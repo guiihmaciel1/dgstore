@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-gray-900 shadow-lg">
+<nav x-data="{ open: false, commercialOpen: false, stockOpen: false, purchasesOpen: false }" class="bg-gray-900 shadow-lg" @click.away="commercialOpen = false; stockOpen = false; purchasesOpen = false">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -11,46 +11,131 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-1 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-1 sm:-my-px sm:ms-10 sm:flex items-center">
                     <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
                         Dashboard
-                    </a>
-                    
-                    <a href="{{ route('products.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('products.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                        Produtos
                     </a>
                     
                     <a href="{{ route('customers.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('customers.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
                         Clientes
                     </a>
                     
-                    <a href="{{ route('sales.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('sales.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                        Vendas
-                    </a>
+                    <!-- Dropdown: Comercial -->
+                    <div class="relative">
+                        <button @click="commercialOpen = !commercialOpen; stockOpen = false; purchasesOpen = false" 
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                            <span>Comercial</span>
+                            <svg class="ml-1.5 h-4 w-4 transition-transform" :class="{ 'rotate-180': commercialOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div x-show="commercialOpen" 
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
+                             x-cloak>
+                            <div class="py-1">
+                                <a href="{{ route('sales.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('sales.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                    Vendas
+                                </a>
+                                <a href="{{ route('reservations.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    Reservas
+                                </a>
+                                <a href="{{ route('warranties.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                    </svg>
+                                    Garantias
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <a href="{{ route('stock.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('stock.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                        Estoque
-                    </a>
+                    <!-- Dropdown: Estoque -->
+                    <div class="relative">
+                        <button @click="stockOpen = !stockOpen; commercialOpen = false; purchasesOpen = false" 
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('products.*') || request()->routeIs('stock.*') || request()->routeIs('imports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                            <span>Estoque</span>
+                            <svg class="ml-1.5 h-4 w-4 transition-transform" :class="{ 'rotate-180': stockOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div x-show="stockOpen" 
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
+                             x-cloak>
+                            <div class="py-1">
+                                <a href="{{ route('products.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('products.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                    Produtos
+                                </a>
+                                <a href="{{ route('stock.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.*') && !request()->routeIs('stock.alerts') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                                    </svg>
+                                    Movimentações
+                                </a>
+                                <a href="{{ route('imports.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('imports.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                    </svg>
+                                    Importações
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <a href="{{ route('suppliers.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                        Fornecedores
-                    </a>
-                    
-                    <a href="{{ route('quotations.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                        Cotações
-                    </a>
-                    
-                    <a href="{{ route('imports.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('imports.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                        Importações
-                    </a>
-                    
-                    <a href="{{ route('reservations.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                        Reservas
-                    </a>
-                    
-                    <a href="{{ route('warranties.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                        Garantias
-                    </a>
+                    <!-- Dropdown: Compras -->
+                    <div class="relative">
+                        <button @click="purchasesOpen = !purchasesOpen; commercialOpen = false; stockOpen = false" 
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('suppliers.*') || request()->routeIs('quotations.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                            <span>Compras</span>
+                            <svg class="ml-1.5 h-4 w-4 transition-transform" :class="{ 'rotate-180': purchasesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div x-show="purchasesOpen" 
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
+                             x-cloak>
+                            <div class="py-1">
+                                <a href="{{ route('suppliers.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                    </svg>
+                                    Fornecedores
+                                </a>
+                                <a href="{{ route('quotations.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                                    </svg>
+                                    Cotações
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('reports.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
@@ -142,37 +227,55 @@
             <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                 Dashboard
             </a>
-            <a href="{{ route('products.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('products.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                Produtos
-            </a>
             <a href="{{ route('customers.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('customers.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                 Clientes
             </a>
-            <a href="{{ route('sales.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('sales.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                Vendas
-            </a>
-            <a href="{{ route('stock.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('stock.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                Estoque
-            </a>
-            <a href="{{ route('suppliers.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                Fornecedores
-            </a>
-            <a href="{{ route('quotations.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                Cotações
-            </a>
-            <a href="{{ route('imports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('imports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                Importações
-            </a>
-            <a href="{{ route('reservations.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                Reservas
-            </a>
-            <a href="{{ route('warranties.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                Garantias
-            </a>
-            @if(auth()->user()->isAdmin())
-                <a href="{{ route('reports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                    Relatórios
+            
+            <!-- Mobile: Comercial -->
+            <div class="border-t border-gray-700 mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Comercial</div>
+                <a href="{{ route('sales.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('sales.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Vendas
                 </a>
+                <a href="{{ route('reservations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Reservas
+                </a>
+                <a href="{{ route('warranties.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Garantias
+                </a>
+            </div>
+            
+            <!-- Mobile: Estoque -->
+            <div class="border-t border-gray-700 mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Estoque</div>
+                <a href="{{ route('products.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('products.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Produtos
+                </a>
+                <a href="{{ route('stock.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Movimentações
+                </a>
+                <a href="{{ route('imports.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('imports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Importações
+                </a>
+            </div>
+            
+            <!-- Mobile: Compras -->
+            <div class="border-t border-gray-700 mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Compras</div>
+                <a href="{{ route('suppliers.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Fornecedores
+                </a>
+                <a href="{{ route('quotations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Cotações
+                </a>
+            </div>
+            
+            @if(auth()->user()->isAdmin())
+                <div class="border-t border-gray-700 mt-2 pt-2">
+                    <a href="{{ route('reports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                        Relatórios
+                    </a>
+                </div>
             @endif
         </div>
 
