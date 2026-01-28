@@ -1,68 +1,124 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center">
-            <a href="{{ route('suppliers.show', $supplier) }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mr-4">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-            </a>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Editar Fornecedor
-            </h2>
-        </div>
-    </x-slot>
+    <div class="py-4">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Cabeçalho compacto -->
+            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <a href="{{ route('suppliers.show', $supplier) }}" style="margin-right: 0.75rem; padding: 0.375rem; color: #6b7280; border-radius: 0.375rem;"
+                   onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                    <svg style="height: 1.25rem; width: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                </a>
+                <div>
+                    <h1 style="font-size: 1.25rem; font-weight: 700; color: #111827;">Editar Fornecedor</h1>
+                    <p style="font-size: 0.75rem; color: #6b7280;">{{ $supplier->name }}</p>
+                </div>
+            </div>
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <x-card>
+            <!-- Formulário -->
+            <div style="background: white; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
                 <form method="POST" action="{{ route('suppliers.update', $supplier) }}">
                     @csrf
                     @method('PUT')
                     
-                    <div class="space-y-6">
-                        <x-form-input name="name" label="Nome do Fornecedor" :value="old('name', $supplier->name)" required />
-                        
-                        <x-form-input name="cnpj" label="CNPJ" :value="old('cnpj', $supplier->formatted_cnpj)" placeholder="00.000.000/0000-00" />
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <x-form-input name="phone" label="Telefone" :value="old('phone', $supplier->formatted_phone)" placeholder="(00) 00000-0000" />
-                            <x-form-input name="email" label="E-mail" type="email" :value="old('email', $supplier->email)" />
-                        </div>
-                        
-                        <x-form-input name="contact_person" label="Pessoa de Contato" :value="old('contact_person', $supplier->contact_person)" />
-                        
-                        <x-form-textarea name="address" label="Endereço" :value="old('address', $supplier->address)" />
-                        
-                        <x-form-textarea name="notes" label="Observações" :value="old('notes', $supplier->notes)" />
+                    <div style="padding: 1rem 1.25rem;">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.875rem;">
+                            <!-- Nome -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                    Nome do Fornecedor <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="text" name="name" value="{{ old('name', $supplier->name) }}" required
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827';this.style.boxShadow='0 0 0 1px #111827'" onblur="this.style.borderColor='#d1d5db';this.style.boxShadow='none'">
+                            </div>
 
-                        <div class="flex items-center gap-2">
-                            <input type="hidden" name="active" value="0">
-                            <input type="checkbox" name="active" id="active" value="1" {{ old('active', $supplier->active) ? 'checked' : '' }}
-                                   class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
-                            <label for="active" class="text-sm text-gray-700 dark:text-gray-300">Fornecedor ativo</label>
+                            <!-- CNPJ -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">CNPJ</label>
+                                <input type="text" name="cnpj" value="{{ old('cnpj', $supplier->formatted_cnpj) }}" placeholder="00.000.000/0000-00"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
+
+                            <!-- Telefone -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Telefone</label>
+                                <input type="text" name="phone" value="{{ old('phone', $supplier->formatted_phone) }}" placeholder="(00) 00000-0000"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
+
+                            <!-- E-mail -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">E-mail</label>
+                                <input type="email" name="email" value="{{ old('email', $supplier->email) }}"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
+
+                            <!-- Pessoa de Contato -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Pessoa de Contato</label>
+                                <input type="text" name="contact_person" value="{{ old('contact_person', $supplier->contact_person) }}"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
+
+                            <!-- Endereço -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Endereço</label>
+                                <input type="text" name="address" value="{{ old('address', $supplier->address) }}"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
+
+                            <!-- Observações -->
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Observações</label>
+                                <input type="text" name="notes" value="{{ old('notes', $supplier->notes) }}" placeholder="Informações adicionais"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-6 flex justify-between">
-                        <form method="POST" action="{{ route('suppliers.destroy', $supplier) }}" onsubmit="return confirm('Tem certeza que deseja excluir este fornecedor?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+
+                    <!-- Rodapé -->
+                    <div style="padding: 0.75rem 1.25rem; background: #f9fafb; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <button type="button" onclick="if(confirm('Tem certeza que deseja excluir este fornecedor?')) document.getElementById('delete-form').submit();"
+                                    style="padding: 0.5rem 0.75rem; background: #fee2e2; color: #dc2626; font-weight: 500; font-size: 0.875rem; border-radius: 0.375rem; border: none; cursor: pointer;"
+                                    onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
                                 Excluir
                             </button>
-                        </form>
-                        
-                        <div class="flex gap-4">
-                            <a href="{{ route('suppliers.show', $supplier) }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="hidden" name="active" value="0">
+                                <input type="checkbox" name="active" value="1" {{ old('active', $supplier->active) ? 'checked' : '' }}
+                                       style="width: 1rem; height: 1rem; border-radius: 0.25rem; margin-right: 0.375rem;">
+                                <span style="font-size: 0.875rem; color: #374151;">Ativo</span>
+                            </label>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="{{ route('suppliers.show', $supplier) }}" 
+                               style="padding: 0.5rem 1rem; background: white; color: #374151; font-weight: 500; font-size: 0.875rem; border-radius: 0.375rem; text-decoration: none; border: 1px solid #d1d5db;">
                                 Cancelar
                             </a>
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                            <button type="submit" 
+                                    style="padding: 0.5rem 1.25rem; background: #111827; color: white; font-weight: 500; font-size: 0.875rem; border-radius: 0.375rem; border: none; cursor: pointer;"
+                                    onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
                                 Salvar Alterações
                             </button>
                         </div>
                     </div>
                 </form>
-            </x-card>
+            </div>
+
+            <!-- Form de exclusão oculto -->
+            <form id="delete-form" method="POST" action="{{ route('suppliers.destroy', $supplier) }}" style="display: none;">
+                @csrf
+                @method('DELETE')
+            </form>
         </div>
     </div>
+
+    <style>
+        @media (max-width: 640px) {
+            div[style*="grid-template-columns: repeat(2"] { grid-template-columns: 1fr !important; }
+            div[style*="grid-column: span 2"] { grid-column: span 1 !important; }
+        }
+    </style>
 </x-app-layout>

@@ -111,9 +111,11 @@ class QuotationController extends Controller
     public function bulkCreate(): View
     {
         $suppliers = $this->supplierService->active();
+        $products = $this->productService->active();
 
         return view('quotations.bulk-create', [
             'suppliers' => $suppliers,
+            'products' => $products,
         ]);
     }
 

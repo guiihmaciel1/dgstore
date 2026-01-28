@@ -1,157 +1,213 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center">
-                <a href="{{ route('suppliers.index') }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mr-4">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                </a>
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {{ $supplier->name }}
-                </h2>
-                @if(!$supplier->active)
-                    <span class="ml-3 px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">Inativo</span>
-                @endif
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Cabeçalho -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center;">
+                    <a href="{{ route('suppliers.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
+                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                        <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">{{ $supplier->name }}</h1>
+                            @if(!$supplier->active)
+                                <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #f3f4f6; color: #6b7280; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">Inativo</span>
+                            @endif
+                        </div>
+                        @if($supplier->cnpj)
+                            <p style="font-size: 0.875rem; color: #6b7280;">CNPJ: {{ $supplier->formatted_cnpj }}</p>
+                        @endif
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{{ route('quotations.create', ['supplier_id' => $supplier->id]) }}" 
+                       style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.625rem 1rem; background: #16a34a; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
+                       onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
+                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Nova Cotação
+                    </a>
+                    <a href="{{ route('suppliers.edit', $supplier) }}" 
+                       style="padding: 0.625rem 1.5rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
+                       onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                        Editar
+                    </a>
+                </div>
             </div>
-            <div class="flex gap-2">
-                <a href="{{ route('quotations.create', ['supplier_id' => $supplier->id]) }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 transition">
-                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    Nova Cotação
-                </a>
-                <a href="{{ route('suppliers.edit', $supplier) }}" class="inline-flex items-center px-4 py-2 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-600 transition">
-                    Editar
-                </a>
-            </div>
-        </div>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="mb-4">
-                    <x-alert type="success">{{ session('success') }}</x-alert>
+                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #16a34a;">
+                    {{ session('success') }}
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Dados do Fornecedor -->
-                <div class="lg:col-span-2">
-                    <x-card title="Dados do Fornecedor">
-                        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">CNPJ</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $supplier->formatted_cnpj ?? '-' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Telefone</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $supplier->formatted_phone ?? '-' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">E-mail</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $supplier->email ?? '-' }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Pessoa de Contato</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $supplier->contact_person ?? '-' }}</dd>
-                            </div>
-                            @if($supplier->address)
-                                <div class="md:col-span-2">
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Endereço</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $supplier->address }}</dd>
-                                </div>
-                            @endif
-                            @if($supplier->notes)
-                                <div class="md:col-span-2">
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Observações</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $supplier->notes }}</dd>
-                                </div>
-                            @endif
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Cadastrado em</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $supplier->created_at->format('d/m/Y H:i') }}</dd>
-                            </div>
-                        </dl>
-                    </x-card>
-                </div>
-
-                <!-- Resumo -->
-                <div>
-                    <x-card title="Resumo de Cotações">
-                        <dl class="space-y-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Cotações</dt>
-                                <dd class="mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100">{{ $quotations->count() }}</dd>
-                            </div>
-                            @if($supplier->latest_quotation)
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                <!-- Coluna Principal -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Informações do Fornecedor -->
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <h3 style="font-weight: 600; color: #111827;">Informações do Fornecedor</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Última Cotação</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $supplier->latest_quotation->quoted_at->format('d/m/Y') }}</dd>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Telefone</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $supplier->formatted_phone ?? '-' }}</dd>
                                 </div>
-                            @endif
-                        </dl>
-                        
-                        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                            <a href="{{ route('quotations.index', ['supplier_id' => $supplier->id]) }}" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 text-sm font-medium">
-                                Ver todas as cotações →
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">E-mail</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $supplier->email ?? '-' }}</dd>
+                                </div>
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Pessoa de Contato</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $supplier->contact_person ?? '-' }}</dd>
+                                </div>
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Status</dt>
+                                    <dd style="margin-top: 0.25rem;">
+                                        @if($supplier->active)
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #f0fdf4; color: #16a34a; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">Ativo</span>
+                                        @else
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #f3f4f6; color: #6b7280; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">Inativo</span>
+                                        @endif
+                                    </dd>
+                                </div>
+                                @if($supplier->address)
+                                <div style="grid-column: span 2;">
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Endereço</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $supplier->address }}</dd>
+                                </div>
+                                @endif
+                                @if($supplier->notes)
+                                <div style="grid-column: span 2;">
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Observações</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $supplier->notes }}</dd>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cotações Recentes -->
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="font-weight: 600; color: #111827;">Cotações Recentes</h3>
+                            <a href="{{ route('quotations.index', ['supplier_id' => $supplier->id]) }}" style="font-size: 0.875rem; color: #111827; text-decoration: none;"
+                               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                Ver todas →
                             </a>
                         </div>
-                    </x-card>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                                        <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Preço Unit.</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Qtd</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Data</th>
+                                        <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($quotations as $quotation)
+                                        <tr style="border-bottom: 1px solid #f3f4f6;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                            <td style="padding: 0.75rem 1.5rem;">
+                                                <div style="font-weight: 500; color: #111827;">{{ $quotation->product_name }}</div>
+                                                @if($quotation->product)
+                                                    <div style="font-size: 0.75rem; color: #6b7280;">SKU: {{ $quotation->product->sku }}</div>
+                                                @endif
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #16a34a;">
+                                                {{ $quotation->formatted_unit_price }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; color: #6b7280;">
+                                                {{ $quotation->formatted_quantity }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; color: #6b7280;">
+                                                {{ $quotation->quoted_at->format('d/m/Y') }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1.5rem; text-align: right;">
+                                                <form method="POST" action="{{ route('quotations.destroy', $quotation) }}" 
+                                                      onsubmit="return confirm('Excluir esta cotação?');" style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" style="color: #dc2626; background: none; border: none; cursor: pointer; font-size: 0.875rem; font-weight: 500;">
+                                                        Excluir
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" style="padding: 3rem; text-align: center; color: #6b7280;">
+                                                Nenhuma cotação registrada.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Histórico de Cotações -->
-            <div class="mt-8">
-                <x-card title="Cotações Recentes" :padding="false">
-                    <x-slot name="actions">
-                        <a href="{{ route('quotations.create', ['supplier_id' => $supplier->id]) }}" class="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 font-medium">
-                            + Nova Cotação
-                        </a>
-                    </x-slot>
-                    
-                    <x-data-table :headers="['Produto', 'Preço Unit.', 'Quantidade', 'Data', 'Registrado por', 'Ações']">
-                        @forelse($quotations as $quotation)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $quotation->product_name }}</div>
-                                    @if($quotation->product)
-                                        <div class="text-xs text-gray-500 dark:text-gray-400">SKU: {{ $quotation->product->sku }}</div>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600 dark:text-green-400">
-                                    {{ $quotation->formatted_unit_price }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $quotation->formatted_quantity }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $quotation->quoted_at->format('d/m/Y') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $quotation->user->name ?? '-' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <form method="POST" action="{{ route('quotations.destroy', $quotation) }}" 
-                                          onsubmit="return confirm('Tem certeza que deseja excluir esta cotação?');"
-                                          class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-400">Excluir</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                    Nenhuma cotação registrada para este fornecedor.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </x-data-table>
-                </x-card>
+                <!-- Coluna Lateral -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Resumo -->
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <h3 style="font-weight: 600; color: #111827;">Resumo</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div style="margin-bottom: 1.5rem;">
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Total de Cotações</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 2rem; font-weight: 700; color: #111827;">{{ $quotations->count() }}</dd>
+                            </div>
+                            @if($supplier->latest_quotation)
+                            <div style="margin-bottom: 1.5rem;">
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Última Cotação</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $supplier->latest_quotation->quoted_at->format('d/m/Y') }}</dd>
+                            </div>
+                            @endif
+                            <div>
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Cadastrado em</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $supplier->created_at->format('d/m/Y H:i') }}</dd>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ações Rápidas -->
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <h3 style="font-weight: 600; color: #111827;">Ações Rápidas</h3>
+                        </div>
+                        <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                            <a href="{{ route('quotations.create', ['supplier_id' => $supplier->id]) }}" 
+                               style="display: block; width: 100%; padding: 0.75rem; background: #16a34a; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none; text-align: center;"
+                               onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
+                                + Nova Cotação
+                            </a>
+                            <a href="{{ route('quotations.bulk-create') }}" 
+                               style="display: block; width: 100%; padding: 0.75rem; background: #f3f4f6; color: #374151; font-weight: 500; border-radius: 0.5rem; text-decoration: none; text-align: center; border: 1px solid #e5e7eb;"
+                               onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                Cadastro Rápido
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <style>
+        @media (max-width: 1024px) {
+            div[style*="grid-template-columns: 2fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
 </x-app-layout>

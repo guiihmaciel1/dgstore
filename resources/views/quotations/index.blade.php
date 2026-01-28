@@ -15,14 +15,16 @@
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
                     <a href="{{ route('quotations.create') }}" 
-                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; background: white; color: #374151; font-weight: 500; border-radius: 0.5rem; text-decoration: none; border: 1px solid #d1d5db;">
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; background: white; color: #374151; font-weight: 500; border-radius: 0.5rem; text-decoration: none; border: 1px solid #d1d5db;"
+                       onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                         </svg>
                         Nova Cotação
                     </a>
                     <a href="{{ route('quotations.bulk-create') }}" 
-                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;">
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
+                       onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
@@ -32,7 +34,7 @@
             </div>
 
             <!-- Cards de Resumo -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
                 <div style="background: white; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid #e5e7eb;">
                     <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Cotações Hoje</div>
                     <div style="font-size: 1.75rem; font-weight: 700; color: #111827; margin-top: 0.25rem;">{{ $todayQuotations->count() }}</div>
@@ -49,36 +51,37 @@
 
             <!-- Filtros -->
             <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem 1.5rem; margin-bottom: 1.5rem;">
-                <form method="GET" action="{{ route('quotations.index') }}" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end;">
-                    <div style="flex: 1; min-width: 150px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Produto</label>
+                <form method="GET" action="{{ route('quotations.index') }}" style="display: grid; grid-template-columns: 1fr 1fr auto auto auto auto; gap: 1rem; align-items: end;">
+                    <div>
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Produto</label>
                         <input type="text" name="product_name" value="{{ $filters['product_name'] }}" placeholder="Buscar produto..." 
-                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#d1d5db'">
                     </div>
-                    <div style="min-width: 150px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Fornecedor</label>
-                        <select name="supplier_id" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
+                    <div>
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Fornecedor</label>
+                        <select name="supplier_id" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
                             <option value="">Todos</option>
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}" {{ $filters['supplier_id'] == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <div style="min-width: 130px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Data Início</label>
+                    <div>
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data Início</label>
                         <input type="date" name="start_date" value="{{ $filters['start_date'] }}" 
-                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                               style="padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
                     </div>
-                    <div style="min-width: 130px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Data Fim</label>
+                    <div>
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data Fim</label>
                         <input type="date" name="end_date" value="{{ $filters['end_date'] }}" 
-                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                               style="padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
                     </div>
-                    <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.875rem;">
+                    <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;">
                         Filtrar
                     </button>
                     @if(array_filter($filters))
-                        <a href="{{ route('quotations.index') }}" style="padding: 0.5rem 1rem; background: white; color: #374151; font-weight: 500; border-radius: 0.375rem; border: 1px solid #d1d5db; text-decoration: none; font-size: 0.875rem;">
+                        <a href="{{ route('quotations.index') }}" style="padding: 0.5rem 1rem; background: white; color: #374151; font-weight: 500; border-radius: 0.5rem; border: 1px solid #d1d5db; text-decoration: none; font-size: 0.875rem; text-align: center;">
                             Limpar
                         </a>
                     @endif
@@ -87,7 +90,7 @@
 
             <!-- Comparativo de Preços -->
             @if($priceComparison->count() > 0)
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
+                <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
                     <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #fef3c7;">
                         <h2 style="font-size: 1rem; font-weight: 600; color: #92400e; display: flex; align-items: center; gap: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,10 +120,12 @@
                                         <td style="padding: 0.75rem 1rem;">
                                             <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                                                 @foreach($quotes as $quote)
-                                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem;
-                                                        {{ $quote->id === $lowestPrice->id ? 'background: #dcfce7; color: #166534; font-weight: 600;' : 'background: #f3f4f6; color: #374151;' }}">
+                                                    @php
+                                                        $isLowest = $quote->id === $lowestPrice->id;
+                                                    @endphp
+                                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; {{ $isLowest ? 'background: #dcfce7; color: #166534; font-weight: 600;' : 'background: #f3f4f6; color: #374151;' }}">
                                                         {{ $quote->supplier->name }}: {{ $quote->formatted_unit_price }}
-                                                        @if($quote->id === $lowestPrice->id)
+                                                        @if($isLowest)
                                                             <svg style="width: 0.875rem; height: 0.875rem;" fill="currentColor" viewBox="0 0 20 20">
                                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                                             </svg>
@@ -130,7 +135,7 @@
                                             </div>
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
-                                            <span style="font-weight: 700; color: #059669; font-size: 1rem;">{{ $lowestPrice->formatted_unit_price }}</span>
+                                            <span style="font-weight: 700; color: #16a34a; font-size: 1rem;">{{ $lowestPrice->formatted_unit_price }}</span>
                                             <div style="font-size: 0.75rem; color: #6b7280;">{{ $lowestPrice->supplier->name }}</div>
                                         </td>
                                     </tr>
@@ -142,8 +147,8 @@
             @endif
 
             <!-- Histórico de Cotações -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb;">
+            <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
                     <h2 style="font-size: 1rem; font-weight: 600; color: #111827;">Histórico de Cotações</h2>
                 </div>
                 <div style="overflow-x: auto;">
@@ -169,11 +174,12 @@
                                         @endif
                                     </td>
                                     <td style="padding: 0.75rem 1rem;">
-                                        <a href="{{ route('suppliers.show', $quotation->supplier) }}" style="color: #4f46e5; text-decoration: none; font-size: 0.875rem;">
+                                        <a href="{{ route('suppliers.show', $quotation->supplier) }}" style="color: #111827; text-decoration: none; font-size: 0.875rem;"
+                                           onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                                             {{ $quotation->supplier->name }}
                                         </a>
                                     </td>
-                                    <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #059669; font-size: 0.875rem;">
+                                    <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #16a34a; font-size: 0.875rem;">
                                         {{ $quotation->formatted_unit_price }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; color: #6b7280;">
@@ -215,4 +221,15 @@
             </div>
         </div>
     </div>
+
+    <style>
+        @media (max-width: 768px) {
+            div[style*="grid-template-columns: repeat(3"] {
+                grid-template-columns: 1fr !important;
+            }
+            form[style*="grid-template-columns: 1fr 1fr auto"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
 </x-app-layout>

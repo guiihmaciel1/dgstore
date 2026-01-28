@@ -1,168 +1,145 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center">
-            <a href="{{ route('quotations.index') }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mr-4">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-            </a>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Nova Cotação
-            </h2>
-        </div>
-    </x-slot>
+    <div class="py-4">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Cabeçalho compacto -->
+            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <a href="{{ route('quotations.index') }}" style="margin-right: 0.75rem; padding: 0.375rem; color: #6b7280; border-radius: 0.375rem;"
+                   onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                    <svg style="height: 1.25rem; width: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                </a>
+                <h1 style="font-size: 1.25rem; font-weight: 700; color: #111827;">Nova Cotação</h1>
+            </div>
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <x-card>
+            <!-- Formulário -->
+            <div style="background: white; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
                 <form method="POST" action="{{ route('quotations.store') }}" x-data="quotationForm()">
                     @csrf
                     
-                    <div class="space-y-6">
-                        <!-- Fornecedor -->
-                        <div>
-                            <label for="supplier_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Fornecedor <span class="text-red-500">*</span>
-                            </label>
-                            <select name="supplier_id" id="supplier_id" required
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                <option value="">Selecione um fornecedor</option>
-                                @foreach($suppliers as $supplier)
-                                    <option value="{{ $supplier->id }}" {{ ($selectedSupplierId ?? old('supplier_id')) == $supplier->id ? 'selected' : '' }}>
-                                        {{ $supplier->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('supplier_id')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div style="padding: 1rem 1.25rem;">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.875rem;">
+                            <!-- Fornecedor -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                    Fornecedor <span style="color: #dc2626;">*</span>
+                                </label>
+                                <select name="supplier_id" required
+                                        style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
+                                    <option value="">Selecione um fornecedor</option>
+                                    @foreach($suppliers as $supplier)
+                                        <option value="{{ $supplier->id }}" {{ ($selectedSupplierId ?? old('supplier_id')) == $supplier->id ? 'selected' : '' }}>
+                                            {{ $supplier->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-                        <!-- Data da Cotação -->
-                        <div>
-                            <label for="quoted_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Data da Cotação <span class="text-red-500">*</span>
-                            </label>
-                            <input type="date" name="quoted_at" id="quoted_at" required
-                                   value="{{ old('quoted_at', date('Y-m-d')) }}"
-                                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                            @error('quoted_at')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                            <!-- Data da Cotação -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                    Data da Cotação <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="date" name="quoted_at" value="{{ old('quoted_at', date('Y-m-d')) }}" required
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
 
-                        <!-- Produto -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Produto <span class="text-red-500">*</span>
-                            </label>
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-4">
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="product_type" value="free" x-model="productType" class="text-indigo-600">
-                                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Nome livre</span>
+                            <!-- Produto -->
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                    Produto <span style="color: #dc2626;">*</span>
+                                </label>
+                                <div style="display: flex; gap: 1rem; margin-bottom: 0.5rem;">
+                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.875rem; color: #374151;">
+                                        <input type="radio" name="product_type" value="free" x-model="productType" style="margin-right: 0.25rem;">
+                                        Nome livre
                                     </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" name="product_type" value="existing" x-model="productType" class="text-indigo-600">
-                                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Produto existente</span>
+                                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.875rem; color: #374151;">
+                                        <input type="radio" name="product_type" value="existing" x-model="productType" style="margin-right: 0.25rem;">
+                                        Produto existente
                                     </label>
                                 </div>
 
                                 <!-- Nome livre -->
                                 <div x-show="productType === 'free'">
-                                    <input type="text" name="product_name" id="product_name"
+                                    <input type="text" name="product_name" id="product_name" value="{{ old('product_name') }}"
                                            placeholder="Ex: iPhone 15 Pro Max 256GB"
                                            :required="productType === 'free'"
-                                           value="{{ old('product_name') }}"
-                                           class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                           style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                                 </div>
 
                                 <!-- Produto existente -->
-                                <div x-show="productType === 'existing'" class="relative">
+                                <div x-show="productType === 'existing'" style="position: relative;">
                                     <input type="hidden" name="product_id" x-model="selectedProductId">
-                                    <input type="text" 
-                                           x-model="productSearch"
-                                           @input.debounce.300ms="searchProducts"
-                                           @focus="showResults = true"
+                                    <input type="text" x-model="productSearch" @input.debounce.300ms="searchProducts" @focus="showResults = true"
                                            placeholder="Buscar produto cadastrado..."
-                                           class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                           style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                                     
-                                    <!-- Resultados da busca -->
-                                    <div x-show="showResults && searchResults.length > 0" 
-                                         @click.away="showResults = false"
-                                         class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto">
+                                    <div x-show="showResults && searchResults.length > 0" @click.away="showResults = false"
+                                         style="position: absolute; z-index: 10; width: 100%; margin-top: 0.25rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 12rem; overflow: auto;">
                                         <template x-for="product in searchResults" :key="product.id">
-                                            <div @click="selectProduct(product)"
-                                                 class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                                                <div class="font-medium text-gray-900 dark:text-gray-100" x-text="product.name"></div>
-                                                <div class="text-sm text-gray-500" x-text="'SKU: ' + product.sku"></div>
+                                            <div @click="selectProduct(product)" style="padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.875rem;"
+                                                 onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                                <div style="font-weight: 500; color: #111827;" x-text="product.name"></div>
+                                                <div style="font-size: 0.75rem; color: #6b7280;" x-text="'SKU: ' + product.sku"></div>
                                             </div>
                                         </template>
                                     </div>
                                 </div>
                             </div>
-                            @error('product_name')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
 
-                        <!-- Preço e Quantidade -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Preço Unitário -->
                             <div>
-                                <label for="unit_price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Preço Unitário <span class="text-red-500">*</span>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                    Preço Unitário <span style="color: #dc2626;">*</span>
                                 </label>
-                                <div class="relative">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
-                                    <input type="number" name="unit_price" id="unit_price" required
-                                           step="0.01" min="0.01"
-                                           value="{{ old('unit_price') }}"
-                                           class="w-full pl-10 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <div style="position: relative;">
+                                    <span style="position: absolute; left: 0.625rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
+                                    <input type="number" name="unit_price" value="{{ old('unit_price') }}" step="0.01" min="0.01" required
+                                           style="width: 100%; padding: 0.5rem 0.625rem 0.5rem 2rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                                 </div>
-                                @error('unit_price')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                                @enderror
                             </div>
                             
+                            <!-- Quantidade -->
                             <div>
-                                <label for="quantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Quantidade
-                                </label>
-                                <input type="number" name="quantity" id="quantity"
-                                       step="0.01" min="0.01"
-                                       value="{{ old('quantity', 1) }}"
-                                       class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Quantidade</label>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                                    <input type="number" name="quantity" value="{{ old('quantity', 1) }}" step="0.01" min="0.01"
+                                           style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                    <select name="unit"
+                                            style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
+                                        <option value="un">un</option>
+                                        <option value="cx">cx</option>
+                                        <option value="kg">kg</option>
+                                        <option value="pç">pç</option>
+                                        <option value="par">par</option>
+                                    </select>
+                                </div>
                             </div>
-                            
-                            <div>
-                                <label for="unit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Unidade
-                                </label>
-                                <select name="unit" id="unit"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    <option value="un" {{ old('unit') == 'un' ? 'selected' : '' }}>Unidade (un)</option>
-                                    <option value="cx" {{ old('unit') == 'cx' ? 'selected' : '' }}>Caixa (cx)</option>
-                                    <option value="kg" {{ old('unit') == 'kg' ? 'selected' : '' }}>Quilograma (kg)</option>
-                                    <option value="pç" {{ old('unit') == 'pç' ? 'selected' : '' }}>Peça (pç)</option>
-                                    <option value="par" {{ old('unit') == 'par' ? 'selected' : '' }}>Par</option>
-                                </select>
+
+                            <!-- Observações -->
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Observações</label>
+                                <input type="text" name="notes" value="{{ old('notes') }}" placeholder="Informações adicionais"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                             </div>
                         </div>
-
-                        <!-- Observações -->
-                        <x-form-textarea name="notes" label="Observações" :value="old('notes')" />
                     </div>
-                    
-                    <div class="mt-6 flex justify-end gap-4">
-                        <a href="{{ route('quotations.index') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition">
+
+                    <!-- Rodapé -->
+                    <div style="padding: 0.75rem 1.25rem; background: #f9fafb; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.5rem;">
+                        <a href="{{ route('quotations.index') }}" 
+                           style="padding: 0.5rem 1rem; background: white; color: #374151; font-weight: 500; font-size: 0.875rem; border-radius: 0.375rem; text-decoration: none; border: 1px solid #d1d5db;">
                             Cancelar
                         </a>
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                        <button type="submit" 
+                                style="padding: 0.5rem 1.25rem; background: #111827; color: white; font-weight: 500; font-size: 0.875rem; border-radius: 0.375rem; border: none; cursor: pointer;"
+                                onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
                             Salvar Cotação
                         </button>
                     </div>
                 </form>
-            </x-card>
+            </div>
         </div>
     </div>
 
@@ -174,33 +151,29 @@
                 selectedProductId: null,
                 searchResults: [],
                 showResults: false,
-
                 async searchProducts() {
-                    if (this.productSearch.length < 2) {
-                        this.searchResults = [];
-                        return;
-                    }
-
+                    if (this.productSearch.length < 2) { this.searchResults = []; return; }
                     try {
                         const response = await fetch(`{{ route('quotations.products.search') }}?q=${encodeURIComponent(this.productSearch)}`);
                         this.searchResults = await response.json();
                         this.showResults = true;
-                    } catch (error) {
-                        console.error('Erro ao buscar produtos:', error);
-                    }
+                    } catch (error) { console.error('Erro ao buscar produtos:', error); }
                 },
-
                 selectProduct(product) {
                     this.selectedProductId = product.id;
                     this.productSearch = product.name;
-                    
-                    // Preenche o nome do produto também
                     document.getElementById('product_name').value = product.name;
-                    
                     this.showResults = false;
                     this.searchResults = [];
                 }
             }
         }
     </script>
+
+    <style>
+        @media (max-width: 640px) {
+            div[style*="grid-template-columns: repeat(2"] { grid-template-columns: 1fr !important; }
+            div[style*="grid-column: span 2"] { grid-column: span 1 !important; }
+        }
+    </style>
 </x-app-layout>

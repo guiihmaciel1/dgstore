@@ -66,6 +66,11 @@ class ProductService
         return $this->repository->getActive();
     }
 
+    public function active(): Collection
+    {
+        return $this->repository->getActive();
+    }
+
     public function search(string $term): Collection
     {
         return $this->repository->search($term);
