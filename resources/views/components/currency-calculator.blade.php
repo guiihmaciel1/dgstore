@@ -73,19 +73,40 @@
                     </div>
                 </div>
 
-                <!-- Margem de Lucro -->
-                <div style="flex: 1; max-width: 200px;">
+                <!-- Margem de Lucro / Preço Final -->
+                <div style="flex: 1; max-width: 220px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <label style="color: #bfdbfe; font-size: 12px;">Margem de Lucro (%)</label>
-                        <span x-show="marginValue > 0" style="color: #4ade80; font-size: 12px; font-weight: 600;">R$ <span x-text="formatNumber(marginValue)"></span></span>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <label style="color: #bfdbfe; font-size: 12px;" x-text="marginMode === 'percent' ? 'Margem de Lucro (%)' : 'Preço Final (R$)'"></label>
+                            <button @click="toggleMarginMode()" 
+                                    type="button"
+                                    style="background: rgba(255,255,255,0.2); border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; display: flex; align-items: center; gap: 4px;"
+                                    :title="marginMode === 'percent' ? 'Mudar para Preço Final' : 'Mudar para Margem %'">
+                                <svg style="width: 14px; height: 14px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <span x-show="marginMode === 'percent' && marginValue > 0" style="color: #4ade80; font-size: 12px; font-weight: 600;">R$ <span x-text="formatNumber(marginValue)"></span></span>
+                        <span x-show="marginMode === 'price' && profitMargin > 0" style="color: #4ade80; font-size: 12px; font-weight: 600;"><span x-text="formatNumber(parseNumber(profitMargin))"></span>%</span>
                     </div>
-                    <div style="position: relative;">
+                    <!-- Input Margem % -->
+                    <div x-show="marginMode === 'percent'" style="position: relative;">
                         <input type="text" 
                                x-model="profitMargin" 
                                @input="calculate()"
                                placeholder="12"
                                style="width: 100%; padding: 12px 36px 12px 12px; background-color: white; border: 2px solid #60a5fa; border-radius: 8px; font-size: 16px; color: #1f2937; outline: none;">
                         <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 16px; font-weight: 500;">%</span>
+                    </div>
+                    <!-- Input Preço Final -->
+                    <div x-show="marginMode === 'price'" style="position: relative;">
+                        <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px; font-weight: 500;">R$</span>
+                        <input type="text" 
+                               x-model="targetPrice" 
+                               @input="calculateFromPrice()"
+                               placeholder="10000"
+                               style="width: 100%; padding: 12px 12px 12px 40px; background-color: white; border: 2px solid #4ade80; border-radius: 8px; font-size: 16px; color: #1f2937; outline: none;">
                     </div>
                 </div>
 
@@ -123,7 +144,7 @@
                     <span style="color: #bfdbfe;">=</span>
                     <span style="color: #fb923c; font-weight: 600;">R$ <span x-text="formatNumber(valueWithTax)"></span></span>
                     <span style="color: #bfdbfe;">+</span>
-                    <span style="color: #4ade80;" x-text="(profitMargin || '0') + '%'"></span>
+                    <span style="color: #4ade80;" x-text="formatNumber(parseNumber(profitMargin)) + '%'"></span>
                     <span style="color: #bfdbfe;">=</span>
                     <span style="color: #4ade80; font-weight: 700; font-size: 16px;">R$ <span x-text="formatNumber(suggestedPrice)"></span></span>
                 </div>
@@ -141,6 +162,8 @@
             exchangeRate: 5.45,
             taxRate: '3,5',
             profitMargin: '12',
+            targetPrice: '',
+            marginMode: 'percent', // 'percent' ou 'price'
             valueInReais: 0,
             valueWithTax: 0,
             suggestedPrice: 0,
@@ -209,6 +232,44 @@
                 });
             },
 
+            toggleMarginMode() {
+                if (this.marginMode === 'percent') {
+                    this.marginMode = 'price';
+                    // Preenche o preço alvo com o preço sugerido atual
+                    if (this.suggestedPrice > 0) {
+                        this.targetPrice = this.formatNumber(this.suggestedPrice);
+                    }
+                } else {
+                    this.marginMode = 'percent';
+                }
+            },
+
+            calculateFromPrice() {
+                const dollar = this.parseNumber(this.dollarValue);
+                const rate = this.parseNumber(this.exchangeRateInput);
+                const tax = this.parseNumber(this.taxRate);
+                const target = this.parseNumber(this.targetPrice);
+
+                this.valueInReais = dollar * rate;
+                this.taxValue = this.valueInReais * (tax / 100);
+                this.valueWithTax = this.valueInReais + this.taxValue;
+                
+                // Calcula a margem necessária para atingir o preço alvo
+                if (this.valueWithTax > 0 && target > 0) {
+                    const marginPercent = ((target - this.valueWithTax) / this.valueWithTax) * 100;
+                    this.profitMargin = marginPercent.toFixed(2).replace('.', ',');
+                    this.marginValue = target - this.valueWithTax;
+                    this.suggestedPrice = target;
+                } else {
+                    this.profitMargin = '0';
+                    this.marginValue = 0;
+                    this.suggestedPrice = this.valueWithTax;
+                }
+                
+                this.exchangeRate = rate;
+                this.saveToStorage();
+            },
+
             calculate() {
                 const dollar = this.parseNumber(this.dollarValue);
                 const rate = this.parseNumber(this.exchangeRateInput);
@@ -221,6 +282,12 @@
                 this.marginValue = this.valueWithTax * (margin / 100);
                 this.suggestedPrice = this.valueWithTax + this.marginValue;
                 this.exchangeRate = rate;
+                
+                // Atualiza o preço alvo se estiver no modo price
+                if (this.marginMode === 'price' && this.suggestedPrice > 0) {
+                    this.targetPrice = this.formatNumber(this.suggestedPrice);
+                }
+                
                 this.saveToStorage();
             }
         }
