@@ -1,110 +1,214 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center">
-            <a href="{{ route('products.index') }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mr-4">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-            </a>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Novo Produto
-            </h2>
-        </div>
-    </x-slot>
+    <div class="py-6">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Cabeçalho -->
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                <a href="{{ route('products.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
+                   onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                    <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                </a>
+                <div>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Novo Produto</h1>
+                    <p style="font-size: 0.875rem; color: #6b7280;">Cadastre um novo produto no sistema</p>
+                </div>
+            </div>
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <x-card>
+            <!-- Formulário -->
+            <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                 <form method="POST" action="{{ route('products.store') }}">
                     @csrf
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <x-form-input name="name" label="Nome do Produto" required class="md:col-span-2" />
-                        
-                        <div class="md:col-span-2 flex gap-4">
-                            <div class="flex-1">
-                                <x-form-input name="sku" label="SKU" required />
+                    <div style="padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                            <!-- Nome -->
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Nome do Produto <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="text" name="name" value="{{ old('name') }}" required
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                @error('name')<p style="margin-top: 0.25rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
                             </div>
-                            <div class="flex items-end">
-                                <button type="button" onclick="generateSku()" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition">
-                                    Gerar SKU
-                                </button>
+
+                            <!-- SKU -->
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    SKU <span style="color: #dc2626;">*</span>
+                                </label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="text" name="sku" id="sku" value="{{ old('sku') }}" required
+                                           style="flex: 1; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                    <button type="button" onclick="generateSku()"
+                                            style="padding: 0.625rem 1rem; background: #f3f4f6; color: #374151; font-weight: 500; border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer;"
+                                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                        Gerar SKU
+                                    </button>
+                                </div>
+                                @error('sku')<p style="margin-top: 0.25rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
                             </div>
-                        </div>
-                        
-                        <div>
-                            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Categoria <span class="text-red-500">*</span>
-                            </label>
-                            <select name="category" id="category" required class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="">Selecione...</option>
-                                @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
-                                    <optgroup label="{{ $group }}">
-                                        @foreach($items as $category)
-                                            <option value="{{ $category->value }}" {{ old('category') == $category->value ? 'selected' : '' }}>
-                                                {{ $category->label() }}
-                                            </option>
-                                        @endforeach
-                                    </optgroup>
-                                @endforeach
-                            </select>
-                            @error('category')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        
-                        <x-form-select 
-                            name="condition" 
-                            label="Condição" 
-                            required 
-                            :options="collect($conditions)->mapWithKeys(fn($c) => [$c->value => $c->label()])"
-                        />
-                        
-                        <x-form-input name="model" label="Modelo" placeholder="Ex: 15 Pro Max" id="model" />
-                        
-                        <x-form-input name="storage" label="Armazenamento" placeholder="Ex: 256GB" />
-                        
-                        <x-form-input name="color" label="Cor" placeholder="Ex: Preto" />
-                        
-                        <x-form-input name="imei" label="IMEI/Serial" placeholder="Para smartphones/eletrônicos" />
-                        
-                        <x-form-input name="cost_price" label="Preço de Custo" type="number" step="0.01" min="0" required />
-                        
-                        <x-form-input name="sale_price" label="Preço de Venda" type="number" step="0.01" min="0" required />
-                        
-                        <x-form-input name="stock_quantity" label="Quantidade em Estoque" type="number" min="0" value="0" required />
-                        
-                        <x-form-input name="min_stock_alert" label="Alerta de Estoque Mínimo" type="number" min="0" value="1" required />
-                        
-                        <x-form-input name="supplier" label="Fornecedor" class="md:col-span-2" />
-                        
-                        <x-form-textarea name="notes" label="Observações" class="md:col-span-2" />
-                        
-                        <div class="md:col-span-2">
-                            <label class="flex items-center">
-                                <input type="checkbox" name="active" value="1" checked class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Produto ativo</span>
-                            </label>
+
+                            <!-- Categoria -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Categoria <span style="color: #dc2626;">*</span>
+                                </label>
+                                <select name="category" id="category" required
+                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                    <option value="">Selecione...</option>
+                                    @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
+                                        <optgroup label="{{ $group }}">
+                                            @foreach($items as $category)
+                                                <option value="{{ $category->value }}" {{ old('category') == $category->value ? 'selected' : '' }}>
+                                                    {{ $category->label() }}
+                                                </option>
+                                            @endforeach
+                                        </optgroup>
+                                    @endforeach
+                                </select>
+                                @error('category')<p style="margin-top: 0.25rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
+                            </div>
+
+                            <!-- Condição -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Condição <span style="color: #dc2626;">*</span>
+                                </label>
+                                <select name="condition" required
+                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                    @foreach($conditions as $condition)
+                                        <option value="{{ $condition->value }}" {{ old('condition') == $condition->value ? 'selected' : '' }}>
+                                            {{ $condition->label() }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('condition')<p style="margin-top: 0.25rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
+                            </div>
+
+                            <!-- Modelo -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Modelo</label>
+                                <input type="text" name="model" id="model" value="{{ old('model') }}" placeholder="Ex: 15 Pro Max"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+
+                            <!-- Armazenamento -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Armazenamento</label>
+                                <input type="text" name="storage" value="{{ old('storage') }}" placeholder="Ex: 256GB"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+
+                            <!-- Cor -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Cor</label>
+                                <input type="text" name="color" value="{{ old('color') }}" placeholder="Ex: Preto"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+
+                            <!-- IMEI/Serial -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">IMEI/Serial</label>
+                                <input type="text" name="imei" value="{{ old('imei') }}" placeholder="Para smartphones/eletrônicos"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+
+                            <!-- Preço de Custo -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Preço de Custo <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="number" name="cost_price" value="{{ old('cost_price') }}" step="0.01" min="0" required
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+
+                            <!-- Preço de Venda -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Preço de Venda <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="number" name="sale_price" value="{{ old('sale_price') }}" step="0.01" min="0" required
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+
+                            <!-- Quantidade em Estoque -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Quantidade em Estoque <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="number" name="stock_quantity" value="{{ old('stock_quantity', 0) }}" min="0" required
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+
+                            <!-- Alerta de Estoque Mínimo -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Alerta de Estoque Mínimo <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="number" name="min_stock_alert" value="{{ old('min_stock_alert', 1) }}" min="0" required
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+
+                            <!-- Fornecedor -->
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Fornecedor</label>
+                                <input type="text" name="supplier" value="{{ old('supplier') }}"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+
+                            <!-- Observações -->
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Observações</label>
+                                <textarea name="notes" rows="3"
+                                          style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
+                                          onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">{{ old('notes') }}</textarea>
+                            </div>
+
+                            <!-- Ativo -->
+                            <div style="grid-column: span 2;">
+                                <label style="display: flex; align-items: center; cursor: pointer;">
+                                    <input type="checkbox" name="active" value="1" checked
+                                           style="width: 1.25rem; height: 1.25rem; border: 2px solid #e5e7eb; border-radius: 0.25rem; margin-right: 0.5rem;">
+                                    <span style="font-size: 0.875rem; color: #374151;">Produto ativo</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-6 flex justify-end gap-4">
-                        <a href="{{ route('products.index') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition">
+
+                    <!-- Rodapé -->
+                    <div style="padding: 1rem 1.5rem; background: #f9fafb; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                        <a href="{{ route('products.index') }}" 
+                           style="padding: 0.625rem 1.5rem; background: white; color: #374151; font-weight: 500; border-radius: 0.5rem; text-decoration: none; border: 1px solid #e5e7eb;">
                             Cancelar
                         </a>
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
-                            Salvar Produto
+                        <button type="submit" 
+                                style="padding: 0.625rem 1.5rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer;"
+                                onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                            Cadastrar Produto
                         </button>
                     </div>
                 </form>
-            </x-card>
+            </div>
         </div>
     </div>
 
-    @push('scripts')
     <script>
         function generateSku() {
-            const category = document.getElementById('category').value || 'iphone';
+            const category = document.getElementById('category').value || 'smartphone';
             const model = document.getElementById('model').value || '';
             
             fetch(`{{ route('products.generate-sku') }}?category=${category}&model=${encodeURIComponent(model)}`)
@@ -114,5 +218,15 @@
                 });
         }
     </script>
-    @endpush
+
+    <style>
+        @media (max-width: 640px) {
+            div[style*="grid-template-columns: repeat(2"] {
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="grid-column: span 2"] {
+                grid-column: span 1 !important;
+            }
+        }
+    </style>
 </x-app-layout>

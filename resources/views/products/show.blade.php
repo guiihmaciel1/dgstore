@@ -1,183 +1,236 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <div class="flex items-center">
-                <a href="{{ route('products.index') }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mr-4">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Cabeçalho -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center;">
+                    <a href="{{ route('products.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
+                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                        <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">{{ $product->name }}</h1>
+                        <p style="font-size: 0.875rem; color: #6b7280;">SKU: {{ $product->sku }}</p>
+                    </div>
+                </div>
+                <a href="{{ route('products.edit', $product) }}" 
+                   style="padding: 0.625rem 1.5rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
+                   onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                    Editar Produto
                 </a>
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    {{ $product->name }}
-                </h2>
             </div>
-            <a href="{{ route('products.edit', $product) }}" class="inline-flex items-center px-4 py-2 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-600 transition">
-                Editar
-            </a>
-        </div>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(session('success'))
-                <div class="mb-4">
-                    <x-alert type="success">{{ session('success') }}</x-alert>
+                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #16a34a;">
+                    {{ session('success') }}
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Informações do Produto -->
-                <div class="lg:col-span-2">
-                    <x-card title="Informações do Produto">
-                        <dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">SKU</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $product->sku }}</dd>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                <!-- Coluna Principal -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Informações do Produto -->
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <h3 style="font-weight: 600; color: #111827;">Informações do Produto</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Categoria</dt>
+                                    <dd style="margin-top: 0.25rem;">
+                                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">
+                                            {{ $product->category->label() }}
+                                        </span>
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Condição</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $product->condition->label() }}</dd>
+                                </div>
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Status</dt>
+                                    <dd style="margin-top: 0.25rem;">
+                                        @if($product->active)
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #f0fdf4; color: #16a34a; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">Ativo</span>
+                                        @else
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #f3f4f6; color: #6b7280; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">Inativo</span>
+                                        @endif
+                                    </dd>
+                                </div>
+                                @if($product->model)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Modelo</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $product->model }}</dd>
+                                </div>
+                                @endif
+                                @if($product->storage)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Armazenamento</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $product->storage }}</dd>
+                                </div>
+                                @endif
+                                @if($product->color)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Cor</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $product->color }}</dd>
+                                </div>
+                                @endif
+                                @if($product->imei)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">IMEI/Serial</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827; font-family: monospace;">{{ $product->imei }}</dd>
+                                </div>
+                                @endif
+                                @if($product->supplier)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Fornecedor</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $product->supplier }}</dd>
+                                </div>
+                                @endif
                             </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Categoria</dt>
-                                <dd class="mt-1"><x-badge color="indigo">{{ $product->category->label() }}</x-badge></dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Condição</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $product->condition->label() }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</dt>
-                                <dd class="mt-1"><x-badge :color="$product->active ? 'green' : 'gray'">{{ $product->active ? 'Ativo' : 'Inativo' }}</x-badge></dd>
-                            </div>
-                            @if($product->model)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Modelo</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $product->model }}</dd>
-                                </div>
-                            @endif
-                            @if($product->storage)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Armazenamento</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $product->storage }}</dd>
-                                </div>
-                            @endif
-                            @if($product->color)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Cor</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $product->color }}</dd>
-                                </div>
-                            @endif
-                            @if($product->imei)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">IMEI</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $product->imei }}</dd>
-                                </div>
-                            @endif
-                            @if($product->supplier)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Fornecedor</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $product->supplier }}</dd>
-                                </div>
-                            @endif
                             @if($product->notes)
-                                <div class="md:col-span-2">
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Observações</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $product->notes }}</dd>
-                                </div>
+                            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Observações</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $product->notes }}</dd>
+                            </div>
                             @endif
-                        </dl>
-                    </x-card>
-                </div>
+                        </div>
+                    </div>
 
-                <!-- Preços e Estoque -->
-                <div class="space-y-6">
-                    <x-card title="Preços">
-                        <dl class="space-y-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Preço de Venda</dt>
-                                <dd class="mt-1 text-2xl font-bold text-green-600 dark:text-green-400">{{ $product->formatted_sale_price }}</dd>
-                            </div>
-                            @if(auth()->user()->isAdmin())
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Preço de Custo</dt>
-                                    <dd class="mt-1 text-lg text-gray-900 dark:text-gray-100">{{ $product->formatted_cost_price }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Margem de Lucro</dt>
-                                    <dd class="mt-1 text-lg text-gray-900 dark:text-gray-100">{{ number_format($product->profit_margin, 1) }}%</dd>
-                                </div>
-                            @endif
-                        </dl>
-                    </x-card>
-
-                    <x-card title="Estoque">
-                        <x-slot name="actions">
-                            <a href="{{ route('stock.product-history', $product) }}" class="text-sm text-indigo-600 hover:text-indigo-500">
-                                Ver histórico
-                            </a>
-                        </x-slot>
-                        
-                        <dl class="space-y-4">
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Quantidade Atual</dt>
-                                <dd class="mt-1">
-                                    <span class="text-2xl font-bold {{ $product->isLowStock() ? ($product->isOutOfStock() ? 'text-red-600' : 'text-yellow-600') : 'text-gray-900 dark:text-gray-100' }}">
-                                        {{ $product->stock_quantity }}
-                                    </span>
-                                    <span class="text-gray-500 dark:text-gray-400">unidades</span>
-                                </dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Alerta Mínimo</dt>
-                                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $product->min_stock_alert }} unidades</dd>
-                            </div>
-                            @if($product->isLowStock())
-                                <div class="pt-2">
-                                    <x-alert type="warning" :dismissible="false">
-                                        Estoque baixo! Considere reabastecer.
-                                    </x-alert>
-                                </div>
-                            @endif
-                        </dl>
-                        
-                        <div class="mt-4">
-                            <a href="{{ route('stock.create') }}?product_id={{ $product->id }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 transition w-full justify-center">
-                                Registrar Entrada
+                    <!-- Movimentações Recentes -->
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="font-weight: 600; color: #111827;">Movimentações Recentes</h3>
+                            <a href="{{ route('stock.product-history', $product) }}" style="font-size: 0.875rem; color: #111827; text-decoration: none;"
+                               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                Ver histórico completo →
                             </a>
                         </div>
-                    </x-card>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                                        <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Data</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Tipo</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Qtd</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Motivo</th>
+                                        <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Usuário</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($product->stockMovements->take(5) as $movement)
+                                        @php
+                                            $typeColors = [
+                                                'in' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
+                                                'out' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
+                                                'adjustment' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
+                                                'return' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
+                                            ];
+                                            $tc = $typeColors[$movement->type->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                        @endphp
+                                        <tr style="border-bottom: 1px solid #f3f4f6;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                            <td style="padding: 0.75rem 1.5rem; font-size: 0.875rem; color: #6b7280;">
+                                                {{ $movement->created_at->format('d/m/Y H:i') }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem;">
+                                                <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $tc['bg'] }}; color: {{ $tc['color'] }}; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">
+                                                    {{ $movement->type->label() }}
+                                                </span>
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: center; font-weight: 600; color: {{ $movement->isAddition() ? '#16a34a' : '#dc2626' }};">
+                                                {{ $movement->isAddition() ? '+' : '-' }}{{ $movement->quantity }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280;">
+                                                {{ $movement->reason ?? '-' }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1.5rem; font-size: 0.875rem; color: #6b7280;">
+                                                {{ $movement->user?->name ?? 'Sistema' }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" style="padding: 3rem; text-align: center; color: #6b7280;">
+                                                Nenhuma movimentação registrada.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Movimentações Recentes -->
-            <div class="mt-8">
-                <x-card title="Movimentações Recentes de Estoque" :padding="false">
-                    <x-data-table :headers="['Data', 'Tipo', 'Quantidade', 'Motivo', 'Usuário']">
-                        @forelse($product->stockMovements->take(10) as $movement)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $movement->created_at->format('d/m/Y H:i') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <x-badge :color="$movement->type_color">{{ $movement->type->label() }}</x-badge>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm {{ $movement->isAddition() ? 'text-green-600' : 'text-red-600' }}">
-                                    {{ $movement->isAddition() ? '+' : '-' }}{{ $movement->quantity }}
-                                </td>
-                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $movement->reason ?? '-' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $movement->user?->name ?? 'Sistema' }}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                    Nenhuma movimentação registrada.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </x-data-table>
-                </x-card>
+                <!-- Coluna Lateral -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Preços -->
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <h3 style="font-weight: 600; color: #111827;">Preços</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div style="margin-bottom: 1rem;">
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Preço de Venda</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 1.75rem; font-weight: 700; color: #16a34a;">{{ $product->formatted_sale_price }}</dd>
+                            </div>
+                            @if(auth()->user()->isAdmin())
+                            <div style="margin-bottom: 1rem;">
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Preço de Custo</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 1.25rem; font-weight: 600; color: #111827;">{{ $product->formatted_cost_price }}</dd>
+                            </div>
+                            <div>
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Margem de Lucro</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 1.25rem; font-weight: 600; color: #111827;">{{ number_format($product->profit_margin, 1) }}%</dd>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Estoque -->
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden; {{ $product->isLowStock() ? ($product->isOutOfStock() ? 'border-color: #fecaca;' : 'border-color: #fde68a;') : '' }}">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#fef2f2' : '#fefce8') : '#f9fafb' }};">
+                            <h3 style="font-weight: 600; color: #111827;">Estoque</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div style="margin-bottom: 1rem;">
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Quantidade Atual</dt>
+                                <dd style="margin-top: 0.25rem;">
+                                    <span style="font-size: 2rem; font-weight: 700; color: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#dc2626' : '#ca8a04') : '#111827' }};">
+                                        {{ $product->stock_quantity }}
+                                    </span>
+                                    <span style="color: #6b7280;"> unidades</span>
+                                </dd>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Alerta Mínimo</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $product->min_stock_alert }} unidades</dd>
+                            </div>
+                            @if($product->isLowStock())
+                            <div style="margin-bottom: 1rem; padding: 0.75rem; background: {{ $product->isOutOfStock() ? '#fef2f2' : '#fefce8' }}; border-radius: 0.5rem; border: 1px solid {{ $product->isOutOfStock() ? '#fecaca' : '#fde68a' }};">
+                                <p style="font-size: 0.875rem; font-weight: 500; color: {{ $product->isOutOfStock() ? '#dc2626' : '#ca8a04' }};">
+                                    {{ $product->isOutOfStock() ? '⚠️ Produto sem estoque!' : '⚠️ Estoque baixo! Considere reabastecer.' }}
+                                </p>
+                            </div>
+                            @endif
+                            <a href="{{ route('stock.create') }}?product_id={{ $product->id }}" 
+                               style="display: block; width: 100%; padding: 0.75rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none; text-align: center;"
+                               onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                                + Registrar Entrada
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <style>
+        @media (max-width: 1024px) {
+            div[style*="grid-template-columns: 2fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
 </x-app-layout>

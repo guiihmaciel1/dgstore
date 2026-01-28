@@ -32,6 +32,14 @@
                         Estoque
                     </a>
                     
+                    <a href="{{ route('suppliers.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                        Fornecedores
+                    </a>
+                    
+                    <a href="{{ route('quotations.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                        Cotações
+                    </a>
+                    
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('reports.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
                             Relatórios
@@ -123,6 +131,12 @@
             </a>
             <a href="{{ route('stock.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('stock.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                 Estoque
+            </a>
+            <a href="{{ route('suppliers.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                Fornecedores
+            </a>
+            <a href="{{ route('quotations.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                Cotações
             </a>
             @if(auth()->user()->isAdmin())
                 <a href="{{ route('reports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">

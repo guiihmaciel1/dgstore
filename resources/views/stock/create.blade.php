@@ -1,61 +1,98 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center">
-            <a href="{{ route('stock.index') }}" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 mr-4">
-                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-            </a>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Nova Movimentação de Estoque
-            </h2>
-        </div>
-    </x-slot>
+    <div class="py-6">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Cabeçalho -->
+            <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+                <a href="{{ route('stock.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
+                   onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                    <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                </a>
+                <div>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Nova Movimentação</h1>
+                    <p style="font-size: 0.875rem; color: #6b7280;">Registrar entrada, saída ou ajuste de estoque</p>
+                </div>
+            </div>
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <x-card>
+            <!-- Formulário -->
+            <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                 <form method="POST" action="{{ route('stock.store') }}">
                     @csrf
                     
-                    <div class="space-y-6">
-                        <x-form-select 
-                            name="product_id" 
-                            label="Produto" 
-                            required 
-                            :options="$products->mapWithKeys(fn($p) => [$p->id => $p->name . ' (Estoque: ' . $p->stock_quantity . ')'])"
-                            :value="request('product_id')"
-                        />
-                        
-                        <x-form-select 
-                            name="type" 
-                            label="Tipo de Movimentação" 
-                            required 
-                            :options="collect($types)->mapWithKeys(fn($t) => [$t->value => $t->label()])"
-                        />
-                        
-                        <x-form-input 
-                            name="quantity" 
-                            label="Quantidade" 
-                            type="number" 
-                            min="1" 
-                            required 
-                            help="Para entrada, informe a quantidade a adicionar. Para ajuste, informe o novo valor total do estoque."
-                        />
-                        
-                        <x-form-textarea name="reason" label="Motivo" placeholder="Descreva o motivo da movimentação..." />
+                    <div style="padding: 1.5rem;">
+                        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                            <!-- Produto -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Produto <span style="color: #dc2626;">*</span>
+                                </label>
+                                <select name="product_id" required
+                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                    <option value="">Selecione um produto...</option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->id }}" {{ request('product_id') == $product->id ? 'selected' : '' }}>
+                                            {{ $product->name }} (Estoque: {{ $product->stock_quantity }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('product_id')<p style="margin-top: 0.25rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
+                            </div>
+
+                            <!-- Tipo de Movimentação -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Tipo de Movimentação <span style="color: #dc2626;">*</span>
+                                </label>
+                                <select name="type" required
+                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                    @foreach($types as $type)
+                                        <option value="{{ $type->value }}">{{ $type->label() }}</option>
+                                    @endforeach
+                                </select>
+                                @error('type')<p style="margin-top: 0.25rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
+                            </div>
+
+                            <!-- Quantidade -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    Quantidade <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="number" name="quantity" value="{{ old('quantity') }}" min="1" required
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                <p style="margin-top: 0.25rem; font-size: 0.75rem; color: #6b7280;">
+                                    Para entrada, informe a quantidade a adicionar. Para ajuste, informe o novo valor total do estoque.
+                                </p>
+                                @error('quantity')<p style="margin-top: 0.25rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
+                            </div>
+
+                            <!-- Motivo -->
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Motivo</label>
+                                <textarea name="reason" rows="3" placeholder="Descreva o motivo da movimentação..."
+                                          style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
+                                          onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">{{ old('reason') }}</textarea>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="mt-6 flex justify-end gap-4">
-                        <a href="{{ route('stock.index') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-500 transition">
+
+                    <!-- Rodapé -->
+                    <div style="padding: 1rem 1.5rem; background: #f9fafb; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem;">
+                        <a href="{{ route('stock.index') }}" 
+                           style="padding: 0.625rem 1.5rem; background: white; color: #374151; font-weight: 500; border-radius: 0.5rem; text-decoration: none; border: 1px solid #e5e7eb;">
                             Cancelar
                         </a>
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+                        <button type="submit" 
+                                style="padding: 0.625rem 1.5rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer;"
+                                onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
                             Registrar Movimentação
                         </button>
                     </div>
                 </form>
-            </x-card>
+            </div>
         </div>
     </div>
 </x-app-layout>
