@@ -155,6 +155,84 @@
                             </div>
                         </div>
                         
+                        <!-- TRADE-IN (Aparelho como entrada) -->
+                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                            <div style="background: #7c3aed; color: white; padding: 0.75rem 1.5rem;">
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center;">
+                                        <svg style="width: 1.25rem; height: 1.25rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span style="font-weight: 600;">Aparelho como Entrada (Trade-in)</span>
+                                    </div>
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="checkbox" x-model="hasTradeIn" @change="if(!hasTradeIn) clearTradeIn()" style="width: 1.25rem; height: 1.25rem; margin-right: 0.5rem;">
+                                        <span style="font-size: 0.875rem;">Ativar</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div x-show="hasTradeIn" x-collapse style="padding: 1.5rem;">
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                                    <div style="grid-column: span 2;">
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+                                            Nome/Descrição do Aparelho <span style="color: #dc2626;">*</span>
+                                        </label>
+                                        <input type="text" name="trade_in[device_name]" x-model="tradeIn.device_name" 
+                                               placeholder="Ex: iPhone 13 Pro Max Azul"
+                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                               onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Modelo</label>
+                                        <input type="text" name="trade_in[device_model]" x-model="tradeIn.device_model" 
+                                               placeholder="Ex: A2643"
+                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                               onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">IMEI</label>
+                                        <input type="text" name="trade_in[imei]" x-model="tradeIn.imei" 
+                                               placeholder="Ex: 123456789012345"
+                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                               onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Condição</label>
+                                        <select name="trade_in[condition]" x-model="tradeIn.condition"
+                                                style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                            @foreach($tradeInConditions as $condition)
+                                                <option value="{{ $condition->value }}">{{ $condition->label() }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+                                            Valor Negociado <span style="color: #dc2626;">*</span>
+                                        </label>
+                                        <div style="position: relative;">
+                                            <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">R$</span>
+                                            <input type="number" name="trade_in[estimated_value]" x-model.number="tradeIn.estimated_value" 
+                                                   @input="updateTotals" step="0.01" min="0"
+                                                   style="width: 100%; padding: 0.625rem 0.75rem 0.625rem 2.5rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                   onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                        </div>
+                                    </div>
+                                    <div style="grid-column: span 2;">
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Observações sobre o aparelho</label>
+                                        <textarea name="trade_in[notes]" x-model="tradeIn.notes" rows="2"
+                                                  placeholder="Estado da tela, bateria, acessórios inclusos..."
+                                                  style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
+                                                  onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 1rem; padding: 0.75rem; background: #f5f3ff; border-radius: 0.5rem; border: 1px solid #ddd6fe;">
+                                    <p style="font-size: 0.75rem; color: #5b21b6;">
+                                        <strong>Nota:</strong> O aparelho ficará pendente para cadastro no estoque após a venda ser finalizada.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- Observações -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem;">
                             <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Observações (opcional)</label>
@@ -169,8 +247,8 @@
                     <div class="sale-sidebar">
                         
                         <!-- PASSO 2: CLIENTE -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
-                            <div style="background: #374151; color: white; padding: 0.75rem 1.5rem;">
+                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; position: relative; z-index: 30;">
+                            <div style="background: #374151; color: white; padding: 0.75rem 1.5rem; border-radius: 1rem 1rem 0 0;">
                                 <div style="display: flex; align-items: center;">
                                     <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">2</span>
                                     <span style="font-weight: 600;">Cliente (opcional)</span>
@@ -189,7 +267,7 @@
                                     <input type="hidden" name="customer_id" x-model="selectedCustomer.id">
                                     
                                     <div x-show="customerResults.length > 0" x-cloak 
-                                         style="position: absolute; z-index: 10; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-radius: 0.75rem; border: 1px solid #e5e7eb; max-height: 10rem; overflow: auto;">
+                                         style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border-radius: 0.75rem; border: 1px solid #e5e7eb; max-height: 12rem; overflow: auto;">
                                         <template x-for="customer in customerResults" :key="customer.id">
                                             <button type="button" @click="selectCustomer(customer)"
                                                     style="width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #f3f4f6; cursor: pointer; background: white;"
@@ -215,7 +293,7 @@
                             </div>
                         </div>
                         
-                        <!-- PASSO 3: PAGAMENTO -->
+                        <!-- PASSO 3: PAGAMENTO MISTO -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                             <div style="background: #374151; color: white; padding: 0.75rem 1.5rem;">
                                 <div style="display: flex; align-items: center;">
@@ -224,29 +302,80 @@
                                 </div>
                             </div>
                             <div style="padding: 1rem;">
+                                <!-- Forma Principal -->
                                 <div style="margin-bottom: 1rem;">
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Forma de Pagamento</label>
-                                    <select name="payment_method" required style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.75rem; outline: none; background: white;">
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Forma Principal</label>
+                                    <select name="payment_method" x-model="paymentMethod" required style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background: white;">
                                         @foreach($paymentMethods as $method)
                                             <option value="{{ $method->value }}">{{ $method->label() }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                    <div>
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Status</label>
-                                        <select name="payment_status" required style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background: white;">
-                                            @foreach($paymentStatuses as $status)
-                                                <option value="{{ $status->value }}" {{ $status->value === 'paid' ? 'selected' : '' }}>{{ $status->label() }}</option>
-                                            @endforeach
-                                        </select>
+                                <!-- Entrada à Vista -->
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f9fafb; border-radius: 0.75rem;">
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.75rem;">Entrada à Vista</label>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                        <div>
+                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Valor</label>
+                                            <div style="position: relative;">
+                                                <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
+                                                <input type="number" name="cash_payment" x-model.number="cashPayment" @input="updateTotals"
+                                                       step="0.01" min="0" placeholder="0,00"
+                                                       style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Forma</label>
+                                            <select name="cash_payment_method" x-model="cashPaymentMethod"
+                                                    style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                                <option value="">-</option>
+                                                <option value="cash">Dinheiro</option>
+                                                <option value="pix">PIX</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Parcelas</label>
-                                        <input type="number" name="installments" value="1" min="1" max="24" 
-                                               style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none;">
+                                </div>
+                                
+                                <!-- Parcelamento -->
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f9fafb; border-radius: 0.75rem;">
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.75rem;">Parcelamento no Cartão</label>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                        <div>
+                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Valor</label>
+                                            <div style="position: relative;">
+                                                <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
+                                                <input type="number" name="card_payment" x-model.number="cardPayment" @input="updateTotals"
+                                                       step="0.01" min="0" placeholder="0,00"
+                                                       style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Parcelas</label>
+                                            <select name="installments" x-model.number="installments"
+                                                    style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                                @for($i = 1; $i <= 12; $i++)
+                                                    <option value="{{ $i }}">{{ $i }}x</option>
+                                                @endfor
+                                            </select>
+                                        </div>
                                     </div>
+                                    <div x-show="cardPayment > 0 && installments > 1" style="margin-top: 0.5rem; font-size: 0.75rem; color: #6b7280;">
+                                        <span x-text="installments + 'x de ' + formatMoney(cardPayment / installments)"></span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Trade-in Value (hidden) -->
+                                <input type="hidden" name="trade_in_value" :value="hasTradeIn ? tradeIn.estimated_value : 0">
+                                
+                                <!-- Status -->
+                                <div>
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Status</label>
+                                    <select name="payment_status" required style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background: white;">
+                                        @foreach($paymentStatuses as $status)
+                                            <option value="{{ $status->value }}" {{ $status->value === 'paid' ? 'selected' : '' }}>{{ $status->label() }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -256,7 +385,7 @@
                             <div style="padding: 1.5rem;">
                                 <h3 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Resumo da Venda</h3>
                                 
-                                <dl style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <dl style="display: flex; flex-direction: column; gap: 0.5rem;">
                                     <div style="display: flex; justify-content: space-between; color: #d1d5db;">
                                         <dt>Itens</dt>
                                         <dd x-text="items.length + ' produto(s)'"></dd>
@@ -275,14 +404,43 @@
                                                 @input="updateTotals"
                                                 step="0.01"
                                                 min="0"
-                                                style="width: 6rem; text-align: right; padding: 0.25rem 0.5rem; background: #1f2937; border: 1px solid #374151; border-radius: 0.5rem; color: white; outline: none;"
+                                                style="width: 5rem; text-align: right; padding: 0.25rem 0.5rem; background: #1f2937; border: 1px solid #374151; border-radius: 0.5rem; color: white; outline: none; font-size: 0.875rem;"
                                             >
                                         </dd>
                                     </div>
-                                    <div style="padding-top: 1rem; border-top: 1px solid #374151;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <dt style="font-size: 1.25rem; font-weight: 700;">TOTAL</dt>
-                                            <dd style="font-size: 1.875rem; font-weight: 700; color: white;" x-text="formatMoney(total)"></dd>
+                                    
+                                    <div style="padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid #374151;">
+                                        <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 700;">
+                                            <dt>TOTAL</dt>
+                                            <dd x-text="formatMoney(total)"></dd>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Breakdown do pagamento -->
+                                    <div x-show="hasTradeIn || cashPayment > 0 || cardPayment > 0" 
+                                         style="padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid #374151;">
+                                        <div style="font-size: 0.75rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.5rem;">FORMA DE PAGAMENTO</div>
+                                        <div x-show="hasTradeIn && tradeIn.estimated_value > 0" style="display: flex; justify-content: space-between; color: #a78bfa; font-size: 0.875rem;">
+                                            <dt>Trade-in (aparelho)</dt>
+                                            <dd x-text="formatMoney(tradeIn.estimated_value || 0)"></dd>
+                                        </div>
+                                        <div x-show="cashPayment > 0" style="display: flex; justify-content: space-between; color: #86efac; font-size: 0.875rem;">
+                                            <dt x-text="'Entrada (' + (cashPaymentMethod === 'pix' ? 'PIX' : 'Dinheiro') + ')'"></dt>
+                                            <dd x-text="formatMoney(cashPayment)"></dd>
+                                        </div>
+                                        <div x-show="cardPayment > 0" style="display: flex; justify-content: space-between; color: #93c5fd; font-size: 0.875rem;">
+                                            <dt x-text="'Cartão (' + installments + 'x)'"></dt>
+                                            <dd x-text="formatMoney(cardPayment)"></dd>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; color: #fbbf24; font-size: 0.875rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #374151;">
+                                            <dt>Soma dos pagamentos</dt>
+                                            <dd x-text="formatMoney(totalPayments)"></dd>
+                                        </div>
+                                        <div x-show="Math.abs(total - totalPayments) > 0.01" style="margin-top: 0.5rem; padding: 0.5rem; background: #7f1d1d; border-radius: 0.375rem;">
+                                            <p style="font-size: 0.75rem; color: #fecaca;">
+                                                <span x-show="total > totalPayments">Faltam <span x-text="formatMoney(total - totalPayments)"></span></span>
+                                                <span x-show="total < totalPayments">Excedente de <span x-text="formatMoney(totalPayments - total)"></span></span>
+                                            </p>
                                         </div>
                                     </div>
                                 </dl>
@@ -291,13 +449,23 @@
                             <button 
                                 type="submit" 
                                 :disabled="items.length === 0"
-                                style="width: 100%; padding: 1rem; background: white; color: #111827; font-size: 1.125rem; font-weight: 700; border: none; cursor: pointer; transition: background 0.2s;"
-                                onmouseover="if(!this.disabled) this.style.backgroundColor='#f3f4f6'" 
-                                onmouseout="this.style.backgroundColor='white'"
-                                :style="items.length === 0 ? 'opacity: 0.5; cursor: not-allowed;' : ''"
+                                class="sale-submit-btn"
+                                :class="{ 'sale-submit-btn-disabled': items.length === 0, 'sale-submit-btn-active': items.length > 0 }"
                             >
-                                <span x-show="items.length > 0">✓ FINALIZAR VENDA</span>
-                                <span x-show="items.length === 0">Adicione produtos para continuar</span>
+                                <span x-show="items.length > 0" class="flex items-center justify-center gap-3">
+                                    <span class="sale-btn-icon-wrapper">
+                                        <svg class="sale-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </span>
+                                    <span class="sale-btn-text">FINALIZAR VENDA</span>
+                                </span>
+                                <span x-show="items.length === 0" class="flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                    </svg>
+                                    <span>Adicione produtos para continuar</span>
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -327,6 +495,101 @@
                 grid-template-columns: 2fr 1fr;
             }
         }
+        [x-cloak] { display: none !important; }
+        
+        /* Botão Finalizar Venda */
+        .sale-submit-btn {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sale-submit-btn-disabled {
+            background: #374151;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .sale-submit-btn-active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .sale-submit-btn-active:hover {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .sale-submit-btn-active:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+        }
+        
+        .sale-btn-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        
+        .sale-btn-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        
+        .sale-btn-text {
+            letter-spacing: 0.05em;
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+        
+        /* Efeito shimmer no botão */
+        .sale-submit-btn-active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
     </style>
 
     @push('scripts')
@@ -342,6 +605,34 @@
                 discount: 0,
                 subtotal: 0,
                 total: 0,
+                
+                // Pagamento misto
+                paymentMethod: 'cash',
+                cashPayment: 0,
+                cashPaymentMethod: '',
+                cardPayment: 0,
+                installments: 1,
+                
+                // Trade-in
+                hasTradeIn: false,
+                tradeIn: {
+                    device_name: '',
+                    device_model: '',
+                    imei: '',
+                    estimated_value: 0,
+                    condition: 'good',
+                    notes: ''
+                },
+                
+                get totalPayments() {
+                    let total = 0;
+                    if (this.hasTradeIn && this.tradeIn.estimated_value) {
+                        total += parseFloat(this.tradeIn.estimated_value) || 0;
+                    }
+                    total += parseFloat(this.cashPayment) || 0;
+                    total += parseFloat(this.cardPayment) || 0;
+                    return total;
+                },
                 
                 async searchProducts() {
                     if (this.searchTerm.length < 2) {
@@ -398,13 +689,25 @@
                     this.selectedCustomer = { id: '', name: '', phone: '' };
                 },
                 
+                clearTradeIn() {
+                    this.tradeIn = {
+                        device_name: '',
+                        device_model: '',
+                        imei: '',
+                        estimated_value: 0,
+                        condition: 'good',
+                        notes: ''
+                    };
+                    this.updateTotals();
+                },
+                
                 updateTotals() {
                     this.subtotal = this.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
                     this.total = Math.max(0, this.subtotal - this.discount);
                 },
                 
                 formatMoney(value) {
-                    return 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    return 'R$ ' + (parseFloat(value) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 }
             }
         }

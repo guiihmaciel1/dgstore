@@ -6,6 +6,8 @@ namespace App\Presentation\Http\Controllers;
 
 use App\Domain\Product\Models\Product;
 use App\Domain\Product\Services\ProductService;
+use App\Domain\Sale\Enums\TradeInStatus;
+use App\Domain\Sale\Models\TradeIn;
 use App\Domain\Stock\Enums\StockMovementType;
 use App\Domain\Stock\Services\StockService;
 use App\Http\Controllers\Controller;
@@ -90,5 +92,70 @@ class StockController extends Controller
             'product' => $product,
             'movements' => $movements,
         ]);
+    }
+
+    public function tradeIns(Request $request): View
+    {
+        $status = $request->get('status', 'pending');
+        
+        $query = TradeIn::with(['sale', 'sale.customer', 'product'])
+            ->orderBy('created_at', 'desc');
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $tradeIns = $query->paginate(15)->withQueryString();
+
+        $stats = [
+            'pending' => TradeIn::pending()->count(),
+            'processed' => TradeIn::processed()->count(),
+            'rejected' => TradeIn::rejected()->count(),
+        ];
+
+        return view('stock.trade-ins', [
+            'tradeIns' => $tradeIns,
+            'stats' => $stats,
+            'currentStatus' => $status,
+        ]);
+    }
+
+    public function processTradeIn(Request $request, TradeIn $tradeIn): RedirectResponse
+    {
+        if (!$tradeIn->isPending()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Este trade-in já foi processado ou rejeitado.');
+        }
+
+        $action = $request->get('action');
+
+        if ($action === 'reject') {
+            $tradeIn->markAsRejected();
+            return redirect()
+                ->back()
+                ->with('success', 'Trade-in rejeitado com sucesso.');
+        }
+
+        // Redireciona para criar produto com dados pré-preenchidos
+        return redirect()
+            ->route('products.create', [
+                'from_trade_in' => $tradeIn->id,
+                'name' => $tradeIn->full_name,
+                'condition' => $tradeIn->condition->value === 'excellent' ? 'new' : 'used',
+            ]);
+    }
+
+    public function linkTradeInToProduct(Request $request, TradeIn $tradeIn): RedirectResponse
+    {
+        $request->validate([
+            'product_id' => ['required', 'exists:products,id'],
+        ]);
+
+        $tradeIn->markAsProcessed($request->product_id);
+
+        return redirect()
+            ->route('stock.trade-ins')
+            ->with('success', 'Trade-in vinculado ao produto com sucesso!');
     }
 }

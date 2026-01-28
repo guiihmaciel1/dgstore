@@ -19,6 +19,11 @@ readonly class SaleData
         public array $items,
         public ?string $customerId = null,
         public float $discount = 0,
+        public float $tradeInValue = 0,
+        public float $cashPayment = 0,
+        public float $cardPayment = 0,
+        public ?string $cashPaymentMethod = null,
+        public ?TradeInData $tradeIn = null,
         public PaymentStatus $paymentStatus = PaymentStatus::Pending,
         public int $installments = 1,
         public ?string $notes = null,
@@ -32,6 +37,12 @@ readonly class SaleData
             $data['items'] ?? []
         );
 
+        // Parse trade-in data if present
+        $tradeIn = null;
+        if (!empty($data['trade_in']) && !empty($data['trade_in']['device_name'])) {
+            $tradeIn = TradeInData::fromArray($data['trade_in']);
+        }
+
         return new self(
             userId: $data['user_id'],
             paymentMethod: $data['payment_method'] instanceof PaymentMethod
@@ -40,6 +51,11 @@ readonly class SaleData
             items: $items,
             customerId: $data['customer_id'] ?? null,
             discount: (float) ($data['discount'] ?? 0),
+            tradeInValue: (float) ($data['trade_in_value'] ?? 0),
+            cashPayment: (float) ($data['cash_payment'] ?? 0),
+            cardPayment: (float) ($data['card_payment'] ?? 0),
+            cashPaymentMethod: $data['cash_payment_method'] ?? null,
+            tradeIn: $tradeIn,
             paymentStatus: isset($data['payment_status'])
                 ? ($data['payment_status'] instanceof PaymentStatus
                     ? $data['payment_status']
@@ -65,5 +81,19 @@ readonly class SaleData
     public function calculateTotal(): float
     {
         return $this->calculateSubtotal() - $this->discount;
+    }
+
+    public function hasTradeIn(): bool
+    {
+        return $this->tradeIn !== null && $this->tradeInValue > 0;
+    }
+
+    public function hasMixedPayment(): bool
+    {
+        $methods = 0;
+        if ($this->tradeInValue > 0) $methods++;
+        if ($this->cashPayment > 0) $methods++;
+        if ($this->cardPayment > 0) $methods++;
+        return $methods > 1;
     }
 }

@@ -21,33 +21,31 @@
                     @csrf
                     
                     <!-- Cabeçalho do Form: Fornecedor e Data -->
-                    <div style="padding: 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="p-4 sm:p-6 border-b border-gray-200 bg-gray-50">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                             <!-- Fornecedor -->
                             <div>
-                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
-                                    Fornecedor <span style="color: #dc2626;">*</span>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Fornecedor <span class="text-red-600">*</span>
                                 </label>
                                 <select name="supplier_id" required
-                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
-                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                                     <option value="">Selecione um fornecedor</option>
                                     @foreach($suppliers as $supplier)
                                         <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('supplier_id')<p style="margin-top: 0.25rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
+                                @error('supplier_id')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
 
                             <!-- Data da Cotação -->
                             <div>
-                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
-                                    Data da Cotação <span style="color: #dc2626;">*</span>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Data da Cotação <span class="text-red-600">*</span>
                                 </label>
                                 <input type="date" name="quoted_at" value="{{ date('Y-m-d') }}" required
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                @error('quoted_at')<p style="margin-top: 0.25rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
+                                       class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                                @error('quoted_at')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
                         </div>
                     </div>
@@ -280,11 +278,4 @@
         }
     </script>
 
-    <style>
-        @media (max-width: 768px) {
-            div[style*="grid-template-columns: 1fr 1fr"] {
-                grid-template-columns: 1fr !important;
-            }
-        }
-    </style>
 </x-app-layout>

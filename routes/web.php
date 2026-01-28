@@ -53,6 +53,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Estoque
     Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
     Route::get('/stock/alerts', [StockController::class, 'alerts'])->name('stock.alerts');
+    Route::get('/stock/trade-ins', [StockController::class, 'tradeIns'])->name('stock.trade-ins');
+    Route::post('/stock/trade-ins/{tradeIn}/process', [StockController::class, 'processTradeIn'])->name('stock.trade-ins.process');
+    Route::post('/stock/trade-ins/{tradeIn}/link', [StockController::class, 'linkTradeInToProduct'])->name('stock.trade-ins.link');
     Route::get('/stock/create', [StockController::class, 'create'])->name('stock.create');
     Route::post('/stock', [StockController::class, 'store'])->name('stock.store');
     Route::get('/stock/product/{product}', [StockController::class, 'productHistory'])->name('stock.product-history');

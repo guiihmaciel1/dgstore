@@ -2,34 +2,31 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Cabeçalho -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center;">
-                    <a href="{{ route('sales.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
-                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
-                        <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                <div class="flex items-center">
+                    <a href="{{ route('sales.index') }}" class="mr-3 sm:mr-4 p-2 text-gray-500 rounded-lg hover:bg-gray-100 transition-colors">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Venda #{{ $sale->sale_number }}</h1>
-                        <p style="font-size: 0.875rem; color: #6b7280;">{{ $sale->sold_at->format('d/m/Y \à\s H:i') }}</p>
+                        <h1 class="text-lg sm:text-2xl font-bold text-gray-900">Venda #{{ $sale->sale_number }}</h1>
+                        <p class="text-sm text-gray-500">{{ $sale->sold_at->format('d/m/Y \à\s H:i') }}</p>
                     </div>
                 </div>
-                <div style="display: flex; gap: 0.75rem;">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <a href="{{ route('sales.receipt', $sale) }}" target="_blank"
-                       style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.5rem; background: #374151; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
-                       onmouseover="this.style.background='#4b5563'" onmouseout="this.style.background='#374151'">
-                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                         </svg>
-                        Imprimir
+                        <span>Imprimir</span>
                     </a>
                     @if($sale->canBeCancelled())
                         <form method="POST" action="{{ route('sales.cancel', $sale) }}" onsubmit="return confirm('Tem certeza que deseja cancelar esta venda? O estoque será devolvido.')">
                             @csrf
                             <button type="submit" 
-                                    style="padding: 0.625rem 1.5rem; background: #dc2626; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer;"
-                                    onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">
+                                    class="w-full px-4 sm:px-6 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors">
                                 Cancelar Venda
                             </button>
                         </form>
@@ -49,7 +46,7 @@
                 </div>
             @endif
 
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 lg:gap-6">
                 <!-- Coluna Principal -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <!-- Itens da Venda -->
@@ -107,6 +104,139 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Detalhes do Pagamento (quando há pagamento misto) -->
+                    @if($sale->hasMixedPayment() || $sale->hasTradeIn())
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <h3 style="font-weight: 600; color: #111827;">Detalhes do Pagamento</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                @if($sale->hasTradeIn())
+                                <div style="padding: 1rem; background: #f5f3ff; border-radius: 0.75rem; border: 1px solid #ddd6fe;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <svg style="width: 1.25rem; height: 1.25rem; color: #7c3aed;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span style="font-size: 0.75rem; font-weight: 600; color: #7c3aed; text-transform: uppercase;">Trade-in</span>
+                                    </div>
+                                    <p style="font-size: 1.25rem; font-weight: 700; color: #5b21b6;">{{ $sale->formatted_trade_in_value }}</p>
+                                </div>
+                                @endif
+                                
+                                @if($sale->cash_payment > 0)
+                                <div style="padding: 1rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <svg style="width: 1.25rem; height: 1.25rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                        <span style="font-size: 0.75rem; font-weight: 600; color: #16a34a; text-transform: uppercase;">
+                                            Entrada ({{ $sale->cash_payment_method_label ?? 'À vista' }})
+                                        </span>
+                                    </div>
+                                    <p style="font-size: 1.25rem; font-weight: 700; color: #166534;">{{ $sale->formatted_cash_payment }}</p>
+                                </div>
+                                @endif
+                                
+                                @if($sale->card_payment > 0)
+                                <div style="padding: 1rem; background: #eff6ff; border-radius: 0.75rem; border: 1px solid #bfdbfe;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                        </svg>
+                                        <span style="font-size: 0.75rem; font-weight: 600; color: #2563eb; text-transform: uppercase;">
+                                            Cartão ({{ $sale->installments }}x)
+                                        </span>
+                                    </div>
+                                    <p style="font-size: 1.25rem; font-weight: 700; color: #1d4ed8;">{{ $sale->formatted_card_payment }}</p>
+                                    @if($sale->installments > 1)
+                                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+                                        {{ $sale->installments }}x de R$ {{ number_format($sale->card_payment / $sale->installments, 2, ',', '.') }}
+                                    </p>
+                                    @endif
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    
+                    <!-- Trade-In (detalhes do aparelho) -->
+                    @if($sale->tradeIn)
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #ddd6fe; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #ddd6fe; background: #f5f3ff;">
+                            <div style="display: flex; align-items: center; justify-content: between;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg style="width: 1.25rem; height: 1.25rem; color: #7c3aed;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    <h3 style="font-weight: 600; color: #5b21b6;">Aparelho Recebido (Trade-in)</h3>
+                                </div>
+                                @php
+                                    $tradeInStatusColors = [
+                                        'pending' => ['bg' => '#fefce8', 'color' => '#ca8a04', 'border' => '#fde68a'],
+                                        'processed' => ['bg' => '#f0fdf4', 'color' => '#16a34a', 'border' => '#bbf7d0'],
+                                        'rejected' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'border' => '#fecaca'],
+                                    ];
+                                    $tisc = $tradeInStatusColors[$sale->tradeIn->status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280', 'border' => '#e5e7eb'];
+                                @endphp
+                                <span style="margin-left: auto; padding: 0.25rem 0.75rem; background: {{ $tisc['bg'] }}; color: {{ $tisc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; border: 1px solid {{ $tisc['border'] }};">
+                                    {{ $sale->tradeIn->status->label() }}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Aparelho</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #111827;">{{ $sale->tradeIn->full_name }}</dd>
+                                </div>
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Valor</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #7c3aed;">{{ $sale->tradeIn->formatted_value }}</dd>
+                                </div>
+                                @if($sale->tradeIn->imei)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">IMEI</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827; font-family: monospace;">{{ $sale->tradeIn->imei }}</dd>
+                                </div>
+                                @endif
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Condição</dt>
+                                    <dd style="margin-top: 0.25rem;">
+                                        @php
+                                            $conditionColors = [
+                                                'excellent' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
+                                                'good' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
+                                                'fair' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
+                                                'poor' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
+                                            ];
+                                            $cc = $conditionColors[$sale->tradeIn->condition->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                        @endphp
+                                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $cc['bg'] }}; color: {{ $cc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
+                                            {{ $sale->tradeIn->condition->label() }}
+                                        </span>
+                                    </dd>
+                                </div>
+                            </div>
+                            @if($sale->tradeIn->notes)
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Observações</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #374151;">{{ $sale->tradeIn->notes }}</dd>
+                            </div>
+                            @endif
+                            @if($sale->tradeIn->isPending())
+                            <div style="margin-top: 1rem; padding: 0.75rem; background: #fefce8; border-radius: 0.5rem; border: 1px solid #fde68a;">
+                                <p style="font-size: 0.75rem; color: #92400e;">
+                                    <strong>Atenção:</strong> Este aparelho ainda não foi cadastrado no estoque. 
+                                    <a href="{{ route('stock.trade-ins') }}" style="color: #b45309; text-decoration: underline;">Processar trade-ins pendentes</a>
+                                </p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
                     
                     @if($sale->notes)
                     <!-- Observações -->
@@ -185,7 +315,7 @@
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Forma de Pagamento</dt>
                                     <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827;">
                                         {{ $sale->payment_method->label() }}
-                                        @if($sale->installments > 1)
+                                        @if($sale->installments > 1 && !$sale->hasMixedPayment())
                                             <span style="color: #6b7280;">({{ $sale->installments }}x de {{ $sale->formatted_installment_value }})</span>
                                         @endif
                                     </dd>
@@ -233,11 +363,4 @@
         </div>
     </div>
 
-    <style>
-        @media (max-width: 1024px) {
-            div[style*="grid-template-columns: 2fr 1fr"] {
-                grid-template-columns: 1fr !important;
-            }
-        }
-    </style>
 </x-app-layout>

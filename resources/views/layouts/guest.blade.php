@@ -39,16 +39,44 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                padding: 2rem;
+                padding: 1.5rem;
                 background-color: #f9fafb;
             }
+            /* Tablet */
             @media (max-width: 1024px) {
                 .split-layout {
                     flex-direction: column;
                 }
-                .split-left, .split-right {
+                .split-left {
                     width: 100%;
-                    min-height: 50vh;
+                    min-height: 30vh;
+                    padding: 2rem 1.5rem;
+                }
+                .split-right {
+                    width: 100%;
+                    min-height: 70vh;
+                    padding: 2rem 1.5rem;
+                }
+                .split-left img {
+                    height: 180px !important;
+                }
+            }
+            /* Mobile */
+            @media (max-width: 640px) {
+                .split-left {
+                    min-height: 25vh;
+                    padding: 1.5rem 1rem;
+                }
+                .split-right {
+                    min-height: 75vh;
+                    padding: 1.5rem 1rem;
+                }
+                .split-left img {
+                    height: 120px !important;
+                }
+                .split-left p {
+                    font-size: 0.75rem !important;
+                    margin-top: 1rem !important;
                 }
             }
         </style>
@@ -67,20 +95,20 @@
 
             <!-- Lado Direito - Formulário -->
             <div class="split-right">
-                <div style="width: 100%; max-width: 420px;">
+                <div class="w-full max-w-md px-2 sm:px-0">
                     <!-- Título -->
-                    <div class="mb-8">
-                        <h1 style="font-size: 1.75rem; font-weight: 700; color: #111827;">Bem-vindo de volta</h1>
-                        <p style="color: #6b7280; margin-top: 0.5rem;">Acesse sua conta para continuar</p>
+                    <div class="mb-6 sm:mb-8">
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Bem-vindo de volta</h1>
+                        <p class="text-gray-500 mt-2 text-sm sm:text-base">Acesse sua conta para continuar</p>
                     </div>
 
                     <!-- Formulário -->
-                    <div style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border: 1px solid #f3f4f6;">
+                    <div class="bg-white p-5 sm:p-8 rounded-xl shadow-lg border border-gray-100">
                         {{ $slot }}
                     </div>
                     
                     <!-- Rodapé -->
-                    <p style="margin-top: 2rem; text-align: center; font-size: 0.875rem; color: #9ca3af;">
+                    <p class="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-400">
                         &copy; {{ date('Y') }} DG Store - Todos os direitos reservados
                     </p>
                 </div>

@@ -8,59 +8,56 @@
             @endif
 
             <!-- Cabeçalho -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Painel de Cotações</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Compare preços entre fornecedores e visualize cotações</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Painel de Cotações</h1>
+                    <p class="text-sm text-gray-500">Compare preços entre fornecedores e visualize cotações</p>
                 </div>
-                <div style="display: flex; gap: 0.5rem;">
+                <div class="flex flex-col sm:flex-row gap-2">
                     <a href="{{ route('quotations.create') }}" 
-                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; background: white; color: #374151; font-weight: 500; border-radius: 0.5rem; text-decoration: none; border: 1px solid #d1d5db;"
-                       onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
-                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                         </svg>
-                        Nova Cotação
+                        <span>Nova Cotação</span>
                     </a>
                     <a href="{{ route('quotations.bulk-create') }}" 
-                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
-                       onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
-                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                        Cadastro Rápido
+                        <span>Cadastro Rápido</span>
                     </a>
                 </div>
             </div>
 
             <!-- Cards de Resumo -->
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-                <div style="background: white; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid #e5e7eb;">
-                    <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Cotações Hoje</div>
-                    <div style="font-size: 1.75rem; font-weight: 700; color: #111827; margin-top: 0.25rem;">{{ $todayQuotations->count() }}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white p-5 rounded-xl border border-gray-200">
+                    <div class="text-xs text-gray-500 uppercase font-semibold">Cotações Hoje</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{{ $todayQuotations->count() }}</div>
                 </div>
-                <div style="background: white; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid #e5e7eb;">
-                    <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Fornecedores Ativos</div>
-                    <div style="font-size: 1.75rem; font-weight: 700; color: #111827; margin-top: 0.25rem;">{{ $suppliers->count() }}</div>
+                <div class="bg-white p-5 rounded-xl border border-gray-200">
+                    <div class="text-xs text-gray-500 uppercase font-semibold">Fornecedores Ativos</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{{ $suppliers->count() }}</div>
                 </div>
-                <div style="background: white; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid #e5e7eb;">
-                    <div style="font-size: 0.75rem; color: #6b7280; text-transform: uppercase; font-weight: 600;">Produtos Cotados</div>
-                    <div style="font-size: 1.75rem; font-weight: 700; color: #111827; margin-top: 0.25rem;">{{ $productNames->count() }}</div>
+                <div class="bg-white p-5 rounded-xl border border-gray-200">
+                    <div class="text-xs text-gray-500 uppercase font-semibold">Produtos Cotados</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{{ $productNames->count() }}</div>
                 </div>
             </div>
 
             <!-- Filtros -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem 1.5rem; margin-bottom: 1.5rem;">
-                <form method="GET" action="{{ route('quotations.index') }}" style="display: grid; grid-template-columns: 1fr 1fr auto auto auto auto; gap: 1rem; align-items: end;">
+            <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
+                <form method="GET" action="{{ route('quotations.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
                     <div>
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Produto</label>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Produto</label>
                         <input type="text" name="product_name" value="{{ $filters['product_name'] }}" placeholder="Buscar produto..." 
-                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#d1d5db'">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                     </div>
                     <div>
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Fornecedor</label>
-                        <select name="supplier_id" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Fornecedor</label>
+                        <select name="supplier_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                             <option value="">Todos</option>
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}" {{ $filters['supplier_id'] == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
@@ -68,23 +65,25 @@
                         </select>
                     </div>
                     <div>
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data Início</label>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Data Início</label>
                         <input type="date" name="start_date" value="{{ $filters['start_date'] }}" 
-                               style="padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                     </div>
                     <div>
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data Fim</label>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Data Fim</label>
                         <input type="date" name="end_date" value="{{ $filters['end_date'] }}" 
-                               style="padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                     </div>
-                    <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;">
-                        Filtrar
-                    </button>
-                    @if(array_filter($filters))
-                        <a href="{{ route('quotations.index') }}" style="padding: 0.5rem 1rem; background: white; color: #374151; font-weight: 500; border-radius: 0.5rem; border: 1px solid #d1d5db; text-decoration: none; font-size: 0.875rem; text-align: center;">
-                            Limpar
-                        </a>
-                    @endif
+                    <div class="flex gap-2 sm:col-span-2 lg:col-span-2">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-gray-900 text-white font-medium rounded-lg text-sm hover:bg-gray-700 transition-colors">
+                            Filtrar
+                        </button>
+                        @if(array_filter($filters))
+                            <a href="{{ route('quotations.index') }}" class="flex-1 px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm text-center hover:bg-gray-50 transition-colors">
+                                Limpar
+                            </a>
+                        @endif
+                    </div>
                 </form>
             </div>
 
@@ -222,14 +221,4 @@
         </div>
     </div>
 
-    <style>
-        @media (max-width: 768px) {
-            div[style*="grid-template-columns: repeat(3"] {
-                grid-template-columns: 1fr !important;
-            }
-            form[style*="grid-template-columns: 1fr 1fr auto"] {
-                grid-template-columns: 1fr !important;
-            }
-        }
-    </style>
 </x-app-layout>

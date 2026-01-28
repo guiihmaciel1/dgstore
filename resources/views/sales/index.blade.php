@@ -14,18 +14,17 @@
             @endif
 
             <!-- Cabeçalho -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Vendas</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Histórico de vendas realizadas</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Vendas</h1>
+                    <p class="text-sm text-gray-500">Histórico de vendas realizadas</p>
                 </div>
                 <a href="{{ route('sales.create') }}" 
-                   style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: #111827; color: white; font-weight: 600; border-radius: 0.5rem; text-decoration: none; transition: background 0.2s;"
-                   onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
-                    <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                     </svg>
-                    Nova Venda
+                    <span>Nova Venda</span>
                 </a>
             </div>
 
@@ -33,17 +32,16 @@
             <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                 
                 <!-- Filtros -->
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-                    <form method="GET" action="{{ route('sales.index') }}" class="sales-filter-form">
+                <div class="p-4 border-b border-gray-200 bg-gray-50">
+                    <form method="GET" action="{{ route('sales.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Buscar</label>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
                             <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nº da venda, cliente..." 
-                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#d1d5db'">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Status</label>
-                            <select name="payment_status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                            <select name="payment_status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                                 <option value="">Todos</option>
                                 @foreach($paymentStatuses as $status)
                                     <option value="{{ $status->value }}" {{ ($filters['payment_status'] ?? '') === $status->value ? 'selected' : '' }}>
@@ -53,8 +51,8 @@
                             </select>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Pagamento</label>
-                            <select name="payment_method" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Pagamento</label>
+                            <select name="payment_method" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                                 <option value="">Todos</option>
                                 @foreach($paymentMethods as $method)
                                     <option value="{{ $method->value }}" {{ ($filters['payment_method'] ?? '') === $method->value ? 'selected' : '' }}>
@@ -64,22 +62,20 @@
                             </select>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data Início</label>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Data Início</label>
                             <input type="date" name="date_from" value="{{ $filters['date_from'] }}" 
-                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data Fim</label>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Data Fim</label>
                             <input type="date" name="date_to" value="{{ $filters['date_to'] }}" 
-                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                         </div>
-                        <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
-                            <button type="submit" 
-                                    style="flex: 1; padding: 0.5rem 1rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;">
+                        <div class="flex gap-2">
+                            <button type="submit" class="flex-1 px-4 py-2 bg-gray-900 text-white font-medium rounded-lg text-sm hover:bg-gray-700 transition-colors">
                                 Filtrar
                             </button>
-                            <a href="{{ route('sales.index') }}" 
-                               style="padding: 0.5rem 1rem; background: white; color: #374151; font-weight: 500; border-radius: 0.5rem; border: 1px solid #d1d5db; text-decoration: none; font-size: 0.875rem;">
+                            <a href="{{ route('sales.index') }}" class="px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
                                 Limpar
                             </a>
                         </div>
@@ -165,22 +161,4 @@
         </div>
     </div>
 
-    <style>
-        .sales-filter-form {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 1rem;
-            align-items: end;
-        }
-        @media (max-width: 1024px) {
-            .sales-filter-form {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        @media (max-width: 640px) {
-            .sales-filter-form {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </x-app-layout>

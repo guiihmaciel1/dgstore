@@ -27,6 +27,10 @@ class Sale extends Model
         'user_id',
         'subtotal',
         'discount',
+        'trade_in_value',
+        'cash_payment',
+        'card_payment',
+        'cash_payment_method',
         'total',
         'payment_method',
         'payment_status',
@@ -40,6 +44,9 @@ class Sale extends Model
         return [
             'subtotal' => 'decimal:2',
             'discount' => 'decimal:2',
+            'trade_in_value' => 'decimal:2',
+            'cash_payment' => 'decimal:2',
+            'card_payment' => 'decimal:2',
             'total' => 'decimal:2',
             'payment_method' => PaymentMethod::class,
             'payment_status' => PaymentStatus::class,
@@ -82,6 +89,11 @@ class Sale extends Model
     public function stockMovements(): HasMany
     {
         return $this->hasMany(StockMovement::class, 'reference_id');
+    }
+
+    public function tradeIn(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(TradeIn::class);
     }
 
     // Scopes
@@ -172,6 +184,44 @@ class Sale extends Model
     public function getFormattedDiscountAttribute(): string
     {
         return 'R$ ' . number_format((float) $this->discount, 2, ',', '.');
+    }
+
+    public function getFormattedTradeInValueAttribute(): string
+    {
+        return 'R$ ' . number_format((float) $this->trade_in_value, 2, ',', '.');
+    }
+
+    public function getFormattedCashPaymentAttribute(): string
+    {
+        return 'R$ ' . number_format((float) $this->cash_payment, 2, ',', '.');
+    }
+
+    public function getFormattedCardPaymentAttribute(): string
+    {
+        return 'R$ ' . number_format((float) $this->card_payment, 2, ',', '.');
+    }
+
+    public function hasTradeIn(): bool
+    {
+        return (float) $this->trade_in_value > 0;
+    }
+
+    public function hasMixedPayment(): bool
+    {
+        $methods = 0;
+        if ((float) $this->trade_in_value > 0) $methods++;
+        if ((float) $this->cash_payment > 0) $methods++;
+        if ((float) $this->card_payment > 0) $methods++;
+        return $methods > 1;
+    }
+
+    public function getCashPaymentMethodLabelAttribute(): ?string
+    {
+        return match ($this->cash_payment_method) {
+            'cash' => 'Dinheiro',
+            'pix' => 'PIX',
+            default => null,
+        };
     }
 
     public function getInstallmentValueAttribute(): float

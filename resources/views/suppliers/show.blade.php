@@ -2,38 +2,35 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Cabeçalho -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center;">
-                    <a href="{{ route('suppliers.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
-                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
-                        <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                <div class="flex items-center">
+                    <a href="{{ route('suppliers.index') }}" class="mr-3 sm:mr-4 p-2 text-gray-500 rounded-lg hover:bg-gray-100 transition-colors">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">{{ $supplier->name }}</h1>
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h1 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">{{ $supplier->name }}</h1>
                             @if(!$supplier->active)
-                                <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #f3f4f6; color: #6b7280; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">Inativo</span>
+                                <span class="px-2 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">Inativo</span>
                             @endif
                         </div>
                         @if($supplier->cnpj)
-                            <p style="font-size: 0.875rem; color: #6b7280;">CNPJ: {{ $supplier->formatted_cnpj }}</p>
+                            <p class="text-sm text-gray-500">CNPJ: {{ $supplier->formatted_cnpj }}</p>
                         @endif
                     </div>
                 </div>
-                <div style="display: flex; gap: 0.5rem;">
+                <div class="flex gap-2">
                     <a href="{{ route('quotations.create', ['supplier_id' => $supplier->id]) }}" 
-                       style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.625rem 1rem; background: #16a34a; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
-                       onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
-                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                         </svg>
-                        Nova Cotação
+                        <span>Nova Cotação</span>
                     </a>
                     <a href="{{ route('suppliers.edit', $supplier) }}" 
-                       style="padding: 0.625rem 1.5rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
-                       onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                       class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors">
                         Editar
                     </a>
                 </div>
@@ -45,7 +42,7 @@
                 </div>
             @endif
 
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 lg:gap-6">
                 <!-- Coluna Principal -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <!-- Informações do Fornecedor -->
@@ -203,11 +200,4 @@
         </div>
     </div>
 
-    <style>
-        @media (max-width: 1024px) {
-            div[style*="grid-template-columns: 2fr 1fr"] {
-                grid-template-columns: 1fr !important;
-            }
-        }
-    </style>
 </x-app-layout>

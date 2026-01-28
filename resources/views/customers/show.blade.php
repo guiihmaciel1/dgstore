@@ -2,33 +2,30 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Cabeçalho -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center;">
-                    <a href="{{ route('customers.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
-                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
-                        <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                <div class="flex items-center">
+                    <a href="{{ route('customers.index') }}" class="mr-3 sm:mr-4 p-2 text-gray-500 rounded-lg hover:bg-gray-100 transition-colors">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <div style="width: 3.5rem; height: 3.5rem; background: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: white; font-size: 1.5rem; font-weight: 600;">{{ strtoupper(substr($customer->name, 0, 1)) }}</span>
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white text-lg sm:text-2xl font-semibold">{{ strtoupper(substr($customer->name, 0, 1)) }}</span>
                         </div>
-                        <div>
-                            <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">{{ $customer->name }}</h1>
-                            <p style="font-size: 0.875rem; color: #6b7280;">Cliente desde {{ $customer->created_at->format('d/m/Y') }}</p>
+                        <div class="min-w-0">
+                            <h1 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">{{ $customer->name }}</h1>
+                            <p class="text-sm text-gray-500">Cliente desde {{ $customer->created_at->format('d/m/Y') }}</p>
                         </div>
                     </div>
                 </div>
-                <div style="display: flex; gap: 0.75rem;">
+                <div class="flex gap-2 sm:gap-3">
                     <a href="{{ route('sales.create') }}?customer_id={{ $customer->id }}" 
-                       style="padding: 0.625rem 1.5rem; background: #16a34a; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
-                       onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
+                       class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors">
                         Nova Venda
                     </a>
                     <a href="{{ route('customers.edit', $customer) }}" 
-                       style="padding: 0.625rem 1.5rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
-                       onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                       class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors">
                         Editar
                     </a>
                 </div>
@@ -40,7 +37,7 @@
                 </div>
             @endif
 
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 lg:gap-6">
                 <!-- Coluna Principal -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <!-- Dados do Cliente -->
@@ -174,11 +171,4 @@
         </div>
     </div>
 
-    <style>
-        @media (max-width: 1024px) {
-            div[style*="grid-template-columns: 2fr 1fr"] {
-                grid-template-columns: 1fr !important;
-            }
-        }
-    </style>
 </x-app-layout>

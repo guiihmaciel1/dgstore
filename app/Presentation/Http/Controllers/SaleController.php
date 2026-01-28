@@ -11,6 +11,7 @@ use App\Domain\Product\Services\ProductService;
 use App\Domain\Sale\DTOs\SaleData;
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
+use App\Domain\Sale\Enums\TradeInCondition;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Services\SaleService;
 use App\Http\Controllers\Controller;
@@ -61,6 +62,7 @@ class SaleController extends Controller
             'products' => $products,
             'paymentMethods' => PaymentMethod::cases(),
             'paymentStatuses' => PaymentStatus::cases(),
+            'tradeInConditions' => TradeInCondition::cases(),
         ]);
     }
 
@@ -86,7 +88,7 @@ class SaleController extends Controller
 
     public function show(Sale $sale): View
     {
-        $sale->load(['items.product', 'customer', 'user', 'stockMovements']);
+        $sale->load(['items.product', 'customer', 'user', 'stockMovements', 'tradeIn']);
 
         return view('sales.show', [
             'sale' => $sale,

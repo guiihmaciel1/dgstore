@@ -8,19 +8,28 @@
             @endif
 
             <!-- Cabeçalho -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Movimentações de Estoque</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Histórico de entradas, saídas e ajustes de estoque</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Movimentações de Estoque</h1>
+                    <p class="text-sm text-gray-500">Histórico de entradas, saídas e ajustes de estoque</p>
                 </div>
-                <a href="{{ route('stock.create') }}" 
-                   style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: #111827; color: white; font-weight: 600; border-radius: 0.5rem; text-decoration: none; transition: background 0.2s;"
-                   onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
-                    <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    Nova Movimentação
-                </a>
+                <div style="display: flex; gap: 0.75rem;">
+                    <a href="{{ route('stock.trade-ins') }}" 
+                       style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1rem; background: #7c3aed; color: white; font-weight: 600; border-radius: 0.5rem; text-decoration: none; font-size: 0.875rem; white-space: nowrap;"
+                       onmouseover="this.style.background='#6d28d9'" onmouseout="this.style.background='#7c3aed'">
+                        <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        <span>Trade-ins</span>
+                    </a>
+                    <a href="{{ route('stock.create') }}" 
+                       class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span class="whitespace-nowrap">Nova Movimentação</span>
+                    </a>
+                </div>
             </div>
 
             <!-- Card Principal -->

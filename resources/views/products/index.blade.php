@@ -8,18 +8,17 @@
             @endif
 
             <!-- Cabeçalho -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Produtos</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Gerencie o catálogo de produtos da loja</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Produtos</h1>
+                    <p class="text-sm text-gray-500">Gerencie o catálogo de produtos da loja</p>
                 </div>
                 <a href="{{ route('products.create') }}" 
-                   style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: #111827; color: white; font-weight: 600; border-radius: 0.5rem; text-decoration: none; transition: background 0.2s;"
-                   onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
-                    <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                     </svg>
-                    Novo Produto
+                    <span>Novo Produto</span>
                 </a>
             </div>
 
@@ -27,17 +26,16 @@
             <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                 
                 <!-- Filtros -->
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-                    <form method="GET" action="{{ route('products.index') }}" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; align-items: end;">
+                <div class="p-4 border-b border-gray-200 bg-gray-50">
+                    <form method="GET" action="{{ route('products.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Buscar</label>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
                             <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nome, SKU, IMEI..." 
-                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#d1d5db'">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Categoria</label>
-                            <select name="category" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Categoria</label>
+                            <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                                 <option value="">Todas</option>
                                 @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
                                     <optgroup label="{{ $group }}">
@@ -51,8 +49,8 @@
                             </select>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Condição</label>
-                            <select name="condition" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Condição</label>
+                            <select name="condition" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                                 <option value="">Todas</option>
                                 @foreach($conditions as $condition)
                                     <option value="{{ $condition->value }}" {{ $filters['condition'] === $condition->value ? 'selected' : '' }}>
@@ -61,20 +59,18 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div style="display: flex; align-items: center; padding-top: 1.25rem;">
-                            <label style="display: flex; align-items: center; cursor: pointer;">
+                        <div class="flex items-center pt-5">
+                            <label class="flex items-center cursor-pointer">
                                 <input type="checkbox" name="low_stock" value="1" {{ $filters['low_stock'] ? 'checked' : '' }} 
-                                       style="width: 1rem; height: 1rem; border-radius: 0.25rem; border: 1px solid #d1d5db; margin-right: 0.5rem;">
-                                <span style="font-size: 0.875rem; color: #374151;">Estoque Baixo</span>
+                                       class="w-4 h-4 rounded border-gray-300 mr-2">
+                                <span class="text-sm text-gray-700">Estoque Baixo</span>
                             </label>
                         </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button type="submit" 
-                                    style="flex: 1; padding: 0.5rem 1rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;">
+                        <div class="flex gap-2">
+                            <button type="submit" class="flex-1 px-4 py-2 bg-gray-900 text-white font-medium rounded-lg text-sm hover:bg-gray-700 transition-colors">
                                 Filtrar
                             </button>
-                            <a href="{{ route('products.index') }}" 
-                               style="padding: 0.5rem 1rem; background: white; color: #374151; font-weight: 500; border-radius: 0.5rem; border: 1px solid #d1d5db; text-decoration: none; font-size: 0.875rem;">
+                            <a href="{{ route('products.index') }}" class="px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
                                 Limpar
                             </a>
                         </div>
@@ -165,11 +161,4 @@
         </div>
     </div>
 
-    <style>
-        @media (max-width: 768px) {
-            form[style*="grid-template-columns"] {
-                grid-template-columns: 1fr !important;
-            }
-        }
-    </style>
 </x-app-layout>

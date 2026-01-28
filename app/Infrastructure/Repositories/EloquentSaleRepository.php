@@ -7,8 +7,10 @@ namespace App\Infrastructure\Repositories;
 use App\Domain\Product\Models\Product;
 use App\Domain\Sale\DTOs\SaleData;
 use App\Domain\Sale\Enums\PaymentStatus;
+use App\Domain\Sale\Enums\TradeInStatus;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Models\SaleItem;
+use App\Domain\Sale\Models\TradeIn;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use App\Domain\Stock\Enums\StockMovementType;
 use App\Domain\Stock\Models\StockMovement;
@@ -96,6 +98,10 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 'user_id' => $data->userId,
                 'subtotal' => $subtotal,
                 'discount' => $data->discount,
+                'trade_in_value' => $data->tradeInValue,
+                'cash_payment' => $data->cashPayment,
+                'card_payment' => $data->cardPayment,
+                'cash_payment_method' => $data->cashPaymentMethod,
                 'total' => $total,
                 'payment_method' => $data->paymentMethod,
                 'payment_status' => $data->paymentStatus,
@@ -131,7 +137,21 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 $product->decrement('stock_quantity', $itemData->quantity);
             }
 
-            return $sale->load(['items.product', 'customer', 'user']);
+            // Cria o trade-in se houver
+            if ($data->hasTradeIn() && $data->tradeIn !== null) {
+                TradeIn::create([
+                    'sale_id' => $sale->id,
+                    'device_name' => $data->tradeIn->deviceName,
+                    'device_model' => $data->tradeIn->deviceModel,
+                    'imei' => $data->tradeIn->imei,
+                    'estimated_value' => $data->tradeIn->estimatedValue,
+                    'condition' => $data->tradeIn->condition,
+                    'notes' => $data->tradeIn->notes,
+                    'status' => TradeInStatus::Pending,
+                ]);
+            }
+
+            return $sale->load(['items.product', 'customer', 'user', 'tradeIn']);
         });
     }
 

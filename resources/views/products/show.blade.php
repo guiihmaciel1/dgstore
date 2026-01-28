@@ -2,22 +2,20 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Cabeçalho -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center;">
-                    <a href="{{ route('products.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
-                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
-                        <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                <div class="flex items-center">
+                    <a href="{{ route('products.index') }}" class="mr-3 sm:mr-4 p-2 text-gray-500 rounded-lg hover:bg-gray-100 transition-colors">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
-                    <div>
-                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">{{ $product->name }}</h1>
-                        <p style="font-size: 0.875rem; color: #6b7280;">SKU: {{ $product->sku }}</p>
+                    <div class="min-w-0">
+                        <h1 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">{{ $product->name }}</h1>
+                        <p class="text-sm text-gray-500">SKU: {{ $product->sku }}</p>
                     </div>
                 </div>
                 <a href="{{ route('products.edit', $product) }}" 
-                   style="padding: 0.625rem 1.5rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
-                   onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                   class="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors">
                     Editar Produto
                 </a>
             </div>
@@ -28,7 +26,7 @@
                 </div>
             @endif
 
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+            <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 lg:gap-6">
                 <!-- Coluna Principal -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <!-- Informações do Produto -->
@@ -226,11 +224,4 @@
         </div>
     </div>
 
-    <style>
-        @media (max-width: 1024px) {
-            div[style*="grid-template-columns: 2fr 1fr"] {
-                grid-template-columns: 1fr !important;
-            }
-        }
-    </style>
 </x-app-layout>
