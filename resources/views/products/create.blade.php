@@ -32,13 +32,26 @@
                             </div>
                         </div>
                         
-                        <x-form-select 
-                            name="category" 
-                            label="Categoria" 
-                            required 
-                            :options="collect($categories)->mapWithKeys(fn($c) => [$c->value => $c->label()])"
-                            id="category"
-                        />
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Categoria <span class="text-red-500">*</span>
+                            </label>
+                            <select name="category" id="category" required class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="">Selecione...</option>
+                                @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
+                                    <optgroup label="{{ $group }}">
+                                        @foreach($items as $category)
+                                            <option value="{{ $category->value }}" {{ old('category') == $category->value ? 'selected' : '' }}>
+                                                {{ $category->label() }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
+                            </select>
+                            @error('category')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
                         
                         <x-form-select 
                             name="condition" 
@@ -53,7 +66,7 @@
                         
                         <x-form-input name="color" label="Cor" placeholder="Ex: Preto" />
                         
-                        <x-form-input name="imei" label="IMEI" placeholder="Apenas para iPhones" />
+                        <x-form-input name="imei" label="IMEI/Serial" placeholder="Para smartphones/eletrônicos" />
                         
                         <x-form-input name="cost_price" label="Preço de Custo" type="number" step="0.01" min="0" required />
                         

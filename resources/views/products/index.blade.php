@@ -31,10 +31,14 @@
                         <div>
                             <select name="category" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md">
                                 <option value="">Todas Categorias</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->value }}" {{ $filters['category'] === $category->value ? 'selected' : '' }}>
-                                        {{ $category->label() }}
-                                    </option>
+                                @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
+                                    <optgroup label="{{ $group }}">
+                                        @foreach($items as $category)
+                                            <option value="{{ $category->value }}" {{ $filters['category'] === $category->value ? 'selected' : '' }}>
+                                                {{ $category->label() }}
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
                                 @endforeach
                             </select>
                         </div>

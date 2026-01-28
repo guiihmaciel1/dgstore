@@ -109,17 +109,29 @@ return new class extends Migration
             $table->index('phone');
         });
 
-        // Tabela de produtos (iPhones e acessórios)
+        // Tabela de produtos (celulares, eletrônicos, perfumes, acessórios, serviços)
         Schema::create('products', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name');
             $table->string('sku')->unique();
-            $table->enum('category', ['iphone', 'accessory', 'service']);
+            $table->enum('category', [
+                'smartphone',    // Celulares
+                'tablet',        // Eletrônicos
+                'notebook',
+                'smartwatch',
+                'headphone',
+                'speaker',
+                'console',
+                'camera',
+                'perfume',       // Perfumes
+                'accessory',     // Acessórios
+                'service'        // Serviços
+            ])->default('smartphone');
             $table->string('model')->nullable();
             $table->string('storage')->nullable();
             $table->string('color')->nullable();
             $table->enum('condition', ['new', 'used', 'refurbished'])->default('new');
-            $table->string('imei')->nullable()->unique();
+            $table->string('imei')->nullable()->unique(); // IMEI/Serial para eletrônicos
             $table->decimal('cost_price', 10, 2);
             $table->decimal('sale_price', 10, 2);
             $table->integer('stock_quantity')->default(0);

@@ -55,13 +55,15 @@ class DatabaseSeeder extends Seeder
 
         $this->command->info('5 clientes de exemplo criados.');
 
-        // Criar produtos de exemplo - iPhones
-        $iphones = [
+        // ========================================
+        // SMARTPHONES
+        // ========================================
+        $smartphones = [
             [
-                'name' => 'iPhone 15 Pro Max',
-                'sku' => 'IPH15PM256BK',
-                'category' => ProductCategory::Iphone,
-                'model' => '15 Pro Max',
+                'name' => 'iPhone 15 Pro Max 256GB',
+                'sku' => 'SPH-IPH15PM256BK',
+                'category' => ProductCategory::Smartphone,
+                'model' => 'iPhone 15 Pro Max',
                 'storage' => '256GB',
                 'color' => 'Preto Titânio',
                 'condition' => ProductCondition::New,
@@ -72,10 +74,10 @@ class DatabaseSeeder extends Seeder
                 'min_stock_alert' => 2,
             ],
             [
-                'name' => 'iPhone 15 Pro',
-                'sku' => 'IPH15P128WH',
-                'category' => ProductCategory::Iphone,
-                'model' => '15 Pro',
+                'name' => 'iPhone 15 Pro 128GB',
+                'sku' => 'SPH-IPH15P128WH',
+                'category' => ProductCategory::Smartphone,
+                'model' => 'iPhone 15 Pro',
                 'storage' => '128GB',
                 'color' => 'Branco Titânio',
                 'condition' => ProductCondition::New,
@@ -86,24 +88,66 @@ class DatabaseSeeder extends Seeder
                 'min_stock_alert' => 2,
             ],
             [
-                'name' => 'iPhone 15',
-                'sku' => 'IPH15128BL',
-                'category' => ProductCategory::Iphone,
-                'model' => '15',
-                'storage' => '128GB',
-                'color' => 'Azul',
+                'name' => 'Samsung Galaxy S24 Ultra',
+                'sku' => 'SPH-SGS24U256',
+                'category' => ProductCategory::Smartphone,
+                'model' => 'Galaxy S24 Ultra',
+                'storage' => '256GB',
+                'color' => 'Violet',
                 'condition' => ProductCondition::New,
-                'imei' => '352345678901236',
-                'cost_price' => 4500.00,
-                'sale_price' => 5999.00,
+                'imei' => '352345678901240',
+                'cost_price' => 5800.00,
+                'sale_price' => 7999.00,
+                'stock_quantity' => 6,
+                'min_stock_alert' => 2,
+            ],
+            [
+                'name' => 'Samsung Galaxy S24',
+                'sku' => 'SPH-SGS24128',
+                'category' => ProductCategory::Smartphone,
+                'model' => 'Galaxy S24',
+                'storage' => '128GB',
+                'color' => 'Preto',
+                'condition' => ProductCondition::New,
+                'imei' => '352345678901241',
+                'cost_price' => 3200.00,
+                'sale_price' => 4499.00,
                 'stock_quantity' => 10,
                 'min_stock_alert' => 3,
             ],
             [
-                'name' => 'iPhone 14 Pro Max',
-                'sku' => 'IPH14PM256PR',
-                'category' => ProductCategory::Iphone,
-                'model' => '14 Pro Max',
+                'name' => 'Xiaomi 14 Ultra',
+                'sku' => 'SPH-XI14U512',
+                'category' => ProductCategory::Smartphone,
+                'model' => 'Xiaomi 14 Ultra',
+                'storage' => '512GB',
+                'color' => 'Preto',
+                'condition' => ProductCondition::New,
+                'imei' => '352345678901242',
+                'cost_price' => 4500.00,
+                'sale_price' => 6299.00,
+                'stock_quantity' => 4,
+                'min_stock_alert' => 2,
+            ],
+            [
+                'name' => 'Motorola Edge 40 Pro',
+                'sku' => 'SPH-MOTE40P',
+                'category' => ProductCategory::Smartphone,
+                'model' => 'Edge 40 Pro',
+                'storage' => '256GB',
+                'color' => 'Azul',
+                'condition' => ProductCondition::New,
+                'imei' => '352345678901243',
+                'cost_price' => 2800.00,
+                'sale_price' => 3999.00,
+                'stock_quantity' => 7,
+                'min_stock_alert' => 2,
+            ],
+            [
+                'name' => 'iPhone 14 Pro Max (Seminovo)',
+                'sku' => 'SPH-IPH14PMU',
+                'category' => ProductCategory::Smartphone,
+                'model' => 'iPhone 14 Pro Max',
                 'storage' => '256GB',
                 'color' => 'Roxo Profundo',
                 'condition' => ProductCondition::Used,
@@ -113,47 +157,343 @@ class DatabaseSeeder extends Seeder
                 'stock_quantity' => 3,
                 'min_stock_alert' => 1,
             ],
+        ];
+
+        foreach ($smartphones as $data) {
+            Product::create($data);
+        }
+        $this->command->info('7 smartphones criados.');
+
+        // ========================================
+        // ELETRÔNICOS - TABLETS
+        // ========================================
+        $tablets = [
             [
-                'name' => 'iPhone 13',
-                'sku' => 'IPH13128PK',
-                'category' => ProductCategory::Iphone,
-                'model' => '13',
-                'storage' => '128GB',
-                'color' => 'Rosa',
-                'condition' => ProductCondition::Refurbished,
-                'imei' => '352345678901238',
-                'cost_price' => 2800.00,
-                'sale_price' => 3999.00,
+                'name' => 'iPad Pro 12.9" M2 256GB',
+                'sku' => 'TBL-IPADP12M2',
+                'category' => ProductCategory::Tablet,
+                'model' => 'iPad Pro 12.9"',
+                'storage' => '256GB',
+                'color' => 'Cinza Espacial',
+                'condition' => ProductCondition::New,
+                'cost_price' => 7200.00,
+                'sale_price' => 9499.00,
+                'stock_quantity' => 4,
+                'min_stock_alert' => 1,
+            ],
+            [
+                'name' => 'iPad Air 5ª Geração',
+                'sku' => 'TBL-IPADAIR5',
+                'category' => ProductCategory::Tablet,
+                'model' => 'iPad Air 5',
+                'storage' => '64GB',
+                'color' => 'Azul',
+                'condition' => ProductCondition::New,
+                'cost_price' => 3800.00,
+                'sale_price' => 5199.00,
                 'stock_quantity' => 6,
                 'min_stock_alert' => 2,
             ],
             [
-                'name' => 'iPhone 12 Mini',
-                'sku' => 'IPH12M64GR',
-                'category' => ProductCategory::Iphone,
-                'model' => '12 Mini',
-                'storage' => '64GB',
-                'color' => 'Verde',
-                'condition' => ProductCondition::Used,
-                'imei' => '352345678901239',
-                'cost_price' => 1800.00,
-                'sale_price' => 2499.00,
-                'stock_quantity' => 2,
+                'name' => 'Samsung Galaxy Tab S9 Ultra',
+                'sku' => 'TBL-SGTABS9U',
+                'category' => ProductCategory::Tablet,
+                'model' => 'Galaxy Tab S9 Ultra',
+                'storage' => '256GB',
+                'color' => 'Grafite',
+                'condition' => ProductCondition::New,
+                'cost_price' => 5500.00,
+                'sale_price' => 7499.00,
+                'stock_quantity' => 3,
                 'min_stock_alert' => 1,
             ],
         ];
 
-        foreach ($iphones as $iphoneData) {
-            Product::create($iphoneData);
+        foreach ($tablets as $data) {
+            Product::create($data);
         }
+        $this->command->info('3 tablets criados.');
 
-        $this->command->info('6 iPhones de exemplo criados.');
+        // ========================================
+        // ELETRÔNICOS - NOTEBOOKS
+        // ========================================
+        $notebooks = [
+            [
+                'name' => 'MacBook Pro 14" M3 Pro',
+                'sku' => 'NTB-MBPM3P14',
+                'category' => ProductCategory::Notebook,
+                'model' => 'MacBook Pro 14"',
+                'storage' => '512GB SSD',
+                'color' => 'Cinza Espacial',
+                'condition' => ProductCondition::New,
+                'cost_price' => 12000.00,
+                'sale_price' => 15999.00,
+                'stock_quantity' => 3,
+                'min_stock_alert' => 1,
+            ],
+            [
+                'name' => 'MacBook Air 15" M3',
+                'sku' => 'NTB-MBAM315',
+                'category' => ProductCategory::Notebook,
+                'model' => 'MacBook Air 15"',
+                'storage' => '256GB SSD',
+                'color' => 'Meia-noite',
+                'condition' => ProductCondition::New,
+                'cost_price' => 8500.00,
+                'sale_price' => 11499.00,
+                'stock_quantity' => 5,
+                'min_stock_alert' => 2,
+            ],
+        ];
 
-        // Criar acessórios
+        foreach ($notebooks as $data) {
+            Product::create($data);
+        }
+        $this->command->info('2 notebooks criados.');
+
+        // ========================================
+        // ELETRÔNICOS - SMARTWATCHES
+        // ========================================
+        $smartwatches = [
+            [
+                'name' => 'Apple Watch Ultra 2',
+                'sku' => 'SWT-AWULTRA2',
+                'category' => ProductCategory::Smartwatch,
+                'model' => 'Watch Ultra 2',
+                'color' => 'Titânio Natural',
+                'condition' => ProductCondition::New,
+                'cost_price' => 5200.00,
+                'sale_price' => 6999.00,
+                'stock_quantity' => 4,
+                'min_stock_alert' => 1,
+            ],
+            [
+                'name' => 'Apple Watch Series 9 45mm',
+                'sku' => 'SWT-AWS945',
+                'category' => ProductCategory::Smartwatch,
+                'model' => 'Watch Series 9',
+                'color' => 'Preto',
+                'condition' => ProductCondition::New,
+                'cost_price' => 2800.00,
+                'sale_price' => 3999.00,
+                'stock_quantity' => 8,
+                'min_stock_alert' => 2,
+            ],
+            [
+                'name' => 'Samsung Galaxy Watch 6 Classic',
+                'sku' => 'SWT-SGW6C',
+                'category' => ProductCategory::Smartwatch,
+                'model' => 'Galaxy Watch 6 Classic',
+                'color' => 'Prata',
+                'condition' => ProductCondition::New,
+                'cost_price' => 1800.00,
+                'sale_price' => 2699.00,
+                'stock_quantity' => 6,
+                'min_stock_alert' => 2,
+            ],
+        ];
+
+        foreach ($smartwatches as $data) {
+            Product::create($data);
+        }
+        $this->command->info('3 smartwatches criados.');
+
+        // ========================================
+        // ELETRÔNICOS - FONES DE OUVIDO
+        // ========================================
+        $headphones = [
+            [
+                'name' => 'AirPods Pro 2ª Geração',
+                'sku' => 'HPH-AIRPODSP2',
+                'category' => ProductCategory::Headphone,
+                'model' => 'AirPods Pro 2',
+                'color' => 'Branco',
+                'condition' => ProductCondition::New,
+                'cost_price' => 1200.00,
+                'sale_price' => 1899.00,
+                'stock_quantity' => 12,
+                'min_stock_alert' => 3,
+            ],
+            [
+                'name' => 'AirPods Max',
+                'sku' => 'HPH-AIRPODSMAX',
+                'category' => ProductCategory::Headphone,
+                'model' => 'AirPods Max',
+                'color' => 'Cinza Espacial',
+                'condition' => ProductCondition::New,
+                'cost_price' => 3200.00,
+                'sale_price' => 4499.00,
+                'stock_quantity' => 4,
+                'min_stock_alert' => 1,
+            ],
+            [
+                'name' => 'Sony WH-1000XM5',
+                'sku' => 'HPH-SONYWH5',
+                'category' => ProductCategory::Headphone,
+                'model' => 'WH-1000XM5',
+                'color' => 'Preto',
+                'condition' => ProductCondition::New,
+                'cost_price' => 1800.00,
+                'sale_price' => 2599.00,
+                'stock_quantity' => 6,
+                'min_stock_alert' => 2,
+            ],
+            [
+                'name' => 'Samsung Galaxy Buds 2 Pro',
+                'sku' => 'HPH-SGBUDS2P',
+                'category' => ProductCategory::Headphone,
+                'model' => 'Galaxy Buds 2 Pro',
+                'color' => 'Grafite',
+                'condition' => ProductCondition::New,
+                'cost_price' => 650.00,
+                'sale_price' => 999.00,
+                'stock_quantity' => 15,
+                'min_stock_alert' => 4,
+            ],
+        ];
+
+        foreach ($headphones as $data) {
+            Product::create($data);
+        }
+        $this->command->info('4 fones de ouvido criados.');
+
+        // ========================================
+        // ELETRÔNICOS - CAIXAS DE SOM
+        // ========================================
+        $speakers = [
+            [
+                'name' => 'HomePod Mini',
+                'sku' => 'SPK-HOMEMINI',
+                'category' => ProductCategory::Speaker,
+                'model' => 'HomePod Mini',
+                'color' => 'Cinza Espacial',
+                'condition' => ProductCondition::New,
+                'cost_price' => 550.00,
+                'sale_price' => 899.00,
+                'stock_quantity' => 10,
+                'min_stock_alert' => 3,
+            ],
+            [
+                'name' => 'JBL Charge 5',
+                'sku' => 'SPK-JBLCHARGE5',
+                'category' => ProductCategory::Speaker,
+                'model' => 'Charge 5',
+                'color' => 'Azul',
+                'condition' => ProductCondition::New,
+                'cost_price' => 650.00,
+                'sale_price' => 999.00,
+                'stock_quantity' => 8,
+                'min_stock_alert' => 2,
+            ],
+        ];
+
+        foreach ($speakers as $data) {
+            Product::create($data);
+        }
+        $this->command->info('2 caixas de som criadas.');
+
+        // ========================================
+        // PERFUMES
+        // ========================================
+        $perfumes = [
+            [
+                'name' => 'Sauvage Dior EDT 100ml',
+                'sku' => 'PRF-SAUVAGE100',
+                'category' => ProductCategory::Perfume,
+                'model' => 'Sauvage',
+                'color' => 'EDT 100ml',
+                'condition' => ProductCondition::New,
+                'cost_price' => 350.00,
+                'sale_price' => 599.00,
+                'stock_quantity' => 15,
+                'min_stock_alert' => 5,
+            ],
+            [
+                'name' => 'Bleu de Chanel EDP 100ml',
+                'sku' => 'PRF-BLEUCHANEL',
+                'category' => ProductCategory::Perfume,
+                'model' => 'Bleu de Chanel',
+                'color' => 'EDP 100ml',
+                'condition' => ProductCondition::New,
+                'cost_price' => 420.00,
+                'sale_price' => 699.00,
+                'stock_quantity' => 12,
+                'min_stock_alert' => 4,
+            ],
+            [
+                'name' => 'Acqua di Gio Profumo 125ml',
+                'sku' => 'PRF-ADGPROF',
+                'category' => ProductCategory::Perfume,
+                'model' => 'Acqua di Gio',
+                'color' => 'Profumo 125ml',
+                'condition' => ProductCondition::New,
+                'cost_price' => 380.00,
+                'sale_price' => 649.00,
+                'stock_quantity' => 10,
+                'min_stock_alert' => 3,
+            ],
+            [
+                'name' => 'Chanel Coco Mademoiselle 100ml',
+                'sku' => 'PRF-COCOMAD',
+                'category' => ProductCategory::Perfume,
+                'model' => 'Coco Mademoiselle',
+                'color' => 'EDP 100ml',
+                'condition' => ProductCondition::New,
+                'cost_price' => 450.00,
+                'sale_price' => 749.00,
+                'stock_quantity' => 8,
+                'min_stock_alert' => 3,
+            ],
+            [
+                'name' => 'Good Girl Carolina Herrera 80ml',
+                'sku' => 'PRF-GOODGIRL',
+                'category' => ProductCategory::Perfume,
+                'model' => 'Good Girl',
+                'color' => 'EDP 80ml',
+                'condition' => ProductCondition::New,
+                'cost_price' => 320.00,
+                'sale_price' => 549.00,
+                'stock_quantity' => 10,
+                'min_stock_alert' => 4,
+            ],
+            [
+                'name' => '212 VIP Men 100ml',
+                'sku' => 'PRF-212VIP',
+                'category' => ProductCategory::Perfume,
+                'model' => '212 VIP Men',
+                'color' => 'EDT 100ml',
+                'condition' => ProductCondition::New,
+                'cost_price' => 280.00,
+                'sale_price' => 479.00,
+                'stock_quantity' => 12,
+                'min_stock_alert' => 4,
+            ],
+            [
+                'name' => 'La Vie Est Belle Lancôme 75ml',
+                'sku' => 'PRF-LAVIE',
+                'category' => ProductCategory::Perfume,
+                'model' => 'La Vie Est Belle',
+                'color' => 'EDP 75ml',
+                'condition' => ProductCondition::New,
+                'cost_price' => 350.00,
+                'sale_price' => 589.00,
+                'stock_quantity' => 9,
+                'min_stock_alert' => 3,
+            ],
+        ];
+
+        foreach ($perfumes as $data) {
+            Product::create($data);
+        }
+        $this->command->info('7 perfumes criados.');
+
+        // ========================================
+        // ACESSÓRIOS
+        // ========================================
         $accessories = [
             [
-                'name' => 'Carregador USB-C 20W Apple Original',
-                'sku' => 'ACC20WUSBC',
+                'name' => 'Carregador USB-C 20W Apple',
+                'sku' => 'ACC-USBC20W',
                 'category' => ProductCategory::Accessory,
                 'condition' => ProductCondition::New,
                 'cost_price' => 120.00,
@@ -162,8 +502,8 @@ class DatabaseSeeder extends Seeder
                 'min_stock_alert' => 5,
             ],
             [
-                'name' => 'Cabo Lightning USB-C 1m Apple',
-                'sku' => 'ACCCABLELT1M',
+                'name' => 'Cabo USB-C para Lightning 1m',
+                'sku' => 'ACC-CABLELT1M',
                 'category' => ProductCategory::Accessory,
                 'condition' => ProductCondition::New,
                 'cost_price' => 80.00,
@@ -172,19 +512,10 @@ class DatabaseSeeder extends Seeder
                 'min_stock_alert' => 10,
             ],
             [
-                'name' => 'AirPods Pro 2ª Geração',
-                'sku' => 'ACCAIRPODSP2',
-                'category' => ProductCategory::Accessory,
-                'condition' => ProductCondition::New,
-                'cost_price' => 1200.00,
-                'sale_price' => 1899.00,
-                'stock_quantity' => 8,
-                'min_stock_alert' => 2,
-            ],
-            [
                 'name' => 'Capa Silicone iPhone 15 Pro Max',
-                'sku' => 'ACCCAPA15PM',
+                'sku' => 'ACC-CAPA15PM',
                 'category' => ProductCategory::Accessory,
+                'model' => 'iPhone 15 Pro Max',
                 'condition' => ProductCondition::New,
                 'cost_price' => 80.00,
                 'sale_price' => 149.00,
@@ -193,7 +524,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Película de Vidro iPhone 15',
-                'sku' => 'ACCPELVD15',
+                'sku' => 'ACC-PELVD15',
                 'category' => ProductCategory::Accessory,
                 'condition' => ProductCondition::New,
                 'cost_price' => 15.00,
@@ -203,7 +534,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'MagSafe Charger Apple',
-                'sku' => 'ACCMAGSAFE',
+                'sku' => 'ACC-MAGSAFE',
                 'category' => ProductCategory::Accessory,
                 'condition' => ProductCondition::New,
                 'cost_price' => 200.00,
@@ -211,54 +542,79 @@ class DatabaseSeeder extends Seeder
                 'stock_quantity' => 12,
                 'min_stock_alert' => 3,
             ],
+            [
+                'name' => 'Capa Samsung Galaxy S24 Ultra',
+                'sku' => 'ACC-CAPAS24U',
+                'category' => ProductCategory::Accessory,
+                'model' => 'Galaxy S24 Ultra',
+                'condition' => ProductCondition::New,
+                'cost_price' => 50.00,
+                'sale_price' => 99.00,
+                'stock_quantity' => 25,
+                'min_stock_alert' => 5,
+            ],
         ];
 
-        foreach ($accessories as $accessoryData) {
-            Product::create($accessoryData);
+        foreach ($accessories as $data) {
+            Product::create($data);
         }
+        $this->command->info('6 acessórios criados.');
 
-        $this->command->info('6 acessórios de exemplo criados.');
-
-        // Criar serviços
+        // ========================================
+        // SERVIÇOS
+        // ========================================
         $services = [
             [
-                'name' => 'Troca de Tela iPhone 15 Pro Max',
-                'sku' => 'SRVTELA15PM',
+                'name' => 'Troca de Tela iPhone',
+                'sku' => 'SRV-TELAIPH',
                 'category' => ProductCategory::Service,
                 'condition' => ProductCondition::New,
-                'cost_price' => 800.00,
-                'sale_price' => 1500.00,
-                'stock_quantity' => 99,
+                'cost_price' => 400.00,
+                'sale_price' => 800.00,
+                'stock_quantity' => 999,
                 'min_stock_alert' => 0,
             ],
             [
-                'name' => 'Troca de Bateria iPhone',
-                'sku' => 'SRVBATERIA',
+                'name' => 'Troca de Bateria Smartphone',
+                'sku' => 'SRV-BATERIA',
                 'category' => ProductCategory::Service,
                 'condition' => ProductCondition::New,
-                'cost_price' => 150.00,
-                'sale_price' => 350.00,
-                'stock_quantity' => 99,
+                'cost_price' => 100.00,
+                'sale_price' => 250.00,
+                'stock_quantity' => 999,
                 'min_stock_alert' => 0,
             ],
             [
                 'name' => 'Backup e Transferência de Dados',
-                'sku' => 'SRVBACKUP',
+                'sku' => 'SRV-BACKUP',
                 'category' => ProductCategory::Service,
                 'condition' => ProductCondition::New,
                 'cost_price' => 0.00,
                 'sale_price' => 80.00,
-                'stock_quantity' => 99,
+                'stock_quantity' => 999,
+                'min_stock_alert' => 0,
+            ],
+            [
+                'name' => 'Formatação e Configuração',
+                'sku' => 'SRV-FORMAT',
+                'category' => ProductCategory::Service,
+                'condition' => ProductCondition::New,
+                'cost_price' => 0.00,
+                'sale_price' => 100.00,
+                'stock_quantity' => 999,
                 'min_stock_alert' => 0,
             ],
         ];
 
-        foreach ($services as $serviceData) {
-            Product::create($serviceData);
+        foreach ($services as $data) {
+            Product::create($data);
         }
+        $this->command->info('4 serviços criados.');
 
-        $this->command->info('3 serviços de exemplo criados.');
         $this->command->info('');
+        $this->command->info('===========================================');
         $this->command->info('Seeding concluído com sucesso!');
+        $this->command->info('Total de produtos: 38');
+        $this->command->info('===========================================');
     }
 }
