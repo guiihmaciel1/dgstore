@@ -59,7 +59,10 @@
 
                 <!-- Taxa Adicional -->
                 <div style="flex: 1; max-width: 180px;">
-                    <label style="display: block; color: #bfdbfe; font-size: 12px; margin-bottom: 6px;">Taxa Adicional (%)</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="color: #bfdbfe; font-size: 12px;">Taxa Adicional (%)</label>
+                        <span x-show="taxValue > 0" style="color: #fbbf24; font-size: 12px; font-weight: 600;">R$ <span x-text="formatNumber(taxValue)"></span></span>
+                    </div>
                     <div style="position: relative;">
                         <input type="text" 
                                x-model="taxRate" 
@@ -72,7 +75,10 @@
 
                 <!-- Margem de Lucro -->
                 <div style="flex: 1; max-width: 200px;">
-                    <label style="display: block; color: #bfdbfe; font-size: 12px; margin-bottom: 6px;">Margem de Lucro (%)</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="color: #bfdbfe; font-size: 12px;">Margem de Lucro (%)</label>
+                        <span x-show="marginValue > 0" style="color: #4ade80; font-size: 12px; font-weight: 600;">R$ <span x-text="formatNumber(marginValue)"></span></span>
+                    </div>
                     <div style="position: relative;">
                         <input type="text" 
                                x-model="profitMargin" 
@@ -138,6 +144,8 @@
             valueInReais: 0,
             valueWithTax: 0,
             suggestedPrice: 0,
+            taxValue: 0,
+            marginValue: 0,
 
             init() {
                 this.loadFromStorage();
@@ -208,8 +216,10 @@
                 const margin = this.parseNumber(this.profitMargin);
 
                 this.valueInReais = dollar * rate;
-                this.valueWithTax = this.valueInReais * (1 + (tax / 100));
-                this.suggestedPrice = this.valueWithTax * (1 + (margin / 100));
+                this.taxValue = this.valueInReais * (tax / 100);
+                this.valueWithTax = this.valueInReais + this.taxValue;
+                this.marginValue = this.valueWithTax * (margin / 100);
+                this.suggestedPrice = this.valueWithTax + this.marginValue;
                 this.exchangeRate = rate;
                 this.saveToStorage();
             }
