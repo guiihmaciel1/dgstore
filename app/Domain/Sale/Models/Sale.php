@@ -1,0 +1,196 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Sale\Models;
+
+use App\Domain\Customer\Models\Customer;
+use App\Domain\Sale\Enums\PaymentMethod;
+use App\Domain\Sale\Enums\PaymentStatus;
+use App\Domain\Stock\Models\StockMovement;
+use App\Domain\User\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+
+class Sale extends Model
+{
+    use HasFactory, HasUlids, SoftDeletes;
+
+    protected $fillable = [
+        'sale_number',
+        'customer_id',
+        'user_id',
+        'subtotal',
+        'discount',
+        'total',
+        'payment_method',
+        'payment_status',
+        'installments',
+        'notes',
+        'sold_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'subtotal' => 'decimal:2',
+            'discount' => 'decimal:2',
+            'total' => 'decimal:2',
+            'payment_method' => PaymentMethod::class,
+            'payment_status' => PaymentStatus::class,
+            'installments' => 'integer',
+            'sold_at' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
+        ];
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (Sale $sale) {
+            if (empty($sale->sale_number)) {
+                $sale->sale_number = self::generateSaleNumber();
+            }
+        });
+    }
+
+    // Relacionamentos
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class)->withTrashed();
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
+    }
+
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class, 'reference_id');
+    }
+
+    // Scopes
+
+    public function scopePaid(Builder $query): Builder
+    {
+        return $query->where('payment_status', PaymentStatus::Paid);
+    }
+
+    public function scopePending(Builder $query): Builder
+    {
+        return $query->where('payment_status', PaymentStatus::Pending);
+    }
+
+    public function scopeCancelled(Builder $query): Builder
+    {
+        return $query->where('payment_status', PaymentStatus::Cancelled);
+    }
+
+    public function scopeToday(Builder $query): Builder
+    {
+        return $query->whereDate('sold_at', today());
+    }
+
+    public function scopeThisMonth(Builder $query): Builder
+    {
+        return $query->whereMonth('sold_at', now()->month)
+            ->whereYear('sold_at', now()->year);
+    }
+
+    public function scopeBetweenDates(Builder $query, $startDate, $endDate): Builder
+    {
+        return $query->whereBetween('sold_at', [$startDate, $endDate]);
+    }
+
+    // Métodos auxiliares
+
+    public static function generateSaleNumber(): string
+    {
+        $prefix = 'DG';
+        $year = now()->format('Y');
+        $month = now()->format('m');
+        
+        $lastSale = self::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($lastSale && preg_match('/(\d+)$/', $lastSale->sale_number, $matches)) {
+            $sequence = (int) $matches[1] + 1;
+        } else {
+            $sequence = 1;
+        }
+
+        return sprintf('%s%s%s%05d', $prefix, $year, $month, $sequence);
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->payment_status === PaymentStatus::Paid;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->payment_status === PaymentStatus::Pending;
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->payment_status === PaymentStatus::Cancelled;
+    }
+
+    public function canBeCancelled(): bool
+    {
+        return !$this->isCancelled();
+    }
+
+    public function getFormattedTotalAttribute(): string
+    {
+        return 'R$ ' . number_format((float) $this->total, 2, ',', '.');
+    }
+
+    public function getFormattedSubtotalAttribute(): string
+    {
+        return 'R$ ' . number_format((float) $this->subtotal, 2, ',', '.');
+    }
+
+    public function getFormattedDiscountAttribute(): string
+    {
+        return 'R$ ' . number_format((float) $this->discount, 2, ',', '.');
+    }
+
+    public function getInstallmentValueAttribute(): float
+    {
+        if ($this->installments <= 1) {
+            return (float) $this->total;
+        }
+
+        return (float) $this->total / $this->installments;
+    }
+
+    public function getFormattedInstallmentValueAttribute(): string
+    {
+        return 'R$ ' . number_format($this->installment_value, 2, ',', '.');
+    }
+
+    public function calculateTotals(): void
+    {
+        $this->subtotal = $this->items->sum('subtotal');
+        $this->total = $this->subtotal - $this->discount;
+    }
+}
