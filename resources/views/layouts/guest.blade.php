@@ -18,34 +18,73 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
         <style>
-            .bg-dg-gradient {
-                background: linear-gradient(180deg, #f5f5f5 0%, #d4d4d4 100%);
+            .bg-logo-gradient {
+                background: linear-gradient(180deg, #ffffff 0%, #a0a0a0 50%, #1a1a1a 100%);
+            }
+            .split-layout {
+                display: flex;
                 min-height: 100vh;
             }
-            .login-card {
-                backdrop-filter: blur(10px);
-                background: rgba(255, 255, 255, 0.95);
+            .split-left {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 2rem;
+            }
+            .split-right {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 2rem;
+                background-color: #f9fafb;
+            }
+            @media (max-width: 1024px) {
+                .split-layout {
+                    flex-direction: column;
+                }
+                .split-left, .split-right {
+                    width: 100%;
+                    min-height: 50vh;
+                }
             }
         </style>
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col justify-center items-center py-8 px-4 bg-dg-gradient">
-            <!-- Logo -->
-            <div class="mb-8">
+        <div class="split-layout">
+            <!-- Lado Esquerdo - Logo com Degradê -->
+            <div class="split-left bg-logo-gradient">
                 <a href="/" class="block">
-                    <img src="{{ asset('images/logodg.png') }}" alt="DG Store" class="h-64 w-auto mx-auto" />
+                    <img src="{{ asset('images/logodg.png') }}" alt="DG Store" style="height: 320px; width: auto;" />
                 </a>
+                <p class="mt-8 text-white text-sm tracking-widest uppercase">
+                    Tecnologia & Lifestyle
+                </p>
             </div>
 
-            <!-- Card de Login -->
-            <div class="w-full max-w-sm px-8 py-8 login-card shadow-2xl rounded-2xl border border-gray-100">
-                {{ $slot }}
+            <!-- Lado Direito - Formulário -->
+            <div class="split-right">
+                <div style="width: 100%; max-width: 420px;">
+                    <!-- Título -->
+                    <div class="mb-8">
+                        <h1 style="font-size: 1.75rem; font-weight: 700; color: #111827;">Bem-vindo de volta</h1>
+                        <p style="color: #6b7280; margin-top: 0.5rem;">Acesse sua conta para continuar</p>
+                    </div>
+
+                    <!-- Formulário -->
+                    <div style="background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border: 1px solid #f3f4f6;">
+                        {{ $slot }}
+                    </div>
+                    
+                    <!-- Rodapé -->
+                    <p style="margin-top: 2rem; text-align: center; font-size: 0.875rem; color: #9ca3af;">
+                        &copy; {{ date('Y') }} DG Store - Todos os direitos reservados
+                    </p>
+                </div>
             </div>
-            
-            <!-- Rodapé -->
-            <p class="mt-8 text-sm text-gray-500">
-                &copy; {{ date('Y') }} DG Store - Apple Store
-            </p>
         </div>
     </body>
 </html>
