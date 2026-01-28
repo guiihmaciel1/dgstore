@@ -3,12 +3,15 @@
 use App\Http\Controllers\ProfileController;
 use App\Presentation\Http\Controllers\CustomerController;
 use App\Presentation\Http\Controllers\DashboardController;
+use App\Presentation\Http\Controllers\ImportOrderController;
 use App\Presentation\Http\Controllers\ProductController;
 use App\Presentation\Http\Controllers\QuotationController;
 use App\Presentation\Http\Controllers\ReportController;
+use App\Presentation\Http\Controllers\ReservationController;
 use App\Presentation\Http\Controllers\SaleController;
 use App\Presentation\Http\Controllers\StockController;
 use App\Presentation\Http\Controllers\SupplierController;
+use App\Presentation\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
 
 // Redireciona a raiz para o dashboard ou login
@@ -59,6 +62,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/stock/create', [StockController::class, 'create'])->name('stock.create');
     Route::post('/stock', [StockController::class, 'store'])->name('stock.store');
     Route::get('/stock/product/{product}', [StockController::class, 'productHistory'])->name('stock.product-history');
+
+    // Garantias
+    Route::get('/warranties', [WarrantyController::class, 'index'])->name('warranties.index');
+    Route::get('/warranties/{warranty}', [WarrantyController::class, 'show'])->name('warranties.show');
+    Route::post('/warranties/{warranty}/claims', [WarrantyController::class, 'storeClaim'])->name('warranties.claims.store');
+    Route::patch('/warranties/claims/{claim}', [WarrantyController::class, 'updateClaim'])->name('warranties.claims.update');
+
+    // Pedidos de Importação
+    Route::get('/imports', [ImportOrderController::class, 'index'])->name('imports.index');
+    Route::get('/imports/create', [ImportOrderController::class, 'create'])->name('imports.create');
+    Route::post('/imports', [ImportOrderController::class, 'store'])->name('imports.store');
+    Route::get('/imports/{import}', [ImportOrderController::class, 'show'])->name('imports.show');
+    Route::patch('/imports/{import}/status', [ImportOrderController::class, 'updateStatus'])->name('imports.status');
+    Route::get('/imports/{import}/receive', [ImportOrderController::class, 'receive'])->name('imports.receive');
+    Route::post('/imports/{import}/receive', [ImportOrderController::class, 'confirmReceive'])->name('imports.confirm-receive');
+    Route::post('/imports/{import}/cancel', [ImportOrderController::class, 'cancel'])->name('imports.cancel');
+
+    // Reservas
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
+    Route::post('/reservations', [ReservationController::class, 'store'])->name('reservations.store');
+    Route::get('/reservations/search-customers', [ReservationController::class, 'searchCustomers'])->name('reservations.search-customers');
+    Route::get('/reservations/search-products', [ReservationController::class, 'searchProducts'])->name('reservations.search-products');
+    Route::get('/reservations/{reservation}', [ReservationController::class, 'show'])->name('reservations.show');
+    Route::post('/reservations/{reservation}/payments', [ReservationController::class, 'storePayment'])->name('reservations.payments.store');
+    Route::get('/reservations/{reservation}/convert', [ReservationController::class, 'convert'])->name('reservations.convert');
+    Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
 
     // Relatórios (apenas admin)
     Route::middleware('role:admin')->group(function () {

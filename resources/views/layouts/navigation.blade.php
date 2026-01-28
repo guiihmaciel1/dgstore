@@ -40,6 +40,18 @@
                         Cotações
                     </a>
                     
+                    <a href="{{ route('imports.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('imports.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                        Importações
+                    </a>
+                    
+                    <a href="{{ route('reservations.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                        Reservas
+                    </a>
+                    
+                    <a href="{{ route('warranties.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                        Garantias
+                    </a>
+                    
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('reports.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
                             Relatórios
@@ -147,6 +159,15 @@
             </a>
             <a href="{{ route('quotations.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                 Cotações
+            </a>
+            <a href="{{ route('imports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('imports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                Importações
+            </a>
+            <a href="{{ route('reservations.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                Reservas
+            </a>
+            <a href="{{ route('warranties.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                Garantias
             </a>
             @if(auth()->user()->isAdmin())
                 <a href="{{ route('reports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">

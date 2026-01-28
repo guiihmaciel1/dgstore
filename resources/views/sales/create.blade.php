@@ -302,19 +302,14 @@
                                 </div>
                             </div>
                             <div style="padding: 1rem;">
-                                <!-- Forma Principal -->
-                                <div style="margin-bottom: 1rem;">
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Forma Principal</label>
-                                    <select name="payment_method" x-model="paymentMethod" required style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background: white;">
-                                        @foreach($paymentMethods as $method)
-                                            <option value="{{ $method->value }}">{{ $method->label() }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                
                                 <!-- Entrada à Vista -->
-                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f9fafb; border-radius: 0.75rem;">
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.75rem;">Entrada à Vista</label>
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0;">
+                                    <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #166534; margin-bottom: 0.75rem;">
+                                        <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                        Entrada à Vista
+                                    </label>
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                                         <div>
                                             <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Valor</label>
@@ -322,13 +317,13 @@
                                                 <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
                                                 <input type="number" name="cash_payment" x-model.number="cashPayment" @input="updateTotals"
                                                        step="0.01" min="0" placeholder="0,00"
-                                                       style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                                       style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #86efac; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
                                             </div>
                                         </div>
                                         <div>
                                             <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Forma</label>
                                             <select name="cash_payment_method" x-model="cashPaymentMethod"
-                                                    style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                                    style="width: 100%; padding: 0.5rem; border: 1px solid #86efac; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
                                                 <option value="">-</option>
                                                 <option value="cash">Dinheiro</option>
                                                 <option value="pix">PIX</option>
@@ -337,35 +332,74 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Parcelamento -->
-                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f9fafb; border-radius: 0.75rem;">
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.75rem;">Parcelamento no Cartão</label>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                        <div>
-                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Valor</label>
-                                            <div style="position: relative;">
-                                                <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
-                                                <input type="number" name="card_payment" x-model.number="cardPayment" @input="updateTotals"
-                                                       step="0.01" min="0" placeholder="0,00"
-                                                       style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                <!-- Parcelamentos em Cartões (Múltiplos) -->
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: #eff6ff; border-radius: 0.75rem; border: 1px solid #bfdbfe;">
+                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #1e40af;">
+                                            <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                            </svg>
+                                            Parcelamento em Cartão
+                                        </label>
+                                        <button type="button" @click="addCardPayment()" 
+                                                style="display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: #3b82f6; color: white; border-radius: 0.375rem; font-size: 0.75rem; border: none; cursor: pointer;">
+                                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            </svg>
+                                            Adicionar Cartão
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Lista de cartões -->
+                                    <template x-for="(card, cardIndex) in cardPayments" :key="cardIndex">
+                                        <div style="background: white; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #dbeafe;">
+                                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                                                <span style="font-size: 0.75rem; font-weight: 600; color: #3b82f6;" x-text="'Cartão ' + (cardIndex + 1)"></span>
+                                                <button type="button" @click="removeCardPayment(cardIndex)" 
+                                                        style="padding: 0.125rem; color: #ef4444; background: none; border: none; cursor: pointer;">
+                                                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                                                <div>
+                                                    <label style="display: block; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.125rem;">Valor</label>
+                                                    <div style="position: relative;">
+                                                        <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.7rem;">R$</span>
+                                                        <input type="number" :name="'card_payments['+cardIndex+'][amount]'" 
+                                                               x-model.number="card.amount" @input="updateTotals"
+                                                               step="0.01" min="0" placeholder="0,00"
+                                                               style="width: 100%; padding: 0.375rem 0.375rem 0.375rem 1.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label style="display: block; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.125rem;">Parcelas</label>
+                                                    <select :name="'card_payments['+cardIndex+'][installments]'" 
+                                                            x-model.number="card.installments"
+                                                            style="width: 100%; padding: 0.375rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
+                                                        @for($i = 1; $i <= 12; $i++)
+                                                            <option value="{{ $i }}">{{ $i }}x</option>
+                                                        @endfor
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div x-show="card.amount > 0 && card.installments > 1" 
+                                                 style="margin-top: 0.375rem; font-size: 0.7rem; color: #6b7280; text-align: right;">
+                                                <span x-text="card.installments + 'x de ' + formatMoney(card.amount / card.installments)"></span>
                                             </div>
                                         </div>
-                                        <div>
-                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Parcelas</label>
-                                            <select name="installments" x-model.number="installments"
-                                                    style="width: 100%; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
-                                                @for($i = 1; $i <= 12; $i++)
-                                                    <option value="{{ $i }}">{{ $i }}x</option>
-                                                @endfor
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div x-show="cardPayment > 0 && installments > 1" style="margin-top: 0.5rem; font-size: 0.75rem; color: #6b7280;">
-                                        <span x-text="installments + 'x de ' + formatMoney(cardPayment / installments)"></span>
+                                    </template>
+                                    
+                                    <div x-show="cardPayments.length === 0" style="text-align: center; padding: 1rem; color: #6b7280; font-size: 0.75rem;">
+                                        Clique em "Adicionar Cartão" para parcelar
                                     </div>
                                 </div>
                                 
-                                <!-- Trade-in Value (hidden) -->
+                                <!-- Campos ocultos para compatibilidade -->
+                                <input type="hidden" name="payment_method" :value="getMainPaymentMethod()">
+                                <input type="hidden" name="card_payment" :value="totalCardPayments">
+                                <input type="hidden" name="installments" :value="cardPayments.length > 0 ? cardPayments[0].installments : 1">
                                 <input type="hidden" name="trade_in_value" :value="hasTradeIn ? tradeIn.estimated_value : 0">
                                 
                                 <!-- Status -->
@@ -417,7 +451,7 @@
                                     </div>
                                     
                                     <!-- Breakdown do pagamento -->
-                                    <div x-show="hasTradeIn || cashPayment > 0 || cardPayment > 0" 
+                                    <div x-show="hasTradeIn || cashPayment > 0 || totalCardPayments > 0" 
                                          style="padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid #374151;">
                                         <div style="font-size: 0.75rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.5rem;">FORMA DE PAGAMENTO</div>
                                         <div x-show="hasTradeIn && tradeIn.estimated_value > 0" style="display: flex; justify-content: space-between; color: #a78bfa; font-size: 0.875rem;">
@@ -428,18 +462,40 @@
                                             <dt x-text="'Entrada (' + (cashPaymentMethod === 'pix' ? 'PIX' : 'Dinheiro') + ')'"></dt>
                                             <dd x-text="formatMoney(cashPayment)"></dd>
                                         </div>
-                                        <div x-show="cardPayment > 0" style="display: flex; justify-content: space-between; color: #93c5fd; font-size: 0.875rem;">
-                                            <dt x-text="'Cartão (' + installments + 'x)'"></dt>
-                                            <dd x-text="formatMoney(cardPayment)"></dd>
-                                        </div>
-                                        <div style="display: flex; justify-content: space-between; color: #fbbf24; font-size: 0.875rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #374151;">
+                                        <template x-for="(card, idx) in cardPayments" :key="idx">
+                                            <div x-show="card.amount > 0" style="display: flex; justify-content: space-between; color: #93c5fd; font-size: 0.875rem;">
+                                                <dt x-text="'Cartão ' + (idx + 1) + ' (' + card.installments + 'x)'"></dt>
+                                                <dd x-text="formatMoney(card.amount)"></dd>
+                                            </div>
+                                        </template>
+                                        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #374151;"
+                                             :style="{ color: paymentDifference === 0 ? '#4ade80' : '#fbbf24' }">
                                             <dt>Soma dos pagamentos</dt>
                                             <dd x-text="formatMoney(totalPayments)"></dd>
                                         </div>
-                                        <div x-show="Math.abs(total - totalPayments) > 0.01" style="margin-top: 0.5rem; padding: 0.5rem; background: #7f1d1d; border-radius: 0.375rem;">
-                                            <p style="font-size: 0.75rem; color: #fecaca;">
-                                                <span x-show="total > totalPayments">Faltam <span x-text="formatMoney(total - totalPayments)"></span></span>
-                                                <span x-show="total < totalPayments">Excedente de <span x-text="formatMoney(totalPayments - total)"></span></span>
+                                        
+                                        <!-- Alerta de diferença -->
+                                        <div x-show="items.length > 0 && Math.abs(paymentDifference) > 0.01" 
+                                             style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 0.375rem;"
+                                             :style="{ background: paymentDifference > 0 ? '#7f1d1d' : '#713f12' }">
+                                            <p style="font-size: 0.75rem;" :style="{ color: paymentDifference > 0 ? '#fecaca' : '#fef08a' }">
+                                                <span x-show="paymentDifference > 0">
+                                                    <strong>Faltam:</strong> <span x-text="formatMoney(paymentDifference)"></span>
+                                                </span>
+                                                <span x-show="paymentDifference < 0">
+                                                    <strong>Excedente:</strong> <span x-text="formatMoney(Math.abs(paymentDifference))"></span>
+                                                </span>
+                                            </p>
+                                        </div>
+                                        
+                                        <!-- Indicador de pagamento correto -->
+                                        <div x-show="items.length > 0 && Math.abs(paymentDifference) <= 0.01 && totalPayments > 0" 
+                                             style="margin-top: 0.5rem; padding: 0.5rem; background: #14532d; border-radius: 0.375rem;">
+                                            <p style="font-size: 0.75rem; color: #86efac; display: flex; align-items: center; gap: 0.25rem;">
+                                                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                                Pagamento correto!
                                             </p>
                                         </div>
                                     </div>
@@ -448,11 +504,11 @@
                             
                             <button 
                                 type="submit" 
-                                :disabled="items.length === 0"
+                                :disabled="!canSubmit"
                                 class="sale-submit-btn"
-                                :class="{ 'sale-submit-btn-disabled': items.length === 0, 'sale-submit-btn-active': items.length > 0 }"
+                                :class="{ 'sale-submit-btn-disabled': !canSubmit, 'sale-submit-btn-active': canSubmit }"
                             >
-                                <span x-show="items.length > 0" class="flex items-center justify-center gap-3">
+                                <span x-show="canSubmit" class="flex items-center justify-center gap-3">
                                     <span class="sale-btn-icon-wrapper">
                                         <svg class="sale-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
@@ -460,11 +516,11 @@
                                     </span>
                                     <span class="sale-btn-text">FINALIZAR VENDA</span>
                                 </span>
-                                <span x-show="items.length === 0" class="flex items-center justify-center gap-2">
+                                <span x-show="!canSubmit" class="flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                                     </svg>
-                                    <span>Adicione produtos para continuar</span>
+                                    <span x-text="getSubmitButtonText()"></span>
                                 </span>
                             </button>
                         </div>
@@ -606,12 +662,12 @@
                 subtotal: 0,
                 total: 0,
                 
-                // Pagamento misto
-                paymentMethod: 'cash',
+                // Pagamento
                 cashPayment: 0,
                 cashPaymentMethod: '',
-                cardPayment: 0,
-                installments: 1,
+                
+                // Múltiplos cartões
+                cardPayments: [],
                 
                 // Trade-in
                 hasTradeIn: false,
@@ -624,14 +680,75 @@
                     notes: ''
                 },
                 
+                // Computed: total de pagamentos em cartão
+                get totalCardPayments() {
+                    return this.cardPayments.reduce((sum, card) => sum + (parseFloat(card.amount) || 0), 0);
+                },
+                
+                // Computed: total de todos os pagamentos
                 get totalPayments() {
                     let total = 0;
                     if (this.hasTradeIn && this.tradeIn.estimated_value) {
                         total += parseFloat(this.tradeIn.estimated_value) || 0;
                     }
                     total += parseFloat(this.cashPayment) || 0;
-                    total += parseFloat(this.cardPayment) || 0;
+                    total += this.totalCardPayments;
                     return total;
+                },
+                
+                // Computed: diferença entre total e pagamentos
+                get paymentDifference() {
+                    return this.total - this.totalPayments;
+                },
+                
+                // Computed: pode submeter o formulário
+                get canSubmit() {
+                    // Precisa ter itens
+                    if (this.items.length === 0) return false;
+                    
+                    // Se tem total, precisa ter pagamentos que fechem
+                    if (this.total > 0) {
+                        // Verifica se a diferença é menor que 1 centavo
+                        return Math.abs(this.paymentDifference) <= 0.01;
+                    }
+                    
+                    return true;
+                },
+                
+                // Adicionar novo cartão
+                addCardPayment() {
+                    this.cardPayments.push({
+                        amount: 0,
+                        installments: 1
+                    });
+                },
+                
+                // Remover cartão
+                removeCardPayment(index) {
+                    this.cardPayments.splice(index, 1);
+                    this.updateTotals();
+                },
+                
+                // Método de pagamento principal (para compatibilidade)
+                getMainPaymentMethod() {
+                    if (this.totalCardPayments > 0) return 'credit_card';
+                    if (this.cashPaymentMethod === 'pix') return 'pix';
+                    if (this.cashPayment > 0) return 'cash';
+                    return 'cash';
+                },
+                
+                // Texto do botão quando desabilitado
+                getSubmitButtonText() {
+                    if (this.items.length === 0) {
+                        return 'Adicione produtos para continuar';
+                    }
+                    if (this.paymentDifference > 0.01) {
+                        return 'Faltam ' + this.formatMoney(this.paymentDifference);
+                    }
+                    if (this.paymentDifference < -0.01) {
+                        return 'Excedente de ' + this.formatMoney(Math.abs(this.paymentDifference));
+                    }
+                    return 'Verifique os dados';
                 },
                 
                 async searchProducts() {

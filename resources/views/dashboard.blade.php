@@ -132,6 +132,161 @@
                 }
             </style>
 
+            <!-- Alertas dos Módulos -->
+            @if(($alerts['warranties_expiring'] ?? 0) > 0 || ($alerts['open_claims'] ?? 0) > 0 || ($alerts['imports_in_transit'] ?? 0) > 0 || ($alerts['reservations_expiring'] ?? 0) > 0 || ($alerts['reservations_overdue'] ?? 0) > 0)
+            <div class="mb-6 sm:mb-8">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Alertas</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    @if(($alerts['warranties_expiring'] ?? 0) > 0)
+                        <a href="{{ route('warranties.index', ['status' => 'expiring']) }}" class="alert-card alert-card-yellow">
+                            <div class="alert-card-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                </svg>
+                            </div>
+                            <div class="alert-card-content">
+                                <span class="alert-card-number">{{ $alerts['warranties_expiring'] }}</span>
+                                <span class="alert-card-label">Garantias vencendo</span>
+                            </div>
+                        </a>
+                    @endif
+
+                    @if(($alerts['open_claims'] ?? 0) > 0)
+                        <a href="{{ route('warranties.index', ['status' => 'with_claims']) }}" class="alert-card alert-card-red">
+                            <div class="alert-card-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <div class="alert-card-content">
+                                <span class="alert-card-number">{{ $alerts['open_claims'] }}</span>
+                                <span class="alert-card-label">Acionamentos abertos</span>
+                            </div>
+                        </a>
+                    @endif
+
+                    @if(($alerts['imports_in_transit'] ?? 0) > 0)
+                        <a href="{{ route('imports.index') }}" class="alert-card alert-card-blue">
+                            <div class="alert-card-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                                </svg>
+                            </div>
+                            <div class="alert-card-content">
+                                <span class="alert-card-number">{{ $alerts['imports_in_transit'] }}</span>
+                                <span class="alert-card-label">Pedidos em trânsito</span>
+                            </div>
+                        </a>
+                    @endif
+
+                    @if(($alerts['reservations_overdue'] ?? 0) > 0)
+                        <a href="{{ route('reservations.index', ['status' => 'active']) }}" class="alert-card alert-card-red">
+                            <div class="alert-card-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                </svg>
+                            </div>
+                            <div class="alert-card-content">
+                                <span class="alert-card-number">{{ $alerts['reservations_overdue'] }}</span>
+                                <span class="alert-card-label">Reservas vencidas</span>
+                            </div>
+                        </a>
+                    @elseif(($alerts['reservations_expiring'] ?? 0) > 0)
+                        <a href="{{ route('reservations.index') }}" class="alert-card alert-card-yellow">
+                            <div class="alert-card-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="alert-card-content">
+                                <span class="alert-card-number">{{ $alerts['reservations_expiring'] }}</span>
+                                <span class="alert-card-label">Reservas vencendo</span>
+                            </div>
+                        </a>
+                    @endif
+                </div>
+            </div>
+
+            <style>
+                .alert-card {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 1rem;
+                    border-radius: 0.75rem;
+                    text-decoration: none;
+                    transition: all 0.15s ease;
+                    border: 1px solid;
+                }
+                .alert-card:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+                }
+                .alert-card-icon {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                    border-radius: 0.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                }
+                .alert-card-icon svg {
+                    width: 1.25rem;
+                    height: 1.25rem;
+                }
+                .alert-card-content {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .alert-card-number {
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    line-height: 1.2;
+                }
+                .alert-card-label {
+                    font-size: 0.75rem;
+                    opacity: 0.8;
+                }
+                .alert-card-yellow {
+                    background: #fefce8;
+                    border-color: #fde68a;
+                    color: #92400e;
+                }
+                .alert-card-yellow .alert-card-icon {
+                    background: #fef3c7;
+                    color: #d97706;
+                }
+                .alert-card-red {
+                    background: #fef2f2;
+                    border-color: #fecaca;
+                    color: #991b1b;
+                }
+                .alert-card-red .alert-card-icon {
+                    background: #fee2e2;
+                    color: #dc2626;
+                }
+                .alert-card-blue {
+                    background: #eff6ff;
+                    border-color: #bfdbfe;
+                    color: #1e40af;
+                }
+                .alert-card-blue .alert-card-icon {
+                    background: #dbeafe;
+                    color: #2563eb;
+                }
+                .alert-card-green {
+                    background: #f0fdf4;
+                    border-color: #bbf7d0;
+                    color: #166534;
+                }
+                .alert-card-green .alert-card-icon {
+                    background: #dcfce7;
+                    color: #16a34a;
+                }
+            </style>
+            @endif
+
             <!-- Cards de Estatísticas -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
                 <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
