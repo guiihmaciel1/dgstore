@@ -21,7 +21,8 @@
 </head>
 <body>
     <div class="header">
-        <h1>DG Store - Relatório de Vendas</h1>
+        <img src="{{ public_path('images/logodg.png') }}" alt="DG Store" style="height: 60px; margin-bottom: 10px;">
+        <h1>Relatório de Vendas</h1>
         <p class="period">Período: {{ $report['period']['start'] }} a {{ $report['period']['end'] }}</p>
     </div>
 

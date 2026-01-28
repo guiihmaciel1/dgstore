@@ -39,7 +39,7 @@
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                padding: 1.5rem;
+                padding: 2rem 3rem;
                 background-color: #f9fafb;
             }
             /* Tablet */
@@ -95,7 +95,7 @@
 
             <!-- Lado Direito - Formulário -->
             <div class="split-right">
-                <div class="w-full max-w-md px-2 sm:px-0">
+                <div class="w-full max-w-sm px-2 sm:px-0">
                     <!-- Título -->
                     <div class="mb-6 sm:mb-8">
                         <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Bem-vindo de volta</h1>
