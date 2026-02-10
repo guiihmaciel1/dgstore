@@ -11,31 +11,17 @@
         </svg>
     </button>
 
-    <!-- Overlay -->
-    <div x-show="open"
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         @click="open = false"
-         x-cloak
-         style="position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.5);"></div>
-
-    <!-- Modal -->
+    <!-- Painel lateral direito -->
     <div x-show="open"
          x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 translate-y-8"
-         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:enter-start="opacity-0 translate-x-4"
+         x-transition:enter-end="opacity-100 translate-x-0"
          x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 translate-y-8"
+         x-transition:leave-start="opacity-100 translate-x-0"
+         x-transition:leave-end="opacity-0 translate-x-4"
          @keydown.escape.window="open = false"
          x-cloak
-         style="position: fixed; inset: 0; z-index: 51; display: flex; align-items: center; justify-content: center; padding: 16px; pointer-events: none;">
-
-        <div @click.stop style="pointer-events: auto; background: white; border-radius: 16px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+         style="position: fixed; bottom: 96px; right: 24px; z-index: 50; width: 440px; max-height: 80vh; overflow-y: auto; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);">
 
             <!-- Header -->
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 0;">
@@ -66,24 +52,6 @@
                     </div>
                 </div>
 
-                <!-- Checkbox taxa de saque -->
-                <div style="margin-bottom: 20px;">
-                    <label @click="addSaque = !addSaque; calculate()" style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px 14px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; user-select: none;"
-                           :style="addSaque ? 'background: #fffbeb; border-color: #fcd34d;' : ''">
-                        <div :style="addSaque
-                            ? 'width: 20px; height: 20px; border-radius: 6px; border: 2px solid #f59e0b; background: #f59e0b; display: flex; align-items: center; justify-content: center; flex-shrink: 0;'
-                            : 'width: 20px; height: 20px; border-radius: 6px; border: 2px solid #d1d5db; background: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;'">
-                            <svg x-show="addSaque" style="width: 12px; height: 12px; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <span style="font-size: 13px; font-weight: 600; color: #111827;">Incluir taxa de saque (+1%)</span>
-                            <span style="font-size: 11px; color: #9ca3af; display: block;">Acrescenta 1% em cada taxa para cobrir o saque</span>
-                        </div>
-                    </label>
-                </div>
-
                 <!-- Tabela de todas as opções -->
                 <div x-show="amount > 0" x-transition>
                     <!-- Pix e Débito -->
@@ -102,7 +70,7 @@
                         <div style="flex: 1; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
                             <div>
                                 <div style="font-size: 13px; font-weight: 700; color: #111827;">Débito</div>
-                                <div style="font-size: 10px; color: #9ca3af;" x-text="'Taxa ' + (addSaque ? '1,8' : '0,8') + '%'"></div>
+                                <div style="font-size: 10px; color: #9ca3af;">Taxa 0,8%</div>
                             </div>
                             <div style="text-align: right;">
                                 <div style="font-size: 17px; font-weight: 800; color: #111827;" x-text="'R$ ' + formatNumber(debitoCobrar)"></div>
@@ -124,7 +92,7 @@
                             <div :style="'display: grid; grid-template-columns: 1fr auto 56px; align-items: center; border-top: 1px solid #f3f4f6;' + (idx % 2 === 0 ? ' background: white;' : ' background: #f9fafb;')">
                                 <div style="padding: 10px 14px;">
                                     <div style="font-size: 13px; font-weight: 600; color: #111827;" x-text="row.label"></div>
-                                    <div style="font-size: 11px; color: #9ca3af;" x-text="'Taxa ' + (row.percentFinal ?? row.percent).toString().replace('.', ',') + '%'"></div>
+                                    <div style="font-size: 11px; color: #9ca3af;" x-text="'Taxa ' + row.percent.toString().replace('.', ',') + '%'"></div>
                                     <div x-show="row.parcelas > 1" style="font-size: 11px; color: #6b7280;" x-text="row.parcelas + 'x de R$ ' + formatNumber(row.cobrar / row.parcelas)"></div>
                                 </div>
                                 <div style="padding: 10px 14px; text-align: right;">
@@ -180,7 +148,6 @@
                     <p style="font-size: 14px;">Digite o valor para simular todas as opções</p>
                 </div>
             </div>
-        </div>
     </div>
 </div>
 
@@ -205,7 +172,6 @@ function cardFeeCalculator() {
             { label: 'Crédito 12x', key: '12x', percent: 9.9, parcelas: 12 },
         ],
 
-        addSaque: false,
         debitoBasePercent: 0.8,
 
         amountInput: '',
@@ -246,20 +212,18 @@ function cardFeeCalculator() {
 
         calculate() {
             this.amount = this.parseNumber(this.amountInput);
-            const extra = this.addSaque ? 1 : 0;
 
             // Débito
-            const debitoPct = (this.debitoBasePercent + extra) / 100;
+            const debitoPct = this.debitoBasePercent / 100;
             this.debitoCobrar = this.amount > 0 ? this.amount / (1 - debitoPct) : 0;
             this.debitoTaxa = this.debitoCobrar - this.amount;
 
             // Crédito
             this.results = this.rates.map(r => {
-                const pctFinal = r.percent + extra;
-                const pct = pctFinal / 100;
+                const pct = r.percent / 100;
                 const cobrar = this.amount > 0 ? this.amount / (1 - pct) : 0;
                 const taxa = cobrar - this.amount;
-                return { ...r, percentFinal: pctFinal, cobrar, taxa, copied: false };
+                return { ...r, cobrar, taxa, copied: false };
             });
         },
 

@@ -24,9 +24,6 @@
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-50">
             @include('layouts.navigation')
-            
-            <!-- Calculadora de Importação -->
-            <x-currency-calculator />
 
             <!-- Page Heading -->
             @isset($header)
@@ -43,7 +40,8 @@
             </main>
         </div>
         
-        <!-- Calculadora de Taxas - Botão Flutuante + Modal -->
+        <!-- Botões Flutuantes + Modais -->
+        <x-currency-calculator />
         <x-card-fee-calculator />
 
         @stack('scripts')
