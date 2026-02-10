@@ -43,6 +43,9 @@
             </main>
         </div>
         
+        <!-- Calculadora de Taxas - Botão Flutuante + Modal -->
+        <x-card-fee-calculator />
+
         @stack('scripts')
     </body>
 </html>
