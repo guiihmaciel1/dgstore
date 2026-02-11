@@ -219,7 +219,7 @@ class MercadoLivreApiService
         foreach ($items as $item) {
             $price = (float) ($item['price'] ?? 0);
 
-            if ($price < 800) {
+            if ($price < 800 || $price > 50000) {
                 continue;
             }
 
