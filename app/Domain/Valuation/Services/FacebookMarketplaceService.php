@@ -24,6 +24,7 @@ class FacebookMarketplaceService
     private const MIN_DELAY = 2;
     private const MAX_DELAY = 4;
 
+    private ?string $lsdToken = null;
     private ?\Closure $onProgress = null;
 
     public function onProgress(\Closure $callback): self
@@ -63,9 +64,28 @@ class FacebookMarketplaceService
             ];
         });
 
-        // 2. Teste de busca de localização
+        // 2. Teste de obtenção do token LSD
+        $steps[] = $this->diagnoseStep('Obtenção do token LSD (anti-CSRF)', function () {
+            $lsd = $this->fetchLsdToken();
+
+            if ($lsd) {
+                $this->lsdToken = $lsd;
+
+                return [
+                    'success' => true,
+                    'details' => ['Token obtido: ' . substr($lsd, 0, 15) . '...'],
+                ];
+            }
+
+            return [
+                'success' => false,
+                'details' => ['Não foi possível extrair o token LSD da página do Marketplace'],
+            ];
+        });
+
+        // 3. Teste de busca de localização (com LSD)
         $steps[] = $this->diagnoseStep('GraphQL: busca de localização', function () {
-            $result = $this->graphqlRequestVerbose([
+            $payload = [
                 'variables' => json_encode([
                     'params' => [
                         'caller' => 'MARKETPLACE',
@@ -74,7 +94,13 @@ class FacebookMarketplaceService
                     ],
                 ]),
                 'doc_id' => self::LOCATION_DOC_ID,
-            ]);
+            ];
+
+            if ($this->lsdToken) {
+                $payload['lsd'] = $this->lsdToken;
+            }
+
+            $result = $this->graphqlRequestVerbose($payload);
 
             if (! $result['success']) {
                 return $result;
@@ -90,13 +116,19 @@ class FacebookMarketplaceService
             ];
         });
 
-        // 3. Teste de busca de listings
-        $steps[] = $this->diagnoseStep('GraphQL: busca de anúncios (iPhone)', function () {
+        // 4. Teste de busca de listings (com LSD)
+        $steps[] = $this->diagnoseStep('GraphQL: busca de anúncios (iPhone) com LSD', function () {
             $variables = $this->buildSearchVariables(-20.8167, -49.3833, 'iPhone', null);
-            $result = $this->graphqlRequestVerbose([
+            $payload = [
                 'variables' => $variables,
                 'doc_id' => self::SEARCH_DOC_ID,
-            ]);
+            ];
+
+            if ($this->lsdToken) {
+                $payload['lsd'] = $this->lsdToken;
+            }
+
+            $result = $this->graphqlRequestVerbose($payload);
 
             if (! $result['success']) {
                 return $result;
@@ -121,15 +153,21 @@ class FacebookMarketplaceService
             ];
         });
 
-        // 4. Teste com proxy (se configurado)
+        // 5. Teste com proxy (se configurado)
         $proxyUrl = config('services.facebook_marketplace.proxy_url');
         if ($proxyUrl) {
-            $steps[] = $this->diagnoseStep('Proxy: busca via Cloudflare Worker', function () use ($proxyUrl) {
+            $steps[] = $this->diagnoseStep('Proxy: busca via Cloudflare Worker (com LSD)', function () use ($proxyUrl) {
                 $variables = $this->buildSearchVariables(-20.8167, -49.3833, 'iPhone', null);
-                $result = $this->graphqlRequestVerbose([
+                $payload = [
                     'variables' => $variables,
                     'doc_id' => self::SEARCH_DOC_ID,
-                ], $proxyUrl);
+                ];
+
+                if ($this->lsdToken) {
+                    $payload['lsd'] = $this->lsdToken;
+                }
+
+                $result = $this->graphqlRequestVerbose($payload, $proxyUrl);
 
                 if (! $result['success']) {
                     return $result;
@@ -183,7 +221,16 @@ class FacebookMarketplaceService
     private function graphqlRequestVerbose(array $payload, ?string $proxyUrl = null): array
     {
         $url = $proxyUrl ?: self::GRAPHQL_URL;
+        $isProxy = $proxyUrl !== null;
         $headers = $this->buildHeaders();
+
+        // Adicionar secret do proxy se configurado
+        if ($isProxy) {
+            $secret = config('services.facebook_marketplace.proxy_secret');
+            if ($secret) {
+                $headers[] = "X-Proxy-Secret: {$secret}";
+            }
+        }
 
         $ch = curl_init();
         curl_setopt_array($ch, [
@@ -204,6 +251,12 @@ class FacebookMarketplaceService
         curl_close($ch);
 
         $details = ["HTTP {$httpCode}"];
+
+        if ($this->lsdToken) {
+            $details[] = 'LSD token: ' . substr($this->lsdToken, 0, 10) . '...';
+        } else {
+            $details[] = 'LSD token: NÃO DISPONÍVEL';
+        }
 
         if ($error) {
             return ['success' => false, 'details' => ["cURL error: {$error}"], 'data' => null];
@@ -226,6 +279,7 @@ class FacebookMarketplaceService
 
         if (isset($data['errors'])) {
             $details[] = 'GraphQL error: ' . ($data['errors'][0]['message'] ?? 'Unknown');
+            $details[] = 'Response: ' . mb_substr((string) $response, 0, 500);
 
             return ['success' => false, 'details' => $details, 'data' => $data];
         }
@@ -572,22 +626,26 @@ class FacebookMarketplaceService
 
     private function graphqlRequest(array $payload): ?array
     {
-        // Tentar direto primeiro, depois via proxy se configurado
-        $data = $this->doGraphqlRequest($payload, self::GRAPHQL_URL);
+        // Garantir que temos o token LSD
+        $this->ensureLsdToken();
 
-        if ($data !== null) {
-            return $data;
+        // Adicionar o LSD ao payload se disponível
+        if ($this->lsdToken) {
+            $payload['lsd'] = $this->lsdToken;
         }
 
-        // Fallback: usar proxy se configurado
+        // Tentar via proxy primeiro (se configurado), pois direto geralmente é bloqueado
         $proxyUrl = config('services.facebook_marketplace.proxy_url');
         if ($proxyUrl) {
-            Log::info('[FB Marketplace] Tentando via proxy...');
-
-            return $this->doGraphqlRequest($payload, $proxyUrl);
+            $data = $this->doGraphqlRequest($payload, $proxyUrl);
+            if ($data !== null) {
+                return $data;
+            }
+            Log::info('[FB Marketplace] Proxy falhou, tentando direto...');
         }
 
-        return null;
+        // Tentar direto
+        return $this->doGraphqlRequest($payload, self::GRAPHQL_URL);
     }
 
     private function doGraphqlRequest(array $payload, string $url): ?array
@@ -658,17 +716,101 @@ class FacebookMarketplaceService
         return $data;
     }
 
+    // ── LSD Token ──────────────────────────────
+
+    /**
+     * Obtém o token LSD visitando a página do Facebook Marketplace.
+     * O token é necessário para que o Facebook aceite requisições GraphQL
+     * sem retornar "Rate limit exceeded".
+     */
+    private function ensureLsdToken(): void
+    {
+        if ($this->lsdToken) {
+            return;
+        }
+
+        $this->lsdToken = $this->fetchLsdToken();
+
+        if ($this->lsdToken) {
+            Log::info('[FB Marketplace] Token LSD obtido: ' . substr($this->lsdToken, 0, 10) . '...');
+        } else {
+            Log::warning('[FB Marketplace] Não foi possível obter token LSD');
+        }
+    }
+
+    /**
+     * Faz uma requisição à página do Marketplace para extrair o token LSD do HTML.
+     */
+    private function fetchLsdToken(): ?string
+    {
+        $ch = curl_init();
+
+        curl_setopt_array($ch, [
+            CURLOPT_URL => 'https://www.facebook.com/marketplace/',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 15,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTPHEADER => [
+                'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
+                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            ],
+            CURLOPT_ENCODING => 'gzip, deflate',
+        ]);
+
+        $html = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if (! $html || $httpCode !== 200) {
+            Log::warning("[FB Marketplace] Falha ao acessar página do Marketplace: HTTP {$httpCode}");
+
+            return null;
+        }
+
+        // Padrão 1: "LSD",[],{"token":"XXXXX"}
+        if (preg_match('/"LSD"\s*,\s*\[\]\s*,\s*\{\s*"token"\s*:\s*"([^"]+)"/', $html, $match)) {
+            return $match[1];
+        }
+
+        // Padrão 2: name="lsd" value="XXXXX"
+        if (preg_match('/name="lsd"\s+value="([^"]+)"/', $html, $match)) {
+            return $match[1];
+        }
+
+        // Padrão 3: {"lsd":"XXXXX"} (genérico)
+        if (preg_match('/"lsd"\s*:\s*"([^"]+)"/', $html, $match)) {
+            return $match[1];
+        }
+
+        // Padrão 4: DTSGInitData.*?"token":"XXXXX" (fb_dtsg, podemos usar como fallback)
+        if (preg_match('/DTSGInitData.*?"token"\s*:\s*"([^"]+)"/', $html, $match)) {
+            return $match[1];
+        }
+
+        Log::warning('[FB Marketplace] Token LSD não encontrado no HTML da página');
+
+        return null;
+    }
+
     private function buildHeaders(): array
     {
-        return [
+        $headers = [
             'sec-fetch-site: same-origin',
-            'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
             'accept: */*',
             'accept-language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
             'content-type: application/x-www-form-urlencoded',
             'origin: https://www.facebook.com',
             'referer: https://www.facebook.com/marketplace/',
         ];
+
+        // Adicionar token LSD nos headers se disponível
+        if ($this->lsdToken) {
+            $headers[] = "x-fb-lsd: {$this->lsdToken}";
+        }
+
+        return $headers;
     }
 
     private function buildSearchVariables(float $lat, float $lon, string $query, ?string $cursor = null): string
