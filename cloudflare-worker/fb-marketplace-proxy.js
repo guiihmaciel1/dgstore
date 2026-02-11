@@ -9,9 +9,8 @@
  */
 
 const FB_GRAPHQL_URL = 'https://www.facebook.com/api/graphql/';
-const FB_MARKETPLACE_URL = 'https://www.facebook.com/marketplace/';
 
-const HEADERS = {
+const BROWSER_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
   'Accept': '*/*',
   'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
@@ -22,10 +21,17 @@ const HEADERS = {
   'Referer': 'https://www.facebook.com/marketplace/',
 };
 
-// Cache do token LSD (dura ~1h)
+// URLs para tentar extrair o token LSD
+const LSD_URLS = [
+  'https://www.facebook.com/',
+  'https://m.facebook.com/',
+  'https://www.facebook.com/marketplace/',
+];
+
+// Cache do token LSD (dura ~30min)
 let cachedLsd = null;
 let cachedLsdTime = 0;
-const LSD_CACHE_TTL = 3600000; // 1 hora
+const LSD_CACHE_TTL = 1800000; // 30 minutos
 
 export default {
   async fetch(request, env) {
@@ -61,28 +67,27 @@ export default {
     try {
       // 1. Obter token LSD do Facebook
       const lsd = await getLsdToken();
-      if (!lsd) {
-        return new Response(JSON.stringify({ error: 'Failed to get LSD token' }), {
-          status: 502,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
 
       // 2. Ler o body original
       const originalBody = await request.text();
 
-      // 3. Adicionar o token LSD ao body
-      const bodyWithLsd = originalBody + '&lsd=' + encodeURIComponent(lsd);
+      // 3. Preparar body com LSD (se disponível)
+      let finalBody = originalBody;
+      if (lsd && !originalBody.includes('lsd=')) {
+        finalBody = originalBody + '&lsd=' + encodeURIComponent(lsd);
+      }
 
-      // 4. Forward para o Facebook GraphQL
+      // 4. Preparar headers
+      const headers = { ...BROWSER_HEADERS, 'Content-Type': 'application/x-www-form-urlencoded' };
+      if (lsd) {
+        headers['X-FB-LSD'] = lsd;
+      }
+
+      // 5. Forward para o Facebook GraphQL
       const fbResponse = await fetch(FB_GRAPHQL_URL, {
         method: 'POST',
-        headers: {
-          ...HEADERS,
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-FB-LSD': lsd,
-        },
-        body: bodyWithLsd,
+        headers,
+        body: finalBody,
       });
 
       const fbBody = await fbResponse.text();
@@ -93,7 +98,7 @@ export default {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
           'X-FB-Status': fbResponse.status.toString(),
-          'X-LSD-Used': lsd.substring(0, 8) + '...',
+          'X-LSD-Used': lsd ? lsd.substring(0, 8) + '...' : 'none',
         },
       });
     } catch (error) {
@@ -106,8 +111,8 @@ export default {
 };
 
 /**
- * Obtém o token LSD visitando a página do Facebook Marketplace.
- * O token está embutido no HTML da página.
+ * Obtém o token LSD visitando páginas do Facebook.
+ * Tenta múltiplas URLs até encontrar o token.
  */
 async function getLsdToken() {
   // Usar cache se ainda válido
@@ -115,44 +120,69 @@ async function getLsdToken() {
     return cachedLsd;
   }
 
+  for (const url of LSD_URLS) {
+    const token = await extractLsdFromUrl(url);
+    if (token) {
+      cachedLsd = token;
+      cachedLsdTime = Date.now();
+      return token;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Faz GET em uma URL do Facebook e extrai o token LSD do HTML.
+ */
+async function extractLsdFromUrl(url) {
   try {
-    const response = await fetch(FB_MARKETPLACE_URL, {
+    const response = await fetch(url, {
       headers: {
-        'User-Agent': HEADERS['User-Agent'],
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'pt-BR,pt;q=0.9',
+        'User-Agent': BROWSER_HEADERS['User-Agent'],
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
       },
+      redirect: 'follow',
     });
 
+    if (!response.ok) return null;
+
     const html = await response.text();
-
-    // Extrair LSD token do HTML
-    // Padrão 1: "LSD",[],{"token":"XXXXX"}
-    let match = html.match(/"LSD"\s*,\s*\[\]\s*,\s*\{\s*"token"\s*:\s*"([^"]+)"/);
-    if (match) {
-      cachedLsd = match[1];
-      cachedLsdTime = Date.now();
-      return cachedLsd;
-    }
-
-    // Padrão 2: name="lsd" value="XXXXX"
-    match = html.match(/name="lsd"\s+value="([^"]+)"/);
-    if (match) {
-      cachedLsd = match[1];
-      cachedLsdTime = Date.now();
-      return cachedLsd;
-    }
-
-    // Padrão 3: {"lsd":"XXXXX"
-    match = html.match(/"lsd"\s*:\s*"([^"]+)"/);
-    if (match) {
-      cachedLsd = match[1];
-      cachedLsdTime = Date.now();
-      return cachedLsd;
-    }
-
-    return null;
-  } catch (error) {
+    return extractLsdFromHtml(html);
+  } catch {
     return null;
   }
+}
+
+/**
+ * Extrai o token LSD de um HTML do Facebook usando vários padrões regex.
+ */
+function extractLsdFromHtml(html) {
+  // Padrão 1: input hidden name="lsd" value="XXXXX" (formulário de login)
+  let match = html.match(/name="lsd"\s+value="([^"]+)"/);
+  if (match) return match[1];
+
+  // Padrão 2: "LSD",[],{"token":"XXXXX"} (React Server Component)
+  match = html.match(/"LSD"\s*,\s*\[\]\s*,\s*\{\s*"token"\s*:\s*"([^"]+)"/);
+  if (match) return match[1];
+
+  // Padrão 3: "lsd":"XXXXX" (inline JSON)
+  match = html.match(/"lsd"\s*:\s*"([A-Za-z0-9_-]+)"/);
+  if (match) return match[1];
+
+  // Padrão 4: lsd=XXXXX em URL ou parâmetro
+  match = html.match(/["&?]lsd=([A-Za-z0-9_-]+)/);
+  if (match) return match[1];
+
+  // Padrão 5: DTSGInitialData / DTSGInitData com token
+  match = html.match(/DTSG(?:Initial)?Data.*?"token"\s*:\s*"([^"]+)"/);
+  if (match) return match[1];
+
+  return null;
 }

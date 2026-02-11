@@ -739,56 +739,105 @@ class FacebookMarketplaceService
     }
 
     /**
-     * Faz uma requisição à página do Marketplace para extrair o token LSD do HTML.
+     * Tenta extrair o token LSD de várias páginas do Facebook.
+     * Tenta: 1) facebook.com (login), 2) m.facebook.com (mobile), 3) marketplace.
      */
     private function fetchLsdToken(): ?string
+    {
+        $urls = [
+            'https://www.facebook.com/',
+            'https://m.facebook.com/',
+            'https://www.facebook.com/marketplace/',
+        ];
+
+        foreach ($urls as $url) {
+            $token = $this->extractLsdFromUrl($url);
+            if ($token) {
+                Log::info("[FB Marketplace] Token LSD obtido de: {$url}");
+
+                return $token;
+            }
+        }
+
+        Log::warning('[FB Marketplace] Token LSD não encontrado em nenhuma página');
+
+        return null;
+    }
+
+    /**
+     * Faz GET em uma URL do Facebook e tenta extrair o token LSD do HTML.
+     */
+    private function extractLsdFromUrl(string $url): ?string
     {
         $ch = curl_init();
 
         curl_setopt_array($ch, [
-            CURLOPT_URL => 'https://www.facebook.com/marketplace/',
+            CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 15,
             CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 5,
             CURLOPT_HTTPHEADER => [
                 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
-                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
                 'Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Sec-Fetch-Dest: document',
+                'Sec-Fetch-Mode: navigate',
+                'Sec-Fetch-Site: none',
+                'Sec-Fetch-User: ?1',
+                'Upgrade-Insecure-Requests: 1',
             ],
-            CURLOPT_ENCODING => 'gzip, deflate',
+            CURLOPT_ENCODING => 'gzip, deflate, br',
+            CURLOPT_COOKIEJAR => '/tmp/fb_lsd_cookies.txt',
+            CURLOPT_COOKIEFILE => '/tmp/fb_lsd_cookies.txt',
         ]);
 
         $html = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $finalUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
         curl_close($ch);
 
         if (! $html || $httpCode !== 200) {
-            Log::warning("[FB Marketplace] Falha ao acessar página do Marketplace: HTTP {$httpCode}");
+            Log::debug("[FB Marketplace] LSD: {$url} retornou HTTP {$httpCode} (final: {$finalUrl})");
 
             return null;
         }
 
-        // Padrão 1: "LSD",[],{"token":"XXXXX"}
-        if (preg_match('/"LSD"\s*,\s*\[\]\s*,\s*\{\s*"token"\s*:\s*"([^"]+)"/', $html, $match)) {
-            return $match[1];
-        }
+        $htmlLength = strlen($html);
+        Log::debug("[FB Marketplace] LSD: {$url} retornou {$htmlLength} bytes (final: {$finalUrl})");
 
-        // Padrão 2: name="lsd" value="XXXXX"
+        return $this->extractLsdFromHtml($html);
+    }
+
+    /**
+     * Extrai o token LSD de um HTML do Facebook usando vários padrões.
+     */
+    private function extractLsdFromHtml(string $html): ?string
+    {
+        // Padrão 1: input hidden com name="lsd" (formulário de login)
         if (preg_match('/name="lsd"\s+value="([^"]+)"/', $html, $match)) {
             return $match[1];
         }
 
-        // Padrão 3: {"lsd":"XXXXX"} (genérico)
-        if (preg_match('/"lsd"\s*:\s*"([^"]+)"/', $html, $match)) {
+        // Padrão 2: "LSD",[],{"token":"XXXXX"} (React Server Component)
+        if (preg_match('/"LSD"\s*,\s*\[\]\s*,\s*\{\s*"token"\s*:\s*"([^"]+)"/', $html, $match)) {
             return $match[1];
         }
 
-        // Padrão 4: DTSGInitData.*?"token":"XXXXX" (fb_dtsg, podemos usar como fallback)
-        if (preg_match('/DTSGInitData.*?"token"\s*:\s*"([^"]+)"/', $html, $match)) {
+        // Padrão 3: "lsd":"XXXXX" (inline JSON)
+        if (preg_match('/"lsd"\s*:\s*"([A-Za-z0-9_-]+)"/', $html, $match)) {
             return $match[1];
         }
 
-        Log::warning('[FB Marketplace] Token LSD não encontrado no HTML da página');
+        // Padrão 4: lsd=XXXXX em meta tag ou script
+        if (preg_match('/["&?]lsd=([A-Za-z0-9_-]+)/', $html, $match)) {
+            return $match[1];
+        }
+
+        // Padrão 5: DTSGInitialData ou DTSGInitData com token
+        if (preg_match('/DTSG(?:Initial)?Data.*?"token"\s*:\s*"([^"]+)"/', $html, $match)) {
+            return $match[1];
+        }
 
         return null;
     }
