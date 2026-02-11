@@ -33,6 +33,206 @@ class FacebookMarketplaceService
         return $this;
     }
 
+    // ── Diagnóstico ─────────────────────────────
+
+    /**
+     * Executa diagnóstico completo para verificar se o endpoint funciona.
+     */
+    public function diagnose(): array
+    {
+        $steps = [];
+
+        // 1. Teste de conectividade básica com Facebook
+        $steps[] = $this->diagnoseStep('Conectividade com facebook.com', function () {
+            $ch = curl_init();
+            curl_setopt_array($ch, [
+                CURLOPT_URL => 'https://www.facebook.com/',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_NOBODY => true,
+                CURLOPT_FOLLOWLOCATION => true,
+            ]);
+            curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $ip = curl_getinfo($ch, CURLINFO_PRIMARY_IP);
+            curl_close($ch);
+
+            return [
+                'success' => $code >= 200 && $code < 400,
+                'details' => ["HTTP {$code}", "IP do servidor: {$ip}"],
+            ];
+        });
+
+        // 2. Teste de busca de localização
+        $steps[] = $this->diagnoseStep('GraphQL: busca de localização', function () {
+            $result = $this->graphqlRequestVerbose([
+                'variables' => json_encode([
+                    'params' => [
+                        'caller' => 'MARKETPLACE',
+                        'page_category' => ['CITY'],
+                        'query' => 'São Paulo',
+                    ],
+                ]),
+                'doc_id' => self::LOCATION_DOC_ID,
+            ]);
+
+            if (! $result['success']) {
+                return $result;
+            }
+
+            $edges = $result['data']['data']['city_street_search']['street_results']['edges'] ?? [];
+
+            return [
+                'success' => count($edges) > 0,
+                'details' => array_merge($result['details'], [
+                    'Localizações encontradas: ' . count($edges),
+                ]),
+            ];
+        });
+
+        // 3. Teste de busca de listings
+        $steps[] = $this->diagnoseStep('GraphQL: busca de anúncios (iPhone)', function () {
+            $variables = $this->buildSearchVariables(-20.8167, -49.3833, 'iPhone', null);
+            $result = $this->graphqlRequestVerbose([
+                'variables' => $variables,
+                'doc_id' => self::SEARCH_DOC_ID,
+            ]);
+
+            if (! $result['success']) {
+                return $result;
+            }
+
+            $edges = $result['data']['data']['marketplace_search']['feed_units']['edges'] ?? [];
+
+            $details = array_merge($result['details'], [
+                'Anúncios encontrados: ' . count($edges),
+            ]);
+
+            if (count($edges) > 0) {
+                $first = $edges[0]['node']['listing'] ?? [];
+                $title = $first['marketplace_listing_title'] ?? 'N/A';
+                $price = $first['listing_price']['formatted_amount'] ?? 'N/A';
+                $details[] = "Exemplo: {$title} => {$price}";
+            }
+
+            return [
+                'success' => count($edges) > 0,
+                'details' => $details,
+            ];
+        });
+
+        // 4. Teste com proxy (se configurado)
+        $proxyUrl = config('services.facebook_marketplace.proxy_url');
+        if ($proxyUrl) {
+            $steps[] = $this->diagnoseStep('Proxy: busca via Cloudflare Worker', function () use ($proxyUrl) {
+                $variables = $this->buildSearchVariables(-20.8167, -49.3833, 'iPhone', null);
+                $result = $this->graphqlRequestVerbose([
+                    'variables' => $variables,
+                    'doc_id' => self::SEARCH_DOC_ID,
+                ], $proxyUrl);
+
+                if (! $result['success']) {
+                    return $result;
+                }
+
+                $edges = $result['data']['data']['marketplace_search']['feed_units']['edges'] ?? [];
+
+                return [
+                    'success' => count($edges) > 0,
+                    'details' => array_merge($result['details'], [
+                        'Anúncios via proxy: ' . count($edges),
+                    ]),
+                ];
+            });
+        } else {
+            $steps[] = [
+                'label' => 'Proxy: não configurado',
+                'success' => false,
+                'details' => [
+                    'Para contornar bloqueio de IP, configure um Cloudflare Worker como proxy.',
+                    'No .env: FB_MARKETPLACE_PROXY_URL=https://seu-worker.workers.dev',
+                ],
+            ];
+        }
+
+        return ['steps' => $steps];
+    }
+
+    private function diagnoseStep(string $label, \Closure $test): array
+    {
+        try {
+            $result = $test();
+
+            return [
+                'label' => $label,
+                'success' => $result['success'],
+                'details' => $result['details'] ?? [],
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'label' => $label,
+                'success' => false,
+                'details' => ["Exceção: {$e->getMessage()}"],
+            ];
+        }
+    }
+
+    /**
+     * Faz uma requisição GraphQL e retorna detalhes verbosos para diagnóstico.
+     */
+    private function graphqlRequestVerbose(array $payload, ?string $proxyUrl = null): array
+    {
+        $url = $proxyUrl ?: self::GRAPHQL_URL;
+        $headers = $this->buildHeaders();
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query($payload),
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_ENCODING => 'gzip, deflate',
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        $details = ["HTTP {$httpCode}"];
+
+        if ($error) {
+            return ['success' => false, 'details' => ["cURL error: {$error}"], 'data' => null];
+        }
+
+        if ($httpCode !== 200) {
+            $details[] = 'Body: ' . mb_substr((string) $response, 0, 300);
+
+            return ['success' => false, 'details' => $details, 'data' => null];
+        }
+
+        $data = json_decode((string) $response, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $details[] = 'Resposta não é JSON válido';
+            $details[] = 'Body: ' . mb_substr((string) $response, 0, 300);
+
+            return ['success' => false, 'details' => $details, 'data' => null];
+        }
+
+        if (isset($data['errors'])) {
+            $details[] = 'GraphQL error: ' . ($data['errors'][0]['message'] ?? 'Unknown');
+
+            return ['success' => false, 'details' => $details, 'data' => $data];
+        }
+
+        return ['success' => true, 'details' => $details, 'data' => $data];
+    }
+
     // ── Localização ─────────────────────────────
 
     /**
@@ -372,20 +572,41 @@ class FacebookMarketplaceService
 
     private function graphqlRequest(array $payload): ?array
     {
-        $headers = [
-            'sec-fetch-site: same-origin',
-            'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            'accept: */*',
-            'accept-language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-            'content-type: application/x-www-form-urlencoded',
-            'origin: https://www.facebook.com',
-            'referer: https://www.facebook.com/marketplace/',
-        ];
+        // Tentar direto primeiro, depois via proxy se configurado
+        $data = $this->doGraphqlRequest($payload, self::GRAPHQL_URL);
+
+        if ($data !== null) {
+            return $data;
+        }
+
+        // Fallback: usar proxy se configurado
+        $proxyUrl = config('services.facebook_marketplace.proxy_url');
+        if ($proxyUrl) {
+            Log::info('[FB Marketplace] Tentando via proxy...');
+
+            return $this->doGraphqlRequest($payload, $proxyUrl);
+        }
+
+        return null;
+    }
+
+    private function doGraphqlRequest(array $payload, string $url): ?array
+    {
+        $isProxy = $url !== self::GRAPHQL_URL;
+        $headers = $this->buildHeaders();
+
+        // Adicionar secret do proxy se configurado
+        if ($isProxy) {
+            $secret = config('services.facebook_marketplace.proxy_secret');
+            if ($secret) {
+                $headers[] = "X-Proxy-Secret: {$secret}";
+            }
+        }
 
         $ch = curl_init();
 
         curl_setopt_array($ch, [
-            CURLOPT_URL => self::GRAPHQL_URL,
+            CURLOPT_URL => $url,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => http_build_query($payload),
             CURLOPT_HTTPHEADER => $headers,
@@ -409,7 +630,7 @@ class FacebookMarketplaceService
         }
 
         if ($httpCode !== 200) {
-            Log::warning("[FB Marketplace] HTTP {$httpCode}", [
+            Log::warning("[FB Marketplace] HTTP {$httpCode} de {$url}", [
                 'body' => mb_substr((string) $response, 0, 500),
             ]);
 
@@ -435,6 +656,19 @@ class FacebookMarketplaceService
         }
 
         return $data;
+    }
+
+    private function buildHeaders(): array
+    {
+        return [
+            'sec-fetch-site: same-origin',
+            'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'accept: */*',
+            'accept-language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            'content-type: application/x-www-form-urlencoded',
+            'origin: https://www.facebook.com',
+            'referer: https://www.facebook.com/marketplace/',
+        ];
     }
 
     private function buildSearchVariables(float $lat, float $lon, string $query, ?string $cursor = null): string

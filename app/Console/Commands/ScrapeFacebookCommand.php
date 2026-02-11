@@ -12,7 +12,8 @@ class ScrapeFacebookCommand extends Command
     protected $signature = 'valuation:scrape-facebook
                             {--model= : Slug do modelo específico (ex: iphone-15-pro-max)}
                             {--location= : Cidade para buscar (ex: São José do Rio Preto)}
-                            {--pages=2 : Número de páginas de resultados (1 página = ~24 anúncios)}';
+                            {--pages=2 : Número de páginas de resultados (1 página = ~24 anúncios)}
+                            {--test : Faz um teste de diagnóstico para verificar se o endpoint funciona}';
 
     protected $description = 'Coleta anúncios de iPhones usados no Facebook Marketplace via GraphQL';
 
@@ -24,6 +25,10 @@ class ScrapeFacebookCommand extends Command
 
     public function handle(): int
     {
+        if ($this->option('test')) {
+            return $this->runDiagnostic();
+        }
+
         $modelSlug = $this->option('model');
         $location = $this->option('location') ?: config('services.facebook_marketplace.default_location', 'São José do Rio Preto');
         $pages = (int) $this->option('pages');
@@ -74,6 +79,30 @@ class ScrapeFacebookCommand extends Command
         $this->info('══════════════════════════════════════════════');
         $this->info("  Coleta finalizada! Total: {$total} anúncios");
         $this->info('══════════════════════════════════════════════');
+
+        return self::SUCCESS;
+    }
+
+    private function runDiagnostic(): int
+    {
+        $this->info('=== Diagnóstico Facebook Marketplace GraphQL ===');
+        $this->newLine();
+
+        $diagnostic = $this->fbService->diagnose();
+
+        foreach ($diagnostic['steps'] as $step) {
+            $icon = $step['success'] ? '✓' : '✗';
+            $this->line("  {$icon} {$step['label']}");
+
+            if (! empty($step['details'])) {
+                foreach ($step['details'] as $detail) {
+                    $this->line("    {$detail}");
+                }
+            }
+        }
+
+        $this->newLine();
+        $this->info('=== Diagnóstico concluído ===');
 
         return self::SUCCESS;
     }
