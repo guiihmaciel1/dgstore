@@ -21,6 +21,7 @@ class MarketListing extends Model
         'price',
         'url',
         'source',
+        'condition',
         'location',
         'scraped_at',
     ];
@@ -59,6 +60,16 @@ class MarketListing extends Model
         }
 
         return $query;
+    }
+
+    public function scopeUsed(Builder $query): Builder
+    {
+        return $query->where('condition', 'used');
+    }
+
+    public function scopeNew(Builder $query): Builder
+    {
+        return $query->where('condition', 'new');
     }
 
     // Accessors

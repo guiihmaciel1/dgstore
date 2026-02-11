@@ -95,7 +95,7 @@ class ValuationService
         }
 
         $lines[] = "";
-        $lines[] = "Preço de mercado (OLX):";
+        $lines[] = "Preço de mercado (Mercado Livre):";
         $lines[] = "  Média: {$priceFormat($evaluation['market_avg'])}";
         $lines[] = "  Faixa: {$priceFormat($evaluation['market_min'])} — {$priceFormat($evaluation['market_max'])}";
         $lines[] = "  Baseado em {$evaluation['sample_count']} anúncios";

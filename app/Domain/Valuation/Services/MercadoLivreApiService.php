@@ -130,7 +130,286 @@ class MercadoLivreApiService
         return $request;
     }
 
-    // ── Coleta via Catálogo (funciona em qualquer IP) ──
+    // ── Proxy para buscar usados ─────────────────────
+
+    /**
+     * Retorna a URL base do proxy (Cloudflare Worker).
+     * Ex: https://fb-marketplace-proxy.guihmaciel.workers.dev
+     */
+    private function getProxyBaseUrl(): ?string
+    {
+        return config('services.facebook_marketplace.proxy_url');
+    }
+
+    /**
+     * Faz uma requisição GET ao ML API via proxy do Cloudflare Worker.
+     * O Worker transforma /ml/... → api.mercadolibre.com/...
+     */
+    private function httpViaProxy(): \Illuminate\Http\Client\PendingRequest
+    {
+        $proxyBase = $this->getProxyBaseUrl();
+
+        if (! $proxyBase) {
+            throw new \RuntimeException('Proxy não configurado. Defina FB_MARKETPLACE_PROXY_URL no .env');
+        }
+
+        $request = Http::baseUrl(rtrim($proxyBase, '/') . '/ml')
+            ->timeout(30);
+
+        // Adicionar proxy secret se configurado
+        $secret = config('services.facebook_marketplace.proxy_secret');
+        if ($secret) {
+            $request = $request->withHeaders(['X-Proxy-Secret' => $secret]);
+        }
+
+        // Adicionar token ML se disponível (para endpoints que precisam)
+        $accessToken = $this->getAccessToken();
+        if ($accessToken) {
+            $request = $request->withToken($accessToken);
+        }
+
+        return $request;
+    }
+
+    // ── Coleta de USADOS via Proxy ──────────────────
+
+    /**
+     * Coleta anúncios de iPhones USADOS no ML via /sites/MLB/search (pelo proxy).
+     */
+    public function scrapeUsedAll(): array
+    {
+        $models = IphoneModel::active()->get();
+        $totalListings = 0;
+        $errors = [];
+
+        $this->progress('  Modo: ML Search API via proxy (usados)');
+
+        foreach ($models as $model) {
+            try {
+                $count = $this->scrapeUsedModel($model);
+                $totalListings += $count;
+
+                $this->progress("  ✓ {$model->name}: {$count} anúncios usados");
+                Log::info("[ML API] Usados - {$model->name}: {$count} anúncios coletados.");
+            } catch (\Throwable $e) {
+                $errors[] = "{$model->name}: {$e->getMessage()}";
+                $this->progress("  ✗ {$model->name}: {$e->getMessage()}", 'error');
+                Log::error("[ML API] Usados - Erro ao buscar {$model->name}: {$e->getMessage()}");
+            }
+
+            sleep(rand(self::MIN_DELAY, self::MAX_DELAY));
+        }
+
+        return [
+            'total_listings' => $totalListings,
+            'models_processed' => $models->count(),
+            'errors' => $errors,
+        ];
+    }
+
+    public function scrapeUsedBySlug(string $slug): array
+    {
+        $model = IphoneModel::where('slug', $slug)->firstOrFail();
+        $count = $this->scrapeUsedModel($model);
+
+        return [
+            'total_listings' => $count,
+            'models_processed' => 1,
+            'errors' => [],
+        ];
+    }
+
+    /**
+     * Busca anúncios usados de um modelo específico via /sites/MLB/search.
+     */
+    private function scrapeUsedModel(IphoneModel $model): int
+    {
+        $totalCount = 0;
+        $limit = 50;
+        $maxPages = 3; // 150 resultados máximo por modelo
+
+        $query = $model->search_term;
+
+        for ($page = 0; $page < $maxPages; $page++) {
+            $offset = $page * $limit;
+
+            $response = $this->httpViaProxy()->get('/sites/MLB/search', [
+                'q' => $query,
+                'condition' => 'used',
+                'category' => 'MLB1055', // Celulares e Smartphones
+                'limit' => $limit,
+                'offset' => $offset,
+                'sort' => 'relevance',
+            ]);
+
+            if (! $response->successful()) {
+                $this->progress("    ↳ HTTP {$response->status()} na página " . ($page + 1), 'warn');
+                Log::warning("[ML API] Usados - HTTP {$response->status()}", [
+                    'model' => $model->name,
+                    'body' => mb_substr($response->body(), 0, 300),
+                ]);
+                break;
+            }
+
+            $data = $response->json();
+            $results = $data['results'] ?? [];
+            $total = $data['paging']['total'] ?? 0;
+
+            if (empty($results)) {
+                break;
+            }
+
+            foreach ($results as $item) {
+                if ($this->isValidUsedItem($item, $model)) {
+                    $this->saveUsedItem($model, $item);
+                    $totalCount++;
+                }
+            }
+
+            $this->progress("    ↳ Página " . ($page + 1) . ": {$totalCount} salvos (de {$total} total)");
+
+            // Se já pegamos todos os resultados, parar
+            if ($offset + $limit >= $total) {
+                break;
+            }
+
+            sleep(rand(self::MIN_DELAY, self::MAX_DELAY));
+        }
+
+        return $totalCount;
+    }
+
+    /**
+     * Valida se um item da busca é realmente um iPhone usado do modelo correto.
+     */
+    private function isValidUsedItem(array $item, IphoneModel $model): bool
+    {
+        $title = mb_strtolower($item['title'] ?? '');
+        $price = (float) ($item['price'] ?? 0);
+        $condition = $item['condition'] ?? '';
+
+        // Deve ser usado
+        if ($condition !== 'used') {
+            return false;
+        }
+
+        // Preço razoável
+        if ($price < 800 || $price > 50000) {
+            return false;
+        }
+
+        // Deve conter "iphone" no título
+        if (! str_contains($title, 'iphone')) {
+            return false;
+        }
+
+        // Verificar keywords do modelo
+        $keywords = array_filter(
+            explode(' ', mb_strtolower($model->search_term)),
+            fn (string $w) => $w !== 'iphone' && strlen($w) > 0
+        );
+
+        foreach ($keywords as $keyword) {
+            if (! str_contains($title, $keyword)) {
+                return false;
+            }
+        }
+
+        // Evitar falsos positivos (ex: "iPhone 15" não deve matchear "iPhone 15 Pro")
+        $modelLower = mb_strtolower($model->search_term);
+        if (! str_contains($modelLower, 'pro') && str_contains($title, 'pro')) {
+            return false;
+        }
+        if (! str_contains($modelLower, 'max') && str_contains($title, 'max')) {
+            return false;
+        }
+        if (! str_contains($modelLower, 'mini') && str_contains($title, 'mini')) {
+            return false;
+        }
+        if (! str_contains($modelLower, 'plus') && str_contains($title, 'plus')) {
+            return false;
+        }
+
+        // Excluir acessórios (capas, películas, etc.)
+        $excludeTerms = ['capa', 'capinha', 'película', 'pelicula', 'carregador', 'fone', 'cabo', 'case', 'protetor'];
+        foreach ($excludeTerms as $term) {
+            if (str_starts_with($title, $term)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Detecta o storage a partir do título ou atributos do item.
+     */
+    private function detectStorageFromItem(array $item): ?string
+    {
+        // Primeiro tentar via atributos
+        $attrs = $item['attributes'] ?? [];
+        foreach ($attrs as $attr) {
+            if (($attr['id'] ?? '') === 'INTERNAL_MEMORY') {
+                return $attr['value_name'] ?? null;
+            }
+        }
+
+        // Fallback: detectar do título
+        $title = mb_strtoupper(str_replace(' ', '', $item['title'] ?? ''));
+        $storages = ['1TB', '512GB', '256GB', '128GB', '64GB', '32GB'];
+
+        foreach ($storages as $storage) {
+            if (str_contains($title, $storage)) {
+                return $storage;
+            }
+        }
+
+        return null;
+    }
+
+    private function saveUsedItem(IphoneModel $model, array $item): void
+    {
+        $itemId = $item['id'] ?? null;
+        $permalink = $item['permalink'] ?? ($itemId ? "https://produto.mercadolivre.com.br/{$itemId}" : null);
+
+        // Evita duplicatas do mesmo item no mesmo dia
+        if ($permalink) {
+            $exists = MarketListing::where('url', $permalink)
+                ->where('scraped_at', now()->toDateString())
+                ->exists();
+
+            if ($exists) {
+                return;
+            }
+        }
+
+        $storage = $this->detectStorageFromItem($item);
+
+        // Extrair localização
+        $location = null;
+        $address = $item['seller_address'] ?? $item['address'] ?? null;
+        if ($address) {
+            $parts = array_filter([
+                $address['city_name'] ?? $address['city']['name'] ?? null,
+                $address['state_name'] ?? $address['state']['name'] ?? null,
+            ]);
+            $location = ! empty($parts) ? implode(', ', $parts) : null;
+        }
+
+        MarketListing::create([
+            'iphone_model_id' => $model->id,
+            'storage' => $storage,
+            'title' => mb_substr($item['title'] ?? '', 0, 255),
+            'price' => (float) ($item['price'] ?? 0),
+            'url' => $permalink,
+            'source' => ListingSource::MercadoLivre,
+            'condition' => 'used',
+            'location' => $location,
+            'scraped_at' => now()->toDateString(),
+        ]);
+    }
+
+    // ── Coleta via Catálogo — NOVOS (funciona em qualquer IP) ──
 
     public function scrapeAll(): array
     {
@@ -360,6 +639,7 @@ class MercadoLivreApiService
             'price' => (float) ($item['price'] ?? 0),
             'url' => $itemId ? "https://produto.mercadolivre.com.br/{$itemId}" : null,
             'source' => ListingSource::MercadoLivre,
+            'condition' => 'new',
             'location' => $this->extractLocation($item),
             'scraped_at' => now()->toDateString(),
         ]);

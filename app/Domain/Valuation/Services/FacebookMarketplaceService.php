@@ -599,6 +599,7 @@ class FacebookMarketplaceService
             'price' => $listing['price'],
             'url' => $url,
             'source' => ListingSource::FacebookMarketplace,
+            'condition' => 'used',
             'location' => $listing['sellerLocation'] ?? null,
             'scraped_at' => now()->toDateString(),
         ]);
