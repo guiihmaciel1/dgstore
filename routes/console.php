@@ -17,5 +17,5 @@ Artisan::command('inspire', function () {
 | * * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
 */
 
-Schedule::command('valuation:scrape-olx')->dailyAt('06:00');
+Schedule::command('valuation:scrape')->dailyAt('06:00');
 Schedule::command('valuation:calculate-averages')->dailyAt('06:15');

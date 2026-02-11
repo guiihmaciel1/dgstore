@@ -227,9 +227,75 @@
                     <h3 style="font-size: 1rem; font-weight: 600; color: #92400e;">Sem dados de mercado</h3>
                     <p style="font-size: 0.875rem; color: #a16207; margin-top: 0.5rem;">
                         Ainda não temos dados de preço para este modelo/armazenamento.<br>
-                        O scraping do OLX roda diariamente às 06:00. Aguarde a próxima coleta ou execute manualmente:<br>
-                        <code style="font-size: 0.75rem; background: #fef3c7; padding: 0.125rem 0.5rem; border-radius: 0.25rem; margin-top: 0.5rem; display: inline-block;">php artisan valuation:scrape-olx</code>
+                        Adicione preços manualmente abaixo ou aguarde a coleta automática (06:00 diário).
                     </p>
+                </div>
+
+                <!-- Card: Entrada Manual de Preços -->
+                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.5rem;">
+                    <h2 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        Adicionar Preço Manual
+                    </h2>
+                    <p style="font-size: 0.75rem; color: #9ca3af; margin-bottom: 1rem;">Pesquise no OLX/ML pelo navegador e insira os preços aqui</p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 0.75rem; align-items: end;">
+                        <!-- Modelo -->
+                        <div>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Modelo</label>
+                            <select x-model="manual.model_id" @change="onManualModelChange()"
+                                    style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem; color: #111827; background: white;">
+                                <option value="">Selecione</option>
+                                <template x-for="model in models" :key="model.id">
+                                    <option :value="model.id" x-text="model.name"></option>
+                                </template>
+                            </select>
+                        </div>
+
+                        <!-- Storage -->
+                        <div>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Capacidade</label>
+                            <select x-model="manual.storage"
+                                    :disabled="!manual.model_id"
+                                    style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem; color: #111827; background: white;">
+                                <option value="">Selecione</option>
+                                <template x-for="s in manualStorages" :key="s">
+                                    <option :value="s" x-text="s"></option>
+                                </template>
+                            </select>
+                        </div>
+
+                        <!-- Preço -->
+                        <div>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço (R$)</label>
+                            <input type="number" x-model.number="manual.price" min="100" step="50" placeholder="5000"
+                                   style="width: 120px; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem; color: #111827;">
+                        </div>
+
+                        <!-- Botão -->
+                        <div>
+                            <button @click="addManualPrice()"
+                                    :disabled="!canAddManual || manualLoading"
+                                    :style="'padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 600; border: none; white-space: nowrap; transition: all 0.2s;'
+                                        + (canAddManual && !manualLoading
+                                            ? 'background: #059669; color: white; cursor: pointer;'
+                                            : 'background: #d1d5db; color: #9ca3af; cursor: not-allowed;')">
+                                <span x-text="manualLoading ? 'Salvando...' : 'Adicionar'"></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div x-show="manualSuccess" x-transition
+                         style="margin-top: 0.75rem; padding: 0.5rem 0.75rem; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 0.375rem;">
+                        <p style="font-size: 0.8125rem; color: #065f46;" x-text="manualSuccess"></p>
+                    </div>
+                    <div x-show="manualError" x-transition
+                         style="margin-top: 0.75rem; padding: 0.5rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.375rem;">
+                        <p style="font-size: 0.8125rem; color: #991b1b;" x-text="manualError"></p>
+                    </div>
                 </div>
 
                 <!-- Card: Erro -->
@@ -262,6 +328,13 @@
                 error: null,
                 loading: false,
                 copied: false,
+
+                // Entrada manual
+                manual: { model_id: '', storage: '', price: null },
+                manualStorages: [],
+                manualLoading: false,
+                manualSuccess: null,
+                manualError: null,
 
                 init() {},
 
@@ -349,6 +422,59 @@
                         this.loading = false;
                     }
                 },
+
+                // --- Entrada manual ---
+
+                get canAddManual() {
+                    return this.manual.model_id && this.manual.storage && this.manual.price >= 100;
+                },
+
+                onManualModelChange() {
+                    const model = this.models.find(m => m.id === this.manual.model_id);
+                    this.manualStorages = model ? model.storages : [];
+                    this.manual.storage = '';
+                },
+
+                async addManualPrice() {
+                    if (!this.canAddManual) return;
+
+                    this.manualLoading = true;
+                    this.manualSuccess = null;
+                    this.manualError = null;
+
+                    try {
+                        const response = await fetch('{{ route("valuations.manual-price") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                iphone_model_id: this.manual.model_id,
+                                storage: this.manual.storage,
+                                price: this.manual.price,
+                            }),
+                        });
+
+                        const json = await response.json();
+
+                        if (response.ok && json.success) {
+                            const model = this.models.find(m => m.id === this.manual.model_id);
+                            this.manualSuccess = `R$ ${this.manual.price.toLocaleString('pt-BR')} adicionado para ${model?.name} ${this.manual.storage}. Médias recalculadas.`;
+                            this.manual.price = null;
+                            setTimeout(() => { this.manualSuccess = null; }, 4000);
+                        } else {
+                            this.manualError = json.message || 'Erro ao salvar preço.';
+                        }
+                    } catch (e) {
+                        this.manualError = 'Erro de conexão. Tente novamente.';
+                    } finally {
+                        this.manualLoading = false;
+                    }
+                },
+
+                // --- Formatação ---
 
                 formatCurrency(value) {
                     if (!value && value !== 0) return 'R$ 0,00';

@@ -95,6 +95,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/valuations', [ValuationController::class, 'index'])->name('valuations.index');
     Route::get('/api/valuations/price', [ValuationController::class, 'getPrice'])->name('valuations.price');
     Route::post('/api/valuations/evaluate', [ValuationController::class, 'evaluate'])->name('valuations.evaluate');
+    Route::post('/api/valuations/manual-price', [ValuationController::class, 'storeManualPrice'])->name('valuations.manual-price');
 
     // Relatórios (apenas admin)
     Route::middleware('role:admin')->group(function () {

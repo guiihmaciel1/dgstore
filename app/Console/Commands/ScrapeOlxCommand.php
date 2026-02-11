@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Domain\Valuation\Services\MercadoLivreScraperService;
 use App\Domain\Valuation\Services\OlxScraperService;
 use Illuminate\Console\Command;
 
 class ScrapeOlxCommand extends Command
 {
-    protected $signature = 'valuation:scrape-olx
+    protected $signature = 'valuation:scrape
                             {--model= : Slug do modelo específico para raspar (ex: iphone-15-pro-max)}';
 
-    protected $description = 'Coleta anúncios de iPhones no OLX para cálculo de preços de mercado';
+    protected $description = 'Coleta anúncios de iPhones no Mercado Livre e OLX para cálculo de preços de mercado';
 
     public function __construct(
-        private readonly OlxScraperService $scraperService,
+        private readonly MercadoLivreScraperService $mlScraper,
+        private readonly OlxScraperService $olxScraper,
     ) {
         parent::__construct();
     }
@@ -23,34 +25,59 @@ class ScrapeOlxCommand extends Command
     public function handle(): int
     {
         $modelSlug = $this->option('model');
+        $grandTotal = 0;
 
-        $this->info('Iniciando coleta de anúncios do OLX...');
+        // === Mercado Livre ===
+        $this->info('=== Mercado Livre ===');
         $this->newLine();
 
         try {
-            $result = $modelSlug
-                ? $this->scraperService->scrapeBySlug($modelSlug)
-                : $this->scraperService->scrapeAll();
+            $mlResult = $modelSlug
+                ? $this->mlScraper->scrapeBySlug($modelSlug)
+                : $this->mlScraper->scrapeAll();
 
-            $this->info("Modelos processados: {$result['models_processed']}");
-            $this->info("Anúncios coletados: {$result['total_listings']}");
+            $this->info("Modelos processados: {$mlResult['models_processed']}");
+            $this->info("Anúncios coletados: {$mlResult['total_listings']}");
+            $grandTotal += $mlResult['total_listings'];
 
-            if (!empty($result['errors'])) {
-                $this->newLine();
-                $this->warn('Erros encontrados:');
-                foreach ($result['errors'] as $error) {
+            if (!empty($mlResult['errors'])) {
+                $this->warn('Erros:');
+                foreach ($mlResult['errors'] as $error) {
                     $this->error("  - {$error}");
                 }
             }
-
-            $this->newLine();
-            $this->info('Coleta finalizada com sucesso!');
-
-            return self::SUCCESS;
         } catch (\Throwable $e) {
-            $this->error("Erro fatal: {$e->getMessage()}");
-
-            return self::FAILURE;
+            $this->error("Erro no Mercado Livre: {$e->getMessage()}");
         }
+
+        $this->newLine();
+
+        // === OLX ===
+        $this->info('=== OLX ===');
+        $this->newLine();
+
+        try {
+            $olxResult = $modelSlug
+                ? $this->olxScraper->scrapeBySlug($modelSlug)
+                : $this->olxScraper->scrapeAll();
+
+            $this->info("Modelos processados: {$olxResult['models_processed']}");
+            $this->info("Anúncios coletados: {$olxResult['total_listings']}");
+            $grandTotal += $olxResult['total_listings'];
+
+            if (!empty($olxResult['errors'])) {
+                $this->warn('Erros:');
+                foreach ($olxResult['errors'] as $error) {
+                    $this->error("  - {$error}");
+                }
+            }
+        } catch (\Throwable $e) {
+            $this->error("Erro no OLX: {$e->getMessage()}");
+        }
+
+        $this->newLine();
+        $this->info("=== Coleta finalizada! Total geral: {$grandTotal} anúncios ===");
+
+        return self::SUCCESS;
     }
 }
