@@ -12,8 +12,7 @@ class MlConnectCommand extends Command
 {
     protected $signature = 'valuation:ml-connect
                             {--status : Mostra o status atual da conexão}
-                            {--disconnect : Desconecta a conta do ML}
-                            {--refresh : Força renovação do token}';
+                            {--disconnect : Desconecta a conta do ML}';
 
     protected $description = 'Conecta, verifica ou desconecta a conta do Mercado Livre (OAuth2)';
 
@@ -31,10 +30,6 @@ class MlConnectCommand extends Command
 
         if ($this->option('disconnect')) {
             return $this->disconnect();
-        }
-
-        if ($this->option('refresh')) {
-            return $this->refresh();
         }
 
         return $this->connect();
@@ -67,10 +62,9 @@ class MlConnectCommand extends Command
         if ($token->isValid()) {
             $remaining = $token->expires_at->diffForHumans();
             $this->info("  ✓ Token válido (expira {$remaining})");
-        } elseif ($token->needsRefresh()) {
-            $this->warn('  ⚠ Token expirado, mas tem refresh token. Renovação automática.');
         } else {
-            $this->error('  ✗ Token inválido. Reconecte: php artisan valuation:ml-connect');
+            $this->warn('  ✗ Token expirado. Reconecte: php artisan valuation:ml-connect');
+            $this->line('  (sem refresh token, o scraper usará fallback de scraping)');
         }
 
         return self::SUCCESS;
@@ -89,18 +83,6 @@ class MlConnectCommand extends Command
         $this->info('Conta do Mercado Livre desconectada.');
 
         return self::SUCCESS;
-    }
-
-    private function refresh(): int
-    {
-        try {
-            $token = $this->apiService->refreshToken();
-            $this->info("Token renovado! Válido até: {$token->expires_at->format('d/m/Y H:i')}");
-            return self::SUCCESS;
-        } catch (\Throwable $e) {
-            $this->error("Erro: {$e->getMessage()}");
-            return self::FAILURE;
-        }
     }
 
     private function connect(): int

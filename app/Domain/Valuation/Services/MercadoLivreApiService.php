@@ -53,15 +53,8 @@ class MercadoLivreApiService
             return true;
         }
 
-        if ($token->needsRefresh()) {
-            try {
-                $this->refreshToken($token);
-                return true;
-            } catch (\Throwable $e) {
-                Log::warning("[ML API] Falha ao renovar token: {$e->getMessage()}");
-                return false;
-            }
-        }
+        // Token expirado - sem refresh token, precisa reconectar
+        Log::info('[ML API] Token expirado. Fallback para scraping.');
 
         return false;
     }
@@ -98,36 +91,13 @@ class MercadoLivreApiService
         return $this->saveToken($response->json());
     }
 
-    public function refreshToken(?ApiToken $token = null): ApiToken
-    {
-        $token ??= ApiToken::forProvider('mercadolivre');
-
-        if (!$token || empty($token->refresh_token)) {
-            throw new \RuntimeException('Nenhum refresh token disponível. Reconecte a conta do ML.');
-        }
-
-        $response = Http::asForm()->post(self::TOKEN_URL, [
-            'grant_type' => 'refresh_token',
-            'client_id' => config('services.mercadolivre.client_id'),
-            'client_secret' => config('services.mercadolivre.client_secret'),
-            'refresh_token' => $token->refresh_token,
-        ]);
-
-        if (!$response->successful()) {
-            $error = $response->json('error', 'unknown');
-            throw new \RuntimeException("Erro ao renovar token: {$error}");
-        }
-
-        return $this->saveToken($response->json());
-    }
-
     private function saveToken(array $data): ApiToken
     {
         return ApiToken::updateOrCreate(
             ['provider' => 'mercadolivre'],
             [
                 'access_token' => $data['access_token'],
-                'refresh_token' => $data['refresh_token'],
+                'refresh_token' => $data['refresh_token'] ?? '',
                 'expires_at' => now()->addSeconds($data['expires_in'] ?? 10800),
                 'external_user_id' => $data['user_id'] ?? null,
                 'scopes' => isset($data['scope']) ? explode(' ', $data['scope']) : null,
@@ -145,12 +115,8 @@ class MercadoLivreApiService
             throw new \RuntimeException('ML API não conectada.');
         }
 
-        if ($token->needsRefresh()) {
-            $token = $this->refreshToken($token);
-        }
-
         if (!$token->isValid()) {
-            throw new \RuntimeException('Token ML expirado. Reconecte a conta.');
+            throw new \RuntimeException('Token ML expirado. Reconecte com: php artisan valuation:ml-connect');
         }
 
         return $token->access_token;
