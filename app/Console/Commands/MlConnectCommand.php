@@ -103,104 +103,122 @@ class MlConnectCommand extends Command
         }
 
         $accessToken = $token->access_token;
+        $userId = $token->external_user_id;
         $this->info("Token: ...{$this->maskToken($accessToken)}");
+        $this->line("User ID: {$userId}");
         $this->line("Scopes: " . ($token->scopes ? implode(', ', $token->scopes) : 'N/A'));
         $this->newLine();
 
+        $http = fn () => \Illuminate\Support\Facades\Http::withToken($accessToken)->timeout(10);
+
         // 1) /users/me
-        $this->line('1. Testando /users/me ...');
-        $r1 = \Illuminate\Support\Facades\Http::withToken($accessToken)
-            ->timeout(10)
-            ->get('https://api.mercadolibre.com/users/me');
-        $this->line("   HTTP: {$r1->status()}");
-        if ($r1->successful()) {
-            $user = $r1->json();
-            $this->info("   ✓ Nickname: " . ($user['nickname'] ?? 'N/A'));
-            $this->info("   ✓ Country: " . ($user['country_id'] ?? 'N/A'));
-        } else {
-            $this->error("   ✗ Body: " . mb_substr($r1->body(), 0, 300));
-        }
-        $this->newLine();
+        $this->line('1. /users/me ...');
+        $r = $http()->get('https://api.mercadolibre.com/users/me');
+        $this->resultLine($r, fn ($d) => "Nickname: {$d['nickname']}, Country: {$d['country_id']}");
 
-        // 2) /sites/MLB/search SEM auth
-        $this->line('2. Testando /sites/MLB/search SEM token ...');
-        $r2 = \Illuminate\Support\Facades\Http::timeout(10)
-            ->get('https://api.mercadolibre.com/sites/MLB/search', ['q' => 'iphone', 'limit' => 2]);
-        $this->line("   HTTP: {$r2->status()}");
-        if ($r2->successful()) {
-            $data = $r2->json();
-            $this->info("   ✓ Total: " . ($data['paging']['total'] ?? 'N/A'));
-        } else {
-            $this->warn("   ✗ Body: " . mb_substr($r2->body(), 0, 300));
-        }
-        $this->newLine();
+        // 2) /sites/MLB (info do site)
+        $this->line('2. /sites/MLB ...');
+        $r = $http()->get('https://api.mercadolibre.com/sites/MLB');
+        $this->resultLine($r, fn ($d) => "Site: {$d['name']}");
 
-        // 3) /sites/MLB/search COM auth
-        $this->line('3. Testando /sites/MLB/search COM token ...');
-        $r3 = \Illuminate\Support\Facades\Http::withToken($accessToken)
-            ->timeout(10)
-            ->get('https://api.mercadolibre.com/sites/MLB/search', ['q' => 'iphone', 'limit' => 2]);
-        $this->line("   HTTP: {$r3->status()}");
-        if ($r3->successful()) {
-            $data = $r3->json();
-            $this->info("   ✓ Total: " . ($data['paging']['total'] ?? 'N/A'));
-            $results = $data['results'] ?? [];
-            foreach (array_slice($results, 0, 2) as $item) {
-                $this->line("     - {$item['title']} => R\$ " . number_format($item['price'], 2, ',', '.'));
-            }
-        } else {
-            $this->error("   ✗ Body: " . mb_substr($r3->body(), 0, 300));
-        }
-        $this->newLine();
+        // 3) /categories/MLB1055 (info da categoria)
+        $this->line('3. /categories/MLB1055 ...');
+        $r = $http()->get('https://api.mercadolibre.com/categories/MLB1055');
+        $this->resultLine($r, fn ($d) => "Categoria: {$d['name']}");
 
-        // 4) /sites/MLB/search COM auth + condition=used + category
-        $this->line('4. Testando busca completa (used + category MLB1055) ...');
-        $r4 = \Illuminate\Support\Facades\Http::withToken($accessToken)
-            ->timeout(10)
-            ->get('https://api.mercadolibre.com/sites/MLB/search', [
-                'q' => 'iphone 15 pro max',
-                'condition' => 'used',
-                'category' => 'MLB1055',
-                'limit' => 2,
-            ]);
-        $this->line("   HTTP: {$r4->status()}");
-        if ($r4->successful()) {
-            $data = $r4->json();
-            $this->info("   ✓ Total: " . ($data['paging']['total'] ?? 'N/A'));
-            $results = $data['results'] ?? [];
-            foreach (array_slice($results, 0, 2) as $item) {
-                $this->line("     - {$item['title']} => R\$ " . number_format($item['price'], 2, ',', '.'));
-            }
-        } else {
-            $this->error("   ✗ Body: " . mb_substr($r4->body(), 0, 300));
-        }
-        $this->newLine();
+        // 4) /sites/MLB/search (o que falha)
+        $this->line('4. /sites/MLB/search?q=iphone ...');
+        $r = $http()->get('https://api.mercadolibre.com/sites/MLB/search', ['q' => 'iphone', 'limit' => 2]);
+        $this->resultLine($r, fn ($d) => "Total: " . ($d['paging']['total'] ?? 'N/A'));
 
-        // 5) Sem categoria
-        $this->line('5. Testando busca sem category ...');
-        $r5 = \Illuminate\Support\Facades\Http::withToken($accessToken)
-            ->timeout(10)
-            ->get('https://api.mercadolibre.com/sites/MLB/search', [
-                'q' => 'iphone 15 pro max usado',
-                'condition' => 'used',
-                'limit' => 2,
-            ]);
-        $this->line("   HTTP: {$r5->status()}");
-        if ($r5->successful()) {
-            $data = $r5->json();
-            $this->info("   ✓ Total: " . ($data['paging']['total'] ?? 'N/A'));
-            $results = $data['results'] ?? [];
-            foreach (array_slice($results, 0, 2) as $item) {
-                $this->line("     - {$item['title']} => R\$ " . number_format($item['price'], 2, ',', '.'));
-            }
-        } else {
-            $this->error("   ✗ Body: " . mb_substr($r5->body(), 0, 300));
-        }
+        // 5) /highlights/MLB/category/MLB1055
+        $this->line('5. /highlights/MLB/category/MLB1055 ...');
+        $r = $http()->get('https://api.mercadolibre.com/highlights/MLB/category/MLB1055');
+        $this->resultLine($r, fn ($d) => "Items: " . count($d['content'] ?? []));
+
+        // 6) /sites/MLB/search/recent (tendências)
+        $this->line('6. /trends/MLB/search ...');
+        $r = $http()->get('https://api.mercadolibre.com/trends/MLB');
+        $this->resultLine($r, fn ($d) => "Trends: " . count($d));
+
+        // 7) /products/search (catálogo)
+        $this->line('7. /products/search?q=iphone 15 pro max ...');
+        $r = $http()->get('https://api.mercadolibre.com/products/search', [
+            'site_id' => 'MLB',
+            'q' => 'iphone 15 pro max',
+            'status' => 'active',
+        ]);
+        $this->resultLine($r, fn ($d) => "Results: " . count($d['results'] ?? []));
+
+        // 8) /sites/MLB/search via cURL nativo (bypass possível)
+        $this->line('8. /sites/MLB/search via cURL nativo ...');
+        $this->testCurlSearch($accessToken);
 
         $this->newLine();
         $this->info('=== Teste concluído ===');
 
         return self::SUCCESS;
+    }
+
+    private function resultLine($response, \Closure $successExtractor): void
+    {
+        $status = $response->status();
+
+        if ($response->successful()) {
+            try {
+                $msg = $successExtractor($response->json());
+                $this->info("   ✓ HTTP {$status} | {$msg}");
+            } catch (\Throwable) {
+                $this->info("   ✓ HTTP {$status} | " . mb_substr($response->body(), 0, 200));
+            }
+        } else {
+            $this->error("   ✗ HTTP {$status} | " . mb_substr($response->body(), 0, 200));
+        }
+
+        $this->newLine();
+    }
+
+    private function testCurlSearch(string $accessToken): void
+    {
+        $url = 'https://api.mercadolibre.com/sites/MLB/search?q=iphone+15+pro+max&condition=used&limit=2';
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_HTTPHEADER => [
+                "Authorization: Bearer {$accessToken}",
+                'Accept: application/json',
+                'User-Agent: DGStore/1.0',
+            ],
+        ]);
+
+        $body = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            $this->error("   ✗ cURL error: {$error}");
+            return;
+        }
+
+        if ($httpCode >= 200 && $httpCode < 300) {
+            $data = json_decode($body, true);
+            $total = $data['paging']['total'] ?? 'N/A';
+            $count = count($data['results'] ?? []);
+            $this->info("   ✓ HTTP {$httpCode} | Total: {$total}, Results: {$count}");
+
+            foreach (array_slice($data['results'] ?? [], 0, 2) as $item) {
+                $price = number_format($item['price'] ?? 0, 2, ',', '.');
+                $this->line("     - {$item['title']} => R\$ {$price}");
+            }
+        } else {
+            $this->error("   ✗ HTTP {$httpCode} | " . mb_substr($body, 0, 200));
+        }
+
+        $this->newLine();
     }
 
     private function maskToken(string $token): string
