@@ -138,11 +138,19 @@ class MercadoLivreApiService
             ]);
 
         if (!$response->successful()) {
-            Log::warning("[ML API] HTTP {$response->status()} para busca: {$query}");
-            return [];
+            Log::warning("[ML API] HTTP {$response->status()} para busca: {$query}", [
+                'body' => mb_substr($response->body(), 0, 500),
+            ]);
+
+            return ['total' => 0, 'items' => []];
         }
 
         $data = $response->json();
+
+        Log::info("[ML API] Busca: {$query}", [
+            'total' => $data['paging']['total'] ?? 'N/A',
+            'results_count' => count($data['results'] ?? []),
+        ]);
 
         return [
             'total' => $data['paging']['total'] ?? 0,
