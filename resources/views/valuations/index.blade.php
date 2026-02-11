@@ -6,7 +6,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <div>
                     <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Avaliador de Seminovos</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Avalie iPhones usados com base nos preços de mercado (Mercado Livre)</p>
+                    <p style="font-size: 0.875rem; color: #6b7280;">Avalie iPhones usados com base nos preços de mercado</p>
                 </div>
             </div>
 
@@ -139,7 +139,7 @@
                     <div style="padding: 1.5rem;">
                         <!-- Preço de Mercado -->
                         <div style="margin-bottom: 1.5rem;">
-                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Preço de Mercado (Mercado Livre)</h3>
+                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Preço de Mercado — Novo (Mercado Livre)</h3>
                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
                                 <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; text-align: center;">
                                     <p style="font-size: 0.75rem; color: #6b7280;">Mínimo</p>
