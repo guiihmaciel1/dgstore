@@ -11,6 +11,7 @@ use App\Presentation\Http\Controllers\ReservationController;
 use App\Presentation\Http\Controllers\SaleController;
 use App\Presentation\Http\Controllers\StockController;
 use App\Presentation\Http\Controllers\SupplierController;
+use App\Presentation\Http\Controllers\MercadoLivreAuthController;
 use App\Presentation\Http\Controllers\ValuationController;
 use App\Presentation\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
@@ -96,6 +97,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/api/valuations/price', [ValuationController::class, 'getPrice'])->name('valuations.price');
     Route::post('/api/valuations/evaluate', [ValuationController::class, 'evaluate'])->name('valuations.evaluate');
     Route::post('/api/valuations/manual-price', [ValuationController::class, 'storeManualPrice'])->name('valuations.manual-price');
+
+    // OAuth Mercado Livre (callback)
+    Route::get('/auth/mercadolivre/callback', [MercadoLivreAuthController::class, 'callback'])->name('ml.callback');
 
     // Relatórios (apenas admin)
     Route::middleware('role:admin')->group(function () {
