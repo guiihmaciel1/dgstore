@@ -39,22 +39,23 @@ class MercadoLivreApiService
 
     public function isConnected(): bool
     {
-        if (!$this->isConfigured()) {
-            return false;
+        // Conexão via token OAuth
+        if ($this->isConfigured()) {
+            $token = ApiToken::forProvider('mercadolivre');
+
+            if ($token && $token->isValid()) {
+                return true;
+            }
         }
 
-        $token = ApiToken::forProvider('mercadolivre');
-
-        if (!$token) {
-            return false;
-        }
-
-        if ($token->isValid()) {
+        // Conexão via proxy (busca pública, sem token)
+        if ($this->isProxyConfigured()) {
             return true;
         }
 
-        // Token expirado - sem refresh token, precisa reconectar
-        Log::info('[ML API] Token expirado. Fallback para scraping.');
+        if ($this->isConfigured()) {
+            Log::info('[ML API] Token expirado e proxy não configurado. Fallback para scraping.');
+        }
 
         return false;
     }
@@ -107,16 +108,12 @@ class MercadoLivreApiService
 
     // ── Search API ───────────────────────────────
 
-    private function getAccessToken(): string
+    private function getAccessToken(): ?string
     {
         $token = ApiToken::forProvider('mercadolivre');
 
-        if (!$token) {
-            throw new \RuntimeException('ML API não conectada.');
-        }
-
-        if (!$token->isValid()) {
-            throw new \RuntimeException('Token ML expirado. Reconecte com: php artisan valuation:ml-connect');
+        if (!$token || !$token->isValid()) {
+            return null;
         }
 
         return $token->access_token;
@@ -124,21 +121,69 @@ class MercadoLivreApiService
 
     public function search(string $query, int $limit = 50, int $offset = 0): array
     {
+        $params = [
+            'q' => $query,
+            'condition' => 'used',
+            'category' => 'MLB1055',
+            'limit' => $limit,
+            'offset' => $offset,
+            'sort' => 'relevance',
+        ];
+
+        // 1) Tenta chamada direta com token (se disponível)
         $accessToken = $this->getAccessToken();
 
-        $response = Http::withToken($accessToken)
-            ->timeout(15)
-            ->get(self::SEARCH_URL, [
-                'q' => $query,
-                'condition' => 'used',
-                'category' => 'MLB1055',
-                'limit' => $limit,
-                'offset' => $offset,
-                'sort' => 'relevance',
+        if ($accessToken) {
+            $response = Http::withToken($accessToken)
+                ->timeout(15)
+                ->get(self::SEARCH_URL, $params);
+
+            if ($response->successful()) {
+                return $this->parseSearchResponse($response->json(), $query, 'direto');
+            }
+
+            // Se não for 403, é outro erro — loggar e retornar vazio
+            if ($response->status() !== 403) {
+                Log::warning("[ML API] HTTP {$response->status()} para busca: {$query}", [
+                    'body' => mb_substr($response->body(), 0, 500),
+                ]);
+
+                return ['total' => 0, 'items' => []];
+            }
+        }
+
+        // 2) Fallback: ScraperAPI como proxy (busca pública via IP residencial)
+        if ($this->isProxyConfigured()) {
+            if ($accessToken) {
+                $this->progress('    ↳ API direta bloqueada (403), usando proxy...', 'warn');
+            }
+
+            return $this->searchViaProxy($params, $query);
+        }
+
+        Log::warning("[ML API] Busca bloqueada e proxy não configurado: {$query}");
+
+        return ['total' => 0, 'items' => []];
+    }
+
+    /**
+     * Busca roteada pelo ScraperAPI (IP residencial).
+     * O endpoint /sites/MLB/search é público — não precisa de Bearer token via proxy.
+     */
+    private function searchViaProxy(array $params, string $query): array
+    {
+        $targetUrl = self::SEARCH_URL . '?' . http_build_query($params);
+
+        $proxyUrl = config('services.scraper_proxy.base_url', 'https://api.scraperapi.com')
+            . '?' . http_build_query([
+                'api_key' => config('services.scraper_proxy.key'),
+                'url' => $targetUrl,
             ]);
 
+        $response = Http::timeout(30)->get($proxyUrl);
+
         if (!$response->successful()) {
-            Log::warning("[ML API] HTTP {$response->status()} para busca: {$query}", [
+            Log::warning("[ML API][Proxy] HTTP {$response->status()} para busca: {$query}", [
                 'body' => mb_substr($response->body(), 0, 500),
             ]);
 
@@ -147,14 +192,36 @@ class MercadoLivreApiService
 
         $data = $response->json();
 
-        Log::info("[ML API] Busca: {$query}", [
-            'total' => $data['paging']['total'] ?? 'N/A',
-            'results_count' => count($data['results'] ?? []),
+        // ScraperAPI pode retornar HTML se a resposta não for JSON
+        if (!is_array($data) || !isset($data['results'])) {
+            Log::warning('[ML API][Proxy] Resposta não é JSON válido da API ML.', [
+                'body' => mb_substr($response->body(), 0, 300),
+            ]);
+
+            return ['total' => 0, 'items' => []];
+        }
+
+        return $this->parseSearchResponse($data, $query, 'proxy');
+    }
+
+    public function isProxyConfigured(): bool
+    {
+        return !empty(config('services.scraper_proxy.key'));
+    }
+
+    private function parseSearchResponse(array $data, string $query, string $via): array
+    {
+        $total = $data['paging']['total'] ?? 0;
+        $results = $data['results'] ?? [];
+
+        Log::info("[ML API][{$via}] Busca: {$query}", [
+            'total' => $total,
+            'results_count' => count($results),
         ]);
 
         return [
-            'total' => $data['paging']['total'] ?? 0,
-            'items' => $data['results'] ?? [],
+            'total' => $total,
+            'items' => $results,
         ];
     }
 
@@ -166,7 +233,16 @@ class MercadoLivreApiService
         $totalListings = 0;
         $errors = [];
 
-        $this->progress('  Modo: API Mercado Livre (OAuth2)');
+        $token = $this->getAccessToken();
+        $proxy = $this->isProxyConfigured();
+
+        if ($token && !$proxy) {
+            $this->progress('  Modo: API Mercado Livre (OAuth2)');
+        } elseif ($token && $proxy) {
+            $this->progress('  Modo: API Mercado Livre (OAuth2 + proxy fallback)');
+        } else {
+            $this->progress('  Modo: API Mercado Livre (proxy público)');
+        }
 
         foreach ($models as $model) {
             try {
