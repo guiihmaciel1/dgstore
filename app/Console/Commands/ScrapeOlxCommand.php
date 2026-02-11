@@ -27,8 +27,23 @@ class ScrapeOlxCommand extends Command
         $modelSlug = $this->option('model');
         $grandTotal = 0;
 
+        // Configura callbacks de progresso
+        $progressCallback = function (string $message, string $type = 'info') {
+            match ($type) {
+                'error' => $this->error($message),
+                'warn' => $this->warn($message),
+                default => $this->line($message),
+            };
+        };
+
+        $this->mlScraper->onProgress($progressCallback);
+        $this->olxScraper->onProgress($progressCallback);
+
         // === Mercado Livre ===
-        $this->info('=== Mercado Livre ===');
+        $this->info('');
+        $this->info('╔══════════════════════════════╗');
+        $this->info('║      MERCADO LIVRE           ║');
+        $this->info('╚══════════════════════════════╝');
         $this->newLine();
 
         try {
@@ -36,24 +51,27 @@ class ScrapeOlxCommand extends Command
                 ? $this->mlScraper->scrapeBySlug($modelSlug)
                 : $this->mlScraper->scrapeAll();
 
-            $this->info("Modelos processados: {$mlResult['models_processed']}");
-            $this->info("Anúncios coletados: {$mlResult['total_listings']}");
+            $this->newLine();
+            $this->info("  Modelos processados: {$mlResult['models_processed']}");
+            $this->info("  Total anúncios: {$mlResult['total_listings']}");
             $grandTotal += $mlResult['total_listings'];
 
             if (!empty($mlResult['errors'])) {
-                $this->warn('Erros:');
+                $this->warn('  Erros:');
                 foreach ($mlResult['errors'] as $error) {
-                    $this->error("  - {$error}");
+                    $this->error("    - {$error}");
                 }
             }
         } catch (\Throwable $e) {
-            $this->error("Erro no Mercado Livre: {$e->getMessage()}");
+            $this->error("  Erro fatal no Mercado Livre: {$e->getMessage()}");
         }
 
         $this->newLine();
 
         // === OLX ===
-        $this->info('=== OLX ===');
+        $this->info('╔══════════════════════════════╗');
+        $this->info('║           OLX                ║');
+        $this->info('╚══════════════════════════════╝');
         $this->newLine();
 
         try {
@@ -61,22 +79,25 @@ class ScrapeOlxCommand extends Command
                 ? $this->olxScraper->scrapeBySlug($modelSlug)
                 : $this->olxScraper->scrapeAll();
 
-            $this->info("Modelos processados: {$olxResult['models_processed']}");
-            $this->info("Anúncios coletados: {$olxResult['total_listings']}");
+            $this->newLine();
+            $this->info("  Modelos processados: {$olxResult['models_processed']}");
+            $this->info("  Total anúncios: {$olxResult['total_listings']}");
             $grandTotal += $olxResult['total_listings'];
 
             if (!empty($olxResult['errors'])) {
-                $this->warn('Erros:');
+                $this->warn('  Erros:');
                 foreach ($olxResult['errors'] as $error) {
-                    $this->error("  - {$error}");
+                    $this->error("    - {$error}");
                 }
             }
         } catch (\Throwable $e) {
-            $this->error("Erro no OLX: {$e->getMessage()}");
+            $this->error("  Erro fatal no OLX: {$e->getMessage()}");
         }
 
         $this->newLine();
-        $this->info("=== Coleta finalizada! Total geral: {$grandTotal} anúncios ===");
+        $this->info("══════════════════════════════════");
+        $this->info("  Coleta finalizada! Total: {$grandTotal} anúncios");
+        $this->info("══════════════════════════════════");
 
         return self::SUCCESS;
     }

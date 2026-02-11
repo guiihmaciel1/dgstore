@@ -7,22 +7,12 @@ namespace App\Domain\Valuation\Services;
 use App\Domain\Valuation\Enums\ListingSource;
 use App\Domain\Valuation\Models\IphoneModel;
 use App\Domain\Valuation\Models\MarketListing;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class MercadoLivreScraperService
 {
-    /**
-     * URL base do Mercado Livre para busca.
-     * O ML aceita busca por slug: lista.mercadolivre.com.br/{termo-separado-por-hifen}
-     */
     private const BASE_URL = 'https://lista.mercadolivre.com.br';
-
-    /**
-     * Sufixo para filtrar apenas usados/seminovos.
-     */
-    private const CONDITION_SUFFIX = '_ItemCondition_2230581'; // Usado
 
     private const USER_AGENTS = [
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -33,6 +23,15 @@ class MercadoLivreScraperService
 
     private const MIN_DELAY = 2;
     private const MAX_DELAY = 4;
+
+    /** @var \Closure|null Callback para exibir progresso no console */
+    private ?\Closure $onProgress = null;
+
+    public function onProgress(\Closure $callback): self
+    {
+        $this->onProgress = $callback;
+        return $this;
+    }
 
     /**
      * Executa o scraping para todos os modelos ativos.
@@ -48,9 +47,11 @@ class MercadoLivreScraperService
                 $count = $this->scrapeModel($model);
                 $totalListings += $count;
 
+                $this->progress("  {$model->name}: {$count} anúncios");
                 Log::info("[ML Scraper] {$model->name}: {$count} anúncios coletados.");
             } catch (\Throwable $e) {
                 $errors[] = "{$model->name}: {$e->getMessage()}";
+                $this->progress("  {$model->name}: ERRO - {$e->getMessage()}", 'error');
                 Log::error("[ML Scraper] Erro ao raspar {$model->name}: {$e->getMessage()}");
             }
 
@@ -124,27 +125,57 @@ class MercadoLivreScraperService
     }
 
     /**
-     * Faz o request HTTP.
+     * Faz o request HTTP via cURL nativo para máxima compatibilidade.
      */
     private function fetchPage(string $url): ?string
     {
-        try {
-            $response = Http::withHeaders([
-                'User-Agent' => $this->randomUserAgent(),
-                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language' => 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-            ])->connectTimeout(5)->timeout(15)->get($url);
+        $ch = curl_init();
 
-            if ($response->successful()) {
-                return $response->body();
-            }
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS => 5,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 20,
+            CURLOPT_ENCODING => '',  // Aceita gzip, deflate automaticamente
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_HTTPHEADER => [
+                'User-Agent: ' . $this->randomUserAgent(),
+                'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Accept-Encoding: gzip, deflate, br',
+                'Cache-Control: no-cache',
+                'Pragma: no-cache',
+                'Sec-Fetch-Dest: document',
+                'Sec-Fetch-Mode: navigate',
+                'Sec-Fetch-Site: none',
+                'Sec-Fetch-User: ?1',
+                'Upgrade-Insecure-Requests: 1',
+            ],
+        ]);
 
-            Log::warning("[ML Scraper] HTTP {$response->status()} para {$url}");
-        } catch (\Throwable $e) {
-            Log::warning("[ML Scraper] Erro ao acessar {$url}: {$e->getMessage()}");
+        $body = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            Log::warning("[ML Scraper] cURL error para {$url}: {$error}");
+            return null;
         }
 
-        return null;
+        if ($httpCode !== 200) {
+            Log::warning("[ML Scraper] HTTP {$httpCode} para {$url}");
+            return null;
+        }
+
+        if (!$body || strlen($body) < 1000) {
+            Log::warning("[ML Scraper] Resposta vazia/pequena para {$url} (" . strlen($body ?: '') . " bytes)");
+            return null;
+        }
+
+        return $body;
     }
 
     /**
@@ -283,6 +314,13 @@ class MercadoLivreScraperService
             'location' => $listing['location'],
             'scraped_at' => now()->toDateString(),
         ]);
+    }
+
+    private function progress(string $message, string $type = 'info'): void
+    {
+        if ($this->onProgress) {
+            ($this->onProgress)($message, $type);
+        }
     }
 
     private function randomDelay(): void
