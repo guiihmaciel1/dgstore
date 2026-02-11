@@ -11,6 +11,7 @@ use App\Presentation\Http\Controllers\ReservationController;
 use App\Presentation\Http\Controllers\SaleController;
 use App\Presentation\Http\Controllers\StockController;
 use App\Presentation\Http\Controllers\SupplierController;
+use App\Presentation\Http\Controllers\ValuationController;
 use App\Presentation\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
 
@@ -89,6 +90,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/reservations/{reservation}/payments', [ReservationController::class, 'storePayment'])->name('reservations.payments.store');
     Route::get('/reservations/{reservation}/convert', [ReservationController::class, 'convert'])->name('reservations.convert');
     Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
+
+    // Avaliação de Seminovos
+    Route::get('/valuations', [ValuationController::class, 'index'])->name('valuations.index');
+    Route::get('/api/valuations/price', [ValuationController::class, 'getPrice'])->name('valuations.price');
+    Route::post('/api/valuations/evaluate', [ValuationController::class, 'evaluate'])->name('valuations.evaluate');
 
     // Relatórios (apenas admin)
     Route::middleware('role:admin')->group(function () {

@@ -74,7 +74,7 @@ class Product extends Model
 
     public function scopeIphones(Builder $query): Builder
     {
-        return $query->where('category', ProductCategory::Iphone);
+        return $query->where('category', ProductCategory::Smartphone);
     }
 
     public function scopeAccessories(Builder $query): Builder
@@ -111,7 +111,7 @@ class Product extends Model
 
     public function isIphone(): bool
     {
-        return $this->category === ProductCategory::Iphone;
+        return $this->category === ProductCategory::Smartphone;
     }
 
     public function getProfitMarginAttribute(): float

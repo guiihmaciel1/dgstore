@@ -137,6 +137,10 @@
                         </div>
                     </div>
                     
+                    <a href="{{ route('valuations.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('valuations.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                        Avaliador
+                    </a>
+                    
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('reports.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
                             Relatórios
@@ -270,6 +274,13 @@
                 </a>
             </div>
             
+            <!-- Mobile: Avaliador -->
+            <div class="border-t border-gray-700 mt-2 pt-2">
+                <a href="{{ route('valuations.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('valuations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Avaliador
+                </a>
+            </div>
+
             @if(auth()->user()->isAdmin())
                 <div class="border-t border-gray-700 mt-2 pt-2">
                     <a href="{{ route('reports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
