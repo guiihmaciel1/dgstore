@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class MercadoLivreApiService
 {
-    private const AUTH_URL = 'https://auth.mercadolibre.com.br/authorization';
+    private const AUTH_URL = 'https://auth.mercadolivre.com.br/authorization';
     private const TOKEN_URL = 'https://api.mercadolibre.com/oauth/token';
     private const SEARCH_URL = 'https://api.mercadolibre.com/sites/MLB/search';
 
