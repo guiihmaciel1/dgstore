@@ -12,7 +12,8 @@ class MlConnectCommand extends Command
 {
     protected $signature = 'valuation:ml-connect
                             {--status : Mostra o status atual da conexão}
-                            {--disconnect : Desconecta a conta do ML}';
+                            {--disconnect : Desconecta a conta do ML}
+                            {--test : Testa a API com chamadas reais}';
 
     protected $description = 'Conecta, verifica ou desconecta a conta do Mercado Livre (OAuth2)';
 
@@ -24,6 +25,10 @@ class MlConnectCommand extends Command
 
     public function handle(): int
     {
+        if ($this->option('test')) {
+            return $this->testApi();
+        }
+
         if ($this->option('status')) {
             return $this->showStatus();
         }
@@ -83,6 +88,124 @@ class MlConnectCommand extends Command
         $this->info('Conta do Mercado Livre desconectada.');
 
         return self::SUCCESS;
+    }
+
+    private function testApi(): int
+    {
+        $this->info('=== Teste da API Mercado Livre ===');
+        $this->newLine();
+
+        $token = ApiToken::forProvider('mercadolivre');
+
+        if (!$token || !$token->isValid()) {
+            $this->error('Token não encontrado ou expirado. Conecte primeiro.');
+            return self::FAILURE;
+        }
+
+        $accessToken = $token->access_token;
+        $this->info("Token: ...{$this->maskToken($accessToken)}");
+        $this->line("Scopes: " . ($token->scopes ? implode(', ', $token->scopes) : 'N/A'));
+        $this->newLine();
+
+        // 1) /users/me
+        $this->line('1. Testando /users/me ...');
+        $r1 = \Illuminate\Support\Facades\Http::withToken($accessToken)
+            ->timeout(10)
+            ->get('https://api.mercadolibre.com/users/me');
+        $this->line("   HTTP: {$r1->status()}");
+        if ($r1->successful()) {
+            $user = $r1->json();
+            $this->info("   ✓ Nickname: " . ($user['nickname'] ?? 'N/A'));
+            $this->info("   ✓ Country: " . ($user['country_id'] ?? 'N/A'));
+        } else {
+            $this->error("   ✗ Body: " . mb_substr($r1->body(), 0, 300));
+        }
+        $this->newLine();
+
+        // 2) /sites/MLB/search SEM auth
+        $this->line('2. Testando /sites/MLB/search SEM token ...');
+        $r2 = \Illuminate\Support\Facades\Http::timeout(10)
+            ->get('https://api.mercadolibre.com/sites/MLB/search', ['q' => 'iphone', 'limit' => 2]);
+        $this->line("   HTTP: {$r2->status()}");
+        if ($r2->successful()) {
+            $data = $r2->json();
+            $this->info("   ✓ Total: " . ($data['paging']['total'] ?? 'N/A'));
+        } else {
+            $this->warn("   ✗ Body: " . mb_substr($r2->body(), 0, 300));
+        }
+        $this->newLine();
+
+        // 3) /sites/MLB/search COM auth
+        $this->line('3. Testando /sites/MLB/search COM token ...');
+        $r3 = \Illuminate\Support\Facades\Http::withToken($accessToken)
+            ->timeout(10)
+            ->get('https://api.mercadolibre.com/sites/MLB/search', ['q' => 'iphone', 'limit' => 2]);
+        $this->line("   HTTP: {$r3->status()}");
+        if ($r3->successful()) {
+            $data = $r3->json();
+            $this->info("   ✓ Total: " . ($data['paging']['total'] ?? 'N/A'));
+            $results = $data['results'] ?? [];
+            foreach (array_slice($results, 0, 2) as $item) {
+                $this->line("     - {$item['title']} => R\$ " . number_format($item['price'], 2, ',', '.'));
+            }
+        } else {
+            $this->error("   ✗ Body: " . mb_substr($r3->body(), 0, 300));
+        }
+        $this->newLine();
+
+        // 4) /sites/MLB/search COM auth + condition=used + category
+        $this->line('4. Testando busca completa (used + category MLB1055) ...');
+        $r4 = \Illuminate\Support\Facades\Http::withToken($accessToken)
+            ->timeout(10)
+            ->get('https://api.mercadolibre.com/sites/MLB/search', [
+                'q' => 'iphone 15 pro max',
+                'condition' => 'used',
+                'category' => 'MLB1055',
+                'limit' => 2,
+            ]);
+        $this->line("   HTTP: {$r4->status()}");
+        if ($r4->successful()) {
+            $data = $r4->json();
+            $this->info("   ✓ Total: " . ($data['paging']['total'] ?? 'N/A'));
+            $results = $data['results'] ?? [];
+            foreach (array_slice($results, 0, 2) as $item) {
+                $this->line("     - {$item['title']} => R\$ " . number_format($item['price'], 2, ',', '.'));
+            }
+        } else {
+            $this->error("   ✗ Body: " . mb_substr($r4->body(), 0, 300));
+        }
+        $this->newLine();
+
+        // 5) Sem categoria
+        $this->line('5. Testando busca sem category ...');
+        $r5 = \Illuminate\Support\Facades\Http::withToken($accessToken)
+            ->timeout(10)
+            ->get('https://api.mercadolibre.com/sites/MLB/search', [
+                'q' => 'iphone 15 pro max usado',
+                'condition' => 'used',
+                'limit' => 2,
+            ]);
+        $this->line("   HTTP: {$r5->status()}");
+        if ($r5->successful()) {
+            $data = $r5->json();
+            $this->info("   ✓ Total: " . ($data['paging']['total'] ?? 'N/A'));
+            $results = $data['results'] ?? [];
+            foreach (array_slice($results, 0, 2) as $item) {
+                $this->line("     - {$item['title']} => R\$ " . number_format($item['price'], 2, ',', '.'));
+            }
+        } else {
+            $this->error("   ✗ Body: " . mb_substr($r5->body(), 0, 300));
+        }
+
+        $this->newLine();
+        $this->info('=== Teste concluído ===');
+
+        return self::SUCCESS;
+    }
+
+    private function maskToken(string $token): string
+    {
+        return substr($token, -8);
     }
 
     private function connect(): int
