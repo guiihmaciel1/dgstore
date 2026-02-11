@@ -150,9 +150,110 @@ class MlConnectCommand extends Command
         ]);
         $this->resultLine($r, fn ($d) => "Results: " . count($d['results'] ?? []));
 
-        // 8) /sites/MLB/search via cURL nativo (bypass possível)
-        $this->line('8. /sites/MLB/search via cURL nativo ...');
-        $this->testCurlSearch($accessToken);
+        // 8) Dump detalhado do /products/search
+        $this->line('8. /products/search - resposta detalhada ...');
+        $r = $http()->get('https://api.mercadolibre.com/products/search', [
+            'site_id' => 'MLB',
+            'q' => 'iphone 15 pro max 256gb',
+            'status' => 'active',
+        ]);
+        if ($r->successful()) {
+            $data = $r->json();
+            $results = $data['results'] ?? [];
+            $this->info("   ✓ HTTP {$r->status()} | Results: " . count($results));
+
+            foreach (array_slice($results, 0, 3) as $i => $product) {
+                $this->newLine();
+                $this->line("   --- Produto " . ($i + 1) . " ---");
+                $this->line("   ID: " . ($product['id'] ?? 'N/A'));
+                $this->line("   Name: " . ($product['name'] ?? 'N/A'));
+                $this->line("   Status: " . ($product['status'] ?? 'N/A'));
+                $this->line("   Domain: " . ($product['domain_id'] ?? 'N/A'));
+
+                // Mostrar atributos importantes
+                $attrs = $product['attributes'] ?? [];
+                foreach ($attrs as $attr) {
+                    $name = $attr['id'] ?? '';
+                    if (in_array($name, ['BRAND', 'MODEL', 'LINE', 'INTERNAL_MEMORY', 'MAIN_COLOR'])) {
+                        $this->line("   {$name}: " . ($attr['value_name'] ?? 'N/A'));
+                    }
+                }
+
+                // Buy box ou preço
+                if (isset($product['buy_box_winner'])) {
+                    $bb = $product['buy_box_winner'];
+                    $this->line("   Buy Box Price: R\$ " . number_format($bb['price'] ?? 0, 2, ',', '.'));
+                    $this->line("   Buy Box Item ID: " . ($bb['item_id'] ?? 'N/A'));
+                }
+
+                if (isset($product['prices'])) {
+                    $this->line("   Prices: " . json_encode($product['prices']));
+                }
+
+                // Chaves de nível superior
+                $keys = array_keys($product);
+                $this->line("   Keys: " . implode(', ', $keys));
+            }
+        } else {
+            $this->error("   ✗ HTTP {$r->status()} | " . mb_substr($r->body(), 0, 200));
+        }
+        $this->newLine();
+
+        // 9) Testar /items/{id} a partir do highlights
+        $this->line('9. Teste /items/{id} (do highlights) ...');
+        $rH = $http()->get('https://api.mercadolibre.com/highlights/MLB/category/MLB1055');
+        if ($rH->successful()) {
+            $items = $rH->json()['content'] ?? [];
+            $itemIds = array_slice(array_column($items, 'id'), 0, 3);
+
+            if (!empty($itemIds)) {
+                $idsStr = implode(',', $itemIds);
+                $rItems = $http()->get("https://api.mercadolibre.com/items", ['ids' => $idsStr]);
+
+                if ($rItems->successful()) {
+                    $itemsData = $rItems->json();
+                    $this->info("   ✓ HTTP {$rItems->status()} | Items: " . count($itemsData));
+
+                    foreach ($itemsData as $wrapper) {
+                        $item = $wrapper['body'] ?? $wrapper;
+                        $title = $item['title'] ?? 'N/A';
+                        $price = $item['price'] ?? 0;
+                        $condition = $item['condition'] ?? 'N/A';
+                        $this->line("     - [{$condition}] {$title} => R\$ " . number_format($price, 2, ',', '.'));
+                    }
+                } else {
+                    $this->error("   ✗ HTTP {$rItems->status()} | " . mb_substr($rItems->body(), 0, 200));
+                }
+            } else {
+                $this->warn('   Nenhum item no highlights.');
+            }
+        }
+        $this->newLine();
+
+        // 10) Testar /products/{id}/items (listagens de um produto)
+        $this->line('10. Teste /products/{id}/items ...');
+        $rProd = $http()->get('https://api.mercadolibre.com/products/search', [
+            'site_id' => 'MLB',
+            'q' => 'iphone 15 pro max',
+            'status' => 'active',
+        ]);
+        if ($rProd->successful()) {
+            $products = $rProd->json()['results'] ?? [];
+            $productId = $products[0]['id'] ?? null;
+
+            if ($productId) {
+                $this->line("   Produto: {$productId}");
+
+                // Tentar /products/{id}/items
+                $rPI = $http()->get("https://api.mercadolibre.com/products/{$productId}/items");
+                $this->line("   /products/{$productId}/items => HTTP {$rPI->status()}");
+                if ($rPI->successful()) {
+                    $this->info("   ✓ " . mb_substr($rPI->body(), 0, 300));
+                } else {
+                    $this->warn("   ✗ " . mb_substr($rPI->body(), 0, 200));
+                }
+            }
+        }
 
         $this->newLine();
         $this->info('=== Teste concluído ===');
