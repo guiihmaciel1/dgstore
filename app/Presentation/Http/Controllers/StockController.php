@@ -75,23 +75,24 @@ class StockController extends Controller
         $product = Product::findOrFail($validated['product_id']);
         $userId = auth()->id();
 
+        $quantity = (int) $validated['quantity'];
+
         if ($validated['type'] === 'in') {
             $this->stockService->registerEntry(
                 $product,
-                $validated['quantity'],
+                $quantity,
                 $userId,
                 $validated['reason'] ?? null
             );
-            $message = "Entrada de {$validated['quantity']} unidades registrada com sucesso!";
+            $message = "Entrada de {$quantity} unidades registrada com sucesso!";
         } else {
-            $newQuantity = $validated['quantity'];
             $this->stockService->registerAdjustment(
                 $product,
-                $newQuantity,
+                $quantity,
                 $userId,
                 $validated['reason'] ?? null
             );
-            $message = "Ajuste de estoque para {$newQuantity} unidades registrado com sucesso!";
+            $message = "Ajuste de estoque para {$quantity} unidades registrado com sucesso!";
         }
 
         return redirect()
