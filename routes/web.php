@@ -13,6 +13,7 @@ use App\Presentation\Http\Controllers\SaleController;
 use App\Presentation\Http\Controllers\StockController;
 use App\Presentation\Http\Controllers\SupplierController;
 use App\Presentation\Http\Controllers\ValuationController;
+use App\Presentation\Http\Controllers\FollowupController;
 use App\Presentation\Http\Controllers\ImeiLookupController;
 use App\Presentation\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ferramentas
     Route::get('/imei-lookup', [ImeiLookupController::class, 'index'])->name('imei-lookup');
     Route::view('/checklist-seminovo', 'tools.checklist')->name('tools.checklist');
+    Route::get('/tabela-precos', function () {
+        $products = \App\Domain\Product\Models\Product::where('active', true)->orderBy('name')->get();
+        return view('tools.price-table', compact('products'));
+    })->name('tools.price-table');
+    Route::view('/mensagens-whatsapp', 'tools.whatsapp-messages')->name('tools.whatsapp-messages');
+    Route::view('/ficha-tecnica', 'tools.specs')->name('tools.specs');
+
+    // Follow-ups
+    Route::resource('followups', FollowupController::class)->except(['edit', 'show', 'create']);
+    Route::post('followups/{followup}/complete', [FollowupController::class, 'complete'])->name('followups.complete');
+    Route::post('followups/{followup}/cancel', [FollowupController::class, 'cancel'])->name('followups.cancel');
 
     // Produtos
     Route::resource('products', ProductController::class);

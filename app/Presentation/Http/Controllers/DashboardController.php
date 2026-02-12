@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers;
 
 use App\Application\UseCases\GenerateReportUseCase;
+use App\Domain\Followup\Models\Followup;
 use App\Domain\Import\Services\ImportOrderService;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Warranty\Services\WarrantyService;
@@ -32,6 +33,8 @@ class DashboardController extends Controller
             'reservations_active' => $this->reservationService->countActive(),
             'reservations_expiring' => $this->reservationService->countExpiringSoon(3),
             'reservations_overdue' => $this->reservationService->countOverdue(),
+            'followups_today' => Followup::where('user_id', auth()->id())->today()->count(),
+            'followups_overdue' => Followup::where('user_id', auth()->id())->overdue()->count(),
         ];
 
         return view('dashboard', [

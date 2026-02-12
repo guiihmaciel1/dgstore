@@ -146,7 +146,7 @@
                     <!-- Dropdown: Ferramentas -->
                     <div class="relative">
                         <button @click="toolsOpen = !toolsOpen; commercialOpen = false; stockOpen = false; purchasesOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || request()->routeIs('reports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || request()->routeIs('tools.*') || request()->routeIs('followups.*') || request()->routeIs('reports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -183,6 +183,34 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                                     </svg>
                                     Checklist Seminovo
+                                </a>
+                                <a href="{{ route('tools.price-table') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.price-table') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                    Tabela de Precos
+                                </a>
+                                <a href="{{ route('tools.whatsapp-messages') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.whatsapp-messages') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                    </svg>
+                                    Mensagens WhatsApp
+                                </a>
+                                <a href="{{ route('tools.specs') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.specs') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    Ficha Tecnica
+                                </a>
+                                <a href="{{ route('followups.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('followups.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    Follow-ups
+                                    @php $pendingFollowups = \App\Domain\Followup\Models\Followup::where('user_id', auth()->id())->where('status', 'pending')->where('due_date', '<=', today())->count(); @endphp
+                                    @if($pendingFollowups > 0)
+                                        <span class="ml-auto inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-red-500 text-white">{{ $pendingFollowups }}</span>
+                                    @endif
                                 </a>
                                 @if(auth()->user()->isAdmin())
                                     <div class="border-t border-gray-700 my-1"></div>
@@ -338,6 +366,21 @@
                 </a>
                 <a href="{{ route('tools.checklist') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.checklist') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Checklist Seminovo
+                </a>
+                <a href="{{ route('tools.price-table') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.price-table') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Tabela de Precos
+                </a>
+                <a href="{{ route('tools.whatsapp-messages') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.whatsapp-messages') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Mensagens WhatsApp
+                </a>
+                <a href="{{ route('tools.specs') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.specs') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Ficha Tecnica
+                </a>
+                <a href="{{ route('followups.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('followups.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Follow-ups
+                    @if(($pendingFollowups ?? 0) > 0)
+                        <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-red-500 text-white">{{ $pendingFollowups }}</span>
+                    @endif
                 </a>
             </div>
 
