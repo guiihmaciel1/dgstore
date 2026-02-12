@@ -180,6 +180,15 @@
                             <span style="color: #059669; font-weight: 800;">R$ <span x-text="formatNumber(suggestedPrice)"></span></span>
                         </div>
                     </div>
+
+                    <!-- Botão copiar resumo para funcionário -->
+                    <button @click="copySummary()" type="button"
+                            :style="copied ? 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:#059669;color:white;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;' : 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:1px solid #e5e7eb;cursor:pointer;font-size:13px;font-weight:600;background:white;color:#374151;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;'">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        <span x-text="copied ? 'Copiado!' : 'Copiar resumo (funcion\u00e1rio)'"></span>
+                    </button>
                 </div>
 
                 <!-- Estado vazio -->
@@ -197,6 +206,7 @@
 function currencyCalculator() {
     return {
         open: false,
+        copied: false,
         dollarValue: '',
         exchangeRateInput: '5,45',
         exchangeRate: 5.45,
@@ -333,6 +343,25 @@ function currencyCalculator() {
             }
 
             this.saveToStorage();
+        },
+
+        copySummary() {
+            var self = this;
+            var lines = [];
+            lines.push('*Resumo Importa\u00e7\u00e3o*');
+            lines.push('');
+            lines.push('\uD83D\uDCB5 Valor: US$ ' + (this.dollarValue || '0'));
+            lines.push('\uD83D\uDCB1 Cota\u00e7\u00e3o: R$ ' + this.formatNumber(this.exchangeRate));
+            lines.push('\uD83D\uDCB0 Valor em R$: R$ ' + this.formatNumber(this.valueInReais));
+            lines.push('');
+            lines.push('\uD83D\uDCC8 Taxa: ' + (this.taxRate || '0') + '%');
+            lines.push('\uD83D\uDCB2 Valor da taxa: R$ ' + this.formatNumber(this.taxValue));
+
+            var text = lines.join('\n');
+            navigator.clipboard.writeText(text).then(function() {
+                self.copied = true;
+                setTimeout(function() { self.copied = false; }, 2500);
+            });
         }
     }
 }
