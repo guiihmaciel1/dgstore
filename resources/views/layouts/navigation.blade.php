@@ -11,21 +11,21 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-1 sm:-my-px sm:ms-10 sm:flex items-center">
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                <div class="hidden sm:-my-px sm:ms-6 sm:flex items-center gap-0.5">
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
                         Dashboard
                     </a>
                     
-                    <a href="{{ route('customers.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('customers.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                    <a href="{{ route('customers.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('customers.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
                         Clientes
                     </a>
                     
                     <!-- Dropdown: Comercial -->
                     <div class="relative">
-                        <button @click="commercialOpen = !commercialOpen; stockOpen = false; purchasesOpen = false" 
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('sales.*') || request()->routeIs('cash-register.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                        <button @click="commercialOpen = !commercialOpen; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('sales.*') || request()->routeIs('cash-register.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Comercial</span>
-                            <svg class="ml-1.5 h-4 w-4 transition-transform" :class="{ 'rotate-180': commercialOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': commercialOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </button>
@@ -69,10 +69,10 @@
                     
                     <!-- Dropdown: Estoque -->
                     <div class="relative">
-                        <button @click="stockOpen = !stockOpen; commercialOpen = false; purchasesOpen = false" 
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('products.*') || request()->routeIs('stock.*') || request()->routeIs('imports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                        <button @click="stockOpen = !stockOpen; commercialOpen = false; purchasesOpen = false; toolsOpen = false" 
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('products.*') || request()->routeIs('stock.*') || request()->routeIs('imports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Estoque</span>
-                            <svg class="ml-1.5 h-4 w-4 transition-transform" :class="{ 'rotate-180': stockOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': stockOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </button>
@@ -110,10 +110,10 @@
                     
                     <!-- Dropdown: Compras -->
                     <div class="relative">
-                        <button @click="purchasesOpen = !purchasesOpen; commercialOpen = false; stockOpen = false" 
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('suppliers.*') || request()->routeIs('quotations.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                        <button @click="purchasesOpen = !purchasesOpen; commercialOpen = false; stockOpen = false; toolsOpen = false" 
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('suppliers.*') || request()->routeIs('quotations.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Compras</span>
-                            <svg class="ml-1.5 h-4 w-4 transition-transform" :class="{ 'rotate-180': purchasesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': purchasesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </button>
@@ -143,15 +143,53 @@
                         </div>
                     </div>
                     
-                    <a href="{{ route('valuations.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('valuations.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                        Avaliador
-                    </a>
-                    
-                    @if(auth()->user()->isAdmin())
-                        <a href="{{ route('reports.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
-                            Relatórios
-                        </a>
-                    @endif
+                    <!-- Dropdown: Ferramentas -->
+                    <div class="relative">
+                        <button @click="toolsOpen = !toolsOpen; commercialOpen = false; stockOpen = false; purchasesOpen = false" 
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || request()->routeIs('reports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <span>Ferramentas</span>
+                            <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': toolsOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div x-show="toolsOpen" 
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
+                             x-cloak>
+                            <div class="py-1">
+                                <a href="{{ route('valuations.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('valuations.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    Avaliador
+                                </a>
+                                <a href="{{ route('imei-lookup') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('imei-lookup') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                    Consulta IMEI
+                                </a>
+                                @if(auth()->user()->isAdmin())
+                                    <div class="border-t border-gray-700 my-1"></div>
+                                    <a href="{{ route('reports.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reports.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                        <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                        Relatórios
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -169,13 +207,6 @@
                     </span>
                 </a>
                 
-                <!-- Consulta IMEI -->
-                <a href="{{ route('imei-lookup') }}" class="relative mr-3 text-gray-300 hover:text-white transition" title="Consulta IMEI">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                    </svg>
-                </a>
-
                 <!-- Alerta de Estoque Baixo -->
                 <a href="{{ route('stock.alerts') }}" class="relative mr-4 text-gray-300 hover:text-white transition" title="Alertas de estoque">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
