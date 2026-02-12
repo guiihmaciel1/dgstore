@@ -178,6 +178,12 @@
                                     </svg>
                                     Consulta IMEI
                                 </a>
+                                <a href="{{ route('tools.checklist') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.checklist') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                    </svg>
+                                    Checklist Seminovo
+                                </a>
                                 @if(auth()->user()->isAdmin())
                                     <div class="border-t border-gray-700 my-1"></div>
                                     <a href="{{ route('reports.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reports.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
@@ -329,6 +335,9 @@
                 </a>
                 <a href="{{ route('imei-lookup') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('imei-lookup') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Consulta IMEI
+                </a>
+                <a href="{{ route('tools.checklist') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.checklist') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Checklist Seminovo
                 </a>
             </div>
 

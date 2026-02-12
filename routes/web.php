@@ -27,8 +27,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Consulta IMEI
+    // Ferramentas
     Route::get('/imei-lookup', [ImeiLookupController::class, 'index'])->name('imei-lookup');
+    Route::view('/checklist-seminovo', 'tools.checklist')->name('tools.checklist');
 
     // Produtos
     Route::resource('products', ProductController::class);
