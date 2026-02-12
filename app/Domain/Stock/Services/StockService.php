@@ -32,6 +32,8 @@ class StockService
 
     /**
      * Registra uma saída de estoque
+     *
+     * @throws \Exception se não houver estoque suficiente
      */
     public function registerExit(
         Product $product,
@@ -40,6 +42,12 @@ class StockService
         ?string $reason = null,
         ?string $referenceId = null
     ): StockMovement {
+        if ($product->stock_quantity < $quantity) {
+            throw new \Exception(
+                "Estoque insuficiente para {$product->name}. Disponível: {$product->stock_quantity}, Solicitado: {$quantity}"
+            );
+        }
+
         return $this->createMovement(
             product: $product,
             type: StockMovementType::Out,
@@ -166,7 +174,7 @@ class StockService
     }
 
     /**
-     * Reserva estoque para uma venda (sem criar movimento ainda)
+     * Verifica disponibilidade de estoque (considerando reservas)
      */
     public function checkAvailability(array $items): array
     {
@@ -175,12 +183,29 @@ class StockService
         foreach ($items as $item) {
             $product = Product::find($item['product_id']);
             
-            if (!$product || $product->stock_quantity < $item['quantity']) {
+            if (!$product) {
                 $unavailable[] = [
                     'product_id' => $item['product_id'],
-                    'product_name' => $product?->name ?? 'Produto não encontrado',
+                    'product_name' => 'Produto não encontrado',
                     'requested' => $item['quantity'],
-                    'available' => $product?->stock_quantity ?? 0,
+                    'available' => 0,
+                ];
+                continue;
+            }
+
+            // Considera produtos reservados como indisponíveis
+            $available = $product->stock_quantity;
+            if ($product->reserved) {
+                $available = max(0, $available - 1);
+            }
+
+            if ($available < $item['quantity']) {
+                $unavailable[] = [
+                    'product_id' => $item['product_id'],
+                    'product_name' => $product->name,
+                    'requested' => $item['quantity'],
+                    'available' => $available,
+                    'reserved' => $product->reserved,
                 ];
             }
         }

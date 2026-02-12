@@ -56,7 +56,7 @@ class ReservationController extends Controller
 
         // Pre-seleciona produto se vier da URL
         $selectedProduct = $request->get('product_id') 
-            ? $this->productService->findById($request->get('product_id'))
+            ? $this->productService->find($request->get('product_id'))
             : null;
 
         return view('reservations.create', [
@@ -174,7 +174,7 @@ class ReservationController extends Controller
             return response()->json([]);
         }
 
-        $customers = $this->customerService->search($query, 10);
+        $customers = $this->customerService->search($query)->take(10);
 
         return response()->json($customers->map(fn($c) => [
             'id' => $c->id,
@@ -191,8 +191,9 @@ class ReservationController extends Controller
             return response()->json([]);
         }
 
-        $products = $this->productService->search($query, 10)
-            ->filter(fn($p) => !$p->reserved && $p->stock_quantity > 0);
+        $products = $this->productService->search($query)
+            ->filter(fn($p) => !$p->reserved && $p->stock_quantity > 0)
+            ->take(10);
 
         return response()->json($products->map(fn($p) => [
             'id' => $p->id,

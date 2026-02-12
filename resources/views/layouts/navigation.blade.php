@@ -23,7 +23,7 @@
                     <!-- Dropdown: Comercial -->
                     <div class="relative">
                         <button @click="commercialOpen = !commercialOpen; stockOpen = false; purchasesOpen = false" 
-                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('sales.*') || request()->routeIs('cash-register.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Comercial</span>
                             <svg class="ml-1.5 h-4 w-4 transition-transform" :class="{ 'rotate-180': commercialOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -44,6 +44,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                     </svg>
                                     Vendas
+                                </a>
+                                <a href="{{ route('cash-register.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('cash-register.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                    Caixa
                                 </a>
                                 <a href="{{ route('reservations.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -240,6 +246,9 @@
                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Comercial</div>
                 <a href="{{ route('sales.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('sales.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Vendas
+                </a>
+                <a href="{{ route('cash-register.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('cash-register.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Caixa
                 </a>
                 <a href="{{ route('reservations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Reservas
