@@ -9,79 +9,112 @@ use Illuminate\Database\Seeder;
 class PriceAverageSeeder extends Seeder
 {
     /**
-     * Seed de preços de mercado (novos) por modelo e storage.
+     * Seed de preços de mercado (USADOS) por modelo e storage.
      *
-     * Os preços são pesquisados manualmente no Mercado Livre e atualizados periodicamente.
-     * O ValuationService aplica o fator de depreciação por geração para estimar o preço de usado.
+     * Preços pesquisados manualmente no Facebook Marketplace — região SJRP e interior SP.
+     * Última atualização: 10/02/2026 (18 capturas analisadas, ~220 anúncios)
      *
      * Para atualizar: edite o array $prices abaixo e rode:
      *   php artisan db:seed --class=PriceAverageSeeder
      */
     public function run(): void
     {
-        // Formato: 'slug' => ['storage' => [avg, min, max]]
-        // Preços de iPhones NOVOS no Mercado Livre (em R$)
+        // Formato: 'slug' => ['storage' => [avg, min, max, samples]]
+        // Preços de iPhones USADOS no marketplace (em R$)
         $prices = [
-            // iPhone 11 (2019) — descontinuado, poucos anúncios de novo
-            // 'iphone-11' => ['64GB' => [2800, 2500, 3100], '128GB' => [3200, 2900, 3500]],
+            // ── iPhone 11 (2019) ──────────────────────
+            'iphone-11' => [
+                '64GB'  => [943, 680, 1200, 25],
+                '128GB' => [1025, 680, 1300, 13],
+            ],
+            'iphone-11-pro' => [
+                '64GB'  => [1143, 950, 1399, 7],
+                '256GB' => [1500, 1400, 1600, 3],
+            ],
+            'iphone-11-pro-max' => [
+                '64GB'  => [1362, 1050, 1500, 9],
+                '256GB' => [1700, 1700, 1700, 1],
+            ],
 
-            // iPhone 12 (2020)
-            // 'iphone-12' => ['64GB' => [3200, 2900, 3500], '128GB' => [3500, 3200, 3800]],
+            // ── iPhone 12 (2020) ──────────────────────
+            'iphone-12' => [
+                '64GB'  => [925, 850, 1000, 2],
+                '128GB' => [1449, 1299, 1599, 2],
+            ],
+            'iphone-12-mini' => [
+                '128GB' => [1450, 1450, 1450, 1],
+            ],
+            'iphone-12-pro' => [
+                '128GB' => [1845, 1600, 2200, 6],
+            ],
+            'iphone-12-pro-max' => [
+                '128GB' => [2183, 1800, 2499, 6],
+                '256GB' => [1800, 1800, 1800, 2],
+            ],
 
-            // iPhone 13 (2021)
+            // ── iPhone 13 (2021) ──────────────────────
             'iphone-13' => [
-                '128GB' => [3999, 3699, 4299],
-                '256GB' => [4499, 4199, 4799],
+                '128GB' => [2031, 1600, 2900, 33],
+                '256GB' => [2153, 2059, 2299, 3],
+            ],
+            'iphone-13-mini' => [
+                '128GB' => [1897, 1897, 1897, 1],
+            ],
+            'iphone-13-pro' => [
+                '128GB' => [2442, 2000, 2750, 5],
+            ],
+            'iphone-13-pro-max' => [
+                '128GB' => [2644, 1600, 3000, 8],
+                '256GB' => [3145, 2990, 3299, 2],
             ],
 
-            // iPhone 14 (2022)
+            // ── iPhone 14 (2022) ──────────────────────
             'iphone-14' => [
-                '128GB' => [4499, 4199, 4799],
-                '256GB' => [5199, 4899, 5499],
+                '128GB' => [2576, 1900, 3000, 14],
+                '256GB' => [2799, 2799, 2799, 1],
+            ],
+            'iphone-14-plus' => [
+                '128GB' => [2927, 2300, 3400, 7],
+            ],
+            'iphone-14-pro' => [
+                '128GB' => [3097, 2900, 3390, 3],
+                '256GB' => [3800, 3800, 3800, 1],
+            ],
+            'iphone-14-pro-max' => [
+                '128GB' => [3511, 2990, 4199, 8],
+                '256GB' => [3810, 3499, 4100, 7],
             ],
 
-            // iPhone 15 (2023)
+            // ── iPhone 15 (2023) ──────────────────────
             'iphone-15' => [
-                '128GB' => [5299, 4999, 5599],
-                '256GB' => [6099, 5799, 6399],
-                '512GB' => [7499, 7199, 7799],
+                '128GB' => [3119, 2200, 3700, 19],
+                '256GB' => [3700, 3700, 3700, 1],
             ],
             'iphone-15-plus' => [
-                '128GB' => [5999, 5699, 6299],
-                '256GB' => [6799, 6499, 7099],
+                '128GB' => [3600, 3450, 3799, 4],
             ],
             'iphone-15-pro' => [
-                '128GB' => [6499, 6199, 6799],
-                '256GB' => [7299, 6999, 7599],
-                '512GB' => [8799, 8499, 9099],
-                '1TB' => [10299, 9999, 10599],
+                '128GB' => [4050, 3750, 4500, 5],
+                '256GB' => [4075, 3899, 4250, 2],
+                '512GB' => [4400, 4400, 4400, 1],
             ],
             'iphone-15-pro-max' => [
-                '256GB' => [8499, 8199, 8799],
-                '512GB' => [9999, 9699, 10299],
-                '1TB' => [11499, 11199, 11799],
+                '256GB' => [4542, 3850, 5250, 9],
             ],
 
-            // iPhone 16 (2024)
+            // ── iPhone 16 (2024) ──────────────────────
             'iphone-16' => [
-                '128GB' => [5999, 5699, 6299],
-                '256GB' => [6799, 6499, 7099],
-                '512GB' => [8199, 7899, 8499],
+                '128GB' => [4112, 3300, 4999, 8],
             ],
             'iphone-16-plus' => [
-                '128GB' => [6799, 6499, 7099],
-                '256GB' => [7599, 7299, 7899],
+                '128GB' => [4699, 4699, 4699, 1],
             ],
             'iphone-16-pro' => [
-                '128GB' => [7499, 7199, 7799],
-                '256GB' => [8299, 7999, 8599],
-                '512GB' => [9799, 9499, 10099],
-                '1TB' => [11299, 10999, 11599],
+                '128GB' => [5075, 4500, 5899, 10],
+                '256GB' => [5187, 4800, 5700, 4],
             ],
             'iphone-16-pro-max' => [
-                '256GB' => [9499, 9199, 9799],
-                '512GB' => [10999, 10699, 11299],
-                '1TB' => [12499, 12199, 12799],
+                '256GB' => [5898, 5499, 6300, 8],
             ],
         ];
 
@@ -95,8 +128,7 @@ class PriceAverageSeeder extends Seeder
                 continue;
             }
 
-            foreach ($storages as $storage => [$avg, $min, $max]) {
-                $median = $avg; // Para simplificar, mediana = média
+            foreach ($storages as $storage => [$avg, $min, $max, $samples]) {
                 $suggestedBuy = round($avg * 0.70, 2); // 30% margem
 
                 PriceAverage::updateOrCreate(
@@ -107,11 +139,11 @@ class PriceAverageSeeder extends Seeder
                     ],
                     [
                         'avg_price' => $avg,
-                        'median_price' => $median,
+                        'median_price' => $avg,
                         'min_price' => $min,
                         'max_price' => $max,
                         'suggested_buy_price' => $suggestedBuy,
-                        'sample_count' => 1,
+                        'sample_count' => $samples,
                     ],
                 );
 
@@ -119,6 +151,6 @@ class PriceAverageSeeder extends Seeder
             }
         }
 
-        $this->command->info("{$count} preços de mercado inseridos/atualizados.");
+        $this->command->info("{$count} preços de mercado (usados) inseridos/atualizados.");
     }
 }

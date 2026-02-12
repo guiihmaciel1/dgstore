@@ -19,11 +19,10 @@ class ValuationService
      * Avalia um iPhone seminovo com base no checklist e preços de mercado.
      *
      * Fluxo:
-     * 1. Obtém a média de preço de NOVO (catálogo ML)
-     * 2. Aplica fator de depreciação por geração → estimativa de USADO
-     * 3. Aplica modificadores (bateria, estado, acessórios)
-     * 4. Aplica margem DG Store (-30%)
-     * 5. Resultado = valor sugerido de compra
+     * 1. Obtém a média de preço de USADO (pesquisa manual no marketplace)
+     * 2. Aplica modificadores (bateria, estado, acessórios)
+     * 3. Aplica margem DG Store (-30%)
+     * 4. Resultado = valor sugerido de compra
      */
     public function evaluate(ValuationChecklistData $checklist): ?array
     {
@@ -39,21 +38,17 @@ class ValuationService
             return null;
         }
 
-        // Preço de mercado (novo)
-        $marketNewAvg = (float) $priceAverage->avg_price;
-        $marketNewMin = (float) $priceAverage->min_price;
-        $marketNewMax = (float) $priceAverage->max_price;
-
-        // Estimativa de usado (novo * fator de depreciação)
-        $depreciationFactor = $model->depreciationFactor();
-        $usedEstimate = round($marketNewAvg * $depreciationFactor, 2);
+        // Preço de mercado (usado — pesquisa no marketplace)
+        $marketAvg = (float) $priceAverage->avg_price;
+        $marketMin = (float) $priceAverage->min_price;
+        $marketMax = (float) $priceAverage->max_price;
 
         // Modificadores do checklist (bateria, estado, acessórios)
         $modifier = $checklist->totalModifier();
 
-        // Valor sugerido = usado estimado * (1 - margem - ajustes_negativos)
+        // Valor sugerido = preço usado * (1 - margem - ajustes)
         $totalDiscount = self::BASE_DISCOUNT - $modifier;
-        $suggestedBuyPrice = round($usedEstimate * (1 - $totalDiscount), 2);
+        $suggestedBuyPrice = round($marketAvg * (1 - $totalDiscount), 2);
 
         return [
             'model' => $model,
@@ -69,20 +64,10 @@ class ValuationService
             'accessory_state_label' => $checklist->accessoryState->label(),
             'notes' => $checklist->notes,
 
-            // Preços de mercado (novo — catálogo ML)
-            'market_new_avg' => $marketNewAvg,
-            'market_new_min' => $marketNewMin,
-            'market_new_max' => $marketNewMax,
-
-            // Estimativa de usado
-            'depreciation_factor' => $depreciationFactor,
-            'depreciation_pct' => round((1 - $depreciationFactor) * 100),
-            'used_estimate' => $usedEstimate,
-
-            // Dados para retrocompatibilidade com a view
-            'market_avg' => $usedEstimate,
-            'market_min' => round($marketNewMin * $depreciationFactor, 2),
-            'market_max' => round($marketNewMax * $depreciationFactor, 2),
+            // Preços de mercado (usado)
+            'market_avg' => $marketAvg,
+            'market_min' => $marketMin,
+            'market_max' => $marketMax,
 
             'sample_count' => $priceAverage->sample_count,
             'data_age_days' => $priceAverage->days_old,
@@ -128,9 +113,9 @@ class ValuationService
         }
 
         $lines[] = '';
-        $lines[] = "Preço de mercado (novo): {$priceFormat($evaluation['market_new_avg'])}";
-        $lines[] = "Estimativa usado ({$evaluation['depreciation_pct']}% dep.): {$priceFormat($evaluation['used_estimate'])}";
-        $lines[] = "  Baseado em {$evaluation['sample_count']} anúncios do ML";
+        $lines[] = "Preço de mercado (usado): {$priceFormat($evaluation['market_avg'])}";
+        $lines[] = "  Faixa: {$priceFormat($evaluation['market_min'])} — {$priceFormat($evaluation['market_max'])}";
+        $lines[] = "  Baseado em {$evaluation['sample_count']} anúncios";
         $lines[] = '';
         $lines[] = 'Valor sugerido de compra:';
         $lines[] = "  {$priceFormat($evaluation['suggested_buy_price'])}";
@@ -156,15 +141,11 @@ class ValuationService
             return null;
         }
 
-        $depreciationFactor = $model->depreciationFactor();
-
         return [
             'avg_price' => (float) $priceAverage->avg_price,
             'median_price' => (float) $priceAverage->median_price,
             'min_price' => (float) $priceAverage->min_price,
             'max_price' => (float) $priceAverage->max_price,
-            'depreciation_factor' => $depreciationFactor,
-            'used_estimate' => round((float) $priceAverage->avg_price * $depreciationFactor, 2),
             'suggested_buy_price' => (float) $priceAverage->suggested_buy_price,
             'sample_count' => $priceAverage->sample_count,
             'calculated_at' => $priceAverage->calculated_at->format('d/m/Y'),
