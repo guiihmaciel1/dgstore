@@ -113,9 +113,14 @@ class QuotationController extends Controller
         $suppliers = $this->supplierService->active();
         $products = $this->productService->active();
 
+        $productsJson = $products->map(function ($p) {
+            return ['id' => $p->id, 'name' => $p->name, 'price' => $p->sale_price];
+        })->values();
+
         return view('quotations.bulk-create', [
             'suppliers' => $suppliers,
             'products' => $products,
+            'productsJson' => $productsJson,
         ]);
     }
 

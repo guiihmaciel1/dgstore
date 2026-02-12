@@ -222,7 +222,7 @@
 
     <script>
         function bulkQuotationForm() {
-            const products = @json($products->map(fn($p) => ['id' => $p->id, 'name' => $p->name, 'price' => $p->sale_price]));
+            const products = @json($productsJson);
             
             return {
                 rows: [

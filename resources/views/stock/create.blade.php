@@ -167,12 +167,7 @@
 
     <script>
         function productSearch() {
-            const products = @json($products->map(fn($p) => [
-                'id'    => $p->id,
-                'name'  => $p->name,
-                'sku'   => $p->sku,
-                'stock' => $p->stock_quantity,
-            ]));
+            const products = @json($productsJson);
 
             const preselected = '{{ request('product_id') }}';
 

@@ -50,8 +50,18 @@ class StockController extends Controller
     {
         $products = $this->productService->getActiveProducts();
 
+        $productsJson = $products->map(function ($p) {
+            return [
+                'id'    => $p->id,
+                'name'  => $p->name,
+                'sku'   => $p->sku,
+                'stock' => $p->stock_quantity,
+            ];
+        })->values();
+
         return view('stock.create', [
             'products' => $products,
+            'productsJson' => $productsJson,
             'types' => [
                 StockMovementType::In,
                 StockMovementType::Adjustment,
