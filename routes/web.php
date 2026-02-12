@@ -13,6 +13,7 @@ use App\Presentation\Http\Controllers\SaleController;
 use App\Presentation\Http\Controllers\StockController;
 use App\Presentation\Http\Controllers\SupplierController;
 use App\Presentation\Http\Controllers\ValuationController;
+use App\Presentation\Http\Controllers\ImeiLookupController;
 use App\Presentation\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,9 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Consulta IMEI
+    Route::get('/imei-lookup', [ImeiLookupController::class, 'index'])->name('imei-lookup');
 
     // Produtos
     Route::resource('products', ProductController::class);
