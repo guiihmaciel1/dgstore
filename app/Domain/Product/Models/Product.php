@@ -35,6 +35,8 @@ class Product extends Model
         'supplier',
         'notes',
         'active',
+        'reserved',
+        'reserved_by',
     ];
 
     protected function casts(): array
@@ -47,6 +49,7 @@ class Product extends Model
             'stock_quantity' => 'integer',
             'min_stock_alert' => 'integer',
             'active' => 'boolean',
+            'reserved' => 'boolean',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',

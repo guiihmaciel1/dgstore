@@ -59,7 +59,8 @@ class StockService
     }
 
     /**
-     * Registra um ajuste de estoque
+     * Registra um ajuste de estoque.
+     * Define o estoque para o valor exato de $newQuantity.
      */
     public function registerAdjustment(
         Product $product,
@@ -67,15 +68,27 @@ class StockService
         ?string $userId = null,
         ?string $reason = null
     ): StockMovement {
-        $difference = $newQuantity - $product->stock_quantity;
+        $oldQuantity = $product->stock_quantity;
+        $difference = $newQuantity - $oldQuantity;
 
-        return $this->createMovement(
-            product: $product,
-            type: StockMovementType::Adjustment,
-            quantity: abs($difference),
-            userId: $userId,
-            reason: $reason ?? "Ajuste de estoque: {$product->stock_quantity} → {$newQuantity}"
-        );
+        if ($difference === 0) {
+            // Nenhuma alteração necessária, mas registra o movimento para auditoria
+        }
+
+        return DB::transaction(function () use ($product, $oldQuantity, $newQuantity, $difference, $userId, $reason) {
+            $movement = StockMovement::create([
+                'product_id' => $product->id,
+                'user_id' => $userId,
+                'type' => StockMovementType::Adjustment,
+                'quantity' => abs($difference),
+                'reason' => $reason ?? "Ajuste de estoque: {$oldQuantity} → {$newQuantity}",
+            ]);
+
+            // Atualiza diretamente para o valor desejado, sem depender de isAddition()
+            $product->update(['stock_quantity' => $newQuantity]);
+
+            return $movement;
+        });
     }
 
     /**

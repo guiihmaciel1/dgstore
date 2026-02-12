@@ -29,14 +29,18 @@ readonly class ProductData
 
     public static function fromArray(array $data): self
     {
+        $name = $data['name'] ?? throw new \InvalidArgumentException('Campo "name" é obrigatório em ProductData.');
+        $sku = $data['sku'] ?? throw new \InvalidArgumentException('Campo "sku" é obrigatório em ProductData.');
+        $category = $data['category'] ?? throw new \InvalidArgumentException('Campo "category" é obrigatório em ProductData.');
+
         return new self(
-            name: $data['name'],
-            sku: $data['sku'],
-            category: $data['category'] instanceof ProductCategory 
-                ? $data['category'] 
-                : ProductCategory::from($data['category']),
-            costPrice: (float) $data['cost_price'],
-            salePrice: (float) $data['sale_price'],
+            name: $name,
+            sku: $sku,
+            category: $category instanceof ProductCategory 
+                ? $category 
+                : ProductCategory::from($category),
+            costPrice: (float) ($data['cost_price'] ?? 0),
+            salePrice: (float) ($data['sale_price'] ?? 0),
             model: $data['model'] ?? null,
             storage: $data['storage'] ?? null,
             color: $data['color'] ?? null,

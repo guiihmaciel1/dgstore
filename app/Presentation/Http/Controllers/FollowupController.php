@@ -10,6 +10,7 @@ use App\Domain\Followup\Models\Followup;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class FollowupController extends Controller
@@ -44,11 +45,18 @@ class FollowupController extends Controller
 
         $followups = $query->paginate(20)->withQueryString();
 
-        // Contagens para badges
+        // Contagens para badges (uma única query)
+        $rawCounts = Followup::where('user_id', auth()->id())
+            ->where('status', FollowupStatus::Pending)
+            ->selectRaw("COUNT(*) as pending")
+            ->selectRaw("SUM(CASE WHEN DATE(due_date) = CURDATE() THEN 1 ELSE 0 END) as today")
+            ->selectRaw("SUM(CASE WHEN DATE(due_date) < CURDATE() THEN 1 ELSE 0 END) as overdue")
+            ->first();
+
         $counts = [
-            'pending' => Followup::where('user_id', auth()->id())->pending()->count(),
-            'today' => Followup::where('user_id', auth()->id())->today()->count(),
-            'overdue' => Followup::where('user_id', auth()->id())->overdue()->count(),
+            'pending' => (int) ($rawCounts->pending ?? 0),
+            'today' => (int) ($rawCounts->today ?? 0),
+            'overdue' => (int) ($rawCounts->overdue ?? 0),
         ];
 
         return view('followups.index', [
@@ -63,7 +71,7 @@ class FollowupController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'type' => 'required|string',
+            'type' => ['required', 'string', Rule::in(array_column(FollowupType::cases(), 'value'))],
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'phone' => 'nullable|string|max:20',
@@ -86,7 +94,7 @@ class FollowupController extends Controller
         $this->authorizeFollowup($followup);
 
         $validated = $request->validate([
-            'type' => 'required|string',
+            'type' => ['required', 'string', Rule::in(array_column(FollowupType::cases(), 'value'))],
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'phone' => 'nullable|string|max:20',

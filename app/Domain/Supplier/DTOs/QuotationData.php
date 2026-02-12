@@ -21,11 +21,11 @@ readonly class QuotationData
     public static function fromArray(array $data): self
     {
         return new self(
-            supplier_id: $data['supplier_id'],
-            user_id: $data['user_id'],
-            product_name: $data['product_name'],
-            unit_price: (float) $data['unit_price'],
-            quoted_at: $data['quoted_at'],
+            supplier_id: $data['supplier_id'] ?? throw new \InvalidArgumentException('Campo "supplier_id" é obrigatório em QuotationData.'),
+            user_id: $data['user_id'] ?? throw new \InvalidArgumentException('Campo "user_id" é obrigatório em QuotationData.'),
+            product_name: $data['product_name'] ?? throw new \InvalidArgumentException('Campo "product_name" é obrigatório em QuotationData.'),
+            unit_price: (float) ($data['unit_price'] ?? throw new \InvalidArgumentException('Campo "unit_price" é obrigatório em QuotationData.')),
+            quoted_at: $data['quoted_at'] ?? throw new \InvalidArgumentException('Campo "quoted_at" é obrigatório em QuotationData.'),
             product_id: $data['product_id'] ?? null,
             quantity: (float) ($data['quantity'] ?? 1),
             unit: $data['unit'] ?? 'un',

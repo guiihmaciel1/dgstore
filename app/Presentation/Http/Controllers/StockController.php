@@ -123,10 +123,17 @@ class StockController extends Controller
 
         $tradeIns = $query->paginate(15)->withQueryString();
 
+        // Contagens consolidadas em uma única query
+        $rawStats = TradeIn::selectRaw("
+            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN status = 'processed' THEN 1 ELSE 0 END) as processed,
+            SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected
+        ")->first();
+
         $stats = [
-            'pending' => TradeIn::pending()->count(),
-            'processed' => TradeIn::processed()->count(),
-            'rejected' => TradeIn::rejected()->count(),
+            'pending' => (int) ($rawStats->pending ?? 0),
+            'processed' => (int) ($rawStats->processed ?? 0),
+            'rejected' => (int) ($rawStats->rejected ?? 0),
         ];
 
         return view('stock.trade-ins', [
@@ -143,6 +150,10 @@ class StockController extends Controller
                 ->back()
                 ->with('error', 'Este trade-in já foi processado ou rejeitado.');
         }
+
+        $request->validate([
+            'action' => 'required|in:reject,create',
+        ]);
 
         $action = $request->get('action');
 
@@ -204,6 +215,12 @@ class StockController extends Controller
 
     public function linkTradeInToProduct(Request $request, TradeIn $tradeIn): RedirectResponse
     {
+        if (!$tradeIn->isPending()) {
+            return redirect()
+                ->back()
+                ->with('error', 'Este trade-in já foi processado ou rejeitado.');
+        }
+
         $request->validate([
             'product_id' => ['required', 'exists:products,id'],
         ]);

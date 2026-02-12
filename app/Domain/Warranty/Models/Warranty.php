@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Warranty\Models;
 
 use App\Domain\Sale\Models\SaleItem;
+use App\Domain\Warranty\Enums\WarrantyClaimStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -91,7 +92,7 @@ class Warranty extends Model
     public function scopeWithOpenClaims(Builder $query): Builder
     {
         return $query->whereHas('claims', function (Builder $q) {
-            $q->whereIn('status', ['opened', 'in_progress']);
+            $q->whereIn('status', [WarrantyClaimStatus::Opened, WarrantyClaimStatus::InProgress]);
         });
     }
 
@@ -144,7 +145,7 @@ class Warranty extends Model
 
     public function getOpenClaimsCountAttribute(): int
     {
-        return $this->claims()->whereIn('status', ['opened', 'in_progress'])->count();
+        return $this->claims()->whereIn('status', [WarrantyClaimStatus::Opened, WarrantyClaimStatus::InProgress])->count();
     }
 
     // Métodos auxiliares

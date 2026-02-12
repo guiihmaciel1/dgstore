@@ -15,6 +15,7 @@ use App\Presentation\Http\Controllers\SupplierController;
 use App\Presentation\Http\Controllers\ValuationController;
 use App\Presentation\Http\Controllers\FollowupController;
 use App\Presentation\Http\Controllers\ImeiLookupController;
+use App\Presentation\Http\Controllers\ToolController;
 use App\Presentation\Http\Controllers\WarrantyController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,24 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ferramentas
     Route::get('/imei-lookup', [ImeiLookupController::class, 'index'])->name('imei-lookup');
     Route::view('/checklist-seminovo', 'tools.checklist')->name('tools.checklist');
-    Route::get('/tabela-precos', function () {
-        $products = \App\Domain\Product\Models\Product::where('active', true)->orderBy('name')->get();
-        $productsJson = $products->map(function ($p) {
-            return [
-                'id' => $p->id,
-                'name' => $p->name,
-                'sku' => $p->sku,
-                'category' => $p->category->value,
-                'storage' => $p->storage,
-                'condition' => $p->condition->value,
-                'cost_price' => (float) $p->cost_price,
-                'sale_price' => (float) $p->sale_price,
-                'stock' => $p->stock_quantity,
-                'margin' => $p->profit_margin,
-            ];
-        })->values();
-        return view('tools.price-table', ['productsJson' => $productsJson]);
-    })->name('tools.price-table');
+    Route::get('/tabela-precos', [ToolController::class, 'priceTable'])->name('tools.price-table');
     Route::view('/mensagens-whatsapp', 'tools.whatsapp-messages')->name('tools.whatsapp-messages');
     Route::view('/ficha-tecnica', 'tools.specs')->name('tools.specs');
 

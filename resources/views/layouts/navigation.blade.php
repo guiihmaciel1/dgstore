@@ -207,8 +207,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                     Follow-ups
-                                    @php $pendingFollowups = \App\Domain\Followup\Models\Followup::where('user_id', auth()->id())->where('status', 'pending')->where('due_date', '<=', today())->count(); @endphp
-                                    @if($pendingFollowups > 0)
+                                    @if(($pendingFollowups ?? 0) > 0)
                                         <span class="ml-auto inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-red-500 text-white">{{ $pendingFollowups }}</span>
                                     @endif
                                 </a>

@@ -20,8 +20,8 @@ readonly class TradeInData
     public static function fromArray(array $data): self
     {
         return new self(
-            deviceName: $data['device_name'],
-            estimatedValue: (float) $data['estimated_value'],
+            deviceName: $data['device_name'] ?? throw new \InvalidArgumentException('Campo "device_name" é obrigatório em TradeInData.'),
+            estimatedValue: (float) ($data['estimated_value'] ?? throw new \InvalidArgumentException('Campo "estimated_value" é obrigatório em TradeInData.')),
             condition: isset($data['condition'])
                 ? ($data['condition'] instanceof TradeInCondition
                     ? $data['condition']

@@ -18,8 +18,8 @@ readonly class CustomerData
     public static function fromArray(array $data): self
     {
         return new self(
-            name: $data['name'],
-            phone: preg_replace('/\D/', '', $data['phone']),
+            name: $data['name'] ?? throw new \InvalidArgumentException('Campo "name" é obrigatório em CustomerData.'),
+            phone: preg_replace('/\D/', '', $data['phone'] ?? throw new \InvalidArgumentException('Campo "phone" é obrigatório em CustomerData.')),
             email: $data['email'] ?? null,
             cpf: isset($data['cpf']) ? preg_replace('/\D/', '', $data['cpf']) : null,
             address: $data['address'] ?? null,

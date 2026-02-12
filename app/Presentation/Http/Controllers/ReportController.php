@@ -24,6 +24,11 @@ class ReportController extends Controller
 
     public function sales(Request $request): View
     {
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+        ]);
+
         $startDate = $request->get('start_date')
             ? Carbon::parse($request->start_date)->startOfDay()
             : Carbon::now()->startOfMonth();
@@ -43,6 +48,11 @@ class ReportController extends Controller
 
     public function salesPdf(Request $request)
     {
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+        ]);
+
         $startDate = $request->get('start_date')
             ? Carbon::parse($request->start_date)->startOfDay()
             : Carbon::now()->startOfMonth();
@@ -73,6 +83,12 @@ class ReportController extends Controller
 
     public function topProducts(Request $request): View
     {
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'limit' => 'nullable|integer|min:1|max:100',
+        ]);
+
         $startDate = $request->get('start_date')
             ? Carbon::parse($request->start_date)->startOfDay()
             : null;
@@ -81,7 +97,7 @@ class ReportController extends Controller
             ? Carbon::parse($request->end_date)->endOfDay()
             : null;
 
-        $limit = $request->get('limit', 10);
+        $limit = (int) $request->get('limit', 10);
 
         $report = $this->reportUseCase->topProductsReport($limit, $startDate, $endDate);
 

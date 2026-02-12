@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\CashRegister\Models;
 
+use App\Domain\CashRegister\Enums\CashEntryType;
 use App\Domain\CashRegister\Enums\CashRegisterStatus;
 use App\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -82,11 +83,11 @@ class CashRegister extends Model
     public function calculateExpectedBalance(): float
     {
         $inflow = $this->entries()
-            ->whereIn('type', ['sale', 'supply'])
+            ->whereIn('type', [CashEntryType::Sale, CashEntryType::Supply])
             ->sum('amount');
 
         $outflow = $this->entries()
-            ->whereIn('type', ['withdrawal', 'trade_in', 'expense'])
+            ->whereIn('type', [CashEntryType::Withdrawal, CashEntryType::TradeIn, CashEntryType::Expense])
             ->sum('amount');
 
         return (float) $this->opening_balance + $inflow - $outflow;
@@ -95,14 +96,14 @@ class CashRegister extends Model
     public function getTotalInflowAttribute(): float
     {
         return (float) $this->entries()
-            ->whereIn('type', ['sale', 'supply'])
+            ->whereIn('type', [CashEntryType::Sale, CashEntryType::Supply])
             ->sum('amount');
     }
 
     public function getTotalOutflowAttribute(): float
     {
         return (float) $this->entries()
-            ->whereIn('type', ['withdrawal', 'trade_in', 'expense'])
+            ->whereIn('type', [CashEntryType::Withdrawal, CashEntryType::TradeIn, CashEntryType::Expense])
             ->sum('amount');
     }
 
