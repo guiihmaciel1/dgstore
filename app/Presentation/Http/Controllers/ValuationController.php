@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers;
 
 use App\Domain\Valuation\DTOs\ValuationChecklistData;
-use App\Domain\Valuation\Enums\ListingSource;
 use App\Domain\Valuation\Models\IphoneModel;
-use App\Domain\Valuation\Models\MarketListing;
-use App\Domain\Valuation\Services\PriceCalculatorService;
 use App\Domain\Valuation\Services\ValuationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,7 +16,6 @@ class ValuationController extends Controller
 {
     public function __construct(
         private readonly ValuationService $valuationService,
-        private readonly PriceCalculatorService $priceCalculator,
     ) {}
 
     /**
@@ -56,7 +52,7 @@ class ValuationController extends Controller
             $request->input('storage'),
         );
 
-        if (!$data) {
+        if (! $data) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sem dados de preço disponíveis para este modelo/armazenamento.',
@@ -87,14 +83,13 @@ class ValuationController extends Controller
         $checklist = ValuationChecklistData::fromArray($validated);
         $evaluation = $this->valuationService->evaluate($checklist);
 
-        if (!$evaluation) {
+        if (! $evaluation) {
             return response()->json([
                 'success' => false,
                 'message' => 'Sem dados de mercado disponíveis para este modelo.',
             ], 404);
         }
 
-        // Serializa para JSON (remove objetos complexos)
         $response = [
             'model_name' => $evaluation['model']->name,
             'storage' => $evaluation['storage'],
@@ -104,10 +99,15 @@ class ValuationController extends Controller
             'device_state_label' => $evaluation['device_state']->label(),
             'accessory_state_label' => $evaluation['accessory_state']->label(),
             'notes' => $evaluation['notes'],
+            'market_new_avg' => $evaluation['market_new_avg'],
+            'market_new_min' => $evaluation['market_new_min'],
+            'market_new_max' => $evaluation['market_new_max'],
             'market_avg' => $evaluation['market_avg'],
             'market_min' => $evaluation['market_min'],
             'market_max' => $evaluation['market_max'],
-            'market_median' => $evaluation['market_median'],
+            'depreciation_factor' => $evaluation['depreciation_factor'],
+            'depreciation_pct' => $evaluation['depreciation_pct'],
+            'used_estimate' => $evaluation['used_estimate'],
             'sample_count' => $evaluation['sample_count'],
             'data_age_days' => $evaluation['data_age_days'],
             'modifiers' => $evaluation['modifiers'],
@@ -120,39 +120,6 @@ class ValuationController extends Controller
         return response()->json([
             'success' => true,
             'data' => $response,
-        ]);
-    }
-
-    /**
-     * API: insere preço manual de mercado.
-     */
-    public function storeManualPrice(Request $request): JsonResponse
-    {
-        $validated = $request->validate([
-            'iphone_model_id' => 'required|string|exists:iphone_models,id',
-            'storage' => 'required|string',
-            'price' => 'required|numeric|min:100',
-            'title' => 'nullable|string|max:255',
-        ]);
-
-        $model = IphoneModel::findOrFail($validated['iphone_model_id']);
-
-        MarketListing::create([
-            'iphone_model_id' => $model->id,
-            'storage' => $validated['storage'],
-            'title' => $validated['title'] ?: "{$model->name} {$validated['storage']} (manual)",
-            'price' => $validated['price'],
-            'source' => ListingSource::Manual,
-            'location' => 'São José do Rio Preto, SP',
-            'scraped_at' => now()->toDateString(),
-        ]);
-
-        // Recalcula média para este modelo+storage
-        $this->priceCalculator->calculateForModelStorage($model, $validated['storage']);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Preço adicionado e médias recalculadas.',
         ]);
     }
 }

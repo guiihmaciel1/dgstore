@@ -35,15 +35,5 @@ return [
         ],
     ],
 
-    'mercadolivre' => [
-        'client_id' => env('ML_CLIENT_ID'),
-        'client_secret' => env('ML_CLIENT_SECRET'),
-        'redirect_uri' => env('ML_REDIRECT_URI'),
-    ],
-
-    'scraper_proxy' => [
-        'key' => env('SCRAPER_API_KEY'),
-        'base_url' => env('SCRAPER_API_URL', 'https://api.scraperapi.com'),
-    ],
 
 ];
