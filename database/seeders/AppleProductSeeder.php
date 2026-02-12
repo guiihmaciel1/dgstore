@@ -84,7 +84,16 @@ class AppleProductSeeder extends Seeder
     private function iphoneLineup(): array
     {
         return [
-            // ── iPhone 16 ──
+            // ── iPhone 17 (Set/2025) — A19 Pro / A19 ──
+            ['iPhone 17 Pro Max', 'I17PM', ['256GB'=>[9200,11499], '512GB'=>[10800,13499], '1TB'=>[12500,15999], '2TB'=>[14500,18499]]],
+            ['iPhone 17 Pro',     'I17PR', ['256GB'=>[8000,9999], '512GB'=>[9500,11999], '1TB'=>[11000,13999]]],
+            ['iPhone 17',         'I17',   ['256GB'=>[6500,7999], '512GB'=>[7500,9499]]],
+            ['iPhone Air',        'IAIR',  ['256GB'=>[7200,8999], '512GB'=>[8200,10499], '1TB'=>[9500,11999]]],
+
+            // ── iPhone 16e (Fev/2025) — A18 + Apple C1 ──
+            ['iPhone 16e',        'I16E',  ['128GB'=>[3500,4499], '256GB'=>[4000,4999], '512GB'=>[5000,5999]]],
+
+            // ── iPhone 16 (Set/2024) ──
             ['iPhone 16 Pro Max', 'I16PM', ['256GB'=>[8500,10499], '512GB'=>[9800,12499], '1TB'=>[11200,14499]]],
             ['iPhone 16 Pro',     'I16PR', ['128GB'=>[7000,8999], '256GB'=>[7800,9999], '512GB'=>[9000,11499], '1TB'=>[10200,13499]]],
             ['iPhone 16 Plus',    'I16PL', ['128GB'=>[6200,7999], '256GB'=>[7000,8999], '512GB'=>[8000,10499]]],
@@ -129,11 +138,22 @@ class AppleProductSeeder extends Seeder
     private function ipadLineup(): array
     {
         return [
+            // ── iPad Pro M4 (2024) ──
             ['iPad Pro M4 13',       'IPDP13', ['256GB'=>[9000,11999], '512GB'=>[10500,13499], '1TB'=>[12500,15999], '2TB'=>[14500,18999]]],
             ['iPad Pro M4 11',       'IPDP11', ['256GB'=>[7500,9999], '512GB'=>[9000,11499], '1TB'=>[10500,13999], '2TB'=>[12500,16499]]],
+
+            // ── iPad Air M3 (2025) ──
+            ['iPad Air M3 13',       'IPDA13M3', ['128GB'=>[6800,8999], '256GB'=>[7500,9999], '512GB'=>[8800,11499], '1TB'=>[10200,13499]]],
+            ['iPad Air M3 11',       'IPDA11M3', ['128GB'=>[5500,7299], '256GB'=>[6200,7999], '512GB'=>[7500,9499], '1TB'=>[8500,10999]]],
+
+            // ── iPad Air M2 ──
             ['iPad Air M2 13',       'IPDA13', ['128GB'=>[6500,8499], '256GB'=>[7200,9499], '512GB'=>[8500,10999], '1TB'=>[9800,12999]]],
             ['iPad Air M2 11',       'IPDA11', ['128GB'=>[5200,6999], '256GB'=>[5800,7499], '512GB'=>[7000,8999], '1TB'=>[8200,10499]]],
-            ['iPad Mini 6a Geracao', 'IPDM6',  ['64GB'=>[3500,4499], '256GB'=>[4500,5499]]],
+
+            // ── iPad Mini A17 Pro (2024) ──
+            ['iPad Mini 7a Geracao', 'IPDM7',  ['128GB'=>[4200,5499], '256GB'=>[5000,6499], '512GB'=>[6000,7499]]],
+
+            // ── iPad base (2022) ──
             ['iPad 10a Geracao',     'IPD10',  ['64GB'=>[3000,3799], '256GB'=>[3800,4799]]],
         ];
     }
@@ -145,6 +165,21 @@ class AppleProductSeeder extends Seeder
     private function macLineup(): array
     {
         return [
+            // ── MacBook Pro M4 (2025) ──
+            ['MacBook Pro 16 M4 Pro', 'MBP16M4', ['512GB'=>[16000,20999], '1TB'=>[18500,23999]]],
+            ['MacBook Pro 14 M4 Pro', 'MBP14M4', ['512GB'=>[13500,17499], '1TB'=>[15500,19999]]],
+            ['MacBook Pro 14 M4',     'MBP14M4B',['512GB'=>[10500,13999], '1TB'=>[12500,16499]]],
+
+            // ── MacBook Air M4 (Mar/2025) ──
+            ['MacBook Air 15 M4',     'MBA15M4', ['256GB'=>[10000,12999], '512GB'=>[11500,14999]]],
+            ['MacBook Air 13 M4',     'MBA13M4', ['256GB'=>[8500,10999], '512GB'=>[9800,12499]]],
+
+            // ── iMac & Mac Mini M4 (2024/2025) ──
+            ['iMac 24 M4',            'IMAC24M4', ['256GB'=>[10500,13999], '512GB'=>[12500,16499]]],
+            ['Mac Mini M4',           'MMINIM4', ['256GB'=>[4500,5999], '512GB'=>[5500,7499]]],
+            ['Mac Mini M4 Pro',       'MMINIM4P',['512GB'=>[7500,9999], '1TB'=>[9500,12499]]],
+
+            // ── Geração anterior (referência) ──
             ['MacBook Pro 16 M3 Pro', 'MBP16', ['512GB'=>[15000,19999], '1TB'=>[17500,22999]]],
             ['MacBook Pro 14 M3 Pro', 'MBP14', ['512GB'=>[12500,16499], '1TB'=>[14500,18999]]],
             ['MacBook Air 15 M3',     'MBA15', ['256GB'=>[9500,12499], '512GB'=>[10800,13999]]],
@@ -161,14 +196,24 @@ class AppleProductSeeder extends Seeder
     private function singleProducts(): array
     {
         return [
-            // Apple Watch
+            // ── Apple Watch (2025) ──
+            $this->makeProduct('Apple Watch Ultra 3 49mm',   'APL-AWU3',    'smartwatch', 'apple-watch-ultra-3',   null, 5800, 7499),
+
+            // ── Apple Watch (2024) ──
             $this->makeProduct('Apple Watch Ultra 2 49mm',   'APL-AWU2',    'smartwatch', 'apple-watch-ultra-2',   null, 5500, 6999),
             $this->makeProduct('Apple Watch Series 10 42mm', 'APL-AW10-42', 'smartwatch', 'apple-watch-series-10', null, 3000, 3999),
             $this->makeProduct('Apple Watch Series 10 46mm', 'APL-AW10-46', 'smartwatch', 'apple-watch-series-10', null, 3300, 4299),
-            $this->makeProduct('Apple Watch SE 2a 40mm',     'APL-AWSE-40', 'smartwatch', 'apple-watch-se-2',      null, 2000, 2799),
-            $this->makeProduct('Apple Watch SE 2a 44mm',     'APL-AWSE-44', 'smartwatch', 'apple-watch-se-2',      null, 2200, 2999),
+            $this->makeProduct('Apple Watch SE 3a 40mm',     'APL-AWSE3-40', 'smartwatch', 'apple-watch-se-3',     null, 2000, 2799),
+            $this->makeProduct('Apple Watch SE 3a 44mm',     'APL-AWSE3-44', 'smartwatch', 'apple-watch-se-3',     null, 2200, 2999),
+            $this->makeProduct('Apple Watch SE 2a 40mm',     'APL-AWSE-40', 'smartwatch', 'apple-watch-se-2',      null, 1800, 2499),
+            $this->makeProduct('Apple Watch SE 2a 44mm',     'APL-AWSE-44', 'smartwatch', 'apple-watch-se-2',      null, 2000, 2699),
 
-            // AirPods
+            // ── AirPods (2025) ──
+            $this->makeProduct('AirPods Pro 3',        'APL-APP3',  'headphone', 'airpods-pro-3', null, 1800, 2499),
+            $this->makeProduct('AirPods 4 ANC',        'APL-AP4A',  'headphone', 'airpods-4-anc', null, 1300, 1799),
+            $this->makeProduct('AirPods 4',            'APL-AP4',   'headphone', 'airpods-4',     null, 900, 1299),
+
+            // ── AirPods (anteriores) ──
             $this->makeProduct('AirPods Pro 2 USB-C',  'APL-APP2',  'headphone', 'airpods-pro-2', null, 1500, 1999),
             $this->makeProduct('AirPods 3a Geracao',   'APL-AP3',   'headphone', 'airpods-3',     null, 1000, 1399),
             $this->makeProduct('AirPods Max USB-C',    'APL-APMAX', 'headphone', 'airpods-max',   null, 3800, 4999),

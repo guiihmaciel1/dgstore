@@ -1,4 +1,4 @@
-<nav x-data="{ open: false, commercialOpen: false, stockOpen: false, purchasesOpen: false }" class="bg-gray-900 shadow-lg" @click.away="commercialOpen = false; stockOpen = false; purchasesOpen = false">
+<nav x-data="{ open: false, commercialOpen: false, stockOpen: false, purchasesOpen: false, toolsOpen: false }" class="bg-gray-900 shadow-lg" @click.away="commercialOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
