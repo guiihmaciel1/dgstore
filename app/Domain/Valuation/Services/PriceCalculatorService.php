@@ -60,32 +60,16 @@ class PriceCalculatorService
 
     /**
      * Calcula a média de preço para um modelo+storage específico.
-     * Prioriza preços de USADOS. Se não houver amostras suficientes, usa todos.
+     * Usa todos os preços disponíveis (novos do catálogo ML + manuais).
      */
     public function calculateForModelStorage(IphoneModel $model, string $storage): bool
     {
-        // 1) Tentar apenas com preços de usados
-        $usedPrices = MarketListing::forModel($model->id, $storage)
-            ->used()
+        $prices = MarketListing::forModel($model->id, $storage)
             ->recent(self::DAYS_WINDOW)
             ->pluck('price')
             ->map(fn ($p) => (float) $p)
             ->sort()
             ->values();
-
-        // 2) Se não houver usados suficientes, usar todos os preços
-        if ($usedPrices->count() >= self::MIN_SAMPLES) {
-            $prices = $usedPrices;
-            $dataSource = 'used';
-        } else {
-            $prices = MarketListing::forModel($model->id, $storage)
-                ->recent(self::DAYS_WINDOW)
-                ->pluck('price')
-                ->map(fn ($p) => (float) $p)
-                ->sort()
-                ->values();
-            $dataSource = 'all';
-        }
 
         if ($prices->count() < self::MIN_SAMPLES) {
             Log::info("[Price Calculator] {$model->name} {$storage}: apenas {$prices->count()} amostras (mínimo: " . self::MIN_SAMPLES . ')');
@@ -93,7 +77,7 @@ class PriceCalculatorService
             return false;
         }
 
-        Log::info("[Price Calculator] {$model->name} {$storage}: usando dados de '{$dataSource}' ({$prices->count()} amostras)");
+        Log::info("[Price Calculator] {$model->name} {$storage}: {$prices->count()} amostras");
 
         // Remove outliers via IQR
         $filtered = $this->removeOutliers($prices);

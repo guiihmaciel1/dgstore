@@ -45,8 +45,9 @@ class MlConnectCommand extends Command
         $this->info('=== Status da Conexão ML ===');
         $this->newLine();
 
-        if (!$this->apiService->isConfigured()) {
+        if (! $this->apiService->isConfigured()) {
             $this->error('ML_CLIENT_ID e ML_CLIENT_SECRET não configurados no .env');
+
             return self::FAILURE;
         }
 
@@ -54,8 +55,9 @@ class MlConnectCommand extends Command
 
         $token = ApiToken::forProvider('mercadolivre');
 
-        if (!$token) {
+        if (! $token) {
             $this->warn('✗ Nenhum token salvo. Execute: php artisan valuation:ml-connect');
+
             return self::SUCCESS;
         }
 
@@ -71,11 +73,6 @@ class MlConnectCommand extends Command
             $this->warn('  ✗ Token expirado. Reconecte: php artisan valuation:ml-connect');
         }
 
-        $this->newLine();
-        $this->line('  Proxy (ScraperAPI): ' . ($this->apiService->isProxyConfigured()
-            ? '✓ Configurado'
-            : '✗ Não configurado (recomendado para contornar bloqueio de IP)'));
-
         return self::SUCCESS;
     }
 
@@ -83,8 +80,9 @@ class MlConnectCommand extends Command
     {
         $token = ApiToken::forProvider('mercadolivre');
 
-        if (!$token) {
+        if (! $token) {
             $this->info('Nenhuma conexão ativa.');
+
             return self::SUCCESS;
         }
 
@@ -100,16 +98,13 @@ class MlConnectCommand extends Command
         $this->newLine();
 
         $token = ApiToken::forProvider('mercadolivre');
-        $hasProxy = $this->apiService->isProxyConfigured();
 
-        // Status geral
         if ($token && $token->isValid()) {
             $this->info("✓ Token válido (expira {$token->expires_at->diffForHumans()})");
         } else {
             $this->warn('✗ Token ausente ou expirado');
         }
 
-        $this->line('Proxy (ScraperAPI): ' . ($hasProxy ? '✓ Configurado' : '✗ Não configurado'));
         $this->newLine();
 
         $accessToken = $token?->isValid() ? $token->access_token : null;
@@ -122,75 +117,27 @@ class MlConnectCommand extends Command
             $this->showResult($r, fn ($d) => "Nickname: {$d['nickname']}, Country: {$d['country_id']}");
         }
 
-        // 2) /sites/MLB/search direto (esperamos 403)
-        $this->line('2. /sites/MLB/search (direto) ...');
+        // 2) /products/search (catálogo)
+        $this->line('2. /products/search (catálogo) ...');
         $http = $accessToken
             ? \Illuminate\Support\Facades\Http::withToken($accessToken)->timeout(10)
             : \Illuminate\Support\Facades\Http::timeout(10);
-        $r = $http->get('https://api.mercadolibre.com/sites/MLB/search', [
-            'q' => 'iphone 15 pro max',
-            'condition' => 'used',
-            'limit' => 2,
+        $r = $http->get('https://api.mercadolibre.com/products/search', [
+            'site_id' => 'MLB',
+            'q' => 'iphone 15 pro max 256GB',
+            'status' => 'active',
         ]);
-        $this->showResult($r, fn ($d) => "Total: " . ($d['paging']['total'] ?? 'N/A'));
+        $this->showResult($r, fn ($d) => 'Produtos encontrados: ' . count($d['results'] ?? []));
 
-        // 3) /sites/MLB/search via ScraperAPI (se configurado)
-        if ($hasProxy) {
-            $this->line('3. /sites/MLB/search (via proxy) ...');
-            $targetUrl = 'https://api.mercadolibre.com/sites/MLB/search?'
-                . http_build_query(['q' => 'iphone 15 pro max', 'condition' => 'used', 'limit' => 2]);
-
-            $proxyUrl = config('services.scraper_proxy.base_url', 'https://api.scraperapi.com')
-                . '?' . http_build_query([
-                    'api_key' => config('services.scraper_proxy.key'),
-                    'url' => $targetUrl,
-                ]);
-
-            $r = \Illuminate\Support\Facades\Http::timeout(30)->get($proxyUrl);
-            if ($r->successful()) {
-                $data = $r->json();
-                if (is_array($data) && isset($data['results'])) {
-                    $total = $data['paging']['total'] ?? 0;
-                    $count = count($data['results']);
-                    $this->info("   ✓ HTTP {$r->status()} | Total: {$total}, Results: {$count}");
-
-                    foreach (array_slice($data['results'], 0, 3) as $item) {
-                        $price = number_format($item['price'] ?? 0, 2, ',', '.');
-                        $cond = $item['condition'] ?? 'N/A';
-                        $this->line("     - [{$cond}] {$item['title']} => R\$ {$price}");
-                    }
-                } else {
-                    $this->warn("   ⚠ HTTP {$r->status()} mas resposta não é JSON da API ML.");
-                    $this->line("     Preview: " . mb_substr($r->body(), 0, 200));
-                }
-            } else {
-                $this->error("   ✗ HTTP {$r->status()} | " . mb_substr($r->body(), 0, 200));
-            }
-            $this->newLine();
-        } else {
-            $this->newLine();
-            $this->warn('3. Proxy não configurado. Para habilitar:');
-            $this->line('   a) Crie conta grátis em https://www.scraperapi.com (5000 créditos/mês)');
-            $this->line('   b) Copie sua API Key');
-            $this->line('   c) No .env: SCRAPER_API_KEY=sua_chave_aqui');
-            $this->line('   d) Rode: php artisan config:cache');
-            $this->newLine();
-        }
-
-        // 4) Teste integrado usando o service
-        $this->line('4. Teste integrado (MercadoLivreApiService::search) ...');
+        // 3) Teste integrado usando o scraper de catálogo
+        $this->line('3. Teste integrado (scrapeBySlug) ...');
         try {
             $this->apiService->onProgress(function (string $msg, string $type = 'info') {
                 $this->line("   {$msg}");
             });
 
-            $result = $this->apiService->search('iphone 15 pro max 256GB', 3);
-            $this->info("   Total: {$result['total']}, Items retornados: " . count($result['items']));
-
-            foreach (array_slice($result['items'], 0, 3) as $item) {
-                $price = number_format($item['price'] ?? 0, 2, ',', '.');
-                $this->line("     - {$item['title']} => R\$ {$price}");
-            }
+            $result = $this->apiService->scrapeBySlug('iphone-15-pro-max');
+            $this->info("   Total: {$result['total_listings']} anúncios coletados");
         } catch (\Throwable $e) {
             $this->error("   ✗ Erro: {$e->getMessage()}");
         }
@@ -218,22 +165,18 @@ class MlConnectCommand extends Command
         $this->newLine();
     }
 
-    private function maskToken(string $token): string
-    {
-        return substr($token, -8);
-    }
-
     private function connect(): int
     {
-        if (!$this->apiService->isConfigured()) {
+        if (! $this->apiService->isConfigured()) {
             $this->error('Configure ML_CLIENT_ID e ML_CLIENT_SECRET no .env primeiro.');
+
             return self::FAILURE;
         }
 
         if ($this->apiService->isConnected()) {
             $this->info('Já conectado ao Mercado Livre!');
 
-            if (!$this->confirm('Deseja reconectar?')) {
+            if (! $this->confirm('Deseja reconectar?')) {
                 return self::SUCCESS;
             }
         }
@@ -260,8 +203,9 @@ class MlConnectCommand extends Command
 
         $code = $this->ask('Cole o código (ou Enter se o redirect já funcionou)');
 
-        if (!$code) {
+        if (! $code) {
             $this->info('Verifique: php artisan valuation:ml-connect --status');
+
             return self::SUCCESS;
         }
 
@@ -275,6 +219,7 @@ class MlConnectCommand extends Command
             $this->info('Agora rode: php artisan valuation:scrape');
         } catch (\Throwable $e) {
             $this->error("Erro: {$e->getMessage()}");
+
             return self::FAILURE;
         }
 

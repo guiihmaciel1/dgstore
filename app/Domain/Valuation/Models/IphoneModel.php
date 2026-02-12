@@ -19,6 +19,7 @@ class IphoneModel extends Model
         'storages',
         'colors',
         'search_term',
+        'release_year',
         'active',
     ];
 
@@ -27,6 +28,7 @@ class IphoneModel extends Model
         return [
             'storages' => 'array',
             'colors' => 'array',
+            'release_year' => 'integer',
             'active' => 'boolean',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -63,5 +65,32 @@ class IphoneModel extends Model
             ->where('storage', $storage)
             ->latest('calculated_at')
             ->first();
+    }
+
+    /**
+     * Calcula a idade do modelo em anos (relativa ao ano atual).
+     */
+    public function getAgeInYearsAttribute(): int
+    {
+        return (int) now()->year - ($this->release_year ?? 2024);
+    }
+
+    /**
+     * Fator de depreciação para estimar o preço de usado a partir do preço de novo.
+     *
+     * Formula: 0.80 - (idade_em_anos * 0.05), com piso de 0.45.
+     *
+     * Baseado em dados reais do mercado brasileiro (2025-2026):
+     *   iPhone 16 (0 anos) → 0.80 (recém-lançado, aberto = 80% do novo)
+     *   iPhone 15 (1 ano)  → 0.75
+     *   iPhone 14 (2 anos) → 0.70
+     *   ...continuando até o piso de 0.45
+     */
+    public function depreciationFactor(): float
+    {
+        $age = $this->age_in_years;
+        $factor = 0.80 - ($age * 0.05);
+
+        return max($factor, 0.45);
     }
 }

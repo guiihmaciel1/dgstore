@@ -137,21 +137,21 @@
                     </div>
 
                     <div style="padding: 1.5rem;">
-                        <!-- Preço de Mercado -->
-                        <div style="margin-bottom: 1.5rem;">
-                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Preço de Mercado — Mercado Livre</h3>
+                        <!-- Preço de Mercado (Novo) -->
+                        <div style="margin-bottom: 1rem;">
+                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Preço Novo — Mercado Livre</h3>
                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
                                 <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; text-align: center;">
                                     <p style="font-size: 0.75rem; color: #6b7280;">Mínimo</p>
-                                    <p style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="formatCurrency(result?.market_min)"></p>
+                                    <p style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="formatCurrency(result?.market_new_min)"></p>
                                 </div>
                                 <div style="padding: 0.75rem; background: #eff6ff; border-radius: 0.5rem; text-align: center; border: 1px solid #bfdbfe;">
                                     <p style="font-size: 0.75rem; color: #3b82f6;">Média</p>
-                                    <p style="font-size: 1.125rem; font-weight: 700; color: #1d4ed8;" x-text="formatCurrency(result?.market_avg)"></p>
+                                    <p style="font-size: 1.125rem; font-weight: 700; color: #1d4ed8;" x-text="formatCurrency(result?.market_new_avg)"></p>
                                 </div>
                                 <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; text-align: center;">
                                     <p style="font-size: 0.75rem; color: #6b7280;">Máximo</p>
-                                    <p style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="formatCurrency(result?.market_max)"></p>
+                                    <p style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="formatCurrency(result?.market_new_max)"></p>
                                 </div>
                             </div>
                             <p style="font-size: 0.75rem; color: #9ca3af; text-align: center; margin-top: 0.5rem;">
@@ -163,6 +163,19 @@
                                     <span> · Atualizado hoje</span>
                                 </template>
                             </p>
+                        </div>
+
+                        <!-- Estimativa de Usado -->
+                        <div style="margin-bottom: 1.5rem; padding: 1rem; background: #fefce8; border-radius: 0.75rem; border: 1px solid #fde68a;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 style="font-size: 0.875rem; font-weight: 600; color: #854d0e; text-transform: uppercase; letter-spacing: 0.05em;">Estimativa Usado</h3>
+                                    <p style="font-size: 0.75rem; color: #a16207; margin-top: 0.25rem;">
+                                        Depreciação de <span x-text="result?.depreciation_pct + '%'"></span> por geração
+                                    </p>
+                                </div>
+                                <p style="font-size: 1.5rem; font-weight: 800; color: #b45309;" x-text="formatCurrency(result?.used_estimate)"></p>
+                            </div>
                         </div>
 
                         <!-- Modificadores -->
@@ -202,7 +215,7 @@
                             <p style="font-size: 0.75rem; font-weight: 600; color: #065f46; text-transform: uppercase; letter-spacing: 0.05em;">Valor Sugerido de Compra</p>
                             <p style="font-size: 2rem; font-weight: 800; color: #047857; margin-top: 0.25rem;" x-text="formatCurrency(result?.suggested_buy_price)"></p>
                             <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
-                                Desconto total: <span x-text="Math.round((result?.total_discount || 0) * 100) + '%'"></span> sobre a média de mercado
+                                Desconto total: <span x-text="Math.round((result?.total_discount || 0) * 100) + '%'"></span> sobre a estimativa de usado
                             </p>
                         </div>
 

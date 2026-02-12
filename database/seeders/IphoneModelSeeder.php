@@ -13,13 +13,14 @@ class IphoneModelSeeder extends Seeder
     public function run(): void
     {
         $models = [
-            // iPhone 11
+            // iPhone 11 (2019)
             [
                 'name' => 'iPhone 11',
                 'slug' => 'iphone-11',
                 'storages' => ['64GB', '128GB', '256GB'],
                 'colors' => ['Preto', 'Branco', 'Verde', 'Amarelo', 'Roxo', 'Vermelho'],
                 'search_term' => 'iphone 11',
+                'release_year' => 2019,
             ],
             [
                 'name' => 'iPhone 11 Pro',
@@ -27,6 +28,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['64GB', '256GB', '512GB'],
                 'colors' => ['Cinza Espacial', 'Prateado', 'Dourado', 'Verde Meia-noite'],
                 'search_term' => 'iphone 11 pro',
+                'release_year' => 2019,
             ],
             [
                 'name' => 'iPhone 11 Pro Max',
@@ -34,15 +36,17 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['64GB', '256GB', '512GB'],
                 'colors' => ['Cinza Espacial', 'Prateado', 'Dourado', 'Verde Meia-noite'],
                 'search_term' => 'iphone 11 pro max',
+                'release_year' => 2019,
             ],
 
-            // iPhone 12
+            // iPhone 12 (2020)
             [
                 'name' => 'iPhone 12',
                 'slug' => 'iphone-12',
                 'storages' => ['64GB', '128GB', '256GB'],
                 'colors' => ['Preto', 'Branco', 'Azul', 'Verde', 'Vermelho'],
                 'search_term' => 'iphone 12',
+                'release_year' => 2020,
             ],
             [
                 'name' => 'iPhone 12 Mini',
@@ -50,6 +54,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['64GB', '128GB', '256GB'],
                 'colors' => ['Preto', 'Branco', 'Azul', 'Verde', 'Vermelho'],
                 'search_term' => 'iphone 12 mini',
+                'release_year' => 2020,
             ],
             [
                 'name' => 'iPhone 12 Pro',
@@ -57,6 +62,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Grafite', 'Prateado', 'Dourado', 'Azul Pacífico'],
                 'search_term' => 'iphone 12 pro',
+                'release_year' => 2020,
             ],
             [
                 'name' => 'iPhone 12 Pro Max',
@@ -64,15 +70,17 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Grafite', 'Prateado', 'Dourado', 'Azul Pacífico'],
                 'search_term' => 'iphone 12 pro max',
+                'release_year' => 2020,
             ],
 
-            // iPhone 13
+            // iPhone 13 (2021)
             [
                 'name' => 'iPhone 13',
                 'slug' => 'iphone-13',
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Meia-noite', 'Estelar', 'Azul', 'Rosa', 'Vermelho', 'Verde'],
                 'search_term' => 'iphone 13',
+                'release_year' => 2021,
             ],
             [
                 'name' => 'iPhone 13 Mini',
@@ -80,6 +88,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Meia-noite', 'Estelar', 'Azul', 'Rosa', 'Vermelho', 'Verde'],
                 'search_term' => 'iphone 13 mini',
+                'release_year' => 2021,
             ],
             [
                 'name' => 'iPhone 13 Pro',
@@ -87,6 +96,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB', '1TB'],
                 'colors' => ['Grafite', 'Prateado', 'Dourado', 'Azul Sierra'],
                 'search_term' => 'iphone 13 pro',
+                'release_year' => 2021,
             ],
             [
                 'name' => 'iPhone 13 Pro Max',
@@ -94,15 +104,17 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB', '1TB'],
                 'colors' => ['Grafite', 'Prateado', 'Dourado', 'Azul Sierra'],
                 'search_term' => 'iphone 13 pro max',
+                'release_year' => 2021,
             ],
 
-            // iPhone 14
+            // iPhone 14 (2022)
             [
                 'name' => 'iPhone 14',
                 'slug' => 'iphone-14',
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Meia-noite', 'Estelar', 'Azul', 'Roxo', 'Vermelho'],
                 'search_term' => 'iphone 14',
+                'release_year' => 2022,
             ],
             [
                 'name' => 'iPhone 14 Plus',
@@ -110,6 +122,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Meia-noite', 'Estelar', 'Azul', 'Roxo', 'Vermelho'],
                 'search_term' => 'iphone 14 plus',
+                'release_year' => 2022,
             ],
             [
                 'name' => 'iPhone 14 Pro',
@@ -117,6 +130,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB', '1TB'],
                 'colors' => ['Preto Espacial', 'Prateado', 'Dourado', 'Roxo Profundo'],
                 'search_term' => 'iphone 14 pro',
+                'release_year' => 2022,
             ],
             [
                 'name' => 'iPhone 14 Pro Max',
@@ -124,15 +138,17 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB', '1TB'],
                 'colors' => ['Preto Espacial', 'Prateado', 'Dourado', 'Roxo Profundo'],
                 'search_term' => 'iphone 14 pro max',
+                'release_year' => 2022,
             ],
 
-            // iPhone 15
+            // iPhone 15 (2023)
             [
                 'name' => 'iPhone 15',
                 'slug' => 'iphone-15',
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Preto', 'Azul', 'Verde', 'Amarelo', 'Rosa'],
                 'search_term' => 'iphone 15',
+                'release_year' => 2023,
             ],
             [
                 'name' => 'iPhone 15 Plus',
@@ -140,6 +156,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Preto', 'Azul', 'Verde', 'Amarelo', 'Rosa'],
                 'search_term' => 'iphone 15 plus',
+                'release_year' => 2023,
             ],
             [
                 'name' => 'iPhone 15 Pro',
@@ -147,6 +164,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB', '1TB'],
                 'colors' => ['Preto Titânio', 'Branco Titânio', 'Natural Titânio', 'Azul Titânio'],
                 'search_term' => 'iphone 15 pro',
+                'release_year' => 2023,
             ],
             [
                 'name' => 'iPhone 15 Pro Max',
@@ -154,15 +172,17 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['256GB', '512GB', '1TB'],
                 'colors' => ['Preto Titânio', 'Branco Titânio', 'Natural Titânio', 'Azul Titânio'],
                 'search_term' => 'iphone 15 pro max',
+                'release_year' => 2023,
             ],
 
-            // iPhone 16
+            // iPhone 16 (2024)
             [
                 'name' => 'iPhone 16',
                 'slug' => 'iphone-16',
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Preto', 'Branco', 'Rosa', 'Verde-azulado', 'Ultramarino'],
                 'search_term' => 'iphone 16',
+                'release_year' => 2024,
             ],
             [
                 'name' => 'iPhone 16 Plus',
@@ -170,6 +190,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB'],
                 'colors' => ['Preto', 'Branco', 'Rosa', 'Verde-azulado', 'Ultramarino'],
                 'search_term' => 'iphone 16 plus',
+                'release_year' => 2024,
             ],
             [
                 'name' => 'iPhone 16 Pro',
@@ -177,6 +198,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['128GB', '256GB', '512GB', '1TB'],
                 'colors' => ['Titânio Preto', 'Titânio Branco', 'Titânio Natural', 'Titânio Deserto'],
                 'search_term' => 'iphone 16 pro',
+                'release_year' => 2024,
             ],
             [
                 'name' => 'iPhone 16 Pro Max',
@@ -184,6 +206,7 @@ class IphoneModelSeeder extends Seeder
                 'storages' => ['256GB', '512GB', '1TB'],
                 'colors' => ['Titânio Preto', 'Titânio Branco', 'Titânio Natural', 'Titânio Deserto'],
                 'search_term' => 'iphone 16 pro max',
+                'release_year' => 2024,
             ],
         ];
 

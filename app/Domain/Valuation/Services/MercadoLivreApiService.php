@@ -33,8 +33,8 @@ class MercadoLivreApiService
 
     public function isConfigured(): bool
     {
-        return !empty(config('services.mercadolivre.client_id'))
-            && !empty(config('services.mercadolivre.client_secret'));
+        return ! empty(config('services.mercadolivre.client_id'))
+            && ! empty(config('services.mercadolivre.client_secret'));
     }
 
     public function isConnected(): bool
@@ -52,11 +52,6 @@ class MercadoLivreApiService
         Log::info('[ML API] Token expirado ou ausente.');
 
         return false;
-    }
-
-    public function isProxyConfigured(): bool
-    {
-        return !empty(config('services.scraper_proxy.key'));
     }
 
     // ── OAuth2 ───────────────────────────────────
@@ -130,261 +125,7 @@ class MercadoLivreApiService
         return $request;
     }
 
-    // ── Proxy para buscar usados ─────────────────────
-
-    /**
-     * Retorna a URL base do proxy (Cloudflare Worker).
-     * Ex: https://fb-marketplace-proxy.guihmaciel.workers.dev
-     */
-    private function getProxyBaseUrl(): ?string
-    {
-        return config('services.facebook_marketplace.proxy_url');
-    }
-
-    /**
-     * Faz uma requisição GET ao ML API via proxy do Cloudflare Worker.
-     * O Worker transforma /ml/... → api.mercadolibre.com/...
-     */
-    private function httpViaProxy(): \Illuminate\Http\Client\PendingRequest
-    {
-        $proxyBase = $this->getProxyBaseUrl();
-
-        if (! $proxyBase) {
-            throw new \RuntimeException('Proxy não configurado. Defina FB_MARKETPLACE_PROXY_URL no .env');
-        }
-
-        $request = Http::baseUrl(rtrim($proxyBase, '/') . '/ml')
-            ->timeout(30);
-
-        // Adicionar proxy secret se configurado
-        $secret = config('services.facebook_marketplace.proxy_secret');
-        if ($secret) {
-            $request = $request->withHeaders(['X-Proxy-Secret' => $secret]);
-        }
-
-        // Adicionar token ML se disponível (para endpoints que precisam)
-        $accessToken = $this->getAccessToken();
-        if ($accessToken) {
-            $request = $request->withToken($accessToken);
-        }
-
-        return $request;
-    }
-
-    // ── Coleta de USADOS via Proxy ──────────────────
-
-    /**
-     * Coleta anúncios de iPhones USADOS no ML via /sites/MLB/search (pelo proxy).
-     */
-    public function scrapeUsedAll(): array
-    {
-        $models = IphoneModel::active()->get();
-        $totalListings = 0;
-        $errors = [];
-
-        $this->progress('  Modo: ML Search API via proxy (usados)');
-
-        foreach ($models as $model) {
-            try {
-                $count = $this->scrapeUsedModel($model);
-                $totalListings += $count;
-
-                $this->progress("  ✓ {$model->name}: {$count} anúncios usados");
-                Log::info("[ML API] Usados - {$model->name}: {$count} anúncios coletados.");
-            } catch (\Throwable $e) {
-                $errors[] = "{$model->name}: {$e->getMessage()}";
-                $this->progress("  ✗ {$model->name}: {$e->getMessage()}", 'error');
-                Log::error("[ML API] Usados - Erro ao buscar {$model->name}: {$e->getMessage()}");
-            }
-
-            sleep(rand(self::MIN_DELAY, self::MAX_DELAY));
-        }
-
-        return [
-            'total_listings' => $totalListings,
-            'models_processed' => $models->count(),
-            'errors' => $errors,
-        ];
-    }
-
-    public function scrapeUsedBySlug(string $slug): array
-    {
-        $model = IphoneModel::where('slug', $slug)->firstOrFail();
-        $count = $this->scrapeUsedModel($model);
-
-        return [
-            'total_listings' => $count,
-            'models_processed' => 1,
-            'errors' => [],
-        ];
-    }
-
-    /**
-     * Busca anúncios usados de um modelo via scraping HTML do ML (pelo Worker).
-     */
-    private function scrapeUsedModel(IphoneModel $model): int
-    {
-        $proxyBase = $this->getProxyBaseUrl();
-
-        if (! $proxyBase) {
-            throw new \RuntimeException('Proxy não configurado. Defina FB_MARKETPLACE_PROXY_URL no .env');
-        }
-
-        $request = Http::baseUrl(rtrim($proxyBase, '/'))
-            ->timeout(30);
-
-        $secret = config('services.facebook_marketplace.proxy_secret');
-        if ($secret) {
-            $request = $request->withHeaders(['X-Proxy-Secret' => $secret]);
-        }
-
-        $response = $request->get('/ml-search', [
-            'q' => $model->search_term,
-            'limit' => 50,
-        ]);
-
-        if (! $response->successful()) {
-            $this->progress("    ↳ HTTP {$response->status()}", 'warn');
-
-            return 0;
-        }
-
-        $data = $response->json();
-
-        if (! ($data['success'] ?? false)) {
-            $error = $data['error'] ?? 'Erro desconhecido';
-            $this->progress("    ↳ Scrape falhou: {$error}", 'warn');
-            Log::warning("[ML API] Usados scrape falhou: {$error}", ['model' => $model->name]);
-
-            return 0;
-        }
-
-        $results = $data['results'] ?? [];
-
-        if (empty($results)) {
-            $this->progress("    ↳ Nenhum resultado", 'warn');
-
-            return 0;
-        }
-
-        $count = 0;
-        foreach ($results as $item) {
-            if ($this->isValidUsedItem($item, $model)) {
-                $this->saveUsedItem($model, $item);
-                $count++;
-            }
-        }
-
-        $this->progress("    ↳ {$count} salvos de {$data['total']} encontrados");
-
-        return $count;
-    }
-
-    /**
-     * Valida se um item do scrape é realmente um iPhone usado do modelo correto.
-     */
-    private function isValidUsedItem(array $item, IphoneModel $model): bool
-    {
-        $title = mb_strtolower($item['title'] ?? '');
-        $price = (float) ($item['price'] ?? 0);
-
-        // Preço razoável
-        if ($price < 800 || $price > 50000) {
-            return false;
-        }
-
-        // Deve conter "iphone" no título
-        if (! str_contains($title, 'iphone')) {
-            return false;
-        }
-
-        // Verificar keywords do modelo
-        $keywords = array_filter(
-            explode(' ', mb_strtolower($model->search_term)),
-            fn (string $w) => $w !== 'iphone' && strlen($w) > 0
-        );
-
-        foreach ($keywords as $keyword) {
-            if (! str_contains($title, $keyword)) {
-                return false;
-            }
-        }
-
-        // Evitar falsos positivos
-        $modelLower = mb_strtolower($model->search_term);
-        if (! str_contains($modelLower, 'pro') && str_contains($title, 'pro')) {
-            return false;
-        }
-        if (! str_contains($modelLower, 'max') && str_contains($title, 'max')) {
-            return false;
-        }
-        if (! str_contains($modelLower, 'mini') && str_contains($title, 'mini')) {
-            return false;
-        }
-        if (! str_contains($modelLower, 'plus') && str_contains($title, 'plus')) {
-            return false;
-        }
-
-        // Excluir acessórios
-        $excludeTerms = ['capa', 'capinha', 'película', 'pelicula', 'carregador', 'fone', 'cabo', 'case', 'protetor'];
-        foreach ($excludeTerms as $term) {
-            if (str_starts_with($title, $term)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Detecta o storage a partir do título.
-     */
-    private function detectStorageFromTitle(string $title): ?string
-    {
-        $titleUpper = mb_strtoupper(str_replace(' ', '', $title));
-        $storages = ['1TB', '512GB', '256GB', '128GB', '64GB', '32GB'];
-
-        foreach ($storages as $storage) {
-            if (str_contains($titleUpper, $storage)) {
-                return $storage;
-            }
-        }
-
-        return null;
-    }
-
-    private function saveUsedItem(IphoneModel $model, array $item): void
-    {
-        $url = $item['url'] ?? null;
-
-        // Evita duplicatas do mesmo item no mesmo dia
-        if ($url) {
-            $exists = MarketListing::where('url', $url)
-                ->where('scraped_at', now()->toDateString())
-                ->exists();
-
-            if ($exists) {
-                return;
-            }
-        }
-
-        $title = $item['title'] ?? '';
-        $storage = $this->detectStorageFromTitle($title);
-
-        MarketListing::create([
-            'iphone_model_id' => $model->id,
-            'storage' => $storage,
-            'title' => mb_substr($title, 0, 255),
-            'price' => (float) ($item['price'] ?? 0),
-            'url' => $url,
-            'source' => ListingSource::MercadoLivre,
-            'condition' => 'used',
-            'location' => null,
-            'scraped_at' => now()->toDateString(),
-        ]);
-    }
-
-    // ── Coleta via Catálogo — NOVOS (funciona em qualquer IP) ──
+    // ── Coleta via Catálogo — NOVOS ──────────────
 
     public function scrapeAll(): array
     {
@@ -452,7 +193,6 @@ class MercadoLivreApiService
 
     private function scrapeModelStorage(IphoneModel $model, string $storage): int
     {
-        // 1) Encontrar o produto no catálogo
         $productId = $this->findCatalogProductId($model, $storage);
 
         if (! $productId) {
@@ -461,14 +201,12 @@ class MercadoLivreApiService
             return 0;
         }
 
-        // 2) Buscar itens (anúncios) desse produto
         $items = $this->fetchProductItems($productId);
 
         if (empty($items)) {
             return 0;
         }
 
-        // 3) Salvar no banco
         $count = 0;
         foreach ($items as $item) {
             $price = (float) ($item['price'] ?? 0);
@@ -515,13 +253,11 @@ class MercadoLivreApiService
 
     /**
      * Filtra os resultados do catálogo para encontrar o produto correto.
-     * Precisa ser Apple iPhone, com o modelo e storage exatos.
      */
     private function matchProduct(array $products, IphoneModel $model, string $storage): ?string
     {
         $storageLower = mb_strtolower(str_replace(' ', '', $storage));
 
-        // Extrair palavras-chave do search_term (ex: "15", "pro", "max")
         $keywords = array_filter(
             explode(' ', mb_strtolower($model->search_term)),
             fn (string $w) => $w !== 'iphone' && strlen($w) > 0
@@ -530,12 +266,10 @@ class MercadoLivreApiService
         foreach ($products as $product) {
             $name = mb_strtolower($product['name'] ?? '');
 
-            // Deve ser Apple iPhone
             if (! str_contains($name, 'apple') || ! str_contains($name, 'iphone')) {
                 continue;
             }
 
-            // Verificar todas as keywords do modelo
             $allMatch = true;
             foreach ($keywords as $keyword) {
                 if (! str_contains($name, $keyword)) {
@@ -587,7 +321,7 @@ class MercadoLivreApiService
         $data = $response->json();
         $results = $data['results'] ?? [];
 
-        Log::info("[ML API] Produto {$productId}: " . count($results) . " itens de " . ($data['paging']['total'] ?? 0));
+        Log::info("[ML API] Produto {$productId}: " . count($results) . ' itens de ' . ($data['paging']['total'] ?? 0));
 
         return $results;
     }
@@ -596,7 +330,6 @@ class MercadoLivreApiService
     {
         $itemId = $item['item_id'] ?? null;
 
-        // Evita duplicatas do mesmo item no mesmo dia
         if ($itemId) {
             $exists = MarketListing::where('url', "https://produto.mercadolivre.com.br/{$itemId}")
                 ->where('scraped_at', now()->toDateString())
@@ -633,7 +366,7 @@ class MercadoLivreApiService
             $address['state']['name'] ?? null,
         ]);
 
-        return !empty($parts) ? implode(', ', $parts) : null;
+        return ! empty($parts) ? implode(', ', $parts) : null;
     }
 
     private function progress(string $message, string $type = 'info'): void

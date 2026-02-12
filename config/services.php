@@ -46,11 +46,4 @@ return [
         'base_url' => env('SCRAPER_API_URL', 'https://api.scraperapi.com'),
     ],
 
-    'facebook_marketplace' => [
-        'default_location' => env('FB_MARKETPLACE_LOCATION', 'São José do Rio Preto'),
-        'radius_km' => (int) env('FB_MARKETPLACE_RADIUS_KM', 40),
-        'proxy_url' => env('FB_MARKETPLACE_PROXY_URL'),
-        'proxy_secret' => env('FB_MARKETPLACE_PROXY_SECRET'),
-    ],
-
 ];

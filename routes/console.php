@@ -12,7 +12,7 @@ Artisan::command('inspire', function () {
 |--------------------------------------------------------------------------
 | Avaliação de iPhones Seminovos
 |--------------------------------------------------------------------------
-| Scraping do OLX às 06:00 e cálculo de médias às 06:15, diariamente.
+| Coleta de preços novos (ML Catálogo) às 06:00 e cálculo de médias às 06:15.
 | Certifique-se de que o cron do servidor esteja configurado:
 | * * * * * cd /path-to-project && php artisan schedule:run >> /dev/null 2>&1
 */

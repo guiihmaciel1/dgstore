@@ -62,16 +62,6 @@ class MarketListing extends Model
         return $query;
     }
 
-    public function scopeUsed(Builder $query): Builder
-    {
-        return $query->where('condition', 'used');
-    }
-
-    public function scopeNew(Builder $query): Builder
-    {
-        return $query->where('condition', 'new');
-    }
-
     // Accessors
 
     public function getFormattedPriceAttribute(): string
