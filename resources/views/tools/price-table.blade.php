@@ -105,18 +105,7 @@
 
     <script>
     function priceTable() {
-        const allProducts = @json($products->map(fn($p) => [
-            'id' => $p->id,
-            'name' => $p->name,
-            'sku' => $p->sku,
-            'category' => $p->category->value,
-            'storage' => $p->storage,
-            'condition' => $p->condition->value,
-            'cost_price' => (float) $p->cost_price,
-            'sale_price' => (float) $p->sale_price,
-            'stock' => $p->stock_quantity,
-            'margin' => $p->profit_margin,
-        ]));
+        const allProducts = @json($productsJson);
 
         return {
             search: '',

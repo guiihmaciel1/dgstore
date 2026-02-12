@@ -33,7 +33,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/checklist-seminovo', 'tools.checklist')->name('tools.checklist');
     Route::get('/tabela-precos', function () {
         $products = \App\Domain\Product\Models\Product::where('active', true)->orderBy('name')->get();
-        return view('tools.price-table', compact('products'));
+        $productsJson = $products->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'sku' => $p->sku,
+                'category' => $p->category->value,
+                'storage' => $p->storage,
+                'condition' => $p->condition->value,
+                'cost_price' => (float) $p->cost_price,
+                'sale_price' => (float) $p->sale_price,
+                'stock' => $p->stock_quantity,
+                'margin' => $p->profit_margin,
+            ];
+        })->values();
+        return view('tools.price-table', ['productsJson' => $productsJson]);
     })->name('tools.price-table');
     Route::view('/mensagens-whatsapp', 'tools.whatsapp-messages')->name('tools.whatsapp-messages');
     Route::view('/ficha-tecnica', 'tools.specs')->name('tools.specs');
