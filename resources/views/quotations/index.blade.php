@@ -26,6 +26,67 @@
                 </div>
             @endif
 
+            <!-- Status do Dia -->
+            @php
+                $todayBySupplier = $todayQuotations->groupBy(fn($q) => $q->supplier->name ?? 'Desconhecido');
+                $hasUpdatesToday = $todayQuotations->count() > 0;
+                $lastUpdate = $todayQuotations->sortByDesc('created_at')->first();
+            @endphp
+            <div style="margin-bottom: 1.5rem; border-radius: 0.75rem; overflow: hidden; border: 1px solid {{ $hasUpdatesToday ? '#bbf7d0' : '#fde68a' }};">
+                <div style="padding: 1rem 1.25rem; background: {{ $hasUpdatesToday ? 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)' : 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' }}; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                    @if($hasUpdatesToday)
+                        <div style="display: flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: #16a34a; flex-shrink: 0;">
+                            <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-weight: 700; color: #065f46; font-size: 0.9375rem;">
+                                Cotações atualizadas hoje
+                                <span style="font-weight: 400; font-size: 0.8125rem; color: #047857; margin-left: 0.25rem;">
+                                    — {{ $todayQuotations->count() }} {{ $todayQuotations->count() === 1 ? 'item' : 'itens' }}
+                                    @if($lastUpdate)
+                                        · última às {{ $lastUpdate->created_at->format('H:i') }}
+                                    @endif
+                                </span>
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                                @foreach($todayBySupplier as $supplierName => $supplierQuotes)
+                                    <span style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: white; color: #065f46; border: 1px solid #a7f3d0; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                                        <span style="width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #16a34a; flex-shrink: 0;"></span>
+                                        {{ $supplierName }}
+                                        <span style="font-weight: 400; color: #047857;">({{ $supplierQuotes->count() }})</span>
+                                    </span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <div style="display: flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: #d97706; flex-shrink: 0;">
+                            <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4m0 4h.01"/>
+                                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="font-weight: 700; color: #92400e; font-size: 0.9375rem;">
+                                Nenhuma cotação atualizada hoje
+                            </div>
+                            <div style="font-size: 0.8125rem; color: #a16207; margin-top: 0.125rem;">
+                                Importe ou cadastre cotações para manter os preços atualizados.
+                            </div>
+                        </div>
+                        <a href="{{ route('quotations.import') }}" 
+                           style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 600; background: #d97706; color: white; text-decoration: none; white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,0.1);"
+                           onmouseover="this.style.background='#b45309'" onmouseout="this.style.background='#d97706'">
+                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                            Importar Agora
+                        </a>
+                    @endif
+                </div>
+            </div>
+
             <!-- Cabeçalho -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div>
