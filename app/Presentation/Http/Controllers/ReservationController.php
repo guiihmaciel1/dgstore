@@ -10,6 +10,7 @@ use App\Domain\Reservation\Enums\ReservationStatus;
 use App\Domain\Reservation\Models\Reservation;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\Enums\PaymentMethod;
+use App\Domain\Supplier\Models\Quotation;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -51,16 +52,11 @@ class ReservationController extends Controller
 
     public function create(Request $request): View
     {
-        $products = $this->productService->getActiveProducts()
-            ->filter(fn($p) => !$p->reserved && $p->stock_quantity > 0);
-
-        // Pre-seleciona produto se vier da URL
-        $selectedProduct = $request->get('product_id') 
+        $selectedProduct = $request->get('product_id')
             ? $this->productService->find($request->get('product_id'))
             : null;
 
         return view('reservations.create', [
-            'products' => $products,
             'selectedProduct' => $selectedProduct,
             'paymentMethods' => PaymentMethod::cases(),
         ]);
@@ -70,7 +66,9 @@ class ReservationController extends Controller
     {
         $request->validate([
             'customer_id' => ['required', 'exists:customers,id'],
-            'product_id' => ['required', 'exists:products,id'],
+            'product_id' => ['nullable', 'exists:products,id'],
+            'product_description' => ['required', 'string', 'max:255'],
+            'source' => ['required', 'in:stock,quotation,manual'],
             'product_price' => ['required', 'numeric', 'min:0'],
             'deposit_amount' => ['required', 'numeric', 'min:0'],
             'expires_at' => ['required', 'date', 'after:today'],
@@ -83,9 +81,9 @@ class ReservationController extends Controller
             $reservation = $this->reservationService->create(
                 array_merge(
                     $request->only([
-                        'customer_id', 'product_id', 'product_price',
-                        'deposit_amount', 'expires_at', 'initial_payment',
-                        'payment_method', 'notes'
+                        'customer_id', 'product_id', 'product_description',
+                        'source', 'product_price', 'deposit_amount',
+                        'expires_at', 'initial_payment', 'payment_method', 'notes'
                     ]),
                     ['user_id' => auth()->id()]
                 )
@@ -141,13 +139,12 @@ class ReservationController extends Controller
 
     public function convert(Reservation $reservation): RedirectResponse
     {
-        // Redireciona para tela de venda com dados pré-preenchidos
         return redirect()
             ->route('sales.create', [
                 'from_reservation' => $reservation->id,
                 'customer_id' => $reservation->customer_id,
                 'product_id' => $reservation->product_id,
-                'discount' => $reservation->deposit_paid, // Sinal como desconto
+                'discount' => $reservation->deposit_paid,
             ]);
     }
 
@@ -169,7 +166,7 @@ class ReservationController extends Controller
     public function searchCustomers(Request $request)
     {
         $query = $request->get('q', '');
-        
+
         if (strlen($query) < 2) {
             return response()->json([]);
         }
@@ -186,22 +183,48 @@ class ReservationController extends Controller
     public function searchProducts(Request $request)
     {
         $query = $request->get('q', '');
-        
+
         if (strlen($query) < 2) {
             return response()->json([]);
         }
 
-        $products = $this->productService->search($query)
-            ->filter(fn($p) => !$p->reserved && $p->stock_quantity > 0)
-            ->take(10);
+        // Busca produtos do estoque (incluindo sem estoque)
+        $stockProducts = $this->productService->search($query)
+            ->filter(fn($p) => !$p->reserved)
+            ->take(10)
+            ->map(fn($p) => [
+                'id' => $p->id,
+                'name' => $p->full_name,
+                'sku' => $p->sku,
+                'price' => (float) $p->sale_price,
+                'formatted_price' => $p->formatted_sale_price,
+                'stock' => $p->stock_quantity,
+                'source' => 'stock',
+                'source_label' => $p->stock_quantity > 0 ? 'Estoque' : 'Sem estoque',
+            ])->values();
 
-        return response()->json($products->map(fn($p) => [
-            'id' => $p->id,
-            'name' => $p->full_name,
-            'sku' => $p->sku,
-            'price' => $p->sale_price,
-            'formatted_price' => $p->formatted_sale_price,
-            'stock' => $p->stock_quantity,
-        ])->values());
+        // Busca cotações de fornecedores (últimos preços únicos)
+        $quotations = Quotation::with('supplier')
+            ->where('product_name', 'like', "%{$query}%")
+            ->orderByDesc('quoted_at')
+            ->limit(20)
+            ->get()
+            ->unique('product_name')
+            ->take(10)
+            ->map(fn($q) => [
+                'id' => null,
+                'name' => $q->product_name,
+                'sku' => $q->supplier->name ?? 'Fornecedor',
+                'price' => (float) $q->unit_price,
+                'formatted_price' => $q->formatted_unit_price,
+                'stock' => null,
+                'source' => 'quotation',
+                'source_label' => 'Cotação - ' . ($q->supplier->name ?? ''),
+            ])->values();
+
+        // Mescla resultados: estoque primeiro, depois cotações
+        $results = $stockProducts->concat($quotations)->take(15);
+
+        return response()->json($results);
     }
 }

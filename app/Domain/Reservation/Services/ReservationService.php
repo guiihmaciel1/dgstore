@@ -27,6 +27,7 @@ class ReservationService
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('reservation_number', 'like', "%{$search}%")
+                  ->orWhere('product_description', 'like', "%{$search}%")
                   ->orWhereHas('customer', function ($q2) use ($search) {
                       $q2->where('name', 'like', "%{$search}%")
                          ->orWhere('phone', 'like', "%{$search}%");
@@ -67,31 +68,40 @@ class ReservationService
     public function create(array $data): Reservation
     {
         return DB::transaction(function () use ($data) {
-            $product = Product::findOrFail($data['product_id']);
+            $product = null;
+            $source = $data['source'] ?? 'stock';
 
-            // Verifica se produto já está reservado
-            if ($product->reserved) {
-                throw new \Exception('Este produto já está reservado.');
+            // Se tiver product_id, é do estoque
+            if (!empty($data['product_id'])) {
+                $product = Product::find($data['product_id']);
+
+                if ($product && $product->reserved) {
+                    throw new \Exception('Este produto já está reservado.');
+                }
             }
 
             // Cria a reserva
             $reservation = Reservation::create([
                 'customer_id' => $data['customer_id'],
-                'product_id' => $data['product_id'],
+                'product_id' => $product?->id,
+                'product_description' => $data['product_description'] ?? $product?->full_name ?? $product?->name,
+                'source' => $source,
                 'user_id' => $data['user_id'],
                 'status' => ReservationStatus::Active,
-                'product_price' => $data['product_price'] ?? $product->sale_price,
+                'product_price' => $data['product_price'] ?? $product?->sale_price ?? 0,
                 'deposit_amount' => $data['deposit_amount'] ?? 0,
                 'deposit_paid' => 0,
                 'expires_at' => $data['expires_at'],
                 'notes' => $data['notes'] ?? null,
             ]);
 
-            // Marca produto como reservado
-            $product->update([
-                'reserved' => true,
-                'reserved_by' => $reservation->id,
-            ]);
+            // Marca produto como reservado (apenas se for do estoque)
+            if ($product) {
+                $product->update([
+                    'reserved' => true,
+                    'reserved_by' => $reservation->id,
+                ]);
+            }
 
             // Se houver pagamento inicial
             if (!empty($data['initial_payment']) && $data['initial_payment'] > 0) {

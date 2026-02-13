@@ -129,8 +129,15 @@
                                             <span style="color: #374151;">{{ $reservation->customer?->name ?? 'Não informado' }}</span>
                                         </td>
                                         <td style="padding: 0.75rem 1rem;">
-                                            <span style="font-weight: 500; color: #111827;">{{ $reservation->product?->name ?? 'Não informado' }}</span>
-                                            <div style="font-size: 0.75rem; color: #6b7280;">{{ $reservation->formatted_product_price }}</div>
+                                            <span style="font-weight: 500; color: #111827;">{{ $reservation->product_name }}</span>
+                                            <div style="font-size: 0.75rem; color: #6b7280;">
+                                                {{ $reservation->formatted_product_price }}
+                                                @if($reservation->source && $reservation->source !== 'stock')
+                                                    <span style="margin-left: 0.25rem; font-size: 0.625rem; padding: 0.0625rem 0.375rem; border-radius: 1rem; font-weight: 500; {{ $reservation->source === 'quotation' ? 'background: #dbeafe; color: #2563eb;' : 'background: #fef3c7; color: #d97706;' }}">
+                                                        {{ $reservation->source === 'quotation' ? 'Cotação' : 'Manual' }}
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @php

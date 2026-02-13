@@ -102,11 +102,22 @@
 
                     <!-- Produto -->
                     <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                        <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                        <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
                             <h3 style="font-weight: 600; color: #111827;">Produto Reservado</h3>
+                            @php
+                                $sourceColors = [
+                                    'stock' => ['bg' => '#dcfce7', 'color' => '#16a34a', 'label' => 'Estoque'],
+                                    'quotation' => ['bg' => '#dbeafe', 'color' => '#2563eb', 'label' => 'Cotação'],
+                                    'manual' => ['bg' => '#fef3c7', 'color' => '#d97706', 'label' => 'Manual'],
+                                ];
+                                $src = $sourceColors[$reservation->source ?? 'stock'] ?? $sourceColors['stock'];
+                            @endphp
+                            <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500; background: {{ $src['bg'] }}; color: {{ $src['color'] }};">
+                                {{ $src['label'] }}
+                            </span>
                         </div>
                         <div style="padding: 1.25rem;">
-                            <div style="font-size: 1.125rem; font-weight: 600; color: #111827;">{{ $reservation->product?->full_name ?? 'Não informado' }}</div>
+                            <div style="font-size: 1.125rem; font-weight: 600; color: #111827;">{{ $reservation->product_name }}</div>
                             @if($reservation->product)
                                 <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
                                     <div>SKU: {{ $reservation->product->sku }}</div>
@@ -114,10 +125,10 @@
                                         <div>IMEI: {{ $reservation->product->imei }}</div>
                                     @endif
                                 </div>
-                                <div style="margin-top: 0.75rem; font-size: 1.25rem; font-weight: 700; color: #16a34a;">
-                                    {{ $reservation->formatted_product_price }}
-                                </div>
                             @endif
+                            <div style="margin-top: 0.75rem; font-size: 1.25rem; font-weight: 700; color: #16a34a;">
+                                {{ $reservation->formatted_product_price }}
+                            </div>
                         </div>
                     </div>
 
@@ -270,7 +281,7 @@
                             $waText = urlencode(
                                 "Ola {$reservation->customer->name}! Sua reserva na DG Store:\n\n"
                                 . "Reserva: #{$reservation->reservation_number}\n"
-                                . "Produto: {$reservation->product?->full_name}\n"
+                                . "Produto: {$reservation->product_name}\n"
                                 . "Valor: {$reservation->formatted_product_price}\n"
                                 . "Sinal: {$reservation->formatted_deposit_amount}\n"
                                 . "Pago: {$reservation->formatted_deposit_paid}\n"

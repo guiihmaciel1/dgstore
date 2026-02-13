@@ -24,6 +24,8 @@ class Reservation extends Model
         'reservation_number',
         'customer_id',
         'product_id',
+        'product_description',
+        'source',
         'user_id',
         'status',
         'product_price',
@@ -138,6 +140,15 @@ class Reservation extends Model
         }
 
         return $number;
+    }
+
+    public function getProductNameAttribute(): string
+    {
+        if ($this->product) {
+            return $this->product->full_name ?? $this->product->name;
+        }
+
+        return $this->product_description ?? 'Produto não especificado';
     }
 
     public function getRemainingAmountAttribute(): float
