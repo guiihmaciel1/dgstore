@@ -32,8 +32,8 @@
                     <!-- Coluna Principal -->
                     <div>
                         <!-- Cliente -->
-                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 1.5rem; position: relative;">
+                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; border-radius: 0.75rem 0.75rem 0 0;">
                                 <h3 style="font-weight: 600; color: #111827;">
                                     <svg style="width: 1.25rem; height: 1.25rem; display: inline; vertical-align: text-bottom; margin-right: 0.375rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -56,7 +56,7 @@
                                 <!-- Dropdown de resultados -->
                                 <div x-show="customerResults.length > 0 && !selectedCustomer" x-cloak
                                      @click.outside="customerResults = []"
-                                     style="position: absolute; top: calc(100% - 1rem); left: 1.25rem; right: 1.25rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 4px 12px -1px rgba(0,0,0,0.15); max-height: 220px; overflow-y: auto; z-index: 50;">
+                                     style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 8px 24px -4px rgba(0,0,0,0.2); max-height: 220px; overflow-y: auto; z-index: 100;">
                                     <template x-for="customer in customerResults" :key="customer.id">
                                         <div @click="selectCustomer(customer)"
                                              style="padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #f3f4f6; transition: background 0.15s;"
@@ -95,8 +95,8 @@
                         </div>
 
                         <!-- Produto -->
-                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
-                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; position: relative;">
+                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; border-radius: 0.75rem 0.75rem 0 0;">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <h3 style="font-weight: 600; color: #111827;">
                                         <svg style="width: 1.25rem; height: 1.25rem; display: inline; vertical-align: text-bottom; margin-right: 0.375rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +129,7 @@
                                 <!-- Dropdown de resultados de produto -->
                                 <div x-show="productResults.length > 0 && !selectedProduct && !manualMode" x-cloak
                                      @click.outside="productResults = []"
-                                     style="position: absolute; top: calc(100% - 1rem); left: 1.25rem; right: 1.25rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 4px 12px -1px rgba(0,0,0,0.15); max-height: 280px; overflow-y: auto; z-index: 50;">
+                                     style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 8px 24px -4px rgba(0,0,0,0.2); max-height: 280px; overflow-y: auto; z-index: 100;">
                                     <template x-for="(product, idx) in productResults" :key="idx">
                                         <div @click="selectProduct(product)"
                                              style="padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #f3f4f6; transition: background 0.15s;"
