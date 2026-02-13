@@ -104,22 +104,12 @@ GREEN *$605* 1pc"
                     <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
                         <button type="button" @click="analyzeText()"
                                 :disabled="loading || !rawText || !supplierId || !exchangeRate"
-                                style="padding: 0.625rem 1.5rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;"
+                                style="padding: 0.75rem 2rem; border-radius: 0.75rem; font-size: 0.9375rem; font-weight: 700; border: none; cursor: pointer; letter-spacing: 0.025em; transition: all 0.2s;"
                                 :style="loading || !rawText || !supplierId || !exchangeRate
-                                    ? 'background: #d1d5db; color: #9ca3af; cursor: not-allowed;'
-                                    : 'background: #111827; color: white;'"
-                                onmouseover="if(!this.disabled) this.style.background='#374151'"
-                                onmouseout="if(!this.disabled) this.style.background='#111827'">
-                            <template x-if="loading">
-                                <svg style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                </svg>
-                            </template>
-                            <template x-if="!loading">
-                                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </template>
+                                    ? 'background: #e5e7eb; color: #9ca3af; cursor: not-allowed;'
+                                    : 'background: linear-gradient(135deg, #111827 0%, #1f2937 100%); color: white; box-shadow: 0 2px 8px rgba(17,24,39,0.3);'"
+                                onmouseover="if(!this.disabled) { this.style.boxShadow='0 6px 20px rgba(17,24,39,0.4)'; this.style.transform='translateY(-2px)'; }"
+                                onmouseout="this.style.boxShadow='0 2px 8px rgba(17,24,39,0.3)'; this.style.transform='none';">
                             <span x-text="loading ? 'Analisando...' : 'Analisar Texto'"></span>
                         </button>
                     </div>
@@ -255,15 +245,12 @@ GREEN *$605* 1pc"
                                 <span x-text="selectedCount"></span> itens selecionados
                             </p>
                             <button type="submit" :disabled="selectedCount === 0"
-                                    style="padding: 0.75rem 2rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;"
+                                    style="padding: 0.75rem 2rem; border-radius: 0.75rem; font-size: 0.9375rem; font-weight: 700; border: none; cursor: pointer; letter-spacing: 0.025em; transition: all 0.2s;"
                                     :style="selectedCount === 0
-                                        ? 'background: #d1d5db; color: #9ca3af; cursor: not-allowed;'
-                                        : 'background: #16a34a; color: white;'"
-                                    onmouseover="if(!this.disabled) this.style.background='#15803d'"
-                                    onmouseout="if(!this.disabled) this.style.background='#16a34a'">
-                                <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
+                                        ? 'background: #e5e7eb; color: #9ca3af; cursor: not-allowed;'
+                                        : 'background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; box-shadow: 0 2px 8px rgba(22,163,106,0.35);'"
+                                    onmouseover="if(!this.disabled) { this.style.boxShadow='0 6px 20px rgba(22,163,106,0.45)'; this.style.transform='translateY(-2px)'; }"
+                                    onmouseout="this.style.boxShadow='0 2px 8px rgba(22,163,106,0.35)'; this.style.transform='none';">
                                 Importar Cotações
                             </button>
                         </div>
