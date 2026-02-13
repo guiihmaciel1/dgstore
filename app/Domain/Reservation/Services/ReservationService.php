@@ -12,6 +12,7 @@ use App\Domain\Sale\Enums\PaymentMethod;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ReservationService
 {
@@ -27,7 +28,6 @@ class ReservationService
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('reservation_number', 'like', "%{$search}%")
-                  ->orWhere('product_description', 'like', "%{$search}%")
                   ->orWhereHas('customer', function ($q2) use ($search) {
                       $q2->where('name', 'like', "%{$search}%")
                          ->orWhere('phone', 'like', "%{$search}%");
@@ -36,6 +36,11 @@ class ReservationService
                       $q2->where('name', 'like', "%{$search}%")
                          ->orWhere('sku', 'like', "%{$search}%");
                   });
+
+                // product_description pode não existir se migração não rodou
+                if (Schema::hasColumn('reservations', 'product_description')) {
+                    $q->orWhere('product_description', 'like', "%{$search}%");
+                }
             });
         }
 

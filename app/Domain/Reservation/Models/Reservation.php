@@ -147,10 +147,14 @@ class Reservation extends Model
     public function getProductNameAttribute(): string
     {
         if ($this->product) {
-            return $this->product->full_name ?? $this->product->name;
+            try {
+                return $this->product->full_name ?? $this->product->name ?? 'Produto';
+            } catch (\Throwable $e) {
+                return $this->product->name ?? 'Produto';
+            }
         }
 
-        return $this->product_description ?? 'Produto não especificado';
+        return $this->attributes['product_description'] ?? 'Produto não especificado';
     }
 
     public function getRemainingAmountAttribute(): float

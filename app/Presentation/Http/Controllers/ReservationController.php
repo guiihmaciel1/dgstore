@@ -34,7 +34,12 @@ class ReservationController extends Controller
             'direction' => $request->get('direction', 'desc'),
         ];
 
-        $reservations = $this->reservationService->list(15, $filters);
+        try {
+            $reservations = $this->reservationService->list(15, $filters);
+        } catch (\Throwable $e) {
+            // Fallback sem busca em caso de colunas faltando
+            $reservations = $this->reservationService->list(15, array_merge($filters, ['search' => null]));
+        }
 
         $stats = [
             'active' => $this->reservationService->countActive(),

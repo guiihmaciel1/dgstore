@@ -8,15 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->decimal('cost_price', 10, 2)->default(0)->after('product_price');
-        });
+        if (!Schema::hasColumn('reservations', 'cost_price')) {
+            Schema::table('reservations', function (Blueprint $table) {
+                $table->decimal('cost_price', 10, 2)->default(0)->after('product_price');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->dropColumn('cost_price');
-        });
+        if (Schema::hasColumn('reservations', 'cost_price')) {
+            Schema::table('reservations', function (Blueprint $table) {
+                $table->dropColumn('cost_price');
+            });
+        }
     }
 };
