@@ -11,9 +11,9 @@ use App\Domain\Valuation\Models\PriceAverage;
 class ValuationService
 {
     /**
-     * Desconto base para compra de seminovos (margem DG Store = 20%).
+     * Desconto base para compra de seminovos (margem DG Store = 15%).
      */
-    private const BASE_DISCOUNT = 0.20;
+    private const BASE_DISCOUNT = 0.15;
 
     /**
      * Avalia um iPhone seminovo com base no checklist e preços de mercado.
@@ -21,7 +21,7 @@ class ValuationService
      * Fluxo:
      * 1. Obtém a média de preço de USADO (pesquisa manual no marketplace)
      * 2. Aplica modificadores (bateria, estado, acessórios)
-     * 3. Aplica margem DG Store (-20%)
+     * 3. Aplica margem DG Store (-15%)
      * 4. Resultado = valor sugerido de compra
      */
     public function evaluate(ValuationChecklistData $checklist): ?array
@@ -48,7 +48,8 @@ class ValuationService
 
         // Valor sugerido = preço usado * (1 - margem - ajustes)
         $totalDiscount = self::BASE_DISCOUNT - $modifier;
-        $suggestedBuyPrice = round($marketAvg * (1 - $totalDiscount), 2);
+        // Arredonda para baixo na centena (ex: 5190 → 5100, 4895 → 4800)
+        $suggestedBuyPrice = floor($marketAvg * (1 - $totalDiscount) / 100) * 100;
 
         return [
             'model' => $model,
