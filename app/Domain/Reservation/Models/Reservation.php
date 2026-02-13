@@ -29,6 +29,7 @@ class Reservation extends Model
         'user_id',
         'status',
         'product_price',
+        'cost_price',
         'deposit_amount',
         'deposit_paid',
         'expires_at',
@@ -41,6 +42,7 @@ class Reservation extends Model
         return [
             'status' => ReservationStatus::class,
             'product_price' => 'decimal:2',
+            'cost_price' => 'decimal:2',
             'deposit_amount' => 'decimal:2',
             'deposit_paid' => 'decimal:2',
             'expires_at' => 'date',
@@ -164,6 +166,21 @@ class Reservation extends Model
     public function getFormattedProductPriceAttribute(): string
     {
         return 'R$ ' . number_format((float) $this->product_price, 2, ',', '.');
+    }
+
+    public function getFormattedCostPriceAttribute(): string
+    {
+        return 'R$ ' . number_format((float) $this->cost_price, 2, ',', '.');
+    }
+
+    public function getProfitAttribute(): float
+    {
+        return (float) $this->product_price - (float) $this->cost_price;
+    }
+
+    public function getFormattedProfitAttribute(): string
+    {
+        return 'R$ ' . number_format($this->profit, 2, ',', '.');
     }
 
     public function getFormattedDepositAmountAttribute(): string

@@ -70,6 +70,7 @@ class ReservationController extends Controller
             'product_description' => ['required', 'string', 'max:255'],
             'source' => ['required', 'in:stock,quotation,manual'],
             'product_price' => ['required', 'numeric', 'min:0'],
+            'cost_price' => ['nullable', 'numeric', 'min:0'],
             'deposit_amount' => ['required', 'numeric', 'min:0'],
             'expires_at' => ['required', 'date', 'after:today'],
             'initial_payment' => ['nullable', 'numeric', 'min:0'],
@@ -82,7 +83,7 @@ class ReservationController extends Controller
                 array_merge(
                     $request->only([
                         'customer_id', 'product_id', 'product_description',
-                        'source', 'product_price', 'deposit_amount',
+                        'source', 'product_price', 'cost_price', 'deposit_amount',
                         'expires_at', 'initial_payment', 'payment_method', 'notes'
                     ]),
                     ['user_id' => auth()->id()]

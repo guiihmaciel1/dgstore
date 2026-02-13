@@ -74,20 +74,22 @@
                                 </div>
 
                                 <!-- Cliente selecionado -->
-                                <div x-show="selectedCustomer" x-cloak style="padding: 0.75rem; background: #f0fdf4; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                            <svg style="width: 1.25rem; height: 1.25rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                <div x-show="selectedCustomer" x-cloak style="padding: 0.625rem 0.75rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; min-width: 1.5rem; background: #16a34a; border-radius: 50%; color: white;">
+                                            <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                                             </svg>
-                                            <span style="font-weight: 600; color: #16a34a;" x-text="selectedCustomer?.name"></span>
+                                        </span>
+                                        <div style="min-width: 0;">
+                                            <div style="font-weight: 600; font-size: 0.875rem; color: #15803d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="selectedCustomer?.name"></div>
+                                            <div style="font-size: 0.75rem; color: #6b7280;" x-text="selectedCustomer?.phone"></div>
                                         </div>
-                                        <span style="font-size: 0.75rem; color: #6b7280; margin-left: 1.75rem;" x-text="selectedCustomer?.phone"></span>
                                     </div>
-                                    <button type="button" @click="clearCustomer()" style="padding: 0.375rem; color: #dc2626; background: none; border: none; cursor: pointer; border-radius: 0.375rem;"
-                                            onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
-                                        <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    <button type="button" @click="clearCustomer()" style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; min-width: 1.5rem; color: #dc2626; background: none; border: none; cursor: pointer; border-radius: 0.375rem;"
+                                            onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'" title="Remover cliente">
+                                        <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -188,34 +190,38 @@
                                 </div>
 
                                 <!-- Produto selecionado -->
-                                <div x-show="selectedProduct" x-cloak style="padding: 0.75rem; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;"
-                                     :style="source === 'stock' ? 'background: #f0fdf4;' : (source === 'quotation' ? 'background: #eff6ff;' : 'background: #fefce8;')">
-                                    <div>
-                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                            <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                                 :style="source === 'stock' ? 'color: #16a34a;' : (source === 'quotation' ? 'color: #2563eb;' : 'color: #d97706;')">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                <div x-show="selectedProduct" x-cloak style="padding: 0.625rem 0.75rem; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;"
+                                     :style="source === 'stock'
+                                         ? 'background: #f0fdf4; border: 1px solid #bbf7d0;'
+                                         : (source === 'quotation' ? 'background: #eff6ff; border: 1px solid #bfdbfe;' : 'background: #fefce8; border: 1px solid #fde68a;')">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0; flex: 1;">
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; min-width: 1.5rem; border-radius: 50%; color: white;"
+                                              :style="source === 'stock' ? 'background: #16a34a;' : (source === 'quotation' ? 'background: #2563eb;' : 'background: #d97706;')">
+                                            <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                                             </svg>
-                                            <span style="font-weight: 600;" x-text="selectedProduct?.name"
-                                                  :style="source === 'stock' ? 'color: #16a34a;' : (source === 'quotation' ? 'color: #2563eb;' : 'color: #d97706;')"></span>
-                                        </div>
-                                        <div style="font-size: 0.75rem; color: #6b7280; margin-left: 1.75rem;">
-                                            <span x-text="selectedProduct?.sku"></span>
-                                            <span style="margin-left: 0.5rem; font-weight: 600;" x-text="selectedProduct?.formatted_price"
-                                                  :style="source === 'stock' ? 'color: #16a34a;' : (source === 'quotation' ? 'color: #2563eb;' : 'color: #d97706;')"></span>
-                                        </div>
-                                        <div style="margin-left: 1.75rem; margin-top: 0.25rem;">
-                                            <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500;"
-                                                  :style="source === 'stock'
-                                                      ? 'background: #dcfce7; color: #16a34a;'
-                                                      : (source === 'quotation' ? 'background: #dbeafe; color: #2563eb;' : 'background: #fef3c7; color: #d97706;')"
-                                                  x-text="source === 'stock' ? 'Estoque' : (source === 'quotation' ? 'Cotação de Fornecedor' : 'Inserido Manualmente')"></span>
+                                        </span>
+                                        <div style="min-width: 0; flex: 1;">
+                                            <div style="font-weight: 600; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                                 :style="source === 'stock' ? 'color: #15803d;' : (source === 'quotation' ? 'color: #1d4ed8;' : 'color: #b45309;')"
+                                                 x-text="selectedProduct?.name"></div>
+                                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #6b7280; margin-top: 0.125rem;">
+                                                <span x-text="selectedProduct?.sku"></span>
+                                                <span style="font-weight: 600;"
+                                                      :style="source === 'stock' ? 'color: #16a34a;' : (source === 'quotation' ? 'color: #2563eb;' : 'color: #d97706;')"
+                                                      x-text="selectedProduct?.formatted_price"></span>
+                                                <span style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; border-radius: 1rem; font-weight: 500;"
+                                                      :style="source === 'stock'
+                                                          ? 'background: #dcfce7; color: #16a34a;'
+                                                          : (source === 'quotation' ? 'background: #dbeafe; color: #2563eb;' : 'background: #fef3c7; color: #d97706;')"
+                                                      x-text="source === 'stock' ? 'Estoque' : (source === 'quotation' ? 'Cotação' : 'Manual')"></span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <button type="button" @click="clearProduct()" style="padding: 0.375rem; color: #dc2626; background: none; border: none; cursor: pointer; border-radius: 0.375rem;"
-                                            onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
-                                        <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    <button type="button" @click="clearProduct()" style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; min-width: 1.5rem; color: #dc2626; background: none; border: none; cursor: pointer; border-radius: 0.375rem; margin-left: 0.5rem;"
+                                            onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'" title="Remover produto">
+                                        <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
                                     </button>
                                 </div>
@@ -236,18 +242,35 @@
                                 </h3>
                             </div>
                             <div style="padding: 1.25rem;">
-                                <div style="margin-bottom: 1rem;">
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Preço do Produto (R$) *</label>
-                                    <input type="number" name="product_price" x-model.number="productPrice" required min="0" step="0.01"
-                                           style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                           onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Valor de Compra (R$) *</label>
+                                        <input type="number" name="cost_price" x-model.number="costPrice" required min="0" step="0.01"
+                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                               onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                                        <p style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.25rem;">Custo do produto</p>
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Valor de Venda (R$) *</label>
+                                        <input type="number" name="product_price" x-model.number="productPrice" required min="0" step="0.01"
+                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                               onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                                        <p style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.25rem;">Preço para o cliente</p>
+                                    </div>
+                                </div>
+                                <!-- Lucro estimado -->
+                                <div x-show="costPrice > 0 && productPrice > 0" x-cloak
+                                     style="padding: 0.5rem 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;"
+                                     :style="(productPrice - costPrice) > 0 ? 'background: #f0fdf4; color: #16a34a;' : 'background: #fef2f2; color: #dc2626;'">
+                                    <span style="font-weight: 500;">Lucro estimado:</span>
+                                    <span style="font-weight: 700;" x-text="'R$ ' + (productPrice - costPrice).toFixed(2).replace('.', ',')"></span>
                                 </div>
                                 <div style="margin-bottom: 1rem;">
                                     <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Valor do Sinal (R$) *</label>
                                     <input type="number" name="deposit_amount" x-model.number="depositAmount" required min="0" step="0.01"
                                            style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                            onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
-                                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Valor combinado como sinal</p>
+                                    <p style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.25rem;">Valor combinado como sinal</p>
                                 </div>
                                 <div>
                                     <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Data Limite *</label>
@@ -255,7 +278,7 @@
                                            min="{{ date('Y-m-d', strtotime('+1 day')) }}"
                                            style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                            onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
-                                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Até quando o cliente pode finalizar</p>
+                                    <p style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.25rem;">Até quando o cliente pode finalizar</p>
                                 </div>
                             </div>
                         </div>
@@ -317,9 +340,17 @@
                                 <div style="font-weight: 500;" x-text="productDescription || '—'"></div>
                             </div>
                             <div style="border-top: 1px solid rgba(255,255,255,0.15); padding-top: 0.75rem; margin-top: 0.5rem;">
+                                <div x-show="costPrice > 0" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8rem; opacity: 0.7;">
+                                    <span>Custo:</span>
+                                    <span x-text="'R$ ' + (costPrice || 0).toFixed(2).replace('.', ',')"></span>
+                                </div>
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
-                                    <span style="opacity: 0.8;">Valor do Produto:</span>
+                                    <span style="opacity: 0.8;">Venda:</span>
                                     <span style="font-weight: 500;" x-text="'R$ ' + (productPrice || 0).toFixed(2).replace('.', ',')"></span>
+                                </div>
+                                <div x-show="costPrice > 0 && productPrice > 0" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8rem; color: #86efac;">
+                                    <span>Lucro:</span>
+                                    <span style="font-weight: 600;" x-text="'R$ ' + ((productPrice || 0) - (costPrice || 0)).toFixed(2).replace('.', ',')"></span>
                                 </div>
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
                                     <span style="opacity: 0.8;">Sinal Combinado:</span>
@@ -389,6 +420,7 @@
                 source: '{{ $selectedProduct ? 'stock' : 'manual' }}',
 
                 // Valores
+                costPrice: 0,
                 productPrice: {{ $selectedProduct?->sale_price ?? 0 }},
                 depositAmount: 0,
                 initialPayment: 0,
@@ -449,7 +481,16 @@
                     this.selectedProduct = product;
                     this.productDescription = product.name;
                     this.source = product.source || 'stock';
-                    this.productPrice = product.price || 0;
+
+                    // Cotação: preço é o custo; Estoque: preço é a venda
+                    if (product.source === 'quotation') {
+                        this.costPrice = product.price || 0;
+                        this.productPrice = 0;
+                    } else {
+                        this.costPrice = 0;
+                        this.productPrice = product.price || 0;
+                    }
+
                     this.productSearch = '';
                     this.productResults = [];
                 },
@@ -459,6 +500,7 @@
                     this.selectedProduct = null;
                     this.productDescription = '';
                     this.source = 'manual';
+                    this.costPrice = 0;
                     this.productPrice = 0;
                     this.productSearch = '';
                     this.searchedProduct = false;

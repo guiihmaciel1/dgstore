@@ -197,13 +197,27 @@
                     <!-- Resumo Financeiro -->
                     <div style="background: #111827; border-radius: 0.75rem; padding: 1.25rem; color: white; margin-bottom: 1.5rem;">
                         <h3 style="font-weight: 600; margin-bottom: 1rem;">Resumo Financeiro</h3>
+
+                        @if($reservation->cost_price > 0)
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8rem; opacity: 0.7;">
+                                <span>Custo:</span>
+                                <span>{{ $reservation->formatted_cost_price }}</span>
+                            </div>
+                        @endif
                         
                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.875rem;">
-                            <span style="opacity: 0.8;">Valor do Produto:</span>
+                            <span style="opacity: 0.8;">Valor de Venda:</span>
                             <span style="font-weight: 500;">{{ $reservation->formatted_product_price }}</span>
                         </div>
+
+                        @if($reservation->cost_price > 0)
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.8rem; color: {{ $reservation->profit >= 0 ? '#86efac' : '#fca5a5' }};">
+                                <span>Lucro:</span>
+                                <span style="font-weight: 600;">{{ $reservation->formatted_profit }}</span>
+                            </div>
+                        @endif
                         
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.875rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.875rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem;">
                             <span style="opacity: 0.8;">Sinal Combinado:</span>
                             <span style="font-weight: 500;">{{ $reservation->formatted_deposit_amount }}</span>
                         </div>
