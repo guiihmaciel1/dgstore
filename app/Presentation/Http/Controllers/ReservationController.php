@@ -212,16 +212,23 @@ class ReservationController extends Controller
             ->get()
             ->unique('product_name')
             ->take(10)
-            ->map(fn($q) => [
-                'id' => null,
-                'name' => $q->product_name,
-                'sku' => $q->supplier->name ?? 'Fornecedor',
-                'price' => (float) $q->unit_price,
-                'formatted_price' => $q->formatted_unit_price,
-                'stock' => null,
-                'source' => 'quotation',
-                'source_label' => 'Cotação - ' . ($q->supplier->name ?? ''),
-            ])->values();
+            ->map(function ($q) {
+                $basePrice = (float) $q->unit_price;
+                $finalPrice = round($basePrice * 1.04, 2);
+
+                return [
+                    'id' => null,
+                    'name' => $q->product_name,
+                    'sku' => $q->supplier->name ?? 'Fornecedor',
+                    'price' => $basePrice,
+                    'final_price' => $finalPrice,
+                    'formatted_price' => 'R$ ' . number_format($finalPrice, 2, ',', '.'),
+                    'formatted_base_price' => $q->formatted_unit_price,
+                    'stock' => null,
+                    'source' => 'quotation',
+                    'source_label' => 'Cotação - ' . ($q->supplier->name ?? ''),
+                ];
+            })->values();
 
         // Mescla resultados: estoque primeiro, depois cotações
         $results = $stockProducts->concat($quotations)->take(15);

@@ -141,8 +141,11 @@
                                                     <div style="font-weight: 500; color: #111827;" x-text="product.name"></div>
                                                     <div style="font-size: 0.75rem; color: #6b7280;" x-text="product.sku"></div>
                                                 </div>
-                                                <div style="text-align: right;">
+                                                <div style="text-align: right; white-space: nowrap;">
                                                     <div style="font-weight: 600; color: #16a34a; font-size: 0.875rem;" x-text="product.formatted_price"></div>
+                                                    <template x-if="product.source === 'quotation' && product.formatted_base_price">
+                                                        <div style="font-size: 0.625rem; color: #9ca3af;" x-text="product.formatted_base_price + ' +4%'"></div>
+                                                    </template>
                                                     <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500;"
                                                           :style="product.source === 'stock'
                                                               ? (product.stock > 0 ? 'background: #dcfce7; color: #16a34a;' : 'background: #fef3c7; color: #d97706;')
@@ -482,9 +485,9 @@
                     this.productDescription = product.name;
                     this.source = product.source || 'stock';
 
-                    // Cotação: preço é o custo; Estoque: preço é a venda
+                    // Cotação: custo = valor final (+4% frete); Estoque: preço = venda
                     if (product.source === 'quotation') {
-                        this.costPrice = product.price || 0;
+                        this.costPrice = product.final_price || product.price || 0;
                         this.productPrice = 0;
                     } else {
                         this.costPrice = 0;
