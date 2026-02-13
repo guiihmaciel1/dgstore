@@ -141,7 +141,15 @@
                                     @endphp
                                     <tr style="border-bottom: 1px solid #f3f4f6;">
                                         <td style="padding: 1rem 1.5rem;">
-                                            <div style="font-weight: 500; color: #111827; display: flex; align-items: center; gap: 0.375rem;">{!! quotationFlag($productName) !!} {{ $productName }}</div>
+                                            <a href="https://www.google.com/search?q={{ urlencode($productName) }}" target="_blank" rel="noopener"
+                                               style="font-weight: 500; color: #111827; display: inline-flex; align-items: center; gap: 0.375rem; text-decoration: none; cursor: pointer;"
+                                               onmouseover="this.style.color='#2563eb'; this.querySelector('.search-icon').style.opacity='1'"
+                                               onmouseout="this.style.color='#111827'; this.querySelector('.search-icon').style.opacity='0'">
+                                                {!! quotationFlag($productName) !!} {{ $productName }}
+                                                <svg class="search-icon" style="width: 0.875rem; height: 0.875rem; opacity: 0; transition: opacity 0.15s; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                            </a>
                                         </td>
                                         <td style="padding: 0.75rem 1rem;">
                                             <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
@@ -241,9 +249,17 @@
                                                style="width: 0.875rem; height: 0.875rem; cursor: pointer; accent-color: #111827;">
                                     </td>
                                     <td style="padding: 0.75rem 1rem;">
-                                        <div style="font-weight: 500; color: #111827; display: flex; align-items: center; gap: 0.375rem;">{!! quotationFlag($quotation->product_name) !!} {{ $quotation->product_name }}</div>
+                                        <a href="https://www.google.com/search?q={{ urlencode($quotation->product_name) }}" target="_blank" rel="noopener"
+                                           style="font-weight: 500; color: #111827; display: inline-flex; align-items: center; gap: 0.375rem; text-decoration: none; cursor: pointer;"
+                                           onmouseover="this.style.color='#2563eb'; this.querySelector('.search-icon').style.opacity='1'"
+                                           onmouseout="this.style.color='#111827'; this.querySelector('.search-icon').style.opacity='0'">
+                                            {!! quotationFlag($quotation->product_name) !!} {{ $quotation->product_name }}
+                                            <svg class="search-icon" style="width: 0.875rem; height: 0.875rem; opacity: 0; transition: opacity 0.15s; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                            </svg>
+                                        </a>
                                         @if($quotation->category)
-                                            <span style="font-size: 0.6875rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280;">{{ $quotation->category }}</span>
+                                            <div><span style="font-size: 0.6875rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280;">{{ $quotation->category }}</span></div>
                                         @endif
                                         @if($quotation->notes)
                                             <div style="font-size: 0.75rem; color: #6b7280;">{{ Str::limit($quotation->notes, 50) }}</div>
