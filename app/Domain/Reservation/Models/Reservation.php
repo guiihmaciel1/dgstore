@@ -115,21 +115,29 @@ class Reservation extends Model
     public static function generateReservationNumber(): string
     {
         $prefix = 'RES';
-        $year = now()->format('Y');
-        $month = now()->format('m');
-        
-        $lastReservation = self::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->orderBy('created_at', 'desc')
+        $yearMonth = now()->format('Ym');
+        $expectedPrefix = $prefix . $yearMonth . '-';
+
+        $lastReservation = self::where('reservation_number', 'like', $expectedPrefix . '%')
+            ->orderByRaw("CAST(SUBSTRING(reservation_number, ?) AS UNSIGNED) DESC", [strlen($expectedPrefix) + 1])
             ->first();
 
-        if ($lastReservation && preg_match('/(\d+)$/', $lastReservation->reservation_number, $matches)) {
+        if ($lastReservation && preg_match('/-(\d+)$/', $lastReservation->reservation_number, $matches)) {
             $sequence = (int) $matches[1] + 1;
         } else {
-            $sequence = 1;
+            $count = self::whereYear('created_at', now()->year)
+                ->whereMonth('created_at', now()->month)
+                ->count();
+            $sequence = $count + 1;
         }
 
-        return sprintf('%s%s%s%04d', $prefix, $year, $month, $sequence);
+        $number = sprintf('%s-%04d', $prefix . $yearMonth, $sequence);
+        while (self::where('reservation_number', $number)->exists()) {
+            $sequence++;
+            $number = sprintf('%s-%04d', $prefix . $yearMonth, $sequence);
+        }
+
+        return $number;
     }
 
     public function getRemainingAmountAttribute(): float

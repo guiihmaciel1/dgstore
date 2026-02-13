@@ -134,21 +134,34 @@ class Sale extends Model
     public static function generateSaleNumber(): string
     {
         $prefix = 'DG';
-        $year = now()->format('Y');
-        $month = now()->format('m');
-        
-        $lastSale = self::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->orderBy('created_at', 'desc')
+        $yearMonth = now()->format('Ym');
+        $expectedPrefix = $prefix . $yearMonth . '-';
+
+        // Busca a última venda do mês com formato correto (DG202602-NNNNN)
+        $lastSale = self::withTrashed()
+            ->where('sale_number', 'like', $expectedPrefix . '%')
+            ->orderByRaw("CAST(SUBSTRING(sale_number, ?) AS UNSIGNED) DESC", [strlen($expectedPrefix) + 1])
             ->first();
 
-        if ($lastSale && preg_match('/(\d+)$/', $lastSale->sale_number, $matches)) {
+        if ($lastSale && preg_match('/-(\d+)$/', $lastSale->sale_number, $matches)) {
             $sequence = (int) $matches[1] + 1;
         } else {
-            $sequence = 1;
+            // Fallback: conta vendas do mês para evitar colisão com formatos antigos
+            $count = self::withTrashed()
+                ->whereYear('created_at', now()->year)
+                ->whereMonth('created_at', now()->month)
+                ->count();
+            $sequence = $count + 1;
         }
 
-        return sprintf('%s%s%s%05d', $prefix, $year, $month, $sequence);
+        // Garante unicidade em caso de race condition
+        $saleNumber = sprintf('%s-%05d', $prefix . $yearMonth, $sequence);
+        while (self::withTrashed()->where('sale_number', $saleNumber)->exists()) {
+            $sequence++;
+            $saleNumber = sprintf('%s-%05d', $prefix . $yearMonth, $sequence);
+        }
+
+        return $saleNumber;
     }
 
     public function isPaid(): bool
