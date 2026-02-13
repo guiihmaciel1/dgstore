@@ -371,16 +371,24 @@
                         </div>
 
                         <!-- Botões -->
-                        <div style="margin-top: 1rem;">
+                        <div style="margin-top: 1.25rem; display: flex; flex-direction: column; gap: 0.625rem;">
                             <button type="submit" :disabled="!canSubmit"
-                                    style="width: 100%; padding: 0.75rem; background: #16a34a; color: white; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 1rem;"
-                                    :style="!canSubmit ? 'opacity: 0.5; cursor: not-allowed;' : ''"
-                                    onmouseover="if(!this.disabled) this.style.background='#15803d'"
-                                    onmouseout="this.style.background='#16a34a'">
+                                    style="width: 100%; padding: 0.875rem; background: #16a34a; color: white; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; box-shadow: 0 1px 3px rgba(22,163,106,0.3);"
+                                    :style="!canSubmit ? 'opacity: 0.5; cursor: not-allowed; box-shadow: none;' : ''"
+                                    onmouseover="if(!this.disabled) { this.style.background='#15803d'; this.style.boxShadow='0 4px 12px rgba(22,163,106,0.4)'; this.style.transform='translateY(-1px)'; }"
+                                    onmouseout="this.style.background='#16a34a'; this.style.boxShadow='0 1px 3px rgba(22,163,106,0.3)'; this.style.transform='none';">
+                                <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                </svg>
                                 Criar Reserva
                             </button>
                             <a href="{{ route('reservations.index') }}"
-                               style="display: block; width: 100%; padding: 0.75rem; margin-top: 0.5rem; text-align: center; color: #6b7280; font-weight: 500; text-decoration: none;">
+                               style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.75rem; color: #6b7280; font-weight: 500; text-decoration: none; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; transition: all 0.2s;"
+                               onmouseover="this.style.background='#f9fafb'; this.style.borderColor='#d1d5db'; this.style.color='#374151';"
+                               onmouseout="this.style.background='transparent'; this.style.borderColor='#e5e7eb'; this.style.color='#6b7280';">
+                                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                </svg>
                                 Cancelar
                             </a>
                         </div>

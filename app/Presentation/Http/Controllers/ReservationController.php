@@ -66,38 +66,50 @@ class ReservationController extends Controller
     {
         $request->validate([
             'customer_id' => ['required', 'exists:customers,id'],
-            'product_id' => ['nullable', 'exists:products,id'],
+            'product_id' => ['nullable'],
             'product_description' => ['required', 'string', 'max:255'],
             'source' => ['required', 'in:stock,quotation,manual'],
-            'product_price' => ['required', 'numeric', 'min:0'],
+            'product_price' => ['required', 'numeric', 'min:0.01'],
             'cost_price' => ['nullable', 'numeric', 'min:0'],
             'deposit_amount' => ['required', 'numeric', 'min:0'],
             'expires_at' => ['required', 'date', 'after:today'],
             'initial_payment' => ['nullable', 'numeric', 'min:0'],
-            'payment_method' => ['required_with:initial_payment', 'in:cash,credit_card,debit_card,pix,bank_transfer'],
+            'payment_method' => ['nullable', 'in:cash,credit_card,debit_card,pix,bank_transfer'],
             'notes' => ['nullable', 'string'],
         ]);
 
         try {
-            $reservation = $this->reservationService->create(
-                array_merge(
-                    $request->only([
-                        'customer_id', 'product_id', 'product_description',
-                        'source', 'product_price', 'cost_price', 'deposit_amount',
-                        'expires_at', 'initial_payment', 'payment_method', 'notes'
-                    ]),
-                    ['user_id' => auth()->id()]
-                )
-            );
+            $data = $request->only([
+                'customer_id', 'product_description',
+                'source', 'product_price', 'cost_price', 'deposit_amount',
+                'expires_at', 'notes'
+            ]);
+
+            $data['user_id'] = auth()->id();
+
+            // product_id só se for válido
+            $productId = $request->input('product_id');
+            if ($productId) {
+                $data['product_id'] = $productId;
+            }
+
+            // Pagamento inicial só se tiver valor > 0
+            $initialPayment = (float) $request->input('initial_payment', 0);
+            if ($initialPayment > 0) {
+                $data['initial_payment'] = $initialPayment;
+                $data['payment_method'] = $request->input('payment_method', 'pix');
+            }
+
+            $reservation = $this->reservationService->create($data);
 
             return redirect()
                 ->route('reservations.show', $reservation)
                 ->with('success', "Reserva #{$reservation->reservation_number} criada com sucesso!");
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', $e->getMessage());
+                ->with('error', 'Erro ao criar reserva: ' . $e->getMessage());
         }
     }
 
