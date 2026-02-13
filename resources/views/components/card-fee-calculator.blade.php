@@ -72,30 +72,18 @@
 
                 <!-- Tabela de todas as opções -->
                 <div x-show="amount > 0" x-transition>
-                    <!-- Pix e Débito -->
-                    <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-                        <div style="flex: 1; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
-                            <div>
-                                <div style="font-size: 13px; font-weight: 700; color: #059669;">Pix</div>
-                                <div style="font-size: 10px; color: #6b7280;">Sem taxa</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 17px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(amount)"></div>
-                            </div>
+                    <!-- Pix (melhor preço) -->
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <div>
+                            <div style="font-size: 14px; font-weight: 700; color: #059669;">Pix</div>
+                            <div style="font-size: 11px; color: #6b7280;">Melhor preço - sem taxa</div>
                         </div>
-                        <div style="flex: 1; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
-                            <div>
-                                <div style="font-size: 13px; font-weight: 700; color: #111827;">Debito</div>
-                                <div style="font-size: 10px; color: #9ca3af;">Taxa 0,8%</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 17px; font-weight: 800; color: #111827;" x-text="'R$ ' + formatNumber(debitoCobrar)"></div>
-                                <div style="font-size: 10px; color: #ef4444;" x-text="'taxa R$ ' + formatNumber(debitoTaxa)"></div>
-                            </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 20px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(amount)"></div>
                         </div>
                     </div>
 
-                    <!-- Crédito -->
+                    <!-- Cartão -->
                     <div style="border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
                         <div style="display: grid; grid-template-columns: 1fr auto 56px; background: #111827; color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
                             <div style="padding: 10px 14px;">Forma</div>
@@ -230,22 +218,13 @@
 
                     <!-- Formas de pagamento do restante -->
                     <div x-show="remaining > 0" x-transition>
-                        <!-- Pix e Debito -->
-                        <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-                            <div style="flex: 1; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between;">
-                                <div>
-                                    <div style="font-size: 12px; font-weight: 700; color: #059669;">Pix</div>
-                                    <div style="font-size: 9px; color: #6b7280;">Sem taxa</div>
-                                </div>
-                                <div style="font-size: 15px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(remaining)"></div>
+                        <!-- Pix (melhor preço) -->
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-size: 12px; font-weight: 700; color: #059669;">Pix</div>
+                                <div style="font-size: 9px; color: #6b7280;">Melhor preço - sem taxa</div>
                             </div>
-                            <div style="flex: 1; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between;">
-                                <div>
-                                    <div style="font-size: 12px; font-weight: 700; color: #111827;">Debito</div>
-                                    <div style="font-size: 9px; color: #9ca3af;">Taxa 0,8%</div>
-                                </div>
-                                <div style="font-size: 15px; font-weight: 800; color: #111827;" x-text="'R$ ' + formatNumber(tiDebitoCobrar)"></div>
-                            </div>
+                            <div style="font-size: 15px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(remaining)"></div>
                         </div>
 
                         <!-- Parcelas do restante -->
@@ -323,24 +302,21 @@ function cardFeeCalculator() {
 
         // ── Taxas ──
         rates: [
-            { label: 'Credito 1x', key: '1x', percent: 2.85, parcelas: 1 },
-            { label: 'Credito 2x', key: '2x', percent: 3.9, parcelas: 2 },
-            { label: 'Credito 3x', key: '3x', percent: 4.9, parcelas: 3 },
-            { label: 'Credito 4x', key: '4x', percent: 5.9, parcelas: 4 },
-            { label: 'Credito 5x', key: '5x', percent: 6.9, parcelas: 5 },
-            { label: 'Credito 6x', key: '6x', percent: 7.9, parcelas: 6 },
-            { label: 'Credito 7x', key: '7x', percent: 8.9, parcelas: 7 },
-            { label: 'Credito 8x', key: '8x', percent: 9.9, parcelas: 8 },
-            { label: 'Credito 9x', key: '9x', percent: 9.9, parcelas: 9 },
-            { label: 'Credito 10x', key: '10x', percent: 9.9, parcelas: 10 },
-            { label: 'Credito 11x', key: '11x', percent: 9.9, parcelas: 11 },
-            { label: 'Credito 12x', key: '12x', percent: 9.9, parcelas: 12 },
+            { label: 'Cart\u00e3o 1x', key: '1x', percent: 2.85, parcelas: 1 },
+            { label: 'Cart\u00e3o 2x', key: '2x', percent: 3.9, parcelas: 2 },
+            { label: 'Cart\u00e3o 3x', key: '3x', percent: 4.9, parcelas: 3 },
+            { label: 'Cart\u00e3o 4x', key: '4x', percent: 5.9, parcelas: 4 },
+            { label: 'Cart\u00e3o 5x', key: '5x', percent: 6.9, parcelas: 5 },
+            { label: 'Cart\u00e3o 6x', key: '6x', percent: 7.9, parcelas: 6 },
+            { label: 'Cart\u00e3o 7x', key: '7x', percent: 8.9, parcelas: 7 },
+            { label: 'Cart\u00e3o 8x', key: '8x', percent: 9.9, parcelas: 8 },
+            { label: 'Cart\u00e3o 9x', key: '9x', percent: 9.9, parcelas: 9 },
+            { label: 'Cart\u00e3o 10x', key: '10x', percent: 9.9, parcelas: 10 },
+            { label: 'Cart\u00e3o 11x', key: '11x', percent: 9.9, parcelas: 11 },
+            { label: 'Cart\u00e3o 12x', key: '12x', percent: 9.9, parcelas: 12 },
         ],
-        debitoBasePercent: 0.8,
         amountInput: '',
         amount: 0,
-        debitoCobrar: 0,
-        debitoTaxa: 0,
         results: [],
 
         // ── Trade-in ──
@@ -349,7 +325,6 @@ function cardFeeCalculator() {
         devicePrice: 0,
         tradeInValue: 0,
         remaining: 0,
-        tiDebitoCobrar: 0,
         tiResults: [],
         tiCopied: false,
 
@@ -401,9 +376,6 @@ function cardFeeCalculator() {
 
         calculate() {
             this.amount = this.parseNumber(this.amountInput);
-            const debitoPct = this.debitoBasePercent / 100;
-            this.debitoCobrar = this.amount > 0 ? this.amount / (1 - debitoPct) : 0;
-            this.debitoTaxa = this.debitoCobrar - this.amount;
             this.results = this.rates.map(r => {
                 const pct = r.percent / 100;
                 const cobrar = this.amount > 0 ? this.amount / (1 - pct) : 0;
@@ -418,10 +390,6 @@ function cardFeeCalculator() {
             this.devicePrice = this.parseNumber(this.devicePriceInput);
             this.tradeInValue = this.parseNumber(this.tradeInValueInput);
             this.remaining = Math.max(0, this.devicePrice - this.tradeInValue);
-
-            // Debito do restante
-            const debitoPct = this.debitoBasePercent / 100;
-            this.tiDebitoCobrar = this.remaining > 0 ? this.remaining / (1 - debitoPct) : 0;
 
             // Parcelas do restante
             this.tiResults = this.rates.map(r => {
@@ -440,68 +408,66 @@ function cardFeeCalculator() {
         // ── Mensagens ──
 
         buildRowMessage(row) {
+            const vlr = row.cobrar / row.parcelas;
             const linhas = [
-                '*Condicoes de pagamento - DG Store*',
+                '*Condi\u00e7\u00f5es de pagamento - DG Store* \uD83D\uDCB3',
                 '',
-                'Forma: *' + row.label + '*',
-                'Valor: *R$ ' + this.formatNumber(row.cobrar) + '*',
+                '\uD83D\uDCB3 *No cart\u00e3o:*',
+                '*' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*',
+                'Total: R$ ' + this.formatNumber(row.cobrar),
+                '',
+                '\u2705 *\u00c0 vista (Pix):*',
+                '*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_',
+                '',
+                '\uD83D\uDD12 *Garantia e proced\u00eancia verificada*',
+                '\uD83C\uDFE2 _Atendimento DG Store_',
             ];
-            if (row.parcelas > 1) {
-                const vlr = row.cobrar / row.parcelas;
-                linhas.push('Parcelas: *' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*');
-            }
-            linhas.push('', 'Produto com garantia e procedencia');
-            linhas.push('Atendimento DG Store');
             return linhas.join("\n");
         },
 
         buildAllMessage() {
-            const credito1x = this.results.find(r => r.parcelas === 1);
             const linhas = [
-                '*Condicoes de pagamento - DG Store*',
+                '*Condi\u00e7\u00f5es de pagamento - DG Store* \uD83D\uDCB3',
                 '',
-                '*A vista:*',
-                'Pix: *R$ ' + this.formatNumber(this.amount) + '* _(melhor preco)_',
-                'Debito: R$ ' + this.formatNumber(this.debitoCobrar),
-                'Credito: R$ ' + this.formatNumber(credito1x ? credito1x.cobrar : 0),
+                '\u2705 *\u00c0 vista (Pix):*',
+                '*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_',
                 '',
-                '*Parcelado no cartao:*',
+                '\uD83D\uDCB3 *No cart\u00e3o:*',
             ];
-            this.results.filter(r => r.parcelas >= 2).forEach(r => {
+            this.results.forEach(r => {
                 const vlr = r.cobrar / r.parcelas;
                 linhas.push(r.parcelas + 'x de R$ ' + this.formatNumber(vlr));
             });
-            linhas.push('', 'Garantia e procedencia', 'Atendimento DG Store');
+            linhas.push('');
+            linhas.push('\uD83D\uDD12 *Garantia e proced\u00eancia verificada*');
+            linhas.push('\uD83C\uDFE2 _Atendimento DG Store_');
             return linhas.join("\n");
         },
 
         buildTradeInMessage() {
             const linhas = [
-                '*Proposta de troca - DG Store*',
+                '*Proposta de troca - DG Store* \uD83D\uDD04',
                 '',
-                'Aparelho novo: *R$ ' + this.formatNumber(this.devicePrice) + '*',
+                '\uD83D\uDCF1 Aparelho novo: *R$ ' + this.formatNumber(this.devicePrice) + '*',
             ];
             if (this.tradeInValue > 0) {
-                linhas.push('Seu aparelho (trade-in): *- R$ ' + this.formatNumber(this.tradeInValue) + '*');
+                linhas.push('\u2B07\uFE0F Seu aparelho (trade-in): *- R$ ' + this.formatNumber(this.tradeInValue) + '*');
             }
             linhas.push('');
-            linhas.push('*Restante a pagar: R$ ' + this.formatNumber(this.remaining) + '*');
+            linhas.push('\uD83D\uDCB0 *Restante a pagar: R$ ' + this.formatNumber(this.remaining) + '*');
             linhas.push('');
-            linhas.push('*Formas de pagamento do restante:*');
-            linhas.push('Pix: *R$ ' + this.formatNumber(this.remaining) + '* _(melhor preco)_');
-            linhas.push('Debito: R$ ' + this.formatNumber(this.tiDebitoCobrar));
-
-            const cred1x = this.tiResults.find(r => r.parcelas === 1);
-            if (cred1x) linhas.push('Credito 1x: R$ ' + this.formatNumber(cred1x.cobrar));
-
+            linhas.push('\u2705 *\u00c0 vista (Pix):*');
+            linhas.push('*R$ ' + this.formatNumber(this.remaining) + '* _(melhor pre\u00e7o)_');
             linhas.push('');
-            linhas.push('*Parcelado no cartao:*');
-            this.tiResults.filter(r => r.parcelas >= 2 && r.parcelas <= 12).forEach(r => {
+            linhas.push('\uD83D\uDCB3 *No cart\u00e3o:*');
+            this.tiResults.forEach(r => {
                 const vlr = r.cobrar / r.parcelas;
                 linhas.push(r.parcelas + 'x de R$ ' + this.formatNumber(vlr));
             });
 
-            linhas.push('', 'Garantia e procedencia', 'Atendimento DG Store');
+            linhas.push('');
+            linhas.push('\uD83D\uDD12 *Garantia e proced\u00eancia verificada*');
+            linhas.push('\uD83C\uDFE2 _Atendimento DG Store_');
             return linhas.join("\n");
         },
 
