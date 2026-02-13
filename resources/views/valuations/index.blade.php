@@ -192,7 +192,7 @@
                                 </div>
                                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #fef2f2; border-radius: 0.375rem; border: 1px solid #fecaca;">
                                     <span style="font-size: 0.875rem; color: #991b1b; font-weight: 500;">Margem DG Store</span>
-                                    <span style="font-size: 0.875rem; font-weight: 600; color: #dc2626;">-30%</span>
+                                    <span style="font-size: 0.875rem; font-weight: 600; color: #dc2626;">-20%</span>
                                 </div>
                             </div>
                         </div>
