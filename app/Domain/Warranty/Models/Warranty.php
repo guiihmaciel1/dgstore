@@ -114,7 +114,7 @@ class Warranty extends Model
             return null;
         }
 
-        $days = now()->diffInDays($this->supplier_warranty_until, false);
+        $days = (int) now()->diffInDays($this->supplier_warranty_until, false);
         return max(0, $days);
     }
 
@@ -124,7 +124,7 @@ class Warranty extends Model
             return null;
         }
 
-        $days = now()->diffInDays($this->customer_warranty_until, false);
+        $days = (int) now()->diffInDays($this->customer_warranty_until, false);
         return max(0, $days);
     }
 

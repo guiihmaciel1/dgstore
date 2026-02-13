@@ -211,7 +211,7 @@ class ImportOrder extends Model
         }
 
         $endDate = $this->received_at ?? now();
-        return $this->shipped_at->diffInDays($endDate);
+        return (int) $this->shipped_at->diffInDays($endDate);
     }
 
     // Métodos auxiliares

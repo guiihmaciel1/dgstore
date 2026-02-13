@@ -208,7 +208,7 @@ class Reservation extends Model
             return 0;
         }
 
-        return now()->diffInDays($this->expires_at);
+        return (int) now()->diffInDays($this->expires_at);
     }
 
     public function getIsOverdueAttribute(): bool

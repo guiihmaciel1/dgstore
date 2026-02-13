@@ -114,9 +114,9 @@ class WarrantyClaim extends Model
     public function getDurationInDaysAttribute(): ?int
     {
         if (!$this->resolved_at) {
-            return $this->opened_at->diffInDays(now());
+            return (int) $this->opened_at->diffInDays(now());
         }
 
-        return $this->opened_at->diffInDays($this->resolved_at);
+        return (int) $this->opened_at->diffInDays($this->resolved_at);
     }
 }
