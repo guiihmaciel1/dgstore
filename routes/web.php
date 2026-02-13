@@ -60,7 +60,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/quotations', [QuotationController::class, 'store'])->name('quotations.store');
     Route::get('/quotations/bulk-create', [QuotationController::class, 'bulkCreate'])->name('quotations.bulk-create');
     Route::post('/quotations/bulk', [QuotationController::class, 'bulkStore'])->name('quotations.bulk-store');
+    Route::get('/quotations/import', [QuotationController::class, 'importForm'])->name('quotations.import');
+    Route::post('/quotations/import-preview', [QuotationController::class, 'importPreview'])->name('quotations.import-preview');
+    Route::post('/quotations/import', [QuotationController::class, 'importStore'])->name('quotations.import-store');
     Route::delete('/quotations/{quotation}', [QuotationController::class, 'destroy'])->name('quotations.destroy');
+    Route::post('/quotations/bulk-destroy', [QuotationController::class, 'bulkDestroy'])->name('quotations.bulk-destroy');
     Route::get('/api/quotations/products/search', [QuotationController::class, 'searchProducts'])->name('quotations.products.search');
     Route::get('/api/quotations/prices', [QuotationController::class, 'getPricesForProduct'])->name('quotations.prices');
 

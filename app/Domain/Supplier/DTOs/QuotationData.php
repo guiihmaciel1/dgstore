@@ -16,6 +16,9 @@ readonly class QuotationData
         public float $quantity = 1,
         public string $unit = 'un',
         public ?string $notes = null,
+        public ?float $price_usd = null,
+        public ?float $exchange_rate = null,
+        public ?string $category = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -30,6 +33,9 @@ readonly class QuotationData
             quantity: (float) ($data['quantity'] ?? 1),
             unit: $data['unit'] ?? 'un',
             notes: $data['notes'] ?? null,
+            price_usd: isset($data['price_usd']) ? (float) $data['price_usd'] : null,
+            exchange_rate: isset($data['exchange_rate']) ? (float) $data['exchange_rate'] : null,
+            category: $data['category'] ?? null,
         );
     }
 
@@ -41,10 +47,13 @@ readonly class QuotationData
             'user_id' => $this->user_id,
             'product_name' => $this->product_name,
             'unit_price' => $this->unit_price,
+            'price_usd' => $this->price_usd,
+            'exchange_rate' => $this->exchange_rate,
             'quantity' => $this->quantity,
             'unit' => $this->unit,
             'quoted_at' => $this->quoted_at,
             'notes' => $this->notes,
+            'category' => $this->category,
         ];
     }
 }

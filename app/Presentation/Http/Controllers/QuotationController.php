@@ -7,10 +7,12 @@ namespace App\Presentation\Http\Controllers;
 use App\Domain\Product\Services\ProductService;
 use App\Domain\Supplier\DTOs\QuotationData;
 use App\Domain\Supplier\Models\Quotation;
+use App\Domain\Supplier\Services\QuotationImportParser;
 use App\Domain\Supplier\Services\QuotationService;
 use App\Domain\Supplier\Services\SupplierService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreBulkQuotationRequest;
+use App\Presentation\Http\Requests\StoreImportQuotationRequest;
 use App\Presentation\Http\Requests\StoreQuotationRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +25,8 @@ class QuotationController extends Controller
     public function __construct(
         private readonly QuotationService $quotationService,
         private readonly SupplierService $supplierService,
-        private readonly ProductService $productService
+        private readonly ProductService $productService,
+        private readonly QuotationImportParser $importParser,
     ) {}
 
     /**
@@ -160,12 +163,31 @@ class QuotationController extends Controller
      */
     public function destroy(Quotation $quotation): RedirectResponse
     {
-        $supplierId = $quotation->supplier_id;
         $this->quotationService->delete($quotation);
 
         return redirect()
             ->back()
             ->with('success', 'Cotação excluída com sucesso!');
+    }
+
+    /**
+     * Excluir múltiplas cotações de uma vez
+     */
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['required', 'ulid'],
+        ], [
+            'ids.required' => 'Selecione pelo menos uma cotação para excluir.',
+            'ids.min' => 'Selecione pelo menos uma cotação para excluir.',
+        ]);
+
+        $count = Quotation::whereIn('id', $validated['ids'])->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', $count . ' cotação(ões) excluída(s) com sucesso!');
     }
 
     /**
@@ -189,6 +211,95 @@ class QuotationController extends Controller
                 'sale_price' => $product->sale_price,
             ])
         );
+    }
+
+    /**
+     * Formulário de importação de cotações
+     */
+    public function importForm(): View
+    {
+        $suppliers = $this->supplierService->active();
+
+        return view('quotations.import', [
+            'suppliers' => $suppliers,
+        ]);
+    }
+
+    /**
+     * Preview: parseia o texto e retorna itens (AJAX)
+     */
+    public function importPreview(Request $request): JsonResponse
+    {
+        $request->validate([
+            'raw_text' => ['required', 'string', 'min:10'],
+        ], [
+            'raw_text.required' => 'Cole o texto da cotação do fornecedor.',
+            'raw_text.min' => 'O texto parece muito curto para conter cotações.',
+        ]);
+
+        $items = $this->importParser->parse($request->input('raw_text'));
+
+        if (empty($items)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nenhum item encontrado no texto. Verifique o formato.',
+                'items' => [],
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => count($items) . ' itens encontrados.',
+            'items' => $items,
+        ]);
+    }
+
+    /**
+     * Salvar cotações importadas
+     */
+    public function importStore(StoreImportQuotationRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+        $userId = Auth::id();
+        $supplierId = $validated['supplier_id'];
+        $quotedAt = $validated['quoted_at'];
+        $exchangeRate = (float) $validated['exchange_rate'];
+
+        // Filtra apenas itens selecionados (selected = true)
+        $selectedItems = collect($validated['items'])->filter(function ($item) {
+            return ($item['selected'] ?? true) == true;
+        });
+
+        if ($selectedItems->isEmpty()) {
+            return redirect()
+                ->route('quotations.import')
+                ->withInput()
+                ->withErrors(['items' => 'Selecione pelo menos um item para importar.']);
+        }
+
+        $quotationsData = $selectedItems->map(function ($item) use ($userId, $supplierId, $quotedAt, $exchangeRate) {
+            $priceUsd = (float) $item['price_usd'];
+            $unitPriceBrl = round($priceUsd * $exchangeRate, 2);
+
+            return QuotationData::fromArray([
+                'supplier_id' => $supplierId,
+                'user_id' => $userId,
+                'product_name' => $item['product_name'],
+                'unit_price' => $unitPriceBrl,
+                'price_usd' => $priceUsd,
+                'exchange_rate' => $exchangeRate,
+                'quantity' => $item['quantity'] ?? 1,
+                'unit' => 'un',
+                'quoted_at' => $quotedAt,
+                'category' => $item['category'] ?? null,
+            ]);
+        })->toArray();
+
+        $this->quotationService->createMany($quotationsData);
+
+        return redirect()
+            ->route('quotations.index')
+            ->with('success', count($quotationsData) . ' cotações importadas com sucesso!');
     }
 
     /**

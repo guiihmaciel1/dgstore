@@ -22,16 +22,21 @@ class Quotation extends Model
         'user_id',
         'product_name',
         'unit_price',
+        'price_usd',
+        'exchange_rate',
         'quantity',
         'unit',
         'quoted_at',
         'notes',
+        'category',
     ];
 
     protected function casts(): array
     {
         return [
             'unit_price' => 'decimal:2',
+            'price_usd' => 'decimal:2',
+            'exchange_rate' => 'decimal:4',
             'quantity' => 'decimal:2',
             'quoted_at' => 'date',
             'created_at' => 'datetime',
@@ -145,5 +150,28 @@ class Quotation extends Model
         }
 
         return number_format($qty, 2, ',', '.') . ' ' . $this->unit;
+    }
+
+    public function getFormattedPriceUsdAttribute(): ?string
+    {
+        if ($this->price_usd === null) {
+            return null;
+        }
+
+        return 'US$ ' . number_format((float) $this->price_usd, 2, ',', '.');
+    }
+
+    public function getFormattedExchangeRateAttribute(): ?string
+    {
+        if ($this->exchange_rate === null) {
+            return null;
+        }
+
+        return number_format((float) $this->exchange_rate, 4, ',', '.');
+    }
+
+    public function getIsImportedAttribute(): bool
+    {
+        return $this->price_usd !== null;
     }
 }
