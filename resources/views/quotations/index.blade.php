@@ -227,10 +227,10 @@
 
             <!-- Filtros -->
             <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
-                <form method="GET" action="{{ route('quotations.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
+                <form method="GET" action="{{ route('quotations.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 items-end">
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Produto</label>
-                        <input type="text" name="product_name" value="{{ $filters['product_name'] }}" placeholder="Buscar produto..." 
+                        <input type="text" name="product_name" value="{{ $filters['product_name'] ?? '' }}" placeholder="Buscar produto..." 
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                     </div>
                     <div>
@@ -238,25 +238,33 @@
                         <select name="supplier_id" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                             <option value="">Todos</option>
                             @foreach($suppliers as $supplier)
-                                <option value="{{ $supplier->id }}" {{ $filters['supplier_id'] == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                                <option value="{{ $supplier->id }}" @selected(($filters['supplier_id'] ?? '') === $supplier->id)>{{ $supplier->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Data Início</label>
-                        <input type="date" name="start_date" value="{{ $filters['start_date'] }}" 
+                        <input type="date" name="start_date" value="{{ $filters['start_date'] ?? '' }}" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-500 mb-1">Data Fim</label>
-                        <input type="date" name="end_date" value="{{ $filters['end_date'] }}" 
+                        <input type="date" name="end_date" value="{{ $filters['end_date'] ?? '' }}" 
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                     </div>
-                    <div class="flex gap-2 sm:col-span-2 lg:col-span-2">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Por página</label>
+                        <select name="per_page" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
+                            <option value="10" @selected(($filters['per_page'] ?? 20) == 10)>10</option>
+                            <option value="20" @selected(($filters['per_page'] ?? 20) == 20)>20</option>
+                            <option value="0" @selected(($filters['per_page'] ?? 20) == 0)>Todos</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-2 sm:col-span-2">
                         <button type="submit" class="flex-1 px-4 py-2 bg-gray-900 text-white font-medium rounded-lg text-sm hover:bg-gray-700 transition-colors">
                             Filtrar
                         </button>
-                        @if(array_filter($filters))
+                        @if(array_filter($filters, fn($v, $k) => $v !== null && $v !== '' && ($k !== 'per_page' || $v != 20), ARRAY_FILTER_USE_BOTH))
                             <a href="{{ route('quotations.index') }}" class="flex-1 px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm text-center hover:bg-gray-50 transition-colors">
                                 Limpar
                             </a>

@@ -41,14 +41,20 @@ class QuotationController extends Controller
      */
     public function index(Request $request): View
     {
-        $supplierId = $request->get('supplier_id');
-        $productId = $request->get('product_id');
-        $productName = $request->get('product_name');
-        $startDate = $request->get('start_date');
-        $endDate = $request->get('end_date');
+        $supplierId = $request->input('supplier_id') ?: null;
+        $productId = $request->input('product_id') ?: null;
+        $productName = $request->input('product_name') ?: null;
+        $startDate = $request->input('start_date') ?: null;
+        $endDate = $request->input('end_date') ?: null;
+        $perPage = (int) ($request->input('per_page') ?: 20);
+
+        // Validar per_page: valores permitidos 10, 20 ou 0 (todos)
+        if (! in_array($perPage, [10, 20, 0], true)) {
+            $perPage = 20;
+        }
 
         $quotations = $this->quotationService->list(
-            perPage: 20,
+            perPage: $perPage === 0 ? 1000 : $perPage,
             supplierId: $supplierId,
             productId: $productId,
             productName: $productName,
@@ -73,6 +79,7 @@ class QuotationController extends Controller
                 'product_name' => $productName,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
+                'per_page' => $perPage,
             ],
         ]);
     }
@@ -83,7 +90,7 @@ class QuotationController extends Controller
     public function create(Request $request): View
     {
         $suppliers = $this->supplierService->active();
-        $supplierId = $request->get('supplier_id');
+        $supplierId = $request->input('supplier_id') ?: null;
 
         return view('quotations.create', [
             'suppliers' => $suppliers,
@@ -102,7 +109,7 @@ class QuotationController extends Controller
         $data = QuotationData::fromArray($validated);
         $quotation = $this->quotationService->create($data);
 
-        $redirectTo = $request->get('redirect_to', 'quotations.index');
+        $redirectTo = $request->input('redirect_to', 'quotations.index');
 
         if ($redirectTo === 'supplier') {
             return redirect()
@@ -202,7 +209,7 @@ class QuotationController extends Controller
      */
     public function searchProducts(Request $request): JsonResponse
     {
-        $term = $request->get('q', '');
+        $term = $request->input('q', '');
         
         if (strlen($term) < 2) {
             return response()->json([]);
@@ -395,7 +402,7 @@ class QuotationController extends Controller
      */
     public function getPricesForProduct(Request $request): JsonResponse
     {
-        $productName = $request->get('product_name');
+        $productName = $request->input('product_name') ?: null;
 
         if (! $productName) {
             return response()->json([]);
