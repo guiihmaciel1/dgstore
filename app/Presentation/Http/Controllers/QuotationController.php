@@ -21,6 +21,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class QuotationController extends Controller
@@ -388,7 +389,7 @@ class QuotationController extends Controller
     }
 
     /**
-     * API: Análise inteligente de cotações usando IA.
+     * API: Análise inteligente de cotações usando IA (cache de 1h).
      */
     public function aiAnalysis(Request $request): JsonResponse
     {
@@ -408,10 +409,54 @@ class QuotationController extends Controller
             ]);
         }
 
-        // Monta contexto das cotações para o Gemini
+        // Gera hash dos dados para invalidar cache quando cotações mudam
+        $dataHash = md5($priceComparison->toJson());
+        $cacheKey = "ai_analysis:{$dataHash}";
+
+        $cached = Cache::get($cacheKey);
+
+        if ($cached) {
+            return response()->json([
+                'success' => true,
+                'analysis' => $cached['analysis'],
+                'products_analyzed' => $cached['products_analyzed'],
+                'cached' => true,
+            ]);
+        }
+
+        $analysis = $this->generateAnalysis($priceComparison);
+
+        if ($analysis === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao processar análise. Tente novamente em alguns segundos.',
+            ]);
+        }
+
+        // Cache por 1 hora
+        Cache::put($cacheKey, [
+            'analysis' => $analysis,
+            'products_analyzed' => $priceComparison->count(),
+        ], 3600);
+
+        return response()->json([
+            'success' => true,
+            'analysis' => $analysis,
+            'products_analyzed' => $priceComparison->count(),
+            'cached' => false,
+        ]);
+    }
+
+    /**
+     * Gera análise de cotações via Gemini.
+     */
+    private function generateAnalysis($priceComparison): ?string
+    {
         $quotationData = [];
+
         foreach ($priceComparison as $productName => $quotes) {
             $suppliers = [];
+
             foreach ($quotes as $quote) {
                 $suppliers[] = [
                     'fornecedor' => $quote->supplier->name,
@@ -420,6 +465,7 @@ class QuotationController extends Controller
                     'data' => $quote->quoted_at->format('d/m/Y'),
                 ];
             }
+
             $quotationData[] = [
                 'produto' => $productName,
                 'fornecedores' => $suppliers,
@@ -446,24 +492,11 @@ PROMPT;
         $systemInstruction = 'Você é um consultor especializado em importação de produtos Apple para o mercado brasileiro. '
             . 'Analise dados de cotações e forneça insights práticos para o comprador da loja.';
 
-        $analysis = $this->geminiService->generateContent($prompt, $systemInstruction);
-
-        if ($analysis === null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao processar análise. Tente novamente em alguns segundos.',
-            ]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'analysis' => $analysis,
-            'products_analyzed' => $priceComparison->count(),
-        ]);
+        return $this->geminiService->generateContent($prompt, $systemInstruction);
     }
 
     /**
-     * API: Sugestão inteligente de compra usando IA.
+     * API: Sugestão inteligente de compra usando IA (cache de 1h).
      */
     public function aiPurchaseSuggestion(Request $request): JsonResponse
     {
@@ -479,7 +512,58 @@ PROMPT;
         $topProducts = $this->saleRepository->getTopSellingProducts(10);
         $todayQuotations = $this->quotationService->getTodayQuotations();
 
-        // Formata dados de estoque baixo
+        // Gera hash dos dados para invalidar cache quando dados mudam
+        $dataHash = md5(
+            $lowStock->pluck('id', 'stock_quantity')->toJson()
+            . $todayQuotations->pluck('id')->toJson()
+        );
+        $cacheKey = "ai_suggestion:{$dataHash}";
+
+        $cached = Cache::get($cacheKey);
+
+        if ($cached) {
+            return response()->json([
+                'success' => true,
+                'suggestion' => $cached['suggestion'],
+                'context' => $cached['context'],
+                'cached' => true,
+            ]);
+        }
+
+        $suggestion = $this->generatePurchaseSuggestion($lowStock, $topProducts, $todayQuotations);
+
+        if ($suggestion === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao gerar sugestões. Tente novamente em alguns segundos.',
+            ]);
+        }
+
+        $context = [
+            'low_stock_count' => $lowStock->count(),
+            'top_products_count' => $topProducts->count(),
+            'today_quotations_count' => $todayQuotations->count(),
+        ];
+
+        // Cache por 1 hora
+        Cache::put($cacheKey, [
+            'suggestion' => $suggestion,
+            'context' => $context,
+        ], 3600);
+
+        return response()->json([
+            'success' => true,
+            'suggestion' => $suggestion,
+            'context' => $context,
+            'cached' => false,
+        ]);
+    }
+
+    /**
+     * Gera sugestão de compra via Gemini.
+     */
+    private function generatePurchaseSuggestion($lowStock, $topProducts, $todayQuotations): ?string
+    {
         $lowStockData = $lowStock->map(fn ($p) => [
             'produto' => $p->name,
             'sku' => $p->sku,
@@ -489,13 +573,11 @@ PROMPT;
             'preco_venda' => $p->sale_price,
         ])->values()->toArray();
 
-        // Formata dados de mais vendidos
         $topProductsData = $topProducts->map(fn ($item) => [
             'produto' => $item->product?->name ?? $item->product_name ?? 'N/A',
             'quantidade_vendida' => $item->total_sold ?? 0,
         ])->values()->toArray();
 
-        // Formata cotações do dia
         $quotationsData = $todayQuotations->map(fn ($q) => [
             'produto' => $q->product_name,
             'fornecedor' => $q->supplier->name,
@@ -533,23 +615,6 @@ PROMPT;
             . 'Analise estoque, demanda e cotações para otimizar as compras da loja. '
             . 'Priorize reposição de itens com estoque crítico e alta demanda.';
 
-        $suggestion = $this->geminiService->generateContent($prompt, $systemInstruction);
-
-        if ($suggestion === null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao gerar sugestões. Tente novamente em alguns segundos.',
-            ]);
-        }
-
-        return response()->json([
-            'success' => true,
-            'suggestion' => $suggestion,
-            'context' => [
-                'low_stock_count' => $lowStock->count(),
-                'top_products_count' => $topProducts->count(),
-                'today_quotations_count' => $todayQuotations->count(),
-            ],
-        ]);
+        return $this->geminiService->generateContent($prompt, $systemInstruction);
     }
 }

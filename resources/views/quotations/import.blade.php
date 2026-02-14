@@ -105,26 +105,29 @@ GREEN *$605* 1pc"
                         <!-- Toggle IA -->
                         <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none;">
                             <input type="checkbox" x-model="forceAi"
-                                   style="width: 1rem; height: 1rem; accent-color: #7c3aed; cursor: pointer;">
-                            <span style="font-size: 0.8125rem; color: #374151; display: inline-flex; align-items: center; gap: 0.375rem;">
-                                <svg style="width: 1rem; height: 1rem; color: #7c3aed;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                                </svg>
-                                Usar IA para analisar (Gemini)
+                                   style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
+                            <span style="font-size: 0.8125rem; color: #6b7280;">
+                                Forçar análise via IA
                             </span>
                         </label>
 
                         <button type="button" @click="analyzeText()"
                                 :disabled="loading || !rawText || !supplierId || !exchangeRate"
-                                style="padding: 0.75rem 2rem; border-radius: 0.75rem; font-size: 0.9375rem; font-weight: 700; border: none; cursor: pointer; letter-spacing: 0.025em; transition: all 0.2s;"
+                                style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.5rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; transition: all 0.15s;"
                                 :style="loading || !rawText || !supplierId || !exchangeRate
                                     ? 'background: #e5e7eb; color: #9ca3af; cursor: not-allowed;'
-                                    : forceAi
-                                        ? 'background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: white; box-shadow: 0 2px 8px rgba(124,58,237,0.3);'
-                                        : 'background: linear-gradient(135deg, #111827 0%, #1f2937 100%); color: white; box-shadow: 0 2px 8px rgba(17,24,39,0.3);'"
-                                onmouseover="if(!this.disabled) { this.style.transform='translateY(-2px)'; }"
-                                onmouseout="this.style.transform='none';">
-                            <span x-text="loading ? 'Analisando...' : (forceAi ? 'Analisar com IA' : 'Analisar Texto')"></span>
+                                    : 'background: #111827; color: white;'"
+                                onmouseover="if(!this.disabled) this.style.background='#374151'"
+                                onmouseout="if(!this.disabled) this.style.background='#111827'">
+                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24" :style="loading ? 'animation: spin 1s linear infinite' : ''">
+                                <template x-if="!loading">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </template>
+                                <template x-if="loading">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </template>
+                            </svg>
+                            <span x-text="loading ? 'Analisando...' : 'Analisar Texto'"></span>
                         </button>
                     </div>
                 </div>
@@ -133,28 +136,17 @@ GREEN *$605* 1pc"
             <!-- Mensagem de erro/info -->
             <template x-if="message">
                 <div :style="'margin-bottom: 1rem; padding: 1rem; border-radius: 0.5rem; font-size: 0.875rem; border: 1px solid; ' +
-                    (messageType === 'error' ? 'background: #fef2f2; border-color: #fecaca; color: #991b1b;' :
-                     parserUsed === 'ai' ? 'background: #f5f3ff; border-color: #c4b5fd; color: #5b21b6;' :
-                     'background: #ecfdf5; border-color: #a7f3d0; color: #065f46;')">
+                    (messageType === 'error' ? 'background: #fef2f2; border-color: #fecaca; color: #991b1b;' : 'background: #ecfdf5; border-color: #a7f3d0; color: #065f46;')">
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                         <span x-text="message"></span>
-                        <template x-if="parserUsed === 'ai' && messageType !== 'error'">
-                            <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 600; background: #7c3aed; color: white;">
-                                <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                                </svg>
-                                Gemini AI
-                            </span>
-                        </template>
-                        <template x-if="parserUsed === 'regex' && messageType !== 'error'">
-                            <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 600; background: #111827; color: white;">
-                                Regex
-                            </span>
+                        <template x-if="parserUsed && messageType !== 'error'">
+                            <span style="padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 600; background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb;"
+                                  x-text="parserUsed === 'ai' ? 'via IA' : 'via Regex'"></span>
                         </template>
                     </div>
                     <template x-if="isFallback && parserUsed === 'ai' && messageType !== 'error'">
-                        <div style="margin-top: 0.5rem; font-size: 0.8125rem; color: #6d28d9; font-style: italic;">
-                            O formato do texto nao foi reconhecido automaticamente. A IA extraiu os dados — revise cada item com atencao.
+                        <div style="margin-top: 0.5rem; font-size: 0.8125rem; color: #6b7280;">
+                            Formato não reconhecido automaticamente. A IA extraiu os dados — revise com atenção.
                         </div>
                     </template>
                 </div>

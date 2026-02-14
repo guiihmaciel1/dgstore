@@ -135,55 +135,55 @@
             </div>
 
             <!-- IA: Botões de Análise e Sugestão -->
-            <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <div class="flex flex-col sm:flex-row gap-2 mb-6">
                 <button type="button" @click="runAiAnalysis()"
                         :disabled="aiAnalysisLoading"
-                        style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 0.625rem; padding: 0.875rem 1.25rem; border-radius: 0.75rem; border: 1px solid #c4b5fd; cursor: pointer; transition: all 0.2s;"
-                        :style="aiAnalysisLoading ? 'background: #f5f3ff; opacity: 0.7; cursor: wait;' : 'background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);'"
-                        onmouseover="if(!this.disabled) this.style.boxShadow='0 4px 12px rgba(124,58,237,0.15)'"
-                        onmouseout="this.style.boxShadow='none'">
-                    <div style="width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; background: #7c3aed; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg style="width: 1.125rem; height: 1.125rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 font-medium rounded-lg text-sm transition-colors"
+                        :class="aiAnalysisLoading ? 'bg-gray-100 text-gray-400 cursor-wait' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 cursor-pointer'">
+                    <svg class="w-4 h-4" :class="aiAnalysisLoading ? 'animate-spin' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <template x-if="!aiAnalysisLoading">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                        </svg>
-                    </div>
-                    <div style="text-align: left;">
-                        <div style="font-size: 0.875rem; font-weight: 600; color: #5b21b6;" x-text="aiAnalysisLoading ? 'Analisando...' : 'Analisar Cotacoes com IA'"></div>
-                        <div style="font-size: 0.75rem; color: #7c3aed;">Comparar fornecedores e identificar oportunidades</div>
-                    </div>
+                        </template>
+                        <template x-if="aiAnalysisLoading">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </template>
+                    </svg>
+                    <span x-text="aiAnalysisLoading ? 'Analisando...' : 'Análise IA'"></span>
                 </button>
                 <button type="button" @click="runAiSuggestion()"
                         :disabled="aiSuggestionLoading"
-                        style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 0.625rem; padding: 0.875rem 1.25rem; border-radius: 0.75rem; border: 1px solid #bbf7d0; cursor: pointer; transition: all 0.2s;"
-                        :style="aiSuggestionLoading ? 'background: #f0fdf4; opacity: 0.7; cursor: wait;' : 'background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);'"
-                        onmouseover="if(!this.disabled) this.style.boxShadow='0 4px 12px rgba(22,163,74,0.15)'"
-                        onmouseout="this.style.boxShadow='none'">
-                    <div style="width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; background: #16a34a; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg style="width: 1.125rem; height: 1.125rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 font-medium rounded-lg text-sm transition-colors"
+                        :class="aiSuggestionLoading ? 'bg-gray-100 text-gray-400 cursor-wait' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 cursor-pointer'">
+                    <svg class="w-4 h-4" :class="aiSuggestionLoading ? 'animate-spin' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <template x-if="!aiSuggestionLoading">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                        </svg>
-                    </div>
-                    <div style="text-align: left;">
-                        <div style="font-size: 0.875rem; font-weight: 600; color: #166534;" x-text="aiSuggestionLoading ? 'Gerando sugestoes...' : 'Sugestao de Compra IA'"></div>
-                        <div style="font-size: 0.75rem; color: #16a34a;">Estoque baixo + demanda + cotacoes do dia</div>
-                    </div>
+                        </template>
+                        <template x-if="aiSuggestionLoading">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </template>
+                    </svg>
+                    <span x-text="aiSuggestionLoading ? 'Gerando...' : 'Sugestão de Compra IA'"></span>
                 </button>
             </div>
 
             <!-- Resultado da Análise IA -->
             <template x-if="aiAnalysisResult || aiAnalysisError">
-                <div style="margin-bottom: 1.5rem; border-radius: 0.75rem; overflow: hidden; border: 1px solid #c4b5fd;">
-                    <div style="padding: 0.75rem 1.25rem; background: #7c3aed; display: flex; justify-content: space-between; align-items: center;">
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+                    <div style="padding: 0.75rem 1.25rem; background: #111827; display: flex; justify-content: space-between; align-items: center;">
                         <h3 style="font-size: 0.875rem; font-weight: 600; color: white; display: flex; align-items: center; gap: 0.5rem;">
                             <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                             </svg>
-                            Analise IA — Comparativo de Cotacoes
+                            Análise IA — Comparativo de Cotações
+                            <template x-if="aiAnalysisCached">
+                                <span style="font-weight: 400; font-size: 0.6875rem; opacity: 0.7; padding: 0.125rem 0.375rem; background: rgba(255,255,255,0.15); border-radius: 0.25rem;">cache</span>
+                            </template>
                         </h3>
                         <button type="button" @click="aiAnalysisResult = ''; aiAnalysisError = ''"
-                                style="color: rgba(255,255,255,0.7); background: none; border: none; cursor: pointer; font-size: 1.25rem; line-height: 1;">&times;</button>
+                                style="color: rgba(255,255,255,0.5); background: none; border: none; cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                                onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">&times;</button>
                     </div>
-                    <div style="padding: 1.25rem; background: #faf5ff;">
+                    <div style="padding: 1.25rem;">
                         <template x-if="aiAnalysisError">
                             <p style="color: #991b1b; font-size: 0.875rem;" x-text="aiAnalysisError"></p>
                         </template>
@@ -196,21 +196,25 @@
 
             <!-- Resultado da Sugestão de Compra IA -->
             <template x-if="aiSuggestionResult || aiSuggestionError">
-                <div style="margin-bottom: 1.5rem; border-radius: 0.75rem; overflow: hidden; border: 1px solid #bbf7d0;">
-                    <div style="padding: 0.75rem 1.25rem; background: #16a34a; display: flex; justify-content: space-between; align-items: center;">
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6">
+                    <div style="padding: 0.75rem 1.25rem; background: #111827; display: flex; justify-content: space-between; align-items: center;">
                         <h3 style="font-size: 0.875rem; font-weight: 600; color: white; display: flex; align-items: center; gap: 0.5rem;">
                             <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                             </svg>
-                            Sugestao de Compra IA
+                            Sugestão de Compra IA
                             <template x-if="aiSuggestionContext">
-                                <span style="font-weight: 400; opacity: 0.8; font-size: 0.75rem;" x-text="'(' + aiSuggestionContext.low_stock_count + ' estoque baixo, ' + aiSuggestionContext.today_quotations_count + ' cotacoes hoje)'"></span>
+                                <span style="font-weight: 400; font-size: 0.6875rem; opacity: 0.7;" x-text="'(' + aiSuggestionContext.low_stock_count + ' estoque baixo, ' + aiSuggestionContext.today_quotations_count + ' cotações hoje)'"></span>
+                            </template>
+                            <template x-if="aiSuggestionCached">
+                                <span style="font-weight: 400; font-size: 0.6875rem; opacity: 0.7; padding: 0.125rem 0.375rem; background: rgba(255,255,255,0.15); border-radius: 0.25rem;">cache</span>
                             </template>
                         </h3>
                         <button type="button" @click="aiSuggestionResult = ''; aiSuggestionError = ''; aiSuggestionContext = null"
-                                style="color: rgba(255,255,255,0.7); background: none; border: none; cursor: pointer; font-size: 1.25rem; line-height: 1;">&times;</button>
+                                style="color: rgba(255,255,255,0.5); background: none; border: none; cursor: pointer; font-size: 1.25rem; line-height: 1;"
+                                onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">&times;</button>
                     </div>
-                    <div style="padding: 1.25rem; background: #f0fdf4;">
+                    <div style="padding: 1.25rem;">
                         <template x-if="aiSuggestionError">
                             <p style="color: #991b1b; font-size: 0.875rem;" x-text="aiSuggestionError"></p>
                         </template>
@@ -483,10 +487,12 @@
                 aiAnalysisLoading: false,
                 aiAnalysisResult: '',
                 aiAnalysisError: '',
+                aiAnalysisCached: false,
                 aiSuggestionLoading: false,
                 aiSuggestionResult: '',
                 aiSuggestionError: '',
                 aiSuggestionContext: null,
+                aiSuggestionCached: false,
 
                 get allSelected() {
                     return this.allIds.length > 0 && this.selectedIds.length === this.allIds.length;
@@ -518,6 +524,7 @@
                     this.aiAnalysisLoading = true;
                     this.aiAnalysisResult = '';
                     this.aiAnalysisError = '';
+                    this.aiAnalysisCached = false;
 
                     try {
                         const response = await fetch('{{ route("quotations.ai-analysis") }}', {
@@ -534,11 +541,12 @@
 
                         if (data.success) {
                             this.aiAnalysisResult = data.analysis;
+                            this.aiAnalysisCached = data.cached || false;
                         } else {
-                            this.aiAnalysisError = data.message || 'Erro ao gerar analise.';
+                            this.aiAnalysisError = data.message || 'Erro ao gerar análise.';
                         }
                     } catch (error) {
-                        this.aiAnalysisError = 'Erro de conexao. Tente novamente.';
+                        this.aiAnalysisError = 'Erro de conexão. Tente novamente.';
                         console.error(error);
                     } finally {
                         this.aiAnalysisLoading = false;
@@ -550,6 +558,7 @@
                     this.aiSuggestionResult = '';
                     this.aiSuggestionError = '';
                     this.aiSuggestionContext = null;
+                    this.aiSuggestionCached = false;
 
                     try {
                         const response = await fetch('{{ route("quotations.ai-suggestion") }}', {
@@ -567,11 +576,12 @@
                         if (data.success) {
                             this.aiSuggestionResult = data.suggestion;
                             this.aiSuggestionContext = data.context || null;
+                            this.aiSuggestionCached = data.cached || false;
                         } else {
-                            this.aiSuggestionError = data.message || 'Erro ao gerar sugestoes.';
+                            this.aiSuggestionError = data.message || 'Erro ao gerar sugestões.';
                         }
                     } catch (error) {
-                        this.aiSuggestionError = 'Erro de conexao. Tente novamente.';
+                        this.aiSuggestionError = 'Erro de conexão. Tente novamente.';
                         console.error(error);
                     } finally {
                         this.aiSuggestionLoading = false;

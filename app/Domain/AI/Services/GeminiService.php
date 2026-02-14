@@ -97,6 +97,10 @@ class GeminiService
             'generationConfig' => [
                 'temperature' => 0.2,
                 'maxOutputTokens' => 4096,
+                // Desabilita "thinking" do gemini-2.5+ para economia de tokens e menor latência
+                'thinkingConfig' => [
+                    'thinkingBudget' => 0,
+                ],
             ],
         ];
 
@@ -112,7 +116,7 @@ class GeminiService
     }
 
     /**
-     * Envia request para a API Gemini com retry.
+     * Envia request para a API Gemini com retry inteligente.
      */
     private function sendRequest(array $body): ?array
     {
@@ -121,7 +125,7 @@ class GeminiService
 
         for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
             try {
-                $response = Http::timeout(30)
+                $response = Http::timeout(60)
                     ->withHeaders(['Content-Type' => 'application/json'])
                     ->post($url, $body);
 
@@ -139,9 +143,10 @@ class GeminiService
                     'body' => mb_substr($errorBody, 0, 500),
                 ]);
 
-                // Rate limit (429) ou erro de servidor (5xx): retry
+                // Rate limit (429) ou erro de servidor (5xx): retry com backoff
                 if ($attempt < $maxAttempts && ($status === 429 || $status >= 500)) {
-                    sleep(2);
+                    $waitSeconds = $this->extractRetryDelay($errorBody);
+                    sleep($waitSeconds);
 
                     continue;
                 }
@@ -153,7 +158,7 @@ class GeminiService
                 ]);
 
                 if ($attempt < $maxAttempts) {
-                    sleep(1);
+                    sleep(2);
 
                     continue;
                 }
@@ -166,19 +171,49 @@ class GeminiService
     }
 
     /**
+     * Extrai o tempo de espera sugerido da resposta 429 do Gemini.
+     */
+    private function extractRetryDelay(string $errorBody): int
+    {
+        // Tenta extrair "Please retry in Xs" da mensagem
+        if (preg_match('/retry in (\d+(?:\.\d+)?)s/i', $errorBody, $matches)) {
+            return (int) ceil((float) $matches[1]);
+        }
+
+        return 5; // Fallback: espera 5 segundos
+    }
+
+    /**
      * Extrai o texto da resposta da API.
+     * Gemini 2.5+ pode retornar "thought" parts antes do texto real.
+     * Percorre todas as parts e retorna o texto da primeira part que NÃO é thought.
      */
     private function extractText(array $response): ?string
     {
-        $text = $response['candidates'][0]['content']['parts'][0]['text'] ?? null;
+        $parts = $response['candidates'][0]['content']['parts'] ?? [];
 
-        if ($text === null) {
-            Log::warning('GeminiService: Resposta sem texto.', [
-                'response' => array_keys($response),
-            ]);
+        // Percorre parts: pula "thought" e pega o primeiro texto real
+        foreach ($parts as $part) {
+            $isThought = isset($part['thought']) && $part['thought'] === true;
+
+            if (! $isThought && isset($part['text'])) {
+                return $part['text'];
+            }
         }
 
-        return $text;
+        // Fallback: tenta qualquer part com texto (caso a flag thought não exista)
+        foreach ($parts as $part) {
+            if (isset($part['text']) && $part['text'] !== '') {
+                return $part['text'];
+            }
+        }
+
+        Log::warning('GeminiService: Resposta sem texto.', [
+            'parts_count' => count($parts),
+            'response_keys' => array_keys($response),
+        ]);
+
+        return null;
     }
 
     /**
@@ -186,23 +221,43 @@ class GeminiService
      */
     private function parseJsonResponse(string $text): ?array
     {
+        $cleaned = trim($text);
+
         // Remove wrapper ```json ... ``` se presente
-        $cleaned = preg_replace('/^```(?:json)?\s*/i', '', trim($text));
+        $cleaned = preg_replace('/^```(?:json)?\s*/i', '', $cleaned);
         $cleaned = preg_replace('/\s*```\s*$/', '', $cleaned);
         $cleaned = trim($cleaned);
 
+        // Tentativa 1: JSON direto
         $decoded = json_decode($cleaned, true);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            Log::warning('GeminiService: Falha ao parsear JSON da resposta.', [
-                'error' => json_last_error_msg(),
-                'text' => mb_substr($text, 0, 500),
-            ]);
-
-            return null;
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
         }
 
-        return $decoded;
+        // Tentativa 2: Extrair JSON entre [ ] ou { } (modelo pode adicionar texto antes/depois)
+        if (preg_match('/(\[[\s\S]*\])\s*$/', $cleaned, $matches)) {
+            $decoded = json_decode($matches[1], true);
+
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        if (preg_match('/(\{[\s\S]*\})\s*$/', $cleaned, $matches)) {
+            $decoded = json_decode($matches[1], true);
+
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        Log::warning('GeminiService: Falha ao parsear JSON da resposta.', [
+            'error' => json_last_error_msg(),
+            'text' => mb_substr($text, 0, 500),
+        ]);
+
+        return null;
     }
 
     /**
