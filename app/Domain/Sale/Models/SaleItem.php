@@ -87,4 +87,20 @@ class SaleItem extends Model
     {
         return $this->product_snapshot['sku'] ?? $this->product?->sku ?? '-';
     }
+
+    /**
+     * Custo unitário do produto no momento da venda
+     */
+    public function getCostPriceAttribute(): float
+    {
+        return (float) ($this->product_snapshot['cost_price'] ?? 0);
+    }
+
+    /**
+     * Lucro do item: (preço venda - custo) * quantidade
+     */
+    public function getItemProfitAttribute(): float
+    {
+        return ((float) $this->unit_price - $this->cost_price) * $this->quantity;
+    }
 }

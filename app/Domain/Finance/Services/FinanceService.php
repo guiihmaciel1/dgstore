@@ -10,6 +10,7 @@ use App\Domain\Finance\Models\AccountTransfer;
 use App\Domain\Finance\Models\FinancialAccount;
 use App\Domain\Finance\Models\FinancialCategory;
 use App\Domain\Finance\Models\FinancialTransaction;
+use App\Domain\Sale\Models\Sale;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,9 @@ class FinanceService
         $monthIncome = (float) FinancialTransaction::income()->paid()->thisMonth()->sum('amount');
         $monthExpense = (float) FinancialTransaction::expense()->paid()->thisMonth()->sum('amount');
         $monthProfit = $monthIncome - $monthExpense;
+
+        // Lucro real das vendas do mês (receita de venda - custo de mercadoria)
+        $salesData = $this->getSalesMonthData();
 
         $dueSoon = FinancialTransaction::unpaid()
             ->where('due_date', '<=', now()->addDays(7))
@@ -48,10 +52,27 @@ class FinanceService
             'monthIncome',
             'monthExpense',
             'monthProfit',
+            'salesData',
             'dueSoon',
             'recentTransactions',
             'chartData',
         );
+    }
+
+    public function getSalesMonthData(): array
+    {
+        $sales = Sale::with('items')
+            ->paid()
+            ->thisMonth()
+            ->get();
+
+        $salesCount = $sales->count();
+        $salesRevenue = (float) $sales->sum('total');
+        $salesCost = (float) $sales->sum(fn ($sale) => $sale->total_cost);
+        $salesProfit = $salesRevenue - $salesCost;
+        $salesMargin = $salesRevenue > 0 ? round(($salesProfit / $salesRevenue) * 100, 1) : 0;
+
+        return compact('salesCount', 'salesRevenue', 'salesCost', 'salesProfit', 'salesMargin');
     }
 
     public function getChartData(int $days): array
@@ -406,6 +427,38 @@ class FinanceService
             'due_date' => now()->toDateString(),
             'paid_at' => $account ? now() : null,
             'payment_method' => $paymentMethod,
+            'reference_type' => 'Sale',
+            'reference_id' => $referenceId,
+        ]);
+    }
+
+    public function registerSaleCost(
+        string $userId,
+        float $amount,
+        string $description,
+        ?string $referenceId = null,
+    ): ?FinancialTransaction {
+        if ($amount <= 0) {
+            return null;
+        }
+
+        $category = $this->getCategoryByName('Custo de Mercadoria', 'expense');
+        $account = $this->getDefaultAccount();
+
+        if (!$category) {
+            return null;
+        }
+
+        return $this->createTransaction([
+            'account_id' => $account?->id,
+            'category_id' => $category->id,
+            'user_id' => $userId,
+            'type' => 'expense',
+            'status' => $account ? 'paid' : 'pending',
+            'amount' => $amount,
+            'description' => $description,
+            'due_date' => now()->toDateString(),
+            'paid_at' => $account ? now() : null,
             'reference_type' => 'Sale',
             'reference_id' => $referenceId,
         ]);

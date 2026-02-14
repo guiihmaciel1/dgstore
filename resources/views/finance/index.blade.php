@@ -38,6 +38,37 @@
                 </div>
             </div>
 
+            <!-- Vendas do Mês -->
+            @if($salesData['salesCount'] > 0)
+                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Vendas do Mês</span>
+                        <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; font-weight: 600;">{{ $salesData['salesCount'] }} {{ $salesData['salesCount'] === 1 ? 'venda' : 'vendas' }}</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Faturamento</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: #111827;">R$ {{ number_format($salesData['salesRevenue'], 2, ',', '.') }}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Custo (CMV)</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: #dc2626;">R$ {{ number_format($salesData['salesCost'], 2, ',', '.') }}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Lucro das Vendas</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: {{ $salesData['salesProfit'] >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($salesData['salesProfit'], 2, ',', '.') }}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Margem</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: {{ $salesData['salesMargin'] >= 0 ? '#16a34a' : '#dc2626' }};">{{ $salesData['salesMargin'] }}%</div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <!-- Carteiras -->
             @if($accounts->count() > 0)
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">

@@ -256,4 +256,34 @@ class Sale extends Model
         $this->subtotal = $this->items->sum('subtotal');
         $this->total = $this->subtotal - $this->discount;
     }
+
+    /**
+     * Calcula o custo total dos produtos vendidos (CMV)
+     * a partir do cost_price salvo no product_snapshot.
+     */
+    public function getTotalCostAttribute(): float
+    {
+        return (float) $this->items->sum(function ($item) {
+            $costPrice = $item->product_snapshot['cost_price'] ?? 0;
+            return (float) $costPrice * $item->quantity;
+        });
+    }
+
+    /**
+     * Calcula o lucro bruto da venda: total recebido - custo dos produtos
+     */
+    public function getProfitAttribute(): float
+    {
+        return (float) $this->total - $this->total_cost;
+    }
+
+    public function getFormattedProfitAttribute(): string
+    {
+        return 'R$ ' . number_format($this->profit, 2, ',', '.');
+    }
+
+    public function getFormattedTotalCostAttribute(): string
+    {
+        return 'R$ ' . number_format($this->total_cost, 2, ',', '.');
+    }
 }

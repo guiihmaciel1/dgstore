@@ -86,6 +86,18 @@ class CreateSaleUseCase
                 );
             }
 
+            // Registrar custo dos produtos (CMV)
+            $sale->load('items');
+            $totalCost = $sale->total_cost;
+            if ($totalCost > 0) {
+                $this->financeService->registerSaleCost(
+                    userId: $sale->user_id,
+                    amount: $totalCost,
+                    description: "{$description} (Custo)",
+                    referenceId: $sale->id,
+                );
+            }
+
             // Registrar trade-in como despesa
             if ((float) $sale->trade_in_value > 0) {
                 $this->financeService->registerTradeInExpense(

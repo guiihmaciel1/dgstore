@@ -26,6 +26,7 @@ class FinanceCategorySeeder extends Seeder
             ['name' => 'Impostos', 'color' => '#b91c1c', 'icon' => 'document'],
             ['name' => 'Manutenção', 'color' => '#ca8a04', 'icon' => 'wrench'],
             ['name' => 'Marketing', 'color' => '#db2777', 'icon' => 'megaphone'],
+            ['name' => 'Custo de Mercadoria', 'color' => '#be123c', 'icon' => 'tag'],
             ['name' => 'Trade-in', 'color' => '#f97316', 'icon' => 'refresh'],
             ['name' => 'Outras Despesas', 'color' => '#6b7280', 'icon' => 'dots'],
         ];
