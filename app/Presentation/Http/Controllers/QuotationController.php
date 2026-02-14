@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers;
 
+use App\Domain\AI\Services\GeminiService;
 use App\Domain\Product\Services\ProductService;
+use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use App\Domain\Supplier\DTOs\QuotationData;
 use App\Domain\Supplier\Models\Quotation;
+use App\Domain\Supplier\Services\AiQuotationParser;
 use App\Domain\Supplier\Services\QuotationImportParser;
 use App\Domain\Supplier\Services\QuotationService;
 use App\Domain\Supplier\Services\SupplierService;
@@ -27,6 +30,9 @@ class QuotationController extends Controller
         private readonly SupplierService $supplierService,
         private readonly ProductService $productService,
         private readonly QuotationImportParser $importParser,
+        private readonly AiQuotationParser $aiParser,
+        private readonly GeminiService $geminiService,
+        private readonly SaleRepositoryInterface $saleRepository,
     ) {}
 
     /**
@@ -226,31 +232,86 @@ class QuotationController extends Controller
     }
 
     /**
-     * Preview: parseia o texto e retorna itens (AJAX)
+     * Preview: parseia o texto e retorna itens (AJAX).
+     * Lógica híbrida: regex primeiro, fallback para IA se necessário.
      */
     public function importPreview(Request $request): JsonResponse
     {
         $request->validate([
             'raw_text' => ['required', 'string', 'min:10'],
+            'force_ai' => ['nullable', 'boolean'],
         ], [
             'raw_text.required' => 'Cole o texto da cotação do fornecedor.',
             'raw_text.min' => 'O texto parece muito curto para conter cotações.',
         ]);
 
-        $items = $this->importParser->parse($request->input('raw_text'));
+        $rawText = $request->input('raw_text');
+        $forceAi = (bool) $request->input('force_ai', false);
 
-        if (empty($items)) {
+        // Se forçar IA, pula regex
+        if ($forceAi) {
+            return $this->parseWithAi($rawText);
+        }
+
+        // Tenta regex primeiro
+        $items = $this->importParser->parse($rawText);
+
+        if (! empty($items)) {
             return response()->json([
-                'success' => false,
-                'message' => 'Nenhum item encontrado no texto. Verifique o formato.',
-                'items' => [],
+                'success' => true,
+                'message' => count($items) . ' itens encontrados.',
+                'items' => $items,
+                'parser_used' => 'regex',
             ]);
         }
 
+        // Regex não encontrou nada — fallback para IA
+        return $this->parseWithAi($rawText, true);
+    }
+
+    /**
+     * Parseia texto usando IA (Gemini).
+     */
+    private function parseWithAi(string $rawText, bool $isFallback = false): JsonResponse
+    {
+        if (! $this->aiParser->isAvailable()) {
+            $message = $isFallback
+                ? 'Nenhum item encontrado via formato padrão e a IA não está disponível. Verifique o formato do texto.'
+                : 'IA não está disponível no momento. Tente o modo padrão (regex).';
+
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+                'items' => [],
+                'parser_used' => 'none',
+            ]);
+        }
+
+        $items = $this->aiParser->parse($rawText);
+
+        if (empty($items)) {
+            $message = $isFallback
+                ? 'Nenhum item encontrado no texto, nem via formato padrão nem via IA. Verifique o conteúdo.'
+                : 'A IA não conseguiu extrair itens do texto. Verifique o conteúdo.';
+
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+                'items' => [],
+                'parser_used' => 'ai',
+            ]);
+        }
+
+        $prefix = $isFallback
+            ? 'Formato não reconhecido automaticamente. A IA extraiu '
+            : '';
+
         return response()->json([
             'success' => true,
-            'message' => count($items) . ' itens encontrados.',
+            'message' => $prefix . count($items) . ' itens encontrados via IA — revise com atenção.',
             'items' => $items,
+            'parser_used' => 'ai',
+            'is_fallback' => $isFallback,
         ]);
     }
 
@@ -308,15 +369,15 @@ class QuotationController extends Controller
     public function getPricesForProduct(Request $request): JsonResponse
     {
         $productName = $request->get('product_name');
-        
-        if (!$productName) {
+
+        if (! $productName) {
             return response()->json([]);
         }
 
         $prices = $this->quotationService->getLatestPricesForProduct($productName);
 
         return response()->json(
-            $prices->map(fn($quotation) => [
+            $prices->map(fn ($quotation) => [
                 'supplier_id' => $quotation->supplier_id,
                 'supplier_name' => $quotation->supplier->name,
                 'unit_price' => $quotation->unit_price,
@@ -324,5 +385,171 @@ class QuotationController extends Controller
                 'quoted_at' => $quotation->quoted_at->format('d/m/Y'),
             ])
         );
+    }
+
+    /**
+     * API: Análise inteligente de cotações usando IA.
+     */
+    public function aiAnalysis(Request $request): JsonResponse
+    {
+        if (! $this->geminiService->isAvailable()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'IA não está disponível. Verifique a configuração da API key.',
+            ]);
+        }
+
+        $priceComparison = $this->quotationService->getPriceComparison();
+
+        if ($priceComparison->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Não há cotações suficientes para análise. Importe cotações primeiro.',
+            ]);
+        }
+
+        // Monta contexto das cotações para o Gemini
+        $quotationData = [];
+        foreach ($priceComparison as $productName => $quotes) {
+            $suppliers = [];
+            foreach ($quotes as $quote) {
+                $suppliers[] = [
+                    'fornecedor' => $quote->supplier->name,
+                    'preco_usd' => $quote->price_usd,
+                    'preco_brl' => $quote->unit_price,
+                    'data' => $quote->quoted_at->format('d/m/Y'),
+                ];
+            }
+            $quotationData[] = [
+                'produto' => $productName,
+                'fornecedores' => $suppliers,
+            ];
+        }
+
+        $dataJson = json_encode($quotationData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+        $prompt = <<<PROMPT
+Analise os dados de cotações abaixo de uma loja de produtos Apple no Brasil.
+
+DADOS DAS COTAÇÕES:
+{$dataJson}
+
+Forneça uma análise concisa e acionável em português brasileiro:
+1. Identifique o melhor fornecedor geral (melhor custo-benefício considerando todos os produtos)
+2. Destaque produtos onde há grande diferença de preço entre fornecedores (oportunidades)
+3. Identifique se há produtos com preço acima do esperado para o mercado
+4. Dê uma recomendação final de compra (quais produtos comprar de qual fornecedor)
+
+Seja direto e objetivo. Use bullet points. Máximo 300 palavras.
+PROMPT;
+
+        $systemInstruction = 'Você é um consultor especializado em importação de produtos Apple para o mercado brasileiro. '
+            . 'Analise dados de cotações e forneça insights práticos para o comprador da loja.';
+
+        $analysis = $this->geminiService->generateContent($prompt, $systemInstruction);
+
+        if ($analysis === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao processar análise. Tente novamente em alguns segundos.',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'analysis' => $analysis,
+            'products_analyzed' => $priceComparison->count(),
+        ]);
+    }
+
+    /**
+     * API: Sugestão inteligente de compra usando IA.
+     */
+    public function aiPurchaseSuggestion(Request $request): JsonResponse
+    {
+        if (! $this->geminiService->isAvailable()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'IA não está disponível. Verifique a configuração da API key.',
+            ]);
+        }
+
+        // Coleta dados do sistema
+        $lowStock = $this->productService->getLowStockProducts();
+        $topProducts = $this->saleRepository->getTopSellingProducts(10);
+        $todayQuotations = $this->quotationService->getTodayQuotations();
+
+        // Formata dados de estoque baixo
+        $lowStockData = $lowStock->map(fn ($p) => [
+            'produto' => $p->name,
+            'sku' => $p->sku,
+            'estoque_atual' => $p->stock_quantity,
+            'alerta_minimo' => $p->min_stock_alert,
+            'preco_custo' => $p->cost_price,
+            'preco_venda' => $p->sale_price,
+        ])->values()->toArray();
+
+        // Formata dados de mais vendidos
+        $topProductsData = $topProducts->map(fn ($item) => [
+            'produto' => $item->product?->name ?? $item->product_name ?? 'N/A',
+            'quantidade_vendida' => $item->total_sold ?? 0,
+        ])->values()->toArray();
+
+        // Formata cotações do dia
+        $quotationsData = $todayQuotations->map(fn ($q) => [
+            'produto' => $q->product_name,
+            'fornecedor' => $q->supplier->name,
+            'preco_usd' => $q->price_usd,
+            'preco_brl' => $q->unit_price,
+        ])->values()->toArray();
+
+        $lowStockJson = json_encode($lowStockData, JSON_UNESCAPED_UNICODE);
+        $topProductsJson = json_encode($topProductsData, JSON_UNESCAPED_UNICODE);
+        $quotationsJson = json_encode($quotationsData, JSON_UNESCAPED_UNICODE);
+
+        $prompt = <<<PROMPT
+Com base nos dados abaixo de uma loja de produtos Apple, sugira quais produtos comprar e de qual fornecedor.
+
+PRODUTOS COM ESTOQUE BAIXO:
+{$lowStockJson}
+
+PRODUTOS MAIS VENDIDOS (últimos 30 dias):
+{$topProductsJson}
+
+COTAÇÕES DISPONÍVEIS HOJE:
+{$quotationsJson}
+
+Forneça recomendações em português brasileiro:
+1. URGENTE: Produtos que precisam de reposição imediata (estoque zero ou muito baixo + alta demanda)
+2. IMPORTANTE: Produtos para repor em breve (estoque baixo + vendas moderadas)
+3. OPORTUNIDADE: Cotações com bom preço que valem aproveitar mesmo sem urgência
+4. Para cada recomendação, indique: produto, quantidade sugerida, fornecedor recomendado e motivo
+
+Se não houver dados suficientes em alguma categoria, informe isso.
+Seja direto e prático. Use bullet points. Máximo 400 palavras.
+PROMPT;
+
+        $systemInstruction = 'Você é um consultor de compras especializado em produtos Apple para varejo brasileiro. '
+            . 'Analise estoque, demanda e cotações para otimizar as compras da loja. '
+            . 'Priorize reposição de itens com estoque crítico e alta demanda.';
+
+        $suggestion = $this->geminiService->generateContent($prompt, $systemInstruction);
+
+        if ($suggestion === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao gerar sugestões. Tente novamente em alguns segundos.',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'suggestion' => $suggestion,
+            'context' => [
+                'low_stock_count' => $lowStock->count(),
+                'top_products_count' => $topProducts->count(),
+                'today_quotations_count' => $todayQuotations->count(),
+            ],
+        ]);
     }
 }

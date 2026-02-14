@@ -67,6 +67,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/quotations/bulk-destroy', [QuotationController::class, 'bulkDestroy'])->name('quotations.bulk-destroy');
     Route::get('/api/quotations/products/search', [QuotationController::class, 'searchProducts'])->name('quotations.products.search');
     Route::get('/api/quotations/prices', [QuotationController::class, 'getPricesForProduct'])->name('quotations.prices');
+    Route::post('/api/quotations/ai-analysis', [QuotationController::class, 'aiAnalysis'])->name('quotations.ai-analysis');
+    Route::post('/api/quotations/ai-suggestion', [QuotationController::class, 'aiPurchaseSuggestion'])->name('quotations.ai-suggestion');
 
     // Vendas
     Route::resource('sales', SaleController::class)->except(['edit', 'update']);

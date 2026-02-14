@@ -134,6 +134,93 @@
                 </div>
             </div>
 
+            <!-- IA: Botões de Análise e Sugestão -->
+            <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <button type="button" @click="runAiAnalysis()"
+                        :disabled="aiAnalysisLoading"
+                        style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 0.625rem; padding: 0.875rem 1.25rem; border-radius: 0.75rem; border: 1px solid #c4b5fd; cursor: pointer; transition: all 0.2s;"
+                        :style="aiAnalysisLoading ? 'background: #f5f3ff; opacity: 0.7; cursor: wait;' : 'background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);'"
+                        onmouseover="if(!this.disabled) this.style.boxShadow='0 4px 12px rgba(124,58,237,0.15)'"
+                        onmouseout="this.style.boxShadow='none'">
+                    <div style="width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; background: #7c3aed; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.125rem; height: 1.125rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 0.875rem; font-weight: 600; color: #5b21b6;" x-text="aiAnalysisLoading ? 'Analisando...' : 'Analisar Cotacoes com IA'"></div>
+                        <div style="font-size: 0.75rem; color: #7c3aed;">Comparar fornecedores e identificar oportunidades</div>
+                    </div>
+                </button>
+                <button type="button" @click="runAiSuggestion()"
+                        :disabled="aiSuggestionLoading"
+                        style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 0.625rem; padding: 0.875rem 1.25rem; border-radius: 0.75rem; border: 1px solid #bbf7d0; cursor: pointer; transition: all 0.2s;"
+                        :style="aiSuggestionLoading ? 'background: #f0fdf4; opacity: 0.7; cursor: wait;' : 'background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);'"
+                        onmouseover="if(!this.disabled) this.style.boxShadow='0 4px 12px rgba(22,163,74,0.15)'"
+                        onmouseout="this.style.boxShadow='none'">
+                    <div style="width: 2.25rem; height: 2.25rem; border-radius: 0.5rem; background: #16a34a; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.125rem; height: 1.125rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 0.875rem; font-weight: 600; color: #166534;" x-text="aiSuggestionLoading ? 'Gerando sugestoes...' : 'Sugestao de Compra IA'"></div>
+                        <div style="font-size: 0.75rem; color: #16a34a;">Estoque baixo + demanda + cotacoes do dia</div>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Resultado da Análise IA -->
+            <template x-if="aiAnalysisResult || aiAnalysisError">
+                <div style="margin-bottom: 1.5rem; border-radius: 0.75rem; overflow: hidden; border: 1px solid #c4b5fd;">
+                    <div style="padding: 0.75rem 1.25rem; background: #7c3aed; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 0.875rem; font-weight: 600; color: white; display: flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                            Analise IA — Comparativo de Cotacoes
+                        </h3>
+                        <button type="button" @click="aiAnalysisResult = ''; aiAnalysisError = ''"
+                                style="color: rgba(255,255,255,0.7); background: none; border: none; cursor: pointer; font-size: 1.25rem; line-height: 1;">&times;</button>
+                    </div>
+                    <div style="padding: 1.25rem; background: #faf5ff;">
+                        <template x-if="aiAnalysisError">
+                            <p style="color: #991b1b; font-size: 0.875rem;" x-text="aiAnalysisError"></p>
+                        </template>
+                        <template x-if="aiAnalysisResult">
+                            <div style="font-size: 0.875rem; color: #374151; line-height: 1.7; white-space: pre-wrap;" x-text="aiAnalysisResult"></div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Resultado da Sugestão de Compra IA -->
+            <template x-if="aiSuggestionResult || aiSuggestionError">
+                <div style="margin-bottom: 1.5rem; border-radius: 0.75rem; overflow: hidden; border: 1px solid #bbf7d0;">
+                    <div style="padding: 0.75rem 1.25rem; background: #16a34a; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 0.875rem; font-weight: 600; color: white; display: flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                            Sugestao de Compra IA
+                            <template x-if="aiSuggestionContext">
+                                <span style="font-weight: 400; opacity: 0.8; font-size: 0.75rem;" x-text="'(' + aiSuggestionContext.low_stock_count + ' estoque baixo, ' + aiSuggestionContext.today_quotations_count + ' cotacoes hoje)'"></span>
+                            </template>
+                        </h3>
+                        <button type="button" @click="aiSuggestionResult = ''; aiSuggestionError = ''; aiSuggestionContext = null"
+                                style="color: rgba(255,255,255,0.7); background: none; border: none; cursor: pointer; font-size: 1.25rem; line-height: 1;">&times;</button>
+                    </div>
+                    <div style="padding: 1.25rem; background: #f0fdf4;">
+                        <template x-if="aiSuggestionError">
+                            <p style="color: #991b1b; font-size: 0.875rem;" x-text="aiSuggestionError"></p>
+                        </template>
+                        <template x-if="aiSuggestionResult">
+                            <div style="font-size: 0.875rem; color: #374151; line-height: 1.7; white-space: pre-wrap;" x-text="aiSuggestionResult"></div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
             <!-- Filtros -->
             <div class="bg-white rounded-xl border border-gray-200 p-4 mb-6">
                 <form method="GET" action="{{ route('quotations.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
@@ -392,6 +479,15 @@
                 selectedIds: [],
                 allIds: @json($quotations->pluck('id')->values()),
 
+                // IA states
+                aiAnalysisLoading: false,
+                aiAnalysisResult: '',
+                aiAnalysisError: '',
+                aiSuggestionLoading: false,
+                aiSuggestionResult: '',
+                aiSuggestionError: '',
+                aiSuggestionContext: null,
+
                 get allSelected() {
                     return this.allIds.length > 0 && this.selectedIds.length === this.allIds.length;
                 },
@@ -416,6 +512,70 @@
                     if (this.selectedIds.length === 0) return;
                     if (!confirm('Excluir ' + this.selectedIds.length + ' cotação(ões) selecionada(s)?')) return;
                     document.getElementById('bulk-delete-form').submit();
+                },
+
+                async runAiAnalysis() {
+                    this.aiAnalysisLoading = true;
+                    this.aiAnalysisResult = '';
+                    this.aiAnalysisError = '';
+
+                    try {
+                        const response = await fetch('{{ route("quotations.ai-analysis") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({}),
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.aiAnalysisResult = data.analysis;
+                        } else {
+                            this.aiAnalysisError = data.message || 'Erro ao gerar analise.';
+                        }
+                    } catch (error) {
+                        this.aiAnalysisError = 'Erro de conexao. Tente novamente.';
+                        console.error(error);
+                    } finally {
+                        this.aiAnalysisLoading = false;
+                    }
+                },
+
+                async runAiSuggestion() {
+                    this.aiSuggestionLoading = true;
+                    this.aiSuggestionResult = '';
+                    this.aiSuggestionError = '';
+                    this.aiSuggestionContext = null;
+
+                    try {
+                        const response = await fetch('{{ route("quotations.ai-suggestion") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({}),
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.aiSuggestionResult = data.suggestion;
+                            this.aiSuggestionContext = data.context || null;
+                        } else {
+                            this.aiSuggestionError = data.message || 'Erro ao gerar sugestoes.';
+                        }
+                    } catch (error) {
+                        this.aiSuggestionError = 'Erro de conexao. Tente novamente.';
+                        console.error(error);
+                    } finally {
+                        this.aiSuggestionLoading = false;
+                    }
                 },
             };
         }
