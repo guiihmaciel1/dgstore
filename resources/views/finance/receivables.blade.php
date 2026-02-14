@@ -51,8 +51,8 @@
                             <input type="text" name="description" required placeholder="Ex: Parcela cliente João" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #6b7280;">Valor *</label>
-                            <input type="number" name="amount" step="0.01" min="0.01" required placeholder="0,00" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
+                            <label style="font-size: 0.75rem; font-weight: 500; color: #6b7280;">Valor Total *</label>
+                            <input type="number" name="amount" step="0.01" min="0.01" required placeholder="0,00" x-model.number="totalAmount" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
                         </div>
                         <div>
                             <label style="font-size: 0.75rem; font-weight: 500; color: #6b7280;">Categoria *</label>
@@ -64,19 +64,29 @@
                             </select>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #6b7280;">Data Prevista *</label>
+                            <label style="font-size: 0.75rem; font-weight: 500; color: #6b7280;">1o Vencimento *</label>
                             <input type="date" name="due_date" required value="{{ now()->format('Y-m-d') }}" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-4">
+                        <div>
+                            <label style="font-size: 0.75rem; font-weight: 500; color: #6b7280;">Parcelas</label>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                                <input type="number" name="installments" min="1" max="120" value="1" x-model.number="installments" style="width: 5rem; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                <span x-show="installments > 1" style="font-size: 0.6875rem; color: #16a34a; font-weight: 600;" x-text="installmentAmount"></span>
+                            </div>
+                        </div>
                         <div>
                             <label style="font-size: 0.75rem; font-weight: 500; color: #6b7280;">Já recebido?</label>
-                            <select name="is_paid" x-model="isPaid" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white; margin-top: 0.25rem;">
+                            <select name="is_paid" x-model="isPaid" :disabled="installments > 1" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white; margin-top: 0.25rem;">
                                 <option value="0">Não — Pendente</option>
-                                <option value="1">Sim — Já recebido</option>
+                                <option value="1" x-bind:disabled="installments > 1">Sim — Já recebido</option>
                             </select>
+                            <template x-if="installments > 1">
+                                <span style="font-size: 0.625rem; color: #9ca3af;">Parcelado = receber individualmente</span>
+                            </template>
                         </div>
-                        <div x-show="isPaid === '1'">
+                        <div x-show="isPaid === '1' && installments <= 1">
                             <label style="font-size: 0.75rem; font-weight: 500; color: #6b7280;">Carteira</label>
                             <select name="account_id" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white; margin-top: 0.25rem;">
                                 @foreach($accounts as $account)
@@ -90,7 +100,8 @@
                         </div>
                         <div style="display: flex; align-items: flex-end;">
                             <button type="submit" style="width: 100%; padding: 0.5rem 1rem; background: #16a34a; color: white; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;">
-                                Registrar Receita
+                                <span x-show="installments <= 1">Registrar Receita</span>
+                                <span x-show="installments > 1" x-text="'Registrar ' + installments + 'x'"></span>
                             </button>
                         </div>
                     </div>
@@ -215,7 +226,18 @@
     @push('scripts')
     <style>[x-cloak] { display: none !important; }</style>
     <script>
-        function receivablesPage() { return { showForm: false, isPaid: '0' }; }
+        function receivablesPage() {
+            return {
+                showForm: false,
+                isPaid: '0',
+                installments: 1,
+                totalAmount: 0,
+                get installmentAmount() {
+                    if (this.installments <= 1 || this.totalAmount <= 0) return '';
+                    return 'Parcela: R$ ' + (this.totalAmount / this.installments).toFixed(2).replace('.', ',');
+                }
+            };
+        }
     </script>
     @endpush
 </x-app-layout>

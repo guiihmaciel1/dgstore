@@ -184,15 +184,53 @@ class FinanceController extends Controller
             'payment_method' => ['nullable', 'string'],
             'is_paid' => ['nullable', 'boolean'],
             'notes' => ['nullable', 'string'],
+            'installments' => ['nullable', 'integer', 'min:1', 'max:120'],
         ]);
 
         $isPaid = $request->boolean('is_paid');
+        $installments = max(1, (int) ($request->installments ?? 1));
+        $totalAmount = (float) $request->amount;
 
+        if ($installments > 1) {
+            // Criar múltiplas parcelas
+            $installmentAmount = round($totalAmount / $installments, 2);
+            $dueDate = \Carbon\Carbon::parse($request->due_date);
+            $created = 0;
+
+            for ($i = 1; $i <= $installments; $i++) {
+                // Última parcela absorve a diferença de arredondamento
+                $amount = ($i === $installments)
+                    ? $totalAmount - ($installmentAmount * ($installments - 1))
+                    : $installmentAmount;
+
+                $this->financeService->createTransaction([
+                    'type' => $request->type,
+                    'category_id' => $request->category_id,
+                    'user_id' => auth()->id(),
+                    'amount' => $amount,
+                    'description' => "{$request->description} ({$i}/{$installments})",
+                    'due_date' => $dueDate->copy()->addMonths($i - 1)->toDateString(),
+                    'account_id' => null,
+                    'status' => 'pending',
+                    'paid_at' => null,
+                    'payment_method' => null,
+                    'notes' => $request->notes,
+                ]);
+                $created++;
+            }
+
+            $route = $request->type === 'expense' ? 'finance.payables' : 'finance.receivables';
+            $label = $request->type === 'expense' ? 'despesas' : 'receitas';
+
+            return redirect()->route($route)->with('success', "{$created} {$label} parceladas registradas com sucesso!");
+        }
+
+        // Transação única
         $this->financeService->createTransaction([
             'type' => $request->type,
             'category_id' => $request->category_id,
             'user_id' => auth()->id(),
-            'amount' => (float) $request->amount,
+            'amount' => $totalAmount,
             'description' => $request->description,
             'due_date' => $request->due_date,
             'account_id' => $isPaid ? $request->account_id : null,
