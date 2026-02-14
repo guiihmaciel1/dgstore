@@ -24,8 +24,9 @@ class FinanceService
         $accounts = FinancialAccount::active()->orderByDesc('is_default')->orderBy('name')->get();
         $totalBalance = (float) $accounts->sum('current_balance');
 
-        $monthIncome = (float) FinancialTransaction::income()->paid()->thisMonth()->sum('amount');
-        $monthExpense = (float) FinancialTransaction::expense()->paid()->thisMonth()->sum('amount');
+        // Receitas e despesas que passaram por carteira (fluxo de caixa real)
+        $monthIncome = (float) FinancialTransaction::income()->paid()->thisMonth()->whereNotNull('account_id')->sum('amount');
+        $monthExpense = (float) FinancialTransaction::expense()->paid()->thisMonth()->whereNotNull('account_id')->sum('amount');
         $monthProfit = $monthIncome - $monthExpense;
 
         // Lucro real das vendas do mês (receita de venda - custo de mercadoria)
@@ -408,9 +409,11 @@ class FinanceService
         string $description,
         ?string $referenceId = null,
         ?string $paymentMethod = null,
+        ?\DateTimeInterface $date = null,
     ): ?FinancialTransaction {
         $category = $this->getCategoryByName('Venda', 'income');
         $account = $this->getDefaultAccount();
+        $date = $date ?? now();
 
         if (!$category) {
             return null;
@@ -424,8 +427,8 @@ class FinanceService
             'status' => $account ? 'paid' : 'pending',
             'amount' => $amount,
             'description' => $description,
-            'due_date' => now()->toDateString(),
-            'paid_at' => $account ? now() : null,
+            'due_date' => $date->format('Y-m-d'),
+            'paid_at' => $account ? $date : null,
             'payment_method' => $paymentMethod,
             'reference_type' => 'Sale',
             'reference_id' => $referenceId,
@@ -437,28 +440,30 @@ class FinanceService
         float $amount,
         string $description,
         ?string $referenceId = null,
+        ?\DateTimeInterface $date = null,
     ): ?FinancialTransaction {
         if ($amount <= 0) {
             return null;
         }
 
         $category = $this->getCategoryByName('Custo de Mercadoria', 'expense');
-        $account = $this->getDefaultAccount();
+        $date = $date ?? now();
 
         if (!$category) {
             return null;
         }
 
+        // CMV é registro contábil para P&L, não movimenta caixa
         return $this->createTransaction([
-            'account_id' => $account?->id,
+            'account_id' => null,
             'category_id' => $category->id,
             'user_id' => $userId,
             'type' => 'expense',
-            'status' => $account ? 'paid' : 'pending',
+            'status' => 'paid',
             'amount' => $amount,
             'description' => $description,
-            'due_date' => now()->toDateString(),
-            'paid_at' => $account ? now() : null,
+            'due_date' => $date->format('Y-m-d'),
+            'paid_at' => $date,
             'reference_type' => 'Sale',
             'reference_id' => $referenceId,
         ]);
@@ -469,24 +474,26 @@ class FinanceService
         float $amount,
         string $description,
         ?string $referenceId = null,
+        ?\DateTimeInterface $date = null,
     ): ?FinancialTransaction {
         $category = $this->getCategoryByName('Trade-in', 'expense');
-        $account = $this->getDefaultAccount();
+        $date = $date ?? now();
 
         if (!$category) {
             return null;
         }
 
+        // Trade-in é troca de aparelho, não saída de caixa
         return $this->createTransaction([
-            'account_id' => $account?->id,
+            'account_id' => null,
             'category_id' => $category->id,
             'user_id' => $userId,
             'type' => 'expense',
-            'status' => $account ? 'paid' : 'pending',
+            'status' => 'paid',
             'amount' => $amount,
             'description' => $description,
-            'due_date' => now()->toDateString(),
-            'paid_at' => $account ? now() : null,
+            'due_date' => $date->format('Y-m-d'),
+            'paid_at' => $date,
             'reference_type' => 'Sale',
             'reference_id' => $referenceId,
         ]);

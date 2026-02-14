@@ -49,6 +49,7 @@ class CreateSaleUseCase
     {
         try {
             $description = "Venda #{$sale->sale_number}";
+            $saleDate = $sale->sold_at ?? now();
 
             // Registrar parcela à vista (dinheiro/PIX)
             if ((float) $sale->cash_payment > 0) {
@@ -59,6 +60,7 @@ class CreateSaleUseCase
                     description: "{$description} ({$method})",
                     referenceId: $sale->id,
                     paymentMethod: $sale->cash_payment_method,
+                    date: $saleDate,
                 );
             }
 
@@ -72,6 +74,7 @@ class CreateSaleUseCase
                     description: "{$description} ({$methodLabel}{$installmentInfo})",
                     referenceId: $sale->id,
                     paymentMethod: $sale->payment_method?->value,
+                    date: $saleDate,
                 );
             }
 
@@ -83,10 +86,11 @@ class CreateSaleUseCase
                     description: $description,
                     referenceId: $sale->id,
                     paymentMethod: $sale->payment_method?->value,
+                    date: $saleDate,
                 );
             }
 
-            // Registrar custo dos produtos (CMV)
+            // Registrar custo dos produtos (CMV) — contábil, não movimenta caixa
             $sale->load('items');
             $totalCost = $sale->total_cost;
             if ($totalCost > 0) {
@@ -95,16 +99,18 @@ class CreateSaleUseCase
                     amount: $totalCost,
                     description: "{$description} (Custo)",
                     referenceId: $sale->id,
+                    date: $saleDate,
                 );
             }
 
-            // Registrar trade-in como despesa
+            // Registrar trade-in — contábil, não movimenta caixa
             if ((float) $sale->trade_in_value > 0) {
                 $this->financeService->registerTradeInExpense(
                     userId: $sale->user_id,
                     amount: (float) $sale->trade_in_value,
                     description: "{$description} (Trade-in)",
                     referenceId: $sale->id,
+                    date: $saleDate,
                 );
             }
         } catch (\Throwable $e) {
