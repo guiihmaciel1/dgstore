@@ -172,6 +172,89 @@ class ReservationService
     }
 
     /**
+     * Atualiza uma reserva ativa
+     */
+    public function update(Reservation $reservation, array $data): Reservation
+    {
+        if (!$reservation->isActive()) {
+            throw new \Exception('Apenas reservas ativas podem ser editadas.');
+        }
+
+        // Validar que deposit_amount não pode ser menor que deposit_paid
+        if (isset($data['deposit_amount']) && $data['deposit_amount'] < $reservation->deposit_paid) {
+            throw new \Exception('O valor do sinal não pode ser menor que o já pago (R$ ' . number_format((float) $reservation->deposit_paid, 2, ',', '.') . ').');
+        }
+
+        return DB::transaction(function () use ($reservation, $data) {
+            $updateData = [];
+
+            // Campos obrigatórios (sempre presentes no form)
+            foreach (['customer_id', 'product_description', 'product_price', 'deposit_amount', 'expires_at'] as $field) {
+                if (array_key_exists($field, $data)) {
+                    $updateData[$field] = $data[$field];
+                }
+            }
+
+            // Campos opcionais (podem ser null/vazio)
+            if (array_key_exists('cost_price', $data)) {
+                $updateData['cost_price'] = $data['cost_price'] ?? 0;
+            }
+            if (array_key_exists('notes', $data)) {
+                $updateData['notes'] = $data['notes'];
+            }
+
+            $reservation->update($updateData);
+
+            return $reservation->fresh(['customer', 'product', 'payments']);
+        });
+    }
+
+    /**
+     * Estorna um pagamento de sinal
+     */
+    public function reversePayment(Reservation $reservation, ReservationPayment $payment): void
+    {
+        if (!$reservation->isActive()) {
+            throw new \Exception('Apenas reservas ativas podem ter pagamentos estornados.');
+        }
+
+        if ($payment->reservation_id !== $reservation->id) {
+            throw new \Exception('Este pagamento não pertence a esta reserva.');
+        }
+
+        DB::transaction(function () use ($reservation, $payment) {
+            $amount = (float) $payment->amount;
+
+            // Subtrair valor do deposit_paid na reserva
+            $newDepositPaid = max(0, (float) $reservation->deposit_paid - $amount);
+            $reservation->update(['deposit_paid' => $newDepositPaid]);
+
+            // Cancelar transação financeira correspondente
+            try {
+                $this->financeService->cancelReservationTransactions($reservation->id);
+                // Re-registrar os pagamentos restantes no financeiro
+                $remainingPayments = $reservation->payments()->where('id', '!=', $payment->id)->get();
+                foreach ($remainingPayments as $remainingPayment) {
+                    $productName = $reservation->product_name ?? 'Reserva';
+                    $this->financeService->registerReservationPayment(
+                        userId: $remainingPayment->user_id,
+                        amount: (float) $remainingPayment->amount,
+                        description: "Sinal Reserva #{$reservation->reservation_number} — {$productName}",
+                        referenceId: $reservation->id,
+                        paymentMethod: $remainingPayment->payment_method->value,
+                        date: $remainingPayment->paid_at,
+                    );
+                }
+            } catch (\Throwable $e) {
+                Log::warning("Não foi possível estornar transação financeira: {$e->getMessage()}");
+            }
+
+            // Deletar o pagamento
+            $payment->delete();
+        });
+    }
+
+    /**
      * Converte reserva em venda
      */
     public function convert(Reservation $reservation, string $saleId): Reservation

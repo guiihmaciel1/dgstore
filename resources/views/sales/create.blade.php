@@ -24,8 +24,25 @@
                 <span style="font-size: 0.875rem; color: #9ca3af;">ESC para cancelar</span>
             </div>
 
+            @if(isset($reservation) && $reservation)
+                <div style="background: #eff6ff; border: 1px solid #93c5fd; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                    </svg>
+                    <div>
+                        <span style="font-weight: 600; color: #1d4ed8;">Convertendo Reserva #{{ $reservation->reservation_number }}</span>
+                        <span style="font-size: 0.875rem; color: #6b7280; margin-left: 0.5rem;">
+                            O sinal de {{ $reservation->formatted_deposit_paid }} será aplicado como desconto.
+                        </span>
+                    </div>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('sales.store') }}" x-data="saleForm()" @keydown.escape.window="window.location.href='{{ route('sales.index') }}'">
                 @csrf
+                @if(isset($reservation) && $reservation)
+                    <input type="hidden" name="from_reservation" value="{{ $reservation->id }}">
+                @endif
                 
                 <div class="sale-grid">
                     <!-- COLUNA PRINCIPAL - PRODUTOS -->
@@ -666,14 +683,31 @@
     @push('scripts')
     <script>
         function saleForm() {
+            const reservationData = {!! json_encode(isset($reservation) && $reservation ? [
+                'customer' => $reservation->customer ? [
+                    'id' => $reservation->customer->id,
+                    'name' => $reservation->customer->name,
+                    'phone' => $reservation->customer->formatted_phone ?? '',
+                ] : null,
+                'product' => $reservation->product ? [
+                    'id' => $reservation->product->id,
+                    'name' => $reservation->product->full_name ?? $reservation->product->name,
+                    'price' => (float) $reservation->product_price,
+                    'cost_price' => (float) ($reservation->product->cost_price ?? 0),
+                    'stock' => $reservation->product->stock_quantity ?? 1,
+                ] : null,
+                'deposit_paid' => (float) $reservation->deposit_paid,
+                'product_price' => (float) $reservation->product_price,
+            ] : null) !!};
+
             return {
                 items: [],
                 searchTerm: '',
                 searchResults: [],
                 customerSearch: '',
                 customerResults: [],
-                selectedCustomer: { id: '', name: '', phone: '' },
-                discount: 0,
+                selectedCustomer: reservationData?.customer ?? { id: '', name: '', phone: '' },
+                discount: reservationData?.deposit_paid ?? 0,
                 subtotal: 0,
                 total: 0,
                 
@@ -693,6 +727,21 @@
                     estimated_value: 0,
                     condition: 'good',
                     notes: ''
+                },
+
+                init() {
+                    // Pré-preencher produto da reserva
+                    if (reservationData?.product) {
+                        this.items.push({
+                            id: reservationData.product.id,
+                            name: reservationData.product.name,
+                            price: reservationData.product.price,
+                            cost_price: reservationData.product.cost_price,
+                            quantity: 1,
+                            stock: reservationData.product.stock
+                        });
+                        this.updateTotals();
+                    }
                 },
                 
                 // Computed: total de pagamentos em cartão

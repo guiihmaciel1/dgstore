@@ -8,10 +8,13 @@ use App\Domain\Customer\Services\CustomerService;
 use App\Domain\Product\Services\ProductService;
 use App\Domain\Reservation\Enums\ReservationStatus;
 use App\Domain\Reservation\Models\Reservation;
+use App\Domain\Reservation\Models\ReservationPayment;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Supplier\Models\Quotation;
 use App\Http\Controllers\Controller;
+use App\Presentation\Http\Requests\StoreReservationRequest;
+use App\Presentation\Http\Requests\UpdateReservationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -67,22 +70,8 @@ class ReservationController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreReservationRequest $request): RedirectResponse
     {
-        $request->validate([
-            'customer_id' => ['required', 'exists:customers,id'],
-            'product_id' => ['nullable'],
-            'product_description' => ['required', 'string', 'max:255'],
-            'source' => ['required', 'in:stock,quotation,manual'],
-            'product_price' => ['required', 'numeric', 'min:0.01'],
-            'cost_price' => ['nullable', 'numeric', 'min:0'],
-            'deposit_amount' => ['required', 'numeric', 'min:0'],
-            'expires_at' => ['required', 'date', 'after:today'],
-            'initial_payment' => ['nullable', 'numeric', 'min:0'],
-            'payment_method' => ['nullable', 'in:cash,credit_card,debit_card,pix,bank_transfer'],
-            'notes' => ['nullable', 'string'],
-        ]);
-
         try {
             $data = $request->only([
                 'customer_id', 'product_description',
@@ -126,6 +115,52 @@ class ReservationController extends Controller
             'reservation' => $reservation,
             'paymentMethods' => PaymentMethod::cases(),
         ]);
+    }
+
+    public function edit(Reservation $reservation): View|RedirectResponse
+    {
+        if (!$reservation->isActive()) {
+            return redirect()
+                ->route('reservations.show', $reservation)
+                ->with('error', 'Apenas reservas ativas podem ser editadas.');
+        }
+
+        $reservation->load(['customer', 'product', 'user', 'payments']);
+
+        return view('reservations.edit', [
+            'reservation' => $reservation,
+        ]);
+    }
+
+    public function update(UpdateReservationRequest $request, Reservation $reservation): RedirectResponse
+    {
+        try {
+            $this->reservationService->update($reservation, $request->validated());
+
+            return redirect()
+                ->route('reservations.show', $reservation)
+                ->with('success', 'Reserva atualizada com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
+    }
+
+    public function destroyPayment(Reservation $reservation, ReservationPayment $payment): RedirectResponse
+    {
+        try {
+            $this->reservationService->reversePayment($reservation, $payment);
+
+            return redirect()
+                ->route('reservations.show', $reservation)
+                ->with('success', 'Pagamento estornado com sucesso!');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage());
+        }
     }
 
     public function storePayment(Request $request, Reservation $reservation): RedirectResponse

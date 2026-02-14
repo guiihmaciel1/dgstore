@@ -37,6 +37,9 @@ class StoreSaleRequest extends FormRequest
             'card_payment' => ['nullable', 'numeric', 'min:0'],
             'cash_payment_method' => ['nullable', 'in:cash,pix'],
             
+            // Reserva (conversão)
+            'from_reservation' => ['nullable', 'exists:reservations,id'],
+
             // Campos de trade-in
             'trade_in' => ['nullable', 'array'],
             'trade_in.device_name' => ['required_with:trade_in.estimated_value', 'nullable', 'string', 'max:255'],

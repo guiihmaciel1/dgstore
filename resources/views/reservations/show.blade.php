@@ -28,6 +28,16 @@
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
+                    @if($reservation->isActive())
+                        <a href="{{ route('reservations.edit', $reservation) }}"
+                           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #eff6ff; color: #2563eb; font-weight: 500; font-size: 0.875rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid #bfdbfe;"
+                           onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Editar
+                        </a>
+                    @endif
                     @if($reservation->canConvert())
                         <a href="{{ route('reservations.convert', $reservation) }}" 
                            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #16a34a; color: white; font-weight: 500; font-size: 0.875rem; border-radius: 0.5rem; text-decoration: none;"
@@ -150,6 +160,9 @@
                                                 <th style="padding: 0.5rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Data</th>
                                                 <th style="padding: 0.5rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Forma</th>
                                                 <th style="padding: 0.5rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Valor</th>
+                                                @if($reservation->isActive())
+                                                    <th style="padding: 0.5rem 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; width: 70px;"></th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -158,6 +171,21 @@
                                                     <td style="padding: 0.5rem 1rem; font-size: 0.875rem;">{{ $payment->paid_at->format('d/m/Y H:i') }}</td>
                                                     <td style="padding: 0.5rem 1rem; font-size: 0.875rem;">{{ $payment->payment_method->label() }}</td>
                                                     <td style="padding: 0.5rem 1rem; font-size: 0.875rem; text-align: right; font-weight: 600; color: #16a34a;">{{ $payment->formatted_amount }}</td>
+                                                    @if($reservation->isActive())
+                                                        <td style="padding: 0.5rem 0.5rem; text-align: center;">
+                                                            <form method="POST" action="{{ route('reservations.payments.destroy', [$reservation, $payment]) }}"
+                                                                  onsubmit="return confirm('Tem certeza que deseja estornar este pagamento de {{ $payment->formatted_amount }}?');"
+                                                                  style="display: inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" title="Estornar pagamento"
+                                                                        style="padding: 0.25rem 0.5rem; background: none; color: #dc2626; font-size: 0.7rem; font-weight: 500; border: 1px solid #fecaca; border-radius: 0.25rem; cursor: pointer;"
+                                                                        onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+                                                                    Estornar
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    @endif
                                                 </tr>
                                             @endforeach
                                         </tbody>

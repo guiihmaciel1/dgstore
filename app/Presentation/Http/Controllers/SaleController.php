@@ -8,6 +8,8 @@ use App\Application\UseCases\CancelSaleUseCase;
 use App\Application\UseCases\CreateSaleUseCase;
 use App\Domain\Customer\Services\CustomerService;
 use App\Domain\Product\Services\ProductService;
+use App\Domain\Reservation\Models\Reservation;
+use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\DTOs\SaleData;
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
@@ -20,6 +22,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class SaleController extends Controller
@@ -29,7 +32,8 @@ class SaleController extends Controller
         private readonly ProductService $productService,
         private readonly CustomerService $customerService,
         private readonly CreateSaleUseCase $createSaleUseCase,
-        private readonly CancelSaleUseCase $cancelSaleUseCase
+        private readonly CancelSaleUseCase $cancelSaleUseCase,
+        private readonly ReservationService $reservationService
     ) {}
 
     public function index(Request $request): View
@@ -54,15 +58,23 @@ class SaleController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
         $products = $this->productService->getActiveProducts();
+
+        // Carregar reserva se vier de conversão
+        $reservation = null;
+        if ($request->get('from_reservation')) {
+            $reservation = Reservation::with(['customer', 'product'])
+                ->find($request->get('from_reservation'));
+        }
 
         return view('sales.create', [
             'products' => $products,
             'paymentMethods' => PaymentMethod::cases(),
             'paymentStatuses' => PaymentStatus::cases(),
             'tradeInConditions' => TradeInCondition::cases(),
+            'reservation' => $reservation,
         ]);
     }
 
@@ -72,8 +84,22 @@ class SaleController extends Controller
             $validated = $request->validated();
             $validated['user_id'] = auth()->id();
 
+            // Extrair from_reservation antes de criar SaleData
+            $fromReservation = $validated['from_reservation'] ?? null;
+            unset($validated['from_reservation']);
+
             $data = SaleData::fromArray($validated);
             $sale = $this->createSaleUseCase->execute($data);
+            if ($fromReservation) {
+                try {
+                    $reservation = Reservation::find($fromReservation);
+                    if ($reservation && $reservation->canConvert()) {
+                        $this->reservationService->convert($reservation, $sale->id);
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning("Não foi possível vincular reserva à venda: {$e->getMessage()}");
+                }
+            }
 
             return redirect()
                 ->route('sales.show', $sale)

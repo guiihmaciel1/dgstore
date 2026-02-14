@@ -109,7 +109,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reservations/search-customers', [ReservationController::class, 'searchCustomers'])->name('reservations.search-customers');
     Route::get('/reservations/search-products', [ReservationController::class, 'searchProducts'])->name('reservations.search-products');
     Route::get('/reservations/{reservation}', [ReservationController::class, 'show'])->name('reservations.show');
+    Route::get('/reservations/{reservation}/edit', [ReservationController::class, 'edit'])->name('reservations.edit');
+    Route::put('/reservations/{reservation}', [ReservationController::class, 'update'])->name('reservations.update');
     Route::post('/reservations/{reservation}/payments', [ReservationController::class, 'storePayment'])->name('reservations.payments.store');
+    Route::delete('/reservations/{reservation}/payments/{payment}', [ReservationController::class, 'destroyPayment'])->name('reservations.payments.destroy');
     Route::get('/reservations/{reservation}/convert', [ReservationController::class, 'convert'])->name('reservations.convert');
     Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
 

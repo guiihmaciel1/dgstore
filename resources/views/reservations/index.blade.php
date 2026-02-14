@@ -179,11 +179,27 @@
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
-                                            <a href="{{ route('reservations.show', $reservation) }}" 
-                                               style="padding: 0.375rem 0.75rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none;"
-                                               onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
-                                                Ver detalhes
-                                            </a>
+                                            <div style="display: flex; gap: 0.375rem; justify-content: flex-end;">
+                                                @if($reservation->status->isActive())
+                                                    <a href="{{ route('reservations.edit', $reservation) }}" title="Editar reserva"
+                                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: #eff6ff; color: #2563eb; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid #bfdbfe;"
+                                                       onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                                                        <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                        </svg>
+                                                        Editar
+                                                    </a>
+                                                @endif
+                                                <a href="{{ route('reservations.show', $reservation) }}" title="Ver detalhes"
+                                                   style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid #e5e7eb;"
+                                                   onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                                    <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                    </svg>
+                                                    Detalhes
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
