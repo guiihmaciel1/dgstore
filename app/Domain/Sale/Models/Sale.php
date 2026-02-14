@@ -91,9 +91,9 @@ class Sale extends Model
         return $this->hasMany(StockMovement::class, 'reference_id');
     }
 
-    public function tradeIn(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function tradeIns(): HasMany
     {
-        return $this->hasOne(TradeIn::class);
+        return $this->hasMany(TradeIn::class);
     }
 
     // Scopes

@@ -17,20 +17,19 @@
 
             <!-- Filtros -->
             <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
-                <form method="GET" action="{{ route('reports.sales') }}" style="display: flex; align-items: flex-end; gap: 1rem;">
+                <form method="GET" action="{{ route('reports.sales') }}" x-data x-ref="filterForm" style="display: flex; align-items: flex-end; gap: 1rem;">
                     <div style="flex: 1;">
                         <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data Inicial</label>
                         <input type="date" name="start_date" value="{{ $startDate }}" 
-                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;">
+                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                               x-on:change="$refs.filterForm.submit()">
                     </div>
                     <div style="flex: 1;">
                         <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data Final</label>
                         <input type="date" name="end_date" value="{{ $endDate }}" 
-                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;">
+                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                               x-on:change="$refs.filterForm.submit()">
                     </div>
-                    <button type="submit" style="padding: 0.625rem 1.5rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer;">
-                        Filtrar
-                    </button>
                     <a href="{{ route('reports.sales.pdf', ['start_date' => $startDate, 'end_date' => $endDate]) }}" 
                        style="padding: 0.625rem 1.5rem; background: #374151; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;">
                         Exportar PDF

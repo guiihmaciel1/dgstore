@@ -134,17 +134,18 @@
                     <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb;">
                         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
                             <h2 style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Extrato — {{ $selectedAccount?->name ?? 'Conta' }}</h2>
-                            <form method="GET" action="{{ route('finance.accounts') }}" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <form method="GET" action="{{ route('finance.accounts') }}" x-data x-ref="filterForm" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                                 <input type="hidden" name="account_id" value="{{ $selectedAccountId }}">
                                 <div>
                                     <label style="font-size: 0.625rem; font-weight: 500; color: #6b7280;">De</label>
-                                    <input type="date" name="start_date" value="{{ request('start_date') }}" style="padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.75rem;">
+                                    <input type="date" name="start_date" value="{{ request('start_date') }}" style="padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.75rem;"
+                                           x-on:change="$refs.filterForm.submit()">
                                 </div>
                                 <div>
                                     <label style="font-size: 0.625rem; font-weight: 500; color: #6b7280;">Até</label>
-                                    <input type="date" name="end_date" value="{{ request('end_date') }}" style="padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.75rem;">
+                                    <input type="date" name="end_date" value="{{ request('end_date') }}" style="padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.75rem;"
+                                           x-on:change="$refs.filterForm.submit()">
                                 </div>
-                                <button type="submit" style="padding: 0.25rem 0.625rem; background: #111827; color: white; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.75rem; margin-top: 0.875rem;">Filtrar</button>
                                 @if(request('start_date') || request('end_date'))
                                     <a href="{{ route('finance.accounts', ['account_id' => $selectedAccountId]) }}" style="padding: 0.25rem 0.625rem; background: white; color: #374151; font-weight: 500; border-radius: 0.375rem; border: 1px solid #d1d5db; text-decoration: none; font-size: 0.75rem; margin-top: 0.875rem;">Limpar</a>
                                 @endif

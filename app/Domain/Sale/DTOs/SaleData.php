@@ -12,6 +12,7 @@ readonly class SaleData
 {
     /**
      * @param array<SaleItemData> $items
+     * @param array<TradeInData> $tradeIns
      */
     public function __construct(
         public string $userId,
@@ -23,7 +24,7 @@ readonly class SaleData
         public float $cashPayment = 0,
         public float $cardPayment = 0,
         public ?string $cashPaymentMethod = null,
-        public ?TradeInData $tradeIn = null,
+        public array $tradeIns = [],
         public PaymentStatus $paymentStatus = PaymentStatus::Pending,
         public int $installments = 1,
         public ?string $notes = null,
@@ -37,10 +38,14 @@ readonly class SaleData
             $data['items'] ?? []
         );
 
-        // Parse trade-in data if present
-        $tradeIn = null;
-        if (!empty($data['trade_in']) && !empty($data['trade_in']['device_name'])) {
-            $tradeIn = TradeInData::fromArray($data['trade_in']);
+        // Parse trade-ins (suporta múltiplos aparelhos)
+        $tradeIns = [];
+        if (!empty($data['trade_ins']) && is_array($data['trade_ins'])) {
+            foreach ($data['trade_ins'] as $tradeInItem) {
+                if (!empty($tradeInItem['device_name'])) {
+                    $tradeIns[] = TradeInData::fromArray($tradeInItem);
+                }
+            }
         }
 
         return new self(
@@ -49,20 +54,20 @@ readonly class SaleData
                 ? $data['payment_method']
                 : PaymentMethod::from($data['payment_method']),
             items: $items,
-            customerId: $data['customer_id'] ?? null,
+            customerId: !empty($data['customer_id']) ? $data['customer_id'] : null,
             discount: (float) ($data['discount'] ?? 0),
             tradeInValue: (float) ($data['trade_in_value'] ?? 0),
             cashPayment: (float) ($data['cash_payment'] ?? 0),
             cardPayment: (float) ($data['card_payment'] ?? 0),
-            cashPaymentMethod: $data['cash_payment_method'] ?? null,
-            tradeIn: $tradeIn,
+            cashPaymentMethod: !empty($data['cash_payment_method']) ? $data['cash_payment_method'] : null,
+            tradeIns: $tradeIns,
             paymentStatus: isset($data['payment_status'])
                 ? ($data['payment_status'] instanceof PaymentStatus
                     ? $data['payment_status']
                     : PaymentStatus::from($data['payment_status']))
                 : PaymentStatus::Pending,
             installments: (int) ($data['installments'] ?? 1),
-            notes: $data['notes'] ?? null,
+            notes: !empty($data['notes']) ? $data['notes'] : null,
             soldAt: isset($data['sold_at']) 
                 ? Carbon::parse($data['sold_at']) 
                 : Carbon::now(),
@@ -85,7 +90,7 @@ readonly class SaleData
 
     public function hasTradeIn(): bool
     {
-        return $this->tradeIn !== null && $this->tradeInValue > 0;
+        return count($this->tradeIns) > 0 && $this->tradeInValue > 0;
     }
 
     public function hasMixedPayment(): bool

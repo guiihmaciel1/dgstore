@@ -258,124 +258,135 @@
                     </div>
                     @endif
                     
-                    <!-- Trade-In (detalhes do aparelho) -->
-                    @if($sale->tradeIn)
+                    <!-- Trade-Ins (detalhes dos aparelhos) -->
+                    @if($sale->tradeIns->isNotEmpty())
                     <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #ddd6fe; overflow: hidden;">
                         <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #ddd6fe; background: #f5f3ff;">
-                            <div style="display: flex; align-items: center; justify-content: between;">
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <svg style="width: 1.25rem; height: 1.25rem; color: #7c3aed;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                    </svg>
-                                    <h3 style="font-weight: 600; color: #5b21b6;">Aparelho Recebido (Trade-in)</h3>
-                                </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <svg style="width: 1.25rem; height: 1.25rem; color: #7c3aed;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                </svg>
+                                <h3 style="font-weight: 600; color: #5b21b6;">
+                                    {{ $sale->tradeIns->count() > 1 ? 'Aparelhos Recebidos (Trade-in)' : 'Aparelho Recebido (Trade-in)' }}
+                                </h3>
+                            </div>
+                        </div>
+                        <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
+                            @foreach($sale->tradeIns as $tradeInItem)
+                            <div style="{{ !$loop->last ? 'padding-bottom: 1.5rem; border-bottom: 1px solid #e5e7eb;' : '' }}">
                                 @php
                                     $tradeInStatusColors = [
                                         'pending' => ['bg' => '#fefce8', 'color' => '#ca8a04', 'border' => '#fde68a'],
                                         'processed' => ['bg' => '#f0fdf4', 'color' => '#16a34a', 'border' => '#bbf7d0'],
                                         'rejected' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'border' => '#fecaca'],
                                     ];
-                                    $tisc = $tradeInStatusColors[$sale->tradeIn->status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280', 'border' => '#e5e7eb'];
+                                    $tisc = $tradeInStatusColors[$tradeInItem->status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280', 'border' => '#e5e7eb'];
                                 @endphp
-                                <span style="margin-left: auto; padding: 0.25rem 0.75rem; background: {{ $tisc['bg'] }}; color: {{ $tisc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; border: 1px solid {{ $tisc['border'] }};">
-                                    {{ $sale->tradeIn->status->label() }}
-                                </span>
-                            </div>
-                        </div>
-                        <div style="padding: 1.5rem;">
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
-                                <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Aparelho</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #111827;">{{ $sale->tradeIn->full_name }}</dd>
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                    @if($sale->tradeIns->count() > 1)
+                                        <span style="font-size: 0.8125rem; font-weight: 600; color: #7c3aed;">Aparelho {{ $loop->iteration }}</span>
+                                    @else
+                                        <span></span>
+                                    @endif
+                                    <span style="padding: 0.25rem 0.75rem; background: {{ $tisc['bg'] }}; color: {{ $tisc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; border: 1px solid {{ $tisc['border'] }};">
+                                        {{ $tradeInItem->status->label() }}
+                                    </span>
                                 </div>
-                                <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Valor</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #7c3aed;">{{ $sale->tradeIn->formatted_value }}</dd>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                                    <div>
+                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Aparelho</dt>
+                                        <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #111827;">{{ $tradeInItem->full_name }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Valor</dt>
+                                        <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #7c3aed;">{{ $tradeInItem->formatted_value }}</dd>
+                                    </div>
+                                    @if($tradeInItem->imei)
+                                    <div>
+                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">IMEI</dt>
+                                        <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827; font-family: monospace;">{{ $tradeInItem->imei }}</dd>
+                                    </div>
+                                    @endif
+                                    <div>
+                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Condição</dt>
+                                        <dd style="margin-top: 0.25rem;">
+                                            @php
+                                                $conditionColors = [
+                                                    'excellent' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
+                                                    'good' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
+                                                    'fair' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
+                                                    'poor' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
+                                                ];
+                                                $cc = $conditionColors[$tradeInItem->condition->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                            @endphp
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $cc['bg'] }}; color: {{ $cc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
+                                                {{ $tradeInItem->condition->label() }}
+                                            </span>
+                                        </dd>
+                                    </div>
                                 </div>
-                                @if($sale->tradeIn->imei)
-                                <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">IMEI</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827; font-family: monospace;">{{ $sale->tradeIn->imei }}</dd>
+                                @if($tradeInItem->notes)
+                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Observações</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #374151;">{{ $tradeInItem->notes }}</dd>
                                 </div>
                                 @endif
-                                <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Condição</dt>
-                                    <dd style="margin-top: 0.25rem;">
-                                        @php
-                                            $conditionColors = [
-                                                'excellent' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                                'good' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                                'fair' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
-                                                'poor' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
-                                            ];
-                                            $cc = $conditionColors[$sale->tradeIn->condition->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
-                                        @endphp
-                                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $cc['bg'] }}; color: {{ $cc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
-                                            {{ $sale->tradeIn->condition->label() }}
-                                        </span>
-                                    </dd>
+                                @if($tradeInItem->isPending())
+                                <div style="margin-top: 1rem; padding: 0.75rem; background: #fefce8; border-radius: 0.5rem; border: 1px solid #fde68a;">
+                                    <p style="font-size: 0.75rem; color: #92400e;">
+                                        <strong>Atenção:</strong> Este aparelho ainda não foi cadastrado no estoque. 
+                                        <a href="{{ route('stock.trade-ins') }}" style="color: #b45309; text-decoration: underline;">Processar trade-ins pendentes</a>
+                                    </p>
                                 </div>
-                            </div>
-                            @if($sale->tradeIn->notes)
-                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
-                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Observações</dt>
-                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #374151;">{{ $sale->tradeIn->notes }}</dd>
-                            </div>
-                            @endif
-                            @if($sale->tradeIn->isPending())
-                            <div style="margin-top: 1rem; padding: 0.75rem; background: #fefce8; border-radius: 0.5rem; border: 1px solid #fde68a;">
-                                <p style="font-size: 0.75rem; color: #92400e;">
-                                    <strong>Atenção:</strong> Este aparelho ainda não foi cadastrado no estoque. 
-                                    <a href="{{ route('stock.trade-ins') }}" style="color: #b45309; text-decoration: underline;">Processar trade-ins pendentes</a>
-                                </p>
-                            </div>
-                            @endif
+                                @endif
 
-                            {{-- Rastreabilidade: se trade-in processado, verificar se ja foi revendido --}}
-                            @if($sale->tradeIn->isProcessed() && $sale->tradeIn->product_id)
-                                @php
-                                    $tradeInProduct = $sale->tradeIn->product;
-                                    $resaleSaleItem = $tradeInProduct
-                                        ? \App\Domain\Sale\Models\SaleItem::where('product_id', $tradeInProduct->id)
-                                            ->whereHas('sale', fn($q) => $q->where('payment_status', '!=', 'cancelled'))
-                                            ->with('sale')
-                                            ->first()
-                                        : null;
-                                    $tradeInCost = (float) $sale->tradeIn->estimated_value;
-                                @endphp
-                                <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid {{ $resaleSaleItem ? '#bbf7d0' : '#bfdbfe' }}; background: {{ $resaleSaleItem ? '#f0fdf4' : '#eff6ff' }};">
-                                    @if($resaleSaleItem)
-                                        @php
-                                            $resalePrice = (float) $resaleSaleItem->unit_price * $resaleSaleItem->quantity;
-                                            $resaleProfit = $resalePrice - $tradeInCost;
-                                        @endphp
-                                        <p style="font-size: 0.8125rem; font-weight: 600; color: {{ $resaleProfit >= 0 ? '#166534' : '#dc2626' }};">
-                                            Trade-in revendido na venda
-                                            <a href="{{ route('sales.show', $resaleSaleItem->sale) }}" style="text-decoration: underline;">
-                                                #{{ $resaleSaleItem->sale->sale_number }}
-                                            </a>
-                                            por R$ {{ number_format($resalePrice, 2, ',', '.') }}
-                                            — Lucro: R$ {{ number_format($resaleProfit, 2, ',', '.') }}
-                                        </p>
-                                    @else
-                                        <p style="font-size: 0.8125rem; color: #1d4ed8;">
-                                            Trade-in cadastrado como produto:
-                                            <a href="{{ route('products.show', $tradeInProduct) }}" style="text-decoration: underline; font-weight: 600;">
-                                                {{ $tradeInProduct->name }}
-                                            </a>
-                                            — Custo: R$ {{ number_format($tradeInCost, 2, ',', '.') }}
-                                            @if($tradeInProduct->sale_price > 0)
-                                                | Preco de venda: R$ {{ number_format((float) $tradeInProduct->sale_price, 2, ',', '.') }}
-                                                @if((float) $tradeInProduct->sale_price < $tradeInCost)
-                                                    <span style="color: #dc2626; font-weight: 700;"> (ABAIXO DO CUSTO!)</span>
+                                {{-- Rastreabilidade: se trade-in processado, verificar se ja foi revendido --}}
+                                @if($tradeInItem->isProcessed() && $tradeInItem->product_id)
+                                    @php
+                                        $tradeInProduct = $tradeInItem->product;
+                                        $resaleSaleItem = $tradeInProduct
+                                            ? \App\Domain\Sale\Models\SaleItem::where('product_id', $tradeInProduct->id)
+                                                ->whereHas('sale', fn($q) => $q->where('payment_status', '!=', 'cancelled'))
+                                                ->with('sale')
+                                                ->first()
+                                            : null;
+                                        $tradeInCost = (float) $tradeInItem->estimated_value;
+                                    @endphp
+                                    <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid {{ $resaleSaleItem ? '#bbf7d0' : '#bfdbfe' }}; background: {{ $resaleSaleItem ? '#f0fdf4' : '#eff6ff' }};">
+                                        @if($resaleSaleItem)
+                                            @php
+                                                $resalePrice = (float) $resaleSaleItem->unit_price * $resaleSaleItem->quantity;
+                                                $resaleProfit = $resalePrice - $tradeInCost;
+                                            @endphp
+                                            <p style="font-size: 0.8125rem; font-weight: 600; color: {{ $resaleProfit >= 0 ? '#166534' : '#dc2626' }};">
+                                                Trade-in revendido na venda
+                                                <a href="{{ route('sales.show', $resaleSaleItem->sale) }}" style="text-decoration: underline;">
+                                                    #{{ $resaleSaleItem->sale->sale_number }}
+                                                </a>
+                                                por R$ {{ number_format($resalePrice, 2, ',', '.') }}
+                                                — Lucro: R$ {{ number_format($resaleProfit, 2, ',', '.') }}
+                                            </p>
+                                        @else
+                                            <p style="font-size: 0.8125rem; color: #1d4ed8;">
+                                                Trade-in cadastrado como produto:
+                                                <a href="{{ route('products.show', $tradeInProduct) }}" style="text-decoration: underline; font-weight: 600;">
+                                                    {{ $tradeInProduct->name }}
+                                                </a>
+                                                — Custo: R$ {{ number_format($tradeInCost, 2, ',', '.') }}
+                                                @if($tradeInProduct->sale_price > 0)
+                                                    | Preco de venda: R$ {{ number_format((float) $tradeInProduct->sale_price, 2, ',', '.') }}
+                                                    @if((float) $tradeInProduct->sale_price < $tradeInCost)
+                                                        <span style="color: #dc2626; font-weight: 700;"> (ABAIXO DO CUSTO!)</span>
+                                                    @endif
+                                                @else
+                                                    | <span style="color: #ca8a04; font-weight: 600;">Preco de venda nao definido</span>
                                                 @endif
-                                            @else
-                                                | <span style="color: #ca8a04; font-weight: 600;">Preco de venda nao definido</span>
-                                            @endif
-                                        </p>
-                                    @endif
-                                </div>
-                            @endif
+                                            </p>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
+                            @endforeach
                         </div>
                     </div>
                     @endif

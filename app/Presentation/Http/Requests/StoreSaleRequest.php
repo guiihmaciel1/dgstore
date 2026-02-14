@@ -40,14 +40,14 @@ class StoreSaleRequest extends FormRequest
             // Reserva (conversão)
             'from_reservation' => ['nullable', 'exists:reservations,id'],
 
-            // Campos de trade-in
-            'trade_in' => ['nullable', 'array'],
-            'trade_in.device_name' => ['required_with:trade_in.estimated_value', 'nullable', 'string', 'max:255'],
-            'trade_in.device_model' => ['nullable', 'string', 'max:255'],
-            'trade_in.imei' => ['nullable', 'string', 'max:50'],
-            'trade_in.estimated_value' => ['required_with:trade_in.device_name', 'nullable', 'numeric', 'min:0'],
-            'trade_in.condition' => ['nullable', Rule::enum(TradeInCondition::class)],
-            'trade_in.notes' => ['nullable', 'string'],
+            // Campos de trade-ins (múltiplos aparelhos)
+            'trade_ins' => ['nullable', 'array'],
+            'trade_ins.*.device_name' => ['required', 'string', 'max:255'],
+            'trade_ins.*.device_model' => ['nullable', 'string', 'max:255'],
+            'trade_ins.*.imei' => ['nullable', 'string', 'max:50'],
+            'trade_ins.*.estimated_value' => ['required', 'numeric', 'min:0.01'],
+            'trade_ins.*.condition' => ['nullable', Rule::enum(TradeInCondition::class)],
+            'trade_ins.*.notes' => ['nullable', 'string'],
         ];
     }
 
@@ -68,12 +68,12 @@ class StoreSaleRequest extends FormRequest
             'cash_payment' => 'entrada à vista',
             'card_payment' => 'valor no cartão',
             'cash_payment_method' => 'forma de entrada',
-            'trade_in.device_name' => 'nome do aparelho',
-            'trade_in.device_model' => 'modelo do aparelho',
-            'trade_in.imei' => 'IMEI',
-            'trade_in.estimated_value' => 'valor do aparelho',
-            'trade_in.condition' => 'condição do aparelho',
-            'trade_in.notes' => 'observações do aparelho',
+            'trade_ins.*.device_name' => 'nome do aparelho',
+            'trade_ins.*.device_model' => 'modelo do aparelho',
+            'trade_ins.*.imei' => 'IMEI',
+            'trade_ins.*.estimated_value' => 'valor do aparelho',
+            'trade_ins.*.condition' => 'condição do aparelho',
+            'trade_ins.*.notes' => 'observações do aparelho',
         ];
     }
 
@@ -85,8 +85,9 @@ class StoreSaleRequest extends FormRequest
             'items.*.product_id.required' => 'Selecione o produto para cada item.',
             'items.*.product_id.exists' => 'Produto inválido selecionado.',
             'items.*.quantity.min' => 'A quantidade deve ser pelo menos 1.',
-            'trade_in.device_name.required_with' => 'Informe o nome do aparelho para o trade-in.',
-            'trade_in.estimated_value.required_with' => 'Informe o valor do aparelho para o trade-in.',
+            'trade_ins.*.device_name.required' => 'Informe o nome do aparelho para o trade-in.',
+            'trade_ins.*.estimated_value.required' => 'Informe o valor do aparelho para o trade-in.',
+            'trade_ins.*.estimated_value.min' => 'O valor do aparelho deve ser maior que zero.',
         ];
     }
 }

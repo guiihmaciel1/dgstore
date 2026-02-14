@@ -27,15 +27,17 @@
                 
                 <!-- Filtros -->
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
-                    <form method="GET" action="{{ route('products.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                    <form method="GET" action="{{ route('products.index') }}" x-data x-ref="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
                             <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nome, SKU, IMEI..." 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
+                                   x-on:input.debounce.400ms="$refs.filterForm.submit()">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Categoria</label>
-                            <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
+                            <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
+                                    x-on:change="$refs.filterForm.submit()">
                                 <option value="">Todas</option>
                                 @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
                                     <optgroup label="{{ $group }}">
@@ -50,7 +52,8 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Condição</label>
-                            <select name="condition" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
+                            <select name="condition" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
+                                    x-on:change="$refs.filterForm.submit()">
                                 <option value="">Todas</option>
                                 @foreach($conditions as $condition)
                                     <option value="{{ $condition->value }}" {{ $filters['condition'] === $condition->value ? 'selected' : '' }}>
@@ -62,15 +65,13 @@
                         <div class="flex items-center pt-5">
                             <label class="flex items-center cursor-pointer">
                                 <input type="checkbox" name="low_stock" value="1" {{ $filters['low_stock'] ? 'checked' : '' }} 
-                                       class="w-4 h-4 rounded border-gray-300 mr-2">
+                                       class="w-4 h-4 rounded border-gray-300 mr-2"
+                                       x-on:change="$refs.filterForm.submit()">
                                 <span class="text-sm text-gray-700">Estoque Baixo</span>
                             </label>
                         </div>
-                        <div class="flex gap-2">
-                            <button type="submit" class="flex-1 px-4 py-2 bg-gray-900 text-white font-medium rounded-lg text-sm hover:bg-gray-700 transition-colors">
-                                Filtrar
-                            </button>
-                            <a href="{{ route('products.index') }}" class="px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
+                        <div>
+                            <a href="{{ route('products.index') }}" class="w-full inline-flex justify-center px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
                                 Limpar
                             </a>
                         </div>

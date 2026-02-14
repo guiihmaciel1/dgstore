@@ -27,24 +27,22 @@
                 
                 <!-- Busca -->
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
-                    <form method="GET" action="{{ route('customers.index') }}" class="flex flex-col sm:flex-row gap-3">
+                    <form method="GET" action="{{ route('customers.index') }}" x-data x-ref="filterForm" class="flex flex-col sm:flex-row gap-3">
                         <div class="flex-1 relative">
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
                             <input type="text" name="search" value="{{ $search }}" placeholder="Buscar por nome, telefone, email ou CPF..." 
-                                   class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                                   class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
+                                   x-on:input.debounce.400ms="$refs.filterForm.submit()">
                         </div>
-                        <div class="flex gap-2">
-                            <button type="submit" class="flex-1 sm:flex-none px-5 py-2.5 bg-gray-900 text-white font-medium rounded-lg text-sm hover:bg-gray-700 transition-colors">
-                                Buscar
-                            </button>
-                            @if($search)
-                                <a href="{{ route('customers.index') }}" class="flex-1 sm:flex-none px-5 py-2.5 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm text-center hover:bg-gray-50 transition-colors">
+                        @if($search)
+                            <div>
+                                <a href="{{ route('customers.index') }}" class="inline-flex justify-center px-5 py-2.5 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm text-center hover:bg-gray-50 transition-colors">
                                     Limpar
                                 </a>
-                            @endif
-                        </div>
+                            </div>
+                        @endif
                     </form>
                 </div>
 

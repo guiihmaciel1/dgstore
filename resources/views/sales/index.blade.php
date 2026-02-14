@@ -33,15 +33,17 @@
                 
                 <!-- Filtros -->
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
-                    <form method="GET" action="{{ route('sales.index') }}" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
+                    <form method="GET" action="{{ route('sales.index') }}" x-data x-ref="filterForm" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
                             <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nº da venda, cliente..." 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
+                                   x-on:input.debounce.400ms="$refs.filterForm.submit()">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                            <select name="payment_status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
+                            <select name="payment_status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
+                                    x-on:change="$refs.filterForm.submit()">
                                 <option value="">Todos</option>
                                 @foreach($paymentStatuses as $status)
                                     <option value="{{ $status->value }}" {{ ($filters['payment_status'] ?? '') === $status->value ? 'selected' : '' }}>
@@ -52,7 +54,8 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Pagamento</label>
-                            <select name="payment_method" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
+                            <select name="payment_method" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
+                                    x-on:change="$refs.filterForm.submit()">
                                 <option value="">Todos</option>
                                 @foreach($paymentMethods as $method)
                                     <option value="{{ $method->value }}" {{ ($filters['payment_method'] ?? '') === $method->value ? 'selected' : '' }}>
@@ -64,18 +67,17 @@
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Data Início</label>
                             <input type="date" name="date_from" value="{{ $filters['date_from'] }}" 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
+                                   x-on:change="$refs.filterForm.submit()">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Data Fim</label>
                             <input type="date" name="date_to" value="{{ $filters['date_to'] }}" 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
+                                   x-on:change="$refs.filterForm.submit()">
                         </div>
-                        <div class="flex gap-2">
-                            <button type="submit" class="flex-1 px-4 py-2 bg-gray-900 text-white font-medium rounded-lg text-sm hover:bg-gray-700 transition-colors">
-                                Filtrar
-                            </button>
-                            <a href="{{ route('sales.index') }}" class="px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
+                        <div>
+                            <a href="{{ route('sales.index') }}" class="w-full inline-flex justify-center px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
                                 Limpar
                             </a>
                         </div>

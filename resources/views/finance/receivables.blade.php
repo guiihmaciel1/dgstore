@@ -119,14 +119,16 @@
 
             <!-- Filtros -->
             <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1.5rem;">
-                <form method="GET" action="{{ route('finance.receivables') }}" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 items-end">
+                <form method="GET" action="{{ route('finance.receivables') }}" x-data x-ref="filterForm" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 items-end">
                     <div>
                         <label style="font-size: 0.6875rem; font-weight: 500; color: #6b7280;">Buscar</label>
-                        <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Descrição..." style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem;">
+                        <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Descrição..." style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem;"
+                               x-on:input.debounce.400ms="$refs.filterForm.submit()">
                     </div>
                     <div>
                         <label style="font-size: 0.6875rem; font-weight: 500; color: #6b7280;">Categoria</label>
-                        <select name="category_id" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem; background: white;">
+                        <select name="category_id" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem; background: white;"
+                                x-on:change="$refs.filterForm.submit()">
                             <option value="">Todas</option>
                             @foreach($categories as $cat)
                                 <option value="{{ $cat->id }}" {{ $filters['category_id'] == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -135,7 +137,8 @@
                     </div>
                     <div>
                         <label style="font-size: 0.6875rem; font-weight: 500; color: #6b7280;">Status</label>
-                        <select name="status" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem; background: white;">
+                        <select name="status" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem; background: white;"
+                                x-on:change="$refs.filterForm.submit()">
                             <option value="">Todos</option>
                             <option value="pending" {{ $filters['status'] === 'pending' ? 'selected' : '' }}>Pendente</option>
                             <option value="overdue" {{ $filters['status'] === 'overdue' ? 'selected' : '' }}>Atrasado</option>
@@ -144,18 +147,19 @@
                     </div>
                     <div>
                         <label style="font-size: 0.6875rem; font-weight: 500; color: #6b7280;">De</label>
-                        <input type="date" name="start_date" value="{{ $filters['start_date'] }}" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem;">
+                        <input type="date" name="start_date" value="{{ $filters['start_date'] }}" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem;"
+                               x-on:change="$refs.filterForm.submit()">
                     </div>
                     <div>
                         <label style="font-size: 0.6875rem; font-weight: 500; color: #6b7280;">Até</label>
-                        <input type="date" name="end_date" value="{{ $filters['end_date'] }}" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem;">
+                        <input type="date" name="end_date" value="{{ $filters['end_date'] }}" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.8125rem;"
+                               x-on:change="$refs.filterForm.submit()">
                     </div>
-                    <div class="flex gap-2">
-                        <button type="submit" style="flex: 1; padding: 0.375rem 0.75rem; background: #111827; color: white; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.8125rem;">Filtrar</button>
-                        @if(array_filter($filters))
-                            <a href="{{ route('finance.receivables') }}" style="padding: 0.375rem 0.75rem; background: white; color: #374151; font-weight: 500; border-radius: 0.375rem; border: 1px solid #d1d5db; text-decoration: none; font-size: 0.8125rem;">Limpar</a>
-                        @endif
-                    </div>
+                    @if(array_filter($filters))
+                        <div>
+                            <a href="{{ route('finance.receivables') }}" style="display: inline-block; padding: 0.375rem 0.75rem; background: white; color: #374151; font-weight: 500; border-radius: 0.375rem; border: 1px solid #d1d5db; text-decoration: none; font-size: 0.8125rem;">Limpar</a>
+                        </div>
+                    @endif
                 </form>
             </div>
 

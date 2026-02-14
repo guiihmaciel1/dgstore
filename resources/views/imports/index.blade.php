@@ -56,24 +56,23 @@
 
             <!-- Filtros -->
             <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1rem;">
-                <form method="GET" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
+                <form method="GET" x-data x-ref="filterForm" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
                     <div style="flex: 1; min-width: 200px;">
                         <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Buscar</label>
                         <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Número, rastreio ou fornecedor..."
-                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                               x-on:input.debounce.400ms="$refs.filterForm.submit()">
                     </div>
                     <div style="min-width: 150px;">
                         <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Status</label>
-                        <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                        <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                x-on:change="$refs.filterForm.submit()">
                             <option value="">Todos</option>
                             @foreach($statuses as $status)
                                 <option value="{{ $status->value }}" {{ $filters['status'] === $status->value ? 'selected' : '' }}>{{ $status->label() }}</option>
                             @endforeach
                         </select>
                     </div>
-                    <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer;">
-                        Filtrar
-                    </button>
                     @if($filters['search'] || $filters['status'])
                         <a href="{{ route('imports.index') }}" style="padding: 0.5rem 1rem; color: #6b7280; font-size: 0.875rem; text-decoration: none;">Limpar</a>
                     @endif

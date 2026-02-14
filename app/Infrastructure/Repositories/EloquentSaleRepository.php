@@ -137,21 +137,23 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 $product->decrement('stock_quantity', $itemData->quantity);
             }
 
-            // Cria o trade-in se houver
-            if ($data->hasTradeIn() && $data->tradeIn !== null) {
-                TradeIn::create([
-                    'sale_id' => $sale->id,
-                    'device_name' => $data->tradeIn->deviceName,
-                    'device_model' => $data->tradeIn->deviceModel,
-                    'imei' => $data->tradeIn->imei,
-                    'estimated_value' => $data->tradeIn->estimatedValue,
-                    'condition' => $data->tradeIn->condition,
-                    'notes' => $data->tradeIn->notes,
-                    'status' => TradeInStatus::Pending,
-                ]);
+            // Cria os trade-ins se houver
+            if ($data->hasTradeIn()) {
+                foreach ($data->tradeIns as $tradeInData) {
+                    TradeIn::create([
+                        'sale_id' => $sale->id,
+                        'device_name' => $tradeInData->deviceName,
+                        'device_model' => $tradeInData->deviceModel,
+                        'imei' => $tradeInData->imei,
+                        'estimated_value' => $tradeInData->estimatedValue,
+                        'condition' => $tradeInData->condition,
+                        'notes' => $tradeInData->notes,
+                        'status' => TradeInStatus::Pending,
+                    ]);
+                }
             }
 
-            return $sale->load(['items.product', 'customer', 'user', 'tradeIn']);
+            return $sale->load(['items.product', 'customer', 'user', 'tradeIns']);
         });
     }
 

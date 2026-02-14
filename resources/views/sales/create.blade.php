@@ -7,6 +7,22 @@
                 </div>
             @endif
 
+            @if($errors->any())
+                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span style="font-weight: 600; color: #991b1b;">Corrija os erros abaixo:</span>
+                    </div>
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: #dc2626; font-size: 0.875rem;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <!-- Cabeçalho -->
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center">
@@ -187,7 +203,7 @@
                             </div>
                         </div>
                         
-                        <!-- TRADE-IN (Aparelho como entrada) -->
+                        <!-- TRADE-IN (Aparelhos como entrada) -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                             <div style="background: #7c3aed; color: white; padding: 0.75rem 1.5rem;">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -195,71 +211,104 @@
                                         <svg style="width: 1.25rem; height: 1.25rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                         </svg>
-                                        <span style="font-weight: 600;">Aparelho como Entrada (Trade-in)</span>
+                                        <span style="font-weight: 600;">Aparelhos como Entrada (Trade-in)</span>
                                     </div>
                                     <label style="display: flex; align-items: center; cursor: pointer;">
-                                        <input type="checkbox" x-model="hasTradeIn" @change="if(!hasTradeIn) clearTradeIn()" style="width: 1.25rem; height: 1.25rem; margin-right: 0.5rem;">
+                                        <input type="checkbox" x-model="hasTradeIn" @change="toggleTradeIn()" style="width: 1.25rem; height: 1.25rem; margin-right: 0.5rem;">
                                         <span style="font-size: 0.875rem;">Ativar</span>
                                     </label>
                                 </div>
                             </div>
                             <div x-show="hasTradeIn" x-collapse style="padding: 1.5rem;">
-                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                                    <div style="grid-column: span 2;">
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
-                                            Nome/Descrição do Aparelho <span style="color: #dc2626;">*</span>
-                                        </label>
-                                        <input type="text" name="trade_in[device_name]" x-model="tradeIn.device_name" 
-                                               placeholder="Ex: iPhone 13 Pro Max Azul"
-                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                               onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
-                                    </div>
-                                    <div>
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Modelo</label>
-                                        <input type="text" name="trade_in[device_model]" x-model="tradeIn.device_model" 
-                                               placeholder="Ex: A2643"
-                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                               onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
-                                    </div>
-                                    <div>
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">IMEI</label>
-                                        <input type="text" name="trade_in[imei]" x-model="tradeIn.imei" 
-                                               placeholder="Ex: 123456789012345"
-                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                               onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
-                                    </div>
-                                    <div>
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Condição</label>
-                                        <select name="trade_in[condition]" x-model="tradeIn.condition"
-                                                style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
-                                            @foreach($tradeInConditions as $condition)
-                                                <option value="{{ $condition->value }}">{{ $condition->label() }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
-                                            Valor Negociado <span style="color: #dc2626;">*</span>
-                                        </label>
-                                        <div style="position: relative;">
-                                            <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">R$</span>
-                                            <input type="number" name="trade_in[estimated_value]" x-model.number="tradeIn.estimated_value" 
-                                                   @input="updateTotals" step="0.01" min="0"
-                                                   style="width: 100%; padding: 0.625rem 0.75rem 0.625rem 2.5rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                   onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                <!-- Lista de aparelhos -->
+                                <template x-for="(ti, tiIndex) in tradeIns" :key="tiIndex">
+                                    <div style="background: #faf5ff; border: 1px solid #ddd6fe; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; position: relative;">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #7c3aed;" x-text="'Aparelho ' + (tiIndex + 1)"></span>
+                                            <button type="button" @click="removeTradeIn(tiIndex)" 
+                                                    x-show="tradeIns.length > 1"
+                                                    style="padding: 0.25rem; color: #ef4444; background: none; border: none; cursor: pointer;"
+                                                    title="Remover aparelho">
+                                                <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
+                                            <div style="grid-column: span 2;">
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+                                                    Nome/Descrição <span style="color: #dc2626;">*</span>
+                                                </label>
+                                                <input type="text" :name="'trade_ins['+tiIndex+'][device_name]'" x-model="ti.device_name" 
+                                                       placeholder="Ex: iPhone 13 Pro Max Azul"
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                            </div>
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Modelo</label>
+                                                <input type="text" :name="'trade_ins['+tiIndex+'][device_model]'" x-model="ti.device_model" 
+                                                       placeholder="Ex: A2643"
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                            </div>
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">IMEI</label>
+                                                <input type="text" :name="'trade_ins['+tiIndex+'][imei]'" x-model="ti.imei" 
+                                                       placeholder="Ex: 123456789012345"
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                            </div>
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Condição</label>
+                                                <select :name="'trade_ins['+tiIndex+'][condition]'" x-model="ti.condition"
+                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                                    @foreach($tradeInConditions as $condition)
+                                                        <option value="{{ $condition->value }}">{{ $condition->label() }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+                                                    Valor Negociado <span style="color: #dc2626;">*</span>
+                                                </label>
+                                                <div style="position: relative;">
+                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">R$</span>
+                                                    <input type="number" :name="'trade_ins['+tiIndex+'][estimated_value]'" x-model.number="ti.estimated_value" 
+                                                           @input="updateTotals" step="0.01" min="0"
+                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.5rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                </div>
+                                            </div>
+                                            <div style="grid-column: span 2;">
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Observações</label>
+                                                <textarea :name="'trade_ins['+tiIndex+'][notes]'" x-model="ti.notes" rows="2"
+                                                          placeholder="Estado da tela, bateria, acessórios inclusos..."
+                                                          style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
+                                                          onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div style="grid-column: span 2;">
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Observações sobre o aparelho</label>
-                                        <textarea name="trade_in[notes]" x-model="tradeIn.notes" rows="2"
-                                                  placeholder="Estado da tela, bateria, acessórios inclusos..."
-                                                  style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
-                                                  onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
-                                    </div>
+                                </template>
+
+                                <!-- Botão adicionar aparelho -->
+                                <button type="button" @click="addTradeIn()"
+                                        style="width: 100%; padding: 0.625rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: #7c3aed; color: white; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer;"
+                                        onmouseover="this.style.background='#6d28d9'" onmouseout="this.style.background='#7c3aed'">
+                                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                    Adicionar outro aparelho
+                                </button>
+
+                                <!-- Total dos trade-ins -->
+                                <div x-show="tradeIns.length > 1" style="margin-top: 0.75rem; padding: 0.75rem; background: #ede9fe; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.8125rem; font-weight: 600; color: #5b21b6;" x-text="tradeIns.length + ' aparelhos'"></span>
+                                    <span style="font-size: 1rem; font-weight: 700; color: #5b21b6;" x-text="'Total: ' + formatMoney(totalTradeInValue)"></span>
                                 </div>
-                                <div style="margin-top: 1rem; padding: 0.75rem; background: #f5f3ff; border-radius: 0.5rem; border: 1px solid #ddd6fe;">
+
+                                <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f5f3ff; border-radius: 0.5rem; border: 1px solid #ddd6fe;">
                                     <p style="font-size: 0.75rem; color: #5b21b6;">
-                                        <strong>Nota:</strong> O aparelho ficará pendente para cadastro no estoque após a venda ser finalizada.
+                                        <strong>Nota:</strong> Os aparelhos ficarão pendentes para cadastro no estoque após a venda ser finalizada.
                                     </p>
                                 </div>
                             </div>
@@ -432,7 +481,7 @@
                                 <input type="hidden" name="payment_method" :value="getMainPaymentMethod()">
                                 <input type="hidden" name="card_payment" :value="totalCardPayments">
                                 <input type="hidden" name="installments" :value="cardPayments.length > 0 ? cardPayments[0].installments : 1">
-                                <input type="hidden" name="trade_in_value" :value="hasTradeIn ? tradeIn.estimated_value : 0">
+                                <input type="hidden" name="trade_in_value" :value="hasTradeIn ? totalTradeInValue : 0">
                                 
                                 <!-- Status -->
                                 <div>
@@ -486,10 +535,12 @@
                                     <div x-show="hasTradeIn || cashPayment > 0 || totalCardPayments > 0" 
                                          style="padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid #374151;">
                                         <div style="font-size: 0.75rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.5rem;">FORMA DE PAGAMENTO</div>
-                                        <div x-show="hasTradeIn && tradeIn.estimated_value > 0" style="display: flex; justify-content: space-between; color: #a78bfa; font-size: 0.875rem;">
-                                            <dt>Trade-in (aparelho)</dt>
-                                            <dd x-text="formatMoney(tradeIn.estimated_value || 0)"></dd>
-                                        </div>
+                                        <template x-for="(ti, tiIdx) in tradeIns" :key="tiIdx">
+                                            <div x-show="hasTradeIn && ti.estimated_value > 0" style="display: flex; justify-content: space-between; color: #a78bfa; font-size: 0.875rem;">
+                                                <dt x-text="'Trade-in ' + (tradeIns.length > 1 ? (tiIdx + 1) + ' ' : '') + '(' + (ti.device_name || 'aparelho') + ')'"></dt>
+                                                <dd x-text="formatMoney(ti.estimated_value || 0)"></dd>
+                                            </div>
+                                        </template>
                                         <div x-show="cashPayment > 0" style="display: flex; justify-content: space-between; color: #86efac; font-size: 0.875rem;">
                                             <dt x-text="'Entrada (' + (cashPaymentMethod === 'pix' ? 'PIX' : 'Dinheiro') + ')'"></dt>
                                             <dd x-text="formatMoney(cashPayment)"></dd>
@@ -718,16 +769,9 @@
                 // Múltiplos cartões
                 cardPayments: [],
                 
-                // Trade-in
+                // Trade-ins (múltiplos aparelhos)
                 hasTradeIn: false,
-                tradeIn: {
-                    device_name: '',
-                    device_model: '',
-                    imei: '',
-                    estimated_value: 0,
-                    condition: 'good',
-                    notes: ''
-                },
+                tradeIns: [],
 
                 init() {
                     // Pré-preencher produto da reserva
@@ -748,12 +792,17 @@
                 get totalCardPayments() {
                     return this.cardPayments.reduce((sum, card) => sum + (parseFloat(card.amount) || 0), 0);
                 },
+
+                // Computed: total de todos os trade-ins
+                get totalTradeInValue() {
+                    return this.tradeIns.reduce((sum, ti) => sum + (parseFloat(ti.estimated_value) || 0), 0);
+                },
                 
                 // Computed: total de todos os pagamentos
                 get totalPayments() {
                     let total = 0;
-                    if (this.hasTradeIn && this.tradeIn.estimated_value) {
-                        total += parseFloat(this.tradeIn.estimated_value) || 0;
+                    if (this.hasTradeIn) {
+                        total += this.totalTradeInValue;
                     }
                     total += parseFloat(this.cashPayment) || 0;
                     total += this.totalCardPayments;
@@ -871,15 +920,32 @@
                     this.selectedCustomer = { id: '', name: '', phone: '' };
                 },
                 
-                clearTradeIn() {
-                    this.tradeIn = {
+                toggleTradeIn() {
+                    if (this.hasTradeIn && this.tradeIns.length === 0) {
+                        this.addTradeIn();
+                    }
+                    if (!this.hasTradeIn) {
+                        this.tradeIns = [];
+                    }
+                    this.updateTotals();
+                },
+
+                addTradeIn() {
+                    this.tradeIns.push({
                         device_name: '',
                         device_model: '',
                         imei: '',
                         estimated_value: 0,
                         condition: 'good',
                         notes: ''
-                    };
+                    });
+                },
+
+                removeTradeIn(index) {
+                    this.tradeIns.splice(index, 1);
+                    if (this.tradeIns.length === 0) {
+                        this.hasTradeIn = false;
+                    }
                     this.updateTotals();
                 },
                 

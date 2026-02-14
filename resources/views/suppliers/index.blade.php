@@ -27,30 +27,29 @@
                 
                 <!-- Filtros -->
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
-                    <form method="GET" action="{{ route('suppliers.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                    <form method="GET" action="{{ route('suppliers.index') }}" x-data x-ref="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
                             <input type="text" name="search" value="{{ $search }}" placeholder="Nome, CNPJ, email, contato..." 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
+                                   x-on:input.debounce.400ms="$refs.filterForm.submit()">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                            <select name="active" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
+                            <select name="active" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
+                                    x-on:change="$refs.filterForm.submit()">
                                 <option value="">Todos</option>
                                 <option value="1" {{ $active === true ? 'selected' : '' }}>Ativos</option>
                                 <option value="0" {{ $active === false ? 'selected' : '' }}>Inativos</option>
                             </select>
                         </div>
-                        <div class="flex gap-2 sm:col-span-2 lg:col-span-2">
-                            <button type="submit" class="flex-1 sm:flex-none px-4 py-2 bg-gray-900 text-white font-medium rounded-lg text-sm hover:bg-gray-700 transition-colors">
-                                Filtrar
-                            </button>
-                            @if($search || $active !== null)
-                                <a href="{{ route('suppliers.index') }}" class="flex-1 sm:flex-none px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm text-center hover:bg-gray-50 transition-colors">
+                        @if($search || $active !== null)
+                            <div class="sm:col-span-2 lg:col-span-2">
+                                <a href="{{ route('suppliers.index') }}" class="inline-flex justify-center px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm text-center hover:bg-gray-50 transition-colors">
                                     Limpar
                                 </a>
-                            @endif
-                        </div>
+                            </div>
+                        @endif
                     </form>
                 </div>
 
