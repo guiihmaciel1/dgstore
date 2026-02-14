@@ -62,7 +62,7 @@ class QuotationController extends Controller
             endDate: $endDate
         );
 
-        $priceComparison = $this->quotationService->getPriceComparison($productName);
+        $priceComparison = $this->quotationService->getPriceComparison($productName, $supplierId);
         $suppliers = $this->supplierService->active();
         $productNames = $this->quotationService->getUniqueProductNames();
         $todayQuotations = $this->quotationService->getTodayQuotations();

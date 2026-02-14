@@ -40,5 +40,5 @@ interface QuotationRepositoryInterface
 
     public function getUniqueProductNames(): Collection;
 
-    public function getPriceComparison(?string $productName = null): Collection;
+    public function getPriceComparison(?string $productName = null, ?string $supplierId = null): Collection;
 }

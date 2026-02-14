@@ -79,9 +79,9 @@ class QuotationService
         return $this->repository->getUniqueProductNames();
     }
 
-    public function getPriceComparison(?string $productName = null): Collection
+    public function getPriceComparison(?string $productName = null, ?string $supplierId = null): Collection
     {
-        return $this->repository->getPriceComparison($productName);
+        return $this->repository->getPriceComparison($productName, $supplierId);
     }
 
     /**

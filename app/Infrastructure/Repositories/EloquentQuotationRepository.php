@@ -123,15 +123,24 @@ class EloquentQuotationRepository implements QuotationRepositoryInterface
             ->pluck('product_name');
     }
 
-    public function getPriceComparison(?string $productName = null): Collection
+    public function getPriceComparison(?string $productName = null, ?string $supplierId = null): Collection
     {
         $query = Quotation::with('supplier')
             ->select('quotations.*')
-            ->whereIn('quotations.id', function ($subquery) {
+            ->whereIn('quotations.id', function ($subquery) use ($supplierId) {
                 $subquery->select(DB::raw('MAX(id)'))
-                    ->from('quotations')
-                    ->groupBy('supplier_id', 'product_name');
+                    ->from('quotations');
+
+                if ($supplierId) {
+                    $subquery->where('supplier_id', $supplierId);
+                }
+
+                $subquery->groupBy('supplier_id', 'product_name');
             });
+
+        if ($supplierId) {
+            $query->where('quotations.supplier_id', $supplierId);
+        }
 
         if ($productName) {
             $query->where('product_name', 'like', "%{$productName}%");
