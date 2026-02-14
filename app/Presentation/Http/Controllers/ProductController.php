@@ -12,6 +12,7 @@ use App\Domain\Product\Services\ProductService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreProductRequest;
 use App\Presentation\Http\Requests\UpdateProductRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -96,6 +97,25 @@ class ProductController extends Controller
         return redirect()
             ->route('products.index')
             ->with('success', 'Produto excluído com sucesso!');
+    }
+
+    /**
+     * Criação rápida de produto via AJAX (retorna JSON)
+     */
+    public function storeQuick(StoreProductRequest $request): JsonResponse
+    {
+        $data = ProductData::fromArray($request->validated());
+        $product = $this->productService->create($data);
+
+        return response()->json([
+            'id' => $product->id,
+            'name' => $product->full_name,
+            'sku' => $product->sku,
+            'price' => $product->sale_price,
+            'cost_price' => $product->cost_price,
+            'stock' => $product->stock_quantity,
+            'formatted_price' => $product->formatted_sale_price,
+        ]);
     }
 
     /**

@@ -45,10 +45,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::get('/api/products/search', [ProductController::class, 'search'])->name('products.search');
     Route::get('/api/products/generate-sku', [ProductController::class, 'generateSku'])->name('products.generate-sku');
+    Route::post('/api/products/store-quick', [ProductController::class, 'storeQuick'])->name('products.store-quick');
 
     // Clientes
     Route::resource('customers', CustomerController::class);
     Route::get('/api/customers/search', [CustomerController::class, 'search'])->name('customers.search');
+    Route::post('/api/customers/store-quick', [CustomerController::class, 'storeQuick'])->name('customers.store-quick');
 
     // Fornecedores
     Route::resource('suppliers', SupplierController::class);

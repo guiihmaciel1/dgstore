@@ -10,6 +10,7 @@ use App\Domain\Customer\Services\CustomerService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreCustomerRequest;
 use App\Presentation\Http\Requests\UpdateCustomerRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -79,6 +80,22 @@ class CustomerController extends Controller
         return redirect()
             ->route('customers.index')
             ->with('success', 'Cliente excluído com sucesso!');
+    }
+
+    /**
+     * Criação rápida de cliente via AJAX (retorna JSON)
+     */
+    public function storeQuick(StoreCustomerRequest $request): JsonResponse
+    {
+        $data = CustomerData::fromArray($request->validated());
+        $customer = $this->customerService->create($data);
+
+        return response()->json([
+            'id' => $customer->id,
+            'name' => $customer->name,
+            'phone' => $customer->formatted_phone,
+            'email' => $customer->email,
+        ]);
     }
 
     /**

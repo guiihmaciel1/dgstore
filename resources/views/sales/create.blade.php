@@ -54,7 +54,8 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('sales.store') }}" x-data="saleForm()" @keydown.escape.window="window.location.href='{{ route('sales.index') }}'">
+            <div x-data="saleForm()" @keydown.escape.window="if(!showCustomerModal && !showProductModal) window.location.href='{{ route('sales.index') }}'">
+            <form method="POST" action="{{ route('sales.store') }}">
                 @csrf
                 @if(isset($reservation) && $reservation)
                     <input type="hidden" name="from_reservation" value="{{ $reservation->id }}">
@@ -67,9 +68,19 @@
                         <!-- PASSO 1: BUSCAR PRODUTO -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                             <div style="background: #111827; color: white; padding: 1rem 1.5rem;">
-                                <div style="display: flex; align-items: center;">
-                                    <span style="width: 2rem; height: 2rem; background: white; color: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">1</span>
-                                    <span style="font-size: 1.125rem; font-weight: 600;">Adicionar Produtos</span>
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center;">
+                                        <span style="width: 2rem; height: 2rem; background: white; color: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">1</span>
+                                        <span style="font-size: 1.125rem; font-weight: 600;">Adicionar Produtos</span>
+                                    </div>
+                                    <button type="button" @click="showProductModal = true; productForm = resetProductForm()"
+                                            style="display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; cursor: pointer;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        Cadastrar Produto
+                                    </button>
                                 </div>
                             </div>
                             <div style="padding: 1.5rem;">
@@ -96,7 +107,7 @@
                                     </div>
                                     
                                     <!-- Resultados da busca -->
-                                    <div x-show="searchResults.length > 0" x-cloak 
+                                    <div x-show="searchResults.length > 0 || (searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading)" x-cloak 
                                          style="position: absolute; z-index: 20; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border-radius: 0.75rem; border: 1px solid #e5e7eb; max-height: 20rem; overflow: auto;">
                                         <template x-for="product in searchResults" :key="product.id">
                                             <button 
@@ -120,6 +131,20 @@
                                                 </div>
                                             </button>
                                         </template>
+                                        <!-- Opção de cadastrar quando não encontra -->
+                                        <div x-show="searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading"
+                                             style="padding: 1rem; text-align: center; border-top: 1px solid #f3f4f6;">
+                                            <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">Nenhum produto encontrado para "<span x-text="searchTerm" style="font-weight: 600;"></span>"</p>
+                                            <button type="button" 
+                                                    @click="productForm = resetProductForm(); productForm.name = searchTerm; showProductModal = true; searchResults = [];"
+                                                    style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer;"
+                                                    onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                                                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                </svg>
+                                                Cadastrar Produto Agora
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -330,13 +355,23 @@
                         <!-- PASSO 2: CLIENTE -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; position: relative; z-index: 30;">
                             <div style="background: #374151; color: white; padding: 0.75rem 1.5rem; border-radius: 1rem 1rem 0 0;">
-                                <div style="display: flex; align-items: center;">
-                                    <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">2</span>
-                                    <span style="font-weight: 600;">Cliente (opcional)</span>
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center;">
+                                        <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">2</span>
+                                        <span style="font-weight: 600;">Cliente (opcional)</span>
+                                    </div>
+                                    <button type="button" @click="showCustomerModal = true; customerForm = resetCustomerForm()"
+                                            style="display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 0.375rem; font-size: 0.75rem; font-weight: 500; cursor: pointer;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                                        <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        Novo
+                                    </button>
                                 </div>
                             </div>
                             <div style="padding: 1rem;">
-                                <div style="position: relative;">
+                                <div x-show="!selectedCustomer.id" style="position: relative;">
                                     <input 
                                         type="text" 
                                         x-model="customerSearch"
@@ -347,8 +382,8 @@
                                     >
                                     <input type="hidden" name="customer_id" x-model="selectedCustomer.id">
                                     
-                                    <div x-show="customerResults.length > 0" x-cloak 
-                                         style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border-radius: 0.75rem; border: 1px solid #e5e7eb; max-height: 12rem; overflow: auto;">
+                                    <div x-show="customerResults.length > 0 || (customerSearch.length >= 2 && customerResults.length === 0 && !customerSearchLoading)" x-cloak 
+                                         style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border-radius: 0.75rem; border: 1px solid #e5e7eb; max-height: 16rem; overflow: auto;">
                                         <template x-for="customer in customerResults" :key="customer.id">
                                             <button type="button" @click="selectCustomer(customer)"
                                                     style="width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #f3f4f6; cursor: pointer; background: white;"
@@ -357,15 +392,36 @@
                                                 <span style="font-size: 0.875rem; color: #6b7280; display: block;" x-text="customer.phone"></span>
                                             </button>
                                         </template>
+                                        <!-- Opção de cadastrar quando não encontra -->
+                                        <div x-show="customerSearch.length >= 2 && customerResults.length === 0 && !customerSearchLoading"
+                                             style="padding: 0.75rem 1rem; text-align: center; border-top: 1px solid #f3f4f6;">
+                                            <p style="font-size: 0.8125rem; color: #6b7280; margin-bottom: 0.5rem;">Cliente não encontrado</p>
+                                            <button type="button" 
+                                                    @click="customerForm = resetCustomerForm(); customerForm.name = customerSearch; showCustomerModal = true; customerResults = [];"
+                                                    style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: #111827; color: white; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 500; border: none; cursor: pointer;">
+                                                <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                </svg>
+                                                Cadastrar Agora
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 
-                                <div x-show="selectedCustomer.id" style="margin-top: 0.75rem; padding: 0.75rem; background: #f3f4f6; border-radius: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <p style="font-weight: 500; color: #111827;" x-text="selectedCustomer.name"></p>
-                                        <p style="font-size: 0.875rem; color: #6b7280;" x-text="selectedCustomer.phone"></p>
+                                <div x-show="selectedCustomer.id" style="margin-top: 0; padding: 0.75rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 0.625rem;">
+                                        <div style="width: 2.25rem; height: 2.25rem; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                            <svg style="width: 1.125rem; height: 1.125rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p style="font-weight: 600; color: #111827; font-size: 0.9375rem;" x-text="selectedCustomer.name"></p>
+                                            <p style="font-size: 0.8125rem; color: #6b7280;" x-text="selectedCustomer.phone"></p>
+                                        </div>
                                     </div>
-                                    <button type="button" @click="clearCustomer" style="padding: 0.25rem; color: #9ca3af; cursor: pointer; background: none; border: none;">
+                                    <button type="button" @click="clearCustomer" style="padding: 0.375rem; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                                            onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
                                         <svg style="height: 1.25rem; width: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
@@ -610,10 +666,240 @@
                     </div>
                 </div>
             </form>
+
+            <!-- MODAL: CADASTRO RÁPIDO DE CLIENTE -->
+            <div x-show="showCustomerModal" x-cloak
+                 style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem;"
+                 @keydown.escape.window="showCustomerModal = false">
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5);" @click="showCustomerModal = false"></div>
+                <div style="position: relative; background: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 100%; max-width: 32rem; max-height: 90vh; overflow-y: auto;"
+                     @click.stop>
+                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background: #f0fdf4; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
+                                <svg style="width: 1.25rem; height: 1.25rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Cadastro Rápido de Cliente</h3>
+                                <p style="font-size: 0.8125rem; color: #6b7280;">O cliente será vinculado automaticamente à venda</p>
+                            </div>
+                        </div>
+                        <button type="button" @click="showCustomerModal = false" style="padding: 0.375rem; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
+                            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div x-show="customerFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; color: #dc2626;" x-text="customerFormError"></p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Nome <span style="color: #dc2626;">*</span></label>
+                                <input type="text" x-model="customerForm.name" x-ref="customerNameInput"
+                                       placeholder="Nome completo do cliente"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                       @keydown.enter.prevent="saveCustomer">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Telefone <span style="color: #dc2626;">*</span></label>
+                                <input type="text" x-model="customerForm.phone"
+                                       placeholder="(00) 00000-0000"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                       @keydown.enter.prevent="saveCustomer">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">CPF</label>
+                                <input type="text" x-model="customerForm.cpf"
+                                       placeholder="000.000.000-00"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">E-mail</label>
+                                <input type="email" x-model="customerForm.email"
+                                       placeholder="email@exemplo.com"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem; background: #f9fafb; border-radius: 0 0 1rem 1rem;">
+                        <button type="button" @click="showCustomerModal = false"
+                                style="padding: 0.625rem 1.25rem; background: white; color: #374151; font-weight: 500; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                            Cancelar
+                        </button>
+                        <button type="button" @click="saveCustomer" :disabled="customerFormSaving"
+                                style="padding: 0.625rem 1.25rem; background: #111827; color: white; font-weight: 600; border: none; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
+                                onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                            <svg x-show="customerFormSaving" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            <span x-text="customerFormSaving ? 'Salvando...' : 'Salvar e Vincular'"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL: CADASTRO RÁPIDO DE PRODUTO -->
+            <div x-show="showProductModal" x-cloak
+                 style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem;"
+                 @keydown.escape.window="showProductModal = false">
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5);" @click="showProductModal = false"></div>
+                <div style="position: relative; background: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 100%; max-width: 40rem; max-height: 90vh; overflow-y: auto;"
+                     @click.stop>
+                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background: #eff6ff; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
+                                <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Cadastro Rápido de Produto</h3>
+                                <p style="font-size: 0.8125rem; color: #6b7280;">O produto será adicionado automaticamente à venda</p>
+                            </div>
+                        </div>
+                        <button type="button" @click="showProductModal = false" style="padding: 0.375rem; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
+                            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div x-show="productFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; color: #dc2626;" x-text="productFormError"></p>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="grid-column: span 2;">
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Nome <span style="color: #dc2626;">*</span></label>
+                                <input type="text" x-model="productForm.name" x-ref="productNameInput"
+                                       placeholder="Ex: iPhone 15 Pro Max 256GB"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Categoria <span style="color: #dc2626;">*</span></label>
+                                <select x-model="productForm.category" @change="generateProductSku"
+                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white; outline: none;">
+                                    <option value="">Selecione...</option>
+                                    @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
+                                        <optgroup label="{{ $group }}">
+                                            @foreach($items as $category)
+                                                <option value="{{ $category->value }}">{{ $category->label() }}</option>
+                                            @endforeach
+                                        </optgroup>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Condição <span style="color: #dc2626;">*</span></label>
+                                <select x-model="productForm.condition"
+                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white; outline: none;">
+                                    @foreach(\App\Domain\Product\Enums\ProductCondition::cases() as $condition)
+                                        <option value="{{ $condition->value }}">{{ $condition->label() }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">SKU <span style="color: #dc2626;">*</span></label>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="text" x-model="productForm.sku"
+                                           placeholder="Gerado automaticamente"
+                                           style="flex: 1; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                    <button type="button" @click="generateProductSku" title="Gerar SKU"
+                                            style="padding: 0.5rem; background: #f3f4f6; border: 2px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer;">
+                                        <svg style="width: 1.125rem; height: 1.125rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">IMEI</label>
+                                <input type="text" x-model="productForm.imei"
+                                       placeholder="000000000000000"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço de Custo <span style="color: #dc2626;">*</span></label>
+                                <div style="position: relative;">
+                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
+                                    <input type="number" x-model.number="productForm.cost_price" step="0.01" min="0"
+                                           style="width: 100%; padding: 0.625rem 0.75rem 0.625rem 2.5rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                </div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço de Venda <span style="color: #dc2626;">*</span></label>
+                                <div style="position: relative;">
+                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
+                                    <input type="number" x-model.number="productForm.sale_price" step="0.01" min="0"
+                                           style="width: 100%; padding: 0.625rem 0.75rem 0.625rem 2.5rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                </div>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Quantidade <span style="color: #dc2626;">*</span></label>
+                                <input type="number" x-model.number="productForm.stock_quantity" min="1"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Cor</label>
+                                <input type="text" x-model="productForm.color"
+                                       placeholder="Ex: Preto"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+                        </div>
+                        <!-- Lucro estimado -->
+                        <div x-show="productForm.sale_price > 0 && productForm.cost_price > 0" 
+                             style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem;"
+                             :style="{ background: productForm.sale_price > productForm.cost_price ? '#f0fdf4' : '#fef2f2', border: '1px solid ' + (productForm.sale_price > productForm.cost_price ? '#bbf7d0' : '#fecaca') }">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.8125rem; font-weight: 500;" :style="{ color: productForm.sale_price > productForm.cost_price ? '#166534' : '#991b1b' }">
+                                    Lucro estimado:
+                                </span>
+                                <span style="font-weight: 700;" :style="{ color: productForm.sale_price > productForm.cost_price ? '#16a34a' : '#dc2626' }"
+                                      x-text="formatMoney(productForm.sale_price - productForm.cost_price) + ' (' + ((productForm.sale_price - productForm.cost_price) / productForm.cost_price * 100).toFixed(0) + '%)'"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem; background: #f9fafb; border-radius: 0 0 1rem 1rem;">
+                        <button type="button" @click="showProductModal = false"
+                                style="padding: 0.625rem 1.25rem; background: white; color: #374151; font-weight: 500; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                            Cancelar
+                        </button>
+                        <button type="button" @click="saveProduct" :disabled="productFormSaving"
+                                style="padding: 0.625rem 1.25rem; background: #111827; color: white; font-weight: 600; border: none; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
+                                onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                            <svg x-show="productFormSaving" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            <span x-text="productFormSaving ? 'Salvando...' : 'Salvar e Adicionar à Venda'"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </div><!-- /x-data wrapper -->
         </div>
     </div>
 
     <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
         .sale-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -755,8 +1041,10 @@
                 items: [],
                 searchTerm: '',
                 searchResults: [],
+                searchLoading: false,
                 customerSearch: '',
                 customerResults: [],
+                customerSearchLoading: false,
                 selectedCustomer: reservationData?.customer ?? { id: '', name: '', phone: '' },
                 discount: reservationData?.deposit_paid ?? 0,
                 subtotal: 0,
@@ -773,6 +1061,18 @@
                 hasTradeIn: false,
                 tradeIns: [],
 
+                // Modal de Cliente
+                showCustomerModal: false,
+                customerForm: { name: '', phone: '', cpf: '', email: '' },
+                customerFormError: '',
+                customerFormSaving: false,
+
+                // Modal de Produto
+                showProductModal: false,
+                productForm: { name: '', sku: '', category: 'smartphone', condition: 'new', imei: '', cost_price: 0, sale_price: 0, stock_quantity: 1, color: '', min_stock_alert: 1 },
+                productFormError: '',
+                productFormSaving: false,
+
                 init() {
                     // Pré-preencher produto da reserva
                     if (reservationData?.product) {
@@ -786,6 +1086,9 @@
                         });
                         this.updateTotals();
                     }
+
+                    // Gerar SKU inicial para o form de produto
+                    this.generateProductSku();
                 },
                 
                 // Computed: total de pagamentos em cartão
@@ -816,33 +1119,22 @@
                 
                 // Computed: pode submeter o formulário
                 get canSubmit() {
-                    // Precisa ter itens
                     if (this.items.length === 0) return false;
-                    
-                    // Se tem total, precisa ter pagamentos que fechem
                     if (this.total > 0) {
-                        // Verifica se a diferença é menor que 1 centavo
                         return Math.abs(this.paymentDifference) <= 0.01;
                     }
-                    
                     return true;
                 },
                 
-                // Adicionar novo cartão
                 addCardPayment() {
-                    this.cardPayments.push({
-                        amount: 0,
-                        installments: 1
-                    });
+                    this.cardPayments.push({ amount: 0, installments: 1 });
                 },
                 
-                // Remover cartão
                 removeCardPayment(index) {
                     this.cardPayments.splice(index, 1);
                     this.updateTotals();
                 },
                 
-                // Método de pagamento principal (para compatibilidade)
                 getMainPaymentMethod() {
                     if (this.totalCardPayments > 0) return 'credit_card';
                     if (this.cashPaymentMethod === 'pix') return 'pix';
@@ -850,7 +1142,6 @@
                     return 'cash';
                 },
                 
-                // Texto do botão quando desabilitado
                 getSubmitButtonText() {
                     if (this.items.length === 0) {
                         return 'Adicione produtos para continuar';
@@ -870,8 +1161,10 @@
                         return;
                     }
                     
+                    this.searchLoading = true;
                     const response = await fetch(`{{ route('products.search') }}?q=${encodeURIComponent(this.searchTerm)}`);
                     this.searchResults = await response.json();
+                    this.searchLoading = false;
                 },
                 
                 addItem(product) {
@@ -906,8 +1199,10 @@
                         return;
                     }
                     
+                    this.customerSearchLoading = true;
                     const response = await fetch(`{{ route('customers.search') }}?q=${encodeURIComponent(this.customerSearch)}`);
                     this.customerResults = await response.json();
+                    this.customerSearchLoading = false;
                 },
                 
                 selectCustomer(customer) {
@@ -956,7 +1251,126 @@
                 
                 formatMoney(value) {
                     return 'R$ ' + (parseFloat(value) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                }
+                },
+
+                // ========== MODAL CLIENTE ==========
+                resetCustomerForm() {
+                    return { name: '', phone: '', cpf: '', email: '' };
+                },
+
+                async saveCustomer() {
+                    this.customerFormError = '';
+                    
+                    if (!this.customerForm.name || !this.customerForm.phone) {
+                        this.customerFormError = 'Nome e telefone são obrigatórios.';
+                        return;
+                    }
+
+                    this.customerFormSaving = true;
+
+                    try {
+                        const response = await fetch('{{ route("customers.store-quick") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify(this.customerForm)
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            const errors = data.errors ? Object.values(data.errors).flat().join(' ') : (data.message || 'Erro ao salvar cliente.');
+                            this.customerFormError = errors;
+                            this.customerFormSaving = false;
+                            return;
+                        }
+
+                        // Selecionar o cliente criado
+                        this.selectedCustomer = { id: data.id, name: data.name, phone: data.phone };
+                        this.customerSearch = '';
+                        this.customerResults = [];
+                        this.showCustomerModal = false;
+                    } catch (e) {
+                        this.customerFormError = 'Erro de conexão. Tente novamente.';
+                    }
+
+                    this.customerFormSaving = false;
+                },
+
+                // ========== MODAL PRODUTO ==========
+                resetProductForm() {
+                    const form = { name: '', sku: '', category: 'smartphone', condition: 'new', imei: '', cost_price: 0, sale_price: 0, stock_quantity: 1, color: '', min_stock_alert: 1 };
+                    // Gerar SKU ao resetar
+                    this.generateProductSkuFor(form);
+                    return form;
+                },
+
+                async generateProductSku() {
+                    await this.generateProductSkuFor(this.productForm);
+                },
+
+                async generateProductSkuFor(form) {
+                    try {
+                        const response = await fetch(`{{ route('products.generate-sku') }}?category=${encodeURIComponent(form.category || 'smartphone')}&model=${encodeURIComponent(form.name || '')}`);
+                        const data = await response.json();
+                        form.sku = data.sku;
+                    } catch (e) {
+                        // Ignora erro de sku
+                    }
+                },
+
+                async saveProduct() {
+                    this.productFormError = '';
+                    
+                    if (!this.productForm.name || !this.productForm.sku || !this.productForm.category || !this.productForm.condition) {
+                        this.productFormError = 'Preencha os campos obrigatórios: Nome, SKU, Categoria e Condição.';
+                        return;
+                    }
+                    if (this.productForm.sale_price <= 0) {
+                        this.productFormError = 'O preço de venda deve ser maior que zero.';
+                        return;
+                    }
+
+                    this.productFormSaving = true;
+
+                    try {
+                        const payload = {
+                            ...this.productForm,
+                            active: true,
+                        };
+
+                        const response = await fetch('{{ route("products.store-quick") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            const errors = data.errors ? Object.values(data.errors).flat().join(' ') : (data.message || 'Erro ao salvar produto.');
+                            this.productFormError = errors;
+                            this.productFormSaving = false;
+                            return;
+                        }
+
+                        // Adicionar produto à venda automaticamente
+                        this.addItem(data);
+                        this.showProductModal = false;
+                        this.searchTerm = '';
+                    } catch (e) {
+                        this.productFormError = 'Erro de conexão. Tente novamente.';
+                    }
+
+                    this.productFormSaving = false;
+                },
             }
         }
     </script>
