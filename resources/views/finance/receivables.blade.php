@@ -203,6 +203,10 @@
                                                 </select>
                                                 <button type="submit" style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; background: #16a34a; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600; margin-left: 0.25rem;">Receber</button>
                                             </form>
+                                            <form method="POST" action="{{ route('finance.transactions.cancel', $tx) }}" style="display: inline; margin-left: 0.25rem;" onsubmit="return confirm('Cancelar esta receita?')">
+                                                @csrf
+                                                <button type="submit" style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; background: none; color: #9ca3af; border: none; cursor: pointer;">Cancelar</button>
+                                            </form>
                                         @elseif($tx->status->value === 'paid')
                                             <span style="font-size: 0.6875rem; color: #9ca3af;">{{ $tx->account->name ?? '-' }}</span>
                                         @endif

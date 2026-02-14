@@ -53,6 +53,6 @@ class AccountTransfer extends Model
 
     public function getFormattedTransferredAtAttribute(): string
     {
-        return $this->transferred_at->format('d/m/Y H:i');
+        return $this->transferred_at?->format('d/m/Y H:i') ?? '';
     }
 }

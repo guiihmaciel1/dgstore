@@ -98,13 +98,21 @@ class FinancialTransaction extends Model
     {
         return $query->unpaid()
             ->where('due_date', '<=', now()->addDays($days))
-            ->where('due_date', '>=', now());
+            ->where('due_date', '>=', today());
     }
 
     public function scopeThisMonth($query)
     {
         return $query->whereMonth('due_date', now()->month)
             ->whereYear('due_date', now()->year);
+    }
+
+    public function scopePaidThisMonth($query)
+    {
+        return $query->paid()
+            ->whereNotNull('paid_at')
+            ->whereMonth('paid_at', now()->month)
+            ->whereYear('paid_at', now()->year);
     }
 
     public function scopeByDateRange($query, ?string $start, ?string $end)
@@ -133,7 +141,7 @@ class FinancialTransaction extends Model
 
     public function getFormattedDueDateAttribute(): string
     {
-        return $this->due_date->format('d/m/Y');
+        return $this->due_date?->format('d/m/Y') ?? '';
     }
 
     public function getFormattedPaidAtAttribute(): ?string
@@ -144,6 +152,6 @@ class FinancialTransaction extends Model
     public function getIsOverdueCheckAttribute(): bool
     {
         return $this->status === TransactionStatus::Pending
-            && $this->due_date->isPast();
+            && $this->due_date?->isPast() === true;
     }
 }

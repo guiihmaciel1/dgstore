@@ -6,6 +6,11 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if(session('error'))
+                <div style="margin-bottom: 1rem; padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; color: #991b1b;">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             <!-- Cabeçalho -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
@@ -114,12 +119,30 @@
             </div>
 
             <!-- Extrato da Conta Selecionada -->
-            @if($selectedAccountId && $statement->count() > 0)
+            @if($selectedAccountId)
                 @php $selectedAccount = $accounts->firstWhere('id', $selectedAccountId); @endphp
                 <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
-                    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-                        <h2 style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Extrato — {{ $selectedAccount->name ?? 'Conta' }}</h2>
+                    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                            <h2 style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Extrato — {{ $selectedAccount?->name ?? 'Conta' }}</h2>
+                            <form method="GET" action="{{ route('finance.accounts') }}" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <input type="hidden" name="account_id" value="{{ $selectedAccountId }}">
+                                <div>
+                                    <label style="font-size: 0.625rem; font-weight: 500; color: #6b7280;">De</label>
+                                    <input type="date" name="start_date" value="{{ request('start_date') }}" style="padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.75rem;">
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.625rem; font-weight: 500; color: #6b7280;">Até</label>
+                                    <input type="date" name="end_date" value="{{ request('end_date') }}" style="padding: 0.25rem 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.75rem;">
+                                </div>
+                                <button type="submit" style="padding: 0.25rem 0.625rem; background: #111827; color: white; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.75rem; margin-top: 0.875rem;">Filtrar</button>
+                                @if(request('start_date') || request('end_date'))
+                                    <a href="{{ route('finance.accounts', ['account_id' => $selectedAccountId]) }}" style="padding: 0.25rem 0.625rem; background: white; color: #374151; font-weight: 500; border-radius: 0.375rem; border: 1px solid #d1d5db; text-decoration: none; font-size: 0.75rem; margin-top: 0.875rem;">Limpar</a>
+                                @endif
+                            </form>
+                        </div>
                     </div>
+                @if($statement->count() > 0)
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
@@ -148,10 +171,11 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-            @elseif($selectedAccountId)
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 2rem; text-align: center; color: #9ca3af;">
-                    Nenhuma movimentação nesta carteira.
+                @else
+                    <div style="padding: 2rem; text-align: center; color: #9ca3af;">
+                        Nenhuma movimentação nesta carteira{{ (request('start_date') || request('end_date')) ? ' no período selecionado' : '' }}.
+                    </div>
+                @endif
                 </div>
             @endif
         </div>

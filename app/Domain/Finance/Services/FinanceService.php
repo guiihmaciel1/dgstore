@@ -24,9 +24,9 @@ class FinanceService
         $accounts = FinancialAccount::active()->orderByDesc('is_default')->orderBy('name')->get();
         $totalBalance = (float) $accounts->sum('current_balance');
 
-        // Receitas e despesas que passaram por carteira (fluxo de caixa real)
-        $monthIncome = (float) FinancialTransaction::income()->paid()->thisMonth()->whereNotNull('account_id')->sum('amount');
-        $monthExpense = (float) FinancialTransaction::expense()->paid()->thisMonth()->whereNotNull('account_id')->sum('amount');
+        // Receitas e despesas que passaram por carteira (fluxo de caixa real, por data de pagamento)
+        $monthIncome = (float) FinancialTransaction::income()->paidThisMonth()->whereNotNull('account_id')->sum('amount');
+        $monthExpense = (float) FinancialTransaction::expense()->paidThisMonth()->whereNotNull('account_id')->sum('amount');
         $monthProfit = $monthIncome - $monthExpense;
 
         // Lucro real das vendas do mês (receita de venda - custo de mercadoria)
@@ -88,11 +88,13 @@ class FinanceService
 
             $incomes[] = (float) FinancialTransaction::income()
                 ->paid()
+                ->whereNotNull('account_id')
                 ->whereDate('paid_at', $date->toDateString())
                 ->sum('amount');
 
             $expenses[] = (float) FinancialTransaction::expense()
                 ->paid()
+                ->whereNotNull('account_id')
                 ->whereDate('paid_at', $date->toDateString())
                 ->sum('amount');
         }
@@ -149,7 +151,7 @@ class FinanceService
     {
         $pending = (float) FinancialTransaction::expense()->pending()->sum('amount');
         $overdue = (float) FinancialTransaction::expense()->overdue()->sum('amount');
-        $paidThisMonth = (float) FinancialTransaction::expense()->paid()->thisMonth()->sum('amount');
+        $paidThisMonth = (float) FinancialTransaction::expense()->paidThisMonth()->sum('amount');
 
         return compact('pending', 'overdue', 'paidThisMonth');
     }
@@ -158,7 +160,7 @@ class FinanceService
     {
         $pending = (float) FinancialTransaction::income()->pending()->sum('amount');
         $overdue = (float) FinancialTransaction::income()->overdue()->sum('amount');
-        $receivedThisMonth = (float) FinancialTransaction::income()->paid()->thisMonth()->sum('amount');
+        $receivedThisMonth = (float) FinancialTransaction::income()->paidThisMonth()->sum('amount');
 
         return compact('pending', 'overdue', 'receivedThisMonth');
     }
@@ -181,6 +183,11 @@ class FinanceService
 
     public function markAsPaid(FinancialTransaction $transaction, string $accountId, ?string $paymentMethod = null): void
     {
+        // Guard: não permitir pagar transação já paga ou cancelada
+        if (in_array($transaction->status, [TransactionStatus::Paid, TransactionStatus::Cancelled])) {
+            return;
+        }
+
         DB::transaction(function () use ($transaction, $accountId, $paymentMethod) {
             $transaction->update([
                 'status' => TransactionStatus::Paid,
@@ -237,9 +244,21 @@ class FinanceService
 
     public function createTransfer(string $fromAccountId, string $toAccountId, float $amount, string $userId, ?string $description = null): AccountTransfer
     {
+        if ($amount <= 0) {
+            throw new \InvalidArgumentException('O valor da transferência deve ser positivo.');
+        }
+
+        if ($fromAccountId === $toAccountId) {
+            throw new \InvalidArgumentException('Não é possível transferir para a mesma conta.');
+        }
+
         return DB::transaction(function () use ($fromAccountId, $toAccountId, $amount, $userId, $description) {
-            $fromAccount = FinancialAccount::findOrFail($fromAccountId);
-            $toAccount = FinancialAccount::findOrFail($toAccountId);
+            $fromAccount = FinancialAccount::lockForUpdate()->findOrFail($fromAccountId);
+            $toAccount = FinancialAccount::lockForUpdate()->findOrFail($toAccountId);
+
+            if ((float) $fromAccount->current_balance < $amount) {
+                throw new \InvalidArgumentException("Saldo insuficiente na conta {$fromAccount->name}.");
+            }
 
             $fromAccount->subtractBalance($amount);
             $toAccount->addBalance($amount);
@@ -288,7 +307,7 @@ class FinanceService
             ->get()
             ->map(fn ($t) => (object) [
                 'date' => $t->transferred_at,
-                'description' => 'Transferência → ' . $t->toAccount->name,
+                'description' => 'Transferência → ' . ($t->toAccount?->name ?? 'Conta removida'),
                 'amount' => -$t->amount,
                 'type' => 'transfer_out',
                 'category_name' => 'Transferência',
@@ -302,7 +321,7 @@ class FinanceService
             ->get()
             ->map(fn ($t) => (object) [
                 'date' => $t->transferred_at,
-                'description' => 'Transferência ← ' . $t->fromAccount->name,
+                'description' => 'Transferência ← ' . ($t->fromAccount?->name ?? 'Conta removida'),
                 'amount' => $t->amount,
                 'type' => 'transfer_in',
                 'category_name' => 'Transferência',
@@ -505,9 +524,11 @@ class FinanceService
         string $description,
         ?string $referenceId = null,
         ?string $paymentMethod = null,
+        ?\DateTimeInterface $date = null,
     ): ?FinancialTransaction {
         $category = $this->getCategoryByName('Sinal de Reserva', 'income');
         $account = $this->getDefaultAccount();
+        $date = $date ?? now();
 
         if (!$category) {
             return null;
@@ -521,8 +542,8 @@ class FinanceService
             'status' => $account ? 'paid' : 'pending',
             'amount' => $amount,
             'description' => $description,
-            'due_date' => now()->toDateString(),
-            'paid_at' => $account ? now() : null,
+            'due_date' => $date->format('Y-m-d'),
+            'paid_at' => $account ? $date : null,
             'payment_method' => $paymentMethod,
             'reference_type' => 'Reservation',
             'reference_id' => $referenceId,

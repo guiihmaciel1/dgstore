@@ -122,13 +122,17 @@ class FinanceController extends Controller
             'description' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $this->financeService->createTransfer(
-            $request->from_account_id,
-            $request->to_account_id,
-            (float) $request->amount,
-            auth()->id(),
-            $request->description,
-        );
+        try {
+            $this->financeService->createTransfer(
+                $request->from_account_id,
+                $request->to_account_id,
+                (float) $request->amount,
+                auth()->id(),
+                $request->description,
+            );
+        } catch (\InvalidArgumentException $e) {
+            return redirect()->route('finance.accounts')->with('error', $e->getMessage());
+        }
 
         return redirect()->route('finance.accounts')->with('success', 'Transferência realizada com sucesso!');
     }
