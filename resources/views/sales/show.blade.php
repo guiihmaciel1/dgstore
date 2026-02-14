@@ -81,12 +81,18 @@
                                     <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                         <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
                                         <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Qtd</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo Unit.</th>
                                         <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Preço Unit.</th>
-                                        <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Subtotal</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Subtotal</th>
+                                        <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Lucro</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($sale->items as $item)
+                                        @php
+                                            $itemProfit = $item->item_profit;
+                                            $profitColor = $itemProfit >= 0 ? '#16a34a' : '#dc2626';
+                                        @endphp
                                         <tr style="border-bottom: 1px solid #f3f4f6;">
                                             <td style="padding: 1rem 1.5rem;">
                                                 <div style="font-weight: 500; color: #111827;">{{ $item->product_name }}</div>
@@ -95,11 +101,17 @@
                                             <td style="padding: 0.75rem 1rem; text-align: center; color: #6b7280;">
                                                 {{ $item->quantity }}
                                             </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280; font-size: 0.875rem;">
+                                                R$ {{ number_format($item->cost_price, 2, ',', '.') }}
+                                            </td>
                                             <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280;">
                                                 {{ $item->formatted_unit_price }}
                                             </td>
-                                            <td style="padding: 0.75rem 1.5rem; text-align: right; font-weight: 600; color: #111827;">
+                                            <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #111827;">
                                                 {{ $item->formatted_subtotal }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1.5rem; text-align: right; font-weight: 600; color: {{ $profitColor }};">
+                                                R$ {{ number_format($itemProfit, 2, ',', '.') }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -126,6 +138,69 @@
                         </div>
                     </div>
                     
+                    <!-- Resumo Financeiro -->
+                    @php
+                        $totalCost = $sale->total_cost;
+                        $revenue = (float) $sale->total;
+                        $tradeInVal = (float) $sale->trade_in_value;
+                        $profit = $sale->profit;
+                        $margin = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
+                    @endphp
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f0fdf4;">
+                            <h3 style="font-weight: 600; color: #166534; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                                Resumo Financeiro
+                            </h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                <!-- Receita -->
+                                <div style="text-align: center; padding: 0.75rem; background: #f0fdf4; border-radius: 0.75rem;">
+                                    <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Receita</div>
+                                    <div style="font-size: 1.125rem; font-weight: 700; color: #16a34a;">R$ {{ number_format($revenue, 2, ',', '.') }}</div>
+                                </div>
+                                <!-- Custo (CMV) -->
+                                <div style="text-align: center; padding: 0.75rem; background: #fef2f2; border-radius: 0.75rem;">
+                                    <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Custo (CMV)</div>
+                                    <div style="font-size: 1.125rem; font-weight: 700; color: #dc2626;">R$ {{ number_format($totalCost, 2, ',', '.') }}</div>
+                                </div>
+                                <!-- Lucro -->
+                                <div style="text-align: center; padding: 0.75rem; background: {{ $profit >= 0 ? '#f0fdf4' : '#fef2f2' }}; border-radius: 0.75rem;">
+                                    <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Lucro Bruto</div>
+                                    <div style="font-size: 1.125rem; font-weight: 700; color: {{ $profit >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($profit, 2, ',', '.') }}</div>
+                                </div>
+                                <!-- Margem -->
+                                <div style="text-align: center; padding: 0.75rem; background: #eff6ff; border-radius: 0.75rem;">
+                                    <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Margem</div>
+                                    <div style="font-size: 1.125rem; font-weight: 700; color: #2563eb;">{{ number_format($margin, 1, ',', '.') }}%</div>
+                                </div>
+                            </div>
+
+                            @if($tradeInVal > 0)
+                            <div style="margin-top: 1rem; padding: 0.75rem; background: #f5f3ff; border-radius: 0.5rem; border: 1px solid #ddd6fe;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.8125rem; color: #5b21b6; font-weight: 500;">Trade-in recebido (abatido do total):</span>
+                                    <span style="font-size: 1rem; font-weight: 700; color: #7c3aed;">R$ {{ number_format($tradeInVal, 2, ',', '.') }}</span>
+                                </div>
+                                <p style="font-size: 0.6875rem; color: #6b7280; margin-top: 0.25rem;">
+                                    O trade-in foi recebido como parte do pagamento. O custo de aquisicao do trade-in nao esta incluido no CMV acima, pois sera contabilizado quando for revendido.
+                                </p>
+                            </div>
+                            @endif
+
+                            @if($profit < 0)
+                            <div style="margin-top: 1rem; padding: 0.75rem; background: #fef2f2; border-radius: 0.5rem; border: 1px solid #fecaca;">
+                                <p style="font-size: 0.8125rem; color: #dc2626; font-weight: 600;">
+                                    Atencao: Esta venda teve prejuizo de R$ {{ number_format(abs($profit), 2, ',', '.') }}. O preco de venda ficou abaixo do custo dos produtos.
+                                </p>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
                     <!-- Detalhes do Pagamento (quando há pagamento misto) -->
                     @if($sale->hasMixedPayment() || $sale->hasTradeIn())
                     <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
@@ -254,6 +329,52 @@
                                     <a href="{{ route('stock.trade-ins') }}" style="color: #b45309; text-decoration: underline;">Processar trade-ins pendentes</a>
                                 </p>
                             </div>
+                            @endif
+
+                            {{-- Rastreabilidade: se trade-in processado, verificar se ja foi revendido --}}
+                            @if($sale->tradeIn->isProcessed() && $sale->tradeIn->product_id)
+                                @php
+                                    $tradeInProduct = $sale->tradeIn->product;
+                                    $resaleSaleItem = $tradeInProduct
+                                        ? \App\Domain\Sale\Models\SaleItem::where('product_id', $tradeInProduct->id)
+                                            ->whereHas('sale', fn($q) => $q->where('payment_status', '!=', 'cancelled'))
+                                            ->with('sale')
+                                            ->first()
+                                        : null;
+                                    $tradeInCost = (float) $sale->tradeIn->estimated_value;
+                                @endphp
+                                <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid {{ $resaleSaleItem ? '#bbf7d0' : '#bfdbfe' }}; background: {{ $resaleSaleItem ? '#f0fdf4' : '#eff6ff' }};">
+                                    @if($resaleSaleItem)
+                                        @php
+                                            $resalePrice = (float) $resaleSaleItem->unit_price * $resaleSaleItem->quantity;
+                                            $resaleProfit = $resalePrice - $tradeInCost;
+                                        @endphp
+                                        <p style="font-size: 0.8125rem; font-weight: 600; color: {{ $resaleProfit >= 0 ? '#166534' : '#dc2626' }};">
+                                            Trade-in revendido na venda
+                                            <a href="{{ route('sales.show', $resaleSaleItem->sale) }}" style="text-decoration: underline;">
+                                                #{{ $resaleSaleItem->sale->sale_number }}
+                                            </a>
+                                            por R$ {{ number_format($resalePrice, 2, ',', '.') }}
+                                            — Lucro: R$ {{ number_format($resaleProfit, 2, ',', '.') }}
+                                        </p>
+                                    @else
+                                        <p style="font-size: 0.8125rem; color: #1d4ed8;">
+                                            Trade-in cadastrado como produto:
+                                            <a href="{{ route('products.show', $tradeInProduct) }}" style="text-decoration: underline; font-weight: 600;">
+                                                {{ $tradeInProduct->name }}
+                                            </a>
+                                            — Custo: R$ {{ number_format($tradeInCost, 2, ',', '.') }}
+                                            @if($tradeInProduct->sale_price > 0)
+                                                | Preco de venda: R$ {{ number_format((float) $tradeInProduct->sale_price, 2, ',', '.') }}
+                                                @if((float) $tradeInProduct->sale_price < $tradeInCost)
+                                                    <span style="color: #dc2626; font-weight: 700;"> (ABAIXO DO CUSTO!)</span>
+                                                @endif
+                                            @else
+                                                | <span style="color: #ca8a04; font-weight: 600;">Preco de venda nao definido</span>
+                                            @endif
+                                        </p>
+                                    @endif
+                                </div>
                             @endif
                         </div>
                     </div>

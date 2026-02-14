@@ -35,6 +35,7 @@ class UpdateSupplierRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
+            'origin' => ['nullable', 'in:py,br'],
             'cnpj' => ['nullable', 'string', 'size:14', Rule::unique('suppliers', 'cnpj')->ignore($supplierId)],
             'phone' => ['nullable', 'string', 'min:10', 'max:11'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -49,6 +50,7 @@ class UpdateSupplierRequest extends FormRequest
     {
         return [
             'name' => 'nome',
+            'origin' => 'origem',
             'cnpj' => 'CNPJ',
             'phone' => 'telefone',
             'email' => 'e-mail',

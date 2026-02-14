@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Supplier\Models;
 
+use App\Domain\Supplier\Enums\SupplierOrigin;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ class Supplier extends Model
 
     protected $fillable = [
         'name',
+        'origin',
         'cnpj',
         'phone',
         'email',
@@ -29,6 +31,7 @@ class Supplier extends Model
     protected function casts(): array
     {
         return [
+            'origin' => SupplierOrigin::class,
             'active' => 'boolean',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -124,5 +127,23 @@ class Supplier extends Model
     public function isActive(): bool
     {
         return $this->active;
+    }
+
+    public function isPy(): bool
+    {
+        return $this->origin === SupplierOrigin::Py;
+    }
+
+    public function isBr(): bool
+    {
+        return $this->origin === SupplierOrigin::Br;
+    }
+
+    /**
+     * Percentual de frete baseado na origem (4% PY, 0% BR).
+     */
+    public function getFreightPercentAttribute(): float
+    {
+        return $this->origin?->freightPercent() ?? 0.0;
     }
 }

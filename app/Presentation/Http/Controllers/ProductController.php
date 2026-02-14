@@ -117,6 +117,7 @@ class ProductController extends Controller
                 'name' => $product->full_name,
                 'sku' => $product->sku,
                 'price' => $product->sale_price,
+                'cost_price' => $product->cost_price,
                 'stock' => $product->stock_quantity,
                 'formatted_price' => $product->formatted_sale_price,
             ])

@@ -33,6 +33,18 @@
                                        onfocus="this.style.borderColor='#111827';this.style.boxShadow='0 0 0 1px #111827'" onblur="this.style.borderColor='#d1d5db';this.style.boxShadow='none'">
                             </div>
 
+                            <!-- Origem -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Origem</label>
+                                <select name="origin"
+                                        style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
+                                    <option value="">Selecione...</option>
+                                    <option value="py" {{ old('origin', $supplier->origin?->value) === 'py' ? 'selected' : '' }}>Paraguai (PY) - com frete 4%</option>
+                                    <option value="br" {{ old('origin', $supplier->origin?->value) === 'br' ? 'selected' : '' }}>Brasil (BR) - sem frete</option>
+                                </select>
+                                @error('origin')<p style="margin-top: 0.125rem; font-size: 0.75rem; color: #dc2626;">{{ $message }}</p>@enderror
+                            </div>
+
                             <!-- CNPJ -->
                             <div>
                                 <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">CNPJ</label>

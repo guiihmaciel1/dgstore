@@ -72,8 +72,9 @@ class FinanceService
         $salesCost = (float) $sales->sum(fn ($sale) => $sale->total_cost);
         $salesProfit = $salesRevenue - $salesCost;
         $salesMargin = $salesRevenue > 0 ? round(($salesProfit / $salesRevenue) * 100, 1) : 0;
+        $tradeInTotal = (float) $sales->sum('trade_in_value');
 
-        return compact('salesCount', 'salesRevenue', 'salesCost', 'salesProfit', 'salesMargin');
+        return compact('salesCount', 'salesRevenue', 'salesCost', 'salesProfit', 'salesMargin', 'tradeInTotal');
     }
 
     public function getChartData(int $days): array

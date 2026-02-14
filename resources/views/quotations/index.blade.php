@@ -10,11 +10,19 @@
         return '';
     }
 
-    function formatFinalPrice(float $unitPrice): string {
-        $final = $unitPrice * 1.04;
+    function formatFinalPrice(float $unitPrice, ?string $origin = null): string {
+        // PY = 4% frete, BR = sem frete, null = mostra 4% como padrão
+        $freightPercent = ($origin === 'py' || $origin === null) ? 0.04 : 0.0;
+        $final = $unitPrice * (1 + $freightPercent);
         $diff = $final - $unitPrice;
+
+        if ($freightPercent > 0) {
+            return '<span style="font-weight:700;color:#16a34a;">R$ ' . number_format($final, 2, ',', '.') . '</span>'
+                 . '<div style="font-size:0.6875rem;color:#ca8a04;">+R$ ' . number_format($diff, 2, ',', '.') . ' (frete 4%)</div>';
+        }
+
         return '<span style="font-weight:700;color:#16a34a;">R$ ' . number_format($final, 2, ',', '.') . '</span>'
-             . '<div style="font-size:0.6875rem;color:#ca8a04;">+R$ ' . number_format($diff, 2, ',', '.') . '</div>';
+             . '<div style="font-size:0.6875rem;color:#6b7280;">Sem frete (BR)</div>';
     }
 @endphp
 <x-app-layout>
@@ -291,13 +299,14 @@
                                     <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
                                     <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Fornecedores e Preços</th>
                                     <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Menor Preço</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #16a34a; text-transform: uppercase;">Final (+4%)</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #16a34a; text-transform: uppercase;">Final c/ Frete</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($priceComparison as $productName => $quotes)
                                     @php
                                         $lowestPrice = $quotes->first();
+                                        $lowestOrigin = $lowestPrice->supplier->origin?->value;
                                     @endphp
                                     <tr style="border-bottom: 1px solid #f3f4f6;">
                                         <td style="padding: 1rem 1.5rem;">
@@ -343,7 +352,7 @@
                                             <div style="font-size: 0.75rem; color: #6b7280;">{{ $lowestPrice->supplier->name }}</div>
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
-                                            <div style="text-align: center;">{!! formatFinalPrice((float) $lowestPrice->unit_price) !!}</div>
+                                            <div style="text-align: center;">{!! formatFinalPrice((float) $lowestPrice->unit_price, $lowestOrigin) !!}</div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -393,7 +402,7 @@
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Fornecedor</th>
                                 <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Preço</th>
-                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #16a34a; text-transform: uppercase;">Final (+4%)</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #16a34a; text-transform: uppercase;">Final c/ Frete</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Qtd</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Data</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Registrado por</th>
@@ -441,7 +450,7 @@
                                         @endif
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.875rem;">
-                                        {!! formatFinalPrice((float) $quotation->unit_price) !!}
+                                        {!! formatFinalPrice((float) $quotation->unit_price, $quotation->supplier->origin?->value) !!}
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; color: #6b7280;">
                                         {{ $quotation->formatted_quantity }}

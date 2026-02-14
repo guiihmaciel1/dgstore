@@ -53,6 +53,25 @@
                         <div style="padding: 1.5rem;">
                             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
                                 <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Origem</dt>
+                                    <dd style="margin-top: 0.25rem;">
+                                        @if($supplier->origin)
+                                            @php
+                                                $originColors = [
+                                                    'py' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'label' => 'Paraguai (PY) - Frete 4%'],
+                                                    'br' => ['bg' => '#f0fdf4', 'color' => '#16a34a', 'label' => 'Brasil (BR) - Sem frete'],
+                                                ];
+                                                $oc = $originColors[$supplier->origin->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280', 'label' => '-'];
+                                            @endphp
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $oc['bg'] }}; color: {{ $oc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
+                                                {{ $oc['label'] }}
+                                            </span>
+                                        @else
+                                            <span style="font-size: 0.875rem; color: #9ca3af;">Não definida</span>
+                                        @endif
+                                    </dd>
+                                </div>
+                                <div>
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Telefone</dt>
                                     <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $supplier->formatted_phone ?? '-' }}</dd>
                                 </div>

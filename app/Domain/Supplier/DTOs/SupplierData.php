@@ -8,6 +8,7 @@ readonly class SupplierData
 {
     public function __construct(
         public string $name,
+        public ?string $origin = null,
         public ?string $cnpj = null,
         public ?string $phone = null,
         public ?string $email = null,
@@ -21,6 +22,7 @@ readonly class SupplierData
     {
         return new self(
             name: $data['name'],
+            origin: $data['origin'] ?? null,
             cnpj: isset($data['cnpj']) ? preg_replace('/\D/', '', $data['cnpj']) : null,
             phone: isset($data['phone']) ? preg_replace('/\D/', '', $data['phone']) : null,
             email: $data['email'] ?? null,
@@ -35,6 +37,7 @@ readonly class SupplierData
     {
         return [
             'name' => $this->name,
+            'origin' => $this->origin,
             'cnpj' => $this->cnpj,
             'phone' => $this->phone,
             'email' => $this->email,

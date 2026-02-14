@@ -81,6 +81,9 @@
                                                 </div>
                                                 <div style="text-align: right;">
                                                     <span style="font-size: 1.125rem; font-weight: 700; color: #111827;" x-text="product.formatted_price"></span>
+                                                    <div x-show="product.cost_price > 0" style="font-size: 0.6875rem; color: #6b7280;">
+                                                        Custo: <span x-text="formatMoney(product.cost_price)"></span>
+                                                    </div>
                                                 </div>
                                             </button>
                                         </template>
@@ -99,7 +102,8 @@
                                     
                                     <div x-show="items.length > 0">
                                         <template x-for="(item, index) in items" :key="index">
-                                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 0.75rem;">
+                                            <div style="padding: 1rem; background: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 0.75rem;">
+                                                <div style="display: flex; align-items: center; gap: 1rem;">
                                                 <div style="flex: 1; min-width: 0;">
                                                     <p style="font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.name"></p>
                                                     <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.id">
@@ -148,6 +152,17 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                     </svg>
                                                 </button>
+                                                </div>
+                                                {{-- Alerta de preço abaixo do custo --}}
+                                                <div x-show="item.cost_price > 0 && item.price < item.cost_price"
+                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.375rem; display: flex; align-items: center; gap: 0.375rem;">
+                                                    <svg style="width: 1rem; height: 1rem; color: #dc2626; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                                    </svg>
+                                                    <span style="font-size: 0.75rem; color: #dc2626; font-weight: 600;">
+                                                        Preco abaixo do custo! Custo: <span x-text="formatMoney(item.cost_price)"></span>
+                                                    </span>
+                                                </div>
                                             </div>
                                         </template>
                                     </div>
@@ -772,6 +787,7 @@
                             id: product.id,
                             name: product.name,
                             price: product.price,
+                            cost_price: product.cost_price || 0,
                             quantity: 1,
                             stock: product.stock
                         });

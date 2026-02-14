@@ -90,6 +90,7 @@
                                 <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Venda</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</th>
                                 <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Total</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Lucro</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Pagamento</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Status</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
@@ -108,6 +109,9 @@
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; font-size: 1rem; color: #111827;">
                                         {{ $sale->formatted_total }}
+                                    </td>
+                                    <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; font-size: 0.875rem; color: {{ $sale->profit >= 0 ? '#16a34a' : '#dc2626' }};">
+                                        {{ $sale->formatted_profit }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280;">
                                         {{ $sale->payment_method->label() }}
@@ -142,7 +146,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" style="padding: 3rem; text-align: center; color: #6b7280;">
+                                    <td colspan="8" style="padding: 3rem; text-align: center; color: #6b7280;">
                                         Nenhuma venda encontrada.
                                     </td>
                                 </tr>

@@ -48,7 +48,7 @@
                         <span style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Vendas do Mês</span>
                         <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; font-weight: 600;">{{ $salesData['salesCount'] }} {{ $salesData['salesCount'] === 1 ? 'venda' : 'vendas' }}</span>
                     </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
                         <div>
                             <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Faturamento</div>
                             <div style="font-size: 1.125rem; font-weight: 800; color: #111827;">R$ {{ number_format($salesData['salesRevenue'], 2, ',', '.') }}</div>
@@ -65,6 +65,13 @@
                             <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Margem</div>
                             <div style="font-size: 1.125rem; font-weight: 800; color: {{ $salesData['salesMargin'] >= 0 ? '#16a34a' : '#dc2626' }};">{{ $salesData['salesMargin'] }}%</div>
                         </div>
+                        @if(($salesData['tradeInTotal'] ?? 0) > 0)
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Trade-ins Recebidos</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: #7c3aed;">R$ {{ number_format($salesData['tradeInTotal'], 2, ',', '.') }}</div>
+                            <div style="font-size: 0.6875rem; color: #6b7280;">Abatidos nas vendas</div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             @endif
