@@ -196,6 +196,13 @@ class ReservationService
 
         $reservation->cancel();
 
+        // Reverter depósitos registrados no financeiro
+        try {
+            $this->financeService->cancelReservationTransactions($reservation->id);
+        } catch (\Throwable $e) {
+            Log::warning("Não foi possível cancelar transações financeiras da reserva #{$reservation->reservation_number}: {$e->getMessage()}");
+        }
+
         return $reservation->fresh();
     }
 

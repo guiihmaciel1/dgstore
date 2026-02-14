@@ -11,6 +11,15 @@
                     {{ session('error') }}
                 </div>
             @endif
+            @if($errors->any())
+                <div style="margin-bottom: 1rem; padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; color: #991b1b;">
+                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.875rem;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <!-- Cabeçalho -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
@@ -61,7 +70,7 @@
                         @foreach($categories->where('type.value', 'income') as $cat)
                             <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 50%; background: {{ $cat->color }}; flex-shrink: 0;"></span>
+                                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 50%; background: {{ $cat->color ?? '#6b7280' }}; flex-shrink: 0;"></span>
                                     <span style="font-size: 0.875rem; font-weight: 500; color: #111827;">{{ $cat->name }}</span>
                                     @if($cat->is_system)
                                         <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; font-weight: 500;">SISTEMA</span>
@@ -88,7 +97,7 @@
                         @foreach($categories->where('type.value', 'expense') as $cat)
                             <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;">
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 50%; background: {{ $cat->color }}; flex-shrink: 0;"></span>
+                                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 50%; background: {{ $cat->color ?? '#6b7280' }}; flex-shrink: 0;"></span>
                                     <span style="font-size: 0.875rem; font-weight: 500; color: #111827;">{{ $cat->name }}</span>
                                     @if($cat->is_system)
                                         <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; font-weight: 500;">SISTEMA</span>

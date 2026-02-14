@@ -204,7 +204,7 @@ class Reservation extends Model
 
     public function getDaysUntilExpirationAttribute(): int
     {
-        if ($this->expires_at->isPast()) {
+        if (!$this->expires_at || $this->expires_at->isPast()) {
             return 0;
         }
 
@@ -213,12 +213,13 @@ class Reservation extends Model
 
     public function getIsOverdueAttribute(): bool
     {
-        return $this->status === ReservationStatus::Active && $this->expires_at->isPast();
+        return $this->status === ReservationStatus::Active
+            && $this->expires_at?->isPast() === true;
     }
 
     public function getIsExpiringSoonAttribute(): bool
     {
-        if ($this->status !== ReservationStatus::Active) {
+        if ($this->status !== ReservationStatus::Active || !$this->expires_at) {
             return false;
         }
 

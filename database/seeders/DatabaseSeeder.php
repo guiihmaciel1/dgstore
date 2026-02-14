@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             IphoneModelSeeder::class,
             AppleProductSeeder::class,
             SupplierSeeder::class,
+            FinanceCategorySeeder::class,
         ]);
     }
 }

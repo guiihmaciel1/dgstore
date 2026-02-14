@@ -114,9 +114,9 @@
                             <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;">
                                 <div>
                                     <div style="font-size: 0.8125rem; font-weight: 500; color: #111827;">{{ $item->description }}</div>
-                                    <div style="font-size: 0.6875rem; color: {{ $item->due_date->isPast() ? '#dc2626' : '#d97706' }};">
-                                        {{ $item->due_date->format('d/m/Y') }}
-                                        @if($item->due_date->isPast()) — Vencido @endif
+                                    <div style="font-size: 0.6875rem; color: {{ $item->due_date?->isPast() ? '#dc2626' : '#d97706' }};">
+                                        {{ $item->due_date?->format('d/m/Y') ?? '-' }}
+                                        @if($item->due_date?->isPast()) — Vencido @endif
                                     </div>
                                 </div>
                                 <div style="text-align: right;">

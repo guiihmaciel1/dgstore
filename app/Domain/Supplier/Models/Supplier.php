@@ -43,6 +43,11 @@ class Supplier extends Model
         return $this->hasMany(Quotation::class);
     }
 
+    public function importOrders(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Import\Models\ImportOrder::class);
+    }
+
     // Scopes
 
     public function scopeActive(Builder $query): Builder

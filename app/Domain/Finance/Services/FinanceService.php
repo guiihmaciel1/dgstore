@@ -561,4 +561,16 @@ class FinanceService
             $this->cancelTransaction($transaction);
         }
     }
+
+    public function cancelReservationTransactions(string $reservationId): void
+    {
+        $transactions = FinancialTransaction::where('reference_type', 'Reservation')
+            ->where('reference_id', $reservationId)
+            ->whereIn('status', ['paid', 'pending'])
+            ->get();
+
+        foreach ($transactions as $transaction) {
+            $this->cancelTransaction($transaction);
+        }
+    }
 }

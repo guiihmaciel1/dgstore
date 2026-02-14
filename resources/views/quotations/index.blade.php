@@ -261,7 +261,7 @@
                     <!-- Botão excluir selecionados -->
                     <div x-show="selectedIds.length > 0" x-cloak
                          style="display: flex; align-items: center; gap: 0.75rem;">
-                        <span style="font-size: 0.8125rem; color: #6b7280;" x-text="selectedIds.length + ' selecionado(s)'"></span>
+                        <span style="font-size: 0.8125rem; color: #6b7280;" x-text="selectedIds.length + ' selecionado(s) na página'"></span>
                         <button type="button" @click="bulkDelete()"
                                 style="padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 500; border: 1px solid #fecaca; border-radius: 0.375rem; background: #fef2f2; color: #dc2626; cursor: pointer; display: inline-flex; align-items: center; gap: 0.375rem;"
                                 onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
@@ -288,6 +288,7 @@
                                 <th style="padding: 0.75rem 0.75rem 0.75rem 1.5rem; text-align: center; width: 2.5rem;">
                                     <input type="checkbox" @change="toggleAll($event.target.checked)"
                                            :checked="allSelected" :indeterminate.prop="someSelected"
+                                           title="Selecionar todos da página"
                                            style="width: 0.875rem; height: 0.875rem; cursor: pointer; accent-color: #111827;">
                                 </th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>

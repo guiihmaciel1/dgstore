@@ -185,11 +185,18 @@ class FinanceController extends Controller
             'description' => ['required', 'string', 'max:255'],
             'due_date' => ['required', 'date'],
             'account_id' => ['nullable', 'exists:financial_accounts,id'],
-            'payment_method' => ['nullable', 'string'],
+            'payment_method' => ['nullable', 'string', 'max:50'],
             'is_paid' => ['nullable', 'boolean'],
             'notes' => ['nullable', 'string'],
             'installments' => ['nullable', 'integer', 'min:1', 'max:120'],
         ]);
+
+        // Validar que a categoria pertence ao tipo da transação
+        $category = FinancialCategory::find($request->category_id);
+        if ($category && $category->type->value !== $request->type) {
+            $route = $request->type === 'expense' ? 'finance.payables' : 'finance.receivables';
+            return redirect()->route($route)->with('error', 'A categoria selecionada não corresponde ao tipo da transação.');
+        }
 
         $isPaid = $request->boolean('is_paid');
         $installments = max(1, (int) ($request->installments ?? 1));

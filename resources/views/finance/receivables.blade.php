@@ -6,6 +6,15 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if($errors->any())
+                <div style="margin-bottom: 1rem; padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; color: #991b1b;">
+                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.875rem;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <!-- Cabeçalho -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">

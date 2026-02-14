@@ -54,6 +54,10 @@ class Customer extends Model
 
     public function getFormattedPhoneAttribute(): string
     {
+        if (!$this->phone) {
+            return '';
+        }
+
         $phone = preg_replace('/\D/', '', $this->phone);
         
         if (strlen($phone) === 11) {

@@ -239,7 +239,11 @@ class Sale extends Model
 
     public function getInstallmentValueAttribute(): float
     {
-        if ($this->installments <= 1) {
+        if ($this->installments <= 0) {
+            return (float) $this->total;
+        }
+
+        if ($this->installments === 1) {
             return (float) $this->total;
         }
 

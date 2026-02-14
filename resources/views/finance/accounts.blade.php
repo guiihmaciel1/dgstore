@@ -11,6 +11,15 @@
                     {{ session('error') }}
                 </div>
             @endif
+            @if($errors->any())
+                <div style="margin-bottom: 1rem; padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; color: #991b1b;">
+                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.875rem;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <!-- Cabeçalho -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
@@ -156,7 +165,7 @@
                             <tbody>
                                 @foreach($statement as $entry)
                                     <tr style="border-bottom: 1px solid #f3f4f6;">
-                                        <td style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; color: #6b7280;">{{ $entry->date->format('d/m/Y H:i') }}</td>
+                                        <td style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; color: #6b7280;">{{ $entry->date?->format('d/m/Y H:i') ?? '-' }}</td>
                                         <td style="padding: 0.5rem 1rem; font-size: 0.8125rem; font-weight: 500; color: #111827;">{{ $entry->description }}</td>
                                         <td style="padding: 0.5rem 1rem;">
                                             <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: {{ $entry->category_color }}20; color: {{ $entry->category_color }}; font-weight: 500;">
