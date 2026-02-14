@@ -102,12 +102,12 @@ GREEN *$605* 1pc"
                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
 
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 0.75rem;">
-                        <!-- Toggle IA -->
+                        <!-- Toggle Regex -->
                         <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none;">
-                            <input type="checkbox" x-model="forceAi"
+                            <input type="checkbox" x-model="forceRegex"
                                    style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
                             <span style="font-size: 0.8125rem; color: #6b7280;">
-                                Forçar análise via IA
+                                Usar apenas regex (sem IA)
                             </span>
                         </label>
 
@@ -307,7 +307,7 @@ GREEN *$605* 1pc"
                 loading: false,
                 message: '',
                 messageType: '',
-                forceAi: false,
+                forceRegex: false,
                 parserUsed: '',
                 isFallback: false,
 
@@ -332,8 +332,8 @@ GREEN *$605* 1pc"
 
                     try {
                         const payload = { raw_text: this.rawText };
-                        if (this.forceAi) {
-                            payload.force_ai = true;
+                        if (this.forceRegex) {
+                            payload.force_regex = true;
                         }
 
                         const response = await fetch('{{ route("quotations.import-preview") }}', {

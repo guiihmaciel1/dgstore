@@ -240,34 +240,60 @@ class QuotationController extends Controller
     {
         $request->validate([
             'raw_text' => ['required', 'string', 'min:10'],
-            'force_ai' => ['nullable', 'boolean'],
+            'force_regex' => ['nullable', 'boolean'],
         ], [
             'raw_text.required' => 'Cole o texto da cotação do fornecedor.',
             'raw_text.min' => 'O texto parece muito curto para conter cotações.',
         ]);
 
         $rawText = $request->input('raw_text');
-        $forceAi = (bool) $request->input('force_ai', false);
+        $forceRegex = (bool) $request->input('force_regex', false);
 
-        // Se forçar IA, pula regex
-        if ($forceAi) {
+        // Se forçar regex, pula IA
+        if ($forceRegex) {
+            $items = $this->importParser->parse($rawText);
+
+            if (! empty($items)) {
+                return response()->json([
+                    'success' => true,
+                    'message' => count($items) . ' itens encontrados.',
+                    'items' => $items,
+                    'parser_used' => 'regex',
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Nenhum item encontrado via regex. Tente sem forçar o modo regex.',
+                'items' => [],
+                'parser_used' => 'regex',
+            ]);
+        }
+
+        // Padrão: IA primeiro (quando disponível)
+        if ($this->aiParser->isAvailable()) {
             return $this->parseWithAi($rawText);
         }
 
-        // Tenta regex primeiro
+        // Fallback para regex se IA não disponível
         $items = $this->importParser->parse($rawText);
 
         if (! empty($items)) {
             return response()->json([
                 'success' => true,
-                'message' => count($items) . ' itens encontrados.',
+                'message' => count($items) . ' itens encontrados (IA indisponível, usado regex).',
                 'items' => $items,
                 'parser_used' => 'regex',
+                'is_fallback' => true,
             ]);
         }
 
-        // Regex não encontrou nada — fallback para IA
-        return $this->parseWithAi($rawText, true);
+        return response()->json([
+            'success' => false,
+            'message' => 'Nenhum item encontrado. IA indisponível e regex não reconheceu o formato.',
+            'items' => [],
+            'parser_used' => 'none',
+        ]);
     }
 
     /**

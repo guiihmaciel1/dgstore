@@ -52,36 +52,33 @@ class AiQuotationParser
      */
     private function buildPrompt(string $rawText): string
     {
+        // Limpa o texto antes de enviar (remove emojis e caracteres problemáticos)
+        $cleanText = $this->cleanRawText($rawText);
+
         return <<<PROMPT
-Analise o texto abaixo que é uma lista de cotação de um fornecedor de produtos Apple (iPhones, iPads, MacBooks, Apple Watch, AirPods, acessórios).
+Converta a lista de cotação abaixo em JSON. O texto vem de WhatsApp de um fornecedor de produtos Apple.
 
-Extraia TODOS os itens com seus dados. Cada item deve conter:
-- category: categoria do produto (ex: "IPHONE LACRADO", "IPHONE SWAP", "APPLE ACCESSORIES", "IPAD", "MACBOOK", "APPLE WATCH", etc.)
-- product_name: nome completo do produto incluindo modelo, capacidade, cor/variante (ex: "15 PRO MAX 256GB - BLACK TITANIUM")
-- price_usd: preço em dólares americanos (número decimal, sem símbolo $)
-- quantity: quantidade disponível (número inteiro, se não informado use 1)
+FORMATO DE SAÍDA (array JSON, sem markdown):
+[{"category":"CATEGORIA","product_name":"NOME COMPLETO","price_usd":999.99,"quantity":1}]
 
-Regras:
-1. Se o texto tem seções/categorias (como "IPHONE LACRADO", "IPHONE SWAP"), use como category
-2. Se um produto tem múltiplas variantes (cores), crie um item separado para CADA variante
-3. O product_name deve incluir o cabeçalho do produto + a variante (ex: "16 PRO 256GB - DESERT TITANIUM")
-4. Preços podem estar em formatos como: *$280*, $280, 280, US$ 280
-5. Quantidades podem estar como: 1pc, 2 pcs, x3, ou implícita (1)
-6. Se o texto contém preços em BRL (R$), IGNORE-os — extraia apenas USD
-7. Se não conseguir identificar o preço em USD, IGNORE o item
+CAMPOS:
+- category: seção/grupo do texto (ex: "IPHONE LACRADO", "IPHONE SWAP", "APPLE ACCESSORIES", "IPAD", "MACBOOK", "APPLE WATCH"). Se não houver seção, use "GERAL"
+- product_name: modelo + capacidade + cor/variante em MAIÚSCULO (ex: "16 PRO 256GB - BLACK TITANIUM")
+- price_usd: preço em USD como número (sem $)
+- quantity: quantidade (número inteiro, padrão 1)
 
-Retorne um array JSON com os itens extraídos. Exemplo:
-[
-  {"category": "IPHONE LACRADO", "product_name": "16 PRO 256GB - DESERT TITANIUM", "price_usd": 650, "quantity": 1},
-  {"category": "IPHONE LACRADO", "product_name": "16 PRO 256GB - BLACK TITANIUM", "price_usd": 655, "quantity": 2}
-]
+REGRAS IMPORTANTES:
+1. Cada variante (cor) é um item SEPARADO
+2. product_name = cabeçalho do produto + " - " + variante (ex: header "15 128GB IN" + cor "BLACK" = "15 128GB IN - BLACK")
+3. Formatos de preço aceitos: *$610*, $610, US$610, 610 (quando claramente USD)
+4. Formatos de quantidade: 1pc, 2pcs, x3, ou padrão 1
+5. IGNORE preços em BRL (R$)
+6. IGNORE itens sem preço USD
+7. Tudo em MAIÚSCULO
+8. NÃO invente dados que não estão no texto
 
-Se nenhum item for encontrado, retorne um array vazio: []
-
-TEXTO DO FORNECEDOR:
----
-{$rawText}
----
+TEXTO:
+{$cleanText}
 PROMPT;
     }
 
@@ -90,9 +87,47 @@ PROMPT;
      */
     private function buildSystemInstruction(): string
     {
-        return 'Você é um parser especializado em extrair dados estruturados de cotações de fornecedores de produtos Apple. '
-            . 'Seu trabalho é transformar texto não estruturado (WhatsApp, e-mail, planilha colada) em dados JSON limpos. '
-            . 'Seja preciso nos preços e nomes. Não invente dados que não estão no texto.';
+        return 'Você é um parser de cotações de produtos Apple. '
+            . 'Converta texto de WhatsApp em JSON puro. '
+            . 'Retorne APENAS o array JSON, sem explicações, sem markdown. '
+            . 'Se não encontrar itens, retorne []. '
+            . 'Seja preciso nos preços e nomes. Não invente dados.';
+    }
+
+    /**
+     * Limpa o texto bruto antes de enviar ao Gemini.
+     * Remove emojis, caracteres especiais e normaliza espaçamento.
+     */
+    private function cleanRawText(string $text): string
+    {
+        // Remove emojis e caracteres Unicode decorativos
+        $patterns = [
+            '/[\x{1F000}-\x{1FFFF}]/u',
+            '/[\x{2600}-\x{27BF}]/u',
+            '/[\x{FE00}-\x{FE0F}]/u',
+            '/[\x{1F900}-\x{1F9FF}]/u',
+            '/[\x{200D}]/u',
+            '/[\x{20E3}]/u',
+            '/[\x{E0020}-\x{E007F}]/u',
+            '/[\x{1F1E0}-\x{1F1FF}]/u',
+            '/[\x{200B}-\x{200F}]/u',
+            '/[\x{2028}-\x{202F}]/u',
+            '/[\x{2060}]/u',
+            '/[\x{FEFF}]/u',
+        ];
+
+        $result = $text;
+        foreach ($patterns as $pattern) {
+            $result = preg_replace($pattern, '', $result) ?? $result;
+        }
+
+        // Normaliza quebras de linha
+        $result = str_replace(["\r\n", "\r"], "\n", $result);
+
+        // Remove linhas vazias consecutivas
+        $result = preg_replace('/\n{3,}/', "\n\n", $result) ?? $result;
+
+        return trim($result);
     }
 
     /**

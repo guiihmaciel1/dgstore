@@ -95,8 +95,8 @@ class GeminiService
                 ],
             ],
             'generationConfig' => [
-                'temperature' => 0.2,
-                'maxOutputTokens' => 4096,
+                'temperature' => 0.1,
+                'maxOutputTokens' => 16384,
                 // Desabilita "thinking" do gemini-2.5+ para economia de tokens e menor latência
                 'thinkingConfig' => [
                     'thinkingBudget' => 0,
@@ -145,7 +145,8 @@ class GeminiService
 
                 // Rate limit (429) ou erro de servidor (5xx): retry com backoff
                 if ($attempt < $maxAttempts && ($status === 429 || $status >= 500)) {
-                    $waitSeconds = $this->extractRetryDelay($errorBody);
+                    $waitSeconds = min($this->extractRetryDelay($errorBody), 30);
+                    Log::info("GeminiService: Aguardando {$waitSeconds}s antes do retry...");
                     sleep($waitSeconds);
 
                     continue;
@@ -217,16 +218,11 @@ class GeminiService
     }
 
     /**
-     * Parseia texto como JSON, removendo possíveis wrappers markdown.
+     * Parseia texto como JSON, removendo possíveis wrappers markdown e caracteres inválidos.
      */
     private function parseJsonResponse(string $text): ?array
     {
-        $cleaned = trim($text);
-
-        // Remove wrapper ```json ... ``` se presente
-        $cleaned = preg_replace('/^```(?:json)?\s*/i', '', $cleaned);
-        $cleaned = preg_replace('/\s*```\s*$/', '', $cleaned);
-        $cleaned = trim($cleaned);
+        $cleaned = $this->sanitizeJsonText($text);
 
         // Tentativa 1: JSON direto
         $decoded = json_decode($cleaned, true);
@@ -235,7 +231,7 @@ class GeminiService
             return $decoded;
         }
 
-        // Tentativa 2: Extrair JSON entre [ ] ou { } (modelo pode adicionar texto antes/depois)
+        // Tentativa 2: Extrair JSON entre [ ] ou { }
         if (preg_match('/(\[[\s\S]*\])\s*$/', $cleaned, $matches)) {
             $decoded = json_decode($matches[1], true);
 
@@ -258,6 +254,31 @@ class GeminiService
         ]);
 
         return null;
+    }
+
+    /**
+     * Sanitiza o texto para parsing JSON seguro.
+     * Remove wrappers markdown, caracteres de controle e BOM.
+     */
+    private function sanitizeJsonText(string $text): string
+    {
+        $cleaned = trim($text);
+
+        // Remove BOM (Byte Order Mark)
+        $cleaned = preg_replace('/^\x{FEFF}/u', '', $cleaned) ?? $cleaned;
+
+        // Remove wrapper ```json ... ``` se presente
+        $cleaned = preg_replace('/^```(?:json)?\s*/i', '', $cleaned);
+        $cleaned = preg_replace('/\s*```\s*$/', '', $cleaned);
+        $cleaned = trim($cleaned);
+
+        // Remove caracteres de controle (exceto \n, \r, \t que são válidos em JSON strings)
+        $cleaned = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $cleaned) ?? $cleaned;
+
+        // Remove caracteres Unicode invisíveis problemáticos
+        $cleaned = preg_replace('/[\x{200B}-\x{200F}\x{2028}-\x{202F}\x{2060}\x{FEFF}]/u', '', $cleaned) ?? $cleaned;
+
+        return $cleaned;
     }
 
     /**
