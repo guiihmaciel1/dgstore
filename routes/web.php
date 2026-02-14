@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Presentation\Http\Controllers\CashRegisterController;
 use App\Presentation\Http\Controllers\CustomerController;
 use App\Presentation\Http\Controllers\DashboardController;
 use App\Presentation\Http\Controllers\ImportOrderController;
@@ -17,6 +16,7 @@ use App\Presentation\Http\Controllers\FollowupController;
 use App\Presentation\Http\Controllers\ImeiLookupController;
 use App\Presentation\Http\Controllers\ToolController;
 use App\Presentation\Http\Controllers\WarrantyController;
+use App\Presentation\Http\Controllers\FinanceController;
 use Illuminate\Support\Facades\Route;
 
 // Redireciona a raiz para o dashboard ou login
@@ -111,11 +111,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reservations/{reservation}/convert', [ReservationController::class, 'convert'])->name('reservations.convert');
     Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
 
-    // Fluxo de Caixa
-    Route::get('/cash-register', [CashRegisterController::class, 'index'])->name('cash-register.index');
-    Route::post('/cash-register/open', [CashRegisterController::class, 'open'])->name('cash-register.open');
-    Route::post('/cash-register/{register}/close', [CashRegisterController::class, 'close'])->name('cash-register.close');
-    Route::post('/cash-register/{register}/entry', [CashRegisterController::class, 'addEntry'])->name('cash-register.entry');
+    // Financeiro
+    Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');
+    Route::get('/finance/payables', [FinanceController::class, 'payables'])->name('finance.payables');
+    Route::get('/finance/receivables', [FinanceController::class, 'receivables'])->name('finance.receivables');
+    Route::get('/finance/accounts', [FinanceController::class, 'accounts'])->name('finance.accounts');
+    Route::post('/finance/accounts', [FinanceController::class, 'storeAccount'])->name('finance.accounts.store');
+    Route::post('/finance/transfers', [FinanceController::class, 'storeTransfer'])->name('finance.transfers.store');
+    Route::get('/finance/categories', [FinanceController::class, 'categories'])->name('finance.categories');
+    Route::post('/finance/categories', [FinanceController::class, 'storeCategory'])->name('finance.categories.store');
+    Route::delete('/finance/categories/{category}', [FinanceController::class, 'destroyCategory'])->name('finance.categories.destroy');
+    Route::post('/finance/transactions', [FinanceController::class, 'storeTransaction'])->name('finance.transactions.store');
+    Route::post('/finance/transactions/{transaction}/pay', [FinanceController::class, 'payTransaction'])->name('finance.transactions.pay');
+    Route::post('/finance/transactions/{transaction}/cancel', [FinanceController::class, 'cancelTransaction'])->name('finance.transactions.cancel');
 
     // Avaliação de Seminovos
     Route::get('/valuations', [ValuationController::class, 'index'])->name('valuations.index');

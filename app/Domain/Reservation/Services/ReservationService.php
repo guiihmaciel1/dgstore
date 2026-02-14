@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Reservation\Services;
 
+use App\Domain\Finance\Services\FinanceService;
 use App\Domain\Product\Models\Product;
 use App\Domain\Reservation\Enums\ReservationStatus;
 use App\Domain\Reservation\Models\Reservation;
@@ -12,10 +13,14 @@ use App\Domain\Sale\Enums\PaymentMethod;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 class ReservationService
 {
+    public function __construct(
+        private readonly FinanceService $financeService,
+    ) {}
     /**
      * Lista reservas com filtros
      */
@@ -148,6 +153,20 @@ class ReservationService
 
         // Atualiza total pago na reserva
         $reservation->addPayment($amount);
+
+        // Registrar no financeiro
+        try {
+            $productName = $reservation->product_name ?? 'Reserva';
+            $this->financeService->registerReservationPayment(
+                userId: $userId,
+                amount: $amount,
+                description: "Sinal Reserva #{$reservation->reservation_number} — {$productName}",
+                referenceId: $reservation->id,
+                paymentMethod: $paymentMethod->value,
+            );
+        } catch (\Throwable $e) {
+            Log::warning("Não foi possível registrar sinal no financeiro: {$e->getMessage()}");
+        }
 
         return $payment;
     }

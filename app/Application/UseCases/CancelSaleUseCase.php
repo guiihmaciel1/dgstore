@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCases;
 
-use App\Domain\CashRegister\Enums\CashEntryType;
-use App\Domain\CashRegister\Models\CashRegisterEntry;
-use App\Domain\CashRegister\Services\CashRegisterService;
+use App\Domain\Finance\Services\FinanceService;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
@@ -17,7 +15,7 @@ class CancelSaleUseCase
 {
     public function __construct(
         private readonly SaleRepositoryInterface $saleRepository,
-        private readonly CashRegisterService $cashRegisterService,
+        private readonly FinanceService $financeService,
     ) {}
 
     /**
@@ -33,8 +31,8 @@ class CancelSaleUseCase
         // 2. Cancelar a venda (o repository cuida de devolver o estoque)
         $sale = $this->saleRepository->cancel($sale);
 
-        // 3. Estornar lançamentos do caixa
-        $this->reverseCashRegisterEntries($sale);
+        // 3. Cancelar transações financeiras
+        $this->cancelFinancialTransactions($sale);
 
         // 4. Se houver motivo, adiciona às notas
         if ($reason) {
@@ -47,51 +45,14 @@ class CancelSaleUseCase
     }
 
     /**
-     * Estorna os lançamentos do caixa relacionados a esta venda.
+     * Cancela as transações financeiras vinculadas à venda.
      */
-    private function reverseCashRegisterEntries(Sale $sale): void
+    private function cancelFinancialTransactions(Sale $sale): void
     {
         try {
-            $register = $this->cashRegisterService->getOpenRegister();
-
-            if (!$register) {
-                return;
-            }
-
-            // Buscar lançamentos de venda vinculados
-            $entries = CashRegisterEntry::where('reference_id', $sale->id)
-                ->where('type', CashEntryType::Sale)
-                ->get();
-
-            foreach ($entries as $entry) {
-                $this->cashRegisterService->addEntry(
-                    register: $register,
-                    userId: auth()->id() ?? $sale->user_id,
-                    type: CashEntryType::Withdrawal,
-                    amount: (float) $entry->amount,
-                    description: "Estorno: Venda #{$sale->sale_number} cancelada",
-                    paymentMethod: $entry->payment_method,
-                    referenceId: $sale->id,
-                );
-            }
-
-            // Estornar trade-in (se houver, devolver como suprimento)
-            $tradeInEntries = CashRegisterEntry::where('reference_id', $sale->id)
-                ->where('type', CashEntryType::TradeIn)
-                ->get();
-
-            foreach ($tradeInEntries as $entry) {
-                $this->cashRegisterService->addEntry(
-                    register: $register,
-                    userId: auth()->id() ?? $sale->user_id,
-                    type: CashEntryType::Supply,
-                    amount: (float) $entry->amount,
-                    description: "Estorno trade-in: Venda #{$sale->sale_number} cancelada",
-                    referenceId: $sale->id,
-                );
-            }
+            $this->financeService->cancelSaleTransactions($sale->id);
         } catch (\Throwable $e) {
-            Log::warning("Não foi possível estornar caixa da venda #{$sale->sale_number}: {$e->getMessage()}");
+            Log::warning("Não foi possível cancelar transações financeiras da venda #{$sale->sale_number}: {$e->getMessage()}");
         }
     }
 

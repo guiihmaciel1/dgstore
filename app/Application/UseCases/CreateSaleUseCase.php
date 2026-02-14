@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCases;
 
-use App\Domain\CashRegister\Enums\CashEntryType;
-use App\Domain\CashRegister\Services\CashRegisterService;
+use App\Domain\Finance\Services\FinanceService;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Sale\DTOs\SaleData;
 use App\Domain\Sale\Models\Sale;
@@ -20,7 +19,7 @@ class CreateSaleUseCase
         private readonly SaleRepositoryInterface $saleRepository,
         private readonly ProductRepositoryInterface $productRepository,
         private readonly StockService $stockService,
-        private readonly CashRegisterService $cashRegisterService,
+        private readonly FinanceService $financeService,
     ) {}
 
     /**
@@ -36,38 +35,30 @@ class CreateSaleUseCase
         // 2. Criar a venda (o repository já cuida de criar items e movimentar estoque)
         $sale = $this->saleRepository->create($data);
 
-        // 3. Registrar automaticamente no caixa (se estiver aberto)
-        $this->registerInCashRegister($sale);
+        // 3. Registrar automaticamente no financeiro
+        $this->registerInFinance($sale);
 
         return $sale;
     }
 
     /**
-     * Registra a venda no caixa aberto, se houver.
-     * Não lança exceção para não bloquear a venda caso o caixa esteja fechado.
+     * Registra a venda no módulo financeiro.
+     * Não lança exceção para não bloquear a venda.
      */
-    private function registerInCashRegister(Sale $sale): void
+    private function registerInFinance(Sale $sale): void
     {
         try {
-            $register = $this->cashRegisterService->getOpenRegister();
-
-            if (!$register) {
-                return;
-            }
-
             $description = "Venda #{$sale->sale_number}";
 
             // Registrar parcela à vista (dinheiro/PIX)
             if ((float) $sale->cash_payment > 0) {
                 $method = $sale->cash_payment_method === 'pix' ? 'PIX' : 'Dinheiro';
-                $this->cashRegisterService->addEntry(
-                    register: $register,
+                $this->financeService->registerSaleIncome(
                     userId: $sale->user_id,
-                    type: CashEntryType::Sale,
                     amount: (float) $sale->cash_payment,
                     description: "{$description} ({$method})",
-                    paymentMethod: $sale->cash_payment_method,
                     referenceId: $sale->id,
+                    paymentMethod: $sale->cash_payment_method,
                 );
             }
 
@@ -75,43 +66,37 @@ class CreateSaleUseCase
             if ((float) $sale->card_payment > 0) {
                 $methodLabel = $sale->payment_method?->label() ?? 'Cartão';
                 $installmentInfo = $sale->installments > 1 ? " {$sale->installments}x" : '';
-                $this->cashRegisterService->addEntry(
-                    register: $register,
+                $this->financeService->registerSaleIncome(
                     userId: $sale->user_id,
-                    type: CashEntryType::Sale,
                     amount: (float) $sale->card_payment,
                     description: "{$description} ({$methodLabel}{$installmentInfo})",
-                    paymentMethod: $sale->payment_method?->value,
                     referenceId: $sale->id,
+                    paymentMethod: $sale->payment_method?->value,
                 );
             }
 
             // Se não for pagamento misto, registrar valor total com método principal
             if ((float) $sale->cash_payment <= 0 && (float) $sale->card_payment <= 0) {
-                $this->cashRegisterService->addEntry(
-                    register: $register,
+                $this->financeService->registerSaleIncome(
                     userId: $sale->user_id,
-                    type: CashEntryType::Sale,
                     amount: (float) $sale->total,
                     description: $description,
-                    paymentMethod: $sale->payment_method?->value,
                     referenceId: $sale->id,
+                    paymentMethod: $sale->payment_method?->value,
                 );
             }
 
-            // Registrar trade-in como saída
+            // Registrar trade-in como despesa
             if ((float) $sale->trade_in_value > 0) {
-                $this->cashRegisterService->addEntry(
-                    register: $register,
+                $this->financeService->registerTradeInExpense(
                     userId: $sale->user_id,
-                    type: CashEntryType::TradeIn,
                     amount: (float) $sale->trade_in_value,
                     description: "{$description} (Trade-in)",
                     referenceId: $sale->id,
                 );
             }
         } catch (\Throwable $e) {
-            Log::warning("Não foi possível registrar venda #{$sale->sale_number} no caixa: {$e->getMessage()}");
+            Log::warning("Não foi possível registrar venda #{$sale->sale_number} no financeiro: {$e->getMessage()}");
         }
     }
 
