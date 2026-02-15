@@ -213,8 +213,8 @@ class StockController extends Controller
                     'model' => $tradeIn->device_model,
                     'condition' => $condition->value,
                     'imei' => $tradeIn->imei,
-                    'stock_quantity' => 1,
-                    'notes' => "Origem: Trade-in da venda #{$tradeIn->sale?->sale_number}. Valor estimado: R$ " . number_format($tradeIn->estimated_value, 2, ',', '.') . ". {$tradeIn->notes}",
+                    'stock_quantity' => 0,
+                    'notes' => "Origem: Trade-in da venda #{$tradeIn->sale?->sale_number}. Valor estimado: R$ " . number_format((float) $tradeIn->estimated_value, 2, ',', '.') . ". {$tradeIn->notes}",
                 ]);
 
                 $product = $this->productService->create($productData);
