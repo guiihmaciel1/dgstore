@@ -120,7 +120,13 @@ class SaleController extends Controller
 
     public function show(Sale $sale): View
     {
-        $sale->load(['items.product', 'customer', 'user', 'stockMovements', 'tradeIns']);
+        $sale->load([
+            'items.product.tradeIn.sale',
+            'customer',
+            'user',
+            'stockMovements',
+            'tradeIns.product.saleItems.sale.customer',
+        ]);
 
         return view('sales.show', [
             'sale' => $sale,

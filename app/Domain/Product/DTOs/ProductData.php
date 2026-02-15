@@ -18,6 +18,7 @@ readonly class ProductData
         public ?string $color = null,
         public ProductCondition $condition = ProductCondition::New,
         public ?string $imei = null,
+        public ?float $costPrice = null,
         public int $stockQuantity = 0,
         public int $minStockAlert = 1,
         public ?string $supplier = null,
@@ -46,6 +47,7 @@ readonly class ProductData
                     : ProductCondition::from($data['condition']))
                 : ProductCondition::New,
             imei: $data['imei'] ?? null,
+            costPrice: isset($data['cost_price']) ? (float) $data['cost_price'] : null,
             stockQuantity: (int) ($data['stock_quantity'] ?? 0),
             minStockAlert: (int) ($data['min_stock_alert'] ?? 1),
             supplier: $data['supplier'] ?? null,
@@ -65,6 +67,7 @@ readonly class ProductData
             'color' => $this->color,
             'condition' => $this->condition->value,
             'imei' => $this->imei,
+            'cost_price' => $this->costPrice,
             'stock_quantity' => $this->stockQuantity,
             'min_stock_alert' => $this->minStockAlert,
             'supplier' => $this->supplier,

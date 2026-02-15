@@ -106,12 +106,24 @@
                                         @endphp
                                         <tr style="border-bottom: 1px solid #f3f4f6;">
                                             <td style="padding: 1rem 1.5rem;">
-                                                <div style="font-weight: 500; color: #111827;">{{ $item->product_name }}</div>
+                                                @php $itemTradeIn = $item->product?->tradeIn; @endphp
+                                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                    <span style="font-weight: 500; color: #111827;">{{ $item->product_name }}</span>
+                                                    @if($itemTradeIn)
+                                                        <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trade-in</span>
+                                                    @endif
+                                                </div>
                                                 <div style="font-size: 0.75rem; color: #9ca3af;">
                                                     SKU: {{ $item->product_sku }}
                                                     @if($item->supplier_origin)
                                                         <span style="margin-left: 0.5rem; padding: 0.125rem 0.375rem; background: {{ $item->supplier_origin === 'py' ? '#fef3c7' : '#dbeafe' }}; color: {{ $item->supplier_origin === 'py' ? '#92400e' : '#1e40af' }}; font-size: 0.6875rem; font-weight: 600; border-radius: 0.25rem;">
                                                             {{ strtoupper($item->supplier_origin) }}
+                                                        </span>
+                                                    @endif
+                                                    @if($itemTradeIn && $itemTradeIn->sale)
+                                                        <span style="margin-left: 0.25rem; font-size: 0.6875rem; color: #6b7280;">
+                                                            Recebido via
+                                                            <a href="{{ route('sales.show', $itemTradeIn->sale) }}" style="color: #2563eb; font-weight: 500; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">#{{ $itemTradeIn->sale->sale_number }}</a>
                                                         </span>
                                                     @endif
                                                 </div>
@@ -359,6 +371,43 @@
                                     <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #374151;">{{ $tradeInItem->notes }}</dd>
                                 </div>
                                 @endif
+                                {{-- Rastreio: produto criado a partir do trade-in --}}
+                                @if($tradeInItem->product)
+                                <div style="margin-top: 1rem; padding: 0.75rem; background: #eff6ff; border-radius: 0.5rem; border: 1px solid #bfdbfe;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <svg style="width: 1rem; height: 1rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                        </svg>
+                                        <span style="font-size: 0.75rem; font-weight: 600; color: #1d4ed8;">Produto Cadastrado no Estoque</span>
+                                    </div>
+                                    <a href="{{ route('products.show', $tradeInItem->product) }}" style="font-size: 0.875rem; font-weight: 500; color: #2563eb; text-decoration: none;"
+                                       onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                        {{ $tradeInItem->product->full_name }} ({{ $tradeInItem->product->sku }})
+                                    </a>
+                                    @php
+                                        $productSale = $tradeInItem->product->saleItems->first()?->sale;
+                                    @endphp
+                                    @if($productSale)
+                                    <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #bfdbfe; display: flex; align-items: center; gap: 0.5rem;">
+                                        <svg style="width: 0.875rem; height: 0.875rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        <span style="font-size: 0.75rem; color: #16a34a; font-weight: 500;">Vendido na venda
+                                            <a href="{{ route('sales.show', $productSale) }}" style="color: #2563eb; font-weight: 600; text-decoration: none;"
+                                               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">#{{ $productSale->sale_number }}</a>
+                                            @if($productSale->customer)
+                                                para {{ $productSale->customer->name }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                    @elseif($tradeInItem->product->stock_quantity > 0)
+                                    <div style="margin-top: 0.5rem; font-size: 0.75rem; color: #ca8a04;">
+                                        Em estoque ({{ $tradeInItem->product->stock_quantity }} unidade(s))
+                                    </div>
+                                    @endif
+                                </div>
+                                @endif
+
                                 @if($tradeInItem->isPending())
                                 <div style="margin-top: 1rem; padding: 0.75rem; background: #fefce8; border-radius: 0.5rem; border: 1px solid #fde68a;">
                                     <p style="font-size: 0.75rem; color: #92400e;">

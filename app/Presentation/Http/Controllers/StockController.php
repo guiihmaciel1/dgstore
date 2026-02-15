@@ -213,6 +213,7 @@ class StockController extends Controller
                     'model' => $tradeIn->device_model,
                     'condition' => $condition->value,
                     'imei' => $tradeIn->imei,
+                    'cost_price' => (float) $tradeIn->estimated_value,
                     'stock_quantity' => 0,
                     'notes' => "Origem: Trade-in da venda #{$tradeIn->sale?->sale_number}. Valor estimado: R$ " . number_format((float) $tradeIn->estimated_value, 2, ',', '.') . ". {$tradeIn->notes}",
                 ]);

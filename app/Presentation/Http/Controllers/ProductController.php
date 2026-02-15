@@ -64,7 +64,7 @@ class ProductController extends Controller
 
     public function show(Product $product): View
     {
-        $product->load('stockMovements.user');
+        $product->load(['stockMovements.user', 'tradeIn.sale.customer', 'saleItems.sale.customer']);
 
         return view('products.show', [
             'product' => $product,
@@ -127,6 +127,7 @@ class ProductController extends Controller
         }
 
         $products = $this->productService->search($term);
+        $products->load('tradeIn:id,product_id,sale_id,estimated_value');
 
         return response()->json(
             $products->map(fn(Product $product) => [
@@ -134,6 +135,9 @@ class ProductController extends Controller
                 'name' => $product->full_name,
                 'sku' => $product->sku,
                 'stock' => $product->stock_quantity,
+                'cost_price' => $product->cost_price ? (float) $product->cost_price : null,
+                'condition' => $product->condition?->value,
+                'from_trade_in' => $product->tradeIn !== null,
             ])
         );
     }

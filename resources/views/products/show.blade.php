@@ -163,6 +163,96 @@
 
                 <!-- Coluna Lateral -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    {{-- Rastreio / Origem do Produto --}}
+                    @php
+                        $tradeIn = $product->tradeIn;
+                        $soldItems = $product->saleItems->filter(fn($item) => $item->sale && $item->sale->status !== 'cancelled');
+                    @endphp
+                    @if($tradeIn || $product->cost_price)
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 2px solid #bfdbfe; overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #eff6ff; display: flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                            </svg>
+                            <h3 style="font-weight: 600; color: #1d4ed8;">Rastreio do Produto</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                            {{-- Custo de aquisição --}}
+                            @if($product->cost_price)
+                            <div style="margin-bottom: 1rem; padding: 0.75rem; background: #f0fdf4; border-radius: 0.5rem; border: 1px solid #bbf7d0;">
+                                <p style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Custo de Aquisição</p>
+                                <p style="font-size: 1.5rem; font-weight: 700; color: #16a34a;">{{ $product->formatted_cost_price }}</p>
+                            </div>
+                            @endif
+
+                            {{-- Origem: Trade-in --}}
+                            @if($tradeIn)
+                            <div style="margin-bottom: 1rem;">
+                                <p style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase; margin-bottom: 0.5rem;">Origem</p>
+                                <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; border: 1px solid #e5e7eb;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trade-in</span>
+                                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: {{ $tradeIn->condition->value === 'excellent' ? '#f0fdf4' : ($tradeIn->condition->value === 'good' ? '#eff6ff' : '#fefce8') }}; color: {{ $tradeIn->condition->value === 'excellent' ? '#16a34a' : ($tradeIn->condition->value === 'good' ? '#2563eb' : '#ca8a04') }}; border-radius: 9999px; font-weight: 500;">
+                                            {{ ucfirst($tradeIn->condition->value) }}
+                                        </span>
+                                    </div>
+                                    <p style="font-size: 0.875rem; font-weight: 500; color: #111827;">{{ $tradeIn->device_name }}</p>
+                                    @if($tradeIn->imei)
+                                    <p style="font-size: 0.75rem; color: #6b7280; font-family: monospace;">IMEI: {{ $tradeIn->imei }}</p>
+                                    @endif
+                                    @if($tradeIn->notes)
+                                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">{{ $tradeIn->notes }}</p>
+                                    @endif
+                                    @if($tradeIn->sale)
+                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb;">
+                                        <p style="font-size: 0.75rem; color: #6b7280;">Recebido na venda:</p>
+                                        <a href="{{ route('sales.show', $tradeIn->sale) }}" style="font-size: 0.875rem; font-weight: 600; color: #1d4ed8; text-decoration: none;"
+                                           onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                            #{{ $tradeIn->sale->sale_number }}
+                                        </a>
+                                        @if($tradeIn->sale->customer)
+                                        <p style="font-size: 0.75rem; color: #6b7280;">Cliente: {{ $tradeIn->sale->customer->name }}</p>
+                                        @endif
+                                        <p style="font-size: 0.75rem; color: #6b7280;">{{ $tradeIn->sale->created_at->format('d/m/Y') }}</p>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
+
+                            {{-- Vendas deste produto --}}
+                            @if($soldItems->isNotEmpty())
+                            <div>
+                                <p style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase; margin-bottom: 0.5rem;">Vendido em</p>
+                                @foreach($soldItems as $saleItem)
+                                <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; border: 1px solid #e5e7eb; {{ !$loop->last ? 'margin-bottom: 0.5rem;' : '' }}">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <a href="{{ route('sales.show', $saleItem->sale) }}" style="font-size: 0.875rem; font-weight: 600; color: #1d4ed8; text-decoration: none;"
+                                           onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                            #{{ $saleItem->sale->sale_number }}
+                                        </a>
+                                        <span style="font-size: 0.75rem; color: #6b7280;">{{ $saleItem->sale->created_at->format('d/m/Y') }}</span>
+                                    </div>
+                                    @if($saleItem->sale->customer)
+                                    <p style="font-size: 0.75rem; color: #6b7280;">{{ $saleItem->sale->customer->name }}</p>
+                                    @endif
+                                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.75rem;">
+                                        <span style="color: #6b7280;">Venda: <span style="font-weight: 600; color: #111827;">R$ {{ number_format((float) $saleItem->unit_price, 2, ',', '.') }}</span></span>
+                                        @if($saleItem->cost_price)
+                                        <span style="color: #6b7280;">Custo: <span style="font-weight: 600; color: #111827;">R$ {{ number_format((float) $saleItem->cost_price, 2, ',', '.') }}</span></span>
+                                        @endif
+                                        <span style="color: {{ $saleItem->item_profit >= 0 ? '#16a34a' : '#dc2626' }}; font-weight: 600;">
+                                            Lucro: R$ {{ number_format($saleItem->item_profit, 2, ',', '.') }}
+                                        </span>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+
                     <!-- Estoque -->
                     <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden; {{ $product->isLowStock() ? ($product->isOutOfStock() ? 'border-color: #fecaca;' : 'border-color: #fde68a;') : '' }}">
                         <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#fef2f2' : '#fefce8') : '#f9fafb' }};">

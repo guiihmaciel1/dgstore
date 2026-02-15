@@ -117,10 +117,14 @@
                                                 onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'"
                                             >
                                                 <div>
-                                                    <span style="font-weight: 600; color: #111827;" x-text="product.name"></span>
+                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                        <span style="font-weight: 600; color: #111827;" x-text="product.name"></span>
+                                                        <span x-show="product.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Trade-in</span>
+                                                    </div>
                                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
                                                         <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #4b5563; border-radius: 0.25rem;" x-text="product.sku"></span>
                                                         <span style="font-size: 0.75rem;" :style="{ color: product.stock > 0 ? '#6b7280' : '#ea580c', fontWeight: product.stock <= 0 ? '600' : '400' }" x-text="product.stock > 0 ? product.stock + ' em estoque' : 'Sem estoque'"></span>
+                                                        <span x-show="product.cost_price" style="font-size: 0.75rem; color: #059669; font-weight: 500;" x-text="product.cost_price ? 'Custo: R$ ' + product.cost_price.toFixed(2).replace('.', ',') : ''"></span>
                                                     </div>
                                                 </div>
                                                 <svg style="width: 1.25rem; height: 1.25rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,7 +165,10 @@
                                                 {{-- Linha 1: Nome, Quantidade, Venda, Subtotal, Remover --}}
                                                 <div style="display: flex; align-items: center; gap: 1rem;">
                                                     <div style="flex: 1; min-width: 0;">
-                                                        <p style="font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.name"></p>
+                                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                            <p style="font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.name"></p>
+                                                            <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; flex-shrink: 0;">TRADE-IN</span>
+                                                        </div>
                                                         <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.id">
                                                     </div>
                                                     
@@ -1358,12 +1365,14 @@
                             id: product.id,
                             name: product.name,
                             price: 0,
-                            cost_price: 0,
+                            cost_price: product.cost_price || 0,
                             supplier_origin: '',
                             freight_type: '',
                             freight_value: 0,
                             quantity: 1,
-                            stock: product.stock
+                            stock: product.stock,
+                            from_trade_in: product.from_trade_in || false,
+                            condition: product.condition || null,
                         });
                     }
                     this.searchTerm = '';

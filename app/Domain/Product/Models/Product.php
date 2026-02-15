@@ -7,11 +7,13 @@ namespace App\Domain\Product\Models;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Sale\Models\SaleItem;
+use App\Domain\Sale\Models\TradeIn;
 use App\Domain\Stock\Models\StockMovement;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -28,6 +30,7 @@ class Product extends Model
         'color',
         'condition',
         'imei',
+        'cost_price',
         'stock_quantity',
         'min_stock_alert',
         'supplier',
@@ -42,6 +45,7 @@ class Product extends Model
         return [
             'category' => ProductCategory::class,
             'condition' => ProductCondition::class,
+            'cost_price' => 'decimal:2',
             'stock_quantity' => 'integer',
             'min_stock_alert' => 'integer',
             'active' => 'boolean',
@@ -62,6 +66,14 @@ class Product extends Model
     public function stockMovements(): HasMany
     {
         return $this->hasMany(StockMovement::class);
+    }
+
+    /**
+     * Trade-in que originou este produto (se aplicável).
+     */
+    public function tradeIn(): HasOne
+    {
+        return $this->hasOne(TradeIn::class, 'product_id');
     }
 
     // Scopes
@@ -113,6 +125,23 @@ class Product extends Model
         return $this->category === ProductCategory::Smartphone;
     }
 
+    /**
+     * Verifica se o produto foi originado de um trade-in.
+     */
+    public function isFromTradeIn(): bool
+    {
+        return $this->tradeIn()->exists();
+    }
+
+    public function getFormattedCostPriceAttribute(): string
+    {
+        if ($this->cost_price === null) {
+            return '-';
+        }
+
+        return 'R$ ' . number_format((float) $this->cost_price, 2, ',', '.');
+    }
+
     public function getFullNameAttribute(): string
     {
         $parts = [$this->name];
@@ -143,6 +172,7 @@ class Product extends Model
             'color' => $this->color,
             'condition' => $this->condition->value,
             'imei' => $this->imei,
+            'cost_price' => $this->cost_price,
         ];
     }
 }
