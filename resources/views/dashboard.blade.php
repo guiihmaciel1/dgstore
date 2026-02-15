@@ -142,6 +142,11 @@
             </div>
 
             <style>
+                .dg-hidden-value {
+                    letter-spacing: 0.1em;
+                    color: #d1d5db;
+                    user-select: none;
+                }
                 .alert-card {
                     display: flex;
                     align-items: center;
@@ -222,64 +227,93 @@
             @endif
 
             <!-- Cards de Estatísticas -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div class="min-w-0 flex-1">
-                            <p class="text-xs sm:text-sm text-gray-500">Vendas Hoje</p>
-                            <p class="text-xl sm:text-2xl font-bold text-gray-900 truncate">R$ {{ number_format($todayTotal, 2, ',', '.') }}</p>
-                        </div>
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
-                            <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                    </div>
+            <div x-data="{ showValues: localStorage.getItem('dg_show_values') !== 'false' }"
+                 x-init="$watch('showValues', v => localStorage.setItem('dg_show_values', v))"
+                 class="mb-6 sm:mb-8">
+                {{-- Botão olho --}}
+                <div class="flex justify-end mb-2">
+                    <button type="button" @click="showValues = !showValues"
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                            :class="showValues ? 'text-gray-400 hover:text-gray-600 hover:bg-gray-100' : 'text-gray-500 bg-gray-100 hover:bg-gray-200'"
+                            :title="showValues ? 'Ocultar valores' : 'Mostrar valores'">
+                        {{-- Olho aberto --}}
+                        <svg x-show="showValues" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        {{-- Olho fechado --}}
+                        <svg x-show="!showValues" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.59 6.59m7.532 7.532l3.29 3.29M3 3l18 18"/>
+                        </svg>
+                        <span x-text="showValues ? 'Ocultar' : 'Mostrar'" class="hidden sm:inline"></span>
+                    </button>
                 </div>
 
-                <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs sm:text-sm text-gray-500">Pedidos Hoje</p>
-                            <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ $todayCount }}</p>
-                        </div>
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                            </svg>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs sm:text-sm text-gray-500">Vendas Hoje</p>
+                                <p class="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                                    <span x-show="showValues">R$ {{ number_format($todayTotal, 2, ',', '.') }}</span>
+                                    <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
+                                </p>
+                            </div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
+                                <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div class="min-w-0 flex-1">
-                            <p class="text-xs sm:text-sm text-gray-500">Vendas do Mês</p>
-                            <p class="text-xl sm:text-2xl font-bold text-gray-900 truncate">R$ {{ number_format($monthTotal, 2, ',', '.') }}</p>
-                        </div>
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-500 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
-                            <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
+                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs sm:text-sm text-gray-500">Pedidos Hoje</p>
+                                <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ $todayCount }}</p>
+                            </div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border {{ $lowStockCount > 0 ? 'border-red-200 bg-red-50' : 'border-gray-100' }}">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs sm:text-sm {{ $lowStockCount > 0 ? 'text-red-600' : 'text-gray-500' }}">Estoque Baixo</p>
-                            <p class="text-xl sm:text-2xl font-bold {{ $lowStockCount > 0 ? 'text-red-600' : 'text-gray-900' }}">{{ $lowStockCount }} <span class="text-base">produtos</span></p>
-                        </div>
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 {{ $lowStockCount > 0 ? 'bg-red-500' : 'bg-gray-400' }} rounded-lg flex items-center justify-center flex-shrink-0">
-                            <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                            </svg>
+                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between">
+                            <div class="min-w-0 flex-1">
+                                <p class="text-xs sm:text-sm text-gray-500">Vendas do Mês</p>
+                                <p class="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                                    <span x-show="showValues">R$ {{ number_format($monthTotal, 2, ',', '.') }}</span>
+                                    <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
+                                </p>
+                            </div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-500 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
+                                <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                    @if($lowStockCount > 0)
-                        <a href="{{ route('stock.alerts') }}" class="text-xs text-red-600 hover:underline mt-2 inline-block">Ver produtos →</a>
-                    @endif
+
+                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border {{ $lowStockCount > 0 ? 'border-red-200 bg-red-50' : 'border-gray-100' }}">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs sm:text-sm {{ $lowStockCount > 0 ? 'text-red-600' : 'text-gray-500' }}">Estoque Baixo</p>
+                                <p class="text-xl sm:text-2xl font-bold {{ $lowStockCount > 0 ? 'text-red-600' : 'text-gray-900' }}">{{ $lowStockCount }} <span class="text-base">produtos</span></p>
+                            </div>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 {{ $lowStockCount > 0 ? 'bg-red-500' : 'bg-gray-400' }} rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        @if($lowStockCount > 0)
+                            <a href="{{ route('stock.alerts') }}" class="text-xs text-red-600 hover:underline mt-2 inline-block">Ver produtos →</a>
+                        @endif
+                    </div>
                 </div>
             </div>
 
@@ -354,14 +388,17 @@
             }
         });
 
+        const realData = @json($salesChart['data']);
+        const hiddenData = realData.map(() => 0);
+
         const ctx = document.getElementById('salesChart').getContext('2d');
-        new Chart(ctx, {
+        const salesChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: @json($salesChart['labels']),
                 datasets: [{
                     label: 'Vendas (R$)',
-                    data: @json($salesChart['data']),
+                    data: localStorage.getItem('dg_show_values') !== 'false' ? realData : hiddenData,
                     borderColor: '#1f2937',
                     backgroundColor: 'rgba(31, 41, 55, 0.1)',
                     fill: true,
@@ -374,6 +411,14 @@
                 plugins: {
                     legend: {
                         display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                if (localStorage.getItem('dg_show_values') === 'false') return 'R$ -----';
+                                return 'R$ ' + context.parsed.y.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                            }
+                        }
                     }
                 },
                 scales: {
@@ -381,6 +426,7 @@
                         beginAtZero: true,
                         ticks: {
                             callback: function(value) {
+                                if (localStorage.getItem('dg_show_values') === 'false') return '';
                                 return 'R$ ' + value.toLocaleString('pt-BR');
                             }
                         }
@@ -388,6 +434,24 @@
                 }
             }
         });
+
+        // Sincronizar gráfico com toggle de valores
+        window.addEventListener('storage', function() {
+            const show = localStorage.getItem('dg_show_values') !== 'false';
+            salesChart.data.datasets[0].data = show ? realData : hiddenData;
+            salesChart.update();
+        });
+
+        // Observer para mudanças no Alpine (mesmo aba)
+        const origSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+            origSetItem.apply(this, arguments);
+            if (key === 'dg_show_values') {
+                const show = value !== 'false';
+                salesChart.data.datasets[0].data = show ? realData : hiddenData;
+                salesChart.update();
+            }
+        };
     </script>
     @endpush
 </x-app-layout>

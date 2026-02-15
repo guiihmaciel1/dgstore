@@ -149,9 +149,9 @@
     </div>
 
     @push('scripts')
+    <script src="{{ asset('js/apple-specs-data.js') }}"></script>
     <script>
     function specsApp() {
-        const models = @json([]) ;
         return {
             models: specsModels(),
             selected1: '',
@@ -174,6 +174,7 @@
             specSections: [
                 { label: 'Tela', fields: [
                     { key: 'screen', label: 'Tela' },
+                    { key: 'brightness', label: 'Brilho' },
                     { key: 'refresh', label: 'Taxa atualiz.' },
                 ]},
                 { label: 'Desempenho', fields: [
@@ -184,57 +185,54 @@
                 { label: 'C\u00e2meras', fields: [
                     { key: 'mainCam', label: 'Cam. traseira' },
                     { key: 'frontCam', label: 'Cam. frontal' },
+                    { key: 'video', label: 'V\u00eddeo' },
                 ]},
-                { label: 'Bateria', fields: [
+                { label: 'Bateria e Energia', fields: [
+                    { key: 'batteryCap', label: 'Capacidade' },
                     { key: 'battery', label: 'Dura\u00e7\u00e3o' },
                     { key: 'charging', label: 'Carregamento' },
                 ]},
                 { label: 'Conectividade', fields: [
+                    { key: 'sim', label: 'SIM' },
                     { key: 'connectivity', label: 'Conex\u00f5es' },
                     { key: 'water', label: 'Resist. \u00e1gua' },
                 ]},
                 { label: 'F\u00edsico', fields: [
+                    { key: 'dimensions', label: 'Dimens\u00f5es' },
                     { key: 'weight', label: 'Peso' },
                     { key: 'material', label: 'Material' },
+                    { key: 'biometrics', label: 'Biometria' },
                 ]},
                 { label: 'Destaque', fields: [
                     { key: 'highlight', label: 'Recursos' },
                 ]},
             ],
 
-            // Retorna: 1 = model1 melhor, -1 = model2 melhor, 0 = igual/não comparável, 2 = diferente mas sem ranking
             getComparison(key) {
                 if (!this.model1 || !this.model2) return 0;
                 const v1 = this.model1[key], v2 = this.model2[key];
                 if (!v1 || !v2 || v1 === '-' || v2 === '-' || v1 === v2) return 0;
 
-                // Campos que não são ranqueáveis
-                const noRank = ['storage', 'charging', 'connectivity', 'material', 'highlight'];
+                const noRank = ['storage', 'charging', 'connectivity', 'material', 'highlight', 'sim', 'biometrics', 'dimensions', 'video'];
                 if (noRank.includes(key)) return 2;
 
-                // Chip tem ranking próprio
                 if (key === 'chip') {
                     const r1 = this.chipRank(v1), r2 = this.chipRank(v2);
                     if (r1 === r2) return 2;
                     return r1 > r2 ? 1 : -1;
                 }
 
-                // Water resistance ranking
                 if (key === 'water') {
                     const r1 = this.waterRank(v1), r2 = this.waterRank(v2);
                     if (r1 === r2) return 2;
                     return r1 > r2 ? 1 : -1;
                 }
 
-                // Extrair primeiro número
                 const n1 = this.extractNum(v1), n2 = this.extractNum(v2);
                 if (n1 === null || n2 === null) return 2;
                 if (n1 === n2) return 2;
 
-                // Peso: menor é melhor
                 if (key === 'weight') return n1 < n2 ? 1 : -1;
-
-                // Demais: maior é melhor (tela, refresh, ram, camera, bateria)
                 return n1 > n2 ? 1 : -1;
             },
 
@@ -244,7 +242,6 @@
                 if (cmp === 0) return 'color: #111827;';
                 if (cmp === 2) return 'background: #fefce8; color: #92400e;';
 
-                // cmp = 1: model1 melhor; cmp = -1: model2 melhor
                 if (modelNum === 1) {
                     return cmp === 1
                         ? 'background: #f0fdf4; color: #166534; font-weight: 600;'
@@ -265,8 +262,8 @@
                 const ranks = {
                     'A19 Pro': 100, 'A19': 95,
                     'A18 Pro': 90, 'A18 + Apple C1': 86, 'A18': 85,
-                    'A17 Pro': 80, 'A16 Bionic': 75, 'A15 Bionic': 70,
-                    'Apple M4 Pro': 115, 'Apple M4': 110, 'Apple M3': 105, 'Apple M2': 100,
+                    'A17 Pro': 80, 'A16 Bionic': 75, 'A15 Bionic': 70, 'A14 Bionic': 65,
+                    'Apple M4 Pro': 120, 'Apple M4': 115, 'Apple M3': 110, 'Apple M2': 105,
                     'S10 SiP': 50, 'S9 SiP': 45,
                     'H3': 30, 'H2': 25,
                 };
@@ -285,57 +282,6 @@
                 return 0;
             },
         };
-    }
-
-    function specsModels() {
-        return [
-            // ── iPhone 17 Series ──
-            { name: 'iPhone 17 Pro Max', cat: 'iPhone', year: '2025', screen: '6.9" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A19 Pro', ram: '12GB', mainCam: '48MP + 48MP UW + 12MP Tele 5x', frontCam: '24MP TrueDepth', battery: 'At\u00e9 33h video', charging: 'USB-C, MagSafe 25W', storage: '256GB, 512GB, 1TB, 2TB', connectivity: '5G, Wi-Fi 7, Bluetooth 5.4, UWB', water: 'IP68 (6m)', weight: '227g', material: 'Tit\u00e2nio', highlight: 'Tela sempre ativa, Dynamic Island, Action Button, Camera Control' },
-            { name: 'iPhone 17 Pro', cat: 'iPhone', year: '2025', screen: '6.3" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A19 Pro', ram: '12GB', mainCam: '48MP + 48MP UW + 12MP Tele 5x', frontCam: '24MP TrueDepth', battery: 'At\u00e9 27h video', charging: 'USB-C, MagSafe 25W', storage: '256GB, 512GB, 1TB', connectivity: '5G, Wi-Fi 7, Bluetooth 5.4, UWB', water: 'IP68 (6m)', weight: '199g', material: 'Tit\u00e2nio', highlight: 'Tela sempre ativa, Dynamic Island, Action Button, Camera Control' },
-            { name: 'iPhone 17', cat: 'iPhone', year: '2025', screen: '6.1" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A19', ram: '8GB', mainCam: '48MP + 24MP UW', frontCam: '24MP TrueDepth', battery: 'At\u00e9 22h video', charging: 'USB-C, MagSafe 25W', storage: '256GB, 512GB', connectivity: '5G, Wi-Fi 7, Bluetooth 5.4', water: 'IP68', weight: '170g', material: 'Alum\u00ednio', highlight: 'Dynamic Island, Camera Control, Apple Intelligence' },
-            { name: 'iPhone Air', cat: 'iPhone', year: '2025', screen: '6.6" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A19', ram: '8GB', mainCam: '48MP + 24MP UW', frontCam: '24MP TrueDepth', battery: 'At\u00e9 24h video', charging: 'USB-C, MagSafe 25W', storage: '256GB, 512GB, 1TB', connectivity: '5G, Wi-Fi 7, Bluetooth 5.4', water: 'IP68', weight: '163g', material: 'Alum\u00ednio', highlight: 'Mais fino da linha, Dynamic Island, Apple Intelligence' },
-            { name: 'iPhone 16e', cat: 'iPhone', year: '2025', screen: '6.1" Super Retina XDR OLED', refresh: '60Hz', chip: 'A18 + Apple C1', ram: '8GB', mainCam: '48MP', frontCam: '12MP TrueDepth', battery: 'At\u00e9 26h video', charging: 'USB-C, MagSafe', storage: '128GB, 256GB, 512GB', connectivity: '5G (C1), Wi-Fi 7, Bluetooth 5.3', water: 'IP68', weight: '170g', material: 'Alum\u00ednio', highlight: 'Modem Apple C1, Apple Intelligence, Face ID' },
-            // ── iPhone 16 Series ──
-            { name: 'iPhone 16 Pro Max', cat: 'iPhone', year: '2024', screen: '6.9" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A18 Pro', ram: '8GB', mainCam: '48MP + 48MP UW + 12MP Tele 5x', frontCam: '12MP TrueDepth', battery: 'At\u00e9 33h video', charging: 'USB-C, MagSafe 25W', storage: '256GB, 512GB, 1TB', connectivity: '5G, Wi-Fi 7, Bluetooth 5.3, UWB', water: 'IP68 (6m)', weight: '227g', material: 'Tit\u00e2nio', highlight: 'Tela sempre ativa, Dynamic Island, Action Button, Camera Control' },
-            { name: 'iPhone 16 Pro', cat: 'iPhone', year: '2024', screen: '6.3" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A18 Pro', ram: '8GB', mainCam: '48MP + 48MP UW + 12MP Tele 5x', frontCam: '12MP TrueDepth', battery: 'At\u00e9 27h video', charging: 'USB-C, MagSafe 25W', storage: '256GB, 512GB, 1TB', connectivity: '5G, Wi-Fi 7, Bluetooth 5.3, UWB', water: 'IP68 (6m)', weight: '199g', material: 'Tit\u00e2nio', highlight: 'Tela sempre ativa, Dynamic Island, Action Button, Camera Control' },
-            { name: 'iPhone 16', cat: 'iPhone', year: '2024', screen: '6.1" Super Retina XDR OLED', refresh: '60Hz', chip: 'A18', ram: '8GB', mainCam: '48MP + 12MP UW', frontCam: '12MP TrueDepth', battery: 'At\u00e9 22h video', charging: 'USB-C, MagSafe', storage: '128GB, 256GB, 512GB', connectivity: '5G, Wi-Fi 7, Bluetooth 5.3', water: 'IP68', weight: '170g', material: 'Alum\u00ednio', highlight: 'Dynamic Island, Camera Control, Action Button' },
-            { name: 'iPhone 16 Plus', cat: 'iPhone', year: '2024', screen: '6.7" Super Retina XDR OLED', refresh: '60Hz', chip: 'A18', ram: '8GB', mainCam: '48MP + 12MP UW', frontCam: '12MP TrueDepth', battery: 'At\u00e9 27h video', charging: 'USB-C, MagSafe', storage: '128GB, 256GB, 512GB', connectivity: '5G, Wi-Fi 7, Bluetooth 5.3', water: 'IP68', weight: '199g', material: 'Alum\u00ednio', highlight: 'Dynamic Island, Camera Control, Action Button' },
-            // ── iPhone 15 Series ──
-            { name: 'iPhone 15 Pro Max', cat: 'iPhone', year: '2023', screen: '6.7" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A17 Pro', ram: '8GB', mainCam: '48MP + 12MP UW + 12MP Tele 5x', frontCam: '12MP TrueDepth', battery: 'At\u00e9 29h video', charging: 'USB-C, MagSafe 15W', storage: '256GB, 512GB, 1TB', connectivity: '5G, Wi-Fi 6E, Bluetooth 5.3, UWB', water: 'IP68 (6m)', weight: '221g', material: 'Tit\u00e2nio', highlight: 'Tela sempre ativa, Dynamic Island, Action Button' },
-            { name: 'iPhone 15 Pro', cat: 'iPhone', year: '2023', screen: '6.1" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A17 Pro', ram: '8GB', mainCam: '48MP + 12MP UW + 12MP Tele 3x', frontCam: '12MP TrueDepth', battery: 'At\u00e9 23h video', charging: 'USB-C, MagSafe 15W', storage: '128GB, 256GB, 512GB, 1TB', connectivity: '5G, Wi-Fi 6E, Bluetooth 5.3, UWB', water: 'IP68 (6m)', weight: '187g', material: 'Tit\u00e2nio', highlight: 'Tela sempre ativa, Dynamic Island, Action Button' },
-            { name: 'iPhone 15', cat: 'iPhone', year: '2023', screen: '6.1" Super Retina XDR OLED', refresh: '60Hz', chip: 'A16 Bionic', ram: '6GB', mainCam: '48MP + 12MP UW', frontCam: '12MP TrueDepth', battery: 'At\u00e9 20h video', charging: 'USB-C, MagSafe 15W', storage: '128GB, 256GB, 512GB', connectivity: '5G, Wi-Fi 6, Bluetooth 5.3', water: 'IP68', weight: '171g', material: 'Alum\u00ednio', highlight: 'Dynamic Island, USB-C' },
-            { name: 'iPhone 15 Plus', cat: 'iPhone', year: '2023', screen: '6.7" Super Retina XDR OLED', refresh: '60Hz', chip: 'A16 Bionic', ram: '6GB', mainCam: '48MP + 12MP UW', frontCam: '12MP TrueDepth', battery: 'At\u00e9 26h video', charging: 'USB-C, MagSafe 15W', storage: '128GB, 256GB, 512GB', connectivity: '5G, Wi-Fi 6, Bluetooth 5.3', water: 'IP68', weight: '201g', material: 'Alum\u00ednio', highlight: 'Dynamic Island, USB-C' },
-            // ── iPhone 14 Series ──
-            { name: 'iPhone 14 Pro Max', cat: 'iPhone', year: '2022', screen: '6.7" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A16 Bionic', ram: '6GB', mainCam: '48MP + 12MP UW + 12MP Tele 3x', frontCam: '12MP TrueDepth', battery: 'At\u00e9 29h video', charging: 'Lightning, MagSafe 15W', storage: '128GB, 256GB, 512GB, 1TB', connectivity: '5G, Wi-Fi 6, Bluetooth 5.3', water: 'IP68 (6m)', weight: '240g', material: 'A\u00e7o inoxid\u00e1vel', highlight: 'Dynamic Island, Tela sempre ativa' },
-            { name: 'iPhone 14 Pro', cat: 'iPhone', year: '2022', screen: '6.1" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A16 Bionic', ram: '6GB', mainCam: '48MP + 12MP UW + 12MP Tele 3x', frontCam: '12MP TrueDepth', battery: 'At\u00e9 23h video', charging: 'Lightning, MagSafe 15W', storage: '128GB, 256GB, 512GB, 1TB', connectivity: '5G, Wi-Fi 6, Bluetooth 5.3', water: 'IP68 (6m)', weight: '206g', material: 'A\u00e7o inoxid\u00e1vel', highlight: 'Dynamic Island, Tela sempre ativa' },
-            { name: 'iPhone 14', cat: 'iPhone', year: '2022', screen: '6.1" Super Retina XDR OLED', refresh: '60Hz', chip: 'A15 Bionic', ram: '6GB', mainCam: '12MP + 12MP UW', frontCam: '12MP TrueDepth', battery: 'At\u00e9 20h video', charging: 'Lightning, MagSafe 15W', storage: '128GB, 256GB, 512GB', connectivity: '5G, Wi-Fi 6, Bluetooth 5.3', water: 'IP68', weight: '172g', material: 'Alum\u00ednio', highlight: 'SOS Emerg\u00eancia via Sat\u00e9lite' },
-            // ── iPhone 13 Series ──
-            { name: 'iPhone 13 Pro Max', cat: 'iPhone', year: '2021', screen: '6.7" Super Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'A15 Bionic', ram: '6GB', mainCam: '12MP + 12MP UW + 12MP Tele 3x', frontCam: '12MP TrueDepth', battery: 'At\u00e9 28h video', charging: 'Lightning, MagSafe 15W', storage: '128GB, 256GB, 512GB, 1TB', connectivity: '5G, Wi-Fi 6, Bluetooth 5.0', water: 'IP68 (6m)', weight: '238g', material: 'A\u00e7o inoxid\u00e1vel', highlight: 'ProMotion 120Hz, Modo Macro' },
-            { name: 'iPhone 13', cat: 'iPhone', year: '2021', screen: '6.1" Super Retina XDR OLED', refresh: '60Hz', chip: 'A15 Bionic', ram: '4GB', mainCam: '12MP + 12MP UW', frontCam: '12MP TrueDepth', battery: 'At\u00e9 19h video', charging: 'Lightning, MagSafe 15W', storage: '128GB, 256GB, 512GB', connectivity: '5G, Wi-Fi 6, Bluetooth 5.0', water: 'IP68', weight: '173g', material: 'Alum\u00ednio', highlight: 'Modo Cinem\u00e1tico' },
-            // ── iPads ──
-            { name: 'iPad Pro M4 13"', cat: 'iPad', year: '2024', screen: '13" Ultra Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'Apple M4', ram: '8/16GB', mainCam: '12MP + 10MP UW + LiDAR', frontCam: '12MP Paisagem', battery: 'At\u00e9 10h nav web', charging: 'USB-C Thunderbolt', storage: '256GB a 2TB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3, 5G opc.', water: '-', weight: '579g (Wi-Fi)', material: 'Alum\u00ednio', highlight: 'Tela Tandem OLED, Apple Pencil Pro, Magic Keyboard' },
-            { name: 'iPad Pro M4 11"', cat: 'iPad', year: '2024', screen: '11" Ultra Retina XDR OLED', refresh: '120Hz ProMotion', chip: 'Apple M4', ram: '8/16GB', mainCam: '12MP + 10MP UW + LiDAR', frontCam: '12MP Paisagem', battery: 'At\u00e9 10h nav web', charging: 'USB-C Thunderbolt', storage: '256GB a 2TB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3, 5G opc.', water: '-', weight: '444g (Wi-Fi)', material: 'Alum\u00ednio', highlight: 'Tela Tandem OLED, Apple Pencil Pro, Magic Keyboard' },
-            { name: 'iPad Air M3 13"', cat: 'iPad', year: '2025', screen: '13" Liquid Retina', refresh: '60Hz', chip: 'Apple M3', ram: '8GB', mainCam: '12MP', frontCam: '12MP Paisagem', battery: 'At\u00e9 10h nav web', charging: 'USB-C', storage: '128GB a 1TB', connectivity: 'Wi-Fi 7, Bluetooth 5.3, 5G opc.', water: '-', weight: '617g (Wi-Fi)', material: 'Alum\u00ednio', highlight: 'Apple Pencil Pro, Magic Keyboard' },
-            { name: 'iPad Air M3 11"', cat: 'iPad', year: '2025', screen: '11" Liquid Retina', refresh: '60Hz', chip: 'Apple M3', ram: '8GB', mainCam: '12MP', frontCam: '12MP Paisagem', battery: 'At\u00e9 10h nav web', charging: 'USB-C', storage: '128GB a 1TB', connectivity: 'Wi-Fi 7, Bluetooth 5.3, 5G opc.', water: '-', weight: '462g (Wi-Fi)', material: 'Alum\u00ednio', highlight: 'Apple Pencil Pro, Magic Keyboard' },
-            { name: 'iPad Mini 7a Ger.', cat: 'iPad', year: '2024', screen: '8.3" Liquid Retina', refresh: '60Hz', chip: 'A17 Pro', ram: '8GB', mainCam: '12MP', frontCam: '12MP Paisagem', battery: 'At\u00e9 10h nav web', charging: 'USB-C', storage: '128GB, 256GB, 512GB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3, 5G opc.', water: '-', weight: '293g (Wi-Fi)', material: 'Alum\u00ednio', highlight: 'Apple Pencil Pro, compacto' },
-            // ── Macs ──
-            { name: 'MacBook Pro 16" M4 Pro', cat: 'Mac', year: '2025', screen: '16.2" Liquid Retina XDR', refresh: '120Hz ProMotion', chip: 'Apple M4 Pro', ram: '24/48GB', mainCam: '-', frontCam: '12MP Center Stage', battery: 'At\u00e9 24h video', charging: 'MagSafe 3 / USB-C', storage: '512GB, 1TB, 2TB, 4TB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3, HDMI 2.1', water: '-', weight: '2.14kg', material: 'Alum\u00ednio', highlight: 'Thunderbolt 5, 3x externo, Bateria enorme' },
-            { name: 'MacBook Pro 14" M4 Pro', cat: 'Mac', year: '2025', screen: '14.2" Liquid Retina XDR', refresh: '120Hz ProMotion', chip: 'Apple M4 Pro', ram: '24/48GB', mainCam: '-', frontCam: '12MP Center Stage', battery: 'At\u00e9 17h video', charging: 'MagSafe 3 / USB-C', storage: '512GB, 1TB, 2TB, 4TB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3, HDMI 2.1', water: '-', weight: '1.55kg', material: 'Alum\u00ednio', highlight: 'Thunderbolt 5, 3x externo' },
-            { name: 'MacBook Pro 14" M4', cat: 'Mac', year: '2025', screen: '14.2" Liquid Retina XDR', refresh: '120Hz ProMotion', chip: 'Apple M4', ram: '16/24/32GB', mainCam: '-', frontCam: '12MP Center Stage', battery: 'At\u00e9 17h video', charging: 'MagSafe 3 / USB-C', storage: '512GB, 1TB, 2TB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3, HDMI 2.1', water: '-', weight: '1.55kg', material: 'Alum\u00ednio', highlight: 'Thunderbolt 4, 2x externo' },
-            { name: 'MacBook Air 15" M4', cat: 'Mac', year: '2025', screen: '15.3" Liquid Retina', refresh: '60Hz', chip: 'Apple M4', ram: '16/24/32GB', mainCam: '-', frontCam: '12MP Center Stage', battery: 'At\u00e9 18h video', charging: 'MagSafe / USB-C', storage: '256GB, 512GB, 1TB, 2TB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3', water: '-', weight: '1.51kg', material: 'Alum\u00ednio', highlight: '2x externo, MagSafe, silencioso (fanless)' },
-            { name: 'MacBook Air 13" M4', cat: 'Mac', year: '2025', screen: '13.6" Liquid Retina', refresh: '60Hz', chip: 'Apple M4', ram: '16/24/32GB', mainCam: '-', frontCam: '12MP Center Stage', battery: 'At\u00e9 18h video', charging: 'MagSafe / USB-C', storage: '256GB, 512GB, 1TB, 2TB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3', water: '-', weight: '1.24kg', material: 'Alum\u00ednio', highlight: '2x externo, MagSafe, silencioso (fanless)' },
-            { name: 'iMac 24" M4', cat: 'Mac', year: '2024', screen: '24" Retina 4.5K', refresh: '60Hz', chip: 'Apple M4', ram: '16/24/32GB', mainCam: '-', frontCam: '12MP Center Stage', battery: '-', charging: 'Fonte externa', storage: '256GB, 512GB, 1TB, 2TB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3', water: '-', weight: '4.48kg', material: 'Alum\u00ednio', highlight: 'Tudo-em-um, 7 cores, USB-C/Thunderbolt' },
-            { name: 'Mac Mini M4', cat: 'Mac', year: '2024', screen: '-', refresh: '-', chip: 'Apple M4', ram: '16/24/32GB', mainCam: '-', frontCam: '-', battery: '-', charging: 'Fonte interna', storage: '256GB, 512GB, 1TB, 2TB', connectivity: 'Wi-Fi 6E, Bluetooth 5.3', water: '-', weight: '0.68kg', material: 'Alum\u00ednio', highlight: 'Compacto, 2x USB-C frontal, Thunderbolt 4' },
-            // ── Apple Watch ──
-            { name: 'Apple Watch Ultra 2', cat: 'Watch', year: '2024', screen: '49mm OLED Flat', refresh: 'Always-On', chip: 'S9 SiP', ram: '-', mainCam: '-', frontCam: '-', battery: 'At\u00e9 36h', charging: 'MagSafe', storage: '64GB', connectivity: 'LTE, Wi-Fi, Bluetooth 5.3, L1+L5 GPS', water: 'WR100 / EN13319', weight: '61.4g', material: 'Tit\u00e2nio', highlight: 'Action Button, Profund\u00edmetro, Sirene 86dB' },
-            { name: 'Apple Watch Series 10', cat: 'Watch', year: '2024', screen: '42/46mm OLED LTPO3', refresh: 'Always-On', chip: 'S10 SiP', ram: '-', mainCam: '-', frontCam: '-', battery: 'At\u00e9 18h', charging: 'MagSafe', storage: '64GB', connectivity: 'LTE opc., Wi-Fi, Bluetooth 5.3, L1+L5 GPS', water: 'WR50', weight: '36g (42mm)', material: 'Alum\u00ednio/Tit\u00e2nio', highlight: 'Mais fino, tela maior, detec\u00e7\u00e3o apneia do sono' },
-            { name: 'Apple Watch SE 3a', cat: 'Watch', year: '2025', screen: '40/44mm OLED LTPO', refresh: 'Always-On', chip: 'S10 SiP', ram: '-', mainCam: '-', frontCam: '-', battery: 'At\u00e9 18h', charging: 'MagSafe', storage: '32GB', connectivity: 'LTE opc., Wi-Fi, Bluetooth 5.3, L1 GPS', water: 'WR50', weight: '27g (40mm)', material: 'Alum\u00ednio', highlight: 'Modelo mais acess\u00edvel, detec\u00e7\u00e3o de queda' },
-            // ── AirPods ──
-            { name: 'AirPods Pro 3', cat: 'AirPods', year: '2025', screen: '-', refresh: '-', chip: 'H3', ram: '-', mainCam: '-', frontCam: '-', battery: 'At\u00e9 6h (30h c/ case)', charging: 'USB-C / MagSafe / Qi', storage: '-', connectivity: 'Bluetooth 5.4', water: 'IPX4', weight: '5.3g cada', material: 'Pl\u00e1stico', highlight: 'ANC adaptativo, \u00c1udio Espacial, Audi\u00e7\u00e3o assistida' },
-            { name: 'AirPods 4 ANC', cat: 'AirPods', year: '2024', screen: '-', refresh: '-', chip: 'H2', ram: '-', mainCam: '-', frontCam: '-', battery: 'At\u00e9 5h (30h c/ case)', charging: 'USB-C / MagSafe', storage: '-', connectivity: 'Bluetooth 5.3', water: 'IP54', weight: '4.3g cada', material: 'Pl\u00e1stico', highlight: 'ANC, \u00c1udio Espacial, sem ponteiras de silicone' },
-            { name: 'AirPods 4', cat: 'AirPods', year: '2024', screen: '-', refresh: '-', chip: 'H2', ram: '-', mainCam: '-', frontCam: '-', battery: 'At\u00e9 5h (30h c/ case)', charging: 'USB-C', storage: '-', connectivity: 'Bluetooth 5.3', water: 'IP54', weight: '4.3g cada', material: 'Pl\u00e1stico', highlight: 'Novo design aberto, \u00c1udio Espacial' },
-            { name: 'AirPods Max', cat: 'AirPods', year: '2024', screen: '-', refresh: '-', chip: 'H2', ram: '-', mainCam: '-', frontCam: '-', battery: 'At\u00e9 20h', charging: 'USB-C', storage: '-', connectivity: 'Bluetooth 5.3', water: '-', weight: '384.8g', material: 'Alum\u00ednio + A\u00e7o', highlight: 'Over-ear, ANC, \u00c1udio Espacial, Alta fidelidade' },
-        ];
     }
     </script>
     @endpush
