@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Sale extends Model
 {
@@ -137,34 +139,51 @@ class Sale extends Model
         $yearMonth = now()->format('Ym');
         $fullPrefix = $prefix . $yearMonth . '-';
 
-        // Busca todos os números de venda do mês e extrai o maior sequence via PHP
-        $existingNumbers = self::withTrashed()
+        // Abordagem 1: busca o maior sale_number por ordenação de string
+        // Funciona porque os números são zero-padded (00001, 00002...)
+        $lastNumber = self::withTrashed()
             ->where('sale_number', 'like', $fullPrefix . '%')
-            ->pluck('sale_number');
+            ->orderByDesc('sale_number')
+            ->value('sale_number');
 
-        $maxSequence = 0;
-
-        foreach ($existingNumbers as $number) {
-            if (preg_match('/-(\d+)$/', $number, $matches)) {
-                $seq = (int) $matches[1];
-                if ($seq > $maxSequence) {
-                    $maxSequence = $seq;
-                }
-            }
+        if ($lastNumber && preg_match('/-(\d+)$/', $lastNumber, $matches)) {
+            $sequence = (int) $matches[1] + 1;
+        } else {
+            // Nenhuma venda no mês com formato novo, começar do 1
+            $sequence = 1;
         }
 
-        $sequence = $maxSequence + 1;
         $saleNumber = sprintf('%s%05d', $fullPrefix, $sequence);
 
-        // Safety check (máx 10 tentativas para race condition)
-        $attempts = 0;
-        while (self::withTrashed()->where('sale_number', $saleNumber)->exists()) {
-            $attempts++;
-            if ($attempts >= 10) {
-                throw new \RuntimeException("Não foi possível gerar número de venda único.");
-            }
-            $sequence++;
+        // Verificação extra: se por alguma razão ainda existe, tenta via MAX direto no DB
+        if (self::withTrashed()->where('sale_number', $saleNumber)->exists()) {
+            Log::warning("generateSaleNumber: colisão detectada", [
+                'tentativa' => $saleNumber,
+                'lastNumber' => $lastNumber,
+                'sequence' => $sequence,
+            ]);
+
+            // Fallback: busca MAX via query raw sem depender de ordering
+            $maxSeq = DB::table('sales')
+                ->where('sale_number', 'like', $fullPrefix . '%')
+                ->selectRaw("MAX(CAST(SUBSTRING_INDEX(sale_number, '-', -1) AS UNSIGNED)) as max_seq")
+                ->value('max_seq');
+
+            $sequence = ($maxSeq ?? 0) + 1;
             $saleNumber = sprintf('%s%05d', $fullPrefix, $sequence);
+
+            Log::info("generateSaleNumber: fallback gerou", [
+                'maxSeq' => $maxSeq,
+                'novoNumero' => $saleNumber,
+            ]);
+        }
+
+        // Último recurso: adiciona timestamp para garantir unicidade
+        if (self::withTrashed()->where('sale_number', $saleNumber)->exists()) {
+            $saleNumber = $fullPrefix . now()->format('dHis');
+            Log::warning("generateSaleNumber: usando timestamp como último recurso", [
+                'numero' => $saleNumber,
+            ]);
         }
 
         return $saleNumber;
