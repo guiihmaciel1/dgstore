@@ -27,7 +27,8 @@ class CrmController extends Controller
         // Admin pode filtrar por vendedor
         $filterUserId = $isAdmin ? $request->get('user_id') : $user->id;
 
-        $stages = PipelineStage::ordered()->get();
+        $allStages = PipelineStage::ordered()->get();
+        $activeStages = $allStages->filter(fn ($s) => ! $s->is_won && ! $s->is_lost)->values();
 
         $dealsQuery = Deal::with(['customer', 'user', 'stage'])
             ->open();
@@ -39,7 +40,7 @@ class CrmController extends Controller
         $deals = $dealsQuery->orderBy('position')->get();
 
         // Agrupa deals por stage
-        $dealsByStage = $stages->mapWithKeys(function ($stage) use ($deals) {
+        $dealsByStage = $activeStages->mapWithKeys(function ($stage) use ($deals) {
             return [$stage->id => $deals->where('pipeline_stage_id', $stage->id)->values()];
         });
 
@@ -72,7 +73,8 @@ class CrmController extends Controller
             : collect();
 
         return view('crm.board', [
-            'stages' => $stages,
+            'stages' => $allStages,
+            'activeStages' => $activeStages,
             'dealsByStage' => $dealsByStage,
             'metrics' => $metrics,
             'sellers' => $sellers,
@@ -96,9 +98,20 @@ class CrmController extends Controller
             'pipeline_stage_id' => 'nullable|exists:pipeline_stages,id',
         ]);
 
-        $stageId = $validated['pipeline_stage_id']
-            ?? PipelineStage::where('is_default', true)->first()?->id
-            ?? PipelineStage::ordered()->first()?->id;
+        // Garante um stage válido: enviado > default > primeiro ativo
+        $stageId = ! empty($validated['pipeline_stage_id'])
+            ? $validated['pipeline_stage_id']
+            : (PipelineStage::where('is_default', true)->value('id')
+                ?? PipelineStage::active()->ordered()->value('id'));
+
+        if (! $stageId) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['pipeline_stage_id' => 'Nenhuma etapa de pipeline configurada. Execute o seeder.']);
+        }
+
+        // Remove pipeline_stage_id do validated para não conflitar com o override
+        unset($validated['pipeline_stage_id']);
 
         $maxPosition = Deal::where('pipeline_stage_id', $stageId)->max('position') ?? 0;
 
@@ -121,11 +134,13 @@ class CrmController extends Controller
 
         $deal->load(['customer', 'user', 'stage', 'activities.user']);
 
-        $stages = PipelineStage::ordered()->get();
+        $allStages = PipelineStage::ordered()->get();
+        $activeStages = $allStages->filter(fn ($s) => ! $s->is_won && ! $s->is_lost)->values();
 
         return view('crm.show', [
             'deal' => $deal,
-            'stages' => $stages,
+            'stages' => $allStages,
+            'activeStages' => $activeStages,
             'activityTypes' => [
                 DealActivityType::Note,
                 DealActivityType::WhatsApp,

@@ -269,7 +269,7 @@
                         <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem;">
                             <h3 style="font-size: 0.8rem; font-weight: 700; color: #6b7280; margin-bottom: 0.5rem;">PIPELINE</h3>
                             <div style="display: flex; gap: 2px;">
-                                @foreach($stages->where('is_won', false)->where('is_lost', false) as $s)
+                                @foreach($activeStages as $s)
                                     @php
                                         $isCurrent = $deal->pipeline_stage_id === $s->id;
                                         $isPast = $s->position < $deal->stage->position;

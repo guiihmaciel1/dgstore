@@ -59,39 +59,39 @@
                         @csrf
                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                             <div>
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Título *</label>
-                                <input type="text" name="title" required placeholder="Ex: iPhone 16 Pro Max - João"
-                                       style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                                <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Título <span style="color: #dc2626;">*</span></label>
+                                <input type="text" name="title" required value="{{ old('title') }}" placeholder="Ex: iPhone 16 Pro Max - João"
+                                       style="width: 100%; padding: 0.5rem; border: 1px solid {{ $errors->has('title') ? '#fca5a5' : '#e5e7eb' }}; border-radius: 0.375rem; font-size: 0.875rem;">
                             </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                                 <div>
                                     <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Produto de Interesse</label>
-                                    <input type="text" name="product_interest" placeholder="iPhone 16 Pro Max 256GB"
+                                    <input type="text" name="product_interest" value="{{ old('product_interest') }}" placeholder="iPhone 16 Pro Max 256GB"
                                            style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
                                 </div>
                                 <div>
                                     <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Valor (R$)</label>
-                                    <input type="number" name="value" step="0.01" placeholder="0,00"
+                                    <input type="number" name="value" step="0.01" value="{{ old('value') }}" placeholder="0,00"
                                            style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
                                 </div>
                             </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                                 <div>
                                     <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Telefone / WhatsApp</label>
-                                    <input type="text" name="phone" placeholder="5511999999999"
+                                    <input type="text" name="phone" value="{{ old('phone') }}" placeholder="5511999999999"
                                            style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
                                 </div>
                                 <div>
                                     <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Previsão de Fechamento</label>
-                                    <input type="date" name="expected_close_date"
+                                    <input type="date" name="expected_close_date" value="{{ old('expected_close_date') }}"
                                            style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
                                 </div>
                             </div>
                             <div>
                                 <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Etapa</label>
                                 <select name="pipeline_stage_id" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
-                                    @foreach($stages->where('is_won', false)->where('is_lost', false) as $stage)
-                                        <option value="{{ $stage->id }}" {{ $stage->is_default ? 'selected' : '' }}>{{ $stage->name }}</option>
+                                    @foreach($activeStages as $stage)
+                                        <option value="{{ $stage->id }}" {{ $stage->is_default ? 'selected' : (old('pipeline_stage_id') === $stage->id ? 'selected' : '') }}>{{ $stage->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -120,7 +120,7 @@
                             <div>
                                 <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Observações</label>
                                 <textarea name="description" rows="2" placeholder="Detalhes sobre o interesse, condições, etc."
-                                          style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;"></textarea>
+                                          style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;">{{ old('description') }}</textarea>
                             </div>
                         </div>
 
@@ -148,7 +148,7 @@
 
             {{-- Kanban Board --}}
             <div style="display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 1rem; min-height: 65vh;">
-                @foreach($stages->where('is_won', false)->where('is_lost', false) as $stage)
+                @foreach($activeStages as $stage)
                     <div style="min-width: 280px; max-width: 320px; flex-shrink: 0; display: flex; flex-direction: column; background: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb;">
                         {{-- Stage Header --}}
                         <div style="padding: 0.75rem 1rem; border-bottom: 2px solid {{ $stage->color }};">
