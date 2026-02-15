@@ -135,37 +135,36 @@ class Sale extends Model
     {
         $prefix = 'DG';
         $yearMonth = now()->format('Ym');
-        $expectedPrefix = $prefix . $yearMonth . '-';
+        $fullPrefix = $prefix . $yearMonth . '-';
 
-        // Busca a última venda do mês com formato correto (DG202602-NNNNN)
-        $lastSale = self::withTrashed()
-            ->where('sale_number', 'like', $expectedPrefix . '%')
-            ->orderByRaw("CAST(SUBSTRING(sale_number, ?) AS UNSIGNED) DESC", [strlen($expectedPrefix) + 1])
-            ->first();
+        // Busca todos os números de venda do mês e extrai o maior sequence via PHP
+        $existingNumbers = self::withTrashed()
+            ->where('sale_number', 'like', $fullPrefix . '%')
+            ->pluck('sale_number');
 
-        if ($lastSale && preg_match('/-(\d+)$/', $lastSale->sale_number, $matches)) {
-            $sequence = (int) $matches[1] + 1;
-        } else {
-            // Fallback: conta vendas do mês para evitar colisão com formatos antigos
-            $count = self::withTrashed()
-                ->whereYear('created_at', now()->year)
-                ->whereMonth('created_at', now()->month)
-                ->count();
-            $sequence = $count + 1;
+        $maxSequence = 0;
+
+        foreach ($existingNumbers as $number) {
+            if (preg_match('/-(\d+)$/', $number, $matches)) {
+                $seq = (int) $matches[1];
+                if ($seq > $maxSequence) {
+                    $maxSequence = $seq;
+                }
+            }
         }
 
-        // Garante unicidade em caso de race condition (com limite de segurança)
-        $saleNumber = sprintf('%s-%05d', $prefix . $yearMonth, $sequence);
-        $maxAttempts = 500;
-        $attempts = 0;
+        $sequence = $maxSequence + 1;
+        $saleNumber = sprintf('%s%05d', $fullPrefix, $sequence);
 
+        // Safety check (máx 10 tentativas para race condition)
+        $attempts = 0;
         while (self::withTrashed()->where('sale_number', $saleNumber)->exists()) {
             $attempts++;
-            if ($attempts >= $maxAttempts) {
-                throw new \RuntimeException("Não foi possível gerar número de venda único após {$maxAttempts} tentativas.");
+            if ($attempts >= 10) {
+                throw new \RuntimeException("Não foi possível gerar número de venda único.");
             }
             $sequence++;
-            $saleNumber = sprintf('%s-%05d', $prefix . $yearMonth, $sequence);
+            $saleNumber = sprintf('%s%05d', $fullPrefix, $sequence);
         }
 
         return $saleNumber;
