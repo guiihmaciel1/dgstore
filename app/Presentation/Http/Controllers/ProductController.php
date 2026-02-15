@@ -143,8 +143,8 @@ class ProductController extends Controller
      */
     public function generateSku(Request $request)
     {
-        $category = $request->get('category', 'iphone');
-        $model = $request->get('model', '');
+        $category = $request->get('category', 'iphone') ?? 'iphone';
+        $model = $request->get('model') ?? '';
 
         $sku = $this->productService->generateSku($category, $model);
 
