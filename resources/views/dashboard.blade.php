@@ -29,110 +29,24 @@
             </div>
 
             <!-- AÇÕES RÁPIDAS -->
-            <div class="mb-5 sm:mb-6">
-                <div class="grid grid-cols-4 gap-2 sm:gap-3">
-                    <a href="{{ route('crm.board') }}" class="quick-action-card quick-action-primary">
-                        <div class="quick-action-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
-                            </svg>
-                        </div>
-                        <span class="quick-action-label">Pipeline CRM</span>
-                    </a>
-
-                    <a href="{{ route('quotations.index') }}" class="quick-action-card">
-                        <div class="quick-action-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                            </svg>
-                        </div>
-                        <span class="quick-action-label">Cotações</span>
-                    </a>
-
-                    <a href="{{ route('valuations.index') }}" class="quick-action-card">
-                        <div class="quick-action-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                        <span class="quick-action-label">Avaliador</span>
-                    </a>
-
-                    <a href="{{ route('tools.specs') }}" class="quick-action-card">
-                        <div class="quick-action-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                        </div>
-                        <span class="quick-action-label">Ficha Técnica</span>
-                    </a>
-                </div>
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+                <a href="{{ route('crm.board') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: #111827; color: white; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; border: 1px solid #111827; transition: all 0.15s;" onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='#111827'">
+                    <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+                    Pipeline CRM
+                </a>
+                <a href="{{ route('quotations.index') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: white; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; border: 1px solid #e5e7eb; transition: all 0.15s;" onmouseover="this.style.borderColor='#111827'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                    Cotações
+                </a>
+                <a href="{{ route('valuations.index') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: white; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; border: 1px solid #e5e7eb; transition: all 0.15s;" onmouseover="this.style.borderColor='#111827'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    Avaliador
+                </a>
+                <a href="{{ route('tools.specs') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: white; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; border: 1px solid #e5e7eb; transition: all 0.15s;" onmouseover="this.style.borderColor='#111827'" onmouseout="this.style.borderColor='#e5e7eb'">
+                    <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Ficha Técnica
+                </a>
             </div>
-
-            <style>
-                .quick-action-card {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 0.75rem 0.5rem;
-                    background: white;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 0.625rem;
-                    text-decoration: none;
-                    transition: all 0.15s ease;
-                }
-                .quick-action-card:hover {
-                    border-color: #111827;
-                    background: #f9fafb;
-                    transform: translateY(-1px);
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-                }
-                .quick-action-primary {
-                    background: #111827;
-                    border-color: #111827;
-                }
-                .quick-action-primary:hover {
-                    background: #1f2937;
-                    border-color: #1f2937;
-                }
-                .quick-action-icon {
-                    width: 1.5rem;
-                    height: 1.5rem;
-                    margin-bottom: 0.375rem;
-                    color: #374151;
-                }
-                .quick-action-icon svg {
-                    width: 100%;
-                    height: 100%;
-                }
-                .quick-action-primary .quick-action-icon {
-                    color: white;
-                }
-                .quick-action-label {
-                    font-size: 0.7rem;
-                    font-weight: 600;
-                    color: #111827;
-                    text-align: center;
-                    line-height: 1.2;
-                }
-                .quick-action-primary .quick-action-label {
-                    color: white;
-                }
-                @media (min-width: 640px) {
-                    .quick-action-card {
-                        padding: 1rem 0.75rem;
-                    }
-                    .quick-action-icon {
-                        width: 1.75rem;
-                        height: 1.75rem;
-                        margin-bottom: 0.5rem;
-                    }
-                    .quick-action-label {
-                        font-size: 0.8rem;
-                    }
-                }
-            </style>
 
             <!-- Alertas dos Módulos -->
             @if(($alerts['warranties_expiring'] ?? 0) > 0 || ($alerts['open_claims'] ?? 0) > 0 || ($alerts['imports_in_transit'] ?? 0) > 0 || ($alerts['reservations_expiring'] ?? 0) > 0 || ($alerts['reservations_overdue'] ?? 0) > 0 || ($alerts['deals_open'] ?? 0) > 0 || ($alerts['deals_overdue'] ?? 0) > 0)
