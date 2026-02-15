@@ -11,32 +11,23 @@ use Illuminate\View\View;
 class ToolController extends Controller
 {
     /**
-     * Tabela de preços rápida.
-     * Filtra dados sensíveis (custo/margem) para não-admins.
+     * Tabela de produtos com informações de estoque.
+     * Preços foram removidos do produto (agora são definidos por venda).
      */
     public function priceTable(): View
     {
         $products = Product::where('active', true)->orderBy('name')->get();
-        $isAdmin = auth()->user()->isAdmin();
 
-        $productsJson = $products->map(function ($p) use ($isAdmin) {
-            $data = [
+        $productsJson = $products->map(function ($p) {
+            return [
                 'id' => $p->id,
                 'name' => $p->name,
                 'sku' => $p->sku,
                 'category' => $p->category->value,
                 'storage' => $p->storage,
                 'condition' => $p->condition->value,
-                'sale_price' => (float) $p->sale_price,
                 'stock' => $p->stock_quantity,
             ];
-
-            if ($isAdmin) {
-                $data['cost_price'] = (float) $p->cost_price;
-                $data['margin'] = $p->profit_margin;
-            }
-
-            return $data;
         })->values();
 
         return view('tools.price-table', ['productsJson' => $productsJson]);

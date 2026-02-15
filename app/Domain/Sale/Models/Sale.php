@@ -263,13 +263,12 @@ class Sale extends Model
 
     /**
      * Calcula o custo total dos produtos vendidos (CMV)
-     * a partir do cost_price salvo no product_snapshot.
+     * usando total_cost do item (cost_price + frete).
      */
     public function getTotalCostAttribute(): float
     {
         return (float) $this->items->sum(function ($item) {
-            $costPrice = $item->product_snapshot['cost_price'] ?? 0;
-            return (float) $costPrice * $item->quantity;
+            return $item->total_cost_value * $item->quantity;
         });
     }
 

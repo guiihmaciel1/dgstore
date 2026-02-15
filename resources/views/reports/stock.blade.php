@@ -22,8 +22,8 @@
                     <div style="font-size: 1.75rem; font-weight: 700; color: #111827; margin-top: 0.25rem;">{{ $report['summary']['total_products'] }}</div>
                 </div>
                 <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem;">
-                    <div style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Valor em Estoque</div>
-                    <div style="font-size: 1.75rem; font-weight: 700; color: #16a34a; margin-top: 0.25rem;">R$ {{ number_format($report['summary']['total_stock_value'], 2, ',', '.') }}</div>
+                    <div style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Total de Unidades</div>
+                    <div style="font-size: 1.75rem; font-weight: 700; color: #16a34a; margin-top: 0.25rem;">{{ $report['summary']['total_units'] }}</div>
                 </div>
                 <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; {{ $report['summary']['out_of_stock'] > 0 ? 'background: #fef2f2; border-color: #fecaca;' : '' }}">
                     <div style="font-size: 0.75rem; font-weight: 500; color: {{ $report['summary']['out_of_stock'] > 0 ? '#dc2626' : '#6b7280' }}; text-transform: uppercase;">Sem Estoque</div>
@@ -55,10 +55,6 @@
                                         <span style="font-size: 0.875rem; color: #6b7280;">Em Estoque:</span>
                                         <span style="font-size: 0.875rem; font-weight: 500; color: #111827;">{{ $data['stock_quantity'] }} un.</span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span style="font-size: 0.875rem; color: #6b7280;">Valor:</span>
-                                        <span style="font-size: 0.875rem; font-weight: 600; color: #16a34a;">R$ {{ number_format($data['stock_value'], 2, ',', '.') }}</span>
-                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -79,7 +75,6 @@
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Categoria</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Estoque</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Mínimo</th>
-                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Valor Unit.</th>
                                 <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ações</th>
                             </tr>
                         </thead>
@@ -105,9 +100,6 @@
                                     <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; color: #6b7280;">
                                         {{ $product->min_stock_alert }} un.
                                     </td>
-                                    <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 500; color: #111827;">
-                                        {{ $product->formatted_cost_price }}
-                                    </td>
                                     <td style="padding: 0.75rem 1.5rem; text-align: right;">
                                         <a href="{{ route('stock.create') }}?product_id={{ $product->id }}" 
                                            style="display: inline-block; padding: 0.375rem 0.75rem; background: #111827; color: white; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none;"
@@ -118,7 +110,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" style="padding: 3rem; text-align: center; color: #6b7280;">
+                                    <td colspan="5" style="padding: 3rem; text-align: center; color: #6b7280;">
                                         <svg style="margin: 0 auto 1rem; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>

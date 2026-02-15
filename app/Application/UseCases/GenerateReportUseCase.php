@@ -97,7 +97,7 @@ class GenerateReportUseCase
         $allProducts = $this->productRepository->getActive();
 
         $totalProducts = $allProducts->count();
-        $totalValue = $allProducts->sum(fn($p) => $p->stock_quantity * $p->cost_price);
+        $totalUnits = $allProducts->sum('stock_quantity');
         $outOfStock = $allProducts->filter(fn($p) => $p->stock_quantity <= 0)->count();
         $lowStockCount = $lowStock->count();
 
@@ -106,13 +106,12 @@ class GenerateReportUseCase
             ->map(fn($group) => [
                 'count' => $group->count(),
                 'stock_quantity' => $group->sum('stock_quantity'),
-                'stock_value' => $group->sum(fn($p) => $p->stock_quantity * $p->cost_price),
             ]);
 
         return [
             'summary' => [
                 'total_products' => $totalProducts,
-                'total_stock_value' => $totalValue,
+                'total_units' => $totalUnits,
                 'out_of_stock' => $outOfStock,
                 'low_stock' => $lowStockCount,
             ],

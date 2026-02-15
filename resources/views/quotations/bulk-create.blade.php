@@ -106,7 +106,7 @@
                                                             style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
                                                         <option value="">Selecione um produto</option>
                                                         @foreach($products as $product)
-                                                            <option value="{{ $product->id }}" data-name="{{ $product->name }}" data-price="{{ $product->sale_price }}">
+                                                            <option value="{{ $product->id }}" data-name="{{ $product->name }}">
                                                                 {{ $product->name }} ({{ $product->sku }})
                                                             </option>
                                                         @endforeach

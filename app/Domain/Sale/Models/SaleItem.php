@@ -20,6 +20,12 @@ class SaleItem extends Model
         'product_snapshot',
         'quantity',
         'unit_price',
+        'cost_price',
+        'supplier_origin',
+        'freight_type',
+        'freight_value',
+        'freight_amount',
+        'total_cost',
         'subtotal',
     ];
 
@@ -29,6 +35,10 @@ class SaleItem extends Model
             'product_snapshot' => 'array',
             'quantity' => 'integer',
             'unit_price' => 'decimal:2',
+            'cost_price' => 'decimal:2',
+            'freight_value' => 'decimal:2',
+            'freight_amount' => 'decimal:2',
+            'total_cost' => 'decimal:2',
             'subtotal' => 'decimal:2',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -89,18 +99,82 @@ class SaleItem extends Model
     }
 
     /**
-     * Custo unitário do produto no momento da venda
+     * Custo unitário do produto no momento da venda.
+     * Primeiro tenta o campo direto, depois faz fallback para o snapshot (vendas antigas).
      */
-    public function getCostPriceAttribute(): float
+    public function getCostPriceValueAttribute(): float
     {
+        if ($this->attributes['cost_price'] !== null) {
+            return (float) $this->attributes['cost_price'];
+        }
+
         return (float) ($this->product_snapshot['cost_price'] ?? 0);
     }
 
     /**
-     * Lucro do item: (preço venda - custo) * quantidade
+     * Retorna o label da origem do fornecedor
+     */
+    public function getSupplierOriginLabelAttribute(): string
+    {
+        return match ($this->supplier_origin) {
+            'br' => 'Brasil',
+            'py' => 'Paraguai',
+            default => '-',
+        };
+    }
+
+    /**
+     * Calcula o valor do frete baseado no tipo
+     */
+    public function getFreightAmountCalculatedAttribute(): float
+    {
+        $costPrice = $this->cost_price_value;
+        $freightValue = (float) ($this->attributes['freight_value'] ?? 0);
+
+        return match ($this->freight_type) {
+            'percentage' => $costPrice * ($freightValue / 100),
+            'fixed' => $freightValue,
+            default => 0,
+        };
+    }
+
+    /**
+     * Custo total real: custo + frete
+     */
+    public function getTotalCostValueAttribute(): float
+    {
+        if ($this->attributes['total_cost'] !== null && (float) $this->attributes['total_cost'] > 0) {
+            return (float) $this->attributes['total_cost'];
+        }
+
+        return $this->cost_price_value + $this->freight_amount_calculated;
+    }
+
+    /**
+     * Lucro do item: (preço venda - custo total) * quantidade
      */
     public function getItemProfitAttribute(): float
     {
-        return ((float) $this->unit_price - $this->cost_price) * $this->quantity;
+        return ((float) $this->unit_price - $this->total_cost_value) * $this->quantity;
+    }
+
+    public function getFormattedCostPriceAttribute(): string
+    {
+        return 'R$ ' . number_format($this->cost_price_value, 2, ',', '.');
+    }
+
+    public function getFormattedFreightAmountAttribute(): string
+    {
+        return 'R$ ' . number_format((float) ($this->attributes['freight_amount'] ?? 0), 2, ',', '.');
+    }
+
+    public function getFormattedTotalCostAttribute(): string
+    {
+        return 'R$ ' . number_format($this->total_cost_value, 2, ',', '.');
+    }
+
+    public function getFormattedItemProfitAttribute(): string
+    {
+        return 'R$ ' . number_format($this->item_profit, 2, ',', '.');
     }
 }

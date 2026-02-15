@@ -28,8 +28,6 @@ class Product extends Model
         'color',
         'condition',
         'imei',
-        'cost_price',
-        'sale_price',
         'stock_quantity',
         'min_stock_alert',
         'supplier',
@@ -44,8 +42,6 @@ class Product extends Model
         return [
             'category' => ProductCategory::class,
             'condition' => ProductCondition::class,
-            'cost_price' => 'decimal:2',
-            'sale_price' => 'decimal:2',
             'stock_quantity' => 'integer',
             'min_stock_alert' => 'integer',
             'active' => 'boolean',
@@ -117,25 +113,6 @@ class Product extends Model
         return $this->category === ProductCategory::Smartphone;
     }
 
-    public function getProfitMarginAttribute(): float
-    {
-        if ($this->cost_price <= 0) {
-            return 0;
-        }
-
-        return (($this->sale_price - $this->cost_price) / $this->cost_price) * 100;
-    }
-
-    public function getFormattedCostPriceAttribute(): string
-    {
-        return 'R$ ' . number_format((float) $this->cost_price, 2, ',', '.');
-    }
-
-    public function getFormattedSalePriceAttribute(): string
-    {
-        return 'R$ ' . number_format((float) $this->sale_price, 2, ',', '.');
-    }
-
     public function getFullNameAttribute(): string
     {
         $parts = [$this->name];
@@ -166,8 +143,6 @@ class Product extends Model
             'color' => $this->color,
             'condition' => $this->condition->value,
             'imei' => $this->imei,
-            'cost_price' => $this->cost_price,
-            'sale_price' => $this->sale_price,
         ];
     }
 }

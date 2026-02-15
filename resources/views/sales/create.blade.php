@@ -120,15 +120,12 @@
                                                     <span style="font-weight: 600; color: #111827;" x-text="product.name"></span>
                                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
                                                         <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #4b5563; border-radius: 0.25rem;" x-text="product.sku"></span>
-                                                        <span style="font-size: 0.75rem; color: #6b7280;" x-text="product.stock + ' em estoque'"></span>
+                                                        <span style="font-size: 0.75rem;" :style="{ color: product.stock > 0 ? '#6b7280' : '#ea580c', fontWeight: product.stock <= 0 ? '600' : '400' }" x-text="product.stock > 0 ? product.stock + ' em estoque' : 'Sem estoque'"></span>
                                                     </div>
                                                 </div>
-                                                <div style="text-align: right;">
-                                                    <span style="font-size: 1.125rem; font-weight: 700; color: #111827;" x-text="product.formatted_price"></span>
-                                                    <div x-show="product.cost_price > 0" style="font-size: 0.6875rem; color: #6b7280;">
-                                                        Custo: <span x-text="formatMoney(product.cost_price)"></span>
-                                                    </div>
-                                                </div>
+                                                <svg style="width: 1.25rem; height: 1.25rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                </svg>
                                             </button>
                                         </template>
                                         <!-- Opção de cadastrar quando não encontra -->
@@ -161,64 +158,150 @@
                                     <div x-show="items.length > 0">
                                         <template x-for="(item, index) in items" :key="index">
                                             <div style="padding: 1rem; background: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 0.75rem;">
+                                                {{-- Linha 1: Nome, Quantidade, Venda, Subtotal, Remover --}}
                                                 <div style="display: flex; align-items: center; gap: 1rem;">
-                                                <div style="flex: 1; min-width: 0;">
-                                                    <p style="font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.name"></p>
-                                                    <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.id">
-                                                </div>
-                                                
-                                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                    <button type="button" @click="item.quantity = Math.max(1, item.quantity - 1); updateTotals()" 
-                                                            style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;">
-                                                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                                                    <div style="flex: 1; min-width: 0;">
+                                                        <p style="font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.name"></p>
+                                                        <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.id">
+                                                    </div>
+                                                    
+                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                        <button type="button" @click="item.quantity = Math.max(1, item.quantity - 1); updateTotals()" 
+                                                                style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;">
+                                                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                                                        </button>
+                                                        <input 
+                                                            type="number" 
+                                                            :name="'items['+index+'][quantity]'"
+                                                            x-model.number="item.quantity"
+                                                            @input="updateTotals"
+                                                            min="1"
+                                                            :max="Math.max(1, item.stock)"
+                                                            style="width: 4rem; text-align: center; font-weight: 700; font-size: 1.125rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.25rem;"
+                                                        >
+                                                        <button type="button" @click="item.quantity = Math.min(Math.max(1, item.stock), item.quantity + 1); updateTotals()" 
+                                                                style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;">
+                                                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    <div style="width: 7rem; text-align: right;">
+                                                        <label style="display: block; font-size: 0.625rem; color: #6b7280; text-transform: uppercase; margin-bottom: 0.125rem;">Venda</label>
+                                                        <input 
+                                                            type="number" 
+                                                            :name="'items['+index+'][unit_price]'"
+                                                            x-model.number="item.price"
+                                                            @input="updateTotals"
+                                                            step="0.01"
+                                                            min="0"
+                                                            style="width: 100%; text-align: right; font-weight: 600; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.25rem 0.5rem;"
+                                                        >
+                                                    </div>
+                                                    
+                                                    <div style="width: 7rem; text-align: right;">
+                                                        <span style="font-size: 1.125rem; font-weight: 700; color: #111827;" x-text="formatMoney(item.quantity * item.price)"></span>
+                                                    </div>
+                                                    
+                                                    <button type="button" @click="removeItem(index)" 
+                                                            style="padding: 0.5rem; color: #ef4444; border-radius: 0.5rem; cursor: pointer; background: none; border: none;"
+                                                            onmouseover="this.style.backgroundColor='#fef2f2'" onmouseout="this.style.backgroundColor='transparent'">
+                                                        <svg style="height: 1.25rem; width: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                        </svg>
                                                     </button>
-                                                    <input 
-                                                        type="number" 
-                                                        :name="'items['+index+'][quantity]'"
-                                                        x-model.number="item.quantity"
-                                                        @input="updateTotals"
-                                                        min="1"
-                                                        :max="item.stock"
-                                                        style="width: 4rem; text-align: center; font-weight: 700; font-size: 1.125rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.25rem;"
-                                                    >
-                                                    <button type="button" @click="item.quantity = Math.min(item.stock, item.quantity + 1); updateTotals()" 
-                                                            style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;">
-                                                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                                </div>
+
+                                                {{-- Linha 2: Custo, Origem, Frete --}}
+                                                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
+                                                    <div>
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                                            Custo (R$) <span style="color: #dc2626;">*</span>
+                                                        </label>
+                                                        <input type="number" 
+                                                               :name="'items['+index+'][cost_price]'"
+                                                               x-model.number="item.cost_price"
+                                                               @input="updateTotals"
+                                                               step="0.01" min="0" placeholder="0.00"
+                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
+                                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                    </div>
+                                                    <div>
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Origem</label>
+                                                        <select :name="'items['+index+'][supplier_origin]'"
+                                                                x-model="item.supplier_origin"
+                                                                @change="updateTotals"
+                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; background: white; outline: none;">
+                                                            <option value="">-</option>
+                                                            <option value="br">BR (Brasil)</option>
+                                                            <option value="py">PY (Paraguai)</option>
+                                                        </select>
+                                                    </div>
+                                                    <div x-show="item.supplier_origin">
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Tipo Frete</label>
+                                                        <select :name="'items['+index+'][freight_type]'"
+                                                                x-model="item.freight_type"
+                                                                @change="updateTotals"
+                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; background: white; outline: none;">
+                                                            <option value="">Sem frete</option>
+                                                            <option value="percentage">% sobre custo</option>
+                                                            <option value="fixed">Valor fixo (R$)</option>
+                                                        </select>
+                                                    </div>
+                                                    <div x-show="item.supplier_origin && item.freight_type">
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;" 
+                                                               x-text="item.freight_type === 'percentage' ? 'Frete (%)' : 'Frete (R$)'">Frete</label>
+                                                        <input type="number" 
+                                                               :name="'items['+index+'][freight_value]'"
+                                                               x-model.number="item.freight_value"
+                                                               @input="updateTotals"
+                                                               step="0.01" min="0" placeholder="0.00"
+                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
+                                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                    </div>
+                                                </div>
+
+                                                {{-- Linha 3: Resumo de custo/lucro --}}
+                                                <div x-show="item.cost_price > 0" 
+                                                     style="margin-top: 0.5rem; display: flex; gap: 1rem; font-size: 0.75rem; color: #6b7280;">
+                                                    <span x-show="getItemFreightAmount(item) > 0">
+                                                        Frete: <span style="font-weight: 600;" x-text="formatMoney(getItemFreightAmount(item))"></span>
+                                                    </span>
+                                                    <span x-show="getItemFreightAmount(item) > 0">
+                                                        Custo real: <span style="font-weight: 600;" x-text="formatMoney(getItemTotalCost(item))"></span>
+                                                    </span>
+                                                    <span :style="{ color: getItemProfit(item) >= 0 ? '#16a34a' : '#dc2626', fontWeight: '600' }">
+                                                        Lucro: <span x-text="formatMoney(getItemProfit(item))"></span>
+                                                    </span>
+                                                </div>
+
+                                                {{-- Alerta de sem estoque --}}
+                                                <div x-show="item.stock <= 0"
+                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 0.375rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+                                                    <div style="display: flex; align-items: center; gap: 0.375rem;">
+                                                        <svg style="width: 1rem; height: 1rem; color: #ea580c; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                                        </svg>
+                                                        <span style="font-size: 0.75rem; color: #9a3412; font-weight: 600;">
+                                                            Sem estoque disponível!
+                                                        </span>
+                                                    </div>
+                                                    <button type="button" @click="openStockModal(index)"
+                                                            style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: #ea580c; color: white; border: none; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; cursor: pointer; white-space: nowrap;"
+                                                            onmouseover="this.style.background='#c2410c'" onmouseout="this.style.background='#ea580c'">
+                                                        <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                                        </svg>
+                                                        Adicionar Estoque
                                                     </button>
                                                 </div>
-                                                
-                                                <div style="width: 7rem; text-align: right;">
-                                                    <input 
-                                                        type="number" 
-                                                        :name="'items['+index+'][unit_price]'"
-                                                        x-model.number="item.price"
-                                                        @input="updateTotals"
-                                                        step="0.01"
-                                                        min="0"
-                                                        style="width: 100%; text-align: right; font-weight: 600; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.25rem 0.5rem;"
-                                                    >
-                                                </div>
-                                                
-                                                <div style="width: 7rem; text-align: right;">
-                                                    <span style="font-size: 1.125rem; font-weight: 700; color: #111827;" x-text="formatMoney(item.quantity * item.price)"></span>
-                                                </div>
-                                                
-                                                <button type="button" @click="removeItem(index)" 
-                                                        style="padding: 0.5rem; color: #ef4444; border-radius: 0.5rem; cursor: pointer; background: none; border: none;"
-                                                        onmouseover="this.style.backgroundColor='#fef2f2'" onmouseout="this.style.backgroundColor='transparent'">
-                                                    <svg style="height: 1.25rem; width: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                    </svg>
-                                                </button>
-                                                </div>
-                                                {{-- Alerta de preço abaixo do custo --}}
-                                                <div x-show="item.cost_price > 0 && item.price < item.cost_price"
+                                                {{-- Alerta de preço abaixo do custo total --}}
+                                                <div x-show="item.cost_price > 0 && item.price > 0 && item.price < getItemTotalCost(item)"
                                                      style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.375rem; display: flex; align-items: center; gap: 0.375rem;">
                                                     <svg style="width: 1rem; height: 1rem; color: #dc2626; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                                                     </svg>
                                                     <span style="font-size: 0.75rem; color: #dc2626; font-weight: 600;">
-                                                        Preco abaixo do custo! Custo: <span x-text="formatMoney(item.cost_price)"></span>
+                                                        Preço abaixo do custo total! Custo: <span x-text="formatMoney(getItemTotalCost(item))"></span>
                                                     </span>
                                                 </div>
                                             </div>
@@ -565,6 +648,19 @@
                                         <dt>Subtotal</dt>
                                         <dd x-text="formatMoney(subtotal)"></dd>
                                     </div>
+                                    <div x-show="totalCost > 0" style="display: flex; justify-content: space-between; color: #9ca3af; font-size: 0.8125rem;">
+                                        <dt>Custo total</dt>
+                                        <dd x-text="formatMoney(totalCost)"></dd>
+                                    </div>
+                                    <div x-show="totalFreight > 0" style="display: flex; justify-content: space-between; color: #9ca3af; font-size: 0.8125rem;">
+                                        <dt>Frete total</dt>
+                                        <dd x-text="formatMoney(totalFreight)"></dd>
+                                    </div>
+                                    <div x-show="totalCost > 0" style="display: flex; justify-content: space-between; font-size: 0.8125rem;"
+                                         :style="{ color: totalProfit >= 0 ? '#4ade80' : '#f87171' }">
+                                        <dt>Lucro estimado</dt>
+                                        <dd x-text="formatMoney(totalProfit)"></dd>
+                                    </div>
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <dt style="color: #d1d5db;">Desconto</dt>
                                         <dd>
@@ -831,24 +927,6 @@
                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço de Custo <span style="color: #dc2626;">*</span></label>
-                                <div style="position: relative;">
-                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
-                                    <input type="number" x-model.number="productForm.cost_price" step="0.01" min="0"
-                                           style="width: 100%; padding: 0.625rem 0.75rem 0.625rem 2.5rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                </div>
-                            </div>
-                            <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço de Venda <span style="color: #dc2626;">*</span></label>
-                                <div style="position: relative;">
-                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
-                                    <input type="number" x-model.number="productForm.sale_price" step="0.01" min="0"
-                                           style="width: 100%; padding: 0.625rem 0.75rem 0.625rem 2.5rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                </div>
-                            </div>
-                            <div>
                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Quantidade <span style="color: #dc2626;">*</span></label>
                                 <input type="number" x-model.number="productForm.stock_quantity" min="1"
                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
@@ -862,18 +940,9 @@
                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                             </div>
                         </div>
-                        <!-- Lucro estimado -->
-                        <div x-show="productForm.sale_price > 0 && productForm.cost_price > 0" 
-                             style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem;"
-                             :style="{ background: productForm.sale_price > productForm.cost_price ? '#f0fdf4' : '#fef2f2', border: '1px solid ' + (productForm.sale_price > productForm.cost_price ? '#bbf7d0' : '#fecaca') }">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-size: 0.8125rem; font-weight: 500;" :style="{ color: productForm.sale_price > productForm.cost_price ? '#166534' : '#991b1b' }">
-                                    Lucro estimado:
-                                </span>
-                                <span style="font-weight: 700;" :style="{ color: productForm.sale_price > productForm.cost_price ? '#16a34a' : '#dc2626' }"
-                                      x-text="formatMoney(productForm.sale_price - productForm.cost_price) + ' (' + ((productForm.sale_price - productForm.cost_price) / productForm.cost_price * 100).toFixed(0) + '%)'"></span>
-                            </div>
-                        </div>
+                        <p style="margin-top: 1rem; padding: 0.75rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.5rem; font-size: 0.8125rem; color: #1e40af;">
+                            Os valores de custo e venda serão informados na hora da venda.
+                        </p>
                     </div>
                     <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem; background: #f9fafb; border-radius: 0 0 1rem 1rem;">
                         <button type="button" @click="showProductModal = false"
@@ -891,6 +960,82 @@
                     </div>
                 </div>
             </div>
+
+            <!-- MODAL: ENTRADA RÁPIDA DE ESTOQUE -->
+            <div x-show="showStockModal" x-cloak
+                 style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem;"
+                 @keydown.escape.window="showStockModal = false">
+                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5);" @click="showStockModal = false"></div>
+                <div style="position: relative; background: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 100%; max-width: 28rem;"
+                     @click.stop>
+                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="width: 2.5rem; height: 2.5rem; background: #fff7ed; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
+                                <svg style="width: 1.25rem; height: 1.25rem; color: #ea580c;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Entrada Rápida de Estoque</h3>
+                                <p style="font-size: 0.8125rem; color: #6b7280;" x-text="stockItemName"></p>
+                            </div>
+                        </div>
+                        <button type="button" @click="showStockModal = false" style="padding: 0.375rem; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
+                            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div x-show="stockFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; color: #dc2626;" x-text="stockFormError"></p>
+                        </div>
+                        <div x-show="stockFormSuccess" style="margin-bottom: 1rem; padding: 0.75rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; color: #166534;" x-text="stockFormSuccess"></p>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Quantidade a adicionar <span style="color: #dc2626;">*</span></label>
+                            <input type="number" x-model.number="stockForm.quantity" min="1" x-ref="stockQuantityInput"
+                                   @keydown.enter.prevent="saveStock"
+                                   style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1.125rem; font-weight: 700; text-align: center; outline: none;"
+                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e5e7eb'">
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Motivo <span style="color: #9ca3af;">(opcional)</span></label>
+                            <input type="text" x-model="stockForm.reason"
+                                   placeholder="Ex: Reposição de estoque"
+                                   style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e5e7eb'">
+                        </div>
+                        <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; color: #6b7280;">
+                                <span>Estoque atual:</span>
+                                <span style="font-weight: 600;" x-text="stockCurrentStock + ' un.'"></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; color: #111827; margin-top: 0.25rem;">
+                                <span style="font-weight: 600;">Estoque após entrada:</span>
+                                <span style="font-weight: 700; color: #16a34a;" x-text="(stockCurrentStock + (stockForm.quantity || 0)) + ' un.'"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem; background: #f9fafb; border-radius: 0 0 1rem 1rem;">
+                        <button type="button" @click="showStockModal = false"
+                                style="padding: 0.625rem 1.25rem; background: white; color: #374151; font-weight: 500; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                            Cancelar
+                        </button>
+                        <button type="button" @click="saveStock" :disabled="stockFormSaving"
+                                style="padding: 0.625rem 1.25rem; background: #ea580c; color: white; font-weight: 600; border: none; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
+                                onmouseover="this.style.background='#c2410c'" onmouseout="this.style.background='#ea580c'">
+                            <svg x-show="stockFormSaving" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            <span x-text="stockFormSaving ? 'Salvando...' : 'Confirmar Entrada'"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             </div><!-- /x-data wrapper -->
         </div>
     </div>
@@ -1030,7 +1175,6 @@
                     'id' => $reservation->product->id,
                     'name' => $reservation->product->full_name ?? $reservation->product->name,
                     'price' => (float) $reservation->product_price,
-                    'cost_price' => (float) ($reservation->product->cost_price ?? 0),
                     'stock' => $reservation->product->stock_quantity ?? 1,
                 ] : null,
                 'deposit_paid' => (float) $reservation->deposit_paid,
@@ -1069,9 +1213,19 @@
 
                 // Modal de Produto
                 showProductModal: false,
-                productForm: { name: '', sku: '', category: 'smartphone', condition: 'new', imei: '', cost_price: 0, sale_price: 0, stock_quantity: 1, color: '', min_stock_alert: 1 },
+                productForm: { name: '', sku: '', category: 'smartphone', condition: 'new', imei: '', stock_quantity: 1, color: '', min_stock_alert: 1 },
                 productFormError: '',
                 productFormSaving: false,
+
+                // Modal de Entrada de Estoque
+                showStockModal: false,
+                stockForm: { quantity: 1, reason: '' },
+                stockFormError: '',
+                stockFormSuccess: '',
+                stockFormSaving: false,
+                stockItemIndex: null,
+                stockItemName: '',
+                stockCurrentStock: 0,
 
                 init() {
                     // Pré-preencher produto da reserva
@@ -1080,7 +1234,10 @@
                             id: reservationData.product.id,
                             name: reservationData.product.name,
                             price: reservationData.product.price,
-                            cost_price: reservationData.product.cost_price,
+                            cost_price: 0,
+                            supplier_origin: '',
+                            freight_type: '',
+                            freight_value: 0,
                             quantity: 1,
                             stock: reservationData.product.stock
                         });
@@ -1177,8 +1334,11 @@
                         this.items.push({
                             id: product.id,
                             name: product.name,
-                            price: product.price,
-                            cost_price: product.cost_price || 0,
+                            price: 0,
+                            cost_price: 0,
+                            supplier_origin: '',
+                            freight_type: '',
+                            freight_value: 0,
                             quantity: 1,
                             stock: product.stock
                         });
@@ -1248,6 +1408,37 @@
                     this.subtotal = this.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
                     this.total = Math.max(0, this.subtotal - this.discount);
                 },
+
+                getItemFreightAmount(item) {
+                    if (!item.supplier_origin || !item.freight_type) return 0;
+                    if (item.freight_type === 'percentage') {
+                        return (parseFloat(item.cost_price) || 0) * ((parseFloat(item.freight_value) || 0) / 100);
+                    }
+                    if (item.freight_type === 'fixed') {
+                        return parseFloat(item.freight_value) || 0;
+                    }
+                    return 0;
+                },
+
+                getItemTotalCost(item) {
+                    return (parseFloat(item.cost_price) || 0) + this.getItemFreightAmount(item);
+                },
+
+                getItemProfit(item) {
+                    return ((parseFloat(item.price) || 0) - this.getItemTotalCost(item)) * (item.quantity || 1);
+                },
+
+                get totalCost() {
+                    return this.items.reduce((sum, item) => sum + (this.getItemTotalCost(item) * item.quantity), 0);
+                },
+
+                get totalFreight() {
+                    return this.items.reduce((sum, item) => sum + (this.getItemFreightAmount(item) * item.quantity), 0);
+                },
+
+                get totalProfit() {
+                    return this.items.reduce((sum, item) => sum + this.getItemProfit(item), 0);
+                },
                 
                 formatMoney(value) {
                     return 'R$ ' + (parseFloat(value) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1300,9 +1491,81 @@
                     this.customerFormSaving = false;
                 },
 
+                // ========== MODAL ESTOQUE ==========
+                openStockModal(index) {
+                    const item = this.items[index];
+                    this.stockItemIndex = index;
+                    this.stockItemName = item.name;
+                    this.stockCurrentStock = item.stock;
+                    this.stockForm = { quantity: 1, reason: '' };
+                    this.stockFormError = '';
+                    this.stockFormSuccess = '';
+                    this.showStockModal = true;
+                    this.$nextTick(() => {
+                        if (this.$refs.stockQuantityInput) {
+                            this.$refs.stockQuantityInput.focus();
+                            this.$refs.stockQuantityInput.select();
+                        }
+                    });
+                },
+
+                async saveStock() {
+                    this.stockFormError = '';
+                    this.stockFormSuccess = '';
+
+                    if (!this.stockForm.quantity || this.stockForm.quantity < 1) {
+                        this.stockFormError = 'A quantidade deve ser pelo menos 1.';
+                        return;
+                    }
+
+                    const item = this.items[this.stockItemIndex];
+                    if (!item) {
+                        this.stockFormError = 'Produto não encontrado na lista.';
+                        return;
+                    }
+
+                    this.stockFormSaving = true;
+
+                    try {
+                        const response = await fetch('{{ route("stock.store-quick") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                product_id: item.id,
+                                quantity: this.stockForm.quantity,
+                                reason: this.stockForm.reason || null,
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            const errors = data.errors ? Object.values(data.errors).flat().join(' ') : (data.message || 'Erro ao registrar entrada.');
+                            this.stockFormError = errors;
+                            this.stockFormSaving = false;
+                            return;
+                        }
+
+                        // Atualizar estoque do item na lista
+                        item.stock = data.new_stock;
+                        this.stockCurrentStock = data.new_stock;
+
+                        // Fechar modal após sucesso
+                        this.showStockModal = false;
+                    } catch (e) {
+                        this.stockFormError = 'Erro de conexão. Tente novamente.';
+                    }
+
+                    this.stockFormSaving = false;
+                },
+
                 // ========== MODAL PRODUTO ==========
                 resetProductForm() {
-                    const form = { name: '', sku: '', category: 'smartphone', condition: 'new', imei: '', cost_price: 0, sale_price: 0, stock_quantity: 1, color: '', min_stock_alert: 1 };
+                    const form = { name: '', sku: '', category: 'smartphone', condition: 'new', imei: '', stock_quantity: 1, color: '', min_stock_alert: 1 };
                     // Gerar SKU ao resetar
                     this.generateProductSkuFor(form);
                     return form;
@@ -1327,10 +1590,6 @@
                     
                     if (!this.productForm.name || !this.productForm.sku || !this.productForm.category || !this.productForm.condition) {
                         this.productFormError = 'Preencha os campos obrigatórios: Nome, SKU, Categoria e Condição.';
-                        return;
-                    }
-                    if (this.productForm.sale_price <= 0) {
-                        this.productFormError = 'O preço de venda deve ser maior que zero.';
                         return;
                     }
 

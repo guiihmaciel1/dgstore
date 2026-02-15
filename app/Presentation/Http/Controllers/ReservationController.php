@@ -249,8 +249,6 @@ class ReservationController extends Controller
                 'id' => $p->id,
                 'name' => $p->full_name,
                 'sku' => $p->sku,
-                'price' => (float) $p->sale_price,
-                'formatted_price' => $p->formatted_sale_price,
                 'stock' => $p->stock_quantity,
                 'source' => 'stock',
                 'source_label' => $p->stock_quantity > 0 ? 'Estoque' : 'Sem estoque',

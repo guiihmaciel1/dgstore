@@ -163,29 +163,6 @@
 
                 <!-- Coluna Lateral -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <!-- Preços -->
-                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
-                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-                            <h3 style="font-weight: 600; color: #111827;">Preços</h3>
-                        </div>
-                        <div style="padding: 1.5rem;">
-                            <div style="margin-bottom: 1rem;">
-                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Preço de Venda</dt>
-                                <dd style="margin-top: 0.25rem; font-size: 1.75rem; font-weight: 700; color: #16a34a;">{{ $product->formatted_sale_price }}</dd>
-                            </div>
-                            @if(auth()->user()->isAdmin())
-                            <div style="margin-bottom: 1rem;">
-                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Preço de Custo</dt>
-                                <dd style="margin-top: 0.25rem; font-size: 1.25rem; font-weight: 600; color: #111827;">{{ $product->formatted_cost_price }}</dd>
-                            </div>
-                            <div>
-                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Margem de Lucro</dt>
-                                <dd style="margin-top: 0.25rem; font-size: 1.25rem; font-weight: 600; color: #111827;">{{ number_format($product->profit_margin, 1) }}%</dd>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-
                     <!-- Estoque -->
                     <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden; {{ $product->isLowStock() ? ($product->isOutOfStock() ? 'border-color: #fecaca;' : 'border-color: #fde68a;') : '' }}">
                         <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#fef2f2' : '#fefce8') : '#f9fafb' }};">

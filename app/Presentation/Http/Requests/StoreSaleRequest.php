@@ -30,6 +30,10 @@ class StoreSaleRequest extends FormRequest
             'items.*.product_id' => ['required', 'exists:products,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
+            'items.*.cost_price' => ['required', 'numeric', 'min:0'],
+            'items.*.supplier_origin' => ['nullable', 'in:br,py'],
+            'items.*.freight_type' => ['nullable', 'in:percentage,fixed'],
+            'items.*.freight_value' => ['nullable', 'numeric', 'min:0'],
             
             // Campos de pagamento misto
             'trade_in_value' => ['nullable', 'numeric', 'min:0'],
@@ -63,7 +67,11 @@ class StoreSaleRequest extends FormRequest
             'items' => 'itens',
             'items.*.product_id' => 'produto',
             'items.*.quantity' => 'quantidade',
-            'items.*.unit_price' => 'preço unitário',
+            'items.*.unit_price' => 'preço de venda',
+            'items.*.cost_price' => 'preço de custo',
+            'items.*.supplier_origin' => 'origem do fornecedor',
+            'items.*.freight_type' => 'tipo de frete',
+            'items.*.freight_value' => 'valor do frete',
             'trade_in_value' => 'valor do trade-in',
             'cash_payment' => 'entrada à vista',
             'card_payment' => 'valor no cartão',

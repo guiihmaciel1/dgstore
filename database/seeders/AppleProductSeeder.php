@@ -46,11 +46,11 @@ class AppleProductSeeder extends Seeder
         foreach ($lineup as [$name, $code, $storages]) {
             $model = Str::slug($name);
 
-            foreach ($storages as $storage => [$cost, $sale]) {
+            foreach ($storages as $storage => $priceData) {
                 $sLabel = str_replace(['GB', 'TB'], ['', 'T'], $storage);
                 $items[] = $this->makeProduct(
                     "{$name} {$storage}", "APL-{$code}-{$sLabel}",
-                    $category, $model, $storage, $cost, $sale,
+                    $category, $model, $storage,
                 );
             }
         }
@@ -60,7 +60,7 @@ class AppleProductSeeder extends Seeder
 
     private function makeProduct(
         string $name, string $sku, string $category,
-        string $model, ?string $storage, float $cost, float $sale,
+        string $model, ?string $storage,
     ): array {
         return [
             'name'            => $name,
@@ -69,8 +69,6 @@ class AppleProductSeeder extends Seeder
             'model'           => $model,
             'storage'         => $storage,
             'condition'       => 'new',
-            'cost_price'      => $cost,
-            'sale_price'      => $sale,
             'stock_quantity'  => 0,
             'min_stock_alert' => 1,
             'supplier'        => 'Apple',
@@ -240,41 +238,41 @@ class AppleProductSeeder extends Seeder
     {
         return [
             // ── Apple Watch Ultra 3 (2025) ──
-            $this->makeProduct('Apple Watch Ultra 3 49mm',   'APL-AWU3',    'smartwatch', 'apple-watch-ultra-3',   null, 4187, 5499),
+            $this->makeProduct('Apple Watch Ultra 3 49mm',   'APL-AWU3',    'smartwatch', 'apple-watch-ultra-3',   null),
 
             // ── Apple Watch Series 11 (2025) ──
-            $this->makeProduct('Apple Watch Series 11 42mm', 'APL-AW11-42', 'smartwatch', 'apple-watch-series-11', null, 1829, 2399),
-            $this->makeProduct('Apple Watch Series 11 46mm', 'APL-AW11-46', 'smartwatch', 'apple-watch-series-11', null, 1982, 2599),
+            $this->makeProduct('Apple Watch Series 11 42mm', 'APL-AW11-42', 'smartwatch', 'apple-watch-series-11', null),
+            $this->makeProduct('Apple Watch Series 11 46mm', 'APL-AW11-46', 'smartwatch', 'apple-watch-series-11', null),
 
             // ── Apple Watch Series 10 (2024) ──
-            $this->makeProduct('Apple Watch Series 10 42mm', 'APL-AW10-42', 'smartwatch', 'apple-watch-series-10', null, 1744, 2299),
-            $this->makeProduct('Apple Watch Series 10 46mm', 'APL-AW10-46', 'smartwatch', 'apple-watch-series-10', null, 1855, 2499),
+            $this->makeProduct('Apple Watch Series 10 42mm', 'APL-AW10-42', 'smartwatch', 'apple-watch-series-10', null),
+            $this->makeProduct('Apple Watch Series 10 46mm', 'APL-AW10-46', 'smartwatch', 'apple-watch-series-10', null),
 
             // ── Apple Watch SE 3a (2025) ──
-            $this->makeProduct('Apple Watch SE 3a 40mm',     'APL-AWSE3-40', 'smartwatch', 'apple-watch-se-3',     null, 1484, 1999),
-            $this->makeProduct('Apple Watch SE 3a 44mm',     'APL-AWSE3-44', 'smartwatch', 'apple-watch-se-3',     null, 1405, 1899),
+            $this->makeProduct('Apple Watch SE 3a 40mm',     'APL-AWSE3-40', 'smartwatch', 'apple-watch-se-3',     null),
+            $this->makeProduct('Apple Watch SE 3a 44mm',     'APL-AWSE3-44', 'smartwatch', 'apple-watch-se-3',     null),
 
             // ── Apple Watch SE 2a (2024) ──
-            $this->makeProduct('Apple Watch SE 2a 40mm',     'APL-AWSE-40', 'smartwatch', 'apple-watch-se-2',      null, 1034, 1499),
-            $this->makeProduct('Apple Watch SE 2a 44mm',     'APL-AWSE-44', 'smartwatch', 'apple-watch-se-2',      null, 1113, 1599),
+            $this->makeProduct('Apple Watch SE 2a 40mm',     'APL-AWSE-40', 'smartwatch', 'apple-watch-se-2',      null),
+            $this->makeProduct('Apple Watch SE 2a 44mm',     'APL-AWSE-44', 'smartwatch', 'apple-watch-se-2',      null),
 
             // ── Apple Watch Ultra 2 (anterior) ──
-            $this->makeProduct('Apple Watch Ultra 2 49mm',   'APL-AWU2',    'smartwatch', 'apple-watch-ultra-2',   null, 5500, 6999),
+            $this->makeProduct('Apple Watch Ultra 2 49mm',   'APL-AWU2',    'smartwatch', 'apple-watch-ultra-2',   null),
 
             // ── AirPods Pro 3 (2025) ──
-            $this->makeProduct('AirPods Pro 3',        'APL-APP3',  'headphone', 'airpods-pro-3', null, 1261, 1699),
+            $this->makeProduct('AirPods Pro 3',        'APL-APP3',  'headphone', 'airpods-pro-3', null),
 
             // ── AirPods 4 (2024) ──
-            $this->makeProduct('AirPods 4 ANC',        'APL-AP4A',  'headphone', 'airpods-4-anc', null, 763, 1099),
-            $this->makeProduct('AirPods 4',            'APL-AP4',   'headphone', 'airpods-4',     null, 535, 799),
+            $this->makeProduct('AirPods 4 ANC',        'APL-AP4A',  'headphone', 'airpods-4-anc', null),
+            $this->makeProduct('AirPods 4',            'APL-AP4',   'headphone', 'airpods-4',     null),
 
             // ── AirPods (anteriores) ──
-            $this->makeProduct('AirPods Pro 2 USB-C',  'APL-APP2',  'headphone', 'airpods-pro-2', null, 981, 1399),
-            $this->makeProduct('AirPods 3a Geracao',   'APL-AP3',   'headphone', 'airpods-3',     null, 1000, 1399),
-            $this->makeProduct('AirPods Max USB-C',    'APL-APMAX', 'headphone', 'airpods-max',   null, 2677, 3499),
+            $this->makeProduct('AirPods Pro 2 USB-C',  'APL-APP2',  'headphone', 'airpods-pro-2', null),
+            $this->makeProduct('AirPods 3a Geracao',   'APL-AP3',   'headphone', 'airpods-3',     null),
+            $this->makeProduct('AirPods Max USB-C',    'APL-APMAX', 'headphone', 'airpods-max',   null),
 
             // ── Acessórios ──
-            $this->makeProduct('Carregador USB-C 20W Apple', 'APL-CHG20W', 'accessory', 'apple-usb-c-20w', null, 101, 179),
+            $this->makeProduct('Carregador USB-C 20W Apple', 'APL-CHG20W', 'accessory', 'apple-usb-c-20w', null),
         ];
     }
 }

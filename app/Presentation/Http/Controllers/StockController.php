@@ -100,6 +100,38 @@ class StockController extends Controller
             ->with('success', $message);
     }
 
+    /**
+     * Entrada rápida de estoque via API (usado na tela de vendas).
+     */
+    public function storeQuick(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $validated = $request->validate([
+            'product_id' => ['required', 'exists:products,id'],
+            'quantity' => ['required', 'integer', 'min:1'],
+            'reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $product = Product::findOrFail($validated['product_id']);
+        $userId = auth()->id();
+        $quantity = (int) $validated['quantity'];
+
+        $this->stockService->registerEntry(
+            $product,
+            $quantity,
+            $userId,
+            $validated['reason'] ?? 'Entrada rápida pela tela de vendas'
+        );
+
+        $product->refresh();
+
+        return response()->json([
+            'success' => true,
+            'product_id' => $product->id,
+            'new_stock' => $product->stock_quantity,
+            'message' => "Entrada de {$quantity} unidade(s) registrada com sucesso!",
+        ]);
+    }
+
     public function productHistory(Product $product): View
     {
         $movements = $this->stockService->getProductHistory($product->id);
@@ -178,13 +210,11 @@ class StockController extends Controller
                     'name' => $tradeIn->device_name,
                     'sku' => $sku,
                     'category' => ProductCategory::Smartphone->value,
-                    'cost_price' => $tradeIn->estimated_value,
-                    'sale_price' => 0, // Definir preço de venda manualmente depois
                     'model' => $tradeIn->device_model,
                     'condition' => $condition->value,
                     'imei' => $tradeIn->imei,
                     'stock_quantity' => 1,
-                    'notes' => "Origem: Trade-in da venda #{$tradeIn->sale?->sale_number}. {$tradeIn->notes}",
+                    'notes' => "Origem: Trade-in da venda #{$tradeIn->sale?->sale_number}. Valor estimado: R$ " . number_format($tradeIn->estimated_value, 2, ',', '.') . ". {$tradeIn->notes}",
                 ]);
 
                 $product = $this->productService->create($productData);

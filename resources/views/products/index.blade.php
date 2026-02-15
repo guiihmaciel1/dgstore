@@ -86,7 +86,6 @@
                                 <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Produto</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Categoria</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Condição</th>
-                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Preço</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Estoque</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Status</th>
                                 <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Ações</th>
@@ -111,12 +110,6 @@
                                     </td>
                                     <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280;">
                                         {{ $product->condition->label() }}
-                                    </td>
-                                    <td style="padding: 0.75rem 1rem; text-align: right;">
-                                        <div style="font-weight: 600; color: #111827;">{{ $product->formatted_sale_price }}</div>
-                                        @if(auth()->user()->isAdmin())
-                                            <div style="font-size: 0.75rem; color: #9ca3af;">Custo: {{ $product->formatted_cost_price }}</div>
-                                        @endif
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: center;">
                                         @php
@@ -143,7 +136,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" style="padding: 3rem; text-align: center; color: #6b7280;">
+                                    <td colspan="6" style="padding: 3rem; text-align: center; color: #6b7280;">
                                         Nenhum produto encontrado.
                                     </td>
                                 </tr>

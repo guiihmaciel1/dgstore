@@ -160,15 +160,6 @@
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
                                             <div style="font-weight: 600; color: #7c3aed;">{{ $tradeIn->formatted_value }}</div>
-                                            <div style="font-size: 0.6875rem; color: #ca8a04;">Venda min: {{ $tradeIn->formatted_value }}</div>
-                                            @if($tradeIn->isProcessed() && $tradeIn->product)
-                                                @php $tradeInSalePrice = (float) $tradeIn->product->sale_price; @endphp
-                                                @if($tradeInSalePrice > 0 && $tradeInSalePrice < (float) $tradeIn->estimated_value)
-                                                    <div style="font-size: 0.6875rem; color: #dc2626; font-weight: 700;">
-                                                        PRECO VENDA ABAIXO DO CUSTO!
-                                                    </div>
-                                                @endif
-                                            @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @php

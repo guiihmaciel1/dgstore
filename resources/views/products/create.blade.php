@@ -111,24 +111,6 @@
                                        style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                             </div>
 
-                            <!-- Preço de Custo -->
-                            <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
-                                    Preço de Custo <span style="color: #dc2626;">*</span>
-                                </label>
-                                <input type="number" name="cost_price" value="{{ old('cost_price') }}" step="0.01" min="0" required
-                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
-                            </div>
-
-                            <!-- Preço de Venda -->
-                            <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
-                                    Preço de Venda <span style="color: #dc2626;">*</span>
-                                </label>
-                                <input type="number" name="sale_price" value="{{ old('sale_price') }}" step="0.01" min="0" required
-                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
-                            </div>
-
                             <!-- Qtd Estoque -->
                             <div>
                                 <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">

@@ -131,7 +131,7 @@ class QuotationController extends Controller
         $products = $this->productService->active();
 
         $productsJson = $products->map(function ($p) {
-            return ['id' => $p->id, 'name' => $p->name, 'price' => $p->sale_price];
+            return ['id' => $p->id, 'name' => $p->name];
         })->values();
 
         return view('quotations.bulk-create', [
@@ -222,7 +222,6 @@ class QuotationController extends Controller
                 'id' => $product->id,
                 'name' => $product->full_name,
                 'sku' => $product->sku,
-                'sale_price' => $product->sale_price,
             ])
         );
     }
@@ -602,8 +601,6 @@ PROMPT;
             'sku' => $p->sku,
             'estoque_atual' => $p->stock_quantity,
             'alerta_minimo' => $p->min_stock_alert,
-            'preco_custo' => $p->cost_price,
-            'preco_venda' => $p->sale_price,
         ])->values()->toArray();
 
         $topProductsData = $topProducts->map(fn ($item) => [

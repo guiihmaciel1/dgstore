@@ -16,6 +16,7 @@ use App\Presentation\Http\Controllers\FollowupController;
 use App\Presentation\Http\Controllers\ImeiLookupController;
 use App\Presentation\Http\Controllers\ToolController;
 use App\Presentation\Http\Controllers\WarrantyController;
+use App\Presentation\Http\Controllers\CrmController;
 use App\Presentation\Http\Controllers\FinanceController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('followups', FollowupController::class)->except(['edit', 'show', 'create']);
     Route::post('followups/{followup}/complete', [FollowupController::class, 'complete'])->name('followups.complete');
     Route::post('followups/{followup}/cancel', [FollowupController::class, 'cancel'])->name('followups.cancel');
+
+    // CRM - Pipeline de Vendas
+    Route::get('/crm', [CrmController::class, 'board'])->name('crm.board');
+    Route::get('/crm/history', [CrmController::class, 'history'])->name('crm.history');
+    Route::post('/crm/deals', [CrmController::class, 'store'])->name('crm.deals.store');
+    Route::get('/crm/deals/{deal}', [CrmController::class, 'show'])->name('crm.show');
+    Route::put('/crm/deals/{deal}', [CrmController::class, 'update'])->name('crm.deals.update');
+    Route::delete('/crm/deals/{deal}', [CrmController::class, 'destroy'])->name('crm.deals.destroy');
+    Route::post('/crm/deals/{deal}/move', [CrmController::class, 'moveStage'])->name('crm.deals.move');
+    Route::post('/crm/deals/{deal}/win', [CrmController::class, 'win'])->name('crm.deals.win');
+    Route::post('/crm/deals/{deal}/lose', [CrmController::class, 'lose'])->name('crm.deals.lose');
+    Route::post('/crm/deals/{deal}/reopen', [CrmController::class, 'reopen'])->name('crm.deals.reopen');
+    Route::post('/crm/deals/{deal}/activities', [CrmController::class, 'storeActivity'])->name('crm.deals.activities.store');
+    Route::post('/api/crm/deals/{deal}/ai-message', [CrmController::class, 'aiSuggestMessage'])->name('crm.deals.ai-message');
+    Route::post('/api/crm/deals/{deal}/ai-analysis', [CrmController::class, 'aiAnalyzeDeal'])->name('crm.deals.ai-analysis');
 
     // Produtos
     Route::resource('products', ProductController::class);
@@ -86,6 +102,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/stock/trade-ins/{tradeIn}/link', [StockController::class, 'linkTradeInToProduct'])->name('stock.trade-ins.link');
     Route::get('/stock/create', [StockController::class, 'create'])->name('stock.create');
     Route::post('/stock', [StockController::class, 'store'])->name('stock.store');
+    Route::post('/api/stock/store-quick', [StockController::class, 'storeQuick'])->name('stock.store-quick');
     Route::get('/stock/product/{product}', [StockController::class, 'productHistory'])->name('stock.product-history');
 
     // Garantias

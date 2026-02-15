@@ -114,12 +114,21 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             foreach ($data->items as $itemData) {
                 $product = Product::findOrFail($itemData->productId);
 
+                $freightAmount = $itemData->calculateFreightAmount();
+                $totalCost = $itemData->calculateTotalCost();
+
                 SaleItem::create([
                     'sale_id' => $sale->id,
                     'product_id' => $product->id,
                     'product_snapshot' => $product->toSnapshot(),
                     'quantity' => $itemData->quantity,
                     'unit_price' => $itemData->unitPrice,
+                    'cost_price' => $itemData->costPrice,
+                    'supplier_origin' => $itemData->supplierOrigin,
+                    'freight_type' => $itemData->freightType,
+                    'freight_value' => $itemData->freightValue,
+                    'freight_amount' => $freightAmount,
+                    'total_cost' => $totalCost,
                     'subtotal' => $itemData->subtotal(),
                 ]);
 

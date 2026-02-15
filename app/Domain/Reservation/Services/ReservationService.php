@@ -98,7 +98,7 @@ class ReservationService
                 'source' => $source,
                 'user_id' => $data['user_id'],
                 'status' => ReservationStatus::Active,
-                'product_price' => $data['product_price'] ?? $product?->sale_price ?? 0,
+                'product_price' => $data['product_price'] ?? 0,
                 'cost_price' => $data['cost_price'] ?? 0,
                 'deposit_amount' => $data['deposit_amount'] ?? 0,
                 'deposit_paid' => 0,

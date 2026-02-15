@@ -81,8 +81,9 @@
                                     <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                         <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
                                         <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Qtd</th>
-                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo Unit.</th>
-                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Preço Unit.</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Frete</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Venda</th>
                                         <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Subtotal</th>
                                         <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Lucro</th>
                                     </tr>
@@ -92,17 +93,35 @@
                                         @php
                                             $itemProfit = $item->item_profit;
                                             $profitColor = $itemProfit >= 0 ? '#16a34a' : '#dc2626';
+                                            $freightAmt = (float) ($item->freight_amount ?? 0);
                                         @endphp
                                         <tr style="border-bottom: 1px solid #f3f4f6;">
                                             <td style="padding: 1rem 1.5rem;">
                                                 <div style="font-weight: 500; color: #111827;">{{ $item->product_name }}</div>
-                                                <div style="font-size: 0.75rem; color: #9ca3af;">SKU: {{ $item->product_sku }}</div>
+                                                <div style="font-size: 0.75rem; color: #9ca3af;">
+                                                    SKU: {{ $item->product_sku }}
+                                                    @if($item->supplier_origin)
+                                                        <span style="margin-left: 0.5rem; padding: 0.125rem 0.375rem; background: {{ $item->supplier_origin === 'py' ? '#fef3c7' : '#dbeafe' }}; color: {{ $item->supplier_origin === 'py' ? '#92400e' : '#1e40af' }}; font-size: 0.6875rem; font-weight: 600; border-radius: 0.25rem;">
+                                                            {{ strtoupper($item->supplier_origin) }}
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             </td>
                                             <td style="padding: 0.75rem 1rem; text-align: center; color: #6b7280;">
                                                 {{ $item->quantity }}
                                             </td>
                                             <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280; font-size: 0.875rem;">
-                                                R$ {{ number_format($item->cost_price, 2, ',', '.') }}
+                                                {{ $item->formatted_cost_price }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280; font-size: 0.875rem;">
+                                                @if($freightAmt > 0)
+                                                    R$ {{ number_format($freightAmt, 2, ',', '.') }}
+                                                    @if($item->freight_type === 'percentage')
+                                                        <div style="font-size: 0.6875rem; color: #9ca3af;">({{ number_format((float) $item->freight_value, 1) }}%)</div>
+                                                    @endif
+                                                @else
+                                                    -
+                                                @endif
                                             </td>
                                             <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280;">
                                                 {{ $item->formatted_unit_price }}
@@ -372,15 +391,8 @@
                                                 <a href="{{ route('products.show', $tradeInProduct) }}" style="text-decoration: underline; font-weight: 600;">
                                                     {{ $tradeInProduct->name }}
                                                 </a>
-                                                — Custo: R$ {{ number_format($tradeInCost, 2, ',', '.') }}
-                                                @if($tradeInProduct->sale_price > 0)
-                                                    | Preco de venda: R$ {{ number_format((float) $tradeInProduct->sale_price, 2, ',', '.') }}
-                                                    @if((float) $tradeInProduct->sale_price < $tradeInCost)
-                                                        <span style="color: #dc2626; font-weight: 700;"> (ABAIXO DO CUSTO!)</span>
-                                                    @endif
-                                                @else
-                                                    | <span style="color: #ca8a04; font-weight: 600;">Preco de venda nao definido</span>
-                                                @endif
+                                                — Valor estimado: R$ {{ number_format($tradeInCost, 2, ',', '.') }}
+                                                | Estoque: {{ $tradeInProduct->stock_quantity }} un.
                                             </p>
                                         @endif
                                     </div>

@@ -13,8 +13,6 @@ readonly class ProductData
         public string $name,
         public string $sku,
         public ProductCategory $category,
-        public float $costPrice,
-        public float $salePrice,
         public ?string $model = null,
         public ?string $storage = null,
         public ?string $color = null,
@@ -39,8 +37,6 @@ readonly class ProductData
             category: $category instanceof ProductCategory 
                 ? $category 
                 : ProductCategory::from($category),
-            costPrice: (float) ($data['cost_price'] ?? 0),
-            salePrice: (float) ($data['sale_price'] ?? 0),
             model: $data['model'] ?? null,
             storage: $data['storage'] ?? null,
             color: $data['color'] ?? null,
@@ -69,8 +65,6 @@ readonly class ProductData
             'color' => $this->color,
             'condition' => $this->condition->value,
             'imei' => $this->imei,
-            'cost_price' => $this->costPrice,
-            'sale_price' => $this->salePrice,
             'stock_quantity' => $this->stockQuantity,
             'min_stock_alert' => $this->minStockAlert,
             'supplier' => $this->supplier,

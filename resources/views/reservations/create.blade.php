@@ -142,7 +142,9 @@
                                                     <div style="font-size: 0.75rem; color: #6b7280;" x-text="product.sku"></div>
                                                 </div>
                                                 <div style="text-align: right; white-space: nowrap;">
-                                                    <div style="font-weight: 600; color: #16a34a; font-size: 0.875rem;" x-text="product.formatted_price"></div>
+                                                    <template x-if="product.formatted_price">
+                                                        <div style="font-weight: 600; color: #16a34a; font-size: 0.875rem;" x-text="product.formatted_price"></div>
+                                                    </template>
                                                     <template x-if="product.source === 'quotation' && product.formatted_base_price">
                                                         <div style="font-size: 0.625rem; color: #9ca3af;" x-text="product.formatted_base_price + ' +4%'"></div>
                                                     </template>
@@ -210,9 +212,11 @@
                                                  x-text="selectedProduct?.name"></div>
                                             <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #6b7280; margin-top: 0.125rem;">
                                                 <span x-text="selectedProduct?.sku"></span>
-                                                <span style="font-weight: 600;"
-                                                      :style="source === 'stock' ? 'color: #16a34a;' : (source === 'quotation' ? 'color: #2563eb;' : 'color: #d97706;')"
-                                                      x-text="selectedProduct?.formatted_price"></span>
+                                                <template x-if="selectedProduct?.formatted_price">
+                                                    <span style="font-weight: 600;"
+                                                          :style="source === 'stock' ? 'color: #16a34a;' : (source === 'quotation' ? 'color: #2563eb;' : 'color: #d97706;')"
+                                                          x-text="selectedProduct?.formatted_price"></span>
+                                                </template>
                                                 <span style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; border-radius: 1rem; font-weight: 500;"
                                                       :style="source === 'stock'
                                                           ? 'background: #dcfce7; color: #16a34a;'
@@ -410,8 +414,6 @@
                     'id' => $selectedProduct->id,
                     'name' => $selectedProduct->full_name,
                     'sku' => $selectedProduct->sku,
-                    'price' => $selectedProduct->sale_price,
-                    'formatted_price' => $selectedProduct->formatted_sale_price,
                     'source' => 'stock',
                     'source_label' => 'Estoque',
                 ]) : 'null' !!},
@@ -426,7 +428,7 @@
 
                 // Valores
                 costPrice: 0,
-                productPrice: {{ $selectedProduct?->sale_price ?? 0 }},
+                productPrice: 0,
                 depositAmount: 0,
                 initialPayment: 0,
                 expiresAt: '{{ date('Y-m-d', strtotime('+7 days')) }}',
@@ -487,13 +489,13 @@
                     this.productDescription = product.name;
                     this.source = product.source || 'stock';
 
-                    // Cotação: custo = valor final (+4% frete); Estoque: preço = venda
+                    // Cotação: custo = valor final (+4% frete); Estoque: preencher manualmente
                     if (product.source === 'quotation') {
                         this.costPrice = product.final_price || product.price || 0;
                         this.productPrice = 0;
                     } else {
                         this.costPrice = 0;
-                        this.productPrice = product.price || 0;
+                        this.productPrice = 0;
                     }
 
                     this.productSearch = '';

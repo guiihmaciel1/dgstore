@@ -5,7 +5,7 @@
             <!-- Header -->
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Tabela de Precos</h1>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Catálogo de Produtos</h1>
                     <p style="font-size: 0.8rem; color: #9ca3af;" x-text="filtered.length + ' produto(s)'"></p>
                 </div>
                 <div style="position: relative; width: 100%; max-width: 320px;">
@@ -37,12 +37,7 @@
                             <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
                             <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 80px;">Storage</th>
                             <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 80px;">Cond.</th>
-                            <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 120px;">Preco</th>
-                            @if(auth()->user()->isAdmin())
-                            <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 90px;">Custo</th>
-                            <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 70px;">Margem</th>
-                            @endif
-                            <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 70px;">Est.</th>
+                            <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 70px;">Estoque</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,14 +53,6 @@
                                     <span :style="p.condition === 'new' ? 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#dcfce7;color:#166534;' : p.condition === 'used' ? 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#fef3c7;color:#92400e;' : 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#dbeafe;color:#1e40af;'"
                                           x-text="p.condition === 'new' ? 'Novo' : p.condition === 'used' ? 'Usado' : 'Recond.'"></span>
                                 </td>
-                                <td style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.9375rem; font-weight: 700; color: #111827;" x-text="formatBRL(p.sale_price)"></td>
-                                @if(auth()->user()->isAdmin())
-                                <td style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.8rem; color: #6b7280;" x-text="formatBRL(p.cost_price)"></td>
-                                <td style="padding: 0.5rem 0.75rem; text-align: right;">
-                                    <span :style="p.margin > 20 ? 'font-size:0.75rem;font-weight:600;color:#059669;' : p.margin > 0 ? 'font-size:0.75rem;font-weight:600;color:#d97706;' : 'font-size:0.75rem;font-weight:600;color:#dc2626;'"
-                                          x-text="p.margin.toFixed(0) + '%'"></span>
-                                </td>
-                                @endif
                                 <td style="padding: 0.5rem 0.75rem; text-align: center;">
                                     <span :style="p.stock > 0 ? 'font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;background:#dcfce7;color:#166534;' : 'font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;background:#fef2f2;color:#991b1b;'"
                                           x-text="p.stock"></span>
@@ -89,8 +76,7 @@
                                 <div style="font-size: 0.7rem; color: #9ca3af; margin-top: 2px;" x-text="p.sku + (p.storage ? ' · ' + p.storage : '')"></div>
                             </div>
                             <div style="text-align: right; flex-shrink: 0;">
-                                <div style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="formatBRL(p.sale_price)"></div>
-                                <span :style="p.stock > 0 ? 'font-size:0.65rem;font-weight:600;padding:1px 6px;border-radius:9999px;background:#dcfce7;color:#166534;' : 'font-size:0.65rem;font-weight:600;padding:1px 6px;border-radius:9999px;background:#fef2f2;color:#991b1b;'"
+                                <span :style="p.stock > 0 ? 'font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#dcfce7;color:#166534;' : 'font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#fef2f2;color:#991b1b;'"
                                       x-text="'Est: ' + p.stock"></span>
                             </div>
                         </div>
@@ -129,10 +115,6 @@
                     list = list.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
                 }
                 return list;
-            },
-
-            formatBRL(v) {
-                return 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
             },
         };
     }
