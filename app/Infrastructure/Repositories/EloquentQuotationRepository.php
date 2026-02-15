@@ -129,7 +129,10 @@ class EloquentQuotationRepository implements QuotationRepositoryInterface
             ->latestPricePerSupplier($productName)
             ->get()
             ->map(function (Quotation $q) {
-                $freightPercent = $q->supplier?->freight_percent ?? 0;
+                // PY = 4%, BR = 0%, null = 4% (padrão PY, mesmo comportamento da view de cotações)
+                $origin = $q->supplier?->origin;
+                $freightPercent = ($origin === null || $origin->value === 'py') ? 0.04 : 0.0;
+
                 $unitPrice = (float) $q->unit_price;
                 $freightCost = round($unitPrice * $freightPercent, 2);
                 $totalCost = round($unitPrice + $freightCost, 2);

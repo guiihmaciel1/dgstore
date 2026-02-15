@@ -287,7 +287,9 @@ class ReservationController extends Controller
             ->take(10)
             ->map(function ($q) {
                 $basePrice = (float) $q->unit_price;
-                $freightPercent = $q->supplier?->freight_percent ?? 0;
+                // PY = 4%, BR = 0%, null = 4% (padrão PY)
+                $origin = $q->supplier?->origin;
+                $freightPercent = ($origin === null || $origin->value === 'py') ? 0.04 : 0.0;
                 $freightCost = round($basePrice * $freightPercent, 2);
                 $finalPrice = round($basePrice + $freightCost, 2);
                 $freightLabel = $freightPercent > 0
