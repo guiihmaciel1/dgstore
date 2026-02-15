@@ -1,4 +1,4 @@
-<nav x-data="{ open: false, commercialOpen: false, financeOpen: false, stockOpen: false, purchasesOpen: false, toolsOpen: false, crmOpen: false }" class="bg-gray-900 shadow-lg" @click.away="commercialOpen = false; financeOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false; crmOpen = false">
+<nav x-data="{ open: false, commercialOpen: false, financeOpen: false, stockOpen: false, purchasesOpen: false, toolsOpen: false }" class="bg-gray-900 shadow-lg" @click.away="commercialOpen = false; financeOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -16,50 +16,9 @@
                         Dashboard
                     </a>
                     
-                    <!-- CRM Pipeline -->
-                    <div class="relative">
-                        <button @click="crmOpen = !crmOpen; commercialOpen = false; financeOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('crm.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
-                            </svg>
-                            <span>CRM</span>
-                            @if(($openDealsCount ?? 0) > 0)
-                                <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
-                            @endif
-                            <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': crmOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </button>
-                        <div x-show="crmOpen" 
-                             x-transition:enter="transition ease-out duration-100"
-                             x-transition:enter-start="transform opacity-0 scale-95"
-                             x-transition:enter-end="transform opacity-100 scale-100"
-                             x-transition:leave="transition ease-in duration-75"
-                             x-transition:leave-start="transform opacity-100 scale-100"
-                             x-transition:leave-end="transform opacity-0 scale-95"
-                             class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
-                             x-cloak>
-                            <div class="py-1">
-                                <a href="{{ route('crm.board') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('crm.board') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
-                                    </svg>
-                                    Pipeline
-                                </a>
-                                <a href="{{ route('crm.history') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('crm.history') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    Histórico
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Dropdown: Comercial -->
                     <div class="relative">
-                        <button @click="commercialOpen = !commercialOpen; crmOpen = false; financeOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
+                        <button @click="commercialOpen = !commercialOpen; financeOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
                                 class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('customers.*') || request()->routeIs('sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Comercial</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': commercialOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -106,7 +65,7 @@
                     
                     <!-- Dropdown: Financeiro -->
                     <div class="relative">
-                        <button @click="financeOpen = !financeOpen; crmOpen = false; commercialOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
+                        <button @click="financeOpen = !financeOpen; commercialOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
                                 class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('finance.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Financeiro</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': financeOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,7 +118,7 @@
                     
                     <!-- Dropdown: Estoque -->
                     <div class="relative">
-                        <button @click="stockOpen = !stockOpen; crmOpen = false; commercialOpen = false; financeOpen = false; purchasesOpen = false; toolsOpen = false" 
+                        <button @click="stockOpen = !stockOpen; commercialOpen = false; financeOpen = false; purchasesOpen = false; toolsOpen = false" 
                                 class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('products.*') || request()->routeIs('stock.*') || request()->routeIs('imports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Estoque</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': stockOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -200,7 +159,7 @@
                     
                     <!-- Dropdown: Compras -->
                     <div class="relative">
-                        <button @click="purchasesOpen = !purchasesOpen; crmOpen = false; commercialOpen = false; financeOpen = false; stockOpen = false; toolsOpen = false" 
+                        <button @click="purchasesOpen = !purchasesOpen; commercialOpen = false; financeOpen = false; stockOpen = false; toolsOpen = false" 
                                 class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('suppliers.*') || request()->routeIs('quotations.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Compras</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': purchasesOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -235,8 +194,8 @@
                     
                     <!-- Dropdown: Ferramentas -->
                     <div class="relative">
-                        <button @click="toolsOpen = !toolsOpen; crmOpen = false; commercialOpen = false; financeOpen = false; stockOpen = false; purchasesOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || request()->routeIs('tools.*') || request()->routeIs('followups.*') || request()->routeIs('reports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                        <button @click="toolsOpen = !toolsOpen; commercialOpen = false; financeOpen = false; stockOpen = false; purchasesOpen = false" 
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || request()->routeIs('tools.*') || request()->routeIs('crm.*') || request()->routeIs('reports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -286,14 +245,22 @@
                                     </svg>
                                     Ficha Tecnica
                                 </a>
-                                <a href="{{ route('followups.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('followups.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <div class="border-t border-gray-700 my-1"></div>
+                                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">CRM</div>
+                                <a href="{{ route('crm.board') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                                     </svg>
-                                    Follow-ups
-                                    @if(($pendingFollowups ?? 0) > 0)
-                                        <span class="ml-auto inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-red-500 text-white">{{ $pendingFollowups }}</span>
+                                    Pipeline
+                                    @if(($openDealsCount ?? 0) > 0)
+                                        <span class="ml-auto inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
                                     @endif
+                                </a>
+                                <a href="{{ route('crm.history') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('crm.history') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Histórico CRM
                                 </a>
                                 @if(auth()->user()->isAdmin())
                                     <div class="border-t border-gray-700 my-1"></div>
@@ -393,20 +360,6 @@
                 Dashboard
             </a>
             
-            <!-- Mobile: CRM -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">CRM</div>
-                <a href="{{ route('crm.board') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.board') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                    Pipeline
-                    @if(($openDealsCount ?? 0) > 0)
-                        <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
-                    @endif
-                </a>
-                <a href="{{ route('crm.history') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.history') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                    Histórico
-                </a>
-            </div>
-
             <!-- Mobile: Comercial -->
             <div class="border-t border-gray-700 mt-2 pt-2">
                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Comercial</div>
@@ -487,11 +440,16 @@
                 <a href="{{ route('tools.specs') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.specs') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Ficha Tecnica
                 </a>
-                <a href="{{ route('followups.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('followups.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                    Follow-ups
-                    @if(($pendingFollowups ?? 0) > 0)
-                        <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-red-500 text-white">{{ $pendingFollowups }}</span>
+                <div class="border-t border-gray-600 mt-1 pt-1 mx-4"></div>
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">CRM</div>
+                <a href="{{ route('crm.board') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Pipeline
+                    @if(($openDealsCount ?? 0) > 0)
+                        <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
                     @endif
+                </a>
+                <a href="{{ route('crm.history') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.history') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Histórico CRM
                 </a>
             </div>
 

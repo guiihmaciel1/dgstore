@@ -133,7 +133,7 @@
             </style>
 
             <!-- Alertas dos Módulos -->
-            @if(($alerts['warranties_expiring'] ?? 0) > 0 || ($alerts['open_claims'] ?? 0) > 0 || ($alerts['imports_in_transit'] ?? 0) > 0 || ($alerts['reservations_expiring'] ?? 0) > 0 || ($alerts['reservations_overdue'] ?? 0) > 0 || ($alerts['followups_today'] ?? 0) > 0 || ($alerts['followups_overdue'] ?? 0) > 0)
+            @if(($alerts['warranties_expiring'] ?? 0) > 0 || ($alerts['open_claims'] ?? 0) > 0 || ($alerts['imports_in_transit'] ?? 0) > 0 || ($alerts['reservations_expiring'] ?? 0) > 0 || ($alerts['reservations_overdue'] ?? 0) > 0 || ($alerts['deals_open'] ?? 0) > 0 || ($alerts['deals_overdue'] ?? 0) > 0)
             <div class="mb-6 sm:mb-8">
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Alertas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -205,28 +205,28 @@
                         </a>
                     @endif
 
-                    @if(($alerts['followups_overdue'] ?? 0) > 0)
-                        <a href="{{ route('followups.index') }}" class="alert-card alert-card-red">
+                    @if(($alerts['deals_overdue'] ?? 0) > 0)
+                        <a href="{{ route('crm.board') }}" class="alert-card alert-card-red">
                             <div class="alert-card-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                                 </svg>
                             </div>
                             <div class="alert-card-content">
-                                <span class="alert-card-number">{{ $alerts['followups_overdue'] }}</span>
-                                <span class="alert-card-label">Follow-ups atrasados</span>
+                                <span class="alert-card-number">{{ $alerts['deals_overdue'] }}</span>
+                                <span class="alert-card-label">Negócios atrasados</span>
                             </div>
                         </a>
-                    @elseif(($alerts['followups_today'] ?? 0) > 0)
-                        <a href="{{ route('followups.index') }}" class="alert-card alert-card-yellow">
+                    @elseif(($alerts['deals_open'] ?? 0) > 0)
+                        <a href="{{ route('crm.board') }}" class="alert-card alert-card-blue">
                             <div class="alert-card-icon">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                                 </svg>
                             </div>
                             <div class="alert-card-content">
-                                <span class="alert-card-number">{{ $alerts['followups_today'] }}</span>
-                                <span class="alert-card-label">Follow-ups para hoje</span>
+                                <span class="alert-card-number">{{ $alerts['deals_open'] }}</span>
+                                <span class="alert-card-label">Negócios em aberto</span>
                             </div>
                         </a>
                     @endif

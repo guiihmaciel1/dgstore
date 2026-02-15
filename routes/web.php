@@ -12,7 +12,6 @@ use App\Presentation\Http\Controllers\SaleController;
 use App\Presentation\Http\Controllers\StockController;
 use App\Presentation\Http\Controllers\SupplierController;
 use App\Presentation\Http\Controllers\ValuationController;
-use App\Presentation\Http\Controllers\FollowupController;
 use App\Presentation\Http\Controllers\ImeiLookupController;
 use App\Presentation\Http\Controllers\ToolController;
 use App\Presentation\Http\Controllers\WarrantyController;
@@ -37,10 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/mensagens-whatsapp', 'tools.whatsapp-messages')->name('tools.whatsapp-messages');
     Route::view('/ficha-tecnica', 'tools.specs')->name('tools.specs');
 
-    // Follow-ups
-    Route::resource('followups', FollowupController::class)->except(['edit', 'show', 'create']);
-    Route::post('followups/{followup}/complete', [FollowupController::class, 'complete'])->name('followups.complete');
-    Route::post('followups/{followup}/cancel', [FollowupController::class, 'cancel'])->name('followups.cancel');
+    // Follow-ups (legado - redireciona para CRM)
+    Route::get('followups', fn() => redirect()->route('crm.board'))->name('followups.index');
 
     // CRM - Pipeline de Vendas
     Route::get('/crm', [CrmController::class, 'board'])->name('crm.board');
