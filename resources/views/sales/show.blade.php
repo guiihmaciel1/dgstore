@@ -15,6 +15,15 @@
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    @if(!$sale->isCancelled())
+                    <a href="{{ route('sales.edit', $sale) }}"
+                       class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        <span>Editar</span>
+                    </a>
+                    @endif
                     <a href="{{ route('sales.receipt', $sale) }}" target="_blank"
                        class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -519,7 +528,19 @@
                                     @endif
                                 </dl>
                             @else
-                                <p style="font-size: 0.875rem; color: #6b7280; text-align: center;">Cliente não informado</p>
+                                <div style="text-align: center;">
+                                    <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">Cliente não informado</p>
+                                    @if(!$sale->isCancelled())
+                                    <a href="{{ route('sales.edit', $sale) }}" 
+                                       style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #2563eb; color: white; font-size: 0.8125rem; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
+                                       onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        Adicionar Cliente
+                                    </a>
+                                    @endif
+                                </div>
                             @endif
                         </div>
                     </div>

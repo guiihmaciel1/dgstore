@@ -86,7 +86,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/api/quotations/ai-suggestion', [QuotationController::class, 'aiPurchaseSuggestion'])->name('quotations.ai-suggestion');
 
     // Vendas
-    Route::resource('sales', SaleController::class)->except(['edit', 'update']);
+    Route::resource('sales', SaleController::class);
     Route::post('/sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
     Route::patch('/sales/{sale}/status', [SaleController::class, 'updateStatus'])->name('sales.update-status');
     Route::get('/sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');

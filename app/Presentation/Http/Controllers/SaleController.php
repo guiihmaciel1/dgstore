@@ -127,6 +127,70 @@ class SaleController extends Controller
         ]);
     }
 
+    public function edit(Sale $sale): View
+    {
+        if ($sale->isCancelled()) {
+            abort(403, 'Vendas canceladas não podem ser editadas.');
+        }
+
+        $sale->load(['items.product', 'customer', 'user', 'tradeIns']);
+
+        return view('sales.edit', [
+            'sale' => $sale,
+            'paymentMethods' => PaymentMethod::cases(),
+            'paymentStatuses' => PaymentStatus::cases(),
+        ]);
+    }
+
+    public function update(Request $request, Sale $sale): RedirectResponse
+    {
+        if ($sale->isCancelled()) {
+            return redirect()->route('sales.show', $sale)
+                ->with('error', 'Vendas canceladas não podem ser editadas.');
+        }
+
+        $validated = $request->validate([
+            'customer_id' => ['nullable', 'exists:customers,id'],
+            'payment_method' => ['required', 'in:cash,credit_card,debit_card,pix,bank_transfer,installment'],
+            'payment_status' => ['required', 'in:pending,paid,partial'],
+            'installments' => ['nullable', 'integer', 'min:1', 'max:24'],
+            'discount' => ['nullable', 'numeric', 'min:0'],
+            'cash_payment' => ['nullable', 'numeric', 'min:0'],
+            'card_payment' => ['nullable', 'numeric', 'min:0'],
+            'cash_payment_method' => ['nullable', 'in:cash,pix'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        try {
+            $discount = (float) ($validated['discount'] ?? 0);
+            $total = max(0, (float) $sale->subtotal - $discount);
+
+            $sale->update([
+                'customer_id' => !empty($validated['customer_id']) ? $validated['customer_id'] : null,
+                'payment_method' => $validated['payment_method'],
+                'payment_status' => $validated['payment_status'],
+                'installments' => (int) ($validated['installments'] ?? 1),
+                'discount' => $discount,
+                'total' => $total,
+                'cash_payment' => (float) ($validated['cash_payment'] ?? 0),
+                'card_payment' => (float) ($validated['card_payment'] ?? 0),
+                'cash_payment_method' => $validated['cash_payment_method'] ?? null,
+                'notes' => $validated['notes'] ?? null,
+            ]);
+
+            return redirect()
+                ->route('sales.show', $sale)
+                ->with('success', 'Venda atualizada com sucesso!');
+        } catch (\Throwable $e) {
+            Log::error("Erro ao atualizar venda: {$e->getMessage()}");
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Erro ao atualizar: ' . $e->getMessage());
+        }
+    }
+
     public function cancel(Request $request, Sale $sale): RedirectResponse
     {
         try {
