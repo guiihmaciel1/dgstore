@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Domain\CRM\Models\Deal;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Followup\Models\Followup;
 use App\Domain\Product\Models\Product;
@@ -33,16 +34,26 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Sale::class, SalePolicy::class);
         Gate::policy(Customer::class, CustomerPolicy::class);
 
-        // Compartilha contagem de follow-ups pendentes com a navigation
+        // Compartilha contagens com a navigation
         View::composer('layouts.navigation', function ($view) {
             $pendingFollowups = 0;
+            $openDealsCount = 0;
+
             if (auth()->check()) {
-                $pendingFollowups = Followup::where('user_id', auth()->id())
+                $userId = auth()->id();
+
+                $pendingFollowups = Followup::where('user_id', $userId)
                     ->where('status', 'pending')
                     ->where('due_date', '<=', today())
                     ->count();
+
+                $openDealsCount = Deal::where('user_id', $userId)
+                    ->open()
+                    ->count();
             }
+
             $view->with('pendingFollowups', $pendingFollowups);
+            $view->with('openDealsCount', $openDealsCount);
         });
     }
 }
