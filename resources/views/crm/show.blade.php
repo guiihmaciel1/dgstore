@@ -1,4 +1,7 @@
 <x-app-layout>
+    @php
+        $activeStages = \App\Domain\CRM\Models\PipelineStage::where('is_won', false)->where('is_lost', false)->orderBy('position')->get();
+    @endphp
     <div class="py-6" x-data="dealPage()">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 

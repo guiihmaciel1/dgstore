@@ -28,7 +28,10 @@ class CrmController extends Controller
         $filterUserId = $isAdmin ? $request->get('user_id') : $user->id;
 
         $allStages = PipelineStage::ordered()->get();
-        $activeStages = $allStages->filter(fn ($s) => ! $s->is_won && ! $s->is_lost)->values();
+        $activeStages = PipelineStage::where('is_won', false)
+            ->where('is_lost', false)
+            ->ordered()
+            ->get();
 
         $dealsQuery = Deal::with(['customer', 'user', 'stage'])
             ->open();
@@ -135,7 +138,10 @@ class CrmController extends Controller
         $deal->load(['customer', 'user', 'stage', 'activities.user']);
 
         $allStages = PipelineStage::ordered()->get();
-        $activeStages = $allStages->filter(fn ($s) => ! $s->is_won && ! $s->is_lost)->values();
+        $activeStages = PipelineStage::where('is_won', false)
+            ->where('is_lost', false)
+            ->ordered()
+            ->get();
 
         return view('crm.show', [
             'deal' => $deal,

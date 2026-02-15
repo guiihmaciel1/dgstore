@@ -1,4 +1,8 @@
 <x-app-layout>
+    @php
+        // Query direta para garantir que sempre temos os stages ativos
+        $activeStages = \App\Domain\CRM\Models\PipelineStage::where('is_won', false)->where('is_lost', false)->orderBy('position')->get();
+    @endphp
     <div class="py-4" x-data="crmBoard()" x-init="init()">
         <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -91,7 +95,7 @@
                                 <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Etapa</label>
                                 <select name="pipeline_stage_id" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
                                     @foreach($activeStages as $stage)
-                                        <option value="{{ $stage->id }}" {{ $stage->is_default ? 'selected' : (old('pipeline_stage_id') === $stage->id ? 'selected' : '') }}>{{ $stage->name }}</option>
+                                        <option value="{{ $stage->id }}" {{ $stage->is_default ? 'selected' : '' }}>{{ $stage->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
