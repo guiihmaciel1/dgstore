@@ -16,15 +16,7 @@
             <!-- BANNER DG STORE -->
             <div class="mb-4 sm:mb-6">
                 <div id="banner-container" style="width: 100%; aspect-ratio: 1200/280; background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%); border-radius: 0.75rem; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
-                    {{-- Substitua o conteúdo abaixo pela tag <img> quando tiver o banner --}}
-                    {{-- <img src="{{ asset('images/banner-dashboard.png') }}" alt="DG Store" style="width: 100%; height: 100%; object-fit: cover;"> --}}
-                    <div style="text-align: center; color: rgba(255,255,255,0.25); padding: 1rem;">
-                        <svg style="width: 32px; height: 32px; margin: 0 auto 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        <p style="font-size: 0.8rem; font-weight: 600;">Coloque seu banner aqui</p>
-                        <p style="font-size: 0.65rem; margin-top: 0.25rem;">Tamanho ideal: <strong>1200 x 280 px</strong> (PNG ou JPG)</p>
-                    </div>
+                    <img src="{{ asset('images/bannerdg.png') }}" alt="DG Store" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
             </div>
 
