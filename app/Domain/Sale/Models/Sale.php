@@ -154,9 +154,16 @@ class Sale extends Model
             $sequence = $count + 1;
         }
 
-        // Garante unicidade em caso de race condition
+        // Garante unicidade em caso de race condition (com limite de segurança)
         $saleNumber = sprintf('%s-%05d', $prefix . $yearMonth, $sequence);
+        $maxAttempts = 500;
+        $attempts = 0;
+
         while (self::withTrashed()->where('sale_number', $saleNumber)->exists()) {
+            $attempts++;
+            if ($attempts >= $maxAttempts) {
+                throw new \RuntimeException("Não foi possível gerar número de venda único após {$maxAttempts} tentativas.");
+            }
             $sequence++;
             $saleNumber = sprintf('%s-%05d', $prefix . $yearMonth, $sequence);
         }

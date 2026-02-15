@@ -19,7 +19,6 @@ use App\Domain\Sale\Services\SaleService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreSaleRequest;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -90,6 +89,7 @@ class SaleController extends Controller
 
             $data = SaleData::fromArray($validated);
             $sale = $this->createSaleUseCase->execute($data);
+
             if ($fromReservation) {
                 try {
                     $reservation = Reservation::find($fromReservation);
@@ -104,11 +104,17 @@ class SaleController extends Controller
             return redirect()
                 ->route('sales.show', $sale)
                 ->with('success', "Venda #{$sale->sale_number} realizada com sucesso!");
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            Log::error("Erro ao criar venda: {$e->getMessage()}", [
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
             return redirect()
                 ->back()
                 ->withInput()
-                ->with('error', $e->getMessage());
+                ->with('error', 'Erro ao finalizar venda: ' . $e->getMessage());
         }
     }
 

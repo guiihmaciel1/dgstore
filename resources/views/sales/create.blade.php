@@ -55,7 +55,7 @@
             @endif
 
             <div x-data="saleForm()" @keydown.escape.window="if(!showCustomerModal && !showProductModal) window.location.href='{{ route('sales.index') }}'">
-            <form method="POST" action="{{ route('sales.store') }}">
+            <form method="POST" action="{{ route('sales.store') }}" @submit="handleSubmit($event)">
                 @csrf
                 @if(isset($reservation) && $reservation)
                     <input type="hidden" name="from_reservation" value="{{ $reservation->id }}">
@@ -739,11 +739,18 @@
                             
                             <button 
                                 type="submit" 
-                                :disabled="!canSubmit"
+                                :disabled="!canSubmit || submitting"
                                 class="sale-submit-btn"
-                                :class="{ 'sale-submit-btn-disabled': !canSubmit, 'sale-submit-btn-active': canSubmit }"
+                                :class="{ 'sale-submit-btn-disabled': !canSubmit || submitting, 'sale-submit-btn-active': canSubmit && !submitting }"
                             >
-                                <span x-show="canSubmit" class="flex items-center justify-center gap-3">
+                                <span x-show="submitting" class="flex items-center justify-center gap-3">
+                                    <svg class="animate-spin" style="width:1.5rem;height:1.5rem;" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                    </svg>
+                                    <span class="sale-btn-text">PROCESSANDO...</span>
+                                </span>
+                                <span x-show="canSubmit && !submitting" class="flex items-center justify-center gap-3">
                                     <span class="sale-btn-icon-wrapper">
                                         <svg class="sale-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
@@ -751,7 +758,7 @@
                                     </span>
                                     <span class="sale-btn-text">FINALIZAR VENDA</span>
                                 </span>
-                                <span x-show="!canSubmit" class="flex items-center justify-center gap-2">
+                                <span x-show="!canSubmit && !submitting" class="flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                                     </svg>
@@ -1217,6 +1224,9 @@
                 productFormError: '',
                 productFormSaving: false,
 
+                // Submissão
+                submitting: false,
+
                 // Modal de Entrada de Estoque
                 showStockModal: false,
                 stockForm: { quantity: 1, reason: '' },
@@ -1226,6 +1236,19 @@
                 stockItemIndex: null,
                 stockItemName: '',
                 stockCurrentStock: 0,
+
+                handleSubmit(event) {
+                    if (this.submitting) {
+                        event.preventDefault();
+                        return;
+                    }
+                    if (!this.canSubmit) {
+                        event.preventDefault();
+                        return;
+                    }
+                    this.submitting = true;
+                    // O form será submetido normalmente pelo browser
+                },
 
                 init() {
                     // Pré-preencher produto da reserva
