@@ -13,49 +13,58 @@
                 </div>
             @endif
 
+            <!-- BANNER DG STORE -->
+            <div class="mb-4 sm:mb-6">
+                <div id="banner-container" style="width: 100%; aspect-ratio: 1200/280; background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%); border-radius: 0.75rem; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
+                    {{-- Substitua o conteúdo abaixo pela tag <img> quando tiver o banner --}}
+                    {{-- <img src="{{ asset('images/banner-dashboard.png') }}" alt="DG Store" style="width: 100%; height: 100%; object-fit: cover;"> --}}
+                    <div style="text-align: center; color: rgba(255,255,255,0.25); padding: 1rem;">
+                        <svg style="width: 32px; height: 32px; margin: 0 auto 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p style="font-size: 0.8rem; font-weight: 600;">Coloque seu banner aqui</p>
+                        <p style="font-size: 0.65rem; margin-top: 0.25rem;">Tamanho ideal: <strong>1200 x 280 px</strong> (PNG ou JPG)</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- AÇÕES RÁPIDAS -->
-            <div class="mb-6 sm:mb-8">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    <!-- NOVA VENDA -->
-                    <a href="{{ route('sales.create') }}" class="quick-action-card quick-action-primary">
+            <div class="mb-5 sm:mb-6">
+                <div class="grid grid-cols-4 gap-2 sm:gap-3">
+                    <a href="{{ route('crm.board') }}" class="quick-action-card quick-action-primary">
                         <div class="quick-action-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                             </svg>
                         </div>
-                        <span class="quick-action-label">Nova Venda</span>
-                        <span class="quick-action-hint">F2</span>
+                        <span class="quick-action-label">Pipeline CRM</span>
                     </a>
-                    
-                    <!-- NOVO PRODUTO -->
-                    <a href="{{ route('products.create') }}" class="quick-action-card">
+
+                    <a href="{{ route('quotations.index') }}" class="quick-action-card">
                         <div class="quick-action-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                             </svg>
                         </div>
-                        <span class="quick-action-label">Novo Produto</span>
+                        <span class="quick-action-label">Cotações</span>
                     </a>
-                    
-                    <!-- NOVO CLIENTE -->
-                    <a href="{{ route('customers.create') }}" class="quick-action-card">
+
+                    <a href="{{ route('valuations.index') }}" class="quick-action-card">
                         <div class="quick-action-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <span class="quick-action-label">Novo Cliente</span>
+                        <span class="quick-action-label">Avaliador</span>
                     </a>
-                    
-                    <!-- ENTRADA ESTOQUE -->
-                    <a href="{{ route('stock.create') }}" class="quick-action-card">
+
+                    <a href="{{ route('tools.specs') }}" class="quick-action-card">
                         <div class="quick-action-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </div>
-                        <span class="quick-action-label">Entrada Estoque</span>
+                        <span class="quick-action-label">Ficha Técnica</span>
                     </a>
                 </div>
             </div>
@@ -66,17 +75,18 @@
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    padding: 1.5rem 1rem;
+                    padding: 0.75rem 0.5rem;
                     background: white;
                     border: 1px solid #e5e7eb;
-                    border-radius: 0.75rem;
+                    border-radius: 0.625rem;
                     text-decoration: none;
                     transition: all 0.15s ease;
-                    position: relative;
                 }
                 .quick-action-card:hover {
                     border-color: #111827;
                     background: #f9fafb;
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
                 }
                 .quick-action-primary {
                     background: #111827;
@@ -87,9 +97,9 @@
                     border-color: #1f2937;
                 }
                 .quick-action-icon {
-                    width: 2.5rem;
-                    height: 2.5rem;
-                    margin-bottom: 0.75rem;
+                    width: 1.5rem;
+                    height: 1.5rem;
+                    margin-bottom: 0.375rem;
                     color: #374151;
                 }
                 .quick-action-icon svg {
@@ -100,34 +110,26 @@
                     color: white;
                 }
                 .quick-action-label {
-                    font-size: 0.875rem;
+                    font-size: 0.7rem;
                     font-weight: 600;
                     color: #111827;
+                    text-align: center;
+                    line-height: 1.2;
                 }
                 .quick-action-primary .quick-action-label {
                     color: white;
                 }
-                .quick-action-hint {
-                    position: absolute;
-                    top: 0.5rem;
-                    right: 0.5rem;
-                    font-size: 0.625rem;
-                    font-weight: 600;
-                    padding: 0.125rem 0.375rem;
-                    background: rgba(255,255,255,0.2);
-                    border-radius: 0.25rem;
-                    color: rgba(255,255,255,0.8);
-                }
                 @media (min-width: 640px) {
                     .quick-action-card {
-                        padding: 2rem 1.5rem;
+                        padding: 1rem 0.75rem;
                     }
                     .quick-action-icon {
-                        width: 3rem;
-                        height: 3rem;
+                        width: 1.75rem;
+                        height: 1.75rem;
+                        margin-bottom: 0.5rem;
                     }
                     .quick-action-label {
-                        font-size: 0.9375rem;
+                        font-size: 0.8rem;
                     }
                 }
             </style>
