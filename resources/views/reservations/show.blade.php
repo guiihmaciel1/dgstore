@@ -142,6 +142,111 @@
                         </div>
                     </div>
 
+                    <!-- Melhor Cotação -->
+                    @if($bestQuotations->isNotEmpty())
+                        @php
+                            $best = $bestQuotations->first();
+                            $hasManySuppliers = $bestQuotations->count() > 1;
+                        @endphp
+                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
+                            <div style="padding: 1rem; background: #eff6ff; border-bottom: 1px solid #bfdbfe; display: flex; justify-content: space-between; align-items: center;">
+                                <h3 style="font-weight: 600; color: #1d4ed8;">
+                                    <svg style="width: 1.25rem; height: 1.25rem; display: inline; vertical-align: text-bottom; margin-right: 0.375rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+                                    </svg>
+                                    Melhor Cotação
+                                </h3>
+                                @if($hasManySuppliers)
+                                    <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500; background: #dbeafe; color: #2563eb;">
+                                        {{ $bestQuotations->count() }} fornecedores
+                                    </span>
+                                @endif
+                            </div>
+                            <div style="padding: 1.25rem;">
+                                {{-- Melhor fornecedor --}}
+                                <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <div style="padding: 0.5rem; background: #dcfce7; border-radius: 0.5rem; min-width: 2.25rem; text-align: center;">
+                                        <svg style="width: 1.25rem; height: 1.25rem; color: #16a34a; margin: 0 auto;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 0.75rem; color: #6b7280;">Comprar de</div>
+                                        <div style="font-weight: 700; color: #111827; font-size: 1.05rem;">{{ $best->supplier->name }}</div>
+                                        <div style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.125rem;">
+                                            {{ $best->supplier->origin?->label() ?? '' }}
+                                            &middot; Cotado em {{ $best->quoted_at->format('d/m/Y') }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Detalhamento de custos --}}
+                                <div style="background: #f9fafb; border-radius: 0.5rem; padding: 0.875rem; margin-bottom: 0.75rem;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                        <span style="color: #6b7280;">Preço do produto</span>
+                                        <span style="font-weight: 500; color: #111827;">R$ {{ number_format((float) $best->unit_price, 2, ',', '.') }}</span>
+                                    </div>
+                                    @if($best->price_usd)
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8rem;">
+                                            <span style="color: #9ca3af;">Preço USD</span>
+                                            <span style="color: #6b7280;">US$ {{ number_format((float) $best->price_usd, 2, ',', '.') }}</span>
+                                        </div>
+                                    @endif
+                                    @if($best->freight_percent > 0)
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
+                                            <span style="color: #6b7280;">Frete ({{ number_format($best->freight_percent * 100, 0) }}%)</span>
+                                            <span style="font-weight: 500; color: #d97706;">+ R$ {{ number_format($best->freight_cost, 2, ',', '.') }}</span>
+                                        </div>
+                                    @endif
+                                    <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid #e5e7eb; font-size: 1rem;">
+                                        <span style="font-weight: 700; color: #111827;">Total com frete</span>
+                                        <span style="font-weight: 700; color: #16a34a;">R$ {{ number_format($best->total_cost, 2, ',', '.') }}</span>
+                                    </div>
+                                </div>
+
+                                {{-- Comparação com custo da reserva --}}
+                                @if($reservation->cost_price > 0)
+                                    @php
+                                        $costDiff = (float) $reservation->cost_price - $best->total_cost;
+                                    @endphp
+                                    @if(abs($costDiff) > 0.01)
+                                        <div style="padding: 0.5rem 0.75rem; border-radius: 0.375rem; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; {{ $costDiff > 0 ? 'background: #f0fdf4; color: #16a34a;' : 'background: #fef2f2; color: #dc2626;' }}">
+                                            <span>{{ $costDiff > 0 ? 'Mais barato que o custo da reserva' : 'Mais caro que o custo da reserva' }}</span>
+                                            <span style="font-weight: 700;">{{ $costDiff > 0 ? '-' : '+' }} R$ {{ number_format(abs($costDiff), 2, ',', '.') }}</span>
+                                        </div>
+                                    @endif
+                                @endif
+
+                                {{-- Outros fornecedores --}}
+                                @if($hasManySuppliers)
+                                    <details style="margin-top: 0.75rem;">
+                                        <summary style="font-size: 0.8rem; color: #2563eb; cursor: pointer; font-weight: 500;">
+                                            Ver outros {{ $bestQuotations->count() - 1 }} fornecedor(es)
+                                        </summary>
+                                        <div style="margin-top: 0.5rem;">
+                                            @foreach($bestQuotations->skip(1) as $alt)
+                                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; font-size: 0.8rem;">
+                                                    <div>
+                                                        <span style="font-weight: 500; color: #374151;">{{ $alt->supplier->name }}</span>
+                                                        <span style="color: #9ca3af; margin-left: 0.25rem;">{{ $alt->supplier->origin?->label() ?? '' }}</span>
+                                                    </div>
+                                                    <div style="text-align: right;">
+                                                        <div style="font-weight: 600; color: #111827;">R$ {{ number_format($alt->total_cost, 2, ',', '.') }}</div>
+                                                        @if($alt->freight_percent > 0)
+                                                            <div style="font-size: 0.7rem; color: #9ca3af;">
+                                                                R$ {{ number_format((float) $alt->unit_price, 2, ',', '.') }} + {{ number_format($alt->freight_percent * 100, 0) }}% frete
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </details>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- Pagamentos -->
                     <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
                         <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">

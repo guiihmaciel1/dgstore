@@ -12,6 +12,7 @@ use App\Domain\Reservation\Models\ReservationPayment;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Supplier\Models\Quotation;
+use App\Domain\Supplier\Services\QuotationService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreReservationRequest;
 use App\Presentation\Http\Requests\UpdateReservationRequest;
@@ -24,7 +25,8 @@ class ReservationController extends Controller
     public function __construct(
         private readonly ReservationService $reservationService,
         private readonly ProductService $productService,
-        private readonly CustomerService $customerService
+        private readonly CustomerService $customerService,
+        private readonly QuotationService $quotationService,
     ) {}
 
     public function index(Request $request): View
@@ -50,11 +52,23 @@ class ReservationController extends Controller
             'overdue' => $this->reservationService->countOverdue(),
         ];
 
+        // Busca a melhor cotação para cada reserva ativa
+        $productNames = $reservations->getCollection()
+            ->filter(fn ($r) => $r->status === ReservationStatus::Active)
+            ->map(fn ($r) => $r->product_description ?? $r->product?->full_name ?? $r->product?->name)
+            ->filter()
+            ->unique()
+            ->values()
+            ->toArray();
+
+        $bestQuotationsMap = $this->quotationService->getBestQuotationsForProducts($productNames);
+
         return view('reservations.index', [
             'reservations' => $reservations,
             'filters' => $filters,
             'stats' => $stats,
             'statuses' => ReservationStatus::cases(),
+            'bestQuotationsMap' => $bestQuotationsMap,
         ]);
     }
 
@@ -111,9 +125,18 @@ class ReservationController extends Controller
     {
         $reservation->load(['customer', 'product', 'user', 'payments.user', 'convertedSale']);
 
+        $productName = $reservation->product_description
+            ?? $reservation->product?->full_name
+            ?? $reservation->product?->name;
+
+        $bestQuotations = $productName
+            ? $this->quotationService->getBestQuotationsForProduct($productName)
+            : collect();
+
         return view('reservations.show', [
             'reservation' => $reservation,
             'paymentMethods' => PaymentMethod::cases(),
+            'bestQuotations' => $bestQuotations,
         ]);
     }
 
@@ -264,7 +287,12 @@ class ReservationController extends Controller
             ->take(10)
             ->map(function ($q) {
                 $basePrice = (float) $q->unit_price;
-                $finalPrice = round($basePrice * 1.04, 2);
+                $freightPercent = $q->supplier?->freight_percent ?? 0;
+                $freightCost = round($basePrice * $freightPercent, 2);
+                $finalPrice = round($basePrice + $freightCost, 2);
+                $freightLabel = $freightPercent > 0
+                    ? ' +' . number_format($freightPercent * 100, 0) . '% frete'
+                    : '';
 
                 return [
                     'id' => null,
@@ -273,7 +301,7 @@ class ReservationController extends Controller
                     'price' => $basePrice,
                     'final_price' => $finalPrice,
                     'formatted_price' => 'R$ ' . number_format($finalPrice, 2, ',', '.'),
-                    'formatted_base_price' => $q->formatted_unit_price,
+                    'formatted_base_price' => $q->formatted_unit_price . $freightLabel,
                     'stock' => null,
                     'source' => 'quotation',
                     'source_label' => 'Cotação - ' . ($q->supplier->name ?? ''),

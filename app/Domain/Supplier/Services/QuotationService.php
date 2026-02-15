@@ -85,6 +85,39 @@ class QuotationService
     }
 
     /**
+     * Retorna as cotações mais recentes por fornecedor para um produto,
+     * ordenadas pelo custo total (preço + frete) ASC.
+     * A primeira da collection é a melhor cotação.
+     */
+    public function getBestQuotationsForProduct(string $productName): Collection
+    {
+        return $this->repository->getBestQuotationsForProduct($productName);
+    }
+
+    /**
+     * Retorna mapa de product_name => melhor cotação para múltiplos nomes.
+     * Usado para exibir a melhor cotação na listagem de reservas.
+     *
+     * @param  array<string>  $productNames
+     * @return Collection<string, Quotation|null>
+     */
+    public function getBestQuotationsForProducts(array $productNames): Collection
+    {
+        $result = collect();
+
+        foreach ($productNames as $name) {
+            if (empty($name)) {
+                continue;
+            }
+
+            $quotations = $this->getBestQuotationsForProduct($name);
+            $result->put($name, $quotations->first());
+        }
+
+        return $result;
+    }
+
+    /**
      * Retorna estatísticas das cotações
      */
     public function getStatistics(): array

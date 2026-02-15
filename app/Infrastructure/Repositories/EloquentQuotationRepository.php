@@ -123,6 +123,27 @@ class EloquentQuotationRepository implements QuotationRepositoryInterface
             ->pluck('product_name');
     }
 
+    public function getBestQuotationsForProduct(string $productName): Collection
+    {
+        return Quotation::with('supplier')
+            ->latestPricePerSupplier($productName)
+            ->get()
+            ->map(function (Quotation $q) {
+                $freightPercent = $q->supplier?->freight_percent ?? 0;
+                $unitPrice = (float) $q->unit_price;
+                $freightCost = round($unitPrice * $freightPercent, 2);
+                $totalCost = round($unitPrice + $freightCost, 2);
+
+                $q->setAttribute('freight_percent', $freightPercent);
+                $q->setAttribute('freight_cost', $freightCost);
+                $q->setAttribute('total_cost', $totalCost);
+
+                return $q;
+            })
+            ->sortBy('total_cost')
+            ->values();
+    }
+
     public function getPriceComparison(?string $productName = null, ?string $supplierId = null): Collection
     {
         $query = Quotation::with('supplier')

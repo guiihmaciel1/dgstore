@@ -41,4 +41,12 @@ interface QuotationRepositoryInterface
     public function getUniqueProductNames(): Collection;
 
     public function getPriceComparison(?string $productName = null, ?string $supplierId = null): Collection;
+
+    /**
+     * Retorna as cotações mais recentes por fornecedor para um produto,
+     * incluindo cálculo de frete baseado na origem do fornecedor.
+     *
+     * @return Collection<Quotation> Ordenada pelo custo total (unit_price + frete) ASC
+     */
+    public function getBestQuotationsForProduct(string $productName): Collection;
 }
