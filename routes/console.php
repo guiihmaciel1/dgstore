@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 // ── Tarefas Agendadas ────────────────────────────────
 Schedule::command('reservations:process-expired')->dailyAt('00:05');
+Schedule::command('sessions:prune')->dailyAt('01:00');
