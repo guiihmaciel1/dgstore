@@ -13,6 +13,233 @@
                 </div>
             @endif
 
+            <!-- DESTAQUE: NOVOS LEADS AGUARDANDO INTERAÇÃO -->
+            @if($newLeadsWaiting->count() > 0)
+            <div class="mb-4 sm:mb-6 new-leads-banner">
+                <a href="{{ route('crm.board') }}" class="new-leads-card">
+                    <div class="new-leads-pulse"></div>
+                    <div class="new-leads-content">
+                        <div class="new-leads-left">
+                            <div class="new-leads-icon-wrap">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                </svg>
+                                <span class="new-leads-badge">{{ $newLeadsWaiting->count() }}</span>
+                            </div>
+                            <div>
+                                <h3 class="new-leads-title">
+                                    {{ $newLeadsWaiting->count() }} {{ $newLeadsWaiting->count() === 1 ? 'novo lead aguardando' : 'novos leads aguardando' }} interação!
+                                </h3>
+                                <div class="new-leads-list">
+                                    @foreach($newLeadsWaiting->take(3) as $lead)
+                                        <div class="new-leads-item">
+                                            <span class="new-leads-dot"></span>
+                                            <span class="new-leads-name">{{ $lead->title }}</span>
+                                            @if($lead->source)
+                                                <span class="new-leads-source">via {{ ucfirst($lead->source) }}</span>
+                                            @endif
+                                            <span class="new-leads-time">{{ $lead->created_at->diffForHumans() }}</span>
+                                        </div>
+                                    @endforeach
+                                    @if($newLeadsWaiting->count() > 3)
+                                        <span class="new-leads-more">+{{ $newLeadsWaiting->count() - 3 }} mais...</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="new-leads-action">
+                            <span>Atender agora</span>
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <style>
+                @keyframes newLeadsPulse {
+                    0%, 100% { opacity: 0.6; transform: scale(1); }
+                    50% { opacity: 0; transform: scale(1.03); }
+                }
+                @keyframes newLeadsBell {
+                    0%, 100% { transform: rotate(0deg); }
+                    10% { transform: rotate(14deg); }
+                    20% { transform: rotate(-14deg); }
+                    30% { transform: rotate(10deg); }
+                    40% { transform: rotate(-8deg); }
+                    50% { transform: rotate(4deg); }
+                    60% { transform: rotate(0deg); }
+                }
+                @keyframes newLeadsDot {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.3; }
+                }
+                .new-leads-banner {
+                    position: relative;
+                }
+                .new-leads-card {
+                    display: block;
+                    position: relative;
+                    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%);
+                    border-radius: 0.875rem;
+                    padding: 1.125rem 1.25rem;
+                    text-decoration: none;
+                    color: white;
+                    overflow: hidden;
+                    transition: all 0.2s ease;
+                    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.35), 0 0 0 1px rgba(249, 115, 22, 0.1);
+                }
+                .new-leads-card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgba(249, 115, 22, 0.45), 0 0 0 1px rgba(249, 115, 22, 0.2);
+                }
+                .new-leads-pulse {
+                    position: absolute;
+                    inset: 0;
+                    border: 2px solid rgba(255, 255, 255, 0.4);
+                    border-radius: 0.875rem;
+                    animation: newLeadsPulse 2s ease-in-out infinite;
+                    pointer-events: none;
+                }
+                .new-leads-content {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 1rem;
+                    position: relative;
+                    z-index: 1;
+                }
+                .new-leads-left {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 0.875rem;
+                    min-width: 0;
+                    flex: 1;
+                }
+                .new-leads-icon-wrap {
+                    position: relative;
+                    width: 2.75rem;
+                    height: 2.75rem;
+                    background: rgba(255, 255, 255, 0.2);
+                    backdrop-filter: blur(4px);
+                    border-radius: 0.75rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                }
+                .new-leads-icon-wrap svg {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                    animation: newLeadsBell 2s ease-in-out infinite;
+                }
+                .new-leads-badge {
+                    position: absolute;
+                    top: -0.375rem;
+                    right: -0.375rem;
+                    min-width: 1.25rem;
+                    height: 1.25rem;
+                    padding: 0 0.25rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: white;
+                    color: #dc2626;
+                    font-size: 0.7rem;
+                    font-weight: 800;
+                    border-radius: 9999px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                }
+                .new-leads-title {
+                    font-size: 1rem;
+                    font-weight: 700;
+                    line-height: 1.3;
+                    margin: 0;
+                    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+                }
+                .new-leads-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.25rem;
+                    margin-top: 0.5rem;
+                }
+                .new-leads-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.375rem;
+                    font-size: 0.775rem;
+                    opacity: 0.95;
+                }
+                .new-leads-dot {
+                    width: 0.375rem;
+                    height: 0.375rem;
+                    background: white;
+                    border-radius: 9999px;
+                    flex-shrink: 0;
+                    animation: newLeadsDot 1.5s ease-in-out infinite;
+                }
+                .new-leads-name {
+                    font-weight: 600;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 180px;
+                }
+                .new-leads-source {
+                    font-size: 0.7rem;
+                    background: rgba(255, 255, 255, 0.2);
+                    padding: 0.0625rem 0.375rem;
+                    border-radius: 0.25rem;
+                    white-space: nowrap;
+                }
+                .new-leads-time {
+                    font-size: 0.7rem;
+                    opacity: 0.75;
+                    white-space: nowrap;
+                }
+                .new-leads-more {
+                    font-size: 0.7rem;
+                    opacity: 0.8;
+                    font-weight: 500;
+                    margin-top: 0.125rem;
+                }
+                .new-leads-action {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.375rem;
+                    background: rgba(255, 255, 255, 0.2);
+                    backdrop-filter: blur(4px);
+                    padding: 0.5rem 1rem;
+                    border-radius: 0.5rem;
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                    white-space: nowrap;
+                    flex-shrink: 0;
+                    transition: background 0.15s ease;
+                }
+                .new-leads-card:hover .new-leads-action {
+                    background: rgba(255, 255, 255, 0.3);
+                }
+                .new-leads-action svg {
+                    width: 1rem;
+                    height: 1rem;
+                }
+                @media (max-width: 640px) {
+                    .new-leads-content {
+                        flex-direction: column;
+                        align-items: stretch;
+                    }
+                    .new-leads-action {
+                        justify-content: center;
+                    }
+                    .new-leads-name {
+                        max-width: 140px;
+                    }
+                }
+            </style>
+            @endif
+
             <!-- BANNER DG STORE -->
             <div class="mb-4 sm:mb-6">
                 <div id="banner-container" style="width: 100%; aspect-ratio: 1200/280; background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%); border-radius: 0.75rem; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">

@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controllers;
 
 use App\Application\UseCases\GenerateReportUseCase;
 use App\Domain\CRM\Models\Deal;
+use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\Finance\Models\FinancialTransaction;
 use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
@@ -45,6 +46,9 @@ class DashboardController extends Controller
         // Notificações do sistema (dados monitorados pelos cron jobs)
         $systemNotifications = $this->getSystemNotifications();
 
+        // Novos leads aguardando interação (no estágio "Novo Lead" sem atividade real)
+        $newLeadsWaiting = $this->getNewLeadsWaiting();
+
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
             'todayCount' => $data['today']['count'],
@@ -56,7 +60,26 @@ class DashboardController extends Controller
             'salesChart' => $data['sales_chart'],
             'alerts' => $alerts,
             'systemNotifications' => $systemNotifications,
+            'newLeadsWaiting' => $newLeadsWaiting,
         ]);
+    }
+
+    private function getNewLeadsWaiting(): \Illuminate\Support\Collection
+    {
+        $defaultStage = PipelineStage::where('is_default', true)->first();
+
+        if (! $defaultStage) {
+            return collect();
+        }
+
+        return Deal::open()
+            ->where('pipeline_stage_id', $defaultStage->id)
+            ->whereDoesntHave('activities', function ($q) {
+                $q->whereIn('type', ['note', 'whatsapp', 'call']);
+            })
+            ->with(['customer', 'user'])
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 
     private function getSystemNotifications(): array
