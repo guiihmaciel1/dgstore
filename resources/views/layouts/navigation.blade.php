@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center">
-                        <img src="{{ asset('images/logodg.png') }}" alt="DG Store" class="h-10 w-auto brightness-0 invert" />
+                        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" class="h-10 w-auto brightness-0 invert" />
                     </a>
                 </div>
 

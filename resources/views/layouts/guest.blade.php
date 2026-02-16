@@ -8,7 +8,7 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
         
         <!-- Favicon -->
-        <link rel="icon" type="image/png" href="{{ asset('images/logodg.png') }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -86,7 +86,7 @@
             <!-- Lado Esquerdo - Logo com Degradê -->
             <div class="split-left bg-logo-gradient">
                 <a href="/" class="block">
-                    <img src="{{ asset('images/logodg.png') }}" alt="DG Store" style="height: 320px; width: auto;" />
+                    <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" style="height: 320px; width: auto;" />
                 </a>
                 <p class="mt-8 text-white text-sm tracking-widest uppercase">
                     Tecnologia & Lifestyle

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Comparativo Apple — DG Store</title>
 
-    <link rel="icon" type="image/png" href="{{ asset('images/logodg.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
@@ -210,7 +210,7 @@
         <!-- Footer with CTA -->
         <div class="footer">
             @if(file_exists(public_path('images/logodg.png')))
-                <img src="{{ asset('images/logodg.png') }}" alt="DG Store" class="footer-logo">
+                <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" class="footer-logo">
             @endif
             <p>Comparativo gerado pela <strong>DG Store</strong></p>
             <a href="https://wa.me/5517996498338" target="_blank">
