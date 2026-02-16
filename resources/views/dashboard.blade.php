@@ -226,6 +226,128 @@
             </style>
             @endif
 
+            <!-- Notificações do Sistema -->
+            @if(count($systemNotifications) > 0)
+            <div class="mb-6 sm:mb-8">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-7 h-7 bg-gray-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-900">Mensagens do Sistema</h2>
+                    <span class="sys-notif-badge">{{ count($systemNotifications) }}</span>
+                </div>
+                <div class="space-y-2">
+                    @foreach($systemNotifications as $notif)
+                        <a href="{{ $notif['route'] }}" class="sys-notif sys-notif-{{ $notif['type'] }}">
+                            <div class="sys-notif-icon-wrap sys-notif-icon-{{ $notif['type'] }}">
+                                @if($notif['icon'] === 'finance')
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                @elseif($notif['icon'] === 'crm')
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                @elseif($notif['icon'] === 'import')
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                                    </svg>
+                                @endif
+                            </div>
+                            <span class="sys-notif-text">{{ $notif['message'] }}</span>
+                            <svg class="sys-notif-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+
+            <style>
+                .sys-notif-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-width: 1.25rem;
+                    height: 1.25rem;
+                    padding: 0 0.375rem;
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    color: white;
+                    background: #111827;
+                    border-radius: 9999px;
+                }
+                .sys-notif {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    padding: 0.75rem 1rem;
+                    border-radius: 0.625rem;
+                    text-decoration: none;
+                    transition: all 0.15s ease;
+                    border: 1px solid;
+                }
+                .sys-notif:hover {
+                    transform: translateX(2px);
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+                }
+                .sys-notif-icon-wrap {
+                    width: 2rem;
+                    height: 2rem;
+                    border-radius: 0.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                }
+                .sys-notif-icon-wrap svg {
+                    width: 1.1rem;
+                    height: 1.1rem;
+                }
+                .sys-notif-text {
+                    flex: 1;
+                    font-size: 0.8rem;
+                    font-weight: 500;
+                    line-height: 1.3;
+                }
+                .sys-notif-arrow {
+                    width: 1rem;
+                    height: 1rem;
+                    flex-shrink: 0;
+                    opacity: 0.4;
+                }
+                .sys-notif-danger {
+                    background: #fef2f2;
+                    border-color: #fecaca;
+                    color: #991b1b;
+                }
+                .sys-notif-icon-danger {
+                    background: #fee2e2;
+                    color: #dc2626;
+                }
+                .sys-notif-warning {
+                    background: #fffbeb;
+                    border-color: #fde68a;
+                    color: #92400e;
+                }
+                .sys-notif-icon-warning {
+                    background: #fef3c7;
+                    color: #d97706;
+                }
+                .sys-notif-info {
+                    background: #f0f9ff;
+                    border-color: #bae6fd;
+                    color: #0c4a6e;
+                }
+                .sys-notif-icon-info {
+                    background: #e0f2fe;
+                    color: #0284c7;
+                }
+            </style>
+            @endif
+
             <!-- Cards de Estatísticas -->
             <div x-data="{ showValues: localStorage.getItem('dg_show_values') !== 'false' }"
                  x-init="$watch('showValues', v => localStorage.setItem('dg_show_values', v))"
