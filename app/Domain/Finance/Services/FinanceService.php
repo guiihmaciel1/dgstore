@@ -29,30 +29,31 @@ class FinanceService
         $monthExpensePaid = (float) FinancialTransaction::expense()->paidThisMonth()->whereNotNull('account_id')->sum('amount');
         $monthProfit = $monthIncome - $monthExpensePaid;
 
-        // Despesas totais do mês (pagas + pendentes + vencidas, por due_date)
-        $monthExpenseTotal = (float) FinancialTransaction::expense()
-            ->thisMonth()
-            ->whereIn('status', ['paid', 'pending', 'overdue'])
-            ->sum('amount');
-
-        // Despesas pendentes do mês (ainda não pagas)
+        // Despesas operacionais pendentes do mês (ainda não pagas, por due_date)
         $monthExpensePending = (float) FinancialTransaction::expense()
             ->thisMonth()
             ->unpaid()
             ->sum('amount');
 
-        // Despesas do próximo mês (por due_date)
-        $nextMonthExpenseTotal = (float) FinancialTransaction::expense()
-            ->whereMonth('due_date', now()->addMonth()->month)
-            ->whereYear('due_date', now()->addMonth()->year)
-            ->whereIn('status', ['paid', 'pending', 'overdue'])
-            ->sum('amount');
+        // Despesas operacionais totais do mês (pagas via caixa + pendentes)
+        // Exclui lançamentos contábeis sem saída de caixa (CMV, Trade-in)
+        $monthExpenseTotal = $monthExpensePaid + $monthExpensePending;
 
+        // Despesas operacionais do próximo mês (exclui lançamentos contábeis)
         $nextMonthExpensePending = (float) FinancialTransaction::expense()
             ->whereMonth('due_date', now()->addMonth()->month)
             ->whereYear('due_date', now()->addMonth()->year)
             ->unpaid()
             ->sum('amount');
+
+        $nextMonthExpensePaid = (float) FinancialTransaction::expense()
+            ->whereMonth('due_date', now()->addMonth()->month)
+            ->whereYear('due_date', now()->addMonth()->year)
+            ->paid()
+            ->whereNotNull('account_id')
+            ->sum('amount');
+
+        $nextMonthExpenseTotal = $nextMonthExpensePaid + $nextMonthExpensePending;
 
         // Lucro real das vendas do mês (receita de venda - custo de mercadoria)
         $salesData = $this->getSalesMonthData();
