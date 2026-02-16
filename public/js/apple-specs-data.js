@@ -1,6 +1,6 @@
 /**
  * Base de dados de especificações de produtos Apple.
- * Usado pela Ficha Técnica (/tools/specs).
+ * Usado pela Ficha Técnica (/tools/specs) e página pública (/compare).
  *
  * Campos por modelo:
  *   cat, name, year, screen, brightness, refresh, chip, ram, storage,
@@ -283,7 +283,7 @@ function specsModels() {
         },
 
         // ═══════════════════════════════════════
-        //  iPAD
+        //  iPAD PRO
         // ═══════════════════════════════════════
         {
             name: 'iPad Pro M4 13"', cat: 'iPad', year: '2024',
@@ -310,6 +310,58 @@ function specsModels() {
             highlight: 'Tela Tandem OLED, Apple Pencil Pro, Magic Keyboard, Thunderbolt'
         },
         {
+            name: 'iPad Pro M2 12.9"', cat: 'iPad', year: '2022',
+            screen: '12.9" Liquid Retina XDR mini-LED', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M2', ram: '8/16GB', storage: '128GB, 256GB, 512GB, 1TB, 2TB',
+            mainCam: '12MP + 10MP UW + LiDAR', frontCam: '12MP TrueDepth',
+            video: '4K 60fps ProRes',
+            batteryCap: '40.88 Wh', battery: 'Até 10h nav web', charging: 'USB-C Thunderbolt',
+            sim: 'eSIM / Wi-Fi', connectivity: 'Wi-Fi 6E, BT 5.3, 5G opc.',
+            water: '-', dimensions: '280.6 × 214.9 × 6.4 mm', weight: '682g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Face ID',
+            highlight: 'Mini-LED XDR, Hover Apple Pencil, Thunderbolt, ProRes'
+        },
+        {
+            name: 'iPad Pro M2 11"', cat: 'iPad', year: '2022',
+            screen: '11" Liquid Retina IPS', brightness: '600 nits', refresh: '120Hz ProMotion',
+            chip: 'Apple M2', ram: '8/16GB', storage: '128GB, 256GB, 512GB, 1TB, 2TB',
+            mainCam: '12MP + 10MP UW + LiDAR', frontCam: '12MP TrueDepth',
+            video: '4K 60fps ProRes',
+            batteryCap: '28.65 Wh', battery: 'Até 10h nav web', charging: 'USB-C Thunderbolt',
+            sim: 'eSIM / Wi-Fi', connectivity: 'Wi-Fi 6E, BT 5.3, 5G opc.',
+            water: '-', dimensions: '247.6 × 178.5 × 5.9 mm', weight: '466g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Face ID',
+            highlight: 'Hover Apple Pencil, Thunderbolt, ProRes'
+        },
+        {
+            name: 'iPad Pro M1 12.9"', cat: 'iPad', year: '2021',
+            screen: '12.9" Liquid Retina XDR mini-LED', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M1', ram: '8/16GB', storage: '128GB, 256GB, 512GB, 1TB, 2TB',
+            mainCam: '12MP + 10MP UW + LiDAR', frontCam: '12MP TrueDepth',
+            video: '4K 60fps ProRes',
+            batteryCap: '40.88 Wh', battery: 'Até 10h nav web', charging: 'USB-C Thunderbolt',
+            sim: 'eSIM / Wi-Fi', connectivity: 'Wi-Fi 6, BT 5.0, 5G opc.',
+            water: '-', dimensions: '280.6 × 214.9 × 6.4 mm', weight: '682g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Face ID',
+            highlight: 'Mini-LED XDR, Thunderbolt, Center Stage, chip M1'
+        },
+        {
+            name: 'iPad Pro M1 11"', cat: 'iPad', year: '2021',
+            screen: '11" Liquid Retina IPS', brightness: '600 nits', refresh: '120Hz ProMotion',
+            chip: 'Apple M1', ram: '8/16GB', storage: '128GB, 256GB, 512GB, 1TB, 2TB',
+            mainCam: '12MP + 10MP UW + LiDAR', frontCam: '12MP TrueDepth',
+            video: '4K 60fps ProRes',
+            batteryCap: '28.65 Wh', battery: 'Até 10h nav web', charging: 'USB-C Thunderbolt',
+            sim: 'eSIM / Wi-Fi', connectivity: 'Wi-Fi 6, BT 5.0, 5G opc.',
+            water: '-', dimensions: '247.6 × 178.5 × 5.9 mm', weight: '466g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Face ID',
+            highlight: 'Thunderbolt, Center Stage, chip M1'
+        },
+
+        // ═══════════════════════════════════════
+        //  iPAD AIR
+        // ═══════════════════════════════════════
+        {
             name: 'iPad Air M3 13"', cat: 'iPad', year: '2025',
             screen: '13" Liquid Retina IPS', brightness: '600 nits', refresh: '60Hz',
             chip: 'Apple M3', ram: '8GB', storage: '128GB, 256GB, 512GB, 1TB',
@@ -334,17 +386,45 @@ function specsModels() {
             highlight: 'Apple Pencil Pro, Magic Keyboard, Apple Intelligence'
         },
         {
-            name: 'iPad Mini 7a Ger.', cat: 'iPad', year: '2024',
-            screen: '8.3" Liquid Retina IPS', brightness: '500 nits', refresh: '60Hz',
-            chip: 'A17 Pro', ram: '8GB', storage: '128GB, 256GB, 512GB',
+            name: 'iPad Air M2 13"', cat: 'iPad', year: '2024',
+            screen: '13" Liquid Retina IPS', brightness: '600 nits', refresh: '60Hz',
+            chip: 'Apple M2', ram: '8GB', storage: '128GB, 256GB, 512GB, 1TB',
             mainCam: '12MP', frontCam: '12MP Paisagem',
             video: '4K 60fps',
-            batteryCap: '19.3 Wh', battery: 'Até 10h nav web', charging: 'USB-C',
+            batteryCap: '36.59 Wh', battery: 'Até 10h nav web', charging: 'USB-C',
             sim: 'eSIM / Wi-Fi', connectivity: 'Wi-Fi 6E, BT 5.3, 5G opc.',
-            water: '-', dimensions: '195.4 × 134.8 × 6.3 mm', weight: '293g (Wi-Fi)',
+            water: '-', dimensions: '281.6 × 214.9 × 6.1 mm', weight: '617g (Wi-Fi)',
             material: 'Alumínio', biometrics: 'Touch ID (botão superior)',
-            highlight: 'Apple Pencil Pro, compacto, Apple Intelligence'
+            highlight: 'Tela grande, Apple Pencil Pro, Magic Keyboard'
         },
+        {
+            name: 'iPad Air M2 11"', cat: 'iPad', year: '2024',
+            screen: '11" Liquid Retina IPS', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M2', ram: '8GB', storage: '128GB, 256GB, 512GB, 1TB',
+            mainCam: '12MP', frontCam: '12MP Paisagem',
+            video: '4K 60fps',
+            batteryCap: '28.93 Wh', battery: 'Até 10h nav web', charging: 'USB-C',
+            sim: 'eSIM / Wi-Fi', connectivity: 'Wi-Fi 6E, BT 5.3, 5G opc.',
+            water: '-', dimensions: '247.6 × 178.5 × 6.1 mm', weight: '462g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Touch ID (botão superior)',
+            highlight: 'Apple Pencil Pro, Magic Keyboard'
+        },
+        {
+            name: 'iPad Air M1 (5a Ger.)', cat: 'iPad', year: '2022',
+            screen: '10.9" Liquid Retina IPS', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M1', ram: '8GB', storage: '64GB, 256GB',
+            mainCam: '12MP f/1.8', frontCam: '12MP Center Stage',
+            video: '4K 60fps',
+            batteryCap: '28.6 Wh', battery: 'Até 10h nav web', charging: 'USB-C',
+            sim: 'eSIM / Wi-Fi', connectivity: 'Wi-Fi 6, BT 5.0, 5G opc.',
+            water: '-', dimensions: '247.6 × 178.5 × 6.1 mm', weight: '461g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Touch ID (botão superior)',
+            highlight: 'Chip M1, Apple Pencil 2, Magic Keyboard'
+        },
+
+        // ═══════════════════════════════════════
+        //  iPAD (BASE) e iPAD MINI
+        // ═══════════════════════════════════════
         {
             name: 'iPad 11a Ger.', cat: 'iPad', year: '2025',
             screen: '10.9" Liquid Retina IPS', brightness: '500 nits', refresh: '60Hz',
@@ -357,46 +437,58 @@ function specsModels() {
             material: 'Alumínio', biometrics: 'Touch ID (botão superior)',
             highlight: 'Apple Pencil (USB-C), Apple Intelligence, modelo acessível'
         },
+        {
+            name: 'iPad 10a Ger.', cat: 'iPad', year: '2022',
+            screen: '10.9" Liquid Retina IPS', brightness: '500 nits', refresh: '60Hz',
+            chip: 'A14 Bionic', ram: '4GB', storage: '64GB, 256GB',
+            mainCam: '12MP f/1.8', frontCam: '12MP Paisagem',
+            video: '4K 60fps',
+            batteryCap: '28.6 Wh', battery: 'Até 10h nav web', charging: 'USB-C',
+            sim: 'eSIM / Wi-Fi', connectivity: 'Wi-Fi 6, BT 5.2, 5G opc.',
+            water: '-', dimensions: '248.6 × 179.5 × 7.0 mm', weight: '477g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Touch ID (botão superior)',
+            highlight: 'USB-C, design sem botão Home, Apple Pencil 1, 4 cores'
+        },
+        {
+            name: 'iPad 9a Ger.', cat: 'iPad', year: '2021',
+            screen: '10.2" Retina IPS', brightness: '500 nits', refresh: '60Hz',
+            chip: 'A13 Bionic', ram: '3GB', storage: '64GB, 256GB',
+            mainCam: '8MP f/2.4', frontCam: '12MP Center Stage',
+            video: '1080p 30fps',
+            batteryCap: '32.4 Wh', battery: 'Até 10h nav web', charging: 'Lightning 20W',
+            sim: 'nano-SIM / Wi-Fi', connectivity: 'Wi-Fi 6, BT 4.2',
+            water: '-', dimensions: '250.6 × 174.1 × 7.5 mm', weight: '487g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Touch ID (botão Home)',
+            highlight: 'Lightning, botão Home, Smart Keyboard, modelo mais acessível'
+        },
+        {
+            name: 'iPad Mini 7a Ger.', cat: 'iPad', year: '2024',
+            screen: '8.3" Liquid Retina IPS', brightness: '500 nits', refresh: '60Hz',
+            chip: 'A17 Pro', ram: '8GB', storage: '128GB, 256GB, 512GB',
+            mainCam: '12MP', frontCam: '12MP Paisagem',
+            video: '4K 60fps',
+            batteryCap: '19.3 Wh', battery: 'Até 10h nav web', charging: 'USB-C',
+            sim: 'eSIM / Wi-Fi', connectivity: 'Wi-Fi 6E, BT 5.3, 5G opc.',
+            water: '-', dimensions: '195.4 × 134.8 × 6.3 mm', weight: '293g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Touch ID (botão superior)',
+            highlight: 'Apple Pencil Pro, compacto, Apple Intelligence'
+        },
+        {
+            name: 'iPad Mini 6a Ger.', cat: 'iPad', year: '2021',
+            screen: '8.3" Liquid Retina IPS', brightness: '500 nits', refresh: '60Hz',
+            chip: 'A15 Bionic', ram: '4GB', storage: '64GB, 256GB',
+            mainCam: '12MP f/1.8', frontCam: '12MP',
+            video: '4K 60fps',
+            batteryCap: '19.3 Wh', battery: 'Até 10h nav web', charging: 'USB-C 20W',
+            sim: 'nano-SIM + eSIM / Wi-Fi', connectivity: 'Wi-Fi 6, BT 5.0, 5G opc.',
+            water: '-', dimensions: '195.4 × 134.8 × 6.3 mm', weight: '293g (Wi-Fi)',
+            material: 'Alumínio', biometrics: 'Touch ID (botão superior)',
+            highlight: 'USB-C, compacto, Apple Pencil 2'
+        },
 
         // ═══════════════════════════════════════
-        //  MAC
+        //  MACBOOK AIR
         // ═══════════════════════════════════════
-        {
-            name: 'MacBook Pro 16" M4 Pro', cat: 'Mac', year: '2025',
-            screen: '16.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
-            chip: 'Apple M4 Pro', ram: '24/48GB', storage: '512GB, 1TB, 2TB, 4TB',
-            mainCam: '-', frontCam: '12MP Center Stage',
-            video: '-',
-            batteryCap: '100 Wh', battery: 'Até 24h vídeo', charging: 'MagSafe 3 / USB-C 140W',
-            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
-            water: '-', dimensions: '355.7 × 248.1 × 16.8 mm', weight: '2.14 kg',
-            material: 'Alumínio', biometrics: 'Touch ID',
-            highlight: 'Thunderbolt 5, até 3 telas externas, bateria recorde'
-        },
-        {
-            name: 'MacBook Pro 14" M4 Pro', cat: 'Mac', year: '2025',
-            screen: '14.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
-            chip: 'Apple M4 Pro', ram: '24/48GB', storage: '512GB, 1TB, 2TB, 4TB',
-            mainCam: '-', frontCam: '12MP Center Stage',
-            video: '-',
-            batteryCap: '72.4 Wh', battery: 'Até 17h vídeo', charging: 'MagSafe 3 / USB-C 96W',
-            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
-            water: '-', dimensions: '312.6 × 221.2 × 15.5 mm', weight: '1.55 kg',
-            material: 'Alumínio', biometrics: 'Touch ID',
-            highlight: 'Thunderbolt 5, até 3 telas externas'
-        },
-        {
-            name: 'MacBook Pro 14" M4', cat: 'Mac', year: '2025',
-            screen: '14.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
-            chip: 'Apple M4', ram: '16/24/32GB', storage: '512GB, 1TB, 2TB',
-            mainCam: '-', frontCam: '12MP Center Stage',
-            video: '-',
-            batteryCap: '72.4 Wh', battery: 'Até 17h vídeo', charging: 'MagSafe 3 / USB-C 70W',
-            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
-            water: '-', dimensions: '312.6 × 221.2 × 15.5 mm', weight: '1.55 kg',
-            material: 'Alumínio', biometrics: 'Touch ID',
-            highlight: 'Thunderbolt 4, até 2 telas externas'
-        },
         {
             name: 'MacBook Air 15" M4', cat: 'Mac', year: '2025',
             screen: '15.3" Liquid Retina', brightness: '500 nits', refresh: '60Hz',
@@ -422,6 +514,230 @@ function specsModels() {
             highlight: 'Fanless (silencioso), 2 telas ext., MagSafe'
         },
         {
+            name: 'MacBook Air 15" M3', cat: 'Mac', year: '2024',
+            screen: '15.3" Liquid Retina', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M3', ram: '8/16/24GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '66.5 Wh', battery: 'Até 18h vídeo', charging: 'MagSafe / USB-C 70W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3',
+            water: '-', dimensions: '340.4 × 237.6 × 11.5 mm', weight: '1.51 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Fanless, 2 telas externas, Wi-Fi 6E'
+        },
+        {
+            name: 'MacBook Air 13" M3', cat: 'Mac', year: '2024',
+            screen: '13.6" Liquid Retina', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M3', ram: '8/16/24GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '52.6 Wh', battery: 'Até 18h vídeo', charging: 'MagSafe / USB-C 70W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3',
+            water: '-', dimensions: '304.1 × 215.0 × 11.3 mm', weight: '1.24 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Fanless, 2 telas externas, Wi-Fi 6E'
+        },
+        {
+            name: 'MacBook Air 15" M2', cat: 'Mac', year: '2023',
+            screen: '15.3" Liquid Retina', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M2', ram: '8/16/24GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '66.5 Wh', battery: 'Até 18h vídeo', charging: 'MagSafe / USB-C 67W',
+            sim: '-', connectivity: 'Wi-Fi 6, BT 5.3',
+            water: '-', dimensions: '340.4 × 237.6 × 11.5 mm', weight: '1.51 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Fanless, tela grande 15", MagSafe'
+        },
+        {
+            name: 'MacBook Air 13" M2', cat: 'Mac', year: '2022',
+            screen: '13.6" Liquid Retina', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M2', ram: '8/16/24GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '52.6 Wh', battery: 'Até 18h vídeo', charging: 'MagSafe / USB-C 67W',
+            sim: '-', connectivity: 'Wi-Fi 6, BT 5.3',
+            water: '-', dimensions: '304.1 × 215.0 × 11.3 mm', weight: '1.24 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Novo design, Fanless, MagSafe, notch'
+        },
+        {
+            name: 'MacBook Air 13" M1', cat: 'Mac', year: '2020',
+            screen: '13.3" Retina IPS', brightness: '400 nits', refresh: '60Hz',
+            chip: 'Apple M1', ram: '8/16GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '720p FaceTime HD',
+            video: '-',
+            batteryCap: '49.9 Wh', battery: 'Até 18h vídeo', charging: 'USB-C 30W',
+            sim: '-', connectivity: 'Wi-Fi 6, BT 5.0',
+            water: '-', dimensions: '304.1 × 212.4 × 16.1 mm', weight: '1.29 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Primeiro MacBook com Apple Silicon, Fanless'
+        },
+
+        // ═══════════════════════════════════════
+        //  MACBOOK PRO
+        // ═══════════════════════════════════════
+        {
+            name: 'MacBook Pro 16" M4 Pro', cat: 'Mac', year: '2024',
+            screen: '16.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M4 Pro', ram: '24/48GB', storage: '512GB, 1TB, 2TB, 4TB',
+            mainCam: '-', frontCam: '12MP Center Stage',
+            video: '-',
+            batteryCap: '100 Wh', battery: 'Até 24h vídeo', charging: 'MagSafe 3 / USB-C 140W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
+            water: '-', dimensions: '355.7 × 248.1 × 16.8 mm', weight: '2.14 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Thunderbolt 5, até 3 telas externas, bateria recorde'
+        },
+        {
+            name: 'MacBook Pro 14" M4 Pro', cat: 'Mac', year: '2024',
+            screen: '14.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M4 Pro', ram: '24/48GB', storage: '512GB, 1TB, 2TB, 4TB',
+            mainCam: '-', frontCam: '12MP Center Stage',
+            video: '-',
+            batteryCap: '72.4 Wh', battery: 'Até 17h vídeo', charging: 'MagSafe 3 / USB-C 96W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
+            water: '-', dimensions: '312.6 × 221.2 × 15.5 mm', weight: '1.55 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Thunderbolt 5, até 3 telas externas'
+        },
+        {
+            name: 'MacBook Pro 14" M4', cat: 'Mac', year: '2024',
+            screen: '14.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M4', ram: '16/24/32GB', storage: '512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '12MP Center Stage',
+            video: '-',
+            batteryCap: '72.4 Wh', battery: 'Até 17h vídeo', charging: 'MagSafe 3 / USB-C 70W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
+            water: '-', dimensions: '312.6 × 221.2 × 15.5 mm', weight: '1.55 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Thunderbolt 4, até 2 telas externas'
+        },
+        {
+            name: 'MacBook Pro 16" M3 Pro', cat: 'Mac', year: '2023',
+            screen: '16.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M3 Pro', ram: '18/36GB', storage: '512GB, 1TB, 2TB, 4TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '100 Wh', battery: 'Até 22h vídeo', charging: 'MagSafe 3 / USB-C 140W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
+            water: '-', dimensions: '355.7 × 248.1 × 16.8 mm', weight: '2.14 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Thunderbolt 4, até 2 telas externas, HDMI'
+        },
+        {
+            name: 'MacBook Pro 16" M3 Max', cat: 'Mac', year: '2023',
+            screen: '16.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M3 Max', ram: '36/48/64/128GB', storage: '1TB, 2TB, 4TB, 8TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '100 Wh', battery: 'Até 22h vídeo', charging: 'MagSafe 3 / USB-C 140W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
+            water: '-', dimensions: '355.7 × 248.1 × 16.8 mm', weight: '2.16 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Thunderbolt 4, até 3 telas externas, HDMI'
+        },
+        {
+            name: 'MacBook Pro 14" M3 Pro', cat: 'Mac', year: '2023',
+            screen: '14.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M3 Pro', ram: '18/36GB', storage: '512GB, 1TB, 2TB, 4TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '72.4 Wh', battery: 'Até 17h vídeo', charging: 'MagSafe 3 / USB-C 96W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
+            water: '-', dimensions: '312.6 × 221.2 × 15.5 mm', weight: '1.61 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Thunderbolt 4, até 2 telas externas, HDMI'
+        },
+        {
+            name: 'MacBook Pro 14" M3', cat: 'Mac', year: '2023',
+            screen: '14.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M3', ram: '8/16/24GB', storage: '512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '72.4 Wh', battery: 'Até 17h vídeo', charging: 'MagSafe 3 / USB-C 70W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
+            water: '-', dimensions: '312.6 × 221.2 × 15.5 mm', weight: '1.55 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Thunderbolt 3, até 2 telas externas, HDMI'
+        },
+        {
+            name: 'MacBook Pro 16" M2 Pro', cat: 'Mac', year: '2023',
+            screen: '16.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M2 Pro', ram: '16/32GB', storage: '512GB, 1TB, 2TB, 4TB, 8TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '100 Wh', battery: 'Até 22h vídeo', charging: 'MagSafe 3 / USB-C 140W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
+            water: '-', dimensions: '355.7 × 248.1 × 16.8 mm', weight: '2.14 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Thunderbolt 4, até 2 telas externas, HDMI'
+        },
+        {
+            name: 'MacBook Pro 14" M2 Pro', cat: 'Mac', year: '2023',
+            screen: '14.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M2 Pro', ram: '16/32GB', storage: '512GB, 1TB, 2TB, 4TB, 8TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '72.4 Wh', battery: 'Até 17h vídeo', charging: 'MagSafe 3 / USB-C 96W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, HDMI 2.1, SD',
+            water: '-', dimensions: '312.6 × 221.2 × 15.5 mm', weight: '1.6 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Thunderbolt 4, até 2 telas externas, HDMI'
+        },
+        {
+            name: 'MacBook Pro 13" M2', cat: 'Mac', year: '2022',
+            screen: '13.3" Retina IPS', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M2', ram: '8/16/24GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '720p FaceTime HD',
+            video: '-',
+            batteryCap: '58.2 Wh', battery: 'Até 20h vídeo', charging: 'USB-C 67W',
+            sim: '-', connectivity: 'Wi-Fi 6, BT 5.0',
+            water: '-', dimensions: '304.1 × 212.4 × 15.6 mm', weight: '1.4 kg',
+            material: 'Alumínio', biometrics: 'Touch ID (Touch Bar)',
+            highlight: 'Touch Bar, longa duração bateria'
+        },
+        {
+            name: 'MacBook Pro 16" M1 Pro', cat: 'Mac', year: '2021',
+            screen: '16.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M1 Pro', ram: '16/32GB', storage: '512GB, 1TB, 2TB, 4TB, 8TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '100 Wh', battery: 'Até 21h vídeo', charging: 'MagSafe 3 / USB-C 140W',
+            sim: '-', connectivity: 'Wi-Fi 6, BT 5.0, HDMI 2.0, SD',
+            water: '-', dimensions: '355.7 × 248.1 × 16.8 mm', weight: '2.14 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Retorno MagSafe/HDMI/SD, ProMotion, notch'
+        },
+        {
+            name: 'MacBook Pro 14" M1 Pro', cat: 'Mac', year: '2021',
+            screen: '14.2" Liquid Retina XDR', brightness: '1600 nits HDR', refresh: '120Hz ProMotion',
+            chip: 'Apple M1 Pro', ram: '16/32GB', storage: '512GB, 1TB, 2TB, 4TB, 8TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '70 Wh', battery: 'Até 17h vídeo', charging: 'MagSafe 3 / USB-C 96W',
+            sim: '-', connectivity: 'Wi-Fi 6, BT 5.0, HDMI 2.0, SD',
+            water: '-', dimensions: '312.6 × 221.2 × 15.5 mm', weight: '1.6 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Retorno MagSafe/HDMI/SD, ProMotion, notch'
+        },
+        {
+            name: 'MacBook Pro 13" M1', cat: 'Mac', year: '2020',
+            screen: '13.3" Retina IPS', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M1', ram: '8/16GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '720p FaceTime HD',
+            video: '-',
+            batteryCap: '58.2 Wh', battery: 'Até 20h vídeo', charging: 'USB-C 61W',
+            sim: '-', connectivity: 'Wi-Fi 6, BT 5.0',
+            water: '-', dimensions: '304.1 × 212.4 × 15.6 mm', weight: '1.4 kg',
+            material: 'Alumínio', biometrics: 'Touch ID (Touch Bar)',
+            highlight: 'Touch Bar, primeiro MacBook Pro com Apple Silicon'
+        },
+
+        // ═══════════════════════════════════════
+        //  iMAC / MAC MINI
+        // ═══════════════════════════════════════
+        {
             name: 'iMac 24" M4', cat: 'Mac', year: '2024',
             screen: '24" Retina 4.5K', brightness: '500 nits', refresh: '60Hz',
             chip: 'Apple M4', ram: '16/24/32GB', storage: '256GB, 512GB, 1TB, 2TB',
@@ -434,6 +750,30 @@ function specsModels() {
             highlight: 'Tudo-em-um, 7 cores, USB-C/Thunderbolt'
         },
         {
+            name: 'iMac 24" M3', cat: 'Mac', year: '2023',
+            screen: '24" Retina 4.5K', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M3', ram: '8/16/24GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '-', battery: '-', charging: 'Fonte externa 143W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, Ethernet opc.',
+            water: '-', dimensions: '547 × 461 × 147 mm', weight: '4.43 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Tudo-em-um, 7 cores, USB-C/Thunderbolt'
+        },
+        {
+            name: 'iMac 24" M1', cat: 'Mac', year: '2021',
+            screen: '24" Retina 4.5K', brightness: '500 nits', refresh: '60Hz',
+            chip: 'Apple M1', ram: '8/16GB', storage: '256GB, 512GB, 1TB',
+            mainCam: '-', frontCam: '1080p FaceTime HD',
+            video: '-',
+            batteryCap: '-', battery: '-', charging: 'Fonte externa 143W',
+            sim: '-', connectivity: 'Wi-Fi 6, BT 5.0, Ethernet opc.',
+            water: '-', dimensions: '547 × 461 × 147 mm', weight: '4.46 kg',
+            material: 'Alumínio', biometrics: 'Touch ID',
+            highlight: 'Tudo-em-um, 7 cores, primeiro iMac Apple Silicon'
+        },
+        {
             name: 'Mac Mini M4', cat: 'Mac', year: '2024',
             screen: '-', brightness: '-', refresh: '-',
             chip: 'Apple M4', ram: '16/24/32GB', storage: '256GB, 512GB, 1TB, 2TB',
@@ -444,6 +784,30 @@ function specsModels() {
             water: '-', dimensions: '127 × 127 × 50 mm', weight: '0.68 kg',
             material: 'Alumínio', biometrics: '-',
             highlight: 'Ultra compacto, 2x USB-C frontal, Thunderbolt 4, até 3 telas'
+        },
+        {
+            name: 'Mac Mini M2', cat: 'Mac', year: '2023',
+            screen: '-', brightness: '-', refresh: '-',
+            chip: 'Apple M2', ram: '8/16/24GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '-', battery: '-', charging: 'Fonte interna 150W',
+            sim: '-', connectivity: 'Wi-Fi 6E, BT 5.3, Ethernet opc.',
+            water: '-', dimensions: '197 × 197 × 35.8 mm', weight: '1.18 kg',
+            material: 'Alumínio', biometrics: '-',
+            highlight: 'Thunderbolt 4, até 2 telas, compacto'
+        },
+        {
+            name: 'Mac Mini M1', cat: 'Mac', year: '2020',
+            screen: '-', brightness: '-', refresh: '-',
+            chip: 'Apple M1', ram: '8/16GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '-', battery: '-', charging: 'Fonte interna 150W',
+            sim: '-', connectivity: 'Wi-Fi 6, BT 5.0, Ethernet',
+            water: '-', dimensions: '197 × 197 × 35.8 mm', weight: '1.2 kg',
+            material: 'Alumínio', biometrics: '-',
+            highlight: 'Thunderbolt/USB 4, HDMI 2.0, primeiro Mac Mini Apple Silicon'
         },
 
         // ═══════════════════════════════════════
@@ -462,6 +826,18 @@ function specsModels() {
             highlight: 'Action Button, Profundímetro, Sirene 86dB, GPS dual-freq'
         },
         {
+            name: 'Apple Watch Ultra 1', cat: 'Watch', year: '2022',
+            screen: '49mm OLED Flat LTPO2', brightness: '2000 nits', refresh: 'Always-On',
+            chip: 'S8 SiP', ram: '-', storage: '32GB',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '542 mAh', battery: 'Até 36h (60h eco)', charging: 'MagSafe magnético',
+            sim: 'eSIM (LTE)', connectivity: 'LTE, Wi-Fi, BT 5.3, L1+L5 GPS',
+            water: 'WR100 / EN13319', dimensions: '49 × 44 × 14.4 mm', weight: '61.3g',
+            material: 'Titânio', biometrics: '-',
+            highlight: 'Action Button, Profundímetro, Sirene 86dB, GPS dual-freq'
+        },
+        {
             name: 'Apple Watch Series 10', cat: 'Watch', year: '2024',
             screen: '42/46mm OLED LTPO3', brightness: '2000 nits', refresh: 'Always-On',
             chip: 'S10 SiP', ram: '-', storage: '64GB',
@@ -474,6 +850,30 @@ function specsModels() {
             highlight: 'Mais fino, tela maior, detecção apneia, carregamento rápido'
         },
         {
+            name: 'Apple Watch Series 9', cat: 'Watch', year: '2023',
+            screen: '41/45mm OLED LTPO2', brightness: '2000 nits', refresh: 'Always-On',
+            chip: 'S9 SiP', ram: '-', storage: '64GB',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '~308 mAh (45mm)', battery: 'Até 18h (36h eco)', charging: 'MagSafe magnético',
+            sim: 'eSIM (LTE opc.)', connectivity: 'LTE opc., Wi-Fi, BT 5.3, L1+L5 GPS, UWB',
+            water: 'WR50', dimensions: '45 × 38 × 10.7 mm (45mm)', weight: '38.7g (45mm Al)',
+            material: 'Alumínio / Aço inoxidável', biometrics: '-',
+            highlight: 'Double Tap, UWB 2ª ger., tela mais brilhante'
+        },
+        {
+            name: 'Apple Watch Series 8', cat: 'Watch', year: '2022',
+            screen: '41/45mm OLED LTPO2', brightness: '1000 nits', refresh: 'Always-On',
+            chip: 'S8 SiP', ram: '-', storage: '32GB',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '~308 mAh (45mm)', battery: 'Até 18h (36h eco)', charging: 'MagSafe magnético',
+            sim: 'eSIM (LTE opc.)', connectivity: 'LTE opc., Wi-Fi, BT 5.3, L1+L5 GPS',
+            water: 'WR50', dimensions: '45 × 38 × 10.7 mm (45mm)', weight: '38.8g (45mm Al)',
+            material: 'Alumínio / Aço inoxidável', biometrics: '-',
+            highlight: 'Sensor de temperatura, detecção de acidente, Always-On'
+        },
+        {
             name: 'Apple Watch SE 3a', cat: 'Watch', year: '2025',
             screen: '40/44mm OLED LTPO', brightness: '1000 nits', refresh: 'Always-On',
             chip: 'S10 SiP', ram: '-', storage: '32GB',
@@ -484,6 +884,30 @@ function specsModels() {
             water: 'WR50', dimensions: '44 × 38 × 10.7 mm (44mm)', weight: '33g (44mm)',
             material: 'Alumínio / Plástico', biometrics: '-',
             highlight: 'Modelo acessível, detecção de queda/acidente, caixa plástica'
+        },
+        {
+            name: 'Apple Watch SE 2a', cat: 'Watch', year: '2022',
+            screen: '40/44mm OLED LTPO', brightness: '1000 nits', refresh: '-',
+            chip: 'S8 SiP', ram: '-', storage: '32GB',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '~245 mAh (44mm)', battery: 'Até 18h', charging: 'MagSafe magnético',
+            sim: 'eSIM (LTE opc.)', connectivity: 'LTE opc., Wi-Fi, BT 5.3, L1 GPS',
+            water: 'WR50', dimensions: '44 × 38 × 10.7 mm (44mm)', weight: '33g (44mm)',
+            material: 'Alumínio', biometrics: '-',
+            highlight: 'Modelo acessível, detecção de queda/acidente'
+        },
+        {
+            name: 'Apple Watch SE 1a', cat: 'Watch', year: '2020',
+            screen: '40/44mm OLED LTPO', brightness: '1000 nits', refresh: '-',
+            chip: 'S5 SiP', ram: '-', storage: '32GB',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '~245 mAh (44mm)', battery: 'Até 18h', charging: 'MagSafe magnético',
+            sim: 'eSIM (LTE opc.)', connectivity: 'LTE opc., Wi-Fi, BT 5.0, L1 GPS',
+            water: 'WR50', dimensions: '44 × 38 × 10.7 mm (44mm)', weight: '36.2g (44mm)',
+            material: 'Alumínio', biometrics: '-',
+            highlight: 'Modelo acessível, detecção de queda'
         },
 
         // ═══════════════════════════════════════
@@ -500,6 +924,30 @@ function specsModels() {
             water: 'IP54', dimensions: '-', weight: '5.3g cada',
             material: 'Plástico', biometrics: '-',
             highlight: 'ANC adaptativo, Áudio Espacial, sensor cardíaco, audição assistida'
+        },
+        {
+            name: 'AirPods Pro 2 (USB-C)', cat: 'AirPods', year: '2023',
+            screen: '-', brightness: '-', refresh: '-',
+            chip: 'H2', ram: '-', storage: '-',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '-', battery: 'Até 6h ANC (30h c/ case)', charging: 'USB-C / MagSafe',
+            sim: '-', connectivity: 'BT 5.3',
+            water: 'IP54', dimensions: '-', weight: '5.3g cada',
+            material: 'Plástico', biometrics: '-',
+            highlight: 'ANC 2x melhor, Áudio Espacial, Transparência adaptativa, case c/ alto-falante'
+        },
+        {
+            name: 'AirPods Pro 1', cat: 'AirPods', year: '2019',
+            screen: '-', brightness: '-', refresh: '-',
+            chip: 'H1', ram: '-', storage: '-',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '-', battery: 'Até 4.5h ANC (24h c/ case)', charging: 'Lightning',
+            sim: '-', connectivity: 'BT 5.0',
+            water: 'IPX4', dimensions: '-', weight: '5.4g cada',
+            material: 'Plástico', biometrics: '-',
+            highlight: 'Primeiro AirPods com ANC, pontas silicone, modo transparência'
         },
         {
             name: 'AirPods 4 ANC', cat: 'AirPods', year: '2024',
@@ -526,6 +974,30 @@ function specsModels() {
             highlight: 'Áudio Espacial, design aberto, case compacto'
         },
         {
+            name: 'AirPods 3', cat: 'AirPods', year: '2021',
+            screen: '-', brightness: '-', refresh: '-',
+            chip: 'H1', ram: '-', storage: '-',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '-', battery: 'Até 6h (30h c/ case)', charging: 'Lightning / MagSafe',
+            sim: '-', connectivity: 'BT 5.0',
+            water: 'IPX4', dimensions: '-', weight: '4.28g cada',
+            material: 'Plástico', biometrics: '-',
+            highlight: 'Áudio Espacial, design novo, sem pontas silicone'
+        },
+        {
+            name: 'AirPods 2', cat: 'AirPods', year: '2019',
+            screen: '-', brightness: '-', refresh: '-',
+            chip: 'H1', ram: '-', storage: '-',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '-', battery: 'Até 5h (24h c/ case)', charging: 'Lightning',
+            sim: '-', connectivity: 'BT 5.0',
+            water: '-', dimensions: '-', weight: '4g cada',
+            material: 'Plástico', biometrics: '-',
+            highlight: 'Hey Siri, case wireless opcional'
+        },
+        {
             name: 'AirPods Max (USB-C)', cat: 'AirPods', year: '2024',
             screen: '-', brightness: '-', refresh: '-',
             chip: 'H2', ram: '-', storage: '-',
@@ -536,6 +1008,18 @@ function specsModels() {
             water: '-', dimensions: '-', weight: '384.8g',
             material: 'Alumínio + Aço', biometrics: '-',
             highlight: 'Over-ear, ANC, Áudio Espacial, Alta fidelidade, 9 cores'
+        },
+        {
+            name: 'AirPods Max (Lightning)', cat: 'AirPods', year: '2020',
+            screen: '-', brightness: '-', refresh: '-',
+            chip: 'H1', ram: '-', storage: '-',
+            mainCam: '-', frontCam: '-',
+            video: '-',
+            batteryCap: '-', battery: 'Até 20h', charging: 'Lightning',
+            sim: '-', connectivity: 'BT 5.0',
+            water: '-', dimensions: '-', weight: '384.8g',
+            material: 'Alumínio + Aço', biometrics: '-',
+            highlight: 'Over-ear, ANC, Áudio Espacial, Alta fidelidade, Digital Crown'
         },
     ];
 }

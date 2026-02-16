@@ -166,4 +166,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Rotas públicas (sem autenticação)
+Route::view('/compare', 'public.specs-compare')->name('public.specs-compare');
+
 require __DIR__.'/auth.php';

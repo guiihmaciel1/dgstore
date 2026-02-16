@@ -12,13 +12,32 @@
                         </h1>
                         <p style="font-size: 0.8125rem; color: #6b7280;">Compare especifica&ccedil;&otilde;es entre modelos</p>
                     </div>
-                    <button x-show="model1 && model2" @click="swapModels()" type="button" title="Inverter modelos"
-                            style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; background: white; cursor: pointer; color: #6b7280;"
-                            onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='white'">
-                        <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
-                        </svg>
-                    </button>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button x-show="model1 && model2" @click="swapModels()" type="button" title="Inverter modelos"
+                                style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; background: white; cursor: pointer; color: #6b7280;"
+                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='white'">
+                            <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                            </svg>
+                        </button>
+                        <button x-show="model1" @click="shareCompare()" type="button" :title="shareCopied ? 'Link copiado!' : 'Enviar comparativo para cliente'"
+                                :style="shareCopied
+                                    ? 'padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #16a34a; background: #f0fdf4; cursor: pointer; color: #16a34a; display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 500; transition: all 0.15s;'
+                                    : 'padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; background: white; cursor: pointer; color: #6b7280; display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 500; transition: all 0.15s;'"
+                                onmouseover="if(!this.__x_refs)this.style.background='#f3f4f6'" onmouseout="if(!this.__x_refs)this.style.background='white'">
+                            <template x-if="!shareCopied">
+                                <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                                </svg>
+                            </template>
+                            <template x-if="shareCopied">
+                                <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </template>
+                            <span x-text="shareCopied ? 'Copiado!' : 'Enviar'" style="display: none;" :style="'display: inline;'"></span>
+                        </button>
+                    </div>
                 </div>
                 <div style="display: flex; gap: 0.75rem; align-items: end; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 200px;">
@@ -165,10 +184,27 @@
             get model1() { return this.models.find(m => m.name === this.selected1) || null; },
             get model2() { return this.models.find(m => m.name === this.selected2) || null; },
 
+            shareCopied: false,
+
             swapModels() {
                 const tmp = this.selected1;
                 this.selected1 = this.selected2;
                 this.selected2 = tmp;
+            },
+
+            shareCompare() {
+                if (!this.model1) return;
+                const base = window.location.origin + '/compare';
+                const params = new URLSearchParams({ m1: this.model1.name });
+                if (this.model2) params.set('m2', this.model2.name);
+                const url = base + '?' + params.toString();
+
+                navigator.clipboard.writeText(url).then(() => {
+                    this.shareCopied = true;
+                    setTimeout(() => { this.shareCopied = false; }, 2500);
+                }).catch(() => {
+                    prompt('Copie o link abaixo:', url);
+                });
             },
 
             specSections: [
@@ -262,10 +298,13 @@
                 const ranks = {
                     'A19 Pro': 100, 'A19': 95,
                     'A18 Pro': 90, 'A18 + Apple C1': 86, 'A18': 85,
-                    'A17 Pro': 80, 'A16 Bionic': 75, 'A15 Bionic': 70, 'A14 Bionic': 65,
-                    'Apple M4 Pro': 120, 'Apple M4': 115, 'Apple M3': 110, 'Apple M2': 105,
-                    'S10 SiP': 50, 'S9 SiP': 45,
-                    'H3': 30, 'H2': 25,
+                    'A17 Pro': 80, 'A16 Bionic': 75, 'A15 Bionic': 70, 'A14 Bionic': 65, 'A13 Bionic': 60,
+                    'Apple M4 Pro': 120, 'Apple M4': 115,
+                    'Apple M3 Max': 114, 'Apple M3 Pro': 112, 'Apple M3': 110,
+                    'Apple M2 Pro': 107, 'Apple M2': 105,
+                    'Apple M1 Pro': 102, 'Apple M1': 100,
+                    'S10 SiP': 50, 'S9 SiP': 45, 'S8 SiP': 40, 'S5 SiP': 35,
+                    'H3': 30, 'H2': 25, 'H1': 20,
                 };
                 return ranks[chip] || 0;
             },
