@@ -246,7 +246,7 @@
                                     <dd style="font-weight: 500; color: #111827;">{{ $order->formatted_shipping_cost }}</dd>
                                 </div>
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Impostos:</dt>
+                                    <dt style="color: #6b7280;">Impostos/Taxas/TAXI:</dt>
                                     <dd style="font-weight: 500; color: #111827;">{{ $order->formatted_taxes }}</dd>
                                 </div>
                                 <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid #e5e7eb;">

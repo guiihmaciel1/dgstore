@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Import\Services;
 
+use App\Domain\Finance\Services\FinanceService;
 use App\Domain\Import\Enums\ImportOrderStatus;
 use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Models\ImportOrderItem;
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\DB;
 
 class ImportOrderService
 {
+    public function __construct(
+        private readonly FinanceService $financeService,
+    ) {}
     /**
      * Lista pedidos com filtros
      */
@@ -82,6 +86,18 @@ class ImportOrderService
                     'quantity' => $item['quantity'],
                     'unit_cost' => $item['unit_cost'],
                 ]);
+            }
+
+            // Lança despesa no financeiro (pedido = já pago)
+            $totalBrl = $order->estimated_total_brl;
+            if ($totalBrl > 0) {
+                $this->financeService->registerImportExpense(
+                    $data['user_id'],
+                    $totalBrl,
+                    "Importação #{$order->order_number}",
+                    $order->id,
+                    $order->ordered_at ? \Carbon\Carbon::parse($order->ordered_at) : now(),
+                );
             }
 
             return $order->load(['supplier', 'items']);
@@ -198,11 +214,16 @@ class ImportOrderService
     }
 
     /**
-     * Cancela pedido
+     * Cancela pedido e reverte lançamento financeiro
      */
     public function cancel(ImportOrder $order): ImportOrder
     {
-        $order->update(['status' => ImportOrderStatus::Cancelled]);
-        return $order->fresh();
+        return DB::transaction(function () use ($order) {
+            $order->update(['status' => ImportOrderStatus::Cancelled]);
+
+            $this->financeService->cancelImportTransactions($order->id);
+
+            return $order->fresh();
+        });
     }
 }

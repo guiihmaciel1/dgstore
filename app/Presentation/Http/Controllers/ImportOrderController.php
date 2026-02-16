@@ -7,8 +7,11 @@ namespace App\Presentation\Http\Controllers;
 use App\Domain\Import\Enums\ImportOrderStatus;
 use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
+use App\Domain\Product\Models\Product;
+use App\Domain\Supplier\Models\Quotation;
 use App\Domain\Supplier\Models\Supplier;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -189,5 +192,58 @@ class ImportOrderController extends Controller
                 ->back()
                 ->with('error', $e->getMessage());
         }
+    }
+
+    public function searchItems(Request $request): JsonResponse
+    {
+        $term = $request->input('q', '');
+
+        if (mb_strlen($term) < 2) {
+            return response()->json([]);
+        }
+
+        $results = collect();
+
+        // Prioridade 1: Cotações (com preço USD e fornecedor)
+        $quotations = Quotation::with('supplier')
+            ->where('product_name', 'like', "%{$term}%")
+            ->whereNotNull('price_usd')
+            ->where('price_usd', '>', 0)
+            ->orderByDesc('quoted_at')
+            ->limit(10)
+            ->get()
+            ->unique('product_name')
+            ->map(fn ($q) => [
+                'name' => $q->product_name,
+                'price_usd' => (float) $q->price_usd,
+                'supplier' => $q->supplier?->name ?? '-',
+                'source' => 'quotation',
+            ]);
+
+        $results = $results->concat($quotations);
+
+        // Prioridade 2: Produtos cadastrados (que não estão nas cotações)
+        $quotationNames = $quotations->pluck('name')->map(fn ($n) => mb_strtolower($n));
+
+        $products = Product::where(function ($query) use ($term) {
+            $query->where('name', 'like', "%{$term}%")
+                ->orWhere('sku', 'like', "%{$term}%")
+                ->orWhere('model', 'like', "%{$term}%");
+        })
+            ->where('active', true)
+            ->orderBy('name')
+            ->limit(10)
+            ->get()
+            ->filter(fn ($p) => ! $quotationNames->contains(mb_strtolower($p->full_name)))
+            ->map(fn ($p) => [
+                'name' => $p->full_name,
+                'price_usd' => null,
+                'supplier' => null,
+                'source' => 'product',
+            ]);
+
+        $results = $results->concat($products);
+
+        return response()->json($results->take(15)->values());
     }
 }

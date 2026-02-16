@@ -112,6 +112,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/imports', [ImportOrderController::class, 'index'])->name('imports.index');
     Route::get('/imports/create', [ImportOrderController::class, 'create'])->name('imports.create');
     Route::post('/imports', [ImportOrderController::class, 'store'])->name('imports.store');
+    Route::get('/api/imports/items/search', [ImportOrderController::class, 'searchItems'])->name('imports.items.search');
     Route::get('/imports/{import}', [ImportOrderController::class, 'show'])->name('imports.show');
     Route::patch('/imports/{import}/status', [ImportOrderController::class, 'updateStatus'])->name('imports.status');
     Route::get('/imports/{import}/receive', [ImportOrderController::class, 'receive'])->name('imports.receive');

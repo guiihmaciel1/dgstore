@@ -610,4 +610,48 @@ class FinanceService
             $this->cancelTransaction($transaction);
         }
     }
+
+    // ─── Import integration ───
+
+    public function registerImportExpense(
+        string $userId,
+        float $amount,
+        string $description,
+        ?string $referenceId = null,
+        ?\DateTimeInterface $date = null,
+    ): ?FinancialTransaction {
+        $category = $this->getCategoryByName('Compra Fornecedor', 'expense');
+        $account = $this->getDefaultAccount();
+        $date = $date ?? now();
+
+        if (! $category) {
+            return null;
+        }
+
+        return $this->createTransaction([
+            'account_id' => $account?->id,
+            'category_id' => $category->id,
+            'user_id' => $userId,
+            'type' => 'expense',
+            'status' => $account ? 'paid' : 'pending',
+            'amount' => $amount,
+            'description' => $description,
+            'due_date' => $date->format('Y-m-d'),
+            'paid_at' => $account ? $date : null,
+            'reference_type' => 'ImportOrder',
+            'reference_id' => $referenceId,
+        ]);
+    }
+
+    public function cancelImportTransactions(string $importOrderId): void
+    {
+        $transactions = FinancialTransaction::where('reference_type', 'ImportOrder')
+            ->where('reference_id', $importOrderId)
+            ->whereIn('status', ['paid', 'pending'])
+            ->get();
+
+        foreach ($transactions as $transaction) {
+            $this->cancelTransaction($transaction);
+        }
+    }
 }
