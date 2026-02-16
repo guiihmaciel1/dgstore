@@ -18,7 +18,7 @@
             </div>
 
             <!-- Cards Principais -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 <div style="background: linear-gradient(135deg, #111827 0%, #1f2937 100%); border-radius: 0.75rem; padding: 1.25rem; color: white;">
                     <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; opacity: 0.7; letter-spacing: 0.05em;">Saldo Total</div>
                     <div style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">R$ {{ number_format($totalBalance, 2, ',', '.') }}</div>
@@ -29,13 +29,73 @@
                     <div style="font-size: 1.5rem; font-weight: 800; color: #16a34a; margin-top: 0.25rem;">R$ {{ number_format($monthIncome, 2, ',', '.') }}</div>
                 </div>
                 <div style="background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid #e5e7eb;">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Despesas do Mês</div>
-                    <div style="font-size: 1.5rem; font-weight: 800; color: #dc2626; margin-top: 0.25rem;">R$ {{ number_format($monthExpense, 2, ',', '.') }}</div>
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Despesas Pagas</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #dc2626; margin-top: 0.25rem;">R$ {{ number_format($monthExpensePaid, 2, ',', '.') }}</div>
+                    <div style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.125rem;">Saídas de caixa no mês</div>
                 </div>
                 <div style="background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid {{ $monthProfit >= 0 ? '#bbf7d0' : '#fecaca' }};">
                     <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Lucro do Mês</div>
                     <div style="font-size: 1.5rem; font-weight: 800; color: {{ $monthProfit >= 0 ? '#16a34a' : '#dc2626' }}; margin-top: 0.25rem;">R$ {{ number_format($monthProfit, 2, ',', '.') }}</div>
                 </div>
+            </div>
+
+            <!-- Detalhamento de Despesas -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div style="background: white; border-radius: 0.75rem; padding: 1rem 1.25rem; border: 1px solid #e5e7eb; display: flex; align-items: center; gap: 0.875rem;">
+                    <div style="width: 2.75rem; height: 2.75rem; border-radius: 0.625rem; background: #fef2f2; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Despesas Totais do Mês</div>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: #dc2626;">R$ {{ number_format($monthExpenseTotal, 2, ',', '.') }}</div>
+                        @if($monthExpensePending > 0)
+                            <div style="font-size: 0.6875rem; color: #d97706; font-weight: 500;">R$ {{ number_format($monthExpensePending, 2, ',', '.') }} pendente</div>
+                        @else
+                            <div style="font-size: 0.6875rem; color: #16a34a; font-weight: 500;">Tudo pago</div>
+                        @endif
+                    </div>
+                </div>
+
+                <div style="background: white; border-radius: 0.75rem; padding: 1rem 1.25rem; border: 1px solid #e5e7eb; display: flex; align-items: center; gap: 0.875rem;">
+                    <div style="width: 2.75rem; height: 2.75rem; border-radius: 0.625rem; background: #fff7ed; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #ea580c;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Despesas Próx. Mês</div>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: #ea580c;">R$ {{ number_format($nextMonthExpenseTotal, 2, ',', '.') }}</div>
+                        @if($nextMonthExpensePending > 0)
+                            <div style="font-size: 0.6875rem; color: #d97706; font-weight: 500;">R$ {{ number_format($nextMonthExpensePending, 2, ',', '.') }} pendente</div>
+                        @elseif($nextMonthExpenseTotal > 0)
+                            <div style="font-size: 0.6875rem; color: #16a34a; font-weight: 500;">Tudo pago</div>
+                        @else
+                            <div style="font-size: 0.6875rem; color: #9ca3af;">Nenhuma despesa lançada</div>
+                        @endif
+                    </div>
+                </div>
+
+                <a href="{{ route('finance.payables') }}" style="background: white; border-radius: 0.75rem; padding: 1rem 1.25rem; border: 1px solid #e5e7eb; display: flex; align-items: center; gap: 0.875rem; text-decoration: none; transition: box-shadow 0.15s;"
+                   onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+                    <div style="width: 2.75rem; height: 2.75rem; border-radius: 0.625rem; background: #f0f9ff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Resumo</div>
+                        <div style="font-size: 0.8125rem; font-weight: 600; color: #111827;">
+                            @if($monthExpensePending > 0)
+                                {{ number_format(($monthExpensePaid / max($monthExpenseTotal, 1)) * 100, 0) }}% das despesas pagas
+                            @else
+                                100% das despesas pagas
+                            @endif
+                        </div>
+                        <div style="font-size: 0.6875rem; color: #2563eb; font-weight: 500;">Ver contas a pagar →</div>
+                    </div>
+                </a>
             </div>
 
             <!-- Vendas do Mês -->
@@ -75,6 +135,59 @@
                     </div>
                 </div>
             @endif
+
+            <!-- Lucro Líquido -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                {{-- Lucro Líquido Atual --}}
+                <div style="background: {{ $netProfitCurrent >= 0 ? 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)' : 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)' }}; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid {{ $netProfitCurrent >= 0 ? '#bbf7d0' : '#fecaca' }};">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: {{ $netProfitCurrent >= 0 ? '#16a34a' : '#dc2626' }}; display: flex; align-items: center; justify-content: center;">
+                            <svg style="width: 1.1rem; height: 1.1rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: {{ $netProfitCurrent >= 0 ? '#166534' : '#991b1b' }}; letter-spacing: 0.05em;">Lucro Líquido Atual</div>
+                    </div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: {{ $netProfitCurrent >= 0 ? '#16a34a' : '#dc2626' }};">
+                        R$ {{ number_format(abs($netProfitCurrent), 2, ',', '.') }}
+                        @if($netProfitCurrent < 0)
+                            <span style="font-size: 0.875rem; font-weight: 600;">negativo</span>
+                        @endif
+                    </div>
+                    <div style="font-size: 0.6875rem; color: {{ $netProfitCurrent >= 0 ? '#166534' : '#991b1b' }}; opacity: 0.8; margin-top: 0.25rem;">
+                        Lucro de vendas (R$ {{ number_format($salesData['salesProfit'], 2, ',', '.') }}) − Despesas pagas (R$ {{ number_format($monthExpensePaid, 2, ',', '.') }})
+                    </div>
+                </div>
+
+                {{-- Lucro Líquido Projetado --}}
+                <div style="background: {{ $netProfitProjected >= 0 ? 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)' : 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)' }}; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid {{ $netProfitProjected >= 0 ? '#bbf7d0' : '#fecaca' }}; position: relative; overflow: hidden;">
+                    @if($netProfitProjected < 0)
+                        <div style="position: absolute; top: 0.625rem; right: 0.625rem; background: #dc2626; color: white; font-size: 0.625rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">Alerta</div>
+                    @endif
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: {{ $netProfitProjected >= 0 ? '#16a34a' : '#dc2626' }}; display: flex; align-items: center; justify-content: center;">
+                            <svg style="width: 1.1rem; height: 1.1rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                            </svg>
+                        </div>
+                        <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: {{ $netProfitProjected >= 0 ? '#166534' : '#991b1b' }}; letter-spacing: 0.05em;">Lucro Líquido Projetado</div>
+                    </div>
+                    <div style="font-size: 1.75rem; font-weight: 800; color: {{ $netProfitProjected >= 0 ? '#16a34a' : '#dc2626' }};">
+                        R$ {{ number_format(abs($netProfitProjected), 2, ',', '.') }}
+                        @if($netProfitProjected < 0)
+                            <span style="font-size: 0.875rem; font-weight: 600;">negativo</span>
+                        @endif
+                    </div>
+                    <div style="font-size: 0.6875rem; color: {{ $netProfitProjected >= 0 ? '#166534' : '#991b1b' }}; opacity: 0.8; margin-top: 0.25rem;">
+                        Lucro de vendas (R$ {{ number_format($salesData['salesProfit'], 2, ',', '.') }}) − Despesas totais (R$ {{ number_format($monthExpenseTotal, 2, ',', '.') }})
+                    </div>
+                    @if($monthExpensePending > 0 && $netProfitProjected < $netProfitCurrent)
+                        <div style="font-size: 0.6875rem; color: #d97706; font-weight: 600; margin-top: 0.375rem;">
+                            ⚠ Ainda há R$ {{ number_format($monthExpensePending, 2, ',', '.') }} em despesas pendentes
+                        </div>
+                    @endif
+                </div>
+            </div>
 
             <!-- Carteiras -->
             @if($accounts->count() > 0)

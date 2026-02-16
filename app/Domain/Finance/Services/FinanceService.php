@@ -26,11 +26,40 @@ class FinanceService
 
         // Receitas e despesas que passaram por carteira (fluxo de caixa real, por data de pagamento)
         $monthIncome = (float) FinancialTransaction::income()->paidThisMonth()->whereNotNull('account_id')->sum('amount');
-        $monthExpense = (float) FinancialTransaction::expense()->paidThisMonth()->whereNotNull('account_id')->sum('amount');
-        $monthProfit = $monthIncome - $monthExpense;
+        $monthExpensePaid = (float) FinancialTransaction::expense()->paidThisMonth()->whereNotNull('account_id')->sum('amount');
+        $monthProfit = $monthIncome - $monthExpensePaid;
+
+        // Despesas totais do mês (pagas + pendentes + vencidas, por due_date)
+        $monthExpenseTotal = (float) FinancialTransaction::expense()
+            ->thisMonth()
+            ->whereIn('status', ['paid', 'pending', 'overdue'])
+            ->sum('amount');
+
+        // Despesas pendentes do mês (ainda não pagas)
+        $monthExpensePending = (float) FinancialTransaction::expense()
+            ->thisMonth()
+            ->unpaid()
+            ->sum('amount');
+
+        // Despesas do próximo mês (por due_date)
+        $nextMonthExpenseTotal = (float) FinancialTransaction::expense()
+            ->whereMonth('due_date', now()->addMonth()->month)
+            ->whereYear('due_date', now()->addMonth()->year)
+            ->whereIn('status', ['paid', 'pending', 'overdue'])
+            ->sum('amount');
+
+        $nextMonthExpensePending = (float) FinancialTransaction::expense()
+            ->whereMonth('due_date', now()->addMonth()->month)
+            ->whereYear('due_date', now()->addMonth()->year)
+            ->unpaid()
+            ->sum('amount');
 
         // Lucro real das vendas do mês (receita de venda - custo de mercadoria)
         $salesData = $this->getSalesMonthData();
+
+        // Lucro líquido: lucro de vendas - despesas operacionais
+        $netProfitCurrent = $salesData['salesProfit'] - $monthExpensePaid;
+        $netProfitProjected = $salesData['salesProfit'] - $monthExpenseTotal;
 
         $dueSoon = FinancialTransaction::unpaid()
             ->where('due_date', '<=', now()->addDays(7))
@@ -51,8 +80,14 @@ class FinanceService
             'accounts',
             'totalBalance',
             'monthIncome',
-            'monthExpense',
+            'monthExpensePaid',
+            'monthExpenseTotal',
+            'monthExpensePending',
             'monthProfit',
+            'netProfitCurrent',
+            'netProfitProjected',
+            'nextMonthExpenseTotal',
+            'nextMonthExpensePending',
             'salesData',
             'dueSoon',
             'recentTransactions',
