@@ -275,24 +275,24 @@
                         </div>
 
                         <!-- Botões -->
-                        <div style="margin-top: 1rem;">
+                        <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
                             <button type="submit" :disabled="items.length === 0 || submitting"
-                                    style="width: 100%; padding: 0.875rem; background: #16a34a; color: white; font-weight: 700; border-radius: 0.625rem; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.9375rem; transition: all 0.15s;"
-                                    :style="(items.length === 0 || submitting) ? 'opacity: 0.5; cursor: not-allowed;' : ''"
-                                    onmouseover="if(!this.disabled) this.style.background='#15803d'"
-                                    onmouseout="this.style.background='#16a34a'">
-                                <svg x-show="!submitting" style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
-                                <svg x-show="submitting" x-cloak style="width: 1.25rem; height: 1.25rem; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                </svg>
+                                    class="btn-criar-pedido"
+                                    :class="{ 'btn-disabled': items.length === 0 || submitting }">
+                                <template x-if="!submitting">
+                                    <svg style="width: 1.125rem; height: 1.125rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </template>
+                                <template x-if="submitting">
+                                    <svg class="btn-spinner" style="width: 1.125rem; height: 1.125rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                    </svg>
+                                </template>
                                 <span x-text="submitting ? 'Criando pedido...' : 'Criar Pedido e Lançar no Financeiro'"></span>
                             </button>
-                            <a href="{{ route('imports.index') }}"
-                               style="display: flex; align-items: center; justify-content: center; gap: 0.375rem; width: 100%; padding: 0.75rem; margin-top: 0.5rem; text-align: center; color: #6b7280; font-weight: 500; text-decoration: none; border: 1px solid #e5e7eb; border-radius: 0.625rem; font-size: 0.875rem; transition: all 0.15s;"
-                               onmouseover="this.style.borderColor='#d1d5db'; this.style.background='#f9fafb'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.background='transparent'">
-                                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <a href="{{ route('imports.index') }}" class="btn-cancelar">
+                                <svg style="width: 0.875rem; height: 0.875rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                                 Cancelar
@@ -406,6 +406,58 @@
 
     <style>
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        .btn-criar-pedido {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: #16a34a;
+            color: white;
+            font-weight: 700;
+            font-size: 0.875rem;
+            border-radius: 0.625rem;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.15s;
+            line-height: 1.4;
+        }
+        .btn-criar-pedido:hover:not(.btn-disabled) {
+            background: #15803d;
+        }
+        .btn-criar-pedido.btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        .btn-cancelar {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-decoration: none;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.625rem;
+            transition: all 0.15s;
+            background: transparent;
+            line-height: 1.4;
+        }
+        .btn-cancelar:hover {
+            border-color: #d1d5db;
+            background: #f9fafb;
+            color: #374151;
+        }
+
         @media (max-width: 768px) {
             div[style*="grid-template-columns: 2fr 1fr"] {
                 grid-template-columns: 1fr !important;
