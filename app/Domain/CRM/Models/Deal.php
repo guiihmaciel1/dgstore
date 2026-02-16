@@ -7,6 +7,7 @@ namespace App\Domain\CRM\Models;
 use App\Domain\CRM\Enums\DealActivityType;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\User\Models\User;
+use App\Domain\WhatsApp\Models\WhatsAppMessage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,8 @@ class Deal extends Model
         'won_at',
         'lost_at',
         'lost_reason',
+        'source',
+        'source_metadata',
     ];
 
     protected function casts(): array
@@ -43,6 +46,7 @@ class Deal extends Model
             'lost_at' => 'datetime',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
+            'source_metadata' => 'array',
         ];
     }
 
@@ -68,6 +72,11 @@ class Deal extends Model
         return $this->hasMany(DealActivity::class)->orderBy('created_at', 'desc');
     }
 
+    public function whatsappMessages(): HasMany
+    {
+        return $this->hasMany(WhatsAppMessage::class);
+    }
+
     // Scopes
 
     public function scopeOpen(Builder $query): Builder
@@ -88,6 +97,11 @@ class Deal extends Model
     public function scopeForUser(Builder $query, string $userId): Builder
     {
         return $query->where('user_id', $userId);
+    }
+
+    public function scopeFromWhatsApp(Builder $query): Builder
+    {
+        return $query->where('source', 'whatsapp');
     }
 
     // Helpers
