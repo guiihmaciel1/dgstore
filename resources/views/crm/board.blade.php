@@ -82,7 +82,7 @@
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                                 <div>
                                     <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Telefone / WhatsApp</label>
-                                    <input type="text" name="phone" value="{{ old('phone') }}" placeholder="5511999999999"
+                                    <input type="text" name="phone" value="{{ old('phone') }}" placeholder="5517996498338"
                                            style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
                                 </div>
                                 <div>

@@ -56,7 +56,7 @@
                         </div>
                         <div>
                             <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Telefone</label>
-                            <input type="text" name="phone" placeholder="5511999999999"
+                            <input type="text" name="phone" placeholder="5517996498338"
                                    style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
                         </div>
                         <div style="grid-column: 1 / -1;">
