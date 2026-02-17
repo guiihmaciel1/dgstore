@@ -22,11 +22,13 @@ class Customer extends Model
         'cpf',
         'address',
         'notes',
+        'birth_date',
     ];
 
     protected function casts(): array
     {
         return [
+            'birth_date' => 'date',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
@@ -81,5 +83,32 @@ class Customer extends Model
             ->whereNotNull('sold_at')
             ->where('payment_status', '!=', 'cancelled')
             ->count();
+    }
+
+    public function getIsBirthdayMonthAttribute(): bool
+    {
+        if (!$this->birth_date) {
+            return false;
+        }
+
+        return $this->birth_date->month === now()->month;
+    }
+
+    public function getFormattedBirthDateAttribute(): ?string
+    {
+        if (!$this->birth_date) {
+            return null;
+        }
+
+        return $this->birth_date->format('d/m/Y');
+    }
+
+    public function getAgeAttribute(): ?int
+    {
+        if (!$this->birth_date) {
+            return null;
+        }
+
+        return $this->birth_date->age;
     }
 }

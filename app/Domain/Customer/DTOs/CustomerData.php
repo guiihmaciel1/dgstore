@@ -13,6 +13,7 @@ readonly class CustomerData
         public ?string $cpf = null,
         public ?string $address = null,
         public ?string $notes = null,
+        public ?string $birthDate = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -24,6 +25,7 @@ readonly class CustomerData
             cpf: isset($data['cpf']) ? preg_replace('/\D/', '', $data['cpf']) : null,
             address: $data['address'] ?? null,
             notes: $data['notes'] ?? null,
+            birthDate: $data['birth_date'] ?? null,
         );
     }
 
@@ -36,6 +38,7 @@ readonly class CustomerData
             'cpf' => $this->cpf,
             'address' => $this->address,
             'notes' => $this->notes,
+            'birth_date' => $this->birthDate,
         ];
     }
 }

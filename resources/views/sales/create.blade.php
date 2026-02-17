@@ -831,10 +831,16 @@
                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                             </div>
-                            <div style="grid-column: span 2;">
+                            <div>
                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">E-mail</label>
                                 <input type="email" x-model="customerForm.email"
                                        placeholder="email@exemplo.com"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Data de Nascimento</label>
+                                <input type="date" x-model="customerForm.birth_date"
                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                             </div>
@@ -1221,7 +1227,7 @@
 
                 // Modal de Cliente
                 showCustomerModal: false,
-                customerForm: { name: '', phone: '', cpf: '', email: '' },
+                customerForm: { name: '', phone: '', cpf: '', email: '', birth_date: '' },
                 customerFormError: '',
                 customerFormSaving: false,
 
@@ -1478,7 +1484,7 @@
 
                 // ========== MODAL CLIENTE ==========
                 resetCustomerForm() {
-                    return { name: '', phone: '', cpf: '', email: '' };
+                    return { name: '', phone: '', cpf: '', email: '', birth_date: '' };
                 },
 
                 async saveCustomer() {

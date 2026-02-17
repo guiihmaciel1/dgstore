@@ -14,7 +14,17 @@
                             <span class="text-white text-lg sm:text-2xl font-semibold">{{ strtoupper(substr($customer->name, 0, 1)) }}</span>
                         </div>
                         <div class="min-w-0">
-                            <h1 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">{{ $customer->name }}</h1>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <h1 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">{{ $customer->name }}</h1>
+                                @if($customer->is_birthday_month)
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; background: #fef3c7; color: #d97706; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; white-space: nowrap;">
+                                        <svg style="width: 0.875rem; height: 0.875rem;" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L10 6.015 6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1zm-5 8.274l-.818 2.552c.25.112.526.174.818.174.292 0 .569-.062.818-.174L5 10.274zm10 0l-.818 2.552c.25.112.526.174.818.174.292 0 .569-.062.818-.174L15 10.274z"/>
+                                        </svg>
+                                        Aniversariante do mês!
+                                    </span>
+                                @endif
+                            </div>
                             <p class="text-sm text-gray-500">Cliente desde {{ $customer->created_at->format('d/m/Y') }}</p>
                         </div>
                     </div>
@@ -58,6 +68,19 @@
                                 <div>
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">CPF</dt>
                                     <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $customer->formatted_cpf ?? '-' }}</dd>
+                                </div>
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Data de Nascimento</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">
+                                        @if($customer->birth_date)
+                                            {{ $customer->formatted_birth_date }}
+                                            @if($customer->age)
+                                                <span style="color: #6b7280;">({{ $customer->age }} anos)</span>
+                                            @endif
+                                        @else
+                                            -
+                                        @endif
+                                    </dd>
                                 </div>
                                 <div>
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Cliente desde</dt>

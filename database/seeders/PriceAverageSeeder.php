@@ -9,10 +9,10 @@ use Illuminate\Database\Seeder;
 class PriceAverageSeeder extends Seeder
 {
     /**
-     * Seed de preços de mercado (USADOS) por modelo e storage.
+     * Seed de preços de mercado por modelo e storage.
      *
      * Preços pesquisados manualmente no Facebook Marketplace — região SJRP e interior SP.
-     * Última atualização: 10/02/2026 (18 capturas analisadas, ~220 anúncios)
+     * Última atualização: 15/02/2026 (22 capturas analisadas, ~260 anúncios)
      *
      * Para atualizar: edite o array $prices abaixo e rode:
      *   php artisan db:seed --class=PriceAverageSeeder
@@ -20,23 +20,24 @@ class PriceAverageSeeder extends Seeder
     public function run(): void
     {
         // Formato: 'slug' => ['storage' => [avg, min, max, samples]]
-        // Preços de iPhones USADOS no marketplace (em R$)
+        // Preços de iPhones no marketplace (em R$)
         $prices = [
-            // ── iPhone 11 (2019) ──────────────────────
+            // ── iPhone 11 (2019) ─── usados ──────────
             'iphone-11' => [
                 '64GB'  => [943, 680, 1200, 25],
                 '128GB' => [1025, 680, 1300, 13],
             ],
             'iphone-11-pro' => [
-                '64GB'  => [1143, 950, 1399, 7],
-                '256GB' => [1500, 1400, 1600, 3],
+                '64GB'  => [1090, 800, 1399, 10],   // +3 amostras (R$1.000, R$1.100, R$800)
+                '256GB' => [1475, 1399, 1600, 4],    // +1 amostra (R$1.399)
             ],
             'iphone-11-pro-max' => [
                 '64GB'  => [1362, 1050, 1500, 9],
-                '256GB' => [1700, 1700, 1700, 1],
+                '256GB' => [1520, 1380, 1700, 9],    // +8 amostras (R$1.400~R$1.700)
+                '512GB' => [1499, 1499, 1499, 1],    // novo: R$1.499 seminovo c/ garantia
             ],
 
-            // ── iPhone 12 (2020) ──────────────────────
+            // ── iPhone 12 (2020) ─── usados ──────────
             'iphone-12' => [
                 '64GB'  => [925, 850, 1000, 2],
                 '128GB' => [1449, 1299, 1599, 2],
@@ -45,14 +46,15 @@ class PriceAverageSeeder extends Seeder
                 '128GB' => [1450, 1450, 1450, 1],
             ],
             'iphone-12-pro' => [
-                '128GB' => [1845, 1600, 2200, 6],
+                '128GB' => [1844, 1600, 2200, 8],    // +2 amostras (R$1.890, R$1.790)
+                '256GB' => [1875, 1850, 1900, 2],    // novo: R$1.850, R$1.900
             ],
             'iphone-12-pro-max' => [
-                '128GB' => [2183, 1800, 2499, 6],
-                '256GB' => [1800, 1800, 1800, 2],
+                '128GB' => [2185, 1800, 2499, 7],    // +1 amostra (R$2.199)
+                '256GB' => [1900, 1800, 2100, 3],    // +1 amostra (R$2.100)
             ],
 
-            // ── iPhone 13 (2021) ──────────────────────
+            // ── iPhone 13 (2021) ─── usados ──────────
             'iphone-13' => [
                 '128GB' => [2031, 1600, 2900, 33],
                 '256GB' => [2153, 2059, 2299, 3],
@@ -61,14 +63,14 @@ class PriceAverageSeeder extends Seeder
                 '128GB' => [1897, 1897, 1897, 1],
             ],
             'iphone-13-pro' => [
-                '128GB' => [2442, 2000, 2750, 5],
+                '128GB' => [2368, 2000, 2750, 6],    // +1 amostra (R$2.000)
             ],
             'iphone-13-pro-max' => [
                 '128GB' => [2644, 1600, 3000, 8],
                 '256GB' => [3145, 2990, 3299, 2],
             ],
 
-            // ── iPhone 14 (2022) ──────────────────────
+            // ── iPhone 14 (2022) ─── usados ──────────
             'iphone-14' => [
                 '128GB' => [2576, 1900, 3000, 14],
                 '256GB' => [2799, 2799, 2799, 1],
@@ -77,15 +79,15 @@ class PriceAverageSeeder extends Seeder
                 '128GB' => [2927, 2300, 3400, 7],
             ],
             'iphone-14-pro' => [
-                '128GB' => [3097, 2900, 3390, 3],
-                '256GB' => [3800, 3800, 3800, 1],
+                '128GB' => [2998, 2700, 3390, 4],    // +1 amostra (R$2.700)
+                '256GB' => [3300, 2800, 3800, 4],    // +3 amostras (R$2.800, R$3.000, R$3.600)
             ],
             'iphone-14-pro-max' => [
                 '128GB' => [3511, 2990, 4199, 8],
                 '256GB' => [3810, 3499, 4100, 7],
             ],
 
-            // ── iPhone 15 (2023) ──────────────────────
+            // ── iPhone 15 (2023) ─── usados ──────────
             'iphone-15' => [
                 '128GB' => [3119, 2200, 3700, 19],
                 '256GB' => [3700, 3700, 3700, 1],
@@ -95,14 +97,14 @@ class PriceAverageSeeder extends Seeder
             ],
             'iphone-15-pro' => [
                 '128GB' => [4050, 3750, 4500, 5],
-                '256GB' => [4075, 3899, 4250, 2],
+                '256GB' => [4059, 3899, 4250, 5],    // +3 amostras (R$3.899, R$3.999, R$4.250)
                 '512GB' => [4400, 4400, 4400, 1],
             ],
             'iphone-15-pro-max' => [
-                '256GB' => [4542, 3850, 5250, 9],
+                '256GB' => [4538, 3850, 5250, 10],   // +1 amostra (R$4.500)
             ],
 
-            // ── iPhone 16 (2024) ──────────────────────
+            // ── iPhone 16 (2024) ─── usados ──────────
             'iphone-16' => [
                 '128GB' => [4112, 3300, 4999, 8],
             ],
@@ -111,10 +113,18 @@ class PriceAverageSeeder extends Seeder
             ],
             'iphone-16-pro' => [
                 '128GB' => [5075, 4500, 5899, 10],
-                '256GB' => [5187, 4800, 5700, 4],
+                '256GB' => [5110, 4800, 5700, 5],    // +1 amostra (R$4.800)
             ],
             'iphone-16-pro-max' => [
-                '256GB' => [5898, 5499, 6300, 8],
+                '256GB' => [5894, 5200, 6500, 11],   // +3 amostras (R$5.200, R$5.950, R$6.500)
+            ],
+
+            // ── iPhone 17 (2025) ─── novos/lacrados ──
+            'iphone-17-pro' => [
+                '256GB' => [7775, 7550, 7999, 2],    // novo: R$7.550, R$7.999 (lacrados)
+            ],
+            'iphone-17-pro-max' => [
+                '256GB' => [7833, 7500, 7999, 3],    // novo: R$7.500, R$7.999, R$7.999 (lacrados)
             ],
         ];
 

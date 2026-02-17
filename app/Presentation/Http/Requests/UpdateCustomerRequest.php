@@ -40,6 +40,7 @@ class UpdateCustomerRequest extends FormRequest
             'cpf' => ['nullable', 'string', 'size:11', Rule::unique('customers', 'cpf')->ignore($customerId)],
             'address' => ['nullable', 'string'],
             'notes' => ['nullable', 'string'],
+            'birth_date' => ['nullable', 'date', 'before:today'],
         ];
     }
 
@@ -52,6 +53,7 @@ class UpdateCustomerRequest extends FormRequest
             'cpf' => 'CPF',
             'address' => 'endereço',
             'notes' => 'observações',
+            'birth_date' => 'data de nascimento',
         ];
     }
 }

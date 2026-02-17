@@ -38,6 +38,7 @@ class StoreCustomerRequest extends FormRequest
             'cpf' => ['nullable', 'string', 'size:11', 'unique:customers,cpf'],
             'address' => ['nullable', 'string'],
             'notes' => ['nullable', 'string'],
+            'birth_date' => ['nullable', 'date', 'before:today'],
         ];
     }
 
@@ -50,6 +51,7 @@ class StoreCustomerRequest extends FormRequest
             'cpf' => 'CPF',
             'address' => 'endereço',
             'notes' => 'observações',
+            'birth_date' => 'data de nascimento',
         ];
     }
 

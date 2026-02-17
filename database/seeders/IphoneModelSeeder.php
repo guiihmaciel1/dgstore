@@ -208,6 +208,24 @@ class IphoneModelSeeder extends Seeder
                 'search_term' => 'iphone 16 pro max',
                 'release_year' => 2024,
             ],
+
+            // iPhone 17 (2025)
+            [
+                'name' => 'iPhone 17 Pro',
+                'slug' => 'iphone-17-pro',
+                'storages' => ['256GB', '512GB', '1TB'],
+                'colors' => ['Titânio Preto', 'Titânio Branco', 'Titânio Natural', 'Titânio Deserto'],
+                'search_term' => 'iphone 17 pro',
+                'release_year' => 2025,
+            ],
+            [
+                'name' => 'iPhone 17 Pro Max',
+                'slug' => 'iphone-17-pro-max',
+                'storages' => ['256GB', '512GB', '1TB'],
+                'colors' => ['Titânio Preto', 'Titânio Branco', 'Titânio Natural', 'Titânio Deserto'],
+                'search_term' => 'iphone 17 pro max',
+                'release_year' => 2025,
+            ],
         ];
 
         foreach ($models as $modelData) {
