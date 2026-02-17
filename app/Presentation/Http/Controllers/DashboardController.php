@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controllers;
 use App\Application\UseCases\GenerateReportUseCase;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\PipelineStage;
+use App\Domain\Customer\Models\Customer;
 use App\Domain\Finance\Models\FinancialTransaction;
 use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
@@ -49,6 +50,9 @@ class DashboardController extends Controller
         // Novos leads aguardando interação (no estágio "Novo Lead" sem atividade real)
         $newLeadsWaiting = $this->getNewLeadsWaiting();
 
+        // Aniversariantes do mês
+        $birthdayCustomers = $this->getBirthdayCustomers();
+
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
             'todayCount' => $data['today']['count'],
@@ -61,6 +65,7 @@ class DashboardController extends Controller
             'alerts' => $alerts,
             'systemNotifications' => $systemNotifications,
             'newLeadsWaiting' => $newLeadsWaiting,
+            'birthdayCustomers' => $birthdayCustomers,
         ]);
     }
 
@@ -79,6 +84,14 @@ class DashboardController extends Controller
             })
             ->with(['customer', 'user'])
             ->orderBy('created_at', 'asc')
+            ->get();
+    }
+
+    private function getBirthdayCustomers(): \Illuminate\Support\Collection
+    {
+        return Customer::whereNotNull('birth_date')
+            ->whereMonth('birth_date', now()->month)
+            ->orderByRaw('DAY(birth_date) ASC')
             ->get();
     }
 
