@@ -242,186 +242,19 @@
 
             <!-- ANIVERSARIANTES DO MÊS -->
             @if($birthdayCustomers->count() > 0)
-            <div class="mb-4 sm:mb-6">
-                <div class="birthday-card">
-                    <div class="birthday-header">
-                        <div class="birthday-icon-wrap">
-                            <span class="birthday-cake">&#127874;</span>
-                        </div>
-                        <div>
-                            <h3 class="birthday-title">Aniversariantes de {{ now()->translatedFormat('F') }}</h3>
-                            <p class="birthday-subtitle">{{ $birthdayCustomers->count() }} {{ $birthdayCustomers->count() === 1 ? 'cliente faz' : 'clientes fazem' }} aniversário este mês</p>
-                        </div>
-                    </div>
-                    <div class="birthday-list">
-                        @foreach($birthdayCustomers as $customer)
-                            <a href="{{ route('customers.show', $customer) }}" class="birthday-item {{ $customer->birth_date->day === now()->day ? 'birthday-today' : '' }}">
-                                <div class="birthday-day">
-                                    <span class="birthday-day-number">{{ $customer->birth_date->format('d') }}</span>
-                                    <span class="birthday-day-label">{{ $customer->birth_date->translatedFormat('M') }}</span>
-                                </div>
-                                <div class="birthday-info">
-                                    <span class="birthday-name">{{ $customer->name }}</span>
-                                    @if($customer->phone)
-                                        <span class="birthday-phone">{{ $customer->phone }}</span>
-                                    @endif
-                                </div>
-                                @if($customer->birth_date->day === now()->day)
-                                    <span class="birthday-today-badge">HOJE!</span>
-                                @elseif($customer->birth_date->day > now()->day)
-                                    <span class="birthday-days-left">em {{ $customer->birth_date->day - now()->day }} dia{{ $customer->birth_date->day - now()->day > 1 ? 's' : '' }}</span>
-                                @else
-                                    <span class="birthday-passed">dia {{ $customer->birth_date->format('d') }}</span>
-                                @endif
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
+                <span style="font-size: 0.9rem;">&#127874;</span>
+                <span style="color: #6b7280; font-weight: 500;">Aniversariantes:</span>
+                @foreach($birthdayCustomers as $customer)
+                    <a href="{{ route('customers.show', $customer) }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; {{ $customer->birth_date->day === now()->day ? 'background: #fef3c7; color: #92400e;' : 'background: #f3f4f6; color: #374151;' }}" title="{{ $customer->phone }}">
+                        <span style="color: #ec4899; font-weight: 800;">{{ $customer->birth_date->format('d') }}</span>
+                        {{ $customer->name }}
+                        @if($customer->birth_date->day === now()->day)
+                            <span style="font-size: 0.625rem; font-weight: 800; color: #d97706;">HOJE!</span>
+                        @endif
+                    </a>
+                @endforeach
             </div>
-
-            <style>
-                .birthday-card {
-                    background: white;
-                    border: 1px solid #e5e7eb;
-                    border-radius: 0.75rem;
-                    overflow: hidden;
-                }
-                .birthday-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    padding: 0.875rem 1.25rem;
-                    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
-                    border-bottom: 1px solid #fce7f3;
-                }
-                .birthday-icon-wrap {
-                    width: 2.5rem;
-                    height: 2.5rem;
-                    background: white;
-                    border-radius: 0.625rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-                    flex-shrink: 0;
-                }
-                .birthday-cake {
-                    font-size: 1.25rem;
-                }
-                .birthday-title {
-                    font-size: 0.9375rem;
-                    font-weight: 700;
-                    color: #111827;
-                    margin: 0;
-                    line-height: 1.3;
-                }
-                .birthday-subtitle {
-                    font-size: 0.75rem;
-                    color: #6b7280;
-                    margin: 0;
-                }
-                .birthday-list {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 0;
-                }
-                .birthday-item {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    padding: 0.625rem 1.25rem;
-                    text-decoration: none;
-                    color: inherit;
-                    border-bottom: 1px solid #f3f4f6;
-                    transition: background 0.1s;
-                    width: 100%;
-                }
-                .birthday-item:last-child {
-                    border-bottom: none;
-                }
-                .birthday-item:hover {
-                    background: #f9fafb;
-                }
-                .birthday-today {
-                    background: #fffbeb;
-                }
-                .birthday-today:hover {
-                    background: #fef3c7;
-                }
-                .birthday-day {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    width: 2.5rem;
-                    flex-shrink: 0;
-                }
-                .birthday-day-number {
-                    font-size: 1.125rem;
-                    font-weight: 800;
-                    color: #ec4899;
-                    line-height: 1;
-                }
-                .birthday-day-label {
-                    font-size: 0.625rem;
-                    color: #9ca3af;
-                    text-transform: uppercase;
-                    font-weight: 600;
-                }
-                .birthday-info {
-                    flex: 1;
-                    min-width: 0;
-                }
-                .birthday-name {
-                    display: block;
-                    font-size: 0.8125rem;
-                    font-weight: 600;
-                    color: #111827;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-                .birthday-phone {
-                    display: block;
-                    font-size: 0.6875rem;
-                    color: #9ca3af;
-                }
-                .birthday-today-badge {
-                    font-size: 0.6875rem;
-                    font-weight: 800;
-                    color: #d97706;
-                    background: #fef3c7;
-                    padding: 0.125rem 0.5rem;
-                    border-radius: 9999px;
-                    white-space: nowrap;
-                    animation: birthdayPulse 2s ease-in-out infinite;
-                }
-                .birthday-days-left {
-                    font-size: 0.6875rem;
-                    color: #6b7280;
-                    white-space: nowrap;
-                }
-                .birthday-passed {
-                    font-size: 0.6875rem;
-                    color: #d1d5db;
-                    white-space: nowrap;
-                }
-                @keyframes birthdayPulse {
-                    0%, 100% { transform: scale(1); }
-                    50% { transform: scale(1.08); }
-                }
-                @media (min-width: 640px) {
-                    .birthday-list {
-                        display: grid;
-                        grid-template-columns: repeat(2, 1fr);
-                    }
-                    .birthday-item {
-                        border-right: 1px solid #f3f4f6;
-                    }
-                    .birthday-item:nth-child(2n) {
-                        border-right: none;
-                    }
-                }
-            </style>
             @endif
 
             <!-- BANNER DG STORE -->
