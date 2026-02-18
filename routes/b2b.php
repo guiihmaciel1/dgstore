@@ -12,7 +12,6 @@ Route::middleware('guest:b2b')->group(function () {
     Route::post('/login', [B2BAuthController::class, 'login'])->name('b2b.login.submit');
     Route::get('/register', [B2BAuthController::class, 'showRegister'])->name('b2b.register');
     Route::post('/register', [B2BAuthController::class, 'register'])->name('b2b.register.submit');
-    Route::get('/register/success', [B2BAuthController::class, 'registerSuccess'])->name('b2b.register.success');
 });
 
 // Rota de logout (precisa estar autenticado)

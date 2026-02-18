@@ -70,26 +70,19 @@ class B2BAuthController extends Controller
 
         $retailer = $service->create(CreateRetailerDTO::fromArray($validated));
 
-        return redirect()->route('b2b.register.success', [
-            'store' => $retailer->store_name,
-            'owner' => $retailer->owner_name,
-            'city' => $retailer->city . '/' . $retailer->state,
-            'whatsapp' => $retailer->whatsapp,
-            'document' => $retailer->document,
-            'email' => $retailer->email,
-        ]);
-    }
+        $message = "Olá! Gostaria de solicitar acesso à *Distribuidora Apple B2B*.\n\n"
+            . "*Dados da Loja:*\n"
+            . "Loja: {$retailer->store_name}\n"
+            . "Responsável: {$retailer->owner_name}\n"
+            . "CNPJ/CPF: {$retailer->document}\n"
+            . "Cidade: {$retailer->city}/{$retailer->state}\n"
+            . "WhatsApp: {$retailer->whatsapp}\n"
+            . "Email: {$retailer->email}\n\n"
+            . "Aguardo a liberação do meu acesso. Obrigado!";
 
-    public function registerSuccess(Request $request): View
-    {
-        return view('b2b.auth.register-success', [
-            'store' => $request->query('store', ''),
-            'owner' => $request->query('owner', ''),
-            'city' => $request->query('city', ''),
-            'whatsapp' => $request->query('whatsapp', ''),
-            'document' => $request->query('document', ''),
-            'email' => $request->query('email', ''),
-        ]);
+        $waLink = 'https://wa.me/5517991665442?text=' . urlencode($message);
+
+        return redirect()->away($waLink);
     }
 
     public function logout(Request $request): RedirectResponse
