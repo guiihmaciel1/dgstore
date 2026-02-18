@@ -17,11 +17,11 @@ export default {
             `border-${c}-200`,
             `bg-${c}-500`, `text-${c}-500`,
         ]),
-        // User role badges (dark theme with opacity modifiers)
+        // User role badges + avatar initials (dark theme with opacity modifiers)
         ...['purple', 'blue', 'green', 'indigo'].flatMap(c => [
-            `bg-${c}-500/10`,
+            `bg-${c}-500/10`, `bg-${c}-500/15`,
             `text-${c}-400`,
-            `border-${c}-500/20`,
+            `border-${c}-500/20`, `border-${c}-500/30`, `border-${c}-500/60`,
         ]),
     ],
 
