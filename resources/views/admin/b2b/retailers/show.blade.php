@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-b2b-admin-layout>
     <x-slot name="header">
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.b2b.retailers.index') }}" class="text-gray-400 hover:text-gray-600">
@@ -134,4 +134,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-b2b-admin-layout>

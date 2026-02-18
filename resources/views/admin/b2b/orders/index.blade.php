@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-b2b-admin-layout>
     <x-slot name="header">
         <h2 class="text-xl font-bold text-gray-900">Pedidos B2B</h2>
     </x-slot>
@@ -96,4 +96,4 @@
     </div>
 
     <div class="mt-4">{{ $orders->links() }}</div>
-</x-app-layout>
+</x-b2b-admin-layout>

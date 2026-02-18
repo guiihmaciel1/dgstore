@@ -1,0 +1,79 @@
+@php
+    $pendingOrders = \App\Domain\B2B\Models\B2BOrder::whereIn('status', ['pending_payment', 'paid'])->count();
+    $pendingRetailers = \App\Domain\B2B\Models\B2BRetailer::where('status', 'pending')->count();
+@endphp
+
+<!-- Sidebar desktop -->
+<aside class="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-gray-900 border-r border-gray-800 z-40">
+    <!-- Logo -->
+    <div class="flex items-center gap-3 h-16 px-6 border-b border-gray-800">
+        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" class="h-8 w-auto brightness-0 invert" />
+        <div>
+            <span class="text-sm font-bold text-white">DG Store</span>
+            <span class="block text-[10px] font-semibold text-blue-400 tracking-widest uppercase">Distribuidora B2B</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        <p class="px-3 mb-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Gestão</p>
+
+        <a href="{{ route('admin.b2b.products.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.b2b.products.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+            Produtos
+        </a>
+
+        <a href="{{ route('admin.b2b.orders.index') }}"
+           class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.b2b.orders.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+            <span class="flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                Pedidos
+            </span>
+            @if($pendingOrders > 0)
+                <span class="bg-amber-500 text-white text-xs font-bold rounded-full px-2 py-0.5">{{ $pendingOrders }}</span>
+            @endif
+        </a>
+
+        <a href="{{ route('admin.b2b.retailers.index') }}"
+           class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.b2b.retailers.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+            <span class="flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Lojistas
+            </span>
+            @if($pendingRetailers > 0)
+                <span class="bg-orange-500 text-white text-xs font-bold rounded-full px-2 py-0.5">{{ $pendingRetailers }}</span>
+            @endif
+        </a>
+
+        <div class="pt-4">
+            <p class="px-3 mb-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Sistema</p>
+        </div>
+
+        <a href="{{ route('admin.b2b.settings.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.b2b.settings.*') ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Configurações
+        </a>
+    </nav>
+
+    <!-- Footer: Voltar ao sistema -->
+    <div class="p-3 border-t border-gray-800">
+        <a href="{{ route('dashboard') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"/>
+            </svg>
+            Voltar ao Sistema Principal
+        </a>
+    </div>
+</aside>

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-b2b-admin-layout>
     <x-slot name="header">
         <h2 class="text-xl font-bold text-gray-900">Configurações B2B</h2>
     </x-slot>
@@ -27,4 +27,4 @@
             </div>
         </form>
     </div>
-</x-app-layout>
+</x-b2b-admin-layout>

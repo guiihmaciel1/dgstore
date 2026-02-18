@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-b2b-admin-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-bold text-gray-900">Produtos B2B - Distribuidora</h2>
@@ -117,4 +117,4 @@
     <div class="mt-4">
         {{ $products->links() }}
     </div>
-</x-app-layout>
+</x-b2b-admin-layout>
