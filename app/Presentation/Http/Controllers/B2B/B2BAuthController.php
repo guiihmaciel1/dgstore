@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class B2BAuthController extends Controller
@@ -63,13 +64,32 @@ class B2BAuthController extends Controller
             'city' => ['required', 'string', 'max:255'],
             'state' => ['required', 'string', 'size:2'],
             'email' => ['required', 'email', 'unique:b2b_retailers,email'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
-        $service->create(CreateRetailerDTO::fromArray($validated));
+        $validated['password'] = Str::random(12);
 
-        return redirect()->route('b2b.login')
-            ->with('status', 'Cadastro realizado com sucesso! Aguarde a aprovação do administrador.');
+        $retailer = $service->create(CreateRetailerDTO::fromArray($validated));
+
+        return redirect()->route('b2b.register.success', [
+            'store' => $retailer->store_name,
+            'owner' => $retailer->owner_name,
+            'city' => $retailer->city . '/' . $retailer->state,
+            'whatsapp' => $retailer->whatsapp,
+            'document' => $retailer->document,
+            'email' => $retailer->email,
+        ]);
+    }
+
+    public function registerSuccess(Request $request): View
+    {
+        return view('b2b.auth.register-success', [
+            'store' => $request->query('store', ''),
+            'owner' => $request->query('owner', ''),
+            'city' => $request->query('city', ''),
+            'whatsapp' => $request->query('whatsapp', ''),
+            'document' => $request->query('document', ''),
+            'email' => $request->query('email', ''),
+        ]);
     }
 
     public function logout(Request $request): RedirectResponse
