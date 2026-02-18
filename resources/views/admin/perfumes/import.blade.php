@@ -54,10 +54,10 @@
 
                     <button type="button" @click="analyzePdf()"
                             :disabled="loading || !file"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg border transition"
                             :class="loading || !file
-                                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-pink-600 text-white hover:bg-pink-700 cursor-pointer'">
+                                ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed'
+                                : 'bg-pink-600 text-white border-pink-600 hover:bg-pink-700 hover:border-pink-700 cursor-pointer'">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                              :class="loading ? 'animate-spin' : ''">
                             <template x-if="!loading">
@@ -183,10 +183,10 @@
                             <span x-text="selectedCount"></span> produtos selecionados
                         </p>
                         <button type="submit" :disabled="selectedCount === 0"
-                                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition"
+                                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg border transition"
                                 :class="selectedCount === 0
-                                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                    : 'bg-pink-600 text-white hover:bg-pink-700 cursor-pointer'">
+                                    ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed'
+                                    : 'bg-pink-600 text-white border-pink-600 hover:bg-pink-700 hover:border-pink-700 cursor-pointer'"
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                             </svg>
