@@ -17,7 +17,9 @@ use App\Presentation\Http\Controllers\ToolController;
 use App\Presentation\Http\Controllers\WarrantyController;
 use App\Presentation\Http\Controllers\CrmController;
 use App\Presentation\Http\Controllers\FinanceController;
+use App\Presentation\Http\Controllers\Admin\AdminB2BDashboardController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BProductController;
+use App\Presentation\Http\Controllers\Admin\AdminB2BReportController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BOrderController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BRetailerController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BSettingController;
@@ -158,6 +160,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin B2B (apenas admin)
     Route::middleware('role:admin')->prefix('admin/b2b')->group(function () {
+        // Dashboard B2B
+        Route::get('/', AdminB2BDashboardController::class)->name('admin.b2b.dashboard');
+
         // Produtos B2B
         Route::get('/products', [AdminB2BProductController::class, 'index'])->name('admin.b2b.products.index');
         Route::get('/products/create', [AdminB2BProductController::class, 'create'])->name('admin.b2b.products.create');
@@ -179,6 +184,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/retailers/{retailer}/edit', [AdminB2BRetailerController::class, 'edit'])->name('admin.b2b.retailers.edit');
         Route::put('/retailers/{retailer}', [AdminB2BRetailerController::class, 'update'])->name('admin.b2b.retailers.update');
         Route::patch('/retailers/{retailer}/status', [AdminB2BRetailerController::class, 'updateStatus'])->name('admin.b2b.retailers.status');
+
+        // Relatórios B2B
+        Route::get('/reports', [AdminB2BReportController::class, 'index'])->name('admin.b2b.reports.index');
 
         // Configurações B2B
         Route::get('/settings', [AdminB2BSettingController::class, 'index'])->name('admin.b2b.settings.index');

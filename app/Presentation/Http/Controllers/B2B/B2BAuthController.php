@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers\B2B;
 
 use App\Domain\B2B\DTOs\CreateRetailerDTO;
+use App\Domain\B2B\Models\B2BSetting;
 use App\Domain\B2B\Services\B2BRetailerService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -70,7 +71,10 @@ class B2BAuthController extends Controller
 
         $retailer = $service->create(CreateRetailerDTO::fromArray($validated));
 
-        $message = "Olá! Gostaria de solicitar acesso à *Distribuidora Apple B2B*.\n\n"
+        $companyName = B2BSetting::getCompanyName();
+        $adminWhatsapp = B2BSetting::getAdminWhatsapp();
+
+        $message = "Olá! Gostaria de solicitar acesso à *{$companyName}*.\n\n"
             . "*Dados da Loja:*\n"
             . "Loja: {$retailer->store_name}\n"
             . "Responsável: {$retailer->owner_name}\n"
@@ -80,7 +84,7 @@ class B2BAuthController extends Controller
             . "Email: {$retailer->email}\n\n"
             . "Aguardo a liberação do meu acesso. Obrigado!";
 
-        $waLink = 'https://wa.me/5517991665442?text=' . urlencode($message);
+        $waLink = 'https://wa.me/' . $adminWhatsapp . '?text=' . urlencode($message);
 
         return redirect()->away($waLink);
     }

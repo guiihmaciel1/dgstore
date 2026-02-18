@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controllers\Admin;
 
 use App\Domain\B2B\DTOs\CreateRetailerDTO;
 use App\Domain\B2B\Enums\RetailerStatus;
+use App\Domain\B2B\Models\B2BOrder;
 use App\Domain\B2B\Models\B2BRetailer;
 use App\Domain\B2B\Services\B2BRetailerService;
 use App\Http\Controllers\Controller;
@@ -73,7 +74,17 @@ class AdminB2BRetailerController extends Controller
             $q->latest()->limit(10);
         }]);
 
-        return view('admin.b2b.retailers.show', compact('retailer'));
+        $completedOrders = B2BOrder::where('b2b_retailer_id', $retailer->id)
+            ->where('status', '!=', 'cancelled');
+
+        $financialStats = [
+            'total_orders' => (clone $completedOrders)->count(),
+            'total_revenue' => (float) (clone $completedOrders)->sum('total'),
+            'avg_ticket' => (float) (clone $completedOrders)->avg('total'),
+            'last_order_at' => (clone $completedOrders)->max('created_at'),
+        ];
+
+        return view('admin.b2b.retailers.show', compact('retailer', 'financialStats'));
     }
 
     public function edit(B2BRetailer $retailer): View

@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controllers\Admin;
 
 use App\Domain\B2B\Enums\B2BOrderStatus;
 use App\Domain\B2B\Models\B2BOrder;
+use App\Domain\B2B\Models\B2BSetting;
 use App\Domain\B2B\Services\B2BOrderService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -46,9 +47,24 @@ class AdminB2BOrderController extends Controller
         ]);
 
         try {
-            $this->orderService->updateStatus($order, B2BOrderStatus::from($validated['status']));
+            $newStatus = B2BOrderStatus::from($validated['status']);
+            $this->orderService->updateStatus($order, $newStatus);
 
-            return back()->with('success', "Status atualizado para: {$order->fresh()->status->label()}");
+            $order->refresh();
+            $order->load('retailer');
+
+            $companyName = B2BSetting::getCompanyName();
+            $message = "Olá {$order->retailer->owner_name}! Atualização do pedido *{$order->order_number}*:\n\n"
+                . "Status: *{$order->status->label()}*\n"
+                . "Valor: {$order->formatted_total}\n\n"
+                . "{$companyName}";
+            $waLink = 'https://wa.me/' . $order->retailer->formatted_whatsapp . '?text=' . urlencode($message);
+
+            return back()->with([
+                'success' => "Status atualizado para: {$order->status->label()}",
+                'whatsapp_link' => $waLink,
+                'whatsapp_retailer' => $order->retailer->store_name,
+            ]);
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         }

@@ -277,7 +277,7 @@
 
                     <!-- Link: Distribuidora B2B (apenas admin) - sistema separado -->
                     @if(auth()->user()->isAdmin())
-                    <a href="{{ route('admin.b2b.products.index') }}"
+                    <a href="{{ route('admin.b2b.dashboard') }}"
                        class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition text-blue-400 hover:text-white hover:bg-blue-700 border border-blue-500/30 hover:border-transparent">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
@@ -472,7 +472,7 @@
                     <a href="{{ route('reports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                         Relatórios
                     </a>
-                    <a href="{{ route('admin.b2b.products.index') }}" class="flex items-center gap-2 px-4 py-2 text-base font-medium text-blue-400 hover:text-white hover:bg-gray-700">
+                    <a href="{{ route('admin.b2b.dashboard') }}" class="flex items-center gap-2 px-4 py-2 text-base font-medium text-blue-400 hover:text-white hover:bg-gray-700">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         Distribuidora B2B
                         <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>

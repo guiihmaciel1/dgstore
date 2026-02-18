@@ -83,8 +83,20 @@
                             <td class="px-6 py-4 text-right text-sm {{ $product->profit_margin > 0 ? 'text-green-600' : 'text-red-600' }}">
                                 {{ number_format($product->profit_margin, 1) }}%
                             </td>
-                            <td class="px-6 py-4 text-center text-sm {{ $product->stock_quantity <= 0 ? 'text-red-600 font-medium' : 'text-gray-900' }}">
-                                {{ $product->stock_quantity }}
+                            <td class="px-6 py-4 text-center">
+                                @if($product->stock_quantity <= 0)
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                        Esgotado
+                                    </span>
+                                @elseif($product->stock_quantity <= $lowStockThreshold)
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                        {{ $product->stock_quantity }} un.
+                                    </span>
+                                @else
+                                    <span class="text-sm text-gray-900">{{ $product->stock_quantity }}</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @if($product->active)

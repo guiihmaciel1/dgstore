@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controllers\Admin;
 use App\Domain\B2B\DTOs\CreateB2BProductDTO;
 use App\Domain\B2B\Enums\B2BProductCondition;
 use App\Domain\B2B\Models\B2BProduct;
+use App\Domain\B2B\Models\B2BSetting;
 use App\Domain\B2B\Services\B2BProductService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -27,8 +28,9 @@ class AdminB2BProductController extends Controller
         );
 
         $conditions = B2BProductCondition::cases();
+        $lowStockThreshold = B2BSetting::getLowStockThreshold();
 
-        return view('admin.b2b.products.index', compact('products', 'conditions'));
+        return view('admin.b2b.products.index', compact('products', 'conditions', 'lowStockThreshold'));
     }
 
     public function create(): View

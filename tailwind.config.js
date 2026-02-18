@@ -10,9 +10,12 @@ export default {
     ],
 
     safelist: [
-        // B2B order status dynamic colors (generated from PHP enum)
-        ...['blue', 'yellow', 'indigo', 'green', 'red', 'purple'].flatMap(c => [
-            `bg-${c}-100`, `text-${c}-800`, `bg-${c}-500`, `text-${c}-500`, `bg-${c}-400`,
+        // B2B dynamic colors: order statuses, retailer status, badges
+        ...['blue', 'yellow', 'amber', 'indigo', 'green', 'emerald', 'red', 'purple', 'gray', 'orange'].flatMap(c => [
+            `bg-${c}-50`, `bg-${c}-100`, `bg-${c}-200`,
+            `text-${c}-600`, `text-${c}-700`, `text-${c}-800`,
+            `border-${c}-200`,
+            `bg-${c}-500`, `text-${c}-500`,
         ]),
     ],
 
