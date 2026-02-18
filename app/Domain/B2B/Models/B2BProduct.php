@@ -105,8 +105,11 @@ class B2BProduct extends Model
     }
 
     /**
-     * Retorna a URL da foto independente do APP_URL configurado.
-     * Usa caminho relativo com '/' para evitar dependência do APP_URL em produção.
+     * Retorna a URL da foto com caminho relativo, independente do APP_URL.
+     * Suporta:
+     *   - "images/b2b-products/..."  → /images/b2b-products/...   (novo padrão, public/)
+     *   - "b2b-products/..."         → /images/b2b-products/...   (formato antigo, mapeado para public/)
+     *   - qualquer outro caminho     → /storage/...               (uploads via admin)
      */
     public function getPhotoUrlAttribute(): ?string
     {
@@ -114,12 +117,16 @@ class B2BProduct extends Model
             return null;
         }
 
-        // Fotos em public/ — caminho relativo, funciona em qualquer domínio
         if (str_starts_with($this->photo, 'images/')) {
             return '/' . ltrim($this->photo, '/');
         }
 
-        // Fotos enviadas via admin (storage/app/public/) — caminho relativo via storage link
+        // Formato antigo sem prefixo "images/" — os arquivos estão em public/images/
+        if (str_starts_with($this->photo, 'b2b-products/')) {
+            return '/images/' . ltrim($this->photo, '/');
+        }
+
+        // Uploads enviados pelo admin (storage/app/public/)
         return '/storage/' . ltrim($this->photo, '/');
     }
 
