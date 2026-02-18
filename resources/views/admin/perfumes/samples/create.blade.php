@@ -1,6 +1,6 @@
 <x-perfumes-admin-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold text-gray-800">Entregar Amostra</h2>
+        <h2 class="text-xl font-bold text-gray-900">Entregar Amostra</h2>
     </x-slot>
 
     <div class="mb-4">
@@ -74,7 +74,7 @@
 
             <div class="mt-8 flex items-center gap-4">
                 <button type="submit"
-                        class="px-5 py-2.5 bg-pink-600 text-white text-sm font-medium rounded-lg hover:bg-pink-700 transition">
+                        class="px-5 py-2.5 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
                     Registrar Entrega
                 </button>
                 <a href="{{ route('admin.perfumes.samples.index') }}"

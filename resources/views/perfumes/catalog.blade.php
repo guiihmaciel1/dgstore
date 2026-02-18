@@ -11,17 +11,17 @@
 </head>
 <body class="font-sans antialiased bg-gray-50">
     <!-- Header -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <header class="bg-gradient-to-r from-[#1a1025] to-[#2d1a3e] sticky top-0 z-30 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="Logo" class="h-8 w-auto">
+                    <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="Logo" class="h-8 w-auto brightness-0 invert">
                     <div>
-                        <span class="text-sm font-bold text-gray-900">{{ $storeName }}</span>
-                        <span class="block text-[10px] font-semibold text-pink-500 tracking-widest uppercase">Catálogo</span>
+                        <span class="text-sm font-bold text-white">{{ $storeName }}</span>
+                        <span class="block text-[10px] font-semibold text-pink-300 tracking-widest uppercase">Catálogo de Perfumes</span>
                     </div>
                 </div>
-                <a href="{{ route('login') }}" class="text-sm text-gray-500 hover:text-gray-700 font-medium">
+                <a href="{{ route('login') }}" class="text-sm text-pink-300/70 hover:text-white font-medium transition">
                     Área Admin
                 </a>
             </div>
@@ -41,7 +41,7 @@
                     <option value="feminino" {{ request('category') === 'feminino' ? 'selected' : '' }}>Feminino</option>
                     <option value="unissex" {{ request('category') === 'unissex' ? 'selected' : '' }}>Unissex</option>
                 </select>
-                <button type="submit" class="px-4 py-2 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition">
+                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
                     Buscar
                 </button>
                 @if(request('search') || request('category'))

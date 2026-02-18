@@ -1,6 +1,6 @@
 <x-perfumes-admin-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold text-gray-800">Editar Produto</h2>
+        <h2 class="text-xl font-bold text-gray-900">Editar Produto</h2>
     </x-slot>
 
     <div class="mb-4">
@@ -93,12 +93,13 @@
                 </div>
 
                 {{-- Profit calculator --}}
-                <div class="md:col-span-2 p-4 bg-gray-50 rounded-lg">
-                    <p class="text-sm font-medium text-gray-700">
-                        Lucro: R$ <span x-text="(sale - cost).toFixed(2).replace('.', ',')">0,00</span>
-                        &nbsp;|&nbsp;
-                        Margem: <span x-text="sale > 0 ? ((sale - cost) / sale * 100).toFixed(1) : '0'">0</span> %
-                    </p>
+                <div class="md:col-span-2 p-4 bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-100 rounded-lg">
+                    <div class="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                        <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        Lucro: <span class="text-pink-700" x-text="'R$ ' + (sale - cost).toFixed(2).replace('.', ',')">R$ 0,00</span>
+                        <span class="text-gray-400 mx-1">|</span>
+                        Margem: <span class="text-pink-700" x-text="(sale > 0 ? ((sale - cost) / sale * 100).toFixed(1) : '0') + '%'">0%</span>
+                    </div>
                 </div>
 
                 {{-- Stock --}}
@@ -150,7 +151,7 @@
 
             <div class="mt-8 flex items-center gap-4">
                 <button type="submit"
-                        class="px-5 py-2.5 bg-pink-600 text-white text-sm font-medium rounded-lg hover:bg-pink-700 transition">
+                        class="px-5 py-2.5 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
                     Salvar Produto
                 </button>
                 <a href="{{ route('admin.perfumes.products.index') }}"

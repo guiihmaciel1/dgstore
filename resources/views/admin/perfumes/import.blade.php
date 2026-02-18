@@ -1,13 +1,13 @@
 <x-perfumes-admin-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold text-gray-800">Importar Produtos via PDF</h2>
+        <h2 class="text-xl font-bold text-gray-900">Importar Produtos via PDF</h2>
     </x-slot>
 
     <div class="max-w-2xl">
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
             <div class="mb-6">
-                <h3 class="text-lg font-semibold text-gray-800">Upload de PDF</h3>
-                <p class="text-sm text-gray-500 mt-1">Envie um arquivo PDF com a lista de perfumes. O sistema tentará extrair nome, marca, tamanho e preço automaticamente.</p>
+                <h3 class="text-lg font-semibold text-gray-900">Upload de PDF</h3>
+                <p class="text-sm text-gray-500 mt-1">Envie um arquivo PDF com a lista de perfumes. O sistema usa IA (Gemini) para extrair nome, marca, código de barras, tamanho, preço e categoria automaticamente.</p>
             </div>
 
             <form action="{{ route('admin.perfumes.import.store') }}" method="POST" enctype="multipart/form-data">
@@ -35,21 +35,26 @@
                     @enderror
                 </div>
 
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-4 mt-2">
                     <button type="submit"
-                            class="px-6 py-2.5 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition">
-                        Importar
+                            class="inline-flex items-center gap-2 px-6 py-3 bg-pink-600 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-bold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-lg shadow-pink-500/25 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                        Importar PDF
                     </button>
-                    <a href="{{ route('admin.perfumes.products.index') }}" class="text-sm text-gray-500 hover:text-gray-700">
+                    <a href="{{ route('admin.perfumes.products.index') }}" class="text-sm text-gray-500 hover:text-pink-600 font-medium">
                         Voltar aos Produtos
                     </a>
                 </div>
             </form>
         </div>
 
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <h4 class="text-sm font-semibold text-blue-800">Formato esperado do PDF</h4>
-            <p class="text-xs text-blue-600 mt-1">O sistema tenta identificar automaticamente: Nome do perfume, Marca, Tamanho (ml) e Preço (R$). Cada produto deve estar em uma linha separada. Após a importação, revise os dados na lista de produtos.</p>
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-3">
+            <h4 class="text-sm font-semibold text-blue-800">Como funciona</h4>
+            <p class="text-xs text-blue-600">O sistema extrai o texto do PDF e envia para a IA (Gemini) analisar. A IA identifica automaticamente os produtos independente do formato da lista, extraindo: nome, marca, código de barras, tamanho (ML), preço (US$) e categoria (masculino/feminino/unissex).</p>
+            <p class="text-xs text-blue-600">Produtos com o mesmo código de barras já existentes no sistema serão atualizados. Novos produtos serão criados.</p>
+            <p class="text-xs text-blue-500 italic">Após a importação, revise os dados na lista de produtos.</p>
         </div>
     </div>
 </x-perfumes-admin-layout>

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <h2 class="text-xl font-bold text-gray-800">Pedido {{ $order->order_number }}</h2>
+                <h2 class="text-xl font-bold text-gray-900">Pedido {{ $order->order_number }}</h2>
                 @php
                     $orderBadgeMap = ['blue' => 'bg-blue-100 text-blue-700', 'yellow' => 'bg-yellow-100 text-yellow-700', 'indigo' => 'bg-indigo-100 text-indigo-700', 'green' => 'bg-green-100 text-green-700', 'red' => 'bg-red-100 text-red-700'];
                     $payBadgeMap = ['red' => 'bg-red-100 text-red-700', 'yellow' => 'bg-yellow-100 text-yellow-700', 'green' => 'bg-green-100 text-green-700'];
@@ -74,7 +74,7 @@
                 </select>
             </div>
             <button type="submit"
-                    class="px-4 py-2 bg-pink-600 text-white text-sm font-medium rounded-lg hover:bg-pink-700 transition">
+                    class="px-4 py-2 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 transition">
                 Atualizar
             </button>
         </form>
@@ -88,7 +88,7 @@
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+                <thead class="bg-pink-50/40">
                     <tr>
                         <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Produto</th>
                         <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Qtd</th>
@@ -150,7 +150,7 @@
         <div class="p-5">
             <div class="overflow-x-auto mb-6">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-pink-50/40">
                         <tr>
                             <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Data</th>
                             <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Valor</th>
@@ -234,7 +234,7 @@
                               class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-pink-500 focus:ring-pink-500"></textarea>
                 </div>
                 <button type="submit"
-                        class="px-4 py-2 bg-pink-600 text-white text-sm font-medium rounded-lg hover:bg-pink-700 transition">
+                        class="px-4 py-2 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
                     Registrar pagamento
                 </button>
             </form>

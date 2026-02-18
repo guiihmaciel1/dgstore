@@ -1,6 +1,6 @@
 <x-perfumes-admin-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold text-gray-800">Novo Pedido</h2>
+        <h2 class="text-xl font-bold text-gray-900">Novo Pedido</h2>
     </x-slot>
 
     <div class="mb-4">
@@ -106,9 +106,10 @@
                         </template>
                     </div>
 
-                    <div class="mt-4 p-4 bg-pink-50 rounded-lg">
-                        <span class="text-sm font-semibold text-gray-700">Subtotal: R$ </span>
-                        <span class="text-sm font-bold text-pink-700" x-text="subtotal.toFixed(2).replace('.', ',')"></span>
+                    <div class="mt-4 p-4 bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-200 rounded-lg flex items-center gap-2">
+                        <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span class="text-sm font-semibold text-gray-800">Subtotal:</span>
+                        <span class="text-lg font-bold text-pink-700" x-text="'R$ ' + subtotal.toFixed(2).replace('.', ',')"></span>
                     </div>
                 </div>
 
@@ -129,7 +130,7 @@
 
             <div class="mt-8 flex items-center gap-4">
                 <button type="submit"
-                        class="px-5 py-2.5 bg-pink-600 text-white text-sm font-medium rounded-lg hover:bg-pink-700 transition">
+                        class="px-5 py-2.5 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
                     Criar Pedido
                 </button>
                 <a href="{{ route('admin.perfumes.orders.index') }}"

@@ -10,12 +10,13 @@ export default {
     ],
 
     safelist: [
-        // B2B dynamic colors: order statuses, retailer status, badges
-        ...['blue', 'yellow', 'amber', 'indigo', 'green', 'emerald', 'red', 'purple', 'gray', 'orange', 'pink'].flatMap(c => [
+        // B2B + Perfumes dynamic colors: order statuses, retailer status, badges
+        ...['blue', 'yellow', 'amber', 'indigo', 'green', 'emerald', 'red', 'purple', 'gray', 'orange', 'pink', 'rose', 'violet'].flatMap(c => [
             `bg-${c}-50`, `bg-${c}-100`, `bg-${c}-200`,
             `text-${c}-600`, `text-${c}-700`, `text-${c}-800`,
             `border-${c}-200`,
             `bg-${c}-500`, `text-${c}-500`,
+            `border-l-${c}-500`,
         ]),
         // User role badges + avatar initials (dark theme with opacity modifiers)
         ...['purple', 'blue', 'green', 'indigo', 'pink'].flatMap(c => [

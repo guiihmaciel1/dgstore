@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <h2 class="text-xl font-bold text-gray-800">{{ $retailer->name }}</h2>
+                <h2 class="text-xl font-bold text-gray-900">{{ $retailer->name }}</h2>
                 @php
                     $statusBadgeClass = $retailer->status->badgeColor() === 'green'
                         ? 'bg-green-100 text-green-700'
@@ -13,7 +13,7 @@
                 </span>
             </div>
             <a href="{{ route('admin.perfumes.retailers.edit', $retailer) }}"
-               class="inline-flex items-center gap-2 px-4 py-2 bg-pink-600 text-white text-sm font-medium rounded-lg hover:bg-pink-700 transition">
+               class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
                 Editar Lojista
             </a>
         </div>
@@ -102,7 +102,7 @@
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+                <thead class="bg-pink-50/40">
                     <tr>
                         <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Produto</th>
                         <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Quantidade</th>
@@ -143,7 +143,7 @@
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+                <thead class="bg-pink-50/40">
                     <tr>
                         <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Pedido</th>
                         <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>

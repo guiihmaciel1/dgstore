@@ -1,95 +1,95 @@
 <x-perfumes-admin-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold text-gray-800">Dashboard Perfumes</h2>
+        <h2 class="text-xl font-bold text-gray-900">Dashboard Perfumes</h2>
     </x-slot>
 
     {{-- KPI Cards - 6 cards in 3 columns --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {{-- Produtos Ativos --}}
-        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition">
+        <div class="bg-white rounded-xl border border-gray-100 border-l-4 border-l-pink-500 p-5 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Produtos Ativos</span>
-                <span class="w-8 h-8 rounded-lg bg-pink-50 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="w-9 h-9 rounded-lg bg-pink-100 flex items-center justify-center">
+                    <svg class="w-4.5 h-4.5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                     </svg>
                 </span>
             </div>
-            <p class="text-2xl font-bold text-gray-900">{{ number_format($totalProducts, 0, ',', '.') }}</p>
-            <a href="{{ route('admin.perfumes.products.index') }}" class="text-xs text-pink-600 hover:text-pink-700 font-medium mt-1 inline-block">Ver produtos</a>
+            <p class="text-3xl font-extrabold text-gray-900">{{ number_format($totalProducts, 0, ',', '.') }}</p>
+            <a href="{{ route('admin.perfumes.products.index') }}" class="text-xs text-pink-600 hover:text-pink-700 font-semibold mt-1.5 inline-block">Ver produtos →</a>
         </div>
 
         {{-- Lojistas Ativos --}}
-        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition">
+        <div class="bg-white rounded-xl border border-gray-100 border-l-4 border-l-violet-500 p-5 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Lojistas Ativos</span>
-                <span class="w-8 h-8 rounded-lg bg-pink-50 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center">
+                    <svg class="w-4.5 h-4.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                 </span>
             </div>
-            <p class="text-2xl font-bold text-gray-900">{{ number_format($totalRetailers, 0, ',', '.') }}</p>
-            <a href="{{ route('admin.perfumes.retailers.index') }}" class="text-xs text-pink-600 hover:text-pink-700 font-medium mt-1 inline-block">Ver lojistas</a>
+            <p class="text-3xl font-extrabold text-gray-900">{{ number_format($totalRetailers, 0, ',', '.') }}</p>
+            <a href="{{ route('admin.perfumes.retailers.index') }}" class="text-xs text-violet-600 hover:text-violet-700 font-semibold mt-1.5 inline-block">Ver lojistas →</a>
         </div>
 
         {{-- Estoque Total --}}
-        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition">
+        <div class="bg-white rounded-xl border border-gray-100 border-l-4 border-l-rose-500 p-5 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Estoque Total</span>
-                <span class="w-8 h-8 rounded-lg bg-pink-50 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="w-9 h-9 rounded-lg bg-rose-100 flex items-center justify-center">
+                    <svg class="w-4.5 h-4.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
                     </svg>
                 </span>
             </div>
-            <p class="text-2xl font-bold text-gray-900">{{ number_format($totalStock, 0, ',', '.') }}</p>
-            <p class="text-xs text-gray-400 mt-1">Unidades em estoque</p>
+            <p class="text-3xl font-extrabold text-gray-900">{{ number_format($totalStock, 0, ',', '.') }}</p>
+            <p class="text-xs text-gray-500 mt-1.5">Unidades em estoque</p>
         </div>
 
         {{-- Amostras em Campo --}}
-        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition">
+        <div class="bg-white rounded-xl border border-gray-100 border-l-4 border-l-amber-500 p-5 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Amostras em Campo</span>
-                <span class="w-8 h-8 rounded-lg bg-pink-50 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="w-9 h-9 rounded-lg bg-amber-100 flex items-center justify-center">
+                    <svg class="w-4.5 h-4.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
                     </svg>
                 </span>
             </div>
-            <p class="text-2xl font-bold text-gray-900">{{ number_format($samplesOut, 0, ',', '.') }}</p>
-            <a href="{{ route('admin.perfumes.samples.index') }}" class="text-xs text-pink-600 hover:text-pink-700 font-medium mt-1 inline-block">Ver amostras</a>
+            <p class="text-3xl font-extrabold text-gray-900">{{ number_format($samplesOut, 0, ',', '.') }}</p>
+            <a href="{{ route('admin.perfumes.samples.index') }}" class="text-xs text-amber-600 hover:text-amber-700 font-semibold mt-1.5 inline-block">Ver amostras →</a>
         </div>
 
         {{-- Faturamento Mês --}}
-        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition">
+        <div class="bg-white rounded-xl border border-gray-100 border-l-4 border-l-green-500 p-5 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Faturamento Mês</span>
-                <span class="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center">
+                    <svg class="w-4.5 h-4.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </span>
             </div>
-            <p class="text-2xl font-bold text-gray-900">R$ {{ number_format($monthRevenue, 2, ',', '.') }}</p>
-            <p class="text-xs text-gray-400 mt-1">{{ now()->translatedFormat('F/Y') }} · {{ $monthOrders }} pedido(s)</p>
+            <p class="text-3xl font-extrabold text-gray-900">R$ {{ number_format($monthRevenue, 2, ',', '.') }}</p>
+            <p class="text-xs text-gray-500 mt-1.5">{{ now()->translatedFormat('F/Y') }} · {{ $monthOrders }} pedido(s)</p>
         </div>
 
         {{-- Lucro Mês --}}
-        <div class="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition">
+        <div class="bg-white rounded-xl border border-gray-100 border-l-4 border-l-emerald-500 p-5 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Lucro Mês</span>
-                <span class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center">
+                    <svg class="w-4.5 h-4.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                     </svg>
                 </span>
             </div>
-            <p class="text-2xl font-bold text-gray-900">R$ {{ number_format($monthProfit, 2, ',', '.') }}</p>
+            <p class="text-3xl font-extrabold text-gray-900">R$ {{ number_format($monthProfit, 2, ',', '.') }}</p>
             @if($monthRevenue > 0)
-                <p class="text-xs text-emerald-600 mt-1">Margem {{ number_format(($monthProfit / $monthRevenue) * 100, 1) }}%</p>
+                <p class="text-xs text-emerald-600 font-semibold mt-1.5">Margem {{ number_format(($monthProfit / $monthRevenue) * 100, 1) }}%</p>
             @else
-                <p class="text-xs text-gray-400 mt-1">{{ now()->translatedFormat('F/Y') }}</p>
+                <p class="text-xs text-gray-500 mt-1.5">{{ now()->translatedFormat('F/Y') }}</p>
             @endif
         </div>
     </div>
@@ -116,15 +116,15 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {{-- Recent Orders --}}
-        <div class="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <h3 class="font-semibold text-gray-800">Pedidos Recentes</h3>
-                <a href="{{ route('admin.perfumes.orders.index') }}" class="text-xs text-pink-600 hover:text-pink-700 font-medium">Ver todos</a>
+        <div class="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-pink-50/50 to-transparent">
+                <h3 class="font-bold text-gray-900">Pedidos Recentes</h3>
+                <a href="{{ route('admin.perfumes.orders.index') }}" class="text-xs text-pink-600 hover:text-pink-700 font-semibold">Ver todos →</a>
             </div>
             @if($recentOrders->isNotEmpty())
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-pink-50/40">
                             <tr>
                                 <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Pedido</th>
                                 <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Lojista</th>
@@ -175,9 +175,9 @@
 
         {{-- Old Samples Alert --}}
         <div class="space-y-6">
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm">
-                <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                    <h3 class="font-semibold text-gray-800">Amostras em Campo &gt; 30 dias</h3>
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-amber-50/50 to-transparent">
+                    <h3 class="font-bold text-gray-900">Amostras em Campo &gt; 30 dias</h3>
                     @if($oldSamples->isNotEmpty())
                         <span class="bg-amber-100 text-amber-700 text-xs font-bold rounded-full px-2.5 py-0.5">{{ $oldSamples->count() }}</span>
                     @endif

@@ -1,6 +1,6 @@
 <x-perfumes-admin-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold text-gray-800">Relatórios</h2>
+        <h2 class="text-xl font-bold text-gray-900">Relatórios</h2>
     </x-slot>
 
     <!-- Filtro de período -->

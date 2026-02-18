@@ -21,9 +21,16 @@ class AdminPerfumeImportController extends Controller
             'pdf_file' => 'required|file|mimes:pdf|max:10240',
         ]);
 
-        $result = $importService->importFromPdf($request->file('pdf_file'));
+        try {
+            $result = $importService->importFromPdf($request->file('pdf_file'));
 
-        return redirect()->route('admin.perfumes.import')
-            ->with('success', "Importação concluída: {$result['created']} criados, {$result['updated']} atualizados, {$result['skipped']} ignorados.");
+            return redirect()->route('admin.perfumes.import')
+                ->with('success', "Importação concluída: {$result['created']} criados, {$result['updated']} atualizados, {$result['skipped']} ignorados.");
+        } catch (\Exception $e) {
+            report($e);
+
+            return redirect()->route('admin.perfumes.import')
+                ->with('error', 'Erro ao importar PDF: ' . class_basename($e) . ' — ' . mb_substr($e->getMessage(), 0, 150));
+        }
     }
 }

@@ -1,6 +1,6 @@
 <x-perfumes-admin-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold text-gray-800">Configurações</h2>
+        <h2 class="text-xl font-bold text-gray-900">Configurações</h2>
     </x-slot>
 
     <div class="max-w-2xl">
@@ -45,7 +45,7 @@
 
                 <div class="mt-6 flex items-center gap-3">
                     <button type="submit"
-                            class="px-6 py-2.5 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition">
+                            class="px-6 py-2.5 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
                         Salvar Configurações
                     </button>
                 </div>
