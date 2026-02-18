@@ -43,6 +43,17 @@
             Entrar
         </button>
 
+        <!-- Distribuidora B2B -->
+        <div class="mt-4 pt-4 border-t border-gray-200">
+            <a href="{{ route('b2b.login') }}"
+               class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                </svg>
+                Distribuidora Apple B2B
+            </a>
+        </div>
+
         <!-- Botões de preenchimento automático (apenas ambiente de desenvolvimento) -->
         @if(app()->environment('local', 'development'))
         <div class="mt-6 pt-5 border-t border-gray-200">

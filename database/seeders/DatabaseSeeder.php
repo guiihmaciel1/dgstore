@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AppleProductSeeder::class,
             SupplierSeeder::class,
             FinanceCategorySeeder::class,
+            B2BSeeder::class,
         ]);
     }
 }

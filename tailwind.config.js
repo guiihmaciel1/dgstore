@@ -9,6 +9,13 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    safelist: [
+        // B2B order status dynamic colors (generated from PHP enum)
+        ...['blue', 'yellow', 'indigo', 'green', 'red', 'purple'].flatMap(c => [
+            `bg-${c}-100`, `text-${c}-800`, `bg-${c}-500`, `text-${c}-500`, `bg-${c}-400`,
+        ]),
+    ],
+
     theme: {
         extend: {
             fontFamily: {

@@ -17,6 +17,10 @@ use App\Presentation\Http\Controllers\ToolController;
 use App\Presentation\Http\Controllers\WarrantyController;
 use App\Presentation\Http\Controllers\CrmController;
 use App\Presentation\Http\Controllers\FinanceController;
+use App\Presentation\Http\Controllers\Admin\AdminB2BProductController;
+use App\Presentation\Http\Controllers\Admin\AdminB2BOrderController;
+use App\Presentation\Http\Controllers\Admin\AdminB2BRetailerController;
+use App\Presentation\Http\Controllers\Admin\AdminB2BSettingController;
 use Illuminate\Support\Facades\Route;
 
 // Redireciona a raiz para o dashboard ou login
@@ -151,6 +155,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/valuations', [ValuationController::class, 'index'])->name('valuations.index');
     Route::get('/api/valuations/price', [ValuationController::class, 'getPrice'])->name('valuations.price');
     Route::post('/api/valuations/evaluate', [ValuationController::class, 'evaluate'])->name('valuations.evaluate');
+
+    // Admin B2B (apenas admin)
+    Route::middleware('role:admin')->prefix('admin/b2b')->group(function () {
+        // Produtos B2B
+        Route::get('/products', [AdminB2BProductController::class, 'index'])->name('admin.b2b.products.index');
+        Route::get('/products/create', [AdminB2BProductController::class, 'create'])->name('admin.b2b.products.create');
+        Route::post('/products', [AdminB2BProductController::class, 'store'])->name('admin.b2b.products.store');
+        Route::get('/products/{product}/edit', [AdminB2BProductController::class, 'edit'])->name('admin.b2b.products.edit');
+        Route::put('/products/{product}', [AdminB2BProductController::class, 'update'])->name('admin.b2b.products.update');
+        Route::delete('/products/{product}', [AdminB2BProductController::class, 'destroy'])->name('admin.b2b.products.destroy');
+
+        // Pedidos B2B
+        Route::get('/orders', [AdminB2BOrderController::class, 'index'])->name('admin.b2b.orders.index');
+        Route::get('/orders/{order}', [AdminB2BOrderController::class, 'show'])->name('admin.b2b.orders.show');
+        Route::patch('/orders/{order}/status', [AdminB2BOrderController::class, 'updateStatus'])->name('admin.b2b.orders.status');
+
+        // Lojistas B2B
+        Route::get('/retailers', [AdminB2BRetailerController::class, 'index'])->name('admin.b2b.retailers.index');
+        Route::get('/retailers/{retailer}', [AdminB2BRetailerController::class, 'show'])->name('admin.b2b.retailers.show');
+        Route::patch('/retailers/{retailer}/status', [AdminB2BRetailerController::class, 'updateStatus'])->name('admin.b2b.retailers.status');
+
+        // Configurações B2B
+        Route::get('/settings', [AdminB2BSettingController::class, 'index'])->name('admin.b2b.settings.index');
+        Route::put('/settings', [AdminB2BSettingController::class, 'update'])->name('admin.b2b.settings.update');
+    });
 
     // Relatórios (apenas admin)
     Route::middleware('role:admin')->group(function () {
