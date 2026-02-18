@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
-
 class B2BProduct extends Model
 {
     use HasUlids, SoftDeletes;
@@ -107,7 +105,8 @@ class B2BProduct extends Model
     }
 
     /**
-     * Retorna a URL da foto, suportando fotos em public/ (asset) e storage/ (Storage disk).
+     * Retorna a URL da foto independente do APP_URL configurado.
+     * Usa caminho relativo com '/' para evitar dependência do APP_URL em produção.
      */
     public function getPhotoUrlAttribute(): ?string
     {
@@ -115,13 +114,13 @@ class B2BProduct extends Model
             return null;
         }
 
-        // Fotos que começam com 'images/' estão em public/ - usar asset()
+        // Fotos em public/ — caminho relativo, funciona em qualquer domínio
         if (str_starts_with($this->photo, 'images/')) {
-            return asset($this->photo);
+            return '/' . ltrim($this->photo, '/');
         }
 
-        // Fotos antigas em storage (b2b-products/...) - usar disco public
-        return Storage::disk('public')->url($this->photo);
+        // Fotos enviadas via admin (storage/app/public/) — caminho relativo via storage link
+        return '/storage/' . ltrim($this->photo, '/');
     }
 
     public function isOutOfStock(): bool
