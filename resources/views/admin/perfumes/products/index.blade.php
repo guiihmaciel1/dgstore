@@ -134,11 +134,21 @@
             </table>
         </div>
 
-        @if($products->hasPages())
-        <div class="px-5 py-4 border-t border-gray-100">
-            {{ $products->links() }}
+        <div class="px-5 py-4 border-t border-gray-100 flex items-center justify-between">
+            <div class="flex items-center gap-2 text-xs text-gray-500">
+                <span>Exibir</span>
+                @foreach([20, 50, 100] as $size)
+                    <a href="{{ request()->fullUrlWithQuery(['per_page' => $size, 'page' => 1]) }}"
+                       class="px-2 py-1 rounded font-medium transition {{ (int) request('per_page', 20) === $size ? 'bg-pink-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                        {{ $size }}
+                    </a>
+                @endforeach
+                <span>por página</span>
+            </div>
+            @if($products->hasPages())
+                <div>{{ $products->links() }}</div>
+            @endif
         </div>
-        @endif
     </div>
 @push('scripts')
 <script>

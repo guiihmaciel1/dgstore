@@ -28,7 +28,8 @@ class AdminPerfumeProductController extends Controller
             $query->where('category', $category);
         }
 
-        $products = $query->orderBy('sort_order')->orderBy('name')->paginate(20)->withQueryString();
+        $perPage = in_array((int) $request->get('per_page'), [20, 50, 100]) ? (int) $request->get('per_page') : 20;
+        $products = $query->orderBy('sort_order')->orderBy('name')->paginate($perPage)->withQueryString();
         $dollarRate = (float) PerfumeSetting::get('dollar_rate', '5.30');
 
         return view('admin.perfumes.products.index', compact('products', 'dollarRate'));

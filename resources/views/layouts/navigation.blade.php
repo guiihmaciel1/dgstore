@@ -313,18 +313,6 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <!-- Botão Nova Venda Rápida -->
-                <a href="{{ route('sales.create') }}" class="group relative mr-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white text-xs font-semibold rounded-lg shadow-md shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:from-emerald-400 hover:to-green-500 transition-all duration-200">
-                    <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-                    </svg>
-                    <span>Nova Venda</span>
-                    <span class="absolute -top-0.5 -right-0.5 flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-200"></span>
-                    </span>
-                </a>
-                
                 <!-- Alerta de Estoque Baixo -->
                 <a href="{{ route('stock.alerts') }}" class="relative mr-4 text-gray-300 hover:text-white transition" title="Alertas de estoque">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -379,16 +367,6 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-gray-800">
-        <!-- Botão Nova Venda Mobile -->
-        <div class="px-4 py-3 border-b border-gray-700">
-            <a href="{{ route('sales.create') }}" class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/30">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-                </svg>
-                <span>Nova Venda</span>
-            </a>
-        </div>
-        
         <div class="pt-2 pb-3 space-y-1">
             <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                 Dashboard
