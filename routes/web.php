@@ -173,7 +173,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Lojistas B2B
         Route::get('/retailers', [AdminB2BRetailerController::class, 'index'])->name('admin.b2b.retailers.index');
+        Route::get('/retailers/create', [AdminB2BRetailerController::class, 'create'])->name('admin.b2b.retailers.create');
+        Route::post('/retailers', [AdminB2BRetailerController::class, 'store'])->name('admin.b2b.retailers.store');
         Route::get('/retailers/{retailer}', [AdminB2BRetailerController::class, 'show'])->name('admin.b2b.retailers.show');
+        Route::get('/retailers/{retailer}/edit', [AdminB2BRetailerController::class, 'edit'])->name('admin.b2b.retailers.edit');
+        Route::put('/retailers/{retailer}', [AdminB2BRetailerController::class, 'update'])->name('admin.b2b.retailers.update');
         Route::patch('/retailers/{retailer}/status', [AdminB2BRetailerController::class, 'updateStatus'])->name('admin.b2b.retailers.status');
 
         // Configurações B2B

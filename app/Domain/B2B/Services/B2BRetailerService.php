@@ -32,9 +32,9 @@ class B2BRetailerService
         return $query->paginate($perPage)->withQueryString();
     }
 
-    public function create(CreateRetailerDTO $dto): B2BRetailer
+    public function create(CreateRetailerDTO $dto, ?string $status = null): B2BRetailer
     {
-        return B2BRetailer::create([
+        $data = [
             'store_name' => $dto->storeName,
             'owner_name' => $dto->ownerName,
             'document' => $dto->document,
@@ -43,7 +43,27 @@ class B2BRetailerService
             'state' => $dto->state,
             'email' => $dto->email,
             'password' => Hash::make($dto->password),
-        ]);
+        ];
+
+        if ($status) {
+            $data['status'] = $status;
+        }
+
+        return B2BRetailer::create($data);
+    }
+
+    public function update(B2BRetailer $retailer, array $data): void
+    {
+        $updateData = collect($data)->only([
+            'store_name', 'owner_name', 'document', 'whatsapp',
+            'city', 'state', 'email',
+        ])->toArray();
+
+        if (!empty($data['password'])) {
+            $updateData['password'] = Hash::make($data['password']);
+        }
+
+        $retailer->update($updateData);
     }
 
     public function updateStatus(B2BRetailer $retailer, RetailerStatus $status): void
