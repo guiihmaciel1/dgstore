@@ -24,6 +24,15 @@ use App\Presentation\Http\Controllers\Admin\AdminB2BOrderController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BRetailerController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BSettingController;
 use App\Presentation\Http\Controllers\Admin\AdminUserController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeDashboardController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeProductController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeRetailerController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeSampleController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeOrderController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumePaymentController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeReportController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeSettingController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeImportController;
 use Illuminate\Support\Facades\Route;
 
 // Redireciona a raiz para o dashboard ou login
@@ -229,6 +238,57 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Configurações B2B
         Route::get('/settings', [AdminB2BSettingController::class, 'index'])->name('admin.b2b.settings.index');
         Route::put('/settings', [AdminB2BSettingController::class, 'update'])->name('admin.b2b.settings.update');
+    });
+
+    // ----------------------------------------------------------------
+    // Perfumes Admin — admin_geral e admin_perfumes
+    // ----------------------------------------------------------------
+    Route::middleware('role:admin_geral,admin_perfumes')->prefix('admin/perfumes')->group(function () {
+        Route::get('/', AdminPerfumeDashboardController::class)->name('admin.perfumes.dashboard');
+
+        // Produtos
+        Route::get('/products', [AdminPerfumeProductController::class, 'index'])->name('admin.perfumes.products.index');
+        Route::get('/products/create', [AdminPerfumeProductController::class, 'create'])->name('admin.perfumes.products.create');
+        Route::post('/products', [AdminPerfumeProductController::class, 'store'])->name('admin.perfumes.products.store');
+        Route::get('/products/{product}/edit', [AdminPerfumeProductController::class, 'edit'])->name('admin.perfumes.products.edit');
+        Route::put('/products/{product}', [AdminPerfumeProductController::class, 'update'])->name('admin.perfumes.products.update');
+        Route::delete('/products/{product}', [AdminPerfumeProductController::class, 'destroy'])->name('admin.perfumes.products.destroy');
+
+        // Lojistas
+        Route::get('/retailers', [AdminPerfumeRetailerController::class, 'index'])->name('admin.perfumes.retailers.index');
+        Route::get('/retailers/create', [AdminPerfumeRetailerController::class, 'create'])->name('admin.perfumes.retailers.create');
+        Route::post('/retailers', [AdminPerfumeRetailerController::class, 'store'])->name('admin.perfumes.retailers.store');
+        Route::get('/retailers/{retailer}', [AdminPerfumeRetailerController::class, 'show'])->name('admin.perfumes.retailers.show');
+        Route::get('/retailers/{retailer}/edit', [AdminPerfumeRetailerController::class, 'edit'])->name('admin.perfumes.retailers.edit');
+        Route::put('/retailers/{retailer}', [AdminPerfumeRetailerController::class, 'update'])->name('admin.perfumes.retailers.update');
+
+        // Amostras
+        Route::get('/samples', [AdminPerfumeSampleController::class, 'index'])->name('admin.perfumes.samples.index');
+        Route::get('/samples/create', [AdminPerfumeSampleController::class, 'create'])->name('admin.perfumes.samples.create');
+        Route::post('/samples', [AdminPerfumeSampleController::class, 'store'])->name('admin.perfumes.samples.store');
+        Route::patch('/samples/{sample}/return', [AdminPerfumeSampleController::class, 'markReturned'])->name('admin.perfumes.samples.return');
+
+        // Pedidos
+        Route::get('/orders', [AdminPerfumeOrderController::class, 'index'])->name('admin.perfumes.orders.index');
+        Route::get('/orders/create', [AdminPerfumeOrderController::class, 'create'])->name('admin.perfumes.orders.create');
+        Route::post('/orders', [AdminPerfumeOrderController::class, 'store'])->name('admin.perfumes.orders.store');
+        Route::get('/orders/{order}', [AdminPerfumeOrderController::class, 'show'])->name('admin.perfumes.orders.show');
+        Route::patch('/orders/{order}/status', [AdminPerfumeOrderController::class, 'updateStatus'])->name('admin.perfumes.orders.status');
+
+        // Pagamentos
+        Route::post('/orders/{order}/payments', [AdminPerfumePaymentController::class, 'store'])->name('admin.perfumes.payments.store');
+        Route::delete('/payments/{payment}', [AdminPerfumePaymentController::class, 'destroy'])->name('admin.perfumes.payments.destroy');
+
+        // Importação PDF
+        Route::get('/import', [AdminPerfumeImportController::class, 'index'])->name('admin.perfumes.import');
+        Route::post('/import', [AdminPerfumeImportController::class, 'store'])->name('admin.perfumes.import.store');
+
+        // Relatórios
+        Route::get('/reports', [AdminPerfumeReportController::class, 'index'])->name('admin.perfumes.reports.index');
+
+        // Configurações
+        Route::get('/settings', [AdminPerfumeSettingController::class, 'index'])->name('admin.perfumes.settings.index');
+        Route::put('/settings', [AdminPerfumeSettingController::class, 'update'])->name('admin.perfumes.settings.update');
     });
 });
 

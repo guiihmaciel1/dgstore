@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('web')
                 ->prefix('b2b')
                 ->group(base_path('routes/b2b.php'));
+
+            Route::middleware('web')
+                ->prefix('perfumes')
+                ->group(base_path('routes/perfumes.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware) {

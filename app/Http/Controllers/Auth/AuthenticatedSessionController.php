@@ -34,6 +34,7 @@ class AuthenticatedSessionController extends Controller
 
         $defaultRedirect = match ($user->role) {
             UserRole::AdminB2B, UserRole::SellerB2B => route('admin.b2b.dashboard'),
+            UserRole::AdminPerfumes => route('admin.perfumes.dashboard'),
             default => route('dashboard'),
         };
 

@@ -92,6 +92,16 @@ class User extends Authenticatable
         return $this->role->canAccessB2BAdmin();
     }
 
+    public function isAdminPerfumes(): bool
+    {
+        return $this->role === UserRole::AdminPerfumes;
+    }
+
+    public function canAccessPerfumesAdmin(): bool
+    {
+        return $this->role->canAccessPerfumesAdmin();
+    }
+
     public function isActive(): bool
     {
         return $this->active;

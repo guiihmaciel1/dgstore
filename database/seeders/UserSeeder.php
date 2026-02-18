@@ -30,6 +30,13 @@ class UserSeeder extends Seeder
                 'active'   => true,
             ],
             [
+                'name'     => 'Admin Perfumes',
+                'email'    => 'perfumes@dgstore.com.br',
+                'password' => Hash::make('DgStore@2026!'),
+                'role'     => UserRole::AdminPerfumes,
+                'active'   => true,
+            ],
+            [
                 'name'     => 'Vendedor',
                 'email'    => 'vendedor@dgstore.com.br',
                 'password' => Hash::make('DgStore@2026!'),
