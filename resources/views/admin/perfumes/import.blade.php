@@ -57,7 +57,7 @@
                             class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition"
                             :class="loading || !file
                                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-pink-600 to-rose-500 text-white hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 cursor-pointer'">
+                                : 'bg-pink-600 text-white hover:bg-pink-700 cursor-pointer'">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                              :class="loading ? 'animate-spin' : ''">
                             <template x-if="!loading">
@@ -186,7 +186,7 @@
                                 class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition"
                                 :class="selectedCount === 0
                                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-pink-600 to-rose-500 text-white hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 cursor-pointer'">
+                                    : 'bg-pink-600 text-white hover:bg-pink-700 cursor-pointer'">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                             </svg>

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             SupplierSeeder::class,
             FinanceCategorySeeder::class,
             B2BSeeder::class,
+            PerfumeProductSeeder::class,
         ]);
     }
 }

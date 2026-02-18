@@ -41,7 +41,7 @@
                     <option value="feminino" {{ request('category') === 'feminino' ? 'selected' : '' }}>Feminino</option>
                     <option value="unissex" {{ request('category') === 'unissex' ? 'selected' : '' }}>Unissex</option>
                 </select>
-                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
+                <button type="submit" class="px-4 py-2 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition">
                     Buscar
                 </button>
                 @if(request('search') || request('category'))

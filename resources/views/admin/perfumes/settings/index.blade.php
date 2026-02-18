@@ -45,7 +45,7 @@
 
                 <div class="mt-6 flex items-center gap-3">
                     <button type="submit"
-                            class="px-6 py-2.5 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
+                            class="px-6 py-2.5 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition">
                         Salvar Configurações
                     </button>
                 </div>

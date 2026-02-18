@@ -13,7 +13,7 @@
                 </span>
             </div>
             <a href="{{ route('admin.perfumes.retailers.edit', $retailer) }}"
-               class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-sm font-semibold rounded-lg hover:from-pink-500 hover:to-rose-400 shadow-md shadow-pink-500/20 transition">
+               class="inline-flex items-center gap-2 px-4 py-2.5 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition">
                 Editar Lojista
             </a>
         </div>
