@@ -10,31 +10,22 @@
     </x-slot>
 
     <div x-data="importPerfumes()">
-        @if($errors->any())
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800">
-                <ul class="list-disc pl-5 text-sm">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        {{-- Etapa 1: Upload PDF --}}
+        {{-- Upload --}}
         <div class="mb-6 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="px-5 py-3 border-b border-gray-100 bg-pink-50/40">
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                     </svg>
-                    1. Selecionar PDF
+                    Selecionar PDF
                 </h3>
             </div>
             <div class="p-5">
-                <div class="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center hover:border-pink-400 transition cursor-pointer"
+                <div class="border-2 border-dashed rounded-lg p-8 text-center transition cursor-pointer"
+                     :class="importing ? 'border-gray-200 opacity-50 pointer-events-none' : 'border-gray-200 hover:border-pink-400'"
                      @click="$refs.pdfInput.click()">
                     <input type="file" accept=".pdf" class="hidden" x-ref="pdfInput"
-                           @change="onFileSelected($event)">
+                           @change="onFileSelected($event)" :disabled="importing">
                     <svg class="mx-auto h-10 w-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                     </svg>
@@ -45,162 +36,129 @@
                     <p x-show="fileName" x-text="fileName" class="mt-3 text-sm font-semibold text-pink-600"></p>
                 </div>
 
-                <div class="flex justify-between items-center mt-4 flex-wrap gap-3">
-                    <label class="inline-flex items-center gap-2 cursor-pointer select-none">
-                        <input type="checkbox" x-model="forceRegex"
-                               class="w-3.5 h-3.5 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer">
-                        <span class="text-xs text-gray-500">Usar apenas regex (sem IA)</span>
-                    </label>
-
-                    <button type="button" @click="analyzePdf()"
-                            :disabled="loading || !file"
-                            class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg border transition"
-                            :class="loading || !file
+                <div class="flex justify-end mt-4">
+                    <button type="button" @click="startImport()"
+                            :disabled="importing || !file"
+                            class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold rounded-lg border transition"
+                            :class="importing || !file
                                 ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed'
                                 : 'bg-pink-600 text-white border-pink-600 hover:bg-pink-700 hover:border-pink-700 cursor-pointer'">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                             :class="loading ? 'animate-spin' : ''">
-                            <template x-if="!loading">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </template>
-                            <template x-if="loading">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                            </template>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                         </svg>
-                        <span x-text="loading ? 'Analisando...' : 'Analisar PDF'"></span>
+                        Importar Produtos
                     </button>
                 </div>
             </div>
         </div>
 
-        {{-- Mensagem --}}
-        <template x-if="message">
-            <div class="mb-6 p-4 rounded-xl text-sm border"
-                 :class="messageType === 'error'
-                    ? 'bg-red-50 border-red-200 text-red-800'
-                    : 'bg-emerald-50 border-emerald-200 text-emerald-800'">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <span x-text="message"></span>
-                    <template x-if="parserUsed && messageType !== 'error'">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                              :class="parserUsed === 'ai' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'"
-                              x-text="parserUsed === 'ai' ? 'via IA' : 'via Regex'"></span>
-                    </template>
-                </div>
+        {{-- Progress --}}
+        <div x-show="importing || done" x-transition class="mb-6 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="px-5 py-3 border-b border-gray-100 bg-pink-50/40">
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                    <svg class="w-4 h-4" :class="importing ? 'animate-spin' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <template x-if="importing">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </template>
+                        <template x-if="!importing">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </template>
+                    </svg>
+                    <span x-text="importing ? 'Importando...' : 'Resultado'"></span>
+                </h3>
             </div>
-        </template>
+            <div class="p-5">
+                {{-- Progress bar --}}
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-sm font-medium text-gray-700" x-text="progressMessage"></span>
+                        <span class="text-sm font-bold" :class="hasError ? 'text-red-600' : 'text-pink-600'" x-text="Math.round(progress) + '%'"></span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                        <div class="h-3 rounded-full transition-all duration-300 ease-out"
+                             :class="hasError ? 'bg-red-500' : 'bg-pink-600'"
+                             :style="'width: ' + progress + '%'"></div>
+                    </div>
+                </div>
 
-        {{-- Etapa 2: Preview e Confirmação --}}
-        <template x-if="items.length > 0">
-            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-5 py-3 border-b border-gray-100 bg-pink-50/40 flex justify-between items-center">
-                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                {{-- Counters --}}
+                <div x-show="totalProducts > 0" class="flex items-center gap-6 text-sm text-gray-600">
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-2 h-2 rounded-full bg-pink-600"></div>
+                        <span><strong x-text="processedProducts"></strong> de <strong x-text="totalProducts"></strong> produtos</span>
+                    </div>
+                    <div x-show="processedProducts > 0 && importing" class="flex items-center gap-1.5">
+                        <div class="w-2 h-2 rounded-full bg-gray-400 animate-pulse"></div>
+                        <span>Lote de 100</span>
+                    </div>
+                </div>
+
+                {{-- Final result --}}
+                <div x-show="done && !hasError" class="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
-                        2. Revisar e Importar
-                        <span class="font-normal normal-case tracking-normal text-gray-400" x-text="'(' + selectedCount + ' de ' + items.length + ' selecionados)'"></span>
-                    </h3>
-                    <div class="flex gap-2">
-                        <button type="button" @click="selectAll()"
-                                class="px-3 py-1.5 text-xs border border-gray-200 rounded-lg bg-white cursor-pointer text-gray-600 hover:bg-gray-50 transition">
-                            Selecionar Todos
-                        </button>
-                        <button type="button" @click="deselectAll()"
-                                class="px-3 py-1.5 text-xs border border-gray-200 rounded-lg bg-white cursor-pointer text-gray-600 hover:bg-gray-50 transition">
-                            Desmarcar Todos
-                        </button>
+                        <span class="text-sm font-medium text-emerald-800" x-text="resultMessage"></span>
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('admin.perfumes.import.store') }}">
-                    @csrf
-
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-pink-50/40">
-                                <tr>
-                                    <th class="px-5 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider w-10"></th>
-                                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nome</th>
-                                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Marca</th>
-                                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Cód. Barras</th>
-                                    <th class="px-5 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">ML</th>
-                                    <th class="px-5 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Preço US$</th>
-                                    <th class="px-5 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Categoria</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100 bg-white">
-                                <template x-for="(item, index) in items" :key="index">
-                                    <tr class="hover:bg-gray-50 transition"
-                                        :class="item.selected ? '' : 'opacity-40'">
-                                        <td class="px-5 py-3 text-center">
-                                            <input type="checkbox" :checked="item.selected" @change="item.selected = $event.target.checked"
-                                                   class="w-4 h-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500 cursor-pointer">
-                                            <input type="hidden" :name="'items[' + index + '][selected]'" :value="item.selected ? 1 : 0">
-                                        </td>
-                                        <td class="px-5 py-3">
-                                            <input type="text" x-model="item.name"
-                                                   :name="'items[' + index + '][name]'"
-                                                   class="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm focus:border-pink-500 focus:ring-pink-500 min-w-[200px]">
-                                        </td>
-                                        <td class="px-5 py-3">
-                                            <input type="text" x-model="item.brand"
-                                                   :name="'items[' + index + '][brand]'"
-                                                   class="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm focus:border-pink-500 focus:ring-pink-500 min-w-[100px]">
-                                        </td>
-                                        <td class="px-5 py-3">
-                                            <input type="text" x-model="item.barcode"
-                                                   :name="'items[' + index + '][barcode]'"
-                                                   class="w-full rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm font-mono focus:border-pink-500 focus:ring-pink-500 min-w-[130px]">
-                                        </td>
-                                        <td class="px-5 py-3 text-center">
-                                            <input type="text" x-model="item.size_ml"
-                                                   :name="'items[' + index + '][size_ml]'"
-                                                   class="w-16 rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm text-center focus:border-pink-500 focus:ring-pink-500">
-                                        </td>
-                                        <td class="px-5 py-3 text-right">
-                                            <input type="number" x-model.number="item.sale_price" step="0.01" min="0"
-                                                   :name="'items[' + index + '][sale_price]'"
-                                                   class="w-24 rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm text-right focus:border-pink-500 focus:ring-pink-500">
-                                        </td>
-                                        <td class="px-5 py-3 text-center">
-                                            <select x-model="item.category"
-                                                    :name="'items[' + index + '][category]'"
-                                                    class="rounded-lg border border-gray-200 px-2.5 py-1.5 text-sm focus:border-pink-500 focus:ring-pink-500">
-                                                <option value="masculino">Masculino</option>
-                                                <option value="feminino">Feminino</option>
-                                                <option value="unissex">Unissex</option>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
+                <div x-show="done && hasError" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="text-sm font-medium text-red-800" x-text="resultMessage"></span>
                     </div>
+                </div>
 
-                    <div class="px-5 py-4 border-t border-gray-100 flex justify-between items-center">
-                        <p class="text-sm text-gray-500">
-                            <span x-text="selectedCount"></span> produtos selecionados
-                        </p>
-                        <button type="submit" :disabled="selectedCount === 0"
-                                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg border transition"
-                                :class="selectedCount === 0
-                                    ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed'
-                                    : 'bg-pink-600 text-white border-pink-600 hover:bg-pink-700 hover:border-pink-700 cursor-pointer'"
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                            </svg>
-                            Importar Produtos
-                        </button>
-                    </div>
-                </form>
+                {{-- Import again button --}}
+                <div x-show="done" class="mt-4 flex justify-end">
+                    <button type="button" @click="reset()"
+                            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-pink-600 border border-pink-200 rounded-lg hover:bg-pink-50 transition cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Nova Importação
+                    </button>
+                </div>
             </div>
-        </template>
+        </div>
 
         {{-- Info --}}
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <div x-show="!importing && !done" class="bg-blue-50 border border-blue-200 rounded-xl p-4">
             <h4 class="text-xs font-semibold text-blue-800">Como funciona</h4>
-            <p class="text-xs text-blue-600 mt-1">O sistema extrai o texto do PDF e usa IA (Gemini) para identificar os produtos. Se a IA estiver indisponível, usa regex como fallback. Revise os dados antes de confirmar a importação.</p>
+            <p class="text-xs text-blue-600 mt-1">O sistema extrai o texto do PDF e identifica os produtos automaticamente. Todos os produtos existentes serão substituídos pelos novos. O processamento é feito em lotes de 100 para maior velocidade.</p>
+        </div>
+
+        {{-- Zerar produtos --}}
+        <div x-data="clearProducts()" x-show="!importing" class="mt-6 bg-white rounded-xl border border-red-100 shadow-sm overflow-hidden">
+            <div class="px-5 py-4 flex items-center justify-between">
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700">Zerar Base de Produtos</h4>
+                    <p class="text-xs text-gray-500 mt-0.5">Remove todos os produtos importados. Esta ação não pode ser desfeita.</p>
+                </div>
+                <button type="button" @click="confirmClear()"
+                        :disabled="clearing"
+                        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg border transition"
+                        :class="clearing
+                            ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed'
+                            : 'bg-red-600 text-white border-red-600 hover:bg-red-700 cursor-pointer'">
+                    <svg x-show="!clearing" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    <svg x-show="clearing" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    <span x-text="clearing ? 'Limpando...' : 'Zerar Produtos'"></span>
+                </button>
+            </div>
+            <div x-show="clearMessage" x-transition class="px-5 pb-4">
+                <div class="p-3 rounded-lg text-sm font-medium"
+                     :class="clearSuccess ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-red-50 border border-red-200 text-red-800'"
+                     x-text="clearMessage"></div>
+            </div>
         </div>
     </div>
 
@@ -210,36 +168,43 @@
             return {
                 file: null,
                 fileName: '',
-                items: [],
-                loading: false,
-                message: '',
-                messageType: '',
-                forceRegex: false,
-                parserUsed: '',
+                importing: false,
+                done: false,
+                hasError: false,
+                progress: 0,
+                progressMessage: '',
+                totalProducts: 0,
+                processedProducts: 0,
+                resultMessage: '',
+                _pollTimer: null,
 
                 onFileSelected(event) {
                     this.file = event.target.files[0] || null;
                     this.fileName = this.file ? this.file.name : '';
-                    this.items = [];
-                    this.message = '';
+                    this.done = false;
+                    this.hasError = false;
+                    this.resultMessage = '';
                 },
 
-                async analyzePdf() {
-                    if (!this.file) return;
+                async startImport() {
+                    if (!this.file || this.importing) return;
 
-                    this.loading = true;
-                    this.message = '';
-                    this.items = [];
-                    this.parserUsed = '';
+                    this.importing = true;
+                    this.done = false;
+                    this.hasError = false;
+                    this.progress = 0;
+                    this.progressMessage = 'Iniciando...';
+                    this.totalProducts = 0;
+                    this.processedProducts = 0;
+                    this.resultMessage = '';
+
+                    this.startPolling();
 
                     try {
                         const formData = new FormData();
                         formData.append('pdf_file', this.file);
-                        if (this.forceRegex) {
-                            formData.append('force_regex', '1');
-                        }
 
-                        const response = await fetch('{{ route("admin.perfumes.import.preview") }}', {
+                        const response = await fetch('{{ route("admin.perfumes.import.store") }}', {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -249,38 +214,108 @@
                         });
 
                         const data = await response.json();
-                        this.parserUsed = data.parser_used || '';
+
+                        this.stopPolling();
 
                         if (data.success) {
-                            this.items = data.items.map(item => ({
-                                ...item,
-                                selected: true,
-                            }));
-                            this.message = data.message;
-                            this.messageType = 'success';
+                            this.progress = 100;
+                            this.progressMessage = 'Concluído!';
+                            this.resultMessage = data.message;
+                            this.totalProducts = data.total || 0;
+                            this.processedProducts = data.total || 0;
                         } else {
-                            this.message = data.message || 'Nenhum produto encontrado no PDF.';
-                            this.messageType = 'error';
+                            this.hasError = true;
+                            this.progress = 100;
+                            this.progressMessage = 'Erro';
+                            this.resultMessage = data.message || 'Erro desconhecido.';
                         }
                     } catch (error) {
-                        this.message = 'Erro ao analisar o PDF. Tente novamente.';
-                        this.messageType = 'error';
+                        this.stopPolling();
+                        this.hasError = true;
+                        this.progress = 100;
+                        this.progressMessage = 'Erro';
+                        this.resultMessage = 'Erro de conexão. Tente novamente.';
                         console.error(error);
                     } finally {
-                        this.loading = false;
+                        this.importing = false;
+                        this.done = true;
                     }
                 },
 
-                get selectedCount() {
-                    return this.items.filter(i => i.selected).length;
+                startPolling() {
+                    this._pollTimer = setInterval(() => this.fetchProgress(), 500);
                 },
 
-                selectAll() {
-                    this.items.forEach(i => i.selected = true);
+                stopPolling() {
+                    if (this._pollTimer) {
+                        clearInterval(this._pollTimer);
+                        this._pollTimer = null;
+                    }
                 },
 
-                deselectAll() {
-                    this.items.forEach(i => i.selected = false);
+                async fetchProgress() {
+                    try {
+                        const res = await fetch('{{ route("admin.perfumes.import.progress") }}');
+                        const data = await res.json();
+
+                        if (data.status !== 'idle' && data.status !== 'done') {
+                            this.progress = data.progress;
+                            this.progressMessage = data.message;
+                            this.totalProducts = data.total || this.totalProducts;
+                            this.processedProducts = data.processed || this.processedProducts;
+                        }
+                    } catch (e) {
+                        // Ignora erros de polling silenciosamente
+                    }
+                },
+
+                reset() {
+                    this.file = null;
+                    this.fileName = '';
+                    this.importing = false;
+                    this.done = false;
+                    this.hasError = false;
+                    this.progress = 0;
+                    this.progressMessage = '';
+                    this.totalProducts = 0;
+                    this.processedProducts = 0;
+                    this.resultMessage = '';
+                    if (this.$refs.pdfInput) {
+                        this.$refs.pdfInput.value = '';
+                    }
+                },
+            };
+        }
+
+        function clearProducts() {
+            return {
+                clearing: false,
+                clearMessage: '',
+                clearSuccess: false,
+
+                async confirmClear() {
+                    if (!confirm('Tem certeza que deseja ZERAR todos os produtos? Esta ação não pode ser desfeita.')) {
+                        return;
+                    }
+                    this.clearing = true;
+                    this.clearMessage = '';
+                    try {
+                        const res = await fetch('{{ route("admin.perfumes.import.clear") }}', {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                        });
+                        const data = await res.json();
+                        this.clearSuccess = data.success;
+                        this.clearMessage = data.message;
+                    } catch (e) {
+                        this.clearSuccess = false;
+                        this.clearMessage = 'Erro ao limpar produtos. Tente novamente.';
+                    } finally {
+                        this.clearing = false;
+                    }
                 },
             };
         }

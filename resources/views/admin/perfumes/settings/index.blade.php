@@ -11,6 +11,20 @@
 
                 <div class="space-y-5">
                     <div>
+                        <label for="dollar_rate" class="block text-sm font-medium text-gray-700">Cotação do Dólar (R$)</label>
+                        <input type="number" name="dollar_rate" id="dollar_rate" step="0.01" min="0.01"
+                               value="{{ old('dollar_rate', $settings['dollar_rate']) }}"
+                               placeholder="5.30"
+                               class="mt-1 block w-44 rounded-lg border-gray-300 shadow-sm focus:ring-pink-500 focus:border-pink-500 text-sm">
+                        <p class="mt-1 text-xs text-gray-400">Valor usado para converter preços de custo (USD) para reais</p>
+                        @error('dollar_rate')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <hr class="border-gray-100">
+
+                    <div>
                         <label for="store_name" class="block text-sm font-medium text-gray-700">Nome da Loja</label>
                         <input type="text" name="store_name" id="store_name"
                                value="{{ old('store_name', $settings['store_name']) }}"

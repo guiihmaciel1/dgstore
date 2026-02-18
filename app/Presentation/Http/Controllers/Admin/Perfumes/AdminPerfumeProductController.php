@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controllers\Admin\Perfumes;
 
 use App\Domain\Perfumes\Enums\PerfumeCategory;
 use App\Domain\Perfumes\Models\PerfumeProduct;
+use App\Domain\Perfumes\Models\PerfumeSetting;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -28,8 +29,9 @@ class AdminPerfumeProductController extends Controller
         }
 
         $products = $query->orderBy('sort_order')->orderBy('name')->paginate(20)->withQueryString();
+        $dollarRate = (float) PerfumeSetting::get('dollar_rate', '5.30');
 
-        return view('admin.perfumes.products.index', compact('products'));
+        return view('admin.perfumes.products.index', compact('products', 'dollarRate'));
     }
 
     public function create()

@@ -272,8 +272,11 @@ class GeminiService
         $cleaned = preg_replace('/\s*```\s*$/', '', $cleaned);
         $cleaned = trim($cleaned);
 
-        // Remove caracteres de controle (exceto \n, \r, \t que são válidos em JSON strings)
-        $cleaned = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $cleaned) ?? $cleaned;
+        // Remove TODOS os caracteres de controle (0x00-0x1F, 0x7F).
+        // Whitespace entre tokens JSON é opcional, então remover \n\r\t não quebra a estrutura.
+        // Isso evita "Control character error" no json_decode quando a IA retorna
+        // newlines/tabs literais dentro de valores string.
+        $cleaned = preg_replace('/[\x00-\x1F\x7F]/u', '', $cleaned) ?? $cleaned;
 
         // Remove caracteres Unicode invisíveis problemáticos
         $cleaned = preg_replace('/[\x{200B}-\x{200F}\x{2028}-\x{202F}\x{2060}\x{FEFF}]/u', '', $cleaned) ?? $cleaned;

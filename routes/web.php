@@ -281,8 +281,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Importação PDF
         Route::get('/import', [AdminPerfumeImportController::class, 'index'])->name('admin.perfumes.import');
-        Route::post('/import/preview', [AdminPerfumeImportController::class, 'preview'])->name('admin.perfumes.import.preview');
         Route::post('/import', [AdminPerfumeImportController::class, 'store'])->name('admin.perfumes.import.store');
+        Route::get('/import/progress', [AdminPerfumeImportController::class, 'progress'])->name('admin.perfumes.import.progress');
+        Route::delete('/import/clear', [AdminPerfumeImportController::class, 'clear'])->name('admin.perfumes.import.clear');
 
         // Relatórios
         Route::get('/reports', [AdminPerfumeReportController::class, 'index'])->name('admin.perfumes.reports.index');
@@ -290,6 +291,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Configurações
         Route::get('/settings', [AdminPerfumeSettingController::class, 'index'])->name('admin.perfumes.settings.index');
         Route::put('/settings', [AdminPerfumeSettingController::class, 'update'])->name('admin.perfumes.settings.update');
+        Route::put('/settings/dollar-rate', [AdminPerfumeSettingController::class, 'updateDollarRate'])->name('admin.perfumes.settings.dollar-rate');
     });
 });
 

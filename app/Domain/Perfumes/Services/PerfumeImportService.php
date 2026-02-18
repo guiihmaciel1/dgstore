@@ -35,6 +35,8 @@ class PerfumeImportService
             fn ($line) => mb_strlen($line) > 3
         );
 
+        $isSeikoFormat = str_contains($text, 'SEIKO') || str_contains($text, 'Lista de Precios');
+
         $products = [];
 
         foreach ($lines as $line) {
@@ -42,7 +44,11 @@ class PerfumeImportService
                 continue;
             }
 
-            $parsed = $this->parseSeikoLine($line) ?? $this->parseGenericLine($line);
+            $parsed = $this->parseSeikoLine($line);
+
+            if (! $parsed && ! $isSeikoFormat) {
+                $parsed = $this->parseGenericLine($line);
+            }
 
             if ($parsed) {
                 $products[] = $parsed;
@@ -65,15 +71,25 @@ class PerfumeImportService
 
     // ----------------------------------------------------------------
     // Formato Seiko Center (tabular)
+    // Usa o barcode (10-14 dígitos) como âncora em vez de dots, pois
+    // algumas linhas não têm pontos de preenchimento.
     // ----------------------------------------------------------------
 
     private function parseSeikoLine(string $line): ?array
     {
-        if (! preg_match('/^\s*(\d+)\s+(.+?)(?:\.{2,}|\s{3,})(\d{4,})\s+([\d.,]+)\s+(\d{1,2})\s*$/', $line, $matches)) {
+        if (! preg_match('/^\s*(\d{1,6})\s+(.+?)\s+(\d{10,14})[A-Z]?\s+([\d.,]+)\s+(\d{1,2})\s*$/', $line, $matches)) {
             return null;
         }
 
-        $description = mb_substr(trim(rtrim($matches[2], '. ')), 0, 255);
+        $description = trim(rtrim($matches[2], '.* '));
+
+        $description = preg_replace('/^\d+/', '', $description);
+        $description = trim($description);
+
+        if ($description === '') {
+            return null;
+        }
+
         $barcode = $matches[3];
         $price = $this->parseBrazilianPrice($matches[4]);
 
@@ -83,8 +99,8 @@ class PerfumeImportService
         }
 
         $brand = null;
-        if (preg_match('/^([A-Z][A-Z\s]+?)\s+/', $description, $bm)) {
-            $candidate = trim($bm[1]);
+        if (preg_match('/^([A-Z][A-Z&.\'\s]+?)\s{1,2}[A-Z]/', $description, $bm)) {
+            $candidate = trim(rtrim($bm[1], ' .'));
             if (mb_strlen($candidate) >= 2 && mb_strlen($candidate) <= 50) {
                 $brand = $candidate;
             }
@@ -157,7 +173,10 @@ class PerfumeImportService
 
     private function isHeaderLine(string $line): bool
     {
-        return (bool) preg_match('/^-{3,}$/', $line)
+        return (bool) preg_match('/^-{2,}/', $line)
+            || (bool) preg_match('/^--\s*\d+\s+of\s+\d+\s*--$/i', $line)
+            || str_contains($line, '/home/')
+            || str_contains($line, 'perfumes.pdf')
             || (bool) preg_match('/LOJA\s+\d/i', $line)
             || str_contains($line, 'Lista de Precios')
             || str_contains($line, 'CENTER SEIKO')
@@ -281,6 +300,10 @@ class PerfumeImportService
         ];
 
         $text = str_replace(array_keys($replacements), array_values($replacements), $text);
+
+        // NBSP (U+00A0) → espaço regular — PDFs frequentemente usam NBSP em vez de space
+        $text = str_replace("\xC2\xA0", ' ', $text);
+
         $text = preg_replace('/[^\x20-\x7E\xC0-\xFF\n\r\t]/u', '', $text);
 
         return $text;

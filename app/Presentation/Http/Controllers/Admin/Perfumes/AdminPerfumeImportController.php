@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers\Admin\Perfumes;
 
 use App\Domain\Perfumes\Models\PerfumeProduct;
-use App\Domain\Perfumes\Services\AiPerfumeImportParser;
 use App\Domain\Perfumes\Services\PerfumeImportService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AdminPerfumeImportController extends Controller
 {
+    private const PROGRESS_KEY = 'perfume_import_progress';
+
+    private const PROGRESS_TTL = 300;
+
     public function __construct(
         private readonly PerfumeImportService $importService,
-        private readonly AiPerfumeImportParser $aiParser,
     ) {}
 
     public function index(): View
@@ -26,140 +30,139 @@ class AdminPerfumeImportController extends Controller
     }
 
     /**
-     * Preview: extrai texto do PDF e parseia (AJAX).
-     * Padrão: IA primeiro, fallback para regex.
+     * Importação direta: extrai texto, deleta tudo, insere em lotes de 100.
+     * Progresso real via Cache para polling do frontend.
      */
-    public function preview(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'pdf_file' => 'required|file|mimes:pdf|max:10240',
-            'force_regex' => ['nullable', 'boolean'],
         ]);
 
-        $text = $this->importService->extractText($request->file('pdf_file'));
-        $forceRegex = (bool) $request->input('force_regex', false);
+        try {
+            $this->updateProgress('extracting', 0, 'Extraindo texto do PDF...');
 
-        if ($forceRegex) {
+            $text = $this->importService->extractText($request->file('pdf_file'));
+
+            $this->updateProgress('parsing', 10, 'Analisando produtos...');
+
             $items = $this->importService->parse($text);
+            $total = count($items);
 
-            if (! empty($items)) {
+            if ($total === 0) {
+                $this->updateProgress('error', 100, 'Nenhum produto encontrado no PDF.');
+
                 return response()->json([
-                    'success' => true,
-                    'message' => count($items) . ' produtos encontrados.',
-                    'items' => $items,
-                    'parser_used' => 'regex',
+                    'success' => false,
+                    'message' => 'Nenhum produto encontrado no PDF.',
                 ]);
             }
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Nenhum produto encontrado via regex. Tente sem forçar o modo regex.',
-                'items' => [],
-                'parser_used' => 'regex',
-            ]);
-        }
+            $this->updateProgress('deleting', 15, "Removendo produtos antigos...", $total);
 
-        if ($this->aiParser->isAvailable()) {
-            return $this->parseWithAi($text);
-        }
+            PerfumeProduct::query()->forceDelete();
 
-        $items = $this->importService->parse($text);
+            $this->updateProgress('importing', 20, "Importando 0 de {$total}...", $total, 0);
 
-        if (! empty($items)) {
+            $chunks = array_chunk($items, 100);
+            $processed = 0;
+            $now = now();
+
+            foreach ($chunks as $chunk) {
+                $rows = array_map(fn (array $item) => [
+                    'id'         => Str::ulid()->toBase32(),
+                    'name'       => $item['name'],
+                    'brand'      => $item['brand'] ?? null,
+                    'barcode'    => $item['barcode'] ?? null,
+                    'size_ml'    => $item['size_ml'] ?? null,
+                    'cost_price' => $item['sale_price'] ?? 0,
+                    'sale_price' => 0,
+                    'category'   => $item['category'] ?? 'unissex',
+                    'active'     => true,
+                    'stock_quantity' => 0,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ], $chunk);
+
+                PerfumeProduct::insert($rows);
+
+                $processed += count($chunk);
+                $pct = 20 + (int) (75 * $processed / $total);
+                $this->updateProgress(
+                    'importing',
+                    $pct,
+                    "Importando {$processed} de {$total}...",
+                    $total,
+                    $processed,
+                );
+            }
+
+            $this->updateProgress('done', 100, "Importação concluída: {$total} produtos importados.", $total, $total);
+
+            Log::info("Perfume import: {$total} produtos importados com sucesso.");
+
             return response()->json([
                 'success' => true,
-                'message' => count($items) . ' produtos encontrados (IA indisponível, usado regex).',
-                'items' => $items,
-                'parser_used' => 'regex',
-                'is_fallback' => true,
+                'message' => "{$total} produtos importados com sucesso.",
+                'total' => $total,
             ]);
-        }
+        } catch (\Throwable $e) {
+            Log::error('Perfume import error: ' . $e->getMessage());
+            $this->updateProgress('error', 100, 'Erro durante a importação: ' . $e->getMessage());
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Nenhum produto encontrado. IA indisponível e regex não reconheceu o formato.',
-            'items' => [],
-            'parser_used' => 'none',
-        ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro durante a importação. Verifique os logs.',
+            ], 500);
+        }
     }
 
     /**
-     * Salvar produtos importados.
+     * Endpoint de polling: retorna progresso atual da importação.
      */
-    public function store(Request $request): RedirectResponse
+    public function progress(): JsonResponse
     {
-        $request->validate([
-            'items' => 'required|array|min:1',
-            'items.*.selected' => 'nullable|boolean',
-            'items.*.name' => 'required|string|max:255',
-            'items.*.brand' => 'nullable|string|max:255',
-            'items.*.barcode' => 'nullable|string|max:100',
-            'items.*.size_ml' => 'nullable|string|max:20',
-            'items.*.sale_price' => 'required|numeric|min:0',
-            'items.*.category' => 'required|in:masculino,feminino,unissex',
+        $data = Cache::get(self::PROGRESS_KEY, [
+            'status' => 'idle',
+            'progress' => 0,
+            'message' => '',
+            'total' => 0,
+            'processed' => 0,
         ]);
 
-        $selectedItems = collect($request->input('items'))
-            ->filter(fn ($item) => ($item['selected'] ?? true) == true);
-
-        if ($selectedItems->isEmpty()) {
-            return redirect()->route('admin.perfumes.import')
-                ->withErrors(['items' => 'Selecione pelo menos um produto para importar.']);
-        }
-
-        $created = 0;
-        $updated = 0;
-
-        foreach ($selectedItems as $item) {
-            $data = [
-                'name'       => $item['name'],
-                'brand'      => $item['brand'] ?: null,
-                'barcode'    => $item['barcode'] ?: null,
-                'size_ml'    => $item['size_ml'] ?: null,
-                'sale_price' => (float) $item['sale_price'],
-                'cost_price' => 0,
-                'category'   => $item['category'],
-                'active'     => true,
-            ];
-
-            $existing = ! empty($data['barcode'])
-                ? PerfumeProduct::where('barcode', $data['barcode'])->first()
-                : PerfumeProduct::where('name', $data['name'])
-                    ->where('brand', $data['brand'])
-                    ->where('size_ml', $data['size_ml'])
-                    ->first();
-
-            if ($existing) {
-                $existing->update($data);
-                $updated++;
-            } else {
-                PerfumeProduct::create($data);
-                $created++;
-            }
-        }
-
-        return redirect()->route('admin.perfumes.import')
-            ->with('success', "Importação concluída: {$created} criados, {$updated} atualizados.");
+        return response()->json($data);
     }
 
-    private function parseWithAi(string $rawText): JsonResponse
+    public function clear(): JsonResponse
     {
-        $items = $this->aiParser->parse($rawText);
+        try {
+            $count = PerfumeProduct::count();
+            PerfumeProduct::query()->forceDelete();
 
-        if (empty($items)) {
+            Log::info("Perfume clear: {$count} produtos removidos.");
+
+            return response()->json([
+                'success' => true,
+                'message' => "{$count} produtos removidos com sucesso.",
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Perfume clear error: ' . $e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'A IA não conseguiu extrair produtos do PDF. Verifique o conteúdo.',
-                'items' => [],
-                'parser_used' => 'ai',
-            ]);
+                'message' => 'Erro ao limpar produtos.',
+            ], 500);
         }
+    }
 
-        return response()->json([
-            'success' => true,
-            'message' => count($items) . ' produtos encontrados via IA — revise com atenção.',
-            'items' => $items,
-            'parser_used' => 'ai',
-        ]);
+    private function updateProgress(string $status, int $progress, string $message, int $total = 0, int $processed = 0): void
+    {
+        Cache::put(self::PROGRESS_KEY, [
+            'status' => $status,
+            'progress' => min($progress, 100),
+            'message' => $message,
+            'total' => $total,
+            'processed' => $processed,
+        ], self::PROGRESS_TTL);
     }
 }
