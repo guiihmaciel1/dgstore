@@ -16,11 +16,21 @@ use Illuminate\View\View;
 
 class AdminUserController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::orderBy('name')->get();
+        $search = $request->input('search');
+        $role = $request->input('role');
 
-        return view('admin.users.index', compact('users'));
+        $users = User::query()
+            ->when($search, fn ($q) => $q->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            }))
+            ->when($role, fn ($q) => $q->where('role', $role))
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.users.index', compact('users', 'search', 'role'));
     }
 
     public function create(): View
