@@ -112,7 +112,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">Foto do Produto</label>
                         @if($product->photo)
                             <div class="mb-2">
-                                <img src="{{ Storage::url($product->photo) }}" alt="" class="w-24 h-24 rounded-lg object-cover" />
+                                <img src="{{ $product->photo_url }}" alt="" class="w-24 h-24 rounded-lg object-cover" />
                             </div>
                         @endif
                         <input type="file" name="photo" accept="image/*"

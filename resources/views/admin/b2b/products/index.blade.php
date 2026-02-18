@@ -54,7 +54,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     @if($product->photo)
-                                        <img src="{{ Storage::url($product->photo) }}" alt="" class="w-10 h-10 rounded-lg object-cover" />
+                                        <img src="{{ $product->photo_url }}" alt="" class="w-10 h-10 rounded-lg object-cover" />
                                     @else
                                         <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

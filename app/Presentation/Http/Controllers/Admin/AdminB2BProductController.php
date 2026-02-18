@@ -55,7 +55,9 @@ class AdminB2BProductController extends Controller
 
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('b2b-products', 'public');
+            $fileName = uniqid('b2b_') . '.' . $request->file('photo')->getClientOriginalExtension();
+            $request->file('photo')->move(public_path('images/b2b-products'), $fileName);
+            $photoPath = 'images/b2b-products/' . $fileName;
         }
 
         $this->productService->create(CreateB2BProductDTO::fromArray(array_merge($validated, [

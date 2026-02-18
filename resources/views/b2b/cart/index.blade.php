@@ -38,7 +38,7 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 hover:border-gray-300 transition-colors">
                         <div class="flex items-center gap-4">
                             @if($item['product']->photo)
-                                <img src="{{ Storage::url($item['product']->photo) }}" alt="" class="w-20 h-20 rounded-xl object-cover shrink-0" />
+                                <img src="{{ $item['product']->photo_url }}" alt="" class="w-20 h-20 rounded-xl object-cover shrink-0" />
                             @else
                                 <div class="w-20 h-20 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
                                     <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -55,7 +55,7 @@
                     <div class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
                         @if($product->photo)
                             <div class="aspect-[4/3]">
-                                <img src="{{ Storage::url($product->photo) }}" alt="{{ $product->name }}"
+                                <img src="{{ $product->photo_url }}" alt="{{ $product->name }}"
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             </div>
                         @else

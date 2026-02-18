@@ -28,18 +28,17 @@ class B2BSeeder extends Seeder
             ]
         );
 
-        // Fotos por modelo (armazenadas em storage/app/public/b2b-products/)
+        // Fotos por modelo (em public/images/b2b-products/)
         $photos = [
-            'iPhone 17 Pro Max' => 'b2b-products/iphone17promax-1.jpg',
-            'iPhone 17 Pro' => 'b2b-products/iphone17pro-1.jpg',
-            'iPhone 17' => 'b2b-products/iphone17-1.jpg',
+            'iPhone 17 Pro Max' => 'images/b2b-products/iphone17promax-1.jpg',
+            'iPhone 17 Pro' => 'images/b2b-products/iphone17pro-1.jpg',
+            'iPhone 17' => 'images/b2b-products/iphone17-1.jpg',
         ];
 
-        // Fotos alternativas para variar entre cores
         $altPhotos = [
-            'iPhone 17 Pro Max' => ['b2b-products/iphone17promax-1.jpg', 'b2b-products/iphone17promax-2.jpg', 'b2b-products/iphone17promax-3.jpg'],
-            'iPhone 17 Pro' => ['b2b-products/iphone17pro-1.jpg', 'b2b-products/iphone17pro-2.jpg', 'b2b-products/iphone17pro-3.jpg'],
-            'iPhone 17' => ['b2b-products/iphone17-1.jpg', 'b2b-products/iphone17-2.jpg', 'b2b-products/iphone17-3.jpg'],
+            'iPhone 17 Pro Max' => ['images/b2b-products/iphone17promax-1.jpg', 'images/b2b-products/iphone17promax-2.jpg', 'images/b2b-products/iphone17promax-3.jpg'],
+            'iPhone 17 Pro' => ['images/b2b-products/iphone17pro-1.jpg', 'images/b2b-products/iphone17pro-2.jpg', 'images/b2b-products/iphone17pro-3.jpg'],
+            'iPhone 17' => ['images/b2b-products/iphone17-1.jpg', 'images/b2b-products/iphone17-2.jpg', 'images/b2b-products/iphone17-3.jpg'],
         ];
 
         $products = [

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class B2BProduct extends Model
 {
@@ -103,6 +104,24 @@ class B2BProduct extends Model
         }
 
         return implode(' - ', $parts);
+    }
+
+    /**
+     * Retorna a URL da foto, suportando fotos em public/ (asset) e storage/ (Storage disk).
+     */
+    public function getPhotoUrlAttribute(): ?string
+    {
+        if (!$this->photo) {
+            return null;
+        }
+
+        // Fotos que começam com 'images/' estão em public/ - usar asset()
+        if (str_starts_with($this->photo, 'images/')) {
+            return asset($this->photo);
+        }
+
+        // Fotos antigas em storage (b2b-products/...) - usar disco public
+        return Storage::disk('public')->url($this->photo);
     }
 
     public function isOutOfStock(): bool

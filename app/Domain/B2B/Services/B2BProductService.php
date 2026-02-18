@@ -74,10 +74,11 @@ class B2BProductService
     public function update(B2BProduct $product, array $data): void
     {
         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
-            if ($product->photo) {
-                Storage::disk('public')->delete($product->photo);
-            }
-            $data['photo'] = $data['photo']->store('b2b-products', 'public');
+            $this->deletePhotoFile($product->photo);
+
+            $fileName = uniqid('b2b_') . '.' . $data['photo']->getClientOriginalExtension();
+            $data['photo']->move(public_path('images/b2b-products'), $fileName);
+            $data['photo'] = 'images/b2b-products/' . $fileName;
         }
 
         $product->update($data);
@@ -85,11 +86,24 @@ class B2BProductService
 
     public function delete(B2BProduct $product): void
     {
-        if ($product->photo) {
-            Storage::disk('public')->delete($product->photo);
+        $this->deletePhotoFile($product->photo);
+        $product->delete();
+    }
+
+    private function deletePhotoFile(?string $photo): void
+    {
+        if (!$photo) {
+            return;
         }
 
-        $product->delete();
+        if (str_starts_with($photo, 'images/')) {
+            $fullPath = public_path($photo);
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+        } else {
+            Storage::disk('public')->delete($photo);
+        }
     }
 
     public function getAvailableModels(): array
