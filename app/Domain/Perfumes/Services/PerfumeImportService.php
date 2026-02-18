@@ -4,163 +4,32 @@ declare(strict_types=1);
 
 namespace App\Domain\Perfumes\Services;
 
-use App\Domain\AI\Services\GeminiService;
 use App\Domain\Perfumes\Models\PerfumeProduct;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 use Smalot\PdfParser\Parser;
 
 class PerfumeImportService
 {
-    private const LINES_PER_CHUNK = 80;
-
-    public function __construct(
-        private readonly GeminiService $gemini
-    ) {}
-
+    /**
+     * Extrai texto do PDF e parseia produtos via regex.
+     *
+     * @return array{created: int, updated: int, skipped: int}
+     */
     public function importFromPdf(UploadedFile $file): array
     {
-        $parser = new Parser();
-        $pdf = $parser->parseFile($file->getRealPath());
-        $text = $this->sanitizeEncoding($pdf->getText());
+        $text = $this->extractText($file);
+        $items = $this->parse($text);
 
-        $products = $this->gemini->isAvailable()
-            ? $this->parseWithAi($text)
-            : $this->parseFallbackRegex($text);
-
-        if (empty($products)) {
-            Log::warning('PerfumeImportService: Nenhum produto extraído do PDF.');
-
-            return ['created' => 0, 'updated' => 0, 'skipped' => 0];
-        }
-
-        return $this->upsertProducts($products);
+        return $this->upsertProducts($items);
     }
 
-    // ----------------------------------------------------------------
-    // Parsing via Gemini AI
-    // ----------------------------------------------------------------
-
-    private function parseWithAi(string $text): array
+    /**
+     * Parseia o texto bruto em array de produtos.
+     *
+     * @return array<int, array{name: string, brand: ?string, barcode: ?string, size_ml: ?string, sale_price: float, cost_price: float, category: string, active: bool}>
+     */
+    public function parse(string $text): array
     {
-        $chunks = $this->splitIntoChunks($text);
-        $allProducts = [];
-
-        foreach ($chunks as $chunk) {
-            $result = $this->gemini->generateJson(
-                $this->buildPrompt($chunk),
-                $this->buildSystemInstruction(),
-            );
-
-            if (is_array($result)) {
-                $items = $result['products'] ?? $result;
-                $allProducts = array_merge($allProducts, $this->normalizeAiItems($items));
-            }
-        }
-
-        return $allProducts;
-    }
-
-    private function splitIntoChunks(string $text): array
-    {
-        $lines = explode("\n", $text);
-
-        if (count($lines) <= self::LINES_PER_CHUNK) {
-            return [$text];
-        }
-
-        return array_map(
-            fn (array $group) => implode("\n", $group),
-            array_chunk($lines, self::LINES_PER_CHUNK)
-        );
-    }
-
-    private function buildPrompt(string $text): string
-    {
-        return <<<PROMPT
-Analise o texto abaixo extraído de um PDF de lista de preços de perfumes.
-Extraia TODOS os produtos e retorne um array JSON.
-
-FORMATO DE SAÍDA:
-[{"name":"NOME","brand":"MARCA","barcode":"CÓDIGO DE BARRAS","size_ml":"ML","sale_price":99.99,"category":"masculino|feminino|unissex"}]
-
-CAMPOS:
-- name: Nome completo do perfume, sem código interno, sem pontos de preenchimento, em MAIÚSCULO
-- brand: Marca principal extraída do nome (ex: LATTAFA, MAISON, AURORA SCENT, BANDERAS, ABERCROMBIE & FITCH, AXIS). Se incerto, deixe vazio ""
-- barcode: Código de barras (sequência longa de dígitos, geralmente 10-13 dígitos, coluna "Referencia")
-- size_ml: Apenas o número em ML do item principal (ex: "200" para 200ML). Se não identificável, null
-- sale_price: Preço em US$ como número decimal (coluna "PrecioE US$")
-- category: "masculino" para homem (indicadores: H, Homme, Man, Men, Him, King), "feminino" para mulher (indicadores: F, Femme, Woman, Women, Her, Lady, Queen), "unissex" quando não for possível identificar
-
-REGRAS:
-1. IGNORE cabeçalhos, separadores, dados da loja, linhas de página
-2. O primeiro dígito colado ao nome (ex: "1MAISON", "2AURORA") é um prefixo de classificação - NÃO inclua no nome
-3. NÃO invente dados que não estejam no texto
-4. Retorne [] se nenhum produto for encontrado
-
-TEXTO:
-{$text}
-PROMPT;
-    }
-
-    private function buildSystemInstruction(): string
-    {
-        return 'Você é um parser especializado em listas de preços de perfumes. '
-            . 'Converta o texto do PDF em JSON puro. '
-            . 'Retorne APENAS o array JSON, sem explicações, sem markdown. '
-            . 'Seja preciso nos preços, nomes e códigos de barras. Não invente dados.';
-    }
-
-    private function normalizeAiItems(array $items): array
-    {
-        $valid = [];
-
-        foreach ($items as $item) {
-            if (! is_array($item)) {
-                continue;
-            }
-
-            $name = trim((string) ($item['name'] ?? ''));
-            $barcode = trim((string) ($item['barcode'] ?? ''));
-
-            if ($name === '' || $barcode === '') {
-                continue;
-            }
-
-            $category = mb_strtolower(trim((string) ($item['category'] ?? 'unissex')));
-            if (! in_array($category, ['masculino', 'feminino', 'unissex'])) {
-                $category = 'unissex';
-            }
-
-            $sizeMl = $item['size_ml'] ?? null;
-            if ($sizeMl !== null) {
-                $sizeMl = preg_replace('/\D/', '', (string) $sizeMl);
-                $sizeMl = $sizeMl !== '' ? $sizeMl : null;
-            }
-
-            $valid[] = [
-                'name'       => mb_strtoupper($name),
-                'brand'      => ($item['brand'] ?? '') !== '' ? mb_strtoupper(trim((string) $item['brand'])) : null,
-                'barcode'    => $barcode,
-                'size_ml'    => $sizeMl,
-                'sale_price' => (float) ($item['sale_price'] ?? 0),
-                'cost_price' => 0,
-                'category'   => $category,
-                'active'     => true,
-            ];
-        }
-
-        return $valid;
-    }
-
-    // ----------------------------------------------------------------
-    // Fallback: parsing por regex (quando Gemini indisponível)
-    // ----------------------------------------------------------------
-
-    private function parseFallbackRegex(string $text): array
-    {
-        Log::info('PerfumeImportService: Gemini indisponível, usando parser regex.');
-
         $lines = array_filter(
             array_map('trim', explode("\n", $text)),
             fn ($line) => mb_strlen($line) > 3
@@ -173,7 +42,7 @@ PROMPT;
                 continue;
             }
 
-            $parsed = $this->parseRegexLine($line);
+            $parsed = $this->parseSeikoLine($line) ?? $this->parseGenericLine($line);
 
             if ($parsed) {
                 $products[] = $parsed;
@@ -183,22 +52,22 @@ PROMPT;
         return $products;
     }
 
-    private function isHeaderLine(string $line): bool
+    /**
+     * Extrai e sanitiza o texto de um PDF.
+     */
+    public function extractText(UploadedFile $file): string
     {
-        return (bool) preg_match('/^-{3,}$/', $line)
-            || (bool) preg_match('/LOJA\s+\d/i', $line)
-            || str_contains($line, 'Lista de Precios')
-            || str_contains($line, 'CENTER SEIKO')
-            || (bool) preg_match('/Nivel:/i', $line)
-            || (bool) preg_match('/Usuario:/i', $line)
-            || (bool) preg_match('/Codigo\s+Descripcion/i', $line)
-            || (bool) preg_match('/Pagina:/i', $line)
-            || (bool) preg_match('/Tipo\s*Iva/i', $line)
-            || (bool) preg_match('/Estacion/i', $line)
-            || (bool) preg_match('/^(codigo|nome|produto|marca|\*\*|#|pagina|total|subtotal)/i', $line);
+        $parser = new Parser();
+        $pdf = $parser->parseFile($file->getRealPath());
+
+        return $this->sanitizeEncoding($pdf->getText());
     }
 
-    private function parseRegexLine(string $line): ?array
+    // ----------------------------------------------------------------
+    // Formato Seiko Center (tabular)
+    // ----------------------------------------------------------------
+
+    private function parseSeikoLine(string $line): ?array
     {
         if (! preg_match('/^\s*(\d+)\s+(.+?)(?:\.{2,}|\s{3,})(\d{4,})\s+([\d.,]+)\s+(\d{1,2})\s*$/', $line, $matches)) {
             return null;
@@ -213,15 +82,123 @@ PROMPT;
             $sizeMl = $m[1];
         }
 
+        $brand = null;
+        if (preg_match('/^([A-Z][A-Z\s]+?)\s+/', $description, $bm)) {
+            $candidate = trim($bm[1]);
+            if (mb_strlen($candidate) >= 2 && mb_strlen($candidate) <= 50) {
+                $brand = $candidate;
+            }
+        }
+
         return [
-            'name'       => mb_strtoupper($description),
+            'name'       => $description,
+            'brand'      => $brand,
             'barcode'    => $barcode,
             'size_ml'    => $sizeMl,
             'sale_price' => $price,
             'cost_price' => 0,
-            'category'   => 'unissex',
+            'category'   => $this->detectCategory($description),
             'active'     => true,
         ];
+    }
+
+    // ----------------------------------------------------------------
+    // Formato genérico (linhas livres)
+    // ----------------------------------------------------------------
+
+    private function parseGenericLine(string $line): ?array
+    {
+        if (preg_match('/^(codigo|nome|produto|marca|---|\*\*|#|pagina|total|subtotal)/i', $line)) {
+            return null;
+        }
+
+        $price = null;
+        if (preg_match('/R\$\s*([\d.,]+)/', $line, $m)) {
+            $price = $this->parseBrazilianPrice($m[1]);
+        } elseif (preg_match('/(?:US?\$|USD)\s*([\d.,]+)/', $line, $m)) {
+            $price = $this->parseBrazilianPrice($m[1]);
+        } elseif (preg_match('/(?<!\d)([\d]{1,3}(?:\.\d{3})*,\d{2})(?!\d)/', $line, $m)) {
+            $price = $this->parseBrazilianPrice($m[1]);
+        }
+
+        $sizeMl = null;
+        if (preg_match('/(\d+)\s*ml/i', $line, $m)) {
+            $sizeMl = $m[1];
+        }
+
+        $clean = preg_replace('/(?:R\$|US?\$|USD)\s*[\d.,]+/', '', $line);
+        $clean = preg_replace('/(?<!\w)[\d]{1,3}(?:\.\d{3})*,\d{2}(?!\w)/', '', $clean);
+        $clean = preg_replace('/\d+\s*ml/i', '', $clean);
+        $clean = trim(preg_replace('/\s{2,}/', ' ', $clean));
+
+        $parts = preg_split('/\s*[-\x{2013}|\/]\s*/u', $clean, 2);
+        $name = mb_substr(trim($parts[0] ?? ''), 0, 255);
+        $brand = mb_substr(trim($parts[1] ?? ''), 0, 255);
+
+        if (mb_strlen($name) < 2) {
+            return null;
+        }
+
+        return [
+            'name'       => $name,
+            'brand'      => $brand ?: null,
+            'barcode'    => null,
+            'size_ml'    => $sizeMl,
+            'sale_price' => $price ?? 0,
+            'cost_price' => 0,
+            'category'   => $this->detectCategory($name . ' ' . $brand),
+            'active'     => true,
+        ];
+    }
+
+    // ----------------------------------------------------------------
+    // Helpers
+    // ----------------------------------------------------------------
+
+    private function isHeaderLine(string $line): bool
+    {
+        return (bool) preg_match('/^-{3,}$/', $line)
+            || (bool) preg_match('/LOJA\s+\d/i', $line)
+            || str_contains($line, 'Lista de Precios')
+            || str_contains($line, 'CENTER SEIKO')
+            || (bool) preg_match('/Nivel:/i', $line)
+            || (bool) preg_match('/Usuario:/i', $line)
+            || (bool) preg_match('/Codigo\s+Descripcion/i', $line)
+            || (bool) preg_match('/Pagina:/i', $line)
+            || (bool) preg_match('/Tipo\s*Iva/i', $line)
+            || (bool) preg_match('/Estacion/i', $line);
+    }
+
+    private function detectCategory(string $text): string
+    {
+        $lower = mb_strtolower($text);
+
+        $femWords = ['feminino', 'woman', 'women', 'femme', 'her', 'donna', 'girl', 'lady'];
+        $mascWords = ['masculino', 'homme', 'man', 'men', 'him', 'pour homme', 'boy'];
+
+        foreach ($femWords as $w) {
+            if (str_contains($lower, $w)) {
+                return 'feminino';
+            }
+        }
+
+        foreach ($mascWords as $w) {
+            if (str_contains($lower, $w)) {
+                return 'masculino';
+            }
+        }
+
+        if (preg_match('/\bH\s+(EDT|EDP|EDC|V\d|SPRAY|SPARY)/i', $text)
+            || preg_match('/\b(EDT|EDP|EDC|DEO)\s+H\b/i', $text)) {
+            return 'masculino';
+        }
+
+        if (preg_match('/\bF\s+(EDT|EDP|EDC|V\d|SPRAY|SPARY)/i', $text)
+            || preg_match('/\b(EDT|EDP|EDC|DEO)\s+F\b/i', $text)) {
+            return 'feminino';
+        }
+
+        return 'unissex';
     }
 
     private function parseBrazilianPrice(string $raw): float
@@ -243,10 +220,9 @@ PROMPT;
         return (float) str_replace(['.', ','], ['', '.'], $raw);
     }
 
-    // ----------------------------------------------------------------
-    // Upsert de produtos (usado por ambos os parsers)
-    // ----------------------------------------------------------------
-
+    /**
+     * Insere ou atualiza produtos no banco.
+     */
     private function upsertProducts(array $products): array
     {
         $created = 0;
@@ -265,7 +241,10 @@ PROMPT;
 
             $existing = $barcode
                 ? PerfumeProduct::where('barcode', $barcode)->first()
-                : PerfumeProduct::where('name', $name)->first();
+                : PerfumeProduct::where('name', $name)
+                    ->where('brand', $data['brand'] ?? null)
+                    ->where('size_ml', $data['size_ml'] ?? null)
+                    ->first();
 
             if ($existing) {
                 $existing->update($data);
@@ -278,10 +257,6 @@ PROMPT;
 
         return compact('created', 'updated', 'skipped');
     }
-
-    // ----------------------------------------------------------------
-    // Encoding
-    // ----------------------------------------------------------------
 
     private function sanitizeEncoding(string $text): string
     {

@@ -281,6 +281,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Importação PDF
         Route::get('/import', [AdminPerfumeImportController::class, 'index'])->name('admin.perfumes.import');
+        Route::post('/import/preview', [AdminPerfumeImportController::class, 'preview'])->name('admin.perfumes.import.preview');
         Route::post('/import', [AdminPerfumeImportController::class, 'store'])->name('admin.perfumes.import.store');
 
         // Relatórios
