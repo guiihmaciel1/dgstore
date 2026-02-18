@@ -262,7 +262,7 @@
                                     </svg>
                                     Histórico CRM
                                 </a>
-                                @if(auth()->user()->isAdmin())
+                                @if(auth()->user()->isAdminGeral())
                                     <div class="border-t border-gray-700 my-1"></div>
                                     <a href="{{ route('reports.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reports.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                                         <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -270,13 +270,19 @@
                                         </svg>
                                         Relatórios
                                     </a>
+                                    <a href="{{ route('admin.users.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('admin.users.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                        <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                        </svg>
+                                        Usuários
+                                    </a>
                                 @endif
                             </div>
                         </div>
                     </div>
 
-                    <!-- Link: Distribuidora B2B (apenas admin) - sistema separado -->
-                    @if(auth()->user()->isAdmin())
+                    <!-- Link: Distribuidora B2B (admin_geral e admin_b2b) - sistema separado -->
+                    @if(auth()->user()->canAccessB2BAdmin())
                     <a href="{{ route('admin.b2b.dashboard') }}"
                        class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition text-blue-400 hover:text-white hover:bg-blue-700 border border-blue-500/30 hover:border-transparent">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -467,11 +473,18 @@
                 </a>
             </div>
 
-            @if(auth()->user()->isAdmin())
+            @if(auth()->user()->isAdminGeral())
                 <div class="border-t border-gray-700 mt-2 pt-2">
                     <a href="{{ route('reports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                         Relatórios
                     </a>
+                    <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('admin.users.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                        Usuários
+                    </a>
+                </div>
+            @endif
+            @if(auth()->user()->canAccessB2BAdmin())
+                <div class="border-t border-gray-700 mt-2 pt-2">
                     <a href="{{ route('admin.b2b.dashboard') }}" class="flex items-center gap-2 px-4 py-2 text-base font-medium text-blue-400 hover:text-white hover:bg-gray-700">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         Distribuidora B2B

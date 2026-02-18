@@ -16,18 +16,25 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'Administrador',
-                'email' => 'admin@dgstore.com.br',
+                'name'     => 'Administrador Geral',
+                'email'    => 'admin@dgstore.com.br',
                 'password' => Hash::make('DgStore@2026!'),
-                'role' => UserRole::Admin,
-                'active' => true,
+                'role'     => UserRole::AdminGeral,
+                'active'   => true,
             ],
             [
-                'name' => 'Vendedor',
-                'email' => 'vendedor@dgstore.com.br',
+                'name'     => 'Admin Distribuidora',
+                'email'    => 'b2b@dgstore.com.br',
                 'password' => Hash::make('DgStore@2026!'),
-                'role' => UserRole::Seller,
-                'active' => true,
+                'role'     => UserRole::AdminB2B,
+                'active'   => true,
+            ],
+            [
+                'name'     => 'Vendedor',
+                'email'    => 'vendedor@dgstore.com.br',
+                'password' => Hash::make('DgStore@2026!'),
+                'role'     => UserRole::Seller,
+                'active'   => true,
             ],
         ];
 

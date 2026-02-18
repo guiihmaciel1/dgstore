@@ -52,16 +52,44 @@ class User extends Authenticatable
         return $this->hasMany(StockMovement::class);
     }
 
-    // Métodos auxiliares
+    // Verificações de role
 
-    public function isAdmin(): bool
+    public function isAdminGeral(): bool
     {
-        return $this->role === UserRole::Admin;
+        return $this->role === UserRole::AdminGeral;
+    }
+
+    public function isAdminB2B(): bool
+    {
+        return $this->role === UserRole::AdminB2B;
     }
 
     public function isSeller(): bool
     {
         return $this->role === UserRole::Seller;
+    }
+
+    public function isSellerB2B(): bool
+    {
+        return $this->role === UserRole::SellerB2B;
+    }
+
+    /** Mantém retrocompatibilidade com views/controllers que chamam isAdmin() */
+    public function isAdmin(): bool
+    {
+        return $this->role->isAdmin();
+    }
+
+    // Verificações de acesso por área
+
+    public function canAccessDGStore(): bool
+    {
+        return $this->role->canAccessDGStore();
+    }
+
+    public function canAccessB2BAdmin(): bool
+    {
+        return $this->role->canAccessB2BAdmin();
     }
 
     public function isActive(): bool

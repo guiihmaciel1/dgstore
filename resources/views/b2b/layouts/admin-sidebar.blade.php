@@ -82,7 +82,8 @@
         </a>
     </nav>
 
-    <!-- Footer: Voltar ao sistema -->
+    <!-- Footer: Voltar ao sistema (apenas para quem tem acesso ao DG Store) -->
+    @if(auth()->user()->canAccessDGStore())
     <div class="p-3 border-t border-gray-800">
         <a href="{{ route('dashboard') }}"
            class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white transition">
@@ -92,4 +93,5 @@
             Voltar ao Sistema Principal
         </a>
     </div>
+    @endif
 </aside>

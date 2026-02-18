@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Domain\User\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -21,6 +22,7 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Handle an incoming authentication request.
+     * Redirects based on user role after successful login.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
@@ -28,7 +30,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = auth()->user();
+
+        $defaultRedirect = match ($user->role) {
+            UserRole::AdminB2B, UserRole::SellerB2B => route('admin.b2b.dashboard'),
+            default => route('dashboard'),
+        };
+
+        return redirect()->intended($defaultRedirect);
     }
 
     /**

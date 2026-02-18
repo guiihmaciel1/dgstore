@@ -6,19 +6,44 @@ namespace App\Domain\User\Enums;
 
 enum UserRole: string
 {
-    case Admin = 'admin';
-    case Seller = 'seller';
+    case AdminGeral = 'admin_geral';
+    case AdminB2B   = 'admin_b2b';
+    case Seller     = 'seller';
+    case SellerB2B  = 'seller_b2b';
 
     public function label(): string
     {
         return match ($this) {
-            self::Admin => 'Administrador',
-            self::Seller => 'Vendedor',
+            self::AdminGeral => 'Admin Geral',
+            self::AdminB2B   => 'Admin Distribuidora',
+            self::Seller     => 'Vendedor',
+            self::SellerB2B  => 'Vendedor B2B',
         };
     }
 
+    public function canAccessDGStore(): bool
+    {
+        return in_array($this, [self::AdminGeral, self::Seller]);
+    }
+
+    public function canAccessB2BAdmin(): bool
+    {
+        return in_array($this, [self::AdminGeral, self::AdminB2B]);
+    }
+
+    /** Mantém retrocompatibilidade com isAdmin() nas views legadas */
     public function isAdmin(): bool
     {
-        return $this === self::Admin;
+        return $this->canAccessB2BAdmin();
+    }
+
+    public function badgeColor(): string
+    {
+        return match ($this) {
+            self::AdminGeral => 'purple',
+            self::AdminB2B   => 'blue',
+            self::Seller     => 'green',
+            self::SellerB2B  => 'indigo',
+        };
     }
 }

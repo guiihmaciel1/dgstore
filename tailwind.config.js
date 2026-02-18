@@ -17,6 +17,12 @@ export default {
             `border-${c}-200`,
             `bg-${c}-500`, `text-${c}-500`,
         ]),
+        // User role badges (dark theme with opacity modifiers)
+        ...['purple', 'blue', 'green', 'indigo'].flatMap(c => [
+            `bg-${c}-500/10`,
+            `text-${c}-400`,
+            `border-${c}-500/20`,
+        ]),
     ],
 
     theme: {
