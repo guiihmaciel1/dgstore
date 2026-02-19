@@ -33,6 +33,9 @@ use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumePaymentControll
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeReportController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeSettingController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeImportController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeCustomerController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeReservationController;
+use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeSaleController;
 use Illuminate\Support\Facades\Route;
 
 // Redireciona a raiz para o dashboard ou login
@@ -292,6 +295,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/settings', [AdminPerfumeSettingController::class, 'index'])->name('admin.perfumes.settings.index');
         Route::put('/settings', [AdminPerfumeSettingController::class, 'update'])->name('admin.perfumes.settings.update');
         Route::put('/settings/dollar-rate', [AdminPerfumeSettingController::class, 'updateDollarRate'])->name('admin.perfumes.settings.dollar-rate');
+
+        // ===== B2C - Varejo =====
+
+        // Clientes
+        Route::get('/customers', [AdminPerfumeCustomerController::class, 'index'])->name('admin.perfumes.customers.index');
+        Route::get('/customers/create', [AdminPerfumeCustomerController::class, 'create'])->name('admin.perfumes.customers.create');
+        Route::post('/customers', [AdminPerfumeCustomerController::class, 'store'])->name('admin.perfumes.customers.store');
+        Route::get('/customers/{customer}', [AdminPerfumeCustomerController::class, 'show'])->name('admin.perfumes.customers.show');
+        Route::get('/customers/{customer}/edit', [AdminPerfumeCustomerController::class, 'edit'])->name('admin.perfumes.customers.edit');
+        Route::put('/customers/{customer}', [AdminPerfumeCustomerController::class, 'update'])->name('admin.perfumes.customers.update');
+        Route::delete('/customers/{customer}', [AdminPerfumeCustomerController::class, 'destroy'])->name('admin.perfumes.customers.destroy');
+
+        // Encomendas (Reservations)
+        Route::get('/reservations', [AdminPerfumeReservationController::class, 'index'])->name('admin.perfumes.reservations.index');
+        Route::get('/reservations/create', [AdminPerfumeReservationController::class, 'create'])->name('admin.perfumes.reservations.create');
+        Route::post('/reservations', [AdminPerfumeReservationController::class, 'store'])->name('admin.perfumes.reservations.store');
+        Route::get('/reservations/{reservation}', [AdminPerfumeReservationController::class, 'show'])->name('admin.perfumes.reservations.show');
+        Route::put('/reservations/{reservation}', [AdminPerfumeReservationController::class, 'update'])->name('admin.perfumes.reservations.update');
+        Route::post('/reservations/{reservation}/payments', [AdminPerfumeReservationController::class, 'storePayment'])->name('admin.perfumes.reservation-payments.store');
+        Route::delete('/reservations/{reservation}/payments/{payment}', [AdminPerfumeReservationController::class, 'destroyPayment'])->name('admin.perfumes.reservation-payments.destroy');
+        Route::post('/reservations/{reservation}/convert', [AdminPerfumeReservationController::class, 'convert'])->name('admin.perfumes.reservations.convert');
+        Route::post('/reservations/{reservation}/cancel', [AdminPerfumeReservationController::class, 'cancel'])->name('admin.perfumes.reservations.cancel');
+
+        // Vendas B2C
+        Route::get('/sales', [AdminPerfumeSaleController::class, 'index'])->name('admin.perfumes.sales.index');
+        Route::get('/sales/create', [AdminPerfumeSaleController::class, 'create'])->name('admin.perfumes.sales.create');
+        Route::post('/sales', [AdminPerfumeSaleController::class, 'store'])->name('admin.perfumes.sales.store');
+        Route::get('/sales/{sale}', [AdminPerfumeSaleController::class, 'show'])->name('admin.perfumes.sales.show');
+        Route::post('/sales/{sale}/cancel', [AdminPerfumeSaleController::class, 'cancel'])->name('admin.perfumes.sales.cancel');
     });
 });
 
