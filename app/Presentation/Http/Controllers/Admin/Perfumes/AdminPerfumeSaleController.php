@@ -86,16 +86,22 @@ class AdminPerfumeSaleController extends Controller
             $data['user_id'] = auth()->id();
             $data['sold_at'] = now();
 
+            // Calcula subtotal e total
+            $subtotal = 0;
+            foreach ($data['items'] as $item) {
+                $product = PerfumeProduct::find($item['perfume_product_id']);
+                $unitPrice = $item['unit_price'] ?? $product->sale_price;
+                $subtotal += $unitPrice * $item['quantity'];
+            }
+            $total = $subtotal - ($data['discount'] ?? 0);
+
+            // Define payment_amount como o total se não foi fornecido
+            if (!isset($data['payment_amount']) || $data['payment_amount'] === null) {
+                $data['payment_amount'] = $total;
+            }
+
             // Calcula o status de pagamento
             if (!isset($data['payment_status'])) {
-                $subtotal = 0;
-                foreach ($data['items'] as $item) {
-                    $product = PerfumeProduct::find($item['perfume_product_id']);
-                    $unitPrice = $item['unit_price'] ?? $product->sale_price;
-                    $subtotal += $unitPrice * $item['quantity'];
-                }
-                $total = $subtotal - ($data['discount'] ?? 0);
-
                 $data['payment_status'] = ($data['payment_amount'] >= $total) 
                     ? PerfumeSalePaymentStatus::Paid 
                     : PerfumeSalePaymentStatus::Partial;

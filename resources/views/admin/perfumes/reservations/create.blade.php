@@ -16,7 +16,12 @@
             initialPayment: {{ old('initial_payment', 0) }},
             hasInitialPayment: {{ old('initial_payment') ? 'true' : 'false' }},
             customers: @json($customers->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'phone' => $c->phone])),
-            products: @json($products->map(fn($p) => ['id' => $p->id, 'name' => $p->name . ($p->brand ? ' - ' . $p->brand : ''), 'price' => (float) $p->sale_price, 'stock' => $p->stock_quantity])),
+            products: @json($products->map(fn($p) => [
+                'id' => $p->id, 
+                'name' => $p->name . ($p->brand ? ' - ' . $p->brand : ''), 
+                'price' => (float) $p->sale_price, 
+                'stock' => $p->stock_quantity
+            ])),
             get filteredCustomers() {
                 if (!this.customerSearch) return this.customers;
                 const search = this.customerSearch.toLowerCase();

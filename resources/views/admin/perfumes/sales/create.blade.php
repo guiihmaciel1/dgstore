@@ -12,7 +12,12 @@
             productSearches: {},
             items: [{ perfume_product_id: '', quantity: 1 }],
             customers: @json($customers->map(fn($c) => ['id' => $c->id, 'name' => $c->name, 'phone' => $c->phone])),
-            products: @json($products->map(fn($p) => ['id' => $p->id, 'name' => $p->name . ($p->brand ? ' - ' . $p->brand : '') . ($p->size_ml ? ' (' . $p->size_ml . 'ml)' : ''), 'price' => (float) $p->sale_price, 'stock' => $p->stock_quantity])),
+            products: @json($products->map(fn($p) => [
+                'id' => $p->id, 
+                'name' => $p->name . ($p->brand ? ' - ' . $p->brand : '') . ($p->size_ml ? ' - ' . $p->size_ml . 'ml' : ''), 
+                'price' => (float) $p->sale_price, 
+                'stock' => $p->stock_quantity
+            ])),
             discount: {{ old('discount', 0) }},
             paymentMethod: '{{ old('payment_method', 'cash') }}',
             installments: {{ old('installments', 1) }},
@@ -48,6 +53,16 @@
             },
             get total() {
                 return Math.max(0, this.subtotal - parseFloat(this.discount || 0))
+            },
+            get hasValidItems() {
+                return this.items.some(i => i.perfume_product_id !== '');
+            },
+            get hasStockIssues() {
+                return this.items.some(i => {
+                    if (!i.perfume_product_id) return false;
+                    const stock = this.getStock(i.perfume_product_id);
+                    return i.quantity > stock;
+                });
             }
         }">
             <form method="POST" action="{{ route('admin.perfumes.sales.store') }}">
@@ -184,7 +199,12 @@
                                                    min="1"
                                                    :max="getStock(item.perfume_product_id)"
                                                    placeholder="Qtd"
+                                                   :class="{'border-red-500': item.perfume_product_id && item.quantity > getStock(item.perfume_product_id)}"
                                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                                            <p class="text-[9px] text-red-600 mt-0.5" 
+                                               x-show="item.perfume_product_id && item.quantity > getStock(item.perfume_product_id)">
+                                                Excede estoque
+                                            </p>
                                         </div>
                                         
                                         <div class="w-32">
@@ -211,6 +231,16 @@
                             </template>
                         </div>
 
+                        <!-- Alerta de Estoque -->
+                        <div x-show="hasStockIssues" class="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <div class="flex items-center gap-2 text-red-800 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                                <span class="font-medium">Um ou mais produtos têm quantidade maior que o estoque disponível</span>
+                            </div>
+                        </div>
+
                         <!-- Resumo -->
                         <div class="mt-3 p-3 bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-200 rounded-lg space-y-1">
                             <div class="flex justify-between text-sm">
@@ -232,8 +262,12 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Desconto (R$)</label>
-                            <input type="number" name="discount" x-model.number="discount" step="0.01" min="0"
-                                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500">
+                            <input type="number" name="discount" x-model.number="discount" step="0.01" min="0" :max="subtotal"
+                                   class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+                                   :class="{'border-red-500': discount > subtotal}">
+                            <p class="text-xs text-red-600 mt-1" x-show="discount > subtotal">
+                                ⚠️ Desconto não pode ser maior que o subtotal
+                            </p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Forma de Pagamento *</label>
@@ -272,9 +306,9 @@
                         Cancelar
                     </a>
                     <button type="submit"
-                            :disabled="!customerId || items.every(i => !i.perfume_product_id)"
-                            class="px-4 py-2 text-sm bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed">
-                        Registrar Venda
+                            :disabled="!customerId || !hasValidItems || hasStockIssues || discount > subtotal"
+                            class="px-4 py-2 text-sm bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                            x-text="hasStockIssues ? 'Estoque Insuficiente' : discount > subtotal ? 'Desconto Inválido' : 'Registrar Venda'">
                     </button>
                 </div>
             </form>
