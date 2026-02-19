@@ -59,7 +59,7 @@ class AdminPerfumeReservationController extends Controller
     {
         $customers = PerfumeCustomer::orderBy('name')->get();
         $products = PerfumeProduct::where('active', true)
-            ->where('stock_quantity', '>', 0)
+            ->orderBy('stock_quantity', 'desc')
             ->orderBy('name')
             ->get();
 
