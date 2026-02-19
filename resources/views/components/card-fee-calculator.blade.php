@@ -378,8 +378,18 @@ function cardFeeCalculator() {
             this.amount = this.parseNumber(this.amountInput);
             this.results = this.rates.map(r => {
                 const pct = r.percent / 100;
-                const cobrar = this.amount > 0 ? this.amount / (1 - pct) : 0;
+                if (this.amount <= 0) {
+                    return { ...r, cobrar: 0, taxa: 0, copied: false };
+                }
+                
+                // Calcula o valor da parcela e arredonda para cima
+                const valorPorParcela = this.amount / r.parcelas / (1 - pct);
+                const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
+                
+                // Total a cobrar = parcela arredondada × número de parcelas
+                const cobrar = parcelaArredondada * r.parcelas;
                 const taxa = cobrar - this.amount;
+                
                 return { ...r, cobrar, taxa, copied: false };
             });
         },
@@ -394,7 +404,17 @@ function cardFeeCalculator() {
             // Parcelas do restante
             this.tiResults = this.rates.map(r => {
                 const pct = r.percent / 100;
-                const cobrar = this.remaining > 0 ? this.remaining / (1 - pct) : 0;
+                if (this.remaining <= 0) {
+                    return { ...r, cobrar: 0, taxa: 0 };
+                }
+                
+                // Calcula o valor da parcela e arredonda para cima
+                const valorPorParcela = this.remaining / r.parcelas / (1 - pct);
+                const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
+                
+                // Total a cobrar = parcela arredondada × número de parcelas
+                const cobrar = parcelaArredondada * r.parcelas;
+                
                 return { ...r, cobrar, taxa: cobrar - this.remaining };
             });
         },
