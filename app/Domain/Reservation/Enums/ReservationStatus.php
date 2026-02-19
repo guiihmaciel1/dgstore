@@ -43,7 +43,7 @@ enum ReservationStatus: string
 
     public function canConvert(): bool
     {
-        return $this === self::Active;
+        return $this === self::Active || $this === self::Expired;
     }
 
     public function canCancel(): bool
