@@ -115,9 +115,22 @@ class AdminPerfumeSaleController extends Controller
 
     public function show(PerfumeSale $sale)
     {
-        $sale->load(['customer', 'user', 'items.product']);
+        $sale->load(['customer', 'user', 'items.product', 'originReservation']);
 
-        return view('admin.perfumes.sales.show', compact('sale'));
+        // Análise de lucro
+        $totalCost = $sale->items->sum(fn($item) => $item->cost_price * $item->quantity);
+        $revenue = $sale->total;
+        $profit = $revenue - $totalCost;
+        $margin = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
+
+        $profitAnalysis = [
+            'total_cost' => $totalCost,
+            'revenue'    => $revenue,
+            'profit'     => $profit,
+            'margin'     => $margin,
+        ];
+
+        return view('admin.perfumes.sales.show', compact('sale', 'profitAnalysis'));
     }
 
     public function cancel(PerfumeSale $sale)

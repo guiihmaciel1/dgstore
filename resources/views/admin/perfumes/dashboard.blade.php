@@ -94,6 +94,45 @@
         </div>
     </div>
 
+    {{-- Métricas B2C (Varejo) --}}
+    <div class="mb-4">
+        <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+            </svg>
+            Varejo (B2C)
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200 p-3">
+                <div class="text-xs font-medium text-blue-700">Clientes</div>
+                <div class="text-2xl font-bold text-blue-900 mt-1">{{ $totalCustomers }}</div>
+                <a href="{{ route('admin.perfumes.customers.index') }}" class="text-[10px] text-blue-600 hover:text-blue-800 font-medium mt-1 inline-block">Ver →</a>
+            </div>
+            
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200 p-3">
+                <div class="text-xs font-medium text-purple-700">Encomendas</div>
+                <div class="text-2xl font-bold text-purple-900 mt-1">{{ $activeReservations }}</div>
+                <a href="{{ route('admin.perfumes.reservations.index') }}" class="text-[10px] text-purple-600 hover:text-purple-800 font-medium mt-1 inline-block">Ver →</a>
+            </div>
+            
+            <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200 p-3">
+                <div class="text-xs font-medium text-green-700">Vendas Mês</div>
+                <div class="text-2xl font-bold text-green-900 mt-1">{{ $monthSales }}</div>
+                <a href="{{ route('admin.perfumes.sales.index') }}" class="text-[10px] text-green-600 hover:text-green-800 font-medium mt-1 inline-block">Ver →</a>
+            </div>
+            
+            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg border border-emerald-200 p-3">
+                <div class="text-xs font-medium text-emerald-700">Receita Mês</div>
+                <div class="text-xl font-bold text-emerald-900 mt-1">R$ {{ number_format($monthSalesRevenue, 0, ',', '.') }}</div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200 p-3">
+                <div class="text-xs font-medium text-yellow-700">Hoje</div>
+                <div class="text-xl font-bold text-yellow-900 mt-1">R$ {{ number_format($todaySales, 0, ',', '.') }}</div>
+            </div>
+        </div>
+    </div>
+
     {{-- Valor Pendente - Yellow warning card --}}
     @if($pendingAmount > 0)
     <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-5 shadow-sm">

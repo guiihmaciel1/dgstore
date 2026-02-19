@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers\Admin\Perfumes;
 
+use App\Domain\Perfumes\Models\PerfumeCustomer;
 use App\Domain\Perfumes\Models\PerfumeOrder;
 use App\Domain\Perfumes\Models\PerfumePayment;
 use App\Domain\Perfumes\Models\PerfumeProduct;
+use App\Domain\Perfumes\Models\PerfumeReservation;
 use App\Domain\Perfumes\Models\PerfumeRetailer;
+use App\Domain\Perfumes\Models\PerfumeSale;
 use App\Domain\Perfumes\Models\PerfumeSample;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -56,6 +59,23 @@ class AdminPerfumeDashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Métricas B2C (Varejo)
+        $totalCustomers = PerfumeCustomer::count();
+        $activeReservations = PerfumeReservation::where('status', 'active')->count();
+        
+        $monthSales = PerfumeSale::whereBetween('sold_at', [$monthStart, $monthEnd])->count();
+        $monthSalesRevenue = PerfumeSale::whereBetween('sold_at', [$monthStart, $monthEnd])->sum('total');
+        
+        $monthSalesCost = DB::table('perfume_sale_items')
+            ->join('perfume_sales', 'perfume_sales.id', '=', 'perfume_sale_items.perfume_sale_id')
+            ->whereBetween('perfume_sales.sold_at', [$monthStart, $monthEnd])
+            ->whereNull('perfume_sales.deleted_at')
+            ->sum(DB::raw('perfume_sale_items.cost_price * perfume_sale_items.quantity'));
+        
+        $monthSalesProfit = $monthSalesRevenue - $monthSalesCost;
+        
+        $todaySales = PerfumeSale::whereDate('sold_at', now()->toDateString())->sum('total');
+
         return view('admin.perfumes.dashboard', compact(
             'totalProducts',
             'totalRetailers',
@@ -68,6 +88,12 @@ class AdminPerfumeDashboardController extends Controller
             'pendingAmount',
             'recentOrders',
             'oldSamples',
+            'totalCustomers',
+            'activeReservations',
+            'monthSales',
+            'monthSalesRevenue',
+            'monthSalesProfit',
+            'todaySales',
         ));
     }
 }

@@ -124,16 +124,33 @@ class AdminPerfumeReservationController extends Controller
         return back()->with('success', 'Pagamento removido com sucesso.');
     }
 
-    public function convert(PerfumeReservation $reservation)
+    public function convert(Request $request, PerfumeReservation $reservation)
     {
         if ($reservation->status->value !== 'active') {
             return back()->with('error', 'Somente encomendas ativas podem ser convertidas.');
         }
 
-        // Redireciona para criação de venda com dados da encomenda
-        return redirect()->route('admin.perfumes.sales.create', [
-            'from_reservation' => $reservation->id,
+        if ($reservation->progress_percentage < 100) {
+            return back()->with('error', 'O sinal precisa estar completo para converter em venda.');
+        }
+
+        $validated = $request->validate([
+            'payment_method' => 'required|in:cash,card,pix,mixed',
+            'notes'          => 'nullable|string',
         ]);
+
+        try {
+            $sale = $this->reservationService->convertToSale(
+                reservation: $reservation,
+                paymentMethod: $validated['payment_method'],
+                notes: $validated['notes'] ?? null
+            );
+
+            return redirect()->route('admin.perfumes.sales.show', $sale)
+                ->with('success', 'Encomenda convertida em venda com sucesso!');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function cancel(PerfumeReservation $reservation)
