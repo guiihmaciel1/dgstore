@@ -1,6 +1,7 @@
 @php
     $pendingPayments = \App\Domain\Perfumes\Models\PerfumeOrder::where('payment_status', 'pending')->count();
     $samplesOut = \App\Domain\Perfumes\Models\PerfumeSample::whereIn('status', ['delivered', 'with_retailer'])->count();
+    $activeReservations = \App\Domain\Perfumes\Models\PerfumeReservation::where('status', 'active')->count();
 @endphp
 
 <!-- Sidebar desktop -->
@@ -76,6 +77,37 @@
             @if($pendingPayments > 0)
                 <span class="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">{{ $pendingPayments }}</span>
             @endif
+        </a>
+
+        <p class="px-3 mt-4 mb-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Varejo</p>
+
+        <a href="{{ route('admin.perfumes.customers.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.perfumes.customers.*') ? 'bg-pink-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            Clientes
+        </a>
+
+        <a href="{{ route('admin.perfumes.reservations.index') }}"
+           class="flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.perfumes.reservations.*') ? 'bg-pink-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+            <span class="flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                Encomendas
+            </span>
+            @if($activeReservations > 0)
+                <span class="bg-blue-500 text-white text-xs font-bold rounded-full px-2 py-0.5">{{ $activeReservations }}</span>
+            @endif
+        </a>
+
+        <a href="{{ route('admin.perfumes.sales.index') }}"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ request()->routeIs('admin.perfumes.sales.*') ? 'bg-pink-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+            </svg>
+            Vendas
         </a>
 
         <div class="pt-4">
