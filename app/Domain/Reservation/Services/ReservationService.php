@@ -172,12 +172,16 @@ class ReservationService
     }
 
     /**
-     * Atualiza uma reserva ativa
+     * Atualiza uma reserva (ativa ou expirada)
      */
     public function update(Reservation $reservation, array $data): Reservation
     {
-        if (!$reservation->isActive()) {
-            throw new \Exception('Apenas reservas ativas podem ser editadas.');
+        if ($reservation->status === ReservationStatus::Converted) {
+            throw new \Exception('Reservas já convertidas em venda não podem ser editadas.');
+        }
+
+        if ($reservation->status === ReservationStatus::Cancelled) {
+            throw new \Exception('Reservas canceladas não podem ser editadas.');
         }
 
         // Validar que deposit_amount não pode ser menor que deposit_paid
@@ -201,6 +205,25 @@ class ReservationService
             }
             if (array_key_exists('notes', $data)) {
                 $updateData['notes'] = $data['notes'];
+            }
+
+            // Se a reserva está expirada e a nova data é futura, reativar
+            if ($reservation->status === ReservationStatus::Expired && 
+                isset($data['expires_at']) && 
+                \Carbon\Carbon::parse($data['expires_at'])->isFuture()) {
+                
+                $updateData['status'] = ReservationStatus::Active;
+                
+                // Se tiver produto vinculado, reservar novamente
+                if ($reservation->product_id) {
+                    $product = Product::find($reservation->product_id);
+                    if ($product && !$product->reserved) {
+                        $product->update([
+                            'reserved' => true,
+                            'reserved_by' => $reservation->id,
+                        ]);
+                    }
+                }
             }
 
             $reservation->update($updateData);

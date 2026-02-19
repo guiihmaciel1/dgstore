@@ -28,7 +28,8 @@
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
-                    @if($reservation->isActive())
+                    @if($reservation->status !== App\Domain\Reservation\Enums\ReservationStatus::Converted && 
+                        $reservation->status !== App\Domain\Reservation\Enums\ReservationStatus::Cancelled)
                         <a href="{{ route('reservations.edit', $reservation) }}"
                            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #eff6ff; color: #2563eb; font-weight: 500; font-size: 0.875rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid #bfdbfe;"
                            onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">

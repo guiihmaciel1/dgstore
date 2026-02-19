@@ -142,10 +142,16 @@ class ReservationController extends Controller
 
     public function edit(Reservation $reservation): View|RedirectResponse
     {
-        if (!$reservation->isActive()) {
+        if ($reservation->status === ReservationStatus::Converted) {
             return redirect()
                 ->route('reservations.show', $reservation)
-                ->with('error', 'Apenas reservas ativas podem ser editadas.');
+                ->with('error', 'Reservas já convertidas em venda não podem ser editadas.');
+        }
+
+        if ($reservation->status === ReservationStatus::Cancelled) {
+            return redirect()
+                ->route('reservations.show', $reservation)
+                ->with('error', 'Reservas canceladas não podem ser editadas.');
         }
 
         $reservation->load(['customer', 'product', 'user', 'payments']);
