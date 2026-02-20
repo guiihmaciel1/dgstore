@@ -156,7 +156,7 @@ class FinanceService
         $query = FinancialTransaction::with(['category', 'account', 'user'])
             ->where('type', $type);
 
-        if (!empty($filters['status'])) {
+        if (isset($filters['status']) && $filters['status'] !== '' && $filters['status'] !== null) {
             $query->where('status', $filters['status']);
         } else {
             $query->where('status', '!=', 'cancelled');
