@@ -38,13 +38,13 @@ class FinanceController extends Controller
         $filters = [
             'status' => $request->get('status'),
             'category_id' => $request->get('category_id'),
-            'start_date' => $request->get('start_date'),
-            'end_date' => $request->get('end_date'),
+            'start_date' => $request->get('start_date', now()->startOfMonth()->format('Y-m-d')),
+            'end_date' => $request->get('end_date', now()->endOfMonth()->format('Y-m-d')),
             'search' => $request->get('search'),
         ];
 
         $transactions = $this->financeService->getPayables(20, $filters);
-        $summary = $this->financeService->getPayablesSummary();
+        $summary = $this->financeService->getPayablesSummary($filters);
         $categories = $this->financeService->getCategoriesByType('expense');
         $accounts = $this->financeService->getAccounts();
 
@@ -60,13 +60,13 @@ class FinanceController extends Controller
         $filters = [
             'status' => $request->get('status'),
             'category_id' => $request->get('category_id'),
-            'start_date' => $request->get('start_date'),
-            'end_date' => $request->get('end_date'),
+            'start_date' => $request->get('start_date', now()->startOfMonth()->format('Y-m-d')),
+            'end_date' => $request->get('end_date', now()->endOfMonth()->format('Y-m-d')),
             'search' => $request->get('search'),
         ];
 
         $transactions = $this->financeService->getReceivables(20, $filters);
-        $summary = $this->financeService->getReceivablesSummary();
+        $summary = $this->financeService->getReceivablesSummary($filters);
         $categories = $this->financeService->getCategoriesByType('income');
         $accounts = $this->financeService->getAccounts();
 

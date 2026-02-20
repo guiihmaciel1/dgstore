@@ -33,18 +33,26 @@
             </div>
 
             <!-- Cards de Resumo -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <div style="background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid #e5e7eb;">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #d97706;">Pendente</div>
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #d97706;">Pendente (Filtrado)</div>
                     <div style="font-size: 1.5rem; font-weight: 800; color: #d97706; margin-top: 0.25rem;">R$ {{ number_format($summary['pending'], 2, ',', '.') }}</div>
+                    <div style="font-size: 0.625rem; color: #9ca3af; margin-top: 0.25rem;">Baseado nos filtros aplicados</div>
                 </div>
                 <div style="background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid {{ $summary['overdue'] > 0 ? '#fecaca' : '#e5e7eb' }};">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #dc2626;">Vencido</div>
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #dc2626;">Vencido (Total)</div>
                     <div style="font-size: 1.5rem; font-weight: 800; color: #dc2626; margin-top: 0.25rem;">R$ {{ number_format($summary['overdue'], 2, ',', '.') }}</div>
+                    <div style="font-size: 0.625rem; color: #9ca3af; margin-top: 0.25rem;">Todas as despesas vencidas</div>
                 </div>
                 <div style="background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid #e5e7eb;">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #16a34a;">Pago no Mês</div>
-                    <div style="font-size: 1.5rem; font-weight: 800; color: #16a34a; margin-top: 0.25rem;">R$ {{ number_format($summary['paidThisMonth'], 2, ',', '.') }}</div>
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #7c3aed;">Custo Mercadorias</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #7c3aed; margin-top: 0.25rem;">R$ {{ number_format($summary['custoMercadoria'], 2, ',', '.') }}</div>
+                    <div style="font-size: 0.625rem; color: #9ca3af; margin-top: 0.25rem;">CMV no período filtrado</div>
+                </div>
+                <div style="background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid #e5e7eb;">
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #16a34a;">Pago no Período</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #16a34a; margin-top: 0.25rem;">R$ {{ number_format($summary['paidExcludingCMV'], 2, ',', '.') }}</div>
+                    <div style="font-size: 0.625rem; color: #9ca3af; margin-top: 0.25rem;">Excluindo CMV</div>
                 </div>
             </div>
 

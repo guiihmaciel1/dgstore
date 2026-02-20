@@ -186,22 +186,87 @@ class FinanceService
             ->withQueryString();
     }
 
-    public function getPayablesSummary(): array
+    public function getPayablesSummary(array $filters = []): array
     {
-        $pending = (float) FinancialTransaction::expense()->pending()->sum('amount');
+        $query = FinancialTransaction::expense();
+        
+        if (!empty($filters['start_date'])) {
+            $query->where('due_date', '>=', $filters['start_date']);
+        }
+        
+        if (!empty($filters['end_date'])) {
+            $query->where('due_date', '<=', $filters['end_date']);
+        }
+        
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+        
+        if (!empty($filters['search'])) {
+            $query->where('description', 'like', '%' . $filters['search'] . '%');
+        }
+        
+        $statusFilter = $filters['status'] ?? null;
+        if ($statusFilter && trim($statusFilter) !== '') {
+            $query->where('status', $statusFilter);
+        } else {
+            $query->whereIn('status', ['pending', 'overdue', 'paid']);
+        }
+        
+        $custoMercadoriaCategory = FinancialCategory::where('name', 'Custo de Mercadoria')->first();
+        
+        $pending = (float) (clone $query)->whereIn('status', ['pending', 'overdue'])->sum('amount');
+        $paidInPeriod = (float) (clone $query)->where('status', 'paid')->sum('amount');
+        
+        $custoMercadoria = 0;
+        $paidExcludingCMV = $paidInPeriod;
+        
+        if ($custoMercadoriaCategory) {
+            $custoMercadoria = (float) (clone $query)
+                ->where('status', 'paid')
+                ->where('category_id', $custoMercadoriaCategory->id)
+                ->sum('amount');
+            
+            $paidExcludingCMV = $paidInPeriod - $custoMercadoria;
+        }
+        
         $overdue = (float) FinancialTransaction::expense()->overdue()->sum('amount');
-        $paidThisMonth = (float) FinancialTransaction::expense()->paidThisMonth()->sum('amount');
 
-        return compact('pending', 'overdue', 'paidThisMonth');
+        return compact('pending', 'overdue', 'paidInPeriod', 'custoMercadoria', 'paidExcludingCMV');
     }
 
-    public function getReceivablesSummary(): array
+    public function getReceivablesSummary(array $filters = []): array
     {
-        $pending = (float) FinancialTransaction::income()->pending()->sum('amount');
+        $query = FinancialTransaction::income();
+        
+        if (!empty($filters['start_date'])) {
+            $query->where('due_date', '>=', $filters['start_date']);
+        }
+        
+        if (!empty($filters['end_date'])) {
+            $query->where('due_date', '<=', $filters['end_date']);
+        }
+        
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+        
+        if (!empty($filters['search'])) {
+            $query->where('description', 'like', '%' . $filters['search'] . '%');
+        }
+        
+        $statusFilter = $filters['status'] ?? null;
+        if ($statusFilter && trim($statusFilter) !== '') {
+            $query->where('status', $statusFilter);
+        } else {
+            $query->whereIn('status', ['pending', 'overdue', 'paid']);
+        }
+        
+        $pending = (float) (clone $query)->whereIn('status', ['pending', 'overdue'])->sum('amount');
+        $receivedInPeriod = (float) (clone $query)->where('status', 'paid')->sum('amount');
         $overdue = (float) FinancialTransaction::income()->overdue()->sum('amount');
-        $receivedThisMonth = (float) FinancialTransaction::income()->paidThisMonth()->sum('amount');
 
-        return compact('pending', 'overdue', 'receivedThisMonth');
+        return compact('pending', 'overdue', 'receivedInPeriod');
     }
 
     // ─── Transactions CRUD ───
