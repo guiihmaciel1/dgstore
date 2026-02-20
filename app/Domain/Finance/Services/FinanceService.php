@@ -156,10 +156,12 @@ class FinanceService
         $query = FinancialTransaction::with(['category', 'account', 'user'])
             ->where('type', $type);
 
-        if (isset($filters['status']) && $filters['status'] !== '' && $filters['status'] !== null) {
-            $query->where('status', $filters['status']);
+        $statusFilter = $filters['status'] ?? null;
+        
+        if ($statusFilter && trim($statusFilter) !== '') {
+            $query->where('status', $statusFilter);
         } else {
-            $query->where('status', '!=', 'cancelled');
+            $query->whereIn('status', ['pending', 'overdue', 'paid']);
         }
 
         if (!empty($filters['category_id'])) {
