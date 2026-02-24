@@ -54,6 +54,25 @@
 
             <!-- ═══════ ABA: TAXAS ═══════ -->
             <div x-show="activeTab === 'fees'" style="padding: 16px 24px 24px;">
+                <!-- Seletor de Máquina -->
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Máquina de Cartão</label>
+                    <div style="display: flex; gap: 8px;">
+                        <button @click="machine = 'sumup'; calculate()" type="button"
+                                :style="machine === 'sumup'
+                                    ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #111827; cursor: pointer; background: #111827; color: white;'
+                                    : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #e5e7eb; cursor: pointer; background: white; color: #6b7280;'">
+                            SumUp
+                        </button>
+                        <button @click="machine = 'stone'; calculate()" type="button"
+                                :style="machine === 'stone'
+                                    ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #16a34a; cursor: pointer; background: #16a34a; color: white;'
+                                    : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #e5e7eb; cursor: pointer; background: white; color: #6b7280;'">
+                            Stone
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Valor que desejo receber -->
                 <div style="margin-bottom: 20px;">
                     <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Valor que desejo receber</label>
@@ -299,9 +318,10 @@ function cardFeeCalculator() {
         open: false,
         activeTab: 'fees',
         copiedAll: false,
+        machine: 'sumup',
 
-        // ── Taxas ──
-        rates: [
+        // ── Taxas SumUp ──
+        ratesSumUp: [
             { label: 'Cart\u00e3o 1x', key: '1x', percent: 2.85, parcelas: 1 },
             { label: 'Cart\u00e3o 2x', key: '2x', percent: 3.9, parcelas: 2 },
             { label: 'Cart\u00e3o 3x', key: '3x', percent: 4.9, parcelas: 3 },
@@ -315,6 +335,30 @@ function cardFeeCalculator() {
             { label: 'Cart\u00e3o 11x', key: '11x', percent: 9.9, parcelas: 11 },
             { label: 'Cart\u00e3o 12x', key: '12x', percent: 9.9, parcelas: 12 },
         ],
+        
+        // ── Taxas Stone ──
+        ratesStone: [
+            { label: 'D\u00e9bito', key: 'debit', percent: 1.09, parcelas: 1 },
+            { label: 'Cr\u00e9dito 1x', key: '1x', percent: 3.19, parcelas: 1 },
+            { label: 'Cr\u00e9dito 2x', key: '2x', percent: 4.49, parcelas: 2 },
+            { label: 'Cr\u00e9dito 3x', key: '3x', percent: 5.49, parcelas: 3 },
+            { label: 'Cr\u00e9dito 4x', key: '4x', percent: 6.39, parcelas: 4 },
+            { label: 'Cr\u00e9dito 5x', key: '5x', percent: 7.19, parcelas: 5 },
+            { label: 'Cr\u00e9dito 6x', key: '6x', percent: 7.59, parcelas: 6 },
+            { label: 'Cr\u00e9dito 7x', key: '7x', percent: 8.59, parcelas: 7 },
+            { label: 'Cr\u00e9dito 8x', key: '8x', percent: 8.69, parcelas: 8 },
+            { label: 'Cr\u00e9dito 9x', key: '9x', percent: 8.99, parcelas: 9 },
+            { label: 'Cr\u00e9dito 10x', key: '10x', percent: 8.99, parcelas: 10 },
+            { label: 'Cr\u00e9dito 11x', key: '11x', percent: 9.97, parcelas: 11 },
+            { label: 'Cr\u00e9dito 12x', key: '12x', percent: 9.99, parcelas: 12 },
+            { label: 'Cr\u00e9dito 13x', key: '13x', percent: 12.75, parcelas: 13 },
+            { label: 'Cr\u00e9dito 14x', key: '14x', percent: 13.47, parcelas: 14 },
+            { label: 'Cr\u00e9dito 15x', key: '15x', percent: 14.19, parcelas: 15 },
+            { label: 'Cr\u00e9dito 16x', key: '16x', percent: 14.91, parcelas: 16 },
+            { label: 'Cr\u00e9dito 17x', key: '17x', percent: 15.63, parcelas: 17 },
+            { label: 'Cr\u00e9dito 18x', key: '18x', percent: 16.35, parcelas: 18 },
+        ],
+        
         amountInput: '',
         amount: 0,
         results: [],
@@ -329,10 +373,10 @@ function cardFeeCalculator() {
         tiCopied: false,
 
         init() {
-            this.results = this.rates.map(r => ({
+            this.results = this.getCurrentRates().map(r => ({
                 ...r, cobrar: 0, taxa: 0, copied: false
             }));
-            this.tiResults = this.rates.map(r => ({
+            this.tiResults = this.getCurrentRates().map(r => ({
                 ...r, cobrar: 0, taxa: 0
             }));
             this.$watch('open', (val) => {
@@ -352,6 +396,14 @@ function cardFeeCalculator() {
                     if (val === 'tradein' && this.$refs.devicePriceField) this.$refs.devicePriceField.focus();
                 });
             });
+        },
+        
+        getCurrentRates() {
+            return this.machine === 'stone' ? this.ratesStone : this.ratesSumUp;
+        },
+        
+        getMachineName() {
+            return this.machine === 'stone' ? 'Stone' : 'SumUp';
         },
 
         // ── Utilitários ──
@@ -376,17 +428,15 @@ function cardFeeCalculator() {
 
         calculate() {
             this.amount = this.parseNumber(this.amountInput);
-            this.results = this.rates.map(r => {
+            const currentRates = this.getCurrentRates();
+            this.results = currentRates.map(r => {
                 const pct = r.percent / 100;
                 if (this.amount <= 0) {
                     return { ...r, cobrar: 0, taxa: 0, copied: false };
                 }
                 
-                // Calcula o valor da parcela e arredonda para cima
                 const valorPorParcela = this.amount / r.parcelas / (1 - pct);
                 const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
-                
-                // Total a cobrar = parcela arredondada × número de parcelas
                 const cobrar = parcelaArredondada * r.parcelas;
                 const taxa = cobrar - this.amount;
                 
@@ -401,18 +451,15 @@ function cardFeeCalculator() {
             this.tradeInValue = this.parseNumber(this.tradeInValueInput);
             this.remaining = Math.max(0, this.devicePrice - this.tradeInValue);
 
-            // Parcelas do restante
-            this.tiResults = this.rates.map(r => {
+            const currentRates = this.getCurrentRates();
+            this.tiResults = currentRates.map(r => {
                 const pct = r.percent / 100;
                 if (this.remaining <= 0) {
                     return { ...r, cobrar: 0, taxa: 0 };
                 }
                 
-                // Calcula o valor da parcela e arredonda para cima
                 const valorPorParcela = this.remaining / r.parcelas / (1 - pct);
                 const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
-                
-                // Total a cobrar = parcela arredondada × número de parcelas
                 const cobrar = parcelaArredondada * r.parcelas;
                 
                 return { ...r, cobrar, taxa: cobrar - this.remaining };
@@ -429,12 +476,14 @@ function cardFeeCalculator() {
 
         buildRowMessage(row) {
             const vlr = row.cobrar / row.parcelas;
+            const machineName = this.getMachineName();
             const linhas = [
                 '*Condi\u00e7\u00f5es de pagamento - DG Store* \uD83D\uDCB3',
                 '',
-                '\uD83D\uDCB3 *No cart\u00e3o:*',
-                '*' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*',
+                '\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*',
+                '*' + row.label + ': ' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*',
                 'Total: R$ ' + this.formatNumber(row.cobrar),
+                'Taxa: ' + row.percent.toString().replace('.', ',') + '%',
                 '',
                 '\u2705 *\u00c0 vista (Pix):*',
                 '*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_',
@@ -446,17 +495,18 @@ function cardFeeCalculator() {
         },
 
         buildAllMessage() {
+            const machineName = this.getMachineName();
             const linhas = [
                 '*Condi\u00e7\u00f5es de pagamento - DG Store* \uD83D\uDCB3',
                 '',
                 '\u2705 *\u00c0 vista (Pix):*',
                 '*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_',
                 '',
-                '\uD83D\uDCB3 *No cart\u00e3o:*',
+                '\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*',
             ];
             this.results.forEach(r => {
                 const vlr = r.cobrar / r.parcelas;
-                linhas.push(r.parcelas + 'x de R$ ' + this.formatNumber(vlr));
+                linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
             });
             linhas.push('');
             linhas.push('\uD83D\uDD12 *Garantia e proced\u00eancia verificada*');
@@ -465,6 +515,7 @@ function cardFeeCalculator() {
         },
 
         buildTradeInMessage() {
+            const machineName = this.getMachineName();
             const linhas = [
                 '*Proposta de troca - DG Store* \uD83D\uDD04',
                 '',
@@ -479,10 +530,10 @@ function cardFeeCalculator() {
             linhas.push('\u2705 *\u00c0 vista (Pix):*');
             linhas.push('*R$ ' + this.formatNumber(this.remaining) + '* _(melhor pre\u00e7o)_');
             linhas.push('');
-            linhas.push('\uD83D\uDCB3 *No cart\u00e3o:*');
+            linhas.push('\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*');
             this.tiResults.forEach(r => {
                 const vlr = r.cobrar / r.parcelas;
-                linhas.push(r.parcelas + 'x de R$ ' + this.formatNumber(vlr));
+                linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
             });
 
             linhas.push('');
