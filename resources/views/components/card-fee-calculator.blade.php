@@ -54,6 +54,36 @@
 
             <!-- ═══════ ABA: TAXAS ═══════ -->
             <div x-show="activeTab === 'fees'" style="padding: 16px 24px 24px;">
+                <!-- Descrição do Aparelho -->
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Descrição do Aparelho (Opcional)</label>
+                    <input type="text"
+                           x-model="deviceDescription"
+                           placeholder="Ex: iPhone 17 Pro Max 256 Silver"
+                           style="width: 100%; padding: 10px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; color: #111827; outline: none;"
+                           onfocus="this.style.borderColor='#111827'; this.style.background='white'"
+                           onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                </div>
+
+                <!-- Tipo de Compra -->
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Tipo de Compra</label>
+                    <div style="display: flex; gap: 8px;">
+                        <button @click="deliveryType = 'pronta'" type="button"
+                                :style="deliveryType === 'pronta'
+                                    ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 2px solid #2563eb; cursor: pointer; background: #2563eb; color: white;'
+                                    : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 2px solid #e5e7eb; cursor: pointer; background: white; color: #6b7280;'">
+                            Pronta Entrega
+                        </button>
+                        <button @click="deliveryType = 'programada'" type="button"
+                                :style="deliveryType === 'programada'
+                                    ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 2px solid #d97706; cursor: pointer; background: #d97706; color: white;'
+                                    : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 2px solid #e5e7eb; cursor: pointer; background: white; color: #6b7280;'">
+                            Compra Programada
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Seletor de Máquina -->
                 <div style="margin-bottom: 16px;">
                     <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Máquina de Cartão</label>
@@ -337,6 +367,8 @@ function cardFeeCalculator() {
         activeTab: 'fees',
         copiedAll: false,
         machine: 'sumup',
+        deviceDescription: '',
+        deliveryType: 'pronta',
 
         // ── Taxas SumUp (taxa de saque - você recebe menos) ──
         ratesSumUp: [
@@ -536,9 +568,13 @@ function cardFeeCalculator() {
 
         buildRowMessage(row) {
             const vlr = row.cobrar / row.parcelas;
-            const machineName = this.getMachineName();
+            const deliveryLabel = this.deliveryType === 'programada' ? 'COMPRA PROGRAMADA' : 'PRONTA ENTREGA';
+            const header = this.deviceDescription 
+                ? '*Condi\u00e7\u00f5es de pagamento - DG Store (' + deliveryLabel + ')* \uD83D\uDCB3 - ' + this.deviceDescription
+                : '*Condi\u00e7\u00f5es de pagamento - DG Store (' + deliveryLabel + ')* \uD83D\uDCB3';
+            
             const linhas = [
-                '*Condi\u00e7\u00f5es de pagamento - DG Store* \uD83D\uDCB3',
+                header,
                 '',
             ];
             
@@ -546,13 +582,13 @@ function cardFeeCalculator() {
                 linhas.push('\uD83D\uDCB5 *Entrada (Pix):*');
                 linhas.push('*R$ ' + this.formatNumber(this.downPayment) + '*');
                 linhas.push('');
-                linhas.push('\uD83D\uDCB3 *Restante no cart\u00e3o (' + machineName + '):*');
+                linhas.push('\uD83D\uDCB3 *Restante no cart\u00e3o:*');
                 linhas.push('*' + row.label + ': ' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*');
                 linhas.push('Total restante: R$ ' + this.formatNumber(row.cobrar));
                 linhas.push('');
                 linhas.push('\uD83D\uDCB0 *Total geral: R$ ' + this.formatNumber(this.downPayment + row.cobrar) + '*');
             } else {
-                linhas.push('\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*');
+                linhas.push('\uD83D\uDCB3 *No cart\u00e3o:*');
                 linhas.push('*' + row.label + ': ' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*');
                 linhas.push('Total: R$ ' + this.formatNumber(row.cobrar));
                 const taxaDisplay = row.percentNominal || row.percent;
@@ -570,9 +606,13 @@ function cardFeeCalculator() {
         },
 
         buildAllMessage() {
-            const machineName = this.getMachineName();
+            const deliveryLabel = this.deliveryType === 'programada' ? 'COMPRA PROGRAMADA' : 'PRONTA ENTREGA';
+            const header = this.deviceDescription 
+                ? '*Condi\u00e7\u00f5es de pagamento - DG Store (' + deliveryLabel + ')* \uD83D\uDCB3 - ' + this.deviceDescription
+                : '*Condi\u00e7\u00f5es de pagamento - DG Store (' + deliveryLabel + ')* \uD83D\uDCB3';
+            
             const linhas = [
-                '*Condi\u00e7\u00f5es de pagamento - DG Store* \uD83D\uDCB3',
+                header,
                 '',
             ];
             
@@ -580,21 +620,16 @@ function cardFeeCalculator() {
                 linhas.push('\uD83D\uDCB5 *Entrada (Pix):*');
                 linhas.push('*R$ ' + this.formatNumber(this.downPayment) + '*');
                 linhas.push('');
-                linhas.push('\uD83D\uDCB3 *Restante no cart\u00e3o (' + machineName + '):*');
+                linhas.push('\uD83D\uDCB3 *Restante no cart\u00e3o:*');
                 this.results.forEach(r => {
                     const vlr = r.cobrar / r.parcelas;
                     linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
-                });
-                linhas.push('');
-                linhas.push('\uD83D\uDCB0 *Total geral (entrada + parcelas):*');
-                this.results.forEach(r => {
-                    linhas.push(r.label + ': R$ ' + this.formatNumber(this.downPayment + r.cobrar));
                 });
             } else {
                 linhas.push('\u2705 *\u00c0 vista (Pix):*');
                 linhas.push('*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_');
                 linhas.push('');
-                linhas.push('\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*');
+                linhas.push('\uD83D\uDCB3 *No cart\u00e3o:*');
                 this.results.forEach(r => {
                     const vlr = r.cobrar / r.parcelas;
                     linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
@@ -608,9 +643,13 @@ function cardFeeCalculator() {
         },
 
         buildTradeInMessage() {
-            const machineName = this.getMachineName();
+            const deliveryLabel = this.deliveryType === 'programada' ? 'COMPRA PROGRAMADA' : 'PRONTA ENTREGA';
+            const header = this.deviceDescription 
+                ? '*Proposta de troca - DG Store (' + deliveryLabel + ')* \uD83D\uDD04 - ' + this.deviceDescription
+                : '*Proposta de troca - DG Store (' + deliveryLabel + ')* \uD83D\uDD04';
+            
             const linhas = [
-                '*Proposta de troca - DG Store* \uD83D\uDD04',
+                header,
                 '',
                 '\uD83D\uDCF1 Aparelho novo: *R$ ' + this.formatNumber(this.devicePrice) + '*',
             ];
