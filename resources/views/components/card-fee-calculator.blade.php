@@ -595,10 +595,16 @@ function cardFeeCalculator() {
                 linhas.push('\uD83D\uDCB0 *Total geral: R$ ' + this.formatNumber(this.downPayment + row.cobrar) + '*');
             } else {
                 linhas.push('\uD83D\uDCB3 *No cart\u00e3o:*');
-                linhas.push('*' + row.label + ': ' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*');
-                linhas.push('Total: R$ ' + this.formatNumber(row.cobrar));
-                const taxaDisplay = row.percentNominal || row.percent;
-                linhas.push('Taxa: ' + taxaDisplay.toString().replace('.', ',') + '%');
+                if (this.machine === 'stone') {
+                    // Stone: apenas parcelas, sem total e taxa
+                    linhas.push('*' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*');
+                } else {
+                    // SumUp: mostra total e taxa
+                    linhas.push('*' + row.label + ': ' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*');
+                    linhas.push('Total: R$ ' + this.formatNumber(row.cobrar));
+                    const taxaDisplay = row.percentNominal || row.percent;
+                    linhas.push('Taxa: ' + taxaDisplay.toString().replace('.', ',') + '%');
+                }
                 linhas.push('');
                 linhas.push('\u2705 *\u00c0 vista (Pix):*');
                 linhas.push('*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_');
@@ -629,7 +635,13 @@ function cardFeeCalculator() {
                 linhas.push('\uD83D\uDCB3 *Restante no cart\u00e3o:*');
                 this.results.forEach(r => {
                     const vlr = r.cobrar / r.parcelas;
-                    linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
+                    if (this.machine === 'stone') {
+                        // Stone: sem "Crédito" e sem total
+                        linhas.push(r.parcelas + 'x de R$ ' + this.formatNumber(vlr));
+                    } else {
+                        // SumUp: com label e total
+                        linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
+                    }
                 });
             } else {
                 linhas.push('\u2705 *\u00c0 vista (Pix):*');
@@ -638,7 +650,13 @@ function cardFeeCalculator() {
                 linhas.push('\uD83D\uDCB3 *No cart\u00e3o:*');
                 this.results.forEach(r => {
                     const vlr = r.cobrar / r.parcelas;
-                    linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
+                    if (this.machine === 'stone') {
+                        // Stone: sem "Crédito" e sem total
+                        linhas.push(r.parcelas + 'x de R$ ' + this.formatNumber(vlr));
+                    } else {
+                        // SumUp: com label e total
+                        linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
+                    }
                 });
             }
             
