@@ -336,27 +336,27 @@ function cardFeeCalculator() {
             { label: 'Cart\u00e3o 12x', key: '12x', percent: 9.9, parcelas: 12 },
         ],
         
-        // ── Taxas Stone ──
+        // ── Taxas Stone (taxa sobre o valor desejado - você recebe integral) ──
         ratesStone: [
             { label: 'D\u00e9bito', key: 'debit', percent: 1.09, parcelas: 1 },
-            { label: 'Cr\u00e9dito 1x', key: '1x', percent: 3.19, parcelas: 1 },
-            { label: 'Cr\u00e9dito 2x', key: '2x', percent: 4.49, parcelas: 2 },
-            { label: 'Cr\u00e9dito 3x', key: '3x', percent: 5.49, parcelas: 3 },
-            { label: 'Cr\u00e9dito 4x', key: '4x', percent: 6.39, parcelas: 4 },
-            { label: 'Cr\u00e9dito 5x', key: '5x', percent: 7.19, parcelas: 5 },
-            { label: 'Cr\u00e9dito 6x', key: '6x', percent: 7.59, parcelas: 6 },
-            { label: 'Cr\u00e9dito 7x', key: '7x', percent: 8.59, parcelas: 7 },
-            { label: 'Cr\u00e9dito 8x', key: '8x', percent: 8.69, parcelas: 8 },
-            { label: 'Cr\u00e9dito 9x', key: '9x', percent: 8.99, parcelas: 9 },
-            { label: 'Cr\u00e9dito 10x', key: '10x', percent: 8.99, parcelas: 10 },
-            { label: 'Cr\u00e9dito 11x', key: '11x', percent: 9.97, parcelas: 11 },
-            { label: 'Cr\u00e9dito 12x', key: '12x', percent: 9.99, parcelas: 12 },
-            { label: 'Cr\u00e9dito 13x', key: '13x', percent: 12.75, parcelas: 13 },
-            { label: 'Cr\u00e9dito 14x', key: '14x', percent: 13.47, parcelas: 14 },
-            { label: 'Cr\u00e9dito 15x', key: '15x', percent: 14.19, parcelas: 15 },
-            { label: 'Cr\u00e9dito 16x', key: '16x', percent: 14.91, parcelas: 16 },
-            { label: 'Cr\u00e9dito 17x', key: '17x', percent: 15.63, parcelas: 17 },
-            { label: 'Cr\u00e9dito 18x', key: '18x', percent: 16.35, parcelas: 18 },
+            { label: 'Cr\u00e9dito 1x', key: '1x', percent: 3.29, parcelas: 1 },
+            { label: 'Cr\u00e9dito 2x', key: '2x', percent: 4.70, parcelas: 2 },
+            { label: 'Cr\u00e9dito 3x', key: '3x', percent: 5.81, parcelas: 3 },
+            { label: 'Cr\u00e9dito 4x', key: '4x', percent: 6.83, parcelas: 4 },
+            { label: 'Cr\u00e9dito 5x', key: '5x', percent: 7.74, parcelas: 5 },
+            { label: 'Cr\u00e9dito 6x', key: '6x', percent: 8.22, parcelas: 6 },
+            { label: 'Cr\u00e9dito 7x', key: '7x', percent: 9.41, parcelas: 7 },
+            { label: 'Cr\u00e9dito 8x', key: '8x', percent: 9.53, parcelas: 8 },
+            { label: 'Cr\u00e9dito 9x', key: '9x', percent: 9.89, parcelas: 9 },
+            { label: 'Cr\u00e9dito 10x', key: '10x', percent: 9.89, parcelas: 10 },
+            { label: 'Cr\u00e9dito 11x', key: '11x', percent: 0.99, parcelas: 11 },
+            { label: 'Cr\u00e9dito 12x', key: '12x', percent: 1.01, parcelas: 12 },
+            { label: 'Cr\u00e9dito 13x', key: '13x', percent: 4.20, parcelas: 13 },
+            { label: 'Cr\u00e9dito 14x', key: '14x', percent: 5.07, parcelas: 14 },
+            { label: 'Cr\u00e9dito 15x', key: '15x', percent: 5.95, parcelas: 15 },
+            { label: 'Cr\u00e9dito 16x', key: '16x', percent: 6.85, parcelas: 16 },
+            { label: 'Cr\u00e9dito 17x', key: '17x', percent: 7.76, parcelas: 17 },
+            { label: 'Cr\u00e9dito 18x', key: '18x', percent: 8.68, parcelas: 18 },
         ],
         
         amountInput: '',
@@ -429,19 +429,36 @@ function cardFeeCalculator() {
         calculate() {
             this.amount = this.parseNumber(this.amountInput);
             const currentRates = this.getCurrentRates();
-            this.results = currentRates.map(r => {
-                const pct = r.percent / 100;
-                if (this.amount <= 0) {
-                    return { ...r, cobrar: 0, taxa: 0, copied: false };
-                }
-                
-                const valorPorParcela = this.amount / r.parcelas / (1 - pct);
-                const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
-                const cobrar = parcelaArredondada * r.parcelas;
-                const taxa = cobrar - this.amount;
-                
-                return { ...r, cobrar, taxa, copied: false };
-            });
+            
+            if (this.machine === 'stone') {
+                // Stone: SEM taxa de saque - você recebe o valor integral
+                this.results = currentRates.map(r => {
+                    if (this.amount <= 0) {
+                        return { ...r, cobrar: 0, taxa: 0, copied: false };
+                    }
+                    
+                    const pct = r.percent / 100;
+                    const cobrar = this.amount * (1 + pct);
+                    const taxa = cobrar - this.amount;
+                    
+                    return { ...r, cobrar, taxa, copied: false };
+                });
+            } else {
+                // SumUp: COM taxa de saque - você recebe menos
+                this.results = currentRates.map(r => {
+                    const pct = r.percent / 100;
+                    if (this.amount <= 0) {
+                        return { ...r, cobrar: 0, taxa: 0, copied: false };
+                    }
+                    
+                    const valorPorParcela = this.amount / r.parcelas / (1 - pct);
+                    const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
+                    const cobrar = parcelaArredondada * r.parcelas;
+                    const taxa = cobrar - this.amount;
+                    
+                    return { ...r, cobrar, taxa, copied: false };
+                });
+            }
         },
 
         // ── Trade-in ──
@@ -452,18 +469,35 @@ function cardFeeCalculator() {
             this.remaining = Math.max(0, this.devicePrice - this.tradeInValue);
 
             const currentRates = this.getCurrentRates();
-            this.tiResults = currentRates.map(r => {
-                const pct = r.percent / 100;
-                if (this.remaining <= 0) {
-                    return { ...r, cobrar: 0, taxa: 0 };
-                }
-                
-                const valorPorParcela = this.remaining / r.parcelas / (1 - pct);
-                const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
-                const cobrar = parcelaArredondada * r.parcelas;
-                
-                return { ...r, cobrar, taxa: cobrar - this.remaining };
-            });
+            
+            if (this.machine === 'stone') {
+                // Stone: SEM taxa de saque - você recebe o valor integral
+                this.tiResults = currentRates.map(r => {
+                    if (this.remaining <= 0) {
+                        return { ...r, cobrar: 0, taxa: 0 };
+                    }
+                    
+                    const pct = r.percent / 100;
+                    const cobrar = this.remaining * (1 + pct);
+                    const taxa = cobrar - this.remaining;
+                    
+                    return { ...r, cobrar, taxa };
+                });
+            } else {
+                // SumUp: COM taxa de saque - você recebe menos
+                this.tiResults = currentRates.map(r => {
+                    const pct = r.percent / 100;
+                    if (this.remaining <= 0) {
+                        return { ...r, cobrar: 0, taxa: 0 };
+                    }
+                    
+                    const valorPorParcela = this.remaining / r.parcelas / (1 - pct);
+                    const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
+                    const cobrar = parcelaArredondada * r.parcelas;
+                    
+                    return { ...r, cobrar, taxa: cobrar - this.remaining };
+                });
+            }
         },
 
         useRemainingInFees() {
