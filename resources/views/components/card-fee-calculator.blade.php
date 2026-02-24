@@ -191,7 +191,7 @@
                     <div style="margin-top: 16px;">
                         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 18px;">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <span style="font-size: 13px; font-weight: 600; color: #059669;">VOCE RECEBE</span>
+                                <span style="font-size: 13px; font-weight: 600; color: #059669;">VOCÊ RECEBE</span>
                                 <span style="font-size: 20px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(amount)"></span>
                             </div>
                         </div>
@@ -386,27 +386,27 @@ function cardFeeCalculator() {
             { label: 'Cart\u00e3o 12x', key: '12x', percent: 9.9, percentNominal: 9.9, parcelas: 12 },
         ],
         
-        // ── Taxas Stone (percentNominal = exibição | percent = cálculo real) ──
+        // ── Taxas Stone (acréscimo direto sobre o valor que você recebe) ──
         ratesStone: [
             { label: 'D\u00e9bito', key: 'debit', percent: 1.09, percentNominal: 1.09, parcelas: 1 },
-            { label: 'Cr\u00e9dito 1x', key: '1x', percent: 3.29, percentNominal: 3.19, parcelas: 1 },
-            { label: 'Cr\u00e9dito 2x', key: '2x', percent: 4.70, percentNominal: 4.49, parcelas: 2 },
-            { label: 'Cr\u00e9dito 3x', key: '3x', percent: 5.81, percentNominal: 5.49, parcelas: 3 },
-            { label: 'Cr\u00e9dito 4x', key: '4x', percent: 6.83, percentNominal: 6.39, parcelas: 4 },
-            { label: 'Cr\u00e9dito 5x', key: '5x', percent: 7.74, percentNominal: 7.19, parcelas: 5 },
-            { label: 'Cr\u00e9dito 6x', key: '6x', percent: 8.22, percentNominal: 7.59, parcelas: 6 },
-            { label: 'Cr\u00e9dito 7x', key: '7x', percent: 9.41, percentNominal: 8.59, parcelas: 7 },
-            { label: 'Cr\u00e9dito 8x', key: '8x', percent: 9.53, percentNominal: 8.69, parcelas: 8 },
-            { label: 'Cr\u00e9dito 9x', key: '9x', percent: 9.89, percentNominal: 8.99, parcelas: 9 },
-            { label: 'Cr\u00e9dito 10x', key: '10x', percent: 9.89, percentNominal: 8.99, parcelas: 10 },
-            { label: 'Cr\u00e9dito 11x', key: '11x', percent: 0.99, percentNominal: 9.97, parcelas: 11 },
-            { label: 'Cr\u00e9dito 12x', key: '12x', percent: 1.01, percentNominal: 9.99, parcelas: 12 },
-            { label: 'Cr\u00e9dito 13x', key: '13x', percent: 4.20, percentNominal: 12.75, parcelas: 13 },
-            { label: 'Cr\u00e9dito 14x', key: '14x', percent: 5.07, percentNominal: 13.47, parcelas: 14 },
-            { label: 'Cr\u00e9dito 15x', key: '15x', percent: 5.95, percentNominal: 14.19, parcelas: 15 },
-            { label: 'Cr\u00e9dito 16x', key: '16x', percent: 6.85, percentNominal: 14.91, parcelas: 16 },
-            { label: 'Cr\u00e9dito 17x', key: '17x', percent: 7.76, percentNominal: 15.63, parcelas: 17 },
-            { label: 'Cr\u00e9dito 18x', key: '18x', percent: 8.68, percentNominal: 16.35, parcelas: 18 },
+            { label: 'Cr\u00e9dito 1x', key: '1x', percent: 3.19, percentNominal: 3.19, parcelas: 1 },
+            { label: 'Cr\u00e9dito 2x', key: '2x', percent: 4.49, percentNominal: 4.49, parcelas: 2 },
+            { label: 'Cr\u00e9dito 3x', key: '3x', percent: 5.49, percentNominal: 5.49, parcelas: 3 },
+            { label: 'Cr\u00e9dito 4x', key: '4x', percent: 6.39, percentNominal: 6.39, parcelas: 4 },
+            { label: 'Cr\u00e9dito 5x', key: '5x', percent: 7.19, percentNominal: 7.19, parcelas: 5 },
+            { label: 'Cr\u00e9dito 6x', key: '6x', percent: 7.59, percentNominal: 7.59, parcelas: 6 },
+            { label: 'Cr\u00e9dito 7x', key: '7x', percent: 8.59, percentNominal: 8.59, parcelas: 7 },
+            { label: 'Cr\u00e9dito 8x', key: '8x', percent: 8.69, percentNominal: 8.69, parcelas: 8 },
+            { label: 'Cr\u00e9dito 9x', key: '9x', percent: 8.99, percentNominal: 8.99, parcelas: 9 },
+            { label: 'Cr\u00e9dito 10x', key: '10x', percent: 8.99, percentNominal: 8.99, parcelas: 10 },
+            { label: 'Cr\u00e9dito 11x', key: '11x', percent: 9.97, percentNominal: 9.97, parcelas: 11 },
+            { label: 'Cr\u00e9dito 12x', key: '12x', percent: 9.99, percentNominal: 9.99, parcelas: 12 },
+            { label: 'Cr\u00e9dito 13x', key: '13x', percent: 12.75, percentNominal: 12.75, parcelas: 13 },
+            { label: 'Cr\u00e9dito 14x', key: '14x', percent: 13.47, percentNominal: 13.47, parcelas: 14 },
+            { label: 'Cr\u00e9dito 15x', key: '15x', percent: 14.19, percentNominal: 14.19, parcelas: 15 },
+            { label: 'Cr\u00e9dito 16x', key: '16x', percent: 14.91, percentNominal: 14.91, parcelas: 16 },
+            { label: 'Cr\u00e9dito 17x', key: '17x', percent: 15.63, percentNominal: 15.63, parcelas: 17 },
+            { label: 'Cr\u00e9dito 18x', key: '18x', percent: 16.35, percentNominal: 16.35, parcelas: 18 },
         ],
         
         amountInput: '',
@@ -488,20 +488,23 @@ function cardFeeCalculator() {
             const currentRates = this.getCurrentRates();
             
             if (this.machine === 'stone') {
-                // Stone: SEM taxa de saque - você recebe o valor integral
+                // Stone: Taxa por conta do cliente - acréscimo direto com arredondamento por parcela
                 this.results = currentRates.map(r => {
                     if (valorParaParcelar <= 0) {
                         return { ...r, cobrar: 0, taxa: 0, copied: false };
                     }
                     
                     const pct = r.percent / 100;
-                    const cobrar = valorParaParcelar * (1 + pct);
+                    const totalBruto = valorParaParcelar * (1 + pct);
+                    const parcelaBruta = totalBruto / r.parcelas;
+                    const parcelaArredondada = Math.round(parcelaBruta * 100) / 100;
+                    const cobrar = parcelaArredondada * r.parcelas;
                     const taxa = cobrar - valorParaParcelar;
                     
                     return { ...r, cobrar, taxa, copied: false };
                 });
             } else {
-                // SumUp: COM taxa de saque - você recebe menos
+                // SumUp: Taxa de saque - você recebe menos
                 this.results = currentRates.map(r => {
                     const pct = r.percent / 100;
                     if (valorParaParcelar <= 0) {
@@ -528,14 +531,17 @@ function cardFeeCalculator() {
             const currentRates = this.getCurrentRates();
             
             if (this.machine === 'stone') {
-                // Stone: SEM taxa de saque - você recebe o valor integral
+                // Stone: Taxa por conta do cliente - acréscimo direto com arredondamento por parcela
                 this.tiResults = currentRates.map(r => {
                     if (this.tiRemaining <= 0) {
                         return { ...r, cobrar: 0, taxa: 0 };
                     }
                     
                     const pct = r.percent / 100;
-                    const cobrar = this.tiRemaining * (1 + pct);
+                    const totalBruto = this.tiRemaining * (1 + pct);
+                    const parcelaBruta = totalBruto / r.parcelas;
+                    const parcelaArredondada = Math.round(parcelaBruta * 100) / 100;
+                    const cobrar = parcelaArredondada * r.parcelas;
                     const taxa = cobrar - this.tiRemaining;
                     
                     return { ...r, cobrar, taxa };
@@ -662,7 +668,7 @@ function cardFeeCalculator() {
             linhas.push('\u2705 *\u00c0 vista (Pix):*');
             linhas.push('*R$ ' + this.formatNumber(this.tiRemaining) + '* _(melhor pre\u00e7o)_');
             linhas.push('');
-            linhas.push('\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*');
+            linhas.push('\uD83D\uDCB3 *Parcelado no cart\u00e3o:*');
             this.tiResults.forEach(r => {
                 const vlr = r.cobrar / r.parcelas;
                 linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
