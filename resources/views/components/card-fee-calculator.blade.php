@@ -74,7 +74,7 @@
                 </div>
 
                 <!-- Valor que desejo receber -->
-                <div style="margin-bottom: 20px;">
+                <div style="margin-bottom: 16px;">
                     <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Valor que desejo receber</label>
                     <div style="position: relative;">
                         <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 15px; font-weight: 500;">R$</span>
@@ -86,6 +86,24 @@
                                style="width: 100%; padding: 14px 16px 14px 42px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 20px; font-weight: 600; color: #111827; outline: none; text-align: right;"
                                onfocus="this.style.borderColor='#111827'; this.style.background='white'"
                                onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                    </div>
+                </div>
+
+                <!-- Entrada (Pix) - Opcional -->
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Entrada (Pix) - Opcional</label>
+                    <div style="position: relative;">
+                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #059669; font-size: 15px; font-weight: 500;">R$</span>
+                        <input type="text"
+                               x-model="downPaymentInput"
+                               @input="calculate()"
+                               placeholder="0,00"
+                               style="width: 100%; padding: 14px 16px 14px 42px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; font-size: 20px; font-weight: 600; color: #059669; outline: none; text-align: right;"
+                               onfocus="this.style.borderColor='#059669'; this.style.background='white'"
+                               onblur="this.style.borderColor='#bbf7d0'; this.style.background='#f0fdf4'">
+                    </div>
+                    <div x-show="downPayment > 0" style="font-size: 11px; color: #059669; margin-top: 6px; font-weight: 600;">
+                        Restante a parcelar: R$ <span x-text="formatNumber(remaining)"></span>
                     </div>
                 </div>
 
@@ -231,12 +249,12 @@
                         <!-- Restante -->
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <span style="font-size: 15px; font-weight: 700; color: #111827;">Restante a pagar</span>
-                            <span style="font-size: 24px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(remaining)"></span>
+                            <span style="font-size: 24px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(tiRemaining)"></span>
                         </div>
                     </div>
 
                     <!-- Formas de pagamento do restante -->
-                    <div x-show="remaining > 0" x-transition>
+                    <div x-show="tiRemaining > 0" x-transition>
                         <!-- Pix (melhor preço) -->
                         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                             <div>
@@ -361,6 +379,9 @@ function cardFeeCalculator() {
         
         amountInput: '',
         amount: 0,
+        downPaymentInput: '',
+        downPayment: 0,
+        remaining: 0,
         results: [],
 
         // ── Trade-in ──
@@ -368,7 +389,7 @@ function cardFeeCalculator() {
         tradeInValueInput: '',
         devicePrice: 0,
         tradeInValue: 0,
-        remaining: 0,
+        tiRemaining: 0,
         tiResults: [],
         tiCopied: false,
 
@@ -428,18 +449,22 @@ function cardFeeCalculator() {
 
         calculate() {
             this.amount = this.parseNumber(this.amountInput);
+            this.downPayment = this.parseNumber(this.downPaymentInput);
+            this.remaining = Math.max(0, this.amount - this.downPayment);
+            
+            const valorParaParcelar = this.remaining > 0 ? this.remaining : this.amount;
             const currentRates = this.getCurrentRates();
             
             if (this.machine === 'stone') {
                 // Stone: SEM taxa de saque - você recebe o valor integral
                 this.results = currentRates.map(r => {
-                    if (this.amount <= 0) {
+                    if (valorParaParcelar <= 0) {
                         return { ...r, cobrar: 0, taxa: 0, copied: false };
                     }
                     
                     const pct = r.percent / 100;
-                    const cobrar = this.amount * (1 + pct);
-                    const taxa = cobrar - this.amount;
+                    const cobrar = valorParaParcelar * (1 + pct);
+                    const taxa = cobrar - valorParaParcelar;
                     
                     return { ...r, cobrar, taxa, copied: false };
                 });
@@ -447,14 +472,14 @@ function cardFeeCalculator() {
                 // SumUp: COM taxa de saque - você recebe menos
                 this.results = currentRates.map(r => {
                     const pct = r.percent / 100;
-                    if (this.amount <= 0) {
+                    if (valorParaParcelar <= 0) {
                         return { ...r, cobrar: 0, taxa: 0, copied: false };
                     }
                     
-                    const valorPorParcela = this.amount / r.parcelas / (1 - pct);
+                    const valorPorParcela = valorParaParcelar / r.parcelas / (1 - pct);
                     const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
                     const cobrar = parcelaArredondada * r.parcelas;
-                    const taxa = cobrar - this.amount;
+                    const taxa = cobrar - valorParaParcelar;
                     
                     return { ...r, cobrar, taxa, copied: false };
                 });
@@ -466,20 +491,20 @@ function cardFeeCalculator() {
         calculateTradeIn() {
             this.devicePrice = this.parseNumber(this.devicePriceInput);
             this.tradeInValue = this.parseNumber(this.tradeInValueInput);
-            this.remaining = Math.max(0, this.devicePrice - this.tradeInValue);
+            this.tiRemaining = Math.max(0, this.devicePrice - this.tradeInValue);
 
             const currentRates = this.getCurrentRates();
             
             if (this.machine === 'stone') {
                 // Stone: SEM taxa de saque - você recebe o valor integral
                 this.tiResults = currentRates.map(r => {
-                    if (this.remaining <= 0) {
+                    if (this.tiRemaining <= 0) {
                         return { ...r, cobrar: 0, taxa: 0 };
                     }
                     
                     const pct = r.percent / 100;
-                    const cobrar = this.remaining * (1 + pct);
-                    const taxa = cobrar - this.remaining;
+                    const cobrar = this.tiRemaining * (1 + pct);
+                    const taxa = cobrar - this.tiRemaining;
                     
                     return { ...r, cobrar, taxa };
                 });
@@ -487,21 +512,22 @@ function cardFeeCalculator() {
                 // SumUp: COM taxa de saque - você recebe menos
                 this.tiResults = currentRates.map(r => {
                     const pct = r.percent / 100;
-                    if (this.remaining <= 0) {
+                    if (this.tiRemaining <= 0) {
                         return { ...r, cobrar: 0, taxa: 0 };
                     }
                     
-                    const valorPorParcela = this.remaining / r.parcelas / (1 - pct);
+                    const valorPorParcela = this.tiRemaining / r.parcelas / (1 - pct);
                     const parcelaArredondada = Math.ceil(valorPorParcela * 100) / 100;
                     const cobrar = parcelaArredondada * r.parcelas;
                     
-                    return { ...r, cobrar, taxa: cobrar - this.remaining };
+                    return { ...r, cobrar, taxa: cobrar - this.tiRemaining };
                 });
             }
         },
 
         useRemainingInFees() {
-            this.amountInput = this.formatNumber(this.remaining);
+            this.amountInput = this.formatNumber(this.tiRemaining);
+            this.downPaymentInput = '';
             this.calculate();
             this.activeTab = 'fees';
         },
@@ -514,17 +540,32 @@ function cardFeeCalculator() {
             const linhas = [
                 '*Condi\u00e7\u00f5es de pagamento - DG Store* \uD83D\uDCB3',
                 '',
-                '\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*',
-                '*' + row.label + ': ' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*',
-                'Total: R$ ' + this.formatNumber(row.cobrar),
-                'Taxa: ' + row.percent.toString().replace('.', ',') + '%',
-                '',
-                '\u2705 *\u00c0 vista (Pix):*',
-                '*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_',
-                '',
-                '\uD83D\uDD12 *Garantia e proced\u00eancia verificada*',
-                '\uD83C\uDFE2 _Atendimento DG Store_',
             ];
+            
+            if (this.downPayment > 0) {
+                linhas.push('\uD83D\uDCB5 *Entrada (Pix):*');
+                linhas.push('*R$ ' + this.formatNumber(this.downPayment) + '*');
+                linhas.push('');
+                linhas.push('\uD83D\uDCB3 *Restante no cart\u00e3o (' + machineName + '):*');
+                linhas.push('*' + row.label + ': ' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*');
+                linhas.push('Total restante: R$ ' + this.formatNumber(row.cobrar));
+                linhas.push('');
+                linhas.push('\uD83D\uDCB0 *Total geral: R$ ' + this.formatNumber(this.downPayment + row.cobrar) + '*');
+            } else {
+                linhas.push('\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*');
+                linhas.push('*' + row.label + ': ' + row.parcelas + 'x de R$ ' + this.formatNumber(vlr) + '*');
+                linhas.push('Total: R$ ' + this.formatNumber(row.cobrar));
+                const taxaDisplay = row.percentNominal || row.percent;
+                linhas.push('Taxa: ' + taxaDisplay.toString().replace('.', ',') + '%');
+                linhas.push('');
+                linhas.push('\u2705 *\u00c0 vista (Pix):*');
+                linhas.push('*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_');
+            }
+            
+            linhas.push('');
+            linhas.push('\uD83D\uDD12 *Garantia e proced\u00eancia verificada*');
+            linhas.push('\uD83C\uDFE2 _Atendimento DG Store_');
+            
             return linhas.join("\n");
         },
 
@@ -533,15 +574,33 @@ function cardFeeCalculator() {
             const linhas = [
                 '*Condi\u00e7\u00f5es de pagamento - DG Store* \uD83D\uDCB3',
                 '',
-                '\u2705 *\u00c0 vista (Pix):*',
-                '*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_',
-                '',
-                '\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*',
             ];
-            this.results.forEach(r => {
-                const vlr = r.cobrar / r.parcelas;
-                linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
-            });
+            
+            if (this.downPayment > 0) {
+                linhas.push('\uD83D\uDCB5 *Entrada (Pix):*');
+                linhas.push('*R$ ' + this.formatNumber(this.downPayment) + '*');
+                linhas.push('');
+                linhas.push('\uD83D\uDCB3 *Restante no cart\u00e3o (' + machineName + '):*');
+                this.results.forEach(r => {
+                    const vlr = r.cobrar / r.parcelas;
+                    linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
+                });
+                linhas.push('');
+                linhas.push('\uD83D\uDCB0 *Total geral (entrada + parcelas):*');
+                this.results.forEach(r => {
+                    linhas.push(r.label + ': R$ ' + this.formatNumber(this.downPayment + r.cobrar));
+                });
+            } else {
+                linhas.push('\u2705 *\u00c0 vista (Pix):*');
+                linhas.push('*R$ ' + this.formatNumber(this.amount) + '* _(melhor pre\u00e7o)_');
+                linhas.push('');
+                linhas.push('\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*');
+                this.results.forEach(r => {
+                    const vlr = r.cobrar / r.parcelas;
+                    linhas.push('*' + r.label + ':* ' + r.parcelas + 'x de R$ ' + this.formatNumber(vlr) + ' = R$ ' + this.formatNumber(r.cobrar));
+                });
+            }
+            
             linhas.push('');
             linhas.push('\uD83D\uDD12 *Garantia e proced\u00eancia verificada*');
             linhas.push('\uD83C\uDFE2 _Atendimento DG Store_');
@@ -559,10 +618,10 @@ function cardFeeCalculator() {
                 linhas.push('\u2B07\uFE0F Seu aparelho (trade-in): *- R$ ' + this.formatNumber(this.tradeInValue) + '*');
             }
             linhas.push('');
-            linhas.push('\uD83D\uDCB0 *Restante a pagar: R$ ' + this.formatNumber(this.remaining) + '*');
+            linhas.push('\uD83D\uDCB0 *Restante a pagar: R$ ' + this.formatNumber(this.tiRemaining) + '*');
             linhas.push('');
             linhas.push('\u2705 *\u00c0 vista (Pix):*');
-            linhas.push('*R$ ' + this.formatNumber(this.remaining) + '* _(melhor pre\u00e7o)_');
+            linhas.push('*R$ ' + this.formatNumber(this.tiRemaining) + '* _(melhor pre\u00e7o)_');
             linhas.push('');
             linhas.push('\uD83D\uDCB3 *No cart\u00e3o (' + machineName + '):*');
             this.tiResults.forEach(r => {
