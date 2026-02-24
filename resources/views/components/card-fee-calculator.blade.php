@@ -113,7 +113,7 @@
                             <div :style="'display: grid; grid-template-columns: 1fr auto 56px; align-items: center; border-top: 1px solid #f3f4f6;' + (idx % 2 === 0 ? ' background: white;' : ' background: #f9fafb;')">
                                 <div style="padding: 10px 14px;">
                                     <div style="font-size: 13px; font-weight: 600; color: #111827;" x-text="row.label"></div>
-                                    <div style="font-size: 11px; color: #9ca3af;" x-text="'Taxa ' + row.percent.toString().replace('.', ',') + '%'"></div>
+                                    <div style="font-size: 11px; color: #9ca3af;" x-text="'Taxa ' + (row.percentNominal || row.percent).toString().replace('.', ',') + '%'"></div>
                                     <div x-show="row.parcelas > 1" style="font-size: 11px; color: #6b7280;" x-text="row.parcelas + 'x de R$ ' + formatNumber(row.cobrar / row.parcelas)"></div>
                                 </div>
                                 <div style="padding: 10px 14px; text-align: right;">
@@ -320,43 +320,43 @@ function cardFeeCalculator() {
         copiedAll: false,
         machine: 'sumup',
 
-        // ── Taxas SumUp ──
+        // ── Taxas SumUp (taxa de saque - você recebe menos) ──
         ratesSumUp: [
-            { label: 'Cart\u00e3o 1x', key: '1x', percent: 2.85, parcelas: 1 },
-            { label: 'Cart\u00e3o 2x', key: '2x', percent: 3.9, parcelas: 2 },
-            { label: 'Cart\u00e3o 3x', key: '3x', percent: 4.9, parcelas: 3 },
-            { label: 'Cart\u00e3o 4x', key: '4x', percent: 5.9, parcelas: 4 },
-            { label: 'Cart\u00e3o 5x', key: '5x', percent: 6.9, parcelas: 5 },
-            { label: 'Cart\u00e3o 6x', key: '6x', percent: 7.9, parcelas: 6 },
-            { label: 'Cart\u00e3o 7x', key: '7x', percent: 8.9, parcelas: 7 },
-            { label: 'Cart\u00e3o 8x', key: '8x', percent: 9.9, parcelas: 8 },
-            { label: 'Cart\u00e3o 9x', key: '9x', percent: 9.9, parcelas: 9 },
-            { label: 'Cart\u00e3o 10x', key: '10x', percent: 9.9, parcelas: 10 },
-            { label: 'Cart\u00e3o 11x', key: '11x', percent: 9.9, parcelas: 11 },
-            { label: 'Cart\u00e3o 12x', key: '12x', percent: 9.9, parcelas: 12 },
+            { label: 'Cart\u00e3o 1x', key: '1x', percent: 2.85, percentNominal: 2.85, parcelas: 1 },
+            { label: 'Cart\u00e3o 2x', key: '2x', percent: 3.9, percentNominal: 3.9, parcelas: 2 },
+            { label: 'Cart\u00e3o 3x', key: '3x', percent: 4.9, percentNominal: 4.9, parcelas: 3 },
+            { label: 'Cart\u00e3o 4x', key: '4x', percent: 5.9, percentNominal: 5.9, parcelas: 4 },
+            { label: 'Cart\u00e3o 5x', key: '5x', percent: 6.9, percentNominal: 6.9, parcelas: 5 },
+            { label: 'Cart\u00e3o 6x', key: '6x', percent: 7.9, percentNominal: 7.9, parcelas: 6 },
+            { label: 'Cart\u00e3o 7x', key: '7x', percent: 8.9, percentNominal: 8.9, parcelas: 7 },
+            { label: 'Cart\u00e3o 8x', key: '8x', percent: 9.9, percentNominal: 9.9, parcelas: 8 },
+            { label: 'Cart\u00e3o 9x', key: '9x', percent: 9.9, percentNominal: 9.9, parcelas: 9 },
+            { label: 'Cart\u00e3o 10x', key: '10x', percent: 9.9, percentNominal: 9.9, parcelas: 10 },
+            { label: 'Cart\u00e3o 11x', key: '11x', percent: 9.9, percentNominal: 9.9, parcelas: 11 },
+            { label: 'Cart\u00e3o 12x', key: '12x', percent: 9.9, percentNominal: 9.9, parcelas: 12 },
         ],
         
-        // ── Taxas Stone (taxa sobre o valor desejado - você recebe integral) ──
+        // ── Taxas Stone (percentNominal = exibição | percent = cálculo real) ──
         ratesStone: [
-            { label: 'D\u00e9bito', key: 'debit', percent: 1.09, parcelas: 1 },
-            { label: 'Cr\u00e9dito 1x', key: '1x', percent: 3.29, parcelas: 1 },
-            { label: 'Cr\u00e9dito 2x', key: '2x', percent: 4.70, parcelas: 2 },
-            { label: 'Cr\u00e9dito 3x', key: '3x', percent: 5.81, parcelas: 3 },
-            { label: 'Cr\u00e9dito 4x', key: '4x', percent: 6.83, parcelas: 4 },
-            { label: 'Cr\u00e9dito 5x', key: '5x', percent: 7.74, parcelas: 5 },
-            { label: 'Cr\u00e9dito 6x', key: '6x', percent: 8.22, parcelas: 6 },
-            { label: 'Cr\u00e9dito 7x', key: '7x', percent: 9.41, parcelas: 7 },
-            { label: 'Cr\u00e9dito 8x', key: '8x', percent: 9.53, parcelas: 8 },
-            { label: 'Cr\u00e9dito 9x', key: '9x', percent: 9.89, parcelas: 9 },
-            { label: 'Cr\u00e9dito 10x', key: '10x', percent: 9.89, parcelas: 10 },
-            { label: 'Cr\u00e9dito 11x', key: '11x', percent: 0.99, parcelas: 11 },
-            { label: 'Cr\u00e9dito 12x', key: '12x', percent: 1.01, parcelas: 12 },
-            { label: 'Cr\u00e9dito 13x', key: '13x', percent: 4.20, parcelas: 13 },
-            { label: 'Cr\u00e9dito 14x', key: '14x', percent: 5.07, parcelas: 14 },
-            { label: 'Cr\u00e9dito 15x', key: '15x', percent: 5.95, parcelas: 15 },
-            { label: 'Cr\u00e9dito 16x', key: '16x', percent: 6.85, parcelas: 16 },
-            { label: 'Cr\u00e9dito 17x', key: '17x', percent: 7.76, parcelas: 17 },
-            { label: 'Cr\u00e9dito 18x', key: '18x', percent: 8.68, parcelas: 18 },
+            { label: 'D\u00e9bito', key: 'debit', percent: 1.09, percentNominal: 1.09, parcelas: 1 },
+            { label: 'Cr\u00e9dito 1x', key: '1x', percent: 3.29, percentNominal: 3.19, parcelas: 1 },
+            { label: 'Cr\u00e9dito 2x', key: '2x', percent: 4.70, percentNominal: 4.49, parcelas: 2 },
+            { label: 'Cr\u00e9dito 3x', key: '3x', percent: 5.81, percentNominal: 5.49, parcelas: 3 },
+            { label: 'Cr\u00e9dito 4x', key: '4x', percent: 6.83, percentNominal: 6.39, parcelas: 4 },
+            { label: 'Cr\u00e9dito 5x', key: '5x', percent: 7.74, percentNominal: 7.19, parcelas: 5 },
+            { label: 'Cr\u00e9dito 6x', key: '6x', percent: 8.22, percentNominal: 7.59, parcelas: 6 },
+            { label: 'Cr\u00e9dito 7x', key: '7x', percent: 9.41, percentNominal: 8.59, parcelas: 7 },
+            { label: 'Cr\u00e9dito 8x', key: '8x', percent: 9.53, percentNominal: 8.69, parcelas: 8 },
+            { label: 'Cr\u00e9dito 9x', key: '9x', percent: 9.89, percentNominal: 8.99, parcelas: 9 },
+            { label: 'Cr\u00e9dito 10x', key: '10x', percent: 9.89, percentNominal: 8.99, parcelas: 10 },
+            { label: 'Cr\u00e9dito 11x', key: '11x', percent: 0.99, percentNominal: 9.97, parcelas: 11 },
+            { label: 'Cr\u00e9dito 12x', key: '12x', percent: 1.01, percentNominal: 9.99, parcelas: 12 },
+            { label: 'Cr\u00e9dito 13x', key: '13x', percent: 4.20, percentNominal: 12.75, parcelas: 13 },
+            { label: 'Cr\u00e9dito 14x', key: '14x', percent: 5.07, percentNominal: 13.47, parcelas: 14 },
+            { label: 'Cr\u00e9dito 15x', key: '15x', percent: 5.95, percentNominal: 14.19, parcelas: 15 },
+            { label: 'Cr\u00e9dito 16x', key: '16x', percent: 6.85, percentNominal: 14.91, parcelas: 16 },
+            { label: 'Cr\u00e9dito 17x', key: '17x', percent: 7.76, percentNominal: 15.63, parcelas: 17 },
+            { label: 'Cr\u00e9dito 18x', key: '18x', percent: 8.68, percentNominal: 16.35, parcelas: 18 },
         ],
         
         amountInput: '',
