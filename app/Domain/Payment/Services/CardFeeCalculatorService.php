@@ -13,8 +13,9 @@ class CardFeeCalculatorService
     /**
      * Calcula o valor bruto que o cliente deve pagar para que o lojista receba o valor líquido desejado
      * 
-     * Regra Stone: A taxa é por conta do cliente (acréscimo)
-     * Fórmula: bruto = liquido * (1 + taxaDecimal)
+     * Regra Stone: Taxa MDR é desconto sobre o bruto (cliente assume a taxa)
+     * Fórmula: liquido = bruto * (1 - taxaDecimal)
+     * Gross-up: bruto = liquido / (1 - taxaDecimal)
      * Arredondamento: Math.round por parcela para evitar diferenças de centavos
      * 
      * @param float $netDesired Valor líquido que o lojista deseja receber
@@ -63,10 +64,10 @@ class CardFeeCalculatorService
         $taxaDecimal = bcdiv((string) $mdrRate, '100', 4);
 
         // Calcula o valor bruto usando BCMath para precisão
-        // bruto = liquido * (1 + taxaDecimal)
+        // Gross-up: bruto = liquido / (1 - taxaDecimal)
         $netStr = number_format($netDesired, 2, '.', '');
-        $multiplicador = bcadd('1', $taxaDecimal, 4);
-        $brutoBcmath = bcmul($netStr, $multiplicador, 4);
+        $divisor = bcsub('1', $taxaDecimal, 4); // (1 - taxa)
+        $brutoBcmath = bcdiv($netStr, $divisor, 4);
 
         // Calcula valor por parcela e arredonda
         $parcelaBruta = bcdiv($brutoBcmath, (string) $installments, 4);

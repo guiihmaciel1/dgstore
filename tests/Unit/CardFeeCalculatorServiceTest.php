@@ -65,12 +65,12 @@ class CardFeeCalculatorServiceTest extends TestCase
         $this->assertEquals($expectedRate, $result->mdrRate);
         $this->assertEquals(1000.00, $result->netAmount);
         
-        // Cálculo esperado: 1000 * (1 + 0.0999) = 1099.90
-        // Parcela: 1099.90 / 12 = 91.658333... → round = 91.66
-        // Total: 91.66 * 12 = 1099.92
-        $this->assertEquals(1099.92, $result->grossAmount);
-        $this->assertEquals(99.92, $result->feeAmount);
-        $this->assertEquals(91.66, $result->installmentValue);
+        // Cálculo esperado (gross-up): 1000 / (1 - 0.0999) = 1110.9876
+        // Parcela: 1110.9876 / 12 = 92.5823 → round = 92.58
+        // Total: 92.58 * 12 = 1110.96
+        $this->assertEquals(1110.96, $result->grossAmount);
+        $this->assertEquals(110.96, $result->feeAmount);
+        $this->assertEquals(92.58, $result->installmentValue);
     }
 
     public function test_debit_calculation(): void
@@ -86,10 +86,10 @@ class CardFeeCalculatorServiceTest extends TestCase
         $this->assertEquals(1, $result->installments);
         $this->assertEquals(1.09, $result->mdrRate);
         
-        // Cálculo: 1000 * (1 + 0.0109) = 1010.90
-        $this->assertEquals(1010.90, $result->grossAmount);
-        $this->assertEquals(10.90, $result->feeAmount);
-        $this->assertEquals(1010.90, $result->installmentValue);
+        // Cálculo (gross-up): 1000 / (1 - 0.0109) = 1011.02
+        $this->assertEquals(1011.02, $result->grossAmount);
+        $this->assertEquals(11.02, $result->feeAmount);
+        $this->assertEquals(1011.02, $result->installmentValue);
     }
 
     public function test_credit_1x_calculation(): void
@@ -105,9 +105,9 @@ class CardFeeCalculatorServiceTest extends TestCase
         $this->assertEquals(1, $result->installments);
         $this->assertEquals(3.19, $result->mdrRate);
         
-        // Cálculo: 1000 * (1 + 0.0319) = 1031.90
-        $this->assertEquals(1031.90, $result->grossAmount);
-        $this->assertEquals(31.90, $result->feeAmount);
+        // Cálculo (gross-up): 1000 / (1 - 0.0319) = 1032.95
+        $this->assertEquals(1032.95, $result->grossAmount);
+        $this->assertEquals(32.95, $result->feeAmount);
     }
 
     public function test_credit_6x_calculation(): void
@@ -122,11 +122,11 @@ class CardFeeCalculatorServiceTest extends TestCase
         $this->assertEquals(6, $result->installments);
         $this->assertEquals(7.59, $result->mdrRate);
         
-        // Cálculo: 1000 * (1 + 0.0759) = 1075.90
-        // Parcela: 1075.90 / 6 = 179.316666... → round = 179.32
-        // Total: 179.32 * 6 = 1075.92
-        $this->assertEquals(1075.92, $result->grossAmount);
-        $this->assertEquals(179.32, $result->installmentValue);
+        // Cálculo (gross-up): 1000 / (1 - 0.0759) = 1082.14
+        // Parcela: 1082.14 / 6 = 180.356666... → round = 180.36
+        // Total: 180.36 * 6 = 1082.16
+        $this->assertEquals(1082.16, $result->grossAmount);
+        $this->assertEquals(180.36, $result->installmentValue);
     }
 
     public function test_credit_18x_calculation(): void
@@ -141,11 +141,11 @@ class CardFeeCalculatorServiceTest extends TestCase
         $this->assertEquals(18, $result->installments);
         $this->assertEquals(16.35, $result->mdrRate);
         
-        // Cálculo: 1000 * (1 + 0.1635) = 1163.50
-        // Parcela: 1163.50 / 18 = 64.638888... → round = 64.64
-        // Total: 64.64 * 18 = 1163.52
-        $this->assertEquals(1163.52, $result->grossAmount);
-        $this->assertEquals(64.64, $result->installmentValue);
+        // Cálculo (gross-up): 1000 / (1 - 0.1635) = 1195.46
+        // Parcela: 1195.46 / 18 = 66.414444... → round = 66.41
+        // Total: 66.41 * 18 = 1195.38
+        $this->assertEquals(1195.38, $result->grossAmount);
+        $this->assertEquals(66.41, $result->installmentValue);
     }
 
     public function test_bcmath_precision_with_small_values(): void
