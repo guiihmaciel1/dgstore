@@ -126,6 +126,19 @@
                     <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f4f6; border-top-color: #111827; border-radius: 50%; animation: spin 1s linear infinite;"></div>
                 </div>
 
+                <!-- Erro -->
+                <div x-show="error && !loading" x-transition style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
+                    <div style="display: flex; align-items: start; gap: 10px;">
+                        <svg style="width: 20px; height: 20px; color: #dc2626; flex-shrink: 0; margin-top: 2px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 600; color: #dc2626; margin-bottom: 4px;">Erro</div>
+                            <div style="font-size: 12px; color: #991b1b;" x-text="error"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Resultados -->
                 <div x-show="!loading && results.length > 0" x-transition>
                     <!-- Pix (melhor preço) -->
@@ -228,6 +241,7 @@ function cardFeeCalculator() {
         open: false,
         loading: false,
         copiedAll: false,
+        error: '',
         deliveryType: 'pronta',
         deviceDescription: '',
         
@@ -294,6 +308,7 @@ function cardFeeCalculator() {
             }
 
             this.loading = true;
+            this.error = '';
 
             try {
                 const response = await fetch('/api/card-fees/calculate-all', {
@@ -313,12 +328,15 @@ function cardFeeCalculator() {
                         label: r.payment_type === 'debit' ? 'Débito' : (r.installments === 1 ? 'Crédito 1x' : `Crédito ${r.installments}x`),
                         copied: false
                     }));
+                    this.error = '';
                 } else {
                     console.error('Erro ao calcular taxas:', data.message);
+                    this.error = data.message || 'Erro ao calcular taxas';
                     this.results = [];
                 }
             } catch (error) {
                 console.error('Erro na requisição:', error);
+                this.error = 'Erro ao conectar com o servidor. Verifique sua conexão.';
                 this.results = [];
             } finally {
                 this.loading = false;

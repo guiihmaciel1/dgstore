@@ -41,11 +41,22 @@ class CardFeeCalculatorService
             throw new InvalidArgumentException('Débito só permite 1 parcela');
         }
 
-        // Busca a taxa MDR
-        $mdrRate = CardMdrRate::getRateFor($type, $installments);
+        // Busca a taxa MDR (com fallback se banco não disponível)
+        $mdrRate = null;
+        
+        try {
+            $mdrRate = CardMdrRate::getRateFor($type, $installments);
+        } catch (\Exception $e) {
+            // Ignora erros de conexão e usa fallback
+        }
         
         if ($mdrRate === null) {
-            throw new InvalidArgumentException("Taxa MDR não encontrada para {$type} {$installments}x");
+            // Fallback: usa taxas hardcoded se banco não estiver populado/disponível
+            $mdrRate = $this->getFallbackRate($type, $installments);
+            
+            if ($mdrRate === null) {
+                throw new InvalidArgumentException("Taxa MDR não encontrada para {$type} {$installments}x");
+            }
         }
 
         // Converte taxa percentual para decimal
@@ -139,5 +150,27 @@ class CardFeeCalculatorService
 
         $remaining = $devicePrice - $tradeInValue;
         return $this->calculateAllOptions($remaining);
+    }
+
+    /**
+     * Fallback: retorna taxas hardcoded caso banco não esteja populado
+     * 
+     * @param string $type
+     * @param int $installments
+     * @return float|null
+     */
+    private function getFallbackRate(string $type, int $installments): ?float
+    {
+        if ($type === 'debit') {
+            return $installments === 1 ? 1.09 : null;
+        }
+
+        $creditRates = [
+            1 => 3.19, 2 => 4.49, 3 => 5.49, 4 => 6.39, 5 => 7.19, 6 => 7.59,
+            7 => 8.59, 8 => 8.69, 9 => 8.99, 10 => 8.99, 11 => 9.97, 12 => 9.99,
+            13 => 12.75, 14 => 13.47, 15 => 14.19, 16 => 14.91, 17 => 15.63, 18 => 16.35,
+        ];
+
+        return $creditRates[$installments] ?? null;
     }
 }
