@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AppleProductSeeder::class,
             SupplierSeeder::class,
             FinanceCategorySeeder::class,
+            CardMdrRateSeeder::class,
             B2BSeeder::class,
             PerfumeProductSeeder::class,
         ]);

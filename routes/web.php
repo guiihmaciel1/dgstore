@@ -17,6 +17,7 @@ use App\Presentation\Http\Controllers\ToolController;
 use App\Presentation\Http\Controllers\WarrantyController;
 use App\Presentation\Http\Controllers\CrmController;
 use App\Presentation\Http\Controllers\FinanceController;
+use App\Presentation\Http\Controllers\CardFeeController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BDashboardController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BProductController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BReportController;
@@ -122,6 +123,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
         Route::patch('/sales/{sale}/status', [SaleController::class, 'updateStatus'])->name('sales.update-status');
         Route::get('/sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
+
+        // API - Calculadora de Taxas de Cartão
+        Route::post('/api/card-fees/calculate', [CardFeeController::class, 'calculate'])->name('card-fees.calculate');
+        Route::post('/api/card-fees/calculate-all', [CardFeeController::class, 'calculateAll'])->name('card-fees.calculate-all');
+        Route::post('/api/card-fees/calculate-with-down-payment', [CardFeeController::class, 'calculateWithDownPayment'])->name('card-fees.calculate-with-down-payment');
+        Route::post('/api/card-fees/calculate-with-trade-in', [CardFeeController::class, 'calculateWithTradeIn'])->name('card-fees.calculate-with-trade-in');
 
         // Estoque
         Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
