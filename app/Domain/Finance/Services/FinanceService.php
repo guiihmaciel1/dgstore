@@ -151,16 +151,15 @@ class FinanceService
         return $this->getTransactions('income', $perPage, $filters);
     }
 
+    private const SYSTEM_EXPENSE_CATEGORIES = ['Trade-in', 'Custo de Mercadoria'];
+
     private function getTransactions(string $type, int $perPage, array $filters): LengthAwarePaginator
     {
         $query = FinancialTransaction::with(['category', 'account', 'user'])
             ->where('type', $type);
 
         if ($type === 'expense') {
-            $tradeInCategory = FinancialCategory::where('name', 'Trade-in')->first();
-            if ($tradeInCategory) {
-                $query->where('category_id', '!=', $tradeInCategory->id);
-            }
+            $this->excludeSystemExpenseCategories($query);
         }
 
         $statusFilter = $filters['status'] ?? null;
@@ -193,14 +192,20 @@ class FinanceService
             ->withQueryString();
     }
 
+    private function excludeSystemExpenseCategories($query): void
+    {
+        $categoryIds = FinancialCategory::whereIn('name', self::SYSTEM_EXPENSE_CATEGORIES)
+            ->pluck('id');
+
+        if ($categoryIds->isNotEmpty()) {
+            $query->whereNotIn('category_id', $categoryIds);
+        }
+    }
+
     public function getPayablesSummary(array $filters = []): array
     {
         $query = FinancialTransaction::expense();
-
-        $tradeInCategory = FinancialCategory::where('name', 'Trade-in')->first();
-        if ($tradeInCategory) {
-            $query->where('category_id', '!=', $tradeInCategory->id);
-        }
+        $this->excludeSystemExpenseCategories($query);
         
         if (!empty($filters['start_date'])) {
             $query->where('due_date', '>=', $filters['start_date']);
@@ -225,30 +230,14 @@ class FinanceService
             $query->whereIn('status', ['pending', 'overdue', 'paid']);
         }
         
-        $custoMercadoriaCategory = FinancialCategory::where('name', 'Custo de Mercadoria')->first();
-        
         $pending = (float) (clone $query)->whereIn('status', ['pending', 'overdue'])->sum('amount');
         $paidInPeriod = (float) (clone $query)->where('status', 'paid')->sum('amount');
         
-        $custoMercadoria = 0;
-        $paidExcludingCMV = $paidInPeriod;
-        
-        if ($custoMercadoriaCategory) {
-            $custoMercadoria = (float) (clone $query)
-                ->where('status', 'paid')
-                ->where('category_id', $custoMercadoriaCategory->id)
-                ->sum('amount');
-            
-            $paidExcludingCMV = $paidInPeriod - $custoMercadoria;
-        }
-        
         $overdueQuery = FinancialTransaction::expense()->overdue();
-        if ($tradeInCategory) {
-            $overdueQuery->where('category_id', '!=', $tradeInCategory->id);
-        }
+        $this->excludeSystemExpenseCategories($overdueQuery);
         $overdue = (float) $overdueQuery->sum('amount');
 
-        return compact('pending', 'overdue', 'paidInPeriod', 'custoMercadoria', 'paidExcludingCMV');
+        return compact('pending', 'overdue', 'paidInPeriod');
     }
 
     public function getReceivablesSummary(array $filters = []): array
