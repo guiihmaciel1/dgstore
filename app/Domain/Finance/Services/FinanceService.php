@@ -151,7 +151,7 @@ class FinanceService
         return $this->getTransactions('income', $perPage, $filters);
     }
 
-    private const SYSTEM_EXPENSE_CATEGORIES = ['Trade-in', 'Custo de Mercadoria'];
+    private const SYSTEM_EXPENSE_CATEGORIES = ['Trade-in', 'Custo de Mercadoria', 'Compra Fornecedor'];
 
     private function getTransactions(string $type, int $perPage, array $filters): LengthAwarePaginator
     {
