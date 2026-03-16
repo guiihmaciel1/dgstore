@@ -45,7 +45,7 @@ class FinanceController extends Controller
 
         $transactions = $this->financeService->getPayables(20, $filters);
         $summary = $this->financeService->getPayablesSummary($filters);
-        $categories = $this->financeService->getCategoriesByType('expense');
+        $categories = $this->financeService->getCategoriesByType('expense')->where('name', '!=', 'Trade-in');
         $accounts = $this->financeService->getAccounts();
 
         return view('finance.payables', compact('transactions', 'summary', 'categories', 'accounts', 'filters'));

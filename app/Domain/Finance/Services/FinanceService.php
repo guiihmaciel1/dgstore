@@ -156,6 +156,13 @@ class FinanceService
         $query = FinancialTransaction::with(['category', 'account', 'user'])
             ->where('type', $type);
 
+        if ($type === 'expense') {
+            $tradeInCategory = FinancialCategory::where('name', 'Trade-in')->first();
+            if ($tradeInCategory) {
+                $query->where('category_id', '!=', $tradeInCategory->id);
+            }
+        }
+
         $statusFilter = $filters['status'] ?? null;
         
         if ($statusFilter && trim($statusFilter) !== '') {
@@ -189,6 +196,11 @@ class FinanceService
     public function getPayablesSummary(array $filters = []): array
     {
         $query = FinancialTransaction::expense();
+
+        $tradeInCategory = FinancialCategory::where('name', 'Trade-in')->first();
+        if ($tradeInCategory) {
+            $query->where('category_id', '!=', $tradeInCategory->id);
+        }
         
         if (!empty($filters['start_date'])) {
             $query->where('due_date', '>=', $filters['start_date']);
@@ -230,7 +242,11 @@ class FinanceService
             $paidExcludingCMV = $paidInPeriod - $custoMercadoria;
         }
         
-        $overdue = (float) FinancialTransaction::expense()->overdue()->sum('amount');
+        $overdueQuery = FinancialTransaction::expense()->overdue();
+        if ($tradeInCategory) {
+            $overdueQuery->where('category_id', '!=', $tradeInCategory->id);
+        }
+        $overdue = (float) $overdueQuery->sum('amount');
 
         return compact('pending', 'overdue', 'paidInPeriod', 'custoMercadoria', 'paidExcludingCMV');
     }
