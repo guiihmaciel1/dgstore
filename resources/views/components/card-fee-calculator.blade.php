@@ -164,20 +164,20 @@
                                 onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
                             Até 12x
                         </button>
-                        <button @click="setSelection('up_to_10')" type="button"
+                        <button @click="setSelection('above_6')" type="button"
                                 style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
                                 onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
-                            Até 10x
+                            Acima de 6x
                         </button>
-                        <button @click="setSelection('up_to_8')" type="button"
+                        <button @click="setSelection('above_8')" type="button"
                                 style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
                                 onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
-                            Até 8x
+                            Acima de 8x
                         </button>
-                        <button @click="setSelection('none')" type="button"
+                        <button @click="setSelection('above_10')" type="button"
                                 style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
                                 onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
-                            Nenhuma
+                            Acima de 10x
                         </button>
                     </div>
 
@@ -470,14 +470,14 @@ function cardFeeCalculator() {
             this.results.forEach(r => {
                 if (preset === 'all') {
                     r.selected = true;
-                } else if (preset === 'none') {
-                    r.selected = false;
                 } else if (preset === 'up_to_12') {
                     r.selected = r.payment_type === 'debit' || r.installments <= 12;
-                } else if (preset === 'up_to_10') {
-                    r.selected = r.payment_type === 'debit' || r.installments <= 10;
-                } else if (preset === 'up_to_8') {
-                    r.selected = r.payment_type === 'debit' || r.installments <= 8;
+                } else if (preset === 'above_6') {
+                    r.selected = r.payment_type === 'debit' || r.installments > 6;
+                } else if (preset === 'above_8') {
+                    r.selected = r.payment_type === 'debit' || r.installments > 8;
+                } else if (preset === 'above_10') {
+                    r.selected = r.payment_type === 'debit' || r.installments > 10;
                 }
             });
         },
