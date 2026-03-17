@@ -152,15 +152,51 @@
                         </div>
                     </div>
 
+                    <!-- Filtro de parcelas -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
+                        <button @click="setSelection('all')" type="button"
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                            Todas
+                        </button>
+                        <button @click="setSelection('up_to_12')" type="button"
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                            Até 12x
+                        </button>
+                        <button @click="setSelection('up_to_10')" type="button"
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                            Até 10x
+                        </button>
+                        <button @click="setSelection('up_to_8')" type="button"
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                            Até 8x
+                        </button>
+                        <button @click="setSelection('none')" type="button"
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                            Nenhuma
+                        </button>
+                    </div>
+
                     <!-- Cartão -->
                     <div style="border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
-                        <div style="display: grid; grid-template-columns: 1fr auto 56px; background: #111827; color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                        <div style="display: grid; grid-template-columns: 28px 1fr auto 56px; background: #111827; color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                            <div style="padding: 10px 0 10px 10px; display: flex; align-items: center;">
+                                <input type="checkbox" :checked="results.every(r => r.selected)" @change="results.forEach(r => r.selected = $event.target.checked)"
+                                       style="width: 14px; height: 14px; accent-color: white; cursor: pointer;">
+                            </div>
                             <div style="padding: 10px 14px;">Forma</div>
                             <div style="padding: 10px 14px; text-align: right;">Cliente Paga</div>
                             <div style="padding: 10px 10px; text-align: center;"></div>
                         </div>
                         <template x-for="(row, idx) in results" :key="idx">
-                            <div :style="'display: grid; grid-template-columns: 1fr auto 56px; align-items: center; border-top: 1px solid #f3f4f6;' + (idx % 2 === 0 ? ' background: white;' : ' background: #f9fafb;')">
+                            <div :style="'display: grid; grid-template-columns: 28px 1fr auto 56px; align-items: center; border-top: 1px solid #f3f4f6;' + (row.selected ? (idx % 2 === 0 ? ' background: white;' : ' background: #f9fafb;') : ' background: #f3f4f6; opacity: 0.5;')">
+                                <div style="padding: 10px 0 10px 10px; display: flex; align-items: center;">
+                                    <input type="checkbox" x-model="row.selected" style="width: 14px; height: 14px; accent-color: #111827; cursor: pointer;">
+                                </div>
                                 <div style="padding: 10px 14px;">
                                     <div style="font-size: 13px; font-weight: 600; color: #111827;" x-text="row.label"></div>
                                     <div x-show="row.installments > 1" style="font-size: 11px; color: #6b7280;" x-text="row.installments + 'x de R$ ' + formatNumber(row.installment_value)"></div>
@@ -326,7 +362,8 @@ function cardFeeCalculator() {
                     this.results = data.data.map(r => ({
                         ...r,
                         label: r.payment_type === 'debit' ? 'Débito' : (r.installments === 1 ? 'Crédito 1x' : `Crédito ${r.installments}x`),
-                        copied: false
+                        copied: false,
+                        selected: true
                     }));
                     this.error = '';
                 } else {
@@ -355,7 +392,7 @@ function cardFeeCalculator() {
             if (this.downPayment > 0 || this.tradeInValue > 0) {
                 if (this.tradeInValue > 0) {
                     linhas.push('📱 *Aparelho novo:* R$ ' + this.formatNumber(this.amount));
-                    linhas.push('⬇️ *Trade-in:* - R$ ' + this.formatNumber(this.tradeInValue));
+                    linhas.push('⬇️ *Entrada seminovo:* - R$ ' + this.formatNumber(this.tradeInValue));
                     linhas.push('');
                 }
                 if (this.downPayment > 0) {
@@ -364,10 +401,16 @@ function cardFeeCalculator() {
                     linhas.push('');
                 }
                 linhas.push('💳 *Restante no cartão:*');
-                linhas.push(`*${row.installments}x de R$ ${this.formatNumber(vlr)}*`);
+                const parcLabel = row.payment_type === 'debit' 
+                    ? `Débito R$ ${this.formatNumber(vlr)}`
+                    : `*${row.installments}x de R$ ${this.formatNumber(vlr)}*`;
+                linhas.push(parcLabel);
             } else {
                 linhas.push('💳 *No cartão:*');
-                linhas.push(`*${row.installments}x de R$ ${this.formatNumber(vlr)}*`);
+                const parcLabel = row.payment_type === 'debit'
+                    ? `Débito R$ ${this.formatNumber(vlr)}`
+                    : `*${row.installments}x de R$ ${this.formatNumber(vlr)}*`;
+                linhas.push(parcLabel);
                 linhas.push('');
                 linhas.push('✅ *À vista (Pix):*');
                 linhas.push(`*R$ ${this.formatNumber(this.finalAmount)}* _(melhor preço)_`);
@@ -390,7 +433,7 @@ function cardFeeCalculator() {
 
             if (this.tradeInValue > 0) {
                 linhas.push('📱 *Aparelho novo:* R$ ' + this.formatNumber(this.amount));
-                linhas.push('⬇️ *Trade-in:* - R$ ' + this.formatNumber(this.tradeInValue));
+                linhas.push('⬇️ *Entrada seminovo:* - R$ ' + this.formatNumber(this.tradeInValue));
                 linhas.push('');
             }
 
@@ -407,8 +450,13 @@ function cardFeeCalculator() {
             }
 
             this.results.forEach(r => {
+                if (!r.selected) return;
                 const vlr = r.installment_value;
-                linhas.push(`${r.installments}x de R$ ${this.formatNumber(vlr)}`);
+                if (r.payment_type === 'debit') {
+                    linhas.push(`Débito R$ ${this.formatNumber(vlr)}`);
+                } else {
+                    linhas.push(`${r.installments}x de R$ ${this.formatNumber(vlr)}`);
+                }
             });
             
             linhas.push('');
@@ -416,6 +464,22 @@ function cardFeeCalculator() {
             linhas.push('🏢 _Atendimento DG Store_');
             
             return linhas.join('\n');
+        },
+
+        setSelection(preset) {
+            this.results.forEach(r => {
+                if (preset === 'all') {
+                    r.selected = true;
+                } else if (preset === 'none') {
+                    r.selected = false;
+                } else if (preset === 'up_to_12') {
+                    r.selected = r.payment_type === 'debit' || r.installments <= 12;
+                } else if (preset === 'up_to_10') {
+                    r.selected = r.payment_type === 'debit' || r.installments <= 10;
+                } else if (preset === 'up_to_8') {
+                    r.selected = r.payment_type === 'debit' || r.installments <= 8;
+                }
+            });
         },
 
         async copyRow(row) {
