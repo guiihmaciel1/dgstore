@@ -44,6 +44,8 @@ Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
 });
 
+Route::middleware('auth')->get('/keepalive', fn () => response()->json(['ok' => true]))->name('keepalive');
+
 // Rotas autenticadas
 Route::middleware(['auth', 'verified'])->group(function () {
 

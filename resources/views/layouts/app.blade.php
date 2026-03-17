@@ -45,5 +45,13 @@
         <x-card-fee-calculator />
 
         @stack('scripts')
+
+        @auth
+        <script>
+            setInterval(() => fetch('{{ route("keepalive") }}', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            }).catch(() => {}), 300000);
+        </script>
+        @endauth
     </body>
 </html>
