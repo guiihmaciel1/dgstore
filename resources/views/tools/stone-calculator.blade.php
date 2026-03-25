@@ -34,44 +34,113 @@
                                 <span x-text="editingQuickValues ? 'Fechar' : 'Editar'"></span>
                             </button>
                         </div>
+
+                        <!-- Lista de aparelhos -->
                         <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                             <template x-for="(qv, idx) in quickValues" :key="idx">
-                                <button @click="selectQuickValue(qv)" type="button"
-                                        :style="deviceDescription === qv.name && amountInput === formatNumber(qv.value)
-                                            ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #111827; background: #111827; color: white; white-space: nowrap;'
-                                            : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: white; color: #374151; white-space: nowrap;'">
-                                    <span x-text="qv.name"></span>
-                                    <span style="opacity: 0.6; margin-left: 4px;" x-text="'R$ ' + formatNumber(qv.value)"></span>
-                                </button>
+                                <div style="display: inline-flex;">
+                                    <!-- Aparelho sem variantes (valor único) -->
+                                    <template x-if="!qv.variants || qv.variants.length === 0">
+                                        <button @click="selectQuickValue(qv.name, qv.value)" type="button"
+                                                :style="isQuickValueActive(qv.name, qv.value)
+                                                    ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #111827; background: #111827; color: white; white-space: nowrap;'
+                                                    : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: white; color: #374151; white-space: nowrap;'">
+                                            <span x-text="qv.name"></span>
+                                            <span style="opacity: 0.6; margin-left: 4px;" x-text="'R$ ' + formatNumber(qv.value)"></span>
+                                        </button>
+                                    </template>
+                                    <!-- Aparelho com variantes (cores) -->
+                                    <template x-if="qv.variants && qv.variants.length > 0">
+                                        <div :style="isQuickValueActiveByName(qv.name)
+                                                ? 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #111827; overflow: hidden;'
+                                                : 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #e5e7eb; overflow: hidden;'">
+                                            <span style="padding: 6px 8px 6px 12px; font-size: 12px; font-weight: 600; color: #374151; white-space: nowrap;" x-text="qv.name"></span>
+                                            <template x-for="(v, vi) in qv.variants" :key="vi">
+                                                <button @click="selectQuickValue(qv.name + ' ' + v.label, v.value)" type="button"
+                                                        :style="isQuickValueActive(qv.name + ' ' + v.label, v.value)
+                                                            ? 'padding: 4px 8px; cursor: pointer; border: none; background: #111827; display: flex; align-items: center; gap: 4px;'
+                                                            : 'padding: 4px 8px; cursor: pointer; border: none; background: transparent; display: flex; align-items: center; gap: 4px;'"
+                                                        :title="v.label + ' - R$ ' + formatNumber(v.value)">
+                                                    <span :style="'width: 14px; height: 14px; border-radius: 50%; border: 2px solid ' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'white' : '#d1d5db') + '; background: ' + v.color + ';'"></span>
+                                                    <span :style="'font-size: 11px; font-weight: 600;' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? ' color: white;' : ' color: #6b7280;')"
+                                                          x-text="formatNumber(v.value)"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
                             </template>
                         </div>
+
                         <!-- Edição dos valores rápidos -->
                         <div x-show="editingQuickValues" x-transition style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb;">
                             <template x-for="(qv, idx) in quickValues" :key="'edit-'+idx">
-                                <div style="display: grid; grid-template-columns: 1fr 120px 32px; gap: 6px; margin-bottom: 6px; align-items: center;">
-                                    <input type="text" x-model="qv.name" @change="saveQuickValues()" placeholder="Nome"
-                                           style="padding: 6px 10px; font-size: 13px; border: 1px solid #e5e7eb; border-radius: 6px; outline: none;"
-                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                    <div style="position: relative;">
-                                        <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 11px;">R$</span>
-                                        <input type="text" :value="formatNumber(qv.value)" @change="qv.value = parseNumber($event.target.value); saveQuickValues()" placeholder="0,00"
-                                               style="width: 100%; padding: 6px 8px 6px 28px; font-size: 13px; border: 1px solid #e5e7eb; border-radius: 6px; outline: none; text-align: right;"
+                                <div style="margin-bottom: 8px; padding: 8px; background: #f9fafb; border-radius: 8px;">
+                                    <div style="display: grid; grid-template-columns: 1fr auto 28px; gap: 6px; align-items: center;">
+                                        <input type="text" x-model="qv.name" @change="saveQuickValues()" placeholder="Nome do aparelho"
+                                               style="padding: 6px 10px; font-size: 13px; border: 1px solid #e5e7eb; border-radius: 6px; outline: none; background: white;"
                                                onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        <template x-if="!qv.variants || qv.variants.length === 0">
+                                            <div style="position: relative;">
+                                                <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 11px;">R$</span>
+                                                <input type="text" :value="formatNumber(qv.value)" @change="qv.value = parseNumber($event.target.value); saveQuickValues()" placeholder="0,00"
+                                                       style="width: 120px; padding: 6px 8px 6px 28px; font-size: 13px; border: 1px solid #e5e7eb; border-radius: 6px; outline: none; text-align: right; background: white;"
+                                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                            </div>
+                                        </template>
+                                        <template x-if="qv.variants && qv.variants.length > 0"><span></span></template>
+                                        <button @click="removeQuickValue(idx)" type="button" title="Remover"
+                                                style="width: 28px; height: 28px; border-radius: 6px; border: none; background: #fef2f2; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center;"
+                                                onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background='#fef2f2'; this.style.color='#ef4444'">
+                                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
                                     </div>
-                                    <button @click="removeQuickValue(idx)" type="button" title="Remover"
-                                            style="width: 28px; height: 28px; border-radius: 6px; border: none; background: #fef2f2; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center;"
-                                            onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background='#fef2f2'; this.style.color='#ef4444'">
-                                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                        </svg>
-                                    </button>
+                                    <!-- Variantes -->
+                                    <template x-if="qv.variants && qv.variants.length > 0">
+                                        <div style="margin-top: 6px; padding-left: 4px;">
+                                            <template x-for="(v, vi) in qv.variants" :key="'var-'+vi">
+                                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                                    <span :style="'width: 16px; height: 16px; border-radius: 50%; border: 2px solid #d1d5db; background: ' + v.color + '; flex-shrink: 0;'"></span>
+                                                    <input type="text" x-model="v.label" @change="saveQuickValues()" placeholder="Cor"
+                                                           style="padding: 4px 8px; font-size: 12px; border: 1px solid #e5e7eb; border-radius: 5px; outline: none; width: 90px; background: white;">
+                                                    <input type="text" x-model="v.color" @change="saveQuickValues()" placeholder="#hex"
+                                                           style="padding: 4px 8px; font-size: 12px; border: 1px solid #e5e7eb; border-radius: 5px; outline: none; width: 70px; background: white; font-family: monospace;">
+                                                    <div style="position: relative; flex: 1;">
+                                                        <span style="position: absolute; left: 6px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 10px;">R$</span>
+                                                        <input type="text" :value="formatNumber(v.value)" @change="v.value = parseNumber($event.target.value); saveQuickValues()"
+                                                               style="width: 100%; padding: 4px 6px 4px 24px; font-size: 12px; border: 1px solid #e5e7eb; border-radius: 5px; outline: none; text-align: right; background: white;">
+                                                    </div>
+                                                    <button @click="qv.variants.splice(vi, 1); saveQuickValues()" type="button"
+                                                            style="width: 22px; height: 22px; border-radius: 4px; border: none; background: #fef2f2; color: #ef4444; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                                        <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </template>
+                                            <button @click="qv.variants.push({ label: '', color: '#cccccc', value: 0 }); saveQuickValues()" type="button"
+                                                    style="padding: 3px 8px; font-size: 11px; color: #9ca3af; background: none; border: 1px dashed #d1d5db; border-radius: 4px; cursor: pointer;"
+                                                    onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9ca3af'">
+                                                + Cor
+                                            </button>
+                                        </div>
+                                    </template>
                                 </div>
                             </template>
-                            <button @click="addQuickValue()" type="button"
-                                    style="padding: 6px 12px; font-size: 12px; font-weight: 500; color: #6b7280; background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 6px; cursor: pointer; width: 100%;"
-                                    onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='#d1d5db'; this.style.color='#6b7280'">
-                                + Adicionar aparelho
-                            </button>
+                            <div style="display: flex; gap: 6px;">
+                                <button @click="addQuickValue(false)" type="button"
+                                        style="flex: 1; padding: 6px 12px; font-size: 12px; font-weight: 500; color: #6b7280; background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 6px; cursor: pointer;"
+                                        onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='#d1d5db'; this.style.color='#6b7280'">
+                                    + Aparelho
+                                </button>
+                                <button @click="addQuickValue(true)" type="button"
+                                        style="flex: 1; padding: 6px 12px; font-size: 12px; font-weight: 500; color: #6b7280; background: #f9fafb; border: 1px dashed #d1d5db; border-radius: 6px; cursor: pointer;"
+                                        onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='#d1d5db'; this.style.color='#6b7280'">
+                                    + Aparelho com cores
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -359,7 +428,11 @@
                 { name: 'iPhone 17 256GB', value: 5699 },
                 { name: 'iPhone 17e 256GB', value: 4199 },
                 { name: 'iPhone 17 Pro 256GB', value: 7799 },
-                { name: 'iPhone 17 Pro Max 256GB', value: 8299 },
+                { name: 'iPhone 17 Pro Max 256GB', value: 0, variants: [
+                    { label: 'Laranja', color: '#f97316', value: 8299 },
+                    { label: 'Azul', color: '#3b82f6', value: 8399 },
+                    { label: 'Branco', color: '#f5f5f4', value: 8599 },
+                ]},
             ],
 
             amountInput: '',
@@ -388,18 +461,32 @@
                 });
             },
 
-            selectQuickValue(qv) {
-                this.deviceDescription = qv.name;
-                this.amountInput = this.formatNumber(qv.value);
+            selectQuickValue(name, value) {
+                this.deviceDescription = name;
+                this.amountInput = this.formatNumber(value);
                 this.calculate();
+            },
+
+            isQuickValueActive(name, value) {
+                return this.deviceDescription === name && this.amountInput === this.formatNumber(value);
+            },
+
+            isQuickValueActiveByName(baseName) {
+                return this.deviceDescription.startsWith(baseName);
             },
 
             saveQuickValues() {
                 localStorage.setItem('stoneCalcQuickValues', JSON.stringify(this.quickValues));
             },
 
-            addQuickValue() {
-                this.quickValues.push({ name: '', value: 0 });
+            addQuickValue(withVariants) {
+                if (withVariants) {
+                    this.quickValues.push({ name: '', value: 0, variants: [
+                        { label: '', color: '#cccccc', value: 0 }
+                    ]});
+                } else {
+                    this.quickValues.push({ name: '', value: 0 });
+                }
                 this.saveQuickValues();
             },
 
