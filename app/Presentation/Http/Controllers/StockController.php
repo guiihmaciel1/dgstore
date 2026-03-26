@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers;
 
-use App\Domain\Product\DTOs\ProductData;
-use App\Domain\Product\Enums\ProductCategory;
-use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
 use App\Domain\Product\Services\ProductService;
-use App\Domain\Sale\Enums\TradeInCondition;
 use App\Domain\Sale\Enums\TradeInStatus;
 use App\Domain\Sale\Models\TradeIn;
+use App\Domain\Sale\Services\TradeInProcessingService;
 use App\Domain\Stock\Enums\StockMovementType;
 use App\Domain\Stock\Services\StockService;
 use App\Http\Controllers\Controller;
@@ -25,7 +22,8 @@ class StockController extends Controller
 {
     public function __construct(
         private readonly StockService $stockService,
-        private readonly ProductService $productService
+        private readonly ProductService $productService,
+        private readonly TradeInProcessingService $tradeInProcessingService,
     ) {}
 
     public function index(Request $request): View
@@ -187,52 +185,18 @@ class StockController extends Controller
             'action' => 'required|in:reject,create',
         ]);
 
-        $action = $request->get('action');
-
-        if ($action === 'reject') {
+        if ($request->get('action') === 'reject') {
             $tradeIn->markAsRejected();
             return redirect()
                 ->back()
                 ->with('success', 'Trade-in rejeitado com sucesso.');
         }
 
-        // Cria produto automaticamente a partir do trade-in
         try {
-            $product = DB::transaction(function () use ($tradeIn) {
-                $condition = match ($tradeIn->condition) {
-                    TradeInCondition::Excellent => ProductCondition::Used,
-                    default => ProductCondition::Used,
-                };
-
-                $sku = $this->productService->generateSku('iphone', $tradeIn->device_model ?? '');
-
-                $productData = ProductData::fromArray([
-                    'name' => $tradeIn->device_name,
-                    'sku' => $sku,
-                    'category' => ProductCategory::Smartphone->value,
-                    'model' => $tradeIn->device_model,
-                    'condition' => $condition->value,
-                    'imei' => $tradeIn->imei,
-                    'cost_price' => (float) $tradeIn->estimated_value,
-                    'stock_quantity' => 0,
-                    'notes' => "Origem: Trade-in da venda #{$tradeIn->sale?->sale_number}. Valor estimado: R$ " . number_format((float) $tradeIn->estimated_value, 2, ',', '.') . ". {$tradeIn->notes}",
-                ]);
-
-                $product = $this->productService->create($productData);
-
-                // Registra entrada no estoque
-                $this->stockService->registerEntry(
-                    $product,
-                    1,
-                    auth()->id(),
-                    "Trade-in processado (venda #{$tradeIn->sale?->sale_number})"
-                );
-
-                // Marca como processado e vincula ao produto
-                $tradeIn->markAsProcessed($product->id);
-
-                return $product;
-            });
+            $product = DB::transaction(fn () => $this->tradeInProcessingService->createProductFromTradeIn(
+                $tradeIn,
+                auth()->id(),
+            ));
 
             return redirect()
                 ->route('products.show', $product)

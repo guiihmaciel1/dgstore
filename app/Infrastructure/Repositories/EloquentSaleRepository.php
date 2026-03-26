@@ -12,6 +12,7 @@ use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Models\SaleItem;
 use App\Domain\Sale\Models\TradeIn;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
+use App\Domain\Sale\Services\TradeInProcessingService;
 use App\Domain\Stock\Enums\StockMovementType;
 use App\Domain\Stock\Models\StockMovement;
 use Carbon\Carbon;
@@ -21,6 +22,10 @@ use Illuminate\Support\Facades\DB;
 
 class EloquentSaleRepository implements SaleRepositoryInterface
 {
+    public function __construct(
+        private readonly TradeInProcessingService $tradeInProcessingService,
+    ) {}
+
     public function find(string $id): ?Sale
     {
         return Sale::with(['items.product', 'customer', 'user'])->find($id);
@@ -146,10 +151,10 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 $product->decrement('stock_quantity', $itemData->quantity);
             }
 
-            // Cria os trade-ins se houver
+            // Cria os trade-ins e já processa automaticamente (cria produto + entrada no estoque)
             if ($data->hasTradeIn()) {
                 foreach ($data->tradeIns as $tradeInData) {
-                    TradeIn::create([
+                    $tradeIn = TradeIn::create([
                         'sale_id' => $sale->id,
                         'device_name' => $tradeInData->deviceName,
                         'device_model' => $tradeInData->deviceModel,
@@ -159,6 +164,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                         'notes' => $tradeInData->notes,
                         'status' => TradeInStatus::Pending,
                     ]);
+
+                    $this->tradeInProcessingService->createProductFromTradeIn($tradeIn, $data->userId);
                 }
             }
 
