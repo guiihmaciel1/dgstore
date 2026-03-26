@@ -38,11 +38,37 @@ class MarketingController extends Controller
             ->get()
             ->keyBy('product_id');
 
+        $pricesJson = $prices->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'storage' => $p->storage,
+                'color' => $p->color,
+                'price' => $p->price,
+                'notes' => $p->notes,
+                'active' => $p->active,
+            ];
+        })->values();
+
+        $usedProductsJson = $usedProducts->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'model' => $p->model,
+                'storage' => $p->storage,
+                'color' => $p->color,
+                'condition' => $p->condition->value,
+                'stock' => $p->stock_quantity,
+            ];
+        })->values();
+
         return view('marketing.index', [
             'prices' => $prices,
+            'pricesJson' => $pricesJson,
             'creatives' => $creatives,
             'creativeDate' => $creativeDate,
             'usedProducts' => $usedProducts,
+            'usedProductsJson' => $usedProductsJson,
             'usedListings' => $usedListings,
         ]);
     }

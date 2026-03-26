@@ -389,25 +389,9 @@
     }
 
     function marketingApp() {
-        const initialPrices = @json($prices->map(fn($p) => [
-            'id' => $p->id,
-            'name' => $p->name,
-            'storage' => $p->storage,
-            'color' => $p->color,
-            'price' => $p->price,
-            'notes' => $p->notes,
-            'active' => $p->active,
-        ]));
+        const initialPrices = @json($pricesJson);
 
-        const usedProducts = @json($usedProducts->map(fn($p) => [
-            'id' => $p->id,
-            'name' => $p->name,
-            'model' => $p->model,
-            'storage' => $p->storage,
-            'color' => $p->color,
-            'condition' => $p->condition->value,
-            'stock' => $p->stock_quantity,
-        ]));
+        const usedProducts = @json($usedProductsJson);
 
         const usedListings = @json($usedListings);
 
