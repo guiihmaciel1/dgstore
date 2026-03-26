@@ -195,6 +195,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', [MarketingController::class, 'index'])->name('index');
             Route::post('/prices', [MarketingController::class, 'storePrices'])->name('prices.store');
             Route::post('/creatives', [MarketingController::class, 'storeCreative'])->name('creatives.store');
+            Route::get('/creatives/{creative}/download', [MarketingController::class, 'downloadCreativeImage'])->name('creatives.download');
             Route::delete('/creatives/{creative}', [MarketingController::class, 'deleteCreative'])->name('creatives.destroy');
             Route::post('/used-listings', [MarketingController::class, 'storeUsedListing'])->name('used-listings.store');
             Route::delete('/used-listings/{listing}', [MarketingController::class, 'deleteUsedListing'])->name('used-listings.destroy');

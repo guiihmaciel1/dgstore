@@ -151,6 +151,18 @@ class MarketingController extends Controller
             ->with('success', 'Criativo adicionado com sucesso!');
     }
 
+    public function downloadCreativeImage(MarketingCreative $creative)
+    {
+        if (!$creative->image_path || !Storage::disk('public')->exists($creative->image_path)) {
+            return redirect()->back()->with('error', 'Imagem não encontrada.');
+        }
+
+        $extension = pathinfo($creative->image_path, PATHINFO_EXTENSION);
+        $safeName = str($creative->title)->slug() . '.' . $extension;
+
+        return Storage::disk('public')->download($creative->image_path, $safeName);
+    }
+
     public function deleteCreative(MarketingCreative $creative): RedirectResponse
     {
         if ($creative->image_path) {
