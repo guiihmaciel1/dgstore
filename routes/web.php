@@ -17,6 +17,7 @@ use App\Presentation\Http\Controllers\ToolController;
 use App\Presentation\Http\Controllers\WarrantyController;
 use App\Presentation\Http\Controllers\CrmController;
 use App\Presentation\Http\Controllers\FinanceController;
+use App\Presentation\Http\Controllers\MarketingController;
 use App\Presentation\Http\Controllers\CardFeeController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BDashboardController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BProductController;
@@ -188,6 +189,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/finance/transactions', [FinanceController::class, 'storeTransaction'])->name('finance.transactions.store');
         Route::post('/finance/transactions/{transaction}/pay', [FinanceController::class, 'payTransaction'])->name('finance.transactions.pay');
         Route::post('/finance/transactions/{transaction}/cancel', [FinanceController::class, 'cancelTransaction'])->name('finance.transactions.cancel');
+
+        // Marketing
+        Route::prefix('marketing')->name('marketing.')->group(function () {
+            Route::get('/', [MarketingController::class, 'index'])->name('index');
+            Route::post('/prices', [MarketingController::class, 'storePrices'])->name('prices.store');
+            Route::post('/creatives', [MarketingController::class, 'storeCreative'])->name('creatives.store');
+            Route::delete('/creatives/{creative}', [MarketingController::class, 'deleteCreative'])->name('creatives.destroy');
+            Route::post('/used-listings', [MarketingController::class, 'storeUsedListing'])->name('used-listings.store');
+            Route::delete('/used-listings/{listing}', [MarketingController::class, 'deleteUsedListing'])->name('used-listings.destroy');
+        });
 
         // Avaliação de Seminovos
         Route::get('/valuations', [ValuationController::class, 'index'])->name('valuations.index');
