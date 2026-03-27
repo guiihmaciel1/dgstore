@@ -109,7 +109,7 @@
                                     <!-- Resultados da busca -->
                                     <div x-show="searchResults.length > 0 || (searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading)" x-cloak 
                                          style="position: absolute; z-index: 20; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border-radius: 0.75rem; border: 1px solid #e5e7eb; max-height: 20rem; overflow: auto;">
-                                        <template x-for="product in searchResults" :key="product.id">
+                                        <template x-for="(product, pIdx) in searchResults" :key="(product.is_consignment ? 'c_' : 'p_') + product.id">
                                             <button 
                                                 type="button"
                                                 @click="addItem(product)"
@@ -120,6 +120,7 @@
                                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                                                         <span style="font-weight: 600; color: #111827;" x-text="product.name"></span>
                                                         <span x-show="product.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Trade-in</span>
+                                                        <span x-show="product.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Consignado</span>
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
                                                         <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #4b5563; border-radius: 0.25rem;" x-text="product.sku"></span>
@@ -168,8 +169,10 @@
                                                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                                                             <p style="font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.name"></p>
                                                             <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; flex-shrink: 0;">TRADE-IN</span>
+                                                            <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-weight: 600; flex-shrink: 0;">CONSIGNADO</span>
                                                         </div>
-                                                        <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.id">
+                                                        <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.is_consignment ? '' : item.id">
+                                                        <input type="hidden" :name="'items['+index+'][consignment_item_id]'" :value="item.consignment_item_id || ''">
                                                     </div>
                                                     
                                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -1276,7 +1279,9 @@
                             freight_type: '',
                             freight_value: 0,
                             quantity: 1,
-                            stock: reservationData.product.stock
+                            stock: reservationData.product.stock,
+                            is_consignment: false,
+                            consignment_item_id: null,
                         });
                         this.updateTotals();
                     }
@@ -1362,25 +1367,52 @@
                 },
                 
                 addItem(product) {
-                    const existing = this.items.find(i => i.id === product.id);
-                    if (existing) {
-                        if (existing.quantity < existing.stock) {
-                            existing.quantity++;
+                    if (product.is_consignment) {
+                        const existingConsignment = this.items.find(i => i.consignment_item_id === product.consignment_item_id);
+                        if (existingConsignment) {
+                            if (existingConsignment.quantity < existingConsignment.stock) {
+                                existingConsignment.quantity++;
+                            }
+                        } else {
+                            this.items.push({
+                                id: product.id,
+                                name: product.name,
+                                price: product.suggested_price || 0,
+                                cost_price: product.cost_price || 0,
+                                supplier_origin: '',
+                                freight_type: '',
+                                freight_value: 0,
+                                quantity: 1,
+                                stock: product.stock,
+                                from_trade_in: false,
+                                condition: product.condition || null,
+                                is_consignment: true,
+                                consignment_item_id: product.consignment_item_id,
+                            });
                         }
                     } else {
-                        this.items.push({
-                            id: product.id,
-                            name: product.name,
-                            price: 0,
-                            cost_price: product.cost_price || 0,
-                            supplier_origin: '',
-                            freight_type: '',
-                            freight_value: 0,
-                            quantity: 1,
-                            stock: product.stock,
-                            from_trade_in: product.from_trade_in || false,
-                            condition: product.condition || null,
-                        });
+                        const existing = this.items.find(i => i.id === product.id && !i.is_consignment);
+                        if (existing) {
+                            if (existing.quantity < existing.stock) {
+                                existing.quantity++;
+                            }
+                        } else {
+                            this.items.push({
+                                id: product.id,
+                                name: product.name,
+                                price: 0,
+                                cost_price: product.cost_price || 0,
+                                supplier_origin: '',
+                                freight_type: '',
+                                freight_value: 0,
+                                quantity: 1,
+                                stock: product.stock,
+                                from_trade_in: product.from_trade_in || false,
+                                condition: product.condition || null,
+                                is_consignment: false,
+                                consignment_item_id: null,
+                            });
+                        }
                     }
                     this.searchTerm = '';
                     this.searchResults = [];

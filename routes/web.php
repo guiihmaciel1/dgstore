@@ -19,6 +19,7 @@ use App\Presentation\Http\Controllers\CrmController;
 use App\Presentation\Http\Controllers\FinanceController;
 use App\Presentation\Http\Controllers\MarketingController;
 use App\Presentation\Http\Controllers\CardFeeController;
+use App\Presentation\Http\Controllers\ConsignmentStockController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BDashboardController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BProductController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BReportController;
@@ -144,6 +145,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/stock', [StockController::class, 'store'])->name('stock.store');
         Route::post('/api/stock/store-quick', [StockController::class, 'storeQuick'])->name('stock.store-quick');
         Route::get('/stock/product/{product}', [StockController::class, 'productHistory'])->name('stock.product-history');
+
+        // Estoque Consignado (Fornecedor Interno)
+        Route::get('/stock/consignment', [ConsignmentStockController::class, 'index'])->name('stock.consignment.index');
+        Route::get('/stock/consignment/create', [ConsignmentStockController::class, 'create'])->name('stock.consignment.create');
+        Route::post('/stock/consignment', [ConsignmentStockController::class, 'store'])->name('stock.consignment.store');
+        Route::post('/stock/consignment/{item}/return', [ConsignmentStockController::class, 'returnItem'])->name('stock.consignment.return');
+        Route::get('/stock/consignment/report', [ConsignmentStockController::class, 'report'])->name('stock.consignment.report');
+        Route::get('/api/consignment/search', [ConsignmentStockController::class, 'search'])->name('stock.consignment.search');
 
         // Garantias
         Route::get('/warranties', [WarrantyController::class, 'index'])->name('warranties.index');

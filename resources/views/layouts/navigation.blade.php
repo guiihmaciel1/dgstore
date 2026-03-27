@@ -119,7 +119,7 @@
                     <!-- Dropdown: Estoque -->
                     <div class="relative">
                         <button @click="stockOpen = !stockOpen; commercialOpen = false; financeOpen = false; purchasesOpen = false; toolsOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('products.*') || request()->routeIs('stock.*') || request()->routeIs('imports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('products.*') || request()->routeIs('stock.*') || request()->routeIs('stock.consignment.*') || request()->routeIs('imports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Estoque</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': stockOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -141,7 +141,7 @@
                                     </svg>
                                     Produtos
                                 </a>
-                                <a href="{{ route('stock.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.*') && !request()->routeIs('stock.alerts') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('stock.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.*') && !request()->routeIs('stock.alerts') && !request()->routeIs('stock.consignment.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
                                     </svg>
@@ -152,6 +152,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     Importações
+                                </a>
+                                <a href="{{ route('stock.consignment.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.consignment.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                    </svg>
+                                    Fornecedor Interno
                                 </a>
                             </div>
                         </div>
@@ -409,6 +415,9 @@
                 </a>
                 <a href="{{ route('imports.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('imports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Importações
+                </a>
+                <a href="{{ route('stock.consignment.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.consignment.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Fornecedor Interno
                 </a>
             </div>
             

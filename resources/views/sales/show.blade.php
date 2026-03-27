@@ -119,6 +119,9 @@
                                                     @if($itemTradeIn)
                                                         <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trade-in</span>
                                                     @endif
+                                                    @if($item->isConsignment())
+                                                        <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Consignado</span>
+                                                    @endif
                                                 </div>
                                                 <div style="font-size: 0.75rem; color: #9ca3af;">
                                                     SKU: {{ $item->product_sku }}

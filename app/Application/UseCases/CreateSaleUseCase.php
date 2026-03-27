@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCases;
 
+use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Finance\Services\FinanceService;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Sale\DTOs\SaleData;
@@ -128,6 +129,30 @@ class CreateSaleUseCase
         $unavailableItems = [];
 
         foreach ($data->items as $item) {
+            if ($item->isConsignment()) {
+                $consignmentItem = ConsignmentStockItem::find($item->consignmentItemId);
+
+                if (!$consignmentItem) {
+                    $unavailableItems[] = ['message' => 'Item consignado não encontrado'];
+                    continue;
+                }
+
+                if (!$consignmentItem->isAvailable()) {
+                    $unavailableItems[] = [
+                        'message' => "Item consignado '{$consignmentItem->name}' não está disponível",
+                    ];
+                    continue;
+                }
+
+                if ($consignmentItem->available_quantity < $item->quantity) {
+                    $unavailableItems[] = [
+                        'message' => "Item consignado '{$consignmentItem->name}': estoque insuficiente. Disponível: {$consignmentItem->available_quantity}",
+                    ];
+                }
+
+                continue;
+            }
+
             $product = $this->productRepository->find($item->productId);
 
             if (!$product) {

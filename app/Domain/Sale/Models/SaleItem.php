@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Sale\Models;
 
+use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Product\Models\Product;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,6 +28,7 @@ class SaleItem extends Model
         'freight_amount',
         'total_cost',
         'subtotal',
+        'consignment_item_id',
     ];
 
     protected function casts(): array
@@ -68,6 +70,16 @@ class SaleItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class)->withTrashed();
+    }
+
+    public function consignmentItem(): BelongsTo
+    {
+        return $this->belongsTo(ConsignmentStockItem::class, 'consignment_item_id');
+    }
+
+    public function isConsignment(): bool
+    {
+        return $this->consignment_item_id !== null;
     }
 
     // Métodos auxiliares

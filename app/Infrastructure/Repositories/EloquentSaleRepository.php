@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Repositories;
 
+use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
+use App\Domain\ConsignmentStock\Services\ConsignmentStockService;
 use App\Domain\Product\Models\Product;
 use App\Domain\Sale\DTOs\SaleData;
 use App\Domain\Sale\Enums\PaymentStatus;
@@ -24,6 +26,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 {
     public function __construct(
         private readonly TradeInProcessingService $tradeInProcessingService,
+        private readonly ConsignmentStockService $consignmentStockService,
     ) {}
 
     public function find(string $id): ?Sale
@@ -117,38 +120,76 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
             // Cria os itens da venda
             foreach ($data->items as $itemData) {
-                $product = Product::findOrFail($itemData->productId);
-
                 $freightAmount = $itemData->calculateFreightAmount();
                 $totalCost = $itemData->calculateTotalCost();
 
-                SaleItem::create([
-                    'sale_id' => $sale->id,
-                    'product_id' => $product->id,
-                    'product_snapshot' => $product->toSnapshot(),
-                    'quantity' => $itemData->quantity,
-                    'unit_price' => $itemData->unitPrice,
-                    'cost_price' => $itemData->costPrice,
-                    'supplier_origin' => $itemData->supplierOrigin,
-                    'freight_type' => $itemData->freightType,
-                    'freight_value' => $itemData->freightValue,
-                    'freight_amount' => $freightAmount,
-                    'total_cost' => $totalCost,
-                    'subtotal' => $itemData->subtotal(),
-                ]);
+                if ($itemData->isConsignment()) {
+                    $consignmentItem = ConsignmentStockItem::findOrFail($itemData->consignmentItemId);
 
-                // Registra saída de estoque
-                StockMovement::create([
-                    'product_id' => $product->id,
-                    'user_id' => $data->userId,
-                    'type' => StockMovementType::Out,
-                    'quantity' => $itemData->quantity,
-                    'reason' => "Venda #{$sale->sale_number}",
-                    'reference_id' => $sale->id,
-                ]);
+                    $snapshot = [
+                        'id' => $consignmentItem->id,
+                        'name' => $consignmentItem->name,
+                        'sku' => $consignmentItem->imei ?? '-',
+                        'category' => 'smartphone',
+                        'model' => $consignmentItem->model,
+                        'storage' => $consignmentItem->storage,
+                        'color' => $consignmentItem->color,
+                        'condition' => 'new',
+                        'imei' => $consignmentItem->imei,
+                        'cost_price' => $consignmentItem->supplier_cost,
+                    ];
 
-                // Decrementa estoque do produto
-                $product->decrement('stock_quantity', $itemData->quantity);
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => null,
+                        'product_snapshot' => $snapshot,
+                        'quantity' => $itemData->quantity,
+                        'unit_price' => $itemData->unitPrice,
+                        'cost_price' => $itemData->costPrice,
+                        'supplier_origin' => $itemData->supplierOrigin,
+                        'freight_type' => $itemData->freightType,
+                        'freight_value' => $itemData->freightValue,
+                        'freight_amount' => $freightAmount,
+                        'total_cost' => $totalCost,
+                        'subtotal' => $itemData->subtotal(),
+                        'consignment_item_id' => $consignmentItem->id,
+                    ]);
+
+                    $this->consignmentStockService->registerSaleExit(
+                        $consignmentItem,
+                        $sale->id,
+                        $data->userId,
+                        $itemData->quantity,
+                    );
+                } else {
+                    $product = Product::findOrFail($itemData->productId);
+
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => $product->id,
+                        'product_snapshot' => $product->toSnapshot(),
+                        'quantity' => $itemData->quantity,
+                        'unit_price' => $itemData->unitPrice,
+                        'cost_price' => $itemData->costPrice,
+                        'supplier_origin' => $itemData->supplierOrigin,
+                        'freight_type' => $itemData->freightType,
+                        'freight_value' => $itemData->freightValue,
+                        'freight_amount' => $freightAmount,
+                        'total_cost' => $totalCost,
+                        'subtotal' => $itemData->subtotal(),
+                    ]);
+
+                    StockMovement::create([
+                        'product_id' => $product->id,
+                        'user_id' => $data->userId,
+                        'type' => StockMovementType::Out,
+                        'quantity' => $itemData->quantity,
+                        'reason' => "Venda #{$sale->sale_number}",
+                        'reference_id' => $sale->id,
+                    ]);
+
+                    $product->decrement('stock_quantity', $itemData->quantity);
+                }
             }
 
             // Cria os trade-ins e já processa automaticamente (cria produto + entrada no estoque)
@@ -182,23 +223,30 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     public function cancel(Sale $sale): Sale
     {
         return DB::transaction(function () use ($sale) {
-            // Atualiza status da venda
             $sale->update(['payment_status' => PaymentStatus::Cancelled]);
 
-            // Devolve os itens ao estoque
             foreach ($sale->items as $item) {
-                // Registra devolução de estoque
-                StockMovement::create([
-                    'product_id' => $item->product_id,
-                    'user_id' => auth()->id(),
-                    'type' => StockMovementType::Return,
-                    'quantity' => $item->quantity,
-                    'reason' => "Cancelamento da venda #{$sale->sale_number}",
-                    'reference_id' => $sale->id,
-                ]);
+                if ($item->consignment_item_id) {
+                    $consignmentItem = ConsignmentStockItem::find($item->consignment_item_id);
+                    if ($consignmentItem) {
+                        $this->consignmentStockService->reverseSaleExit(
+                            $consignmentItem,
+                            auth()->id(),
+                            $item->quantity,
+                        );
+                    }
+                } elseif ($item->product_id && $item->product) {
+                    StockMovement::create([
+                        'product_id' => $item->product_id,
+                        'user_id' => auth()->id(),
+                        'type' => StockMovementType::Return,
+                        'quantity' => $item->quantity,
+                        'reason' => "Cancelamento da venda #{$sale->sale_number}",
+                        'reference_id' => $sale->id,
+                    ]);
 
-                // Incrementa estoque do produto
-                $item->product->increment('stock_quantity', $item->quantity);
+                    $item->product->increment('stock_quantity', $item->quantity);
+                }
             }
 
             return $sale->fresh();

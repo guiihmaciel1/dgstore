@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers;
 
+use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Product\DTOs\ProductData;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
@@ -129,17 +130,39 @@ class ProductController extends Controller
         $products = $this->productService->search($term);
         $products->load('tradeIn:id,product_id,sale_id,estimated_value');
 
-        return response()->json(
-            $products->map(fn(Product $product) => [
-                'id' => $product->id,
-                'name' => $product->full_name,
-                'sku' => $product->sku,
-                'stock' => $product->stock_quantity,
-                'cost_price' => $product->cost_price ? (float) $product->cost_price : null,
-                'condition' => $product->condition?->value,
-                'from_trade_in' => $product->tradeIn !== null,
-            ])
-        );
+        $results = $products->map(fn(Product $product) => [
+            'id' => $product->id,
+            'name' => $product->full_name,
+            'sku' => $product->sku,
+            'stock' => $product->stock_quantity,
+            'cost_price' => $product->cost_price ? (float) $product->cost_price : null,
+            'condition' => $product->condition?->value,
+            'from_trade_in' => $product->tradeIn !== null,
+            'is_consignment' => false,
+            'consignment_item_id' => null,
+        ]);
+
+        $consignmentItems = ConsignmentStockItem::with('supplier')
+            ->available()
+            ->where('available_quantity', '>', 0)
+            ->search($term)
+            ->limit(10)
+            ->get();
+
+        $consignmentResults = $consignmentItems->map(fn(ConsignmentStockItem $item) => [
+            'id' => $item->id,
+            'name' => $item->full_name . ' [' . $item->supplier->name . ']',
+            'sku' => $item->imei ?? '-',
+            'stock' => $item->available_quantity,
+            'cost_price' => (float) $item->supplier_cost,
+            'condition' => 'new',
+            'from_trade_in' => false,
+            'is_consignment' => true,
+            'consignment_item_id' => $item->id,
+            'suggested_price' => $item->suggested_price ? (float) $item->suggested_price : null,
+        ]);
+
+        return response()->json($results->concat($consignmentResults)->values());
     }
 
     /**
