@@ -41,6 +41,12 @@
                             : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Seminovos
                 </button>
+                <button @click="tab = 'resale'" type="button"
+                        :style="tab === 'resale'
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #111827; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
+                    Repasses
+                </button>
             </div>
 
             {{-- ============================================================ --}}
@@ -280,6 +286,172 @@
             </div>
 
             {{-- ============================================================ --}}
+            {{-- ABA 4: REPASSES --}}
+            {{-- ============================================================ --}}
+            <div x-show="tab === 'resale'" x-cloak>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+                    <div>
+                        <h2 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Lista de Repasse</h2>
+                        <p style="font-size: 0.8rem; color: #6b7280;">Selecione os itens e copie a lista formatada para WhatsApp</p>
+                    </div>
+                    <button type="button" @click="copyResaleToWhatsApp()"
+                            :style="resaleCopied
+                                ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#059669;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:default;white-space:nowrap;'
+                                : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#16a34a;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;'">
+                        <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                        <span x-text="resaleCopied ? 'Copiado!' : 'Copiar p/ WhatsApp'"></span>
+                    </button>
+                </div>
+
+                {{-- Novos Lacrados --}}
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 0.9375rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: #dbeafe; border-radius: 0.375rem;">
+                            <svg style="width: 0.875rem; height: 0.875rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                        </span>
+                        Novos Lacrados
+                        <span style="font-size: 0.7rem; font-weight: 500; color: #6b7280;" x-text="'(' + resaleConsignment.length + ' itens)'"></span>
+                    </h3>
+
+                    <div x-show="resaleConsignment.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
+                        Nenhum item consignado disponivel
+                    </div>
+
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;" x-show="resaleConsignment.length > 0">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                                    <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Exibir</th>
+                                    <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Modelo</th>
+                                    <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 80px;">Storage</th>
+                                    <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Cor</th>
+                                    <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 130px;">Preco Repasse</th>
+                                    <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 60px;">Salvar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="item in resaleConsignment" :key="item.id">
+                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <td style="padding: 0.375rem 0.75rem; text-align: center;">
+                                            <input type="checkbox" x-model="item.resale.visible"
+                                                   style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
+                                        </td>
+                                        <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; font-weight: 500; color: #111827;" x-text="item.name"></td>
+                                        <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; color: #6b7280;" x-text="item.storage || '-'"></td>
+                                        <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; color: #6b7280;">
+                                            <div style="display: flex; align-items: center; gap: 0.375rem;">
+                                                <span x-show="item._colorHex" :style="'display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid #d1d5db;background:' + item._colorHex"></span>
+                                                <span x-text="item.color || '-'"></span>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem;">
+                                            <input type="number" step="0.01" x-model="item.resale.resale_price" placeholder="0.00"
+                                                   style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
+                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                            <button type="button" @click="saveResaleItem(item)"
+                                                    :style="item._saving
+                                                        ? 'padding:0.25rem 0.625rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.75rem;font-weight:600;cursor:default;'
+                                                        : 'padding:0.25rem 0.625rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.75rem;font-weight:600;cursor:pointer;'"
+                                                    :disabled="item._saving">
+                                                <span x-text="item._saving ? '✓' : 'Salvar'"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- Seminovos --}}
+                <div>
+                    <h3 style="font-size: 0.9375rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: #fef3c7; border-radius: 0.375rem;">
+                            <svg style="width: 0.875rem; height: 0.875rem; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        </span>
+                        Semi Novos
+                        <span style="font-size: 0.7rem; font-weight: 500; color: #6b7280;" x-text="'(' + resaleUsed.length + ' itens)'"></span>
+                    </h3>
+
+                    <div x-show="resaleUsed.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
+                        Nenhum seminovo disponivel em estoque
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem;" x-show="resaleUsed.length > 0">
+                        <template x-for="item in resaleUsed" :key="item.id">
+                            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                                <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="min-width: 0; flex: 1;">
+                                        <div style="font-size: 0.875rem; font-weight: 600; color: #111827;" x-text="item.name"></div>
+                                        <div style="font-size: 0.7rem; color: #9ca3af; margin-top: 2px;">
+                                            <span x-text="item.storage || ''"></span>
+                                            <span x-show="item.color"> · <span x-text="item.color"></span></span>
+                                        </div>
+                                    </div>
+                                    <label style="display: flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; color: #374151; cursor: pointer; flex-shrink: 0;">
+                                        <input type="checkbox" x-model="item.resale.visible"
+                                               style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
+                                        Exibir
+                                    </label>
+                                </div>
+
+                                <div style="padding: 0.75rem 1rem;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.625rem;">
+                                        <div>
+                                            <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Preco Repasse</label>
+                                            <input type="number" step="0.01" x-model="item.resale.resale_price" placeholder="0.00"
+                                                   style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Bateria %</label>
+                                            <input type="number" min="0" max="100" x-model="item.resale.battery_health" placeholder="0"
+                                                   style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Garantia ate</label>
+                                            <input type="date" x-model="item.resale.warranty_until"
+                                                   style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        </div>
+                                        <div style="display: flex; align-items: flex-end; gap: 0.75rem; padding-bottom: 0.25rem;">
+                                            <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #374151; cursor: pointer;">
+                                                <input type="checkbox" x-model="item.resale.has_box" style="accent-color: #111827; cursor: pointer;">
+                                                Caixa
+                                            </label>
+                                            <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #374151; cursor: pointer;">
+                                                <input type="checkbox" x-model="item.resale.has_cable" style="accent-color: #111827; cursor: pointer;">
+                                                Cabo
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-bottom: 0.625rem;">
+                                        <textarea x-model="item.resale.notes" rows="2" placeholder="Observacoes..."
+                                                  style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; resize: vertical;"
+                                                  onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+                                    </div>
+
+                                    <button type="button" @click="saveResaleItem(item)"
+                                            :style="item._saving
+                                                ? 'width:100%;padding:0.5rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:default;'
+                                                : 'width:100%;padding:0.5rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:pointer;'"
+                                            :disabled="item._saving">
+                                        <span x-text="item._saving ? 'Salvo!' : 'Salvar'"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ============================================================ --}}
             {{-- ABA 3: SEMINOVOS DISPONIVEIS --}}
             {{-- ============================================================ --}}
             <div x-show="tab === 'used'" x-cloak>
@@ -405,12 +577,77 @@
 
         const usedListings = @json($usedListings);
 
+        const consignmentForResale = @json($consignmentResaleJson);
+        const usedForResale = @json($usedResaleJson);
+        const resaleItemsMap = @json($resaleItems);
+
+        const colorMap = {
+            'preto': '#000000', 'black': '#000000', 'midnight': '#1c1c1e', 'meia-noite': '#1c1c1e',
+            'branco': '#f5f5f7', 'white': '#f5f5f7', 'starlight': '#f9f3ee', 'estelar': '#f9f3ee',
+            'azul': '#0071e3', 'blue': '#0071e3', 'ultramarine': '#3634a3', 'ultramarino': '#3634a3',
+            'verde': '#4caf50', 'green': '#4caf50',
+            'roxo': '#bf5af2', 'purple': '#bf5af2',
+            'rosa': '#f472b6', 'pink': '#f472b6',
+            'vermelho': '#dc2626', 'red': '#dc2626', 'product red': '#dc2626',
+            'dourado': '#f5d08e', 'gold': '#f5d08e',
+            'prateado': '#c0c0c0', 'silver': '#c0c0c0', 'prata': '#c0c0c0',
+            'grafite': '#5c5c5e', 'graphite': '#5c5c5e',
+            'natural titanium': '#b0a898', 'titanio natural': '#b0a898', 'titânio natural': '#b0a898',
+            'desert': '#c2a97c', 'desert titanium': '#c2a97c', 'deserto': '#c2a97c',
+            'white titanium': '#f0ede8', 'titanio branco': '#f0ede8', 'titânio branco': '#f0ede8',
+            'black titanium': '#3c3c3d', 'titanio preto': '#3c3c3d', 'titânio preto': '#3c3c3d',
+            'teal': '#5ac8d8',
+        };
+
+        function getColorHex(colorName) {
+            if (!colorName) return '';
+            return colorMap[colorName.toLowerCase().trim()] || '';
+        }
+
+        function getColorEmoji(colorName) {
+            if (!colorName) return '';
+            const lower = colorName.toLowerCase().trim();
+            const emojiMap = {
+                'preto': '⚫', 'black': '⚫', 'midnight': '⚫', 'meia-noite': '⚫',
+                'branco': '⚪', 'white': '⚪', 'starlight': '⚪', 'estelar': '⚪',
+                'azul': '🔵', 'blue': '🔵', 'ultramarine': '🔵', 'ultramarino': '🔵',
+                'verde': '🟢', 'green': '🟢',
+                'roxo': '🟣', 'purple': '🟣',
+                'rosa': '🩷', 'pink': '🩷',
+                'vermelho': '🔴', 'red': '🔴', 'product red': '🔴',
+                'dourado': '🟡', 'gold': '🟡',
+                'prateado': '⚪', 'silver': '⚪', 'prata': '⚪',
+                'grafite': '⚫', 'graphite': '⚫',
+                'natural titanium': '🟤', 'titanio natural': '🟤', 'titânio natural': '🟤',
+                'desert': '🟠', 'desert titanium': '🟠', 'deserto': '🟠',
+                'white titanium': '⚪', 'titanio branco': '⚪', 'titânio branco': '⚪',
+                'black titanium': '⚫', 'titanio preto': '⚫', 'titânio preto': '⚫',
+                'teal': '🔵',
+            };
+            return emojiMap[lower] || '🔘';
+        }
+
+        function buildResaleData(item) {
+            const key = item.morph_type + '_' + item.id;
+            const existing = resaleItemsMap[key];
+            return {
+                resale_price: existing ? existing.resale_price : item.suggested_price || null,
+                battery_health: existing ? existing.battery_health : null,
+                warranty_until: existing ? existing.warranty_until : null,
+                has_box: existing ? existing.has_box : false,
+                has_cable: existing ? existing.has_cable : false,
+                notes: existing ? existing.notes : '',
+                visible: existing ? existing.visible : true,
+            };
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
 
         return {
             tab: urlParams.get('tab') || 'prices',
             priceSearch: '',
             priceCopied: false,
+            resaleCopied: false,
             showCreativeForm: false,
             creativeDate: @json($creativeDate),
             usedSearch: '',
@@ -437,6 +674,19 @@
                     has_cable: false,
                     notes: '',
                 },
+                _saving: false,
+            })),
+
+            resaleConsignment: consignmentForResale.map(c => ({
+                ...c,
+                resale: buildResaleData(c),
+                _colorHex: getColorHex(c.color),
+                _saving: false,
+            })),
+
+            resaleUsed: usedForResale.map(p => ({
+                ...p,
+                resale: buildResaleData(p),
                 _saving: false,
             })),
 
@@ -563,6 +813,139 @@
                     alert('Erro ao salvar: ' + e.message);
                     item._saving = false;
                 }
+            },
+
+            async saveResaleItem(item) {
+                item._saving = true;
+                try {
+                    const res = await fetch('{{ route("marketing.resale-items.store") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            resaleable_type: item.morph_type,
+                            resaleable_id: item.id,
+                            resale_price: item.resale.resale_price || null,
+                            battery_health: item.resale.battery_health || null,
+                            warranty_until: item.resale.warranty_until || null,
+                            has_box: item.resale.has_box ? 1 : 0,
+                            has_cable: item.resale.has_cable ? 1 : 0,
+                            notes: item.resale.notes || null,
+                            visible: item.resale.visible ? 1 : 0,
+                        }),
+                    });
+                    if (!res.ok) throw new Error('Erro ao salvar');
+                    setTimeout(() => { item._saving = false; }, 1200);
+                } catch (e) {
+                    alert('Erro ao salvar: ' + e.message);
+                    item._saving = false;
+                }
+            },
+
+            copyResaleToWhatsApp() {
+                const visibleConsignment = this.resaleConsignment.filter(c => c.resale.visible && c.resale.resale_price);
+                const visibleUsed = this.resaleUsed.filter(u => u.resale.visible && u.resale.resale_price);
+
+                if (visibleConsignment.length === 0 && visibleUsed.length === 0) {
+                    alert('Nenhum item marcado como visivel com preco.');
+                    return;
+                }
+
+                let lines = [];
+                lines.push('LISTA DE REPASSE DG STORE');
+                lines.push('');
+
+                if (visibleConsignment.length > 0) {
+                    lines.push('*NOVOS LACRADOS*');
+                    lines.push('');
+
+                    const grouped = {};
+                    visibleConsignment.forEach(c => {
+                        const key = (c.name || '').trim() + (c.storage ? ' ' + c.storage : '');
+                        if (!grouped[key]) grouped[key] = [];
+                        grouped[key].push(c);
+                    });
+
+                    Object.keys(grouped).forEach(modelKey => {
+                        const items = grouped[modelKey];
+                        if (items.length === 1) {
+                            const c = items[0];
+                            const colorEmoji = c.color ? getColorEmoji(c.color) : '';
+                            const price = parseFloat(c.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                            lines.push(`${modelKey}`);
+                            lines.push(`${colorEmoji} R$ ${price} 🔥🔥`);
+                        } else {
+                            lines.push(`${modelKey}`);
+                            items.forEach(c => {
+                                const colorEmoji = c.color ? getColorEmoji(c.color) : '🔘';
+                                const price = parseFloat(c.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                                lines.push(`${colorEmoji} R$ ${price} 🔥🔥`);
+                            });
+                        }
+                        lines.push('');
+                    });
+                }
+
+                if (visibleUsed.length > 0) {
+                    lines.push('*SEMI NOVOS*');
+                    lines.push('');
+
+                    visibleUsed.forEach(u => {
+                        const namePart = (u.name || '') + (u.storage ? ' ' + u.storage : '');
+                        const color = u.color || '';
+                        const battery = u.resale.battery_health ? `🔋${u.resale.battery_health}%` : '';
+
+                        let accessories = '';
+                        if (u.resale.has_box && u.resale.has_cable) {
+                            accessories = '📦 Caixa e cabo';
+                        } else if (u.resale.has_box) {
+                            accessories = '📦 Caixa';
+                        } else if (u.resale.has_cable) {
+                            accessories = '✅Cabo';
+                        } else {
+                            accessories = '❌Caixa ❌Cabo';
+                        }
+
+                        let warranty = '';
+                        if (u.resale.warranty_until) {
+                            const d = new Date(u.resale.warranty_until);
+                            const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+                            warranty = `🛡️ Garantia até ${months[d.getMonth()]}/${d.getFullYear()}`;
+                        }
+
+                        const price = parseFloat(u.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+
+                        let parts = [`${namePart} ${color}`.trim()];
+                        if (battery) parts.push(battery);
+                        if (accessories) parts.push(accessories);
+                        if (warranty) parts.push(warranty);
+                        if (u.resale.notes) parts.push(u.resale.notes);
+                        parts.push(`💰R$ ${price}`);
+
+                        lines.push(parts.join(' - '));
+                    });
+                }
+
+                const text = lines.join('\n');
+
+                navigator.clipboard.writeText(text).then(() => {
+                    this.resaleCopied = true;
+                    setTimeout(() => { this.resaleCopied = false; }, 2500);
+                }).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    this.resaleCopied = true;
+                    setTimeout(() => { this.resaleCopied = false; }, 2500);
+                });
             },
         };
     }

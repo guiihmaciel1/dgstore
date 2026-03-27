@@ -209,6 +209,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/creatives/{creative}', [MarketingController::class, 'deleteCreative'])->name('creatives.destroy');
             Route::post('/used-listings', [MarketingController::class, 'storeUsedListing'])->name('used-listings.store');
             Route::delete('/used-listings/{listing}', [MarketingController::class, 'deleteUsedListing'])->name('used-listings.destroy');
+            Route::post('/resale-items', [MarketingController::class, 'storeResaleItem'])->name('resale-items.store');
+            Route::post('/resale-items/{item}/toggle', [MarketingController::class, 'toggleResaleVisibility'])->name('resale-items.toggle');
         });
 
         // Avaliação de Seminovos

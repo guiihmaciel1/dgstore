@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers;
 
+use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Marketing\Models\MarketingCreative;
 use App\Domain\Marketing\Models\MarketingPrice;
+use App\Domain\Marketing\Models\MarketingResaleItem;
 use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Product\Models\Product;
 use App\Http\Controllers\Controller;
@@ -62,6 +64,40 @@ class MarketingController extends Controller
             ];
         })->values();
 
+        $consignmentItems = ConsignmentStockItem::available()
+            ->where('available_quantity', '>', 0)
+            ->orderBy('name')
+            ->get();
+
+        $usedForResale = Product::where('active', true)
+            ->where('stock_quantity', '>', 0)
+            ->whereIn('condition', ['used', 'refurbished'])
+            ->orderBy('name')
+            ->get();
+
+        $resaleItems = MarketingResaleItem::all()
+            ->keyBy(fn ($r) => $r->resaleable_type . '_' . $r->resaleable_id);
+
+        $consignmentResaleJson = $consignmentItems->map(fn ($c) => [
+            'id' => $c->id,
+            'morph_type' => ConsignmentStockItem::class,
+            'name' => $c->name,
+            'storage' => $c->storage,
+            'color' => $c->color,
+            'suggested_price' => (float) $c->suggested_price,
+            'available_quantity' => $c->available_quantity,
+        ])->values();
+
+        $usedResaleJson = $usedForResale->map(fn ($p) => [
+            'id' => $p->id,
+            'morph_type' => Product::class,
+            'name' => $p->name,
+            'storage' => $p->storage,
+            'color' => $p->color,
+            'condition' => $p->condition->value,
+            'stock' => $p->stock_quantity,
+        ])->values();
+
         return view('marketing.index', [
             'prices' => $prices,
             'pricesJson' => $pricesJson,
@@ -70,6 +106,9 @@ class MarketingController extends Controller
             'usedProducts' => $usedProducts,
             'usedProductsJson' => $usedProductsJson,
             'usedListings' => $usedListings,
+            'consignmentResaleJson' => $consignmentResaleJson,
+            'usedResaleJson' => $usedResaleJson,
+            'resaleItems' => $resaleItems,
         ]);
     }
 
@@ -229,6 +268,53 @@ class MarketingController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Dados do seminovo removidos!',
+        ]);
+    }
+
+    public function storeResaleItem(Request $request): JsonResponse
+    {
+        $request->validate([
+            'resaleable_type' => ['required', 'string'],
+            'resaleable_id' => ['required', 'string'],
+            'resale_price' => ['nullable', 'numeric', 'min:0'],
+            'battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'warranty_until' => ['nullable', 'date'],
+            'has_box' => ['nullable'],
+            'has_cable' => ['nullable'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+            'visible' => ['nullable'],
+        ]);
+
+        $item = MarketingResaleItem::updateOrCreate(
+            [
+                'resaleable_type' => $request->resaleable_type,
+                'resaleable_id' => $request->resaleable_id,
+            ],
+            [
+                'resale_price' => $request->resale_price,
+                'battery_health' => $request->battery_health,
+                'warranty_until' => $request->warranty_until,
+                'has_box' => $request->boolean('has_box'),
+                'has_cable' => $request->boolean('has_cable'),
+                'notes' => $request->notes,
+                'visible' => $request->boolean('visible'),
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Item de repasse salvo!',
+            'item' => $item,
+        ]);
+    }
+
+    public function toggleResaleVisibility(MarketingResaleItem $item): JsonResponse
+    {
+        $item->update(['visible' => !$item->visible]);
+
+        return response()->json([
+            'success' => true,
+            'visible' => $item->visible,
         ]);
     }
 }
