@@ -194,13 +194,13 @@
                                                     
                                                     <div style="width: 7rem; text-align: right;">
                                                         <label style="display: block; font-size: 0.625rem; color: #6b7280; text-transform: uppercase; margin-bottom: 0.125rem;">Venda</label>
+                                                        <input type="hidden" :name="'items['+index+'][unit_price]'" :value="item.price">
                                                         <input 
-                                                            type="number" 
-                                                            :name="'items['+index+'][unit_price]'"
-                                                            x-model.number="item.price"
-                                                            @input="updateTotals"
-                                                            step="0.01"
-                                                            min="0"
+                                                            type="text"
+                                                            inputmode="numeric"
+                                                            :value="toMoneyMask(item.price)"
+                                                            @input="applyMoneyMask($event); item.price = parseMoney($event.target.value); updateTotals()"
+                                                            placeholder="0,00"
                                                             style="width: 100%; text-align: right; font-weight: 600; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.25rem 0.5rem;"
                                                         >
                                                     </div>
@@ -224,11 +224,12 @@
                                                         <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
                                                             Custo (R$) <span style="color: #dc2626;">*</span>
                                                         </label>
-                                                        <input type="number" 
-                                                               :name="'items['+index+'][cost_price]'"
-                                                               x-model.number="item.cost_price"
-                                                               @input="updateTotals"
-                                                               step="0.01" min="0" placeholder="0.00"
+                                                        <input type="hidden" :name="'items['+index+'][cost_price]'" :value="item.cost_price">
+                                                        <input type="text"
+                                                               inputmode="numeric"
+                                                               :value="toMoneyMask(item.cost_price)"
+                                                               @input="applyMoneyMask($event); item.cost_price = parseMoney($event.target.value); updateTotals()"
+                                                               placeholder="0,00"
                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
                                                                onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                                     </div>
@@ -1480,6 +1481,33 @@
                 
                 formatMoney(value) {
                     return 'R$ ' + (parseFloat(value) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                },
+
+                toMoneyMask(value) {
+                    const num = Math.round((parseFloat(value) || 0) * 100);
+                    if (num === 0) return '';
+                    const str = String(num).padStart(3, '0');
+                    const intPart = str.slice(0, -2);
+                    const decPart = str.slice(-2);
+                    const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                    return formatted + ',' + decPart;
+                },
+
+                parseMoney(masked) {
+                    if (!masked) return 0;
+                    const clean = String(masked).replace(/[^\d,]/g, '').replace(',', '.');
+                    return parseFloat(clean) || 0;
+                },
+
+                applyMoneyMask(event) {
+                    let val = event.target.value.replace(/\D/g, '');
+                    if (!val) { event.target.value = ''; return; }
+                    val = String(parseInt(val, 10));
+                    val = val.padStart(3, '0');
+                    const intPart = val.slice(0, -2);
+                    const decPart = val.slice(-2);
+                    const formatted = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                    event.target.value = formatted + ',' + decPart;
                 },
 
                 // ========== MODAL CLIENTE ==========
