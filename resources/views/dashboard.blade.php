@@ -288,105 +288,25 @@
                 </a>
             </div>
 
-            <!-- Alertas dos Módulos -->
-            @if(($alerts['warranties_expiring'] ?? 0) > 0 || ($alerts['open_claims'] ?? 0) > 0 || ($alerts['imports_in_transit'] ?? 0) > 0 || ($alerts['reservations_expiring'] ?? 0) > 0 || ($alerts['reservations_overdue'] ?? 0) > 0 || ($alerts['deals_open'] ?? 0) > 0 || ($alerts['deals_overdue'] ?? 0) > 0)
+            <!-- Mensagens do Sistema -->
             <div class="mb-6 sm:mb-8">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Alertas</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    @if(($alerts['warranties_expiring'] ?? 0) > 0)
-                        <a href="{{ route('warranties.index', ['status' => 'expiring']) }}" class="alert-card alert-card-yellow">
-                            <div class="alert-card-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                                </svg>
-                            </div>
-                            <div class="alert-card-content">
-                                <span class="alert-card-number">{{ $alerts['warranties_expiring'] }}</span>
-                                <span class="alert-card-label">Garantias vencendo</span>
-                            </div>
-                        </a>
-                    @endif
-
-                    @if(($alerts['open_claims'] ?? 0) > 0)
-                        <a href="{{ route('warranties.index', ['status' => 'with_claims']) }}" class="alert-card alert-card-red">
-                            <div class="alert-card-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                </svg>
-                            </div>
-                            <div class="alert-card-content">
-                                <span class="alert-card-number">{{ $alerts['open_claims'] }}</span>
-                                <span class="alert-card-label">Acionamentos abertos</span>
-                            </div>
-                        </a>
-                    @endif
-
-                    @if(($alerts['imports_in_transit'] ?? 0) > 0)
-                        <a href="{{ route('imports.index') }}" class="alert-card alert-card-blue">
-                            <div class="alert-card-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
-                                </svg>
-                            </div>
-                            <div class="alert-card-content">
-                                <span class="alert-card-number">{{ $alerts['imports_in_transit'] }}</span>
-                                <span class="alert-card-label">Pedidos em trânsito</span>
-                            </div>
-                        </a>
-                    @endif
-
-                    @if(($alerts['reservations_overdue'] ?? 0) > 0)
-                        <a href="{{ route('reservations.index', ['status' => 'active']) }}" class="alert-card alert-card-red">
-                            <div class="alert-card-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                                </svg>
-                            </div>
-                            <div class="alert-card-content">
-                                <span class="alert-card-number">{{ $alerts['reservations_overdue'] }}</span>
-                                <span class="alert-card-label">Reservas vencidas</span>
-                            </div>
-                        </a>
-                    @elseif(($alerts['reservations_expiring'] ?? 0) > 0)
-                        <a href="{{ route('reservations.index') }}" class="alert-card alert-card-yellow">
-                            <div class="alert-card-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                            </div>
-                            <div class="alert-card-content">
-                                <span class="alert-card-number">{{ $alerts['reservations_expiring'] }}</span>
-                                <span class="alert-card-label">Reservas vencendo</span>
-                            </div>
-                        </a>
-                    @endif
-
-                    @if(($alerts['deals_overdue'] ?? 0) > 0)
-                        <a href="{{ route('crm.board') }}" class="alert-card alert-card-red">
-                            <div class="alert-card-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
-                                </svg>
-                            </div>
-                            <div class="alert-card-content">
-                                <span class="alert-card-number">{{ $alerts['deals_overdue'] }}</span>
-                                <span class="alert-card-label">Negócios atrasados</span>
-                            </div>
-                        </a>
-                    @elseif(($alerts['deals_open'] ?? 0) > 0)
-                        <a href="{{ route('crm.board') }}" class="alert-card alert-card-blue">
-                            <div class="alert-card-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
-                                </svg>
-                            </div>
-                            <div class="alert-card-content">
-                                <span class="alert-card-number">{{ $alerts['deals_open'] }}</span>
-                                <span class="alert-card-label">Negócios em aberto</span>
-                            </div>
-                        </a>
-                    @endif
-                </div>
+                @if(count($systemNotifications) > 0)
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px;">
+                        @foreach($systemNotifications as $notif)
+                            <a href="{{ $notif['route'] }}" class="sn-card sn-card-{{ $notif['type'] }}">
+                                <span class="sn-card-count">{{ $notif['count'] }}</span>
+                                <span class="sn-card-label">{{ $notif['label'] }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="sn-ok">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span>Tudo em dia!</span>
+                    </div>
+                @endif
             </div>
 
             <style>
@@ -395,237 +315,46 @@
                     color: #d1d5db;
                     user-select: none;
                 }
-                .alert-card {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    padding: 1rem;
-                    border-radius: 0.75rem;
-                    text-decoration: none;
-                    transition: all 0.15s ease;
-                    border: 1px solid;
-                }
-                .alert-card:hover {
-                    transform: translateY(-1px);
-                    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-                }
-                .alert-card-icon {
-                    width: 2.5rem;
-                    height: 2.5rem;
-                    border-radius: 0.5rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    flex-shrink: 0;
-                }
-                .alert-card-icon svg {
-                    width: 1.25rem;
-                    height: 1.25rem;
-                }
-                .alert-card-content {
+                .sn-card {
                     display: flex;
                     flex-direction: column;
+                    padding: 10px 14px;
+                    border-radius: 10px;
+                    text-decoration: none;
+                    border: 1px solid;
+                    transition: all 0.15s ease;
                 }
-                .alert-card-number {
+                .sn-card:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                }
+                .sn-card-count {
                     font-size: 1.25rem;
-                    font-weight: 700;
-                    line-height: 1.2;
+                    font-weight: 800;
+                    line-height: 1;
                 }
-                .alert-card-label {
-                    font-size: 0.75rem;
+                .sn-card-label {
+                    font-size: 0.7rem;
+                    font-weight: 500;
+                    margin-top: 2px;
                     opacity: 0.8;
                 }
-                .alert-card-yellow {
-                    background: #fefce8;
-                    border-color: #fde68a;
-                    color: #92400e;
-                }
-                .alert-card-yellow .alert-card-icon {
-                    background: #fef3c7;
-                    color: #d97706;
-                }
-                .alert-card-red {
-                    background: #fef2f2;
-                    border-color: #fecaca;
-                    color: #991b1b;
-                }
-                .alert-card-red .alert-card-icon {
-                    background: #fee2e2;
-                    color: #dc2626;
-                }
-                .alert-card-blue {
-                    background: #eff6ff;
-                    border-color: #bfdbfe;
-                    color: #1e40af;
-                }
-                .alert-card-blue .alert-card-icon {
-                    background: #dbeafe;
-                    color: #2563eb;
-                }
-                .alert-card-green {
-                    background: #f0fdf4;
-                    border-color: #bbf7d0;
-                    color: #166534;
-                }
-                .alert-card-green .alert-card-icon {
-                    background: #dcfce7;
-                    color: #16a34a;
-                }
-            </style>
-            @endif
-
-            <!-- Notificações do Sistema -->
-            <div class="mb-6 sm:mb-8">
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-7 h-7 bg-gray-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <h2 class="text-lg font-semibold text-gray-900">Mensagens do Sistema</h2>
-                    @if(count($systemNotifications) > 0)
-                        <span class="sys-notif-badge">{{ count($systemNotifications) }}</span>
-                    @endif
-                </div>
-
-                @if(count($systemNotifications) > 0)
-                    <div class="space-y-2">
-                        @foreach($systemNotifications as $notif)
-                            <a href="{{ $notif['route'] }}" class="sys-notif sys-notif-{{ $notif['type'] }}">
-                                <div class="sys-notif-icon-wrap sys-notif-icon-{{ $notif['type'] }}">
-                                    @if($notif['icon'] === 'sale')
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
-                                        </svg>
-                                    @elseif($notif['icon'] === 'finance')
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                    @elseif($notif['icon'] === 'crm')
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        </svg>
-                                    @elseif($notif['icon'] === 'import')
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
-                                        </svg>
-                                    @endif
-                                </div>
-                                <span class="sys-notif-text">{{ $notif['message'] }}</span>
-                                <svg class="sys-notif-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </a>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="sys-notif-empty">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        <span>Tudo em dia! Nenhuma pendência encontrada.</span>
-                    </div>
-                @endif
-            </div>
-
-            <style>
-                .sys-notif-badge {
+                .sn-card-danger { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+                .sn-card-warning { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+                .sn-card-info { background: #f0f9ff; border-color: #bae6fd; color: #0c4a6e; }
+                .sn-ok {
                     display: inline-flex;
                     align-items: center;
-                    justify-content: center;
-                    min-width: 1.25rem;
-                    height: 1.25rem;
-                    padding: 0 0.375rem;
-                    font-size: 0.7rem;
-                    font-weight: 700;
-                    color: white;
-                    background: #111827;
-                    border-radius: 9999px;
-                }
-                .sys-notif {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.75rem;
-                    padding: 0.75rem 1rem;
-                    border-radius: 0.625rem;
-                    text-decoration: none;
-                    transition: all 0.15s ease;
-                    border: 1px solid;
-                }
-                .sys-notif:hover {
-                    transform: translateX(2px);
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-                }
-                .sys-notif-icon-wrap {
-                    width: 2rem;
-                    height: 2rem;
-                    border-radius: 0.5rem;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    flex-shrink: 0;
-                }
-                .sys-notif-icon-wrap svg {
-                    width: 1.1rem;
-                    height: 1.1rem;
-                }
-                .sys-notif-text {
-                    flex: 1;
-                    font-size: 0.8rem;
-                    font-weight: 500;
-                    line-height: 1.3;
-                }
-                .sys-notif-arrow {
-                    width: 1rem;
-                    height: 1rem;
-                    flex-shrink: 0;
-                    opacity: 0.4;
-                }
-                .sys-notif-danger {
-                    background: #fef2f2;
-                    border-color: #fecaca;
-                    color: #991b1b;
-                }
-                .sys-notif-icon-danger {
-                    background: #fee2e2;
-                    color: #dc2626;
-                }
-                .sys-notif-warning {
-                    background: #fffbeb;
-                    border-color: #fde68a;
-                    color: #92400e;
-                }
-                .sys-notif-icon-warning {
-                    background: #fef3c7;
-                    color: #d97706;
-                }
-                .sys-notif-info {
-                    background: #f0f9ff;
-                    border-color: #bae6fd;
-                    color: #0c4a6e;
-                }
-                .sys-notif-icon-info {
-                    background: #e0f2fe;
-                    color: #0284c7;
-                }
-                .sys-notif-empty {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                    padding: 0.75rem 1rem;
+                    gap: 6px;
+                    padding: 8px 14px;
                     background: #f0fdf4;
                     border: 1px solid #bbf7d0;
-                    border-radius: 0.625rem;
+                    border-radius: 10px;
                     color: #166534;
                     font-size: 0.8rem;
-                    font-weight: 500;
+                    font-weight: 600;
                 }
-                .sys-notif-empty svg {
-                    width: 1.1rem;
-                    height: 1.1rem;
-                    flex-shrink: 0;
-                    color: #16a34a;
-                }
+                .sn-ok svg { width: 1rem; height: 1rem; color: #16a34a; }
             </style>
 
             <!-- Cards de Estatísticas -->

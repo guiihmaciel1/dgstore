@@ -31,22 +31,7 @@ class DashboardController extends Controller
     {
         $data = $this->reportUseCase->dashboardData();
 
-        // Alertas dos módulos
-        $alerts = [
-            'warranties_expiring' => $this->warrantyService->countExpiringSoon(30),
-            'open_claims' => $this->warrantyService->countOpenClaims(),
-            'imports_in_transit' => $this->importService->countInTransit(),
-            'reservations_active' => $this->reservationService->countActive(),
-            'reservations_expiring' => $this->reservationService->countExpiringSoon(3),
-            'reservations_overdue' => $this->reservationService->countOverdue(),
-            'deals_open' => Deal::where('user_id', auth()->id())->open()->count(),
-            'deals_overdue' => Deal::where('user_id', auth()->id())->open()
-                ->whereNotNull('expected_close_date')
-                ->where('expected_close_date', '<', today())
-                ->count(),
-        ];
-
-        // Notificações do sistema (dados monitorados pelos cron jobs)
+        // Notificações unificadas do sistema
         $systemNotifications = $this->getSystemNotifications();
 
         // Novos leads aguardando interação (no estágio "Novo Lead" sem atividade real)
@@ -64,7 +49,6 @@ class DashboardController extends Controller
             'lowStockProducts' => $data['low_stock']['products'],
             'topProducts' => $data['top_products'],
             'salesChart' => $data['sales_chart'],
-            'alerts' => $alerts,
             'systemNotifications' => $systemNotifications,
             'newLeadsWaiting' => $newLeadsWaiting,
             'birthdayCustomers' => $birthdayCustomers,
@@ -101,90 +85,121 @@ class DashboardController extends Controller
     {
         $notifications = [];
 
-        // Transações financeiras vencidas
+        $salesPending = Sale::where('payment_status', PaymentStatus::Pending)->count();
+        if ($salesPending > 0) {
+            $notifications[] = [
+                'type' => 'danger', 'icon' => 'sale', 'count' => $salesPending,
+                'label' => 'Vendas pendentes',
+                'route' => route('sales.index', ['payment_status' => 'pending']),
+            ];
+        }
+
+        $salesPartial = Sale::where('payment_status', PaymentStatus::Partial)->count();
+        if ($salesPartial > 0) {
+            $notifications[] = [
+                'type' => 'warning', 'icon' => 'sale', 'count' => $salesPartial,
+                'label' => 'Pagamento parcial',
+                'route' => route('sales.index', ['payment_status' => 'partial']),
+            ];
+        }
+
         $overdueTransactions = FinancialTransaction::where('status', 'overdue')->count();
         if ($overdueTransactions > 0) {
             $notifications[] = [
-                'type' => 'danger',
-                'icon' => 'finance',
-                'message' => "{$overdueTransactions} transação(ões) financeira(s) vencida(s)",
+                'type' => 'danger', 'icon' => 'finance', 'count' => $overdueTransactions,
+                'label' => 'Transações vencidas',
                 'route' => route('finance.payables'),
             ];
         }
 
-        // Transações vencendo nos próximos 3 dias
         $dueSoon = FinancialTransaction::where('status', 'pending')
             ->whereBetween('due_date', [today(), today()->addDays(3)])
             ->count();
         if ($dueSoon > 0) {
             $notifications[] = [
-                'type' => 'warning',
-                'icon' => 'finance',
-                'message' => "{$dueSoon} transação(ões) vencendo nos próximos 3 dias",
+                'type' => 'warning', 'icon' => 'finance', 'count' => $dueSoon,
+                'label' => 'Transações vencendo',
                 'route' => route('finance.index'),
             ];
         }
 
-        // Deals atrasados no CRM
         $overdueDeals = Deal::where('user_id', auth()->id())->open()
             ->whereNotNull('expected_close_date')
             ->where('expected_close_date', '<', today())
             ->count();
         if ($overdueDeals > 0) {
             $notifications[] = [
-                'type' => 'danger',
-                'icon' => 'crm',
-                'message' => "{$overdueDeals} negócio(s) com prazo de fechamento vencido",
+                'type' => 'danger', 'icon' => 'crm', 'count' => $overdueDeals,
+                'label' => 'Negócios atrasados',
                 'route' => route('crm.board'),
             ];
         }
 
-        // Deals sem atividade há mais de 5 dias
         $staleDeals = Deal::where('user_id', auth()->id())->open()
             ->where('updated_at', '<', now()->subDays(5))
             ->count();
         if ($staleDeals > 0) {
             $notifications[] = [
-                'type' => 'info',
-                'icon' => 'crm',
-                'message' => "{$staleDeals} negócio(s) sem atividade há mais de 5 dias",
+                'type' => 'info', 'icon' => 'crm', 'count' => $staleDeals,
+                'label' => 'Negócios parados',
                 'route' => route('crm.board'),
             ];
         }
 
-        // Vendas com pagamento pendente
-        $salesPending = Sale::where('payment_status', PaymentStatus::Pending)->count();
-        if ($salesPending > 0) {
+        $warrantiesExpiring = $this->warrantyService->countExpiringSoon(30);
+        if ($warrantiesExpiring > 0) {
             $notifications[] = [
-                'type' => 'danger',
-                'icon' => 'sale',
-                'message' => "{$salesPending} venda(s) com pagamento pendente",
-                'route' => route('sales.index', ['payment_status' => 'pending']),
+                'type' => 'warning', 'icon' => 'warranty', 'count' => $warrantiesExpiring,
+                'label' => 'Garantias vencendo',
+                'route' => route('warranties.index', ['status' => 'expiring']),
             ];
         }
 
-        // Vendas com pagamento parcial
-        $salesPartial = Sale::where('payment_status', PaymentStatus::Partial)->count();
-        if ($salesPartial > 0) {
+        $openClaims = $this->warrantyService->countOpenClaims();
+        if ($openClaims > 0) {
             $notifications[] = [
-                'type' => 'warning',
-                'icon' => 'sale',
-                'message' => "{$salesPartial} venda(s) com pagamento parcial",
-                'route' => route('sales.index', ['payment_status' => 'partial']),
+                'type' => 'danger', 'icon' => 'warranty', 'count' => $openClaims,
+                'label' => 'Acionamentos abertos',
+                'route' => route('warranties.index', ['status' => 'with_claims']),
             ];
         }
 
-        // Importações atrasadas
+        $importsInTransit = $this->importService->countInTransit();
+        if ($importsInTransit > 0) {
+            $notifications[] = [
+                'type' => 'info', 'icon' => 'import', 'count' => $importsInTransit,
+                'label' => 'Importações em trânsito',
+                'route' => route('imports.index'),
+            ];
+        }
+
         $delayedImports = ImportOrder::active()
             ->whereNotNull('estimated_arrival')
             ->where('estimated_arrival', '<', today())
             ->count();
         if ($delayedImports > 0) {
             $notifications[] = [
-                'type' => 'warning',
-                'icon' => 'import',
-                'message' => "{$delayedImports} pedido(s) de importação com chegada atrasada",
+                'type' => 'warning', 'icon' => 'import', 'count' => $delayedImports,
+                'label' => 'Importações atrasadas',
                 'route' => route('imports.index'),
+            ];
+        }
+
+        $reservationsOverdue = $this->reservationService->countOverdue();
+        if ($reservationsOverdue > 0) {
+            $notifications[] = [
+                'type' => 'danger', 'icon' => 'reservation', 'count' => $reservationsOverdue,
+                'label' => 'Reservas vencidas',
+                'route' => route('reservations.index', ['status' => 'active']),
+            ];
+        }
+
+        $reservationsExpiring = $this->reservationService->countExpiringSoon(3);
+        if ($reservationsExpiring > 0) {
+            $notifications[] = [
+                'type' => 'warning', 'icon' => 'reservation', 'count' => $reservationsExpiring,
+                'label' => 'Reservas vencendo',
+                'route' => route('reservations.index'),
             ];
         }
 
