@@ -12,6 +12,8 @@ use App\Domain\Finance\Models\FinancialTransaction;
 use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
 use App\Domain\Reservation\Services\ReservationService;
+use App\Domain\Sale\Enums\PaymentStatus;
+use App\Domain\Sale\Models\Sale;
 use App\Domain\Warranty\Services\WarrantyService;
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
@@ -41,6 +43,9 @@ class DashboardController extends Controller
             'deals_overdue' => Deal::where('user_id', auth()->id())->open()
                 ->whereNotNull('expected_close_date')
                 ->where('expected_close_date', '<', today())
+                ->count(),
+            'sales_not_paid' => Sale::whereNot('payment_status', PaymentStatus::Paid)
+                ->whereNot('payment_status', PaymentStatus::Cancelled)
                 ->count(),
         ];
 
@@ -147,6 +152,19 @@ class DashboardController extends Controller
                 'icon' => 'crm',
                 'message' => "{$staleDeals} negócio(s) sem atividade há mais de 5 dias",
                 'route' => route('crm.board'),
+            ];
+        }
+
+        // Vendas com pagamento pendente/parcial
+        $salesNotPaid = Sale::whereNot('payment_status', PaymentStatus::Paid)
+            ->whereNot('payment_status', PaymentStatus::Cancelled)
+            ->count();
+        if ($salesNotPaid > 0) {
+            $notifications[] = [
+                'type' => 'warning',
+                'icon' => 'sale',
+                'message' => "{$salesNotPaid} venda(s) com pagamento pendente",
+                'route' => route('sales.index', ['payment_status' => 'pending']),
             ];
         }
 
