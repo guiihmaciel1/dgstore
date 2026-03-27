@@ -27,7 +27,7 @@
                 
                 <!-- Filtros -->
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
-                    <form method="GET" action="{{ route('products.index') }}" x-data x-ref="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                    <form method="GET" action="{{ route('products.index') }}" x-data x-ref="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
                             <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nome, SKU, IMEI..." 
@@ -60,6 +60,15 @@
                                         {{ $condition->label() }}
                                     </option>
                                 @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                            <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
+                                    x-on:change="$refs.filterForm.submit()">
+                                <option value="">Todos</option>
+                                <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Ativo</option>
+                                <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>Inativo</option>
                             </select>
                         </div>
                         <div class="flex items-center pt-5">

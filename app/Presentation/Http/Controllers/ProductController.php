@@ -30,10 +30,17 @@ class ProductController extends Controller
             'search' => $request->get('search'),
             'category' => $request->get('category'),
             'condition' => $request->get('condition'),
+            'status' => $request->get('status'),
             'low_stock' => $request->boolean('low_stock'),
             'sort' => $request->get('sort', 'created_at'),
             'direction' => $request->get('direction', 'desc'),
         ];
+
+        if ($filters['status'] === 'active') {
+            $filters['active'] = true;
+        } elseif ($filters['status'] === 'inactive') {
+            $filters['active'] = false;
+        }
 
         $products = $this->productService->list(15, $filters);
 
