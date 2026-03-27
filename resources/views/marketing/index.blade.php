@@ -402,8 +402,8 @@
                                      style="padding: 0.5rem 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none;"
                                      :style="!item._collapsed ? 'background: #f9fafb;' : ''"
                                      onmouseover="this.style.background='#f9fafb'" onmouseout="if(this.__x_el){ return; } this.style.background=''">
-                                    <svg style="width: 0.75rem; height: 0.75rem; flex-shrink: 0; transition: transform 0.2s;"
-                                         :style="item._collapsed ? 'color:#9ca3af;transform:rotate(0deg);' : 'color:#111827;transform:rotate(90deg);'"
+                                    <svg width="14" height="14"
+                                         :style="'flex-shrink:0;transition:transform 0.2s;' + (item._collapsed ? 'color:#9ca3af;transform:rotate(0deg);' : 'color:#111827;transform:rotate(90deg);')"
                                          fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                                     </svg>
