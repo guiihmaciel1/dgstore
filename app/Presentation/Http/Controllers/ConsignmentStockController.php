@@ -87,6 +87,45 @@ class ConsignmentStockController extends Controller
             ->with('success', 'Entrada de estoque consignado registrada com sucesso!');
     }
 
+    public function edit(ConsignmentStockItem $item): View
+    {
+        $suppliers = Supplier::active()->orderBy('name')->get();
+
+        return view('stock.consignment.edit', [
+            'item' => $item,
+            'suppliers' => $suppliers,
+        ]);
+    }
+
+    public function update(Request $request, ConsignmentStockItem $item): RedirectResponse
+    {
+        $validated = $request->validate([
+            'supplier_id' => ['required', 'exists:suppliers,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'model' => ['nullable', 'string', 'max:255'],
+            'storage' => ['nullable', 'string', 'max:50'],
+            'color' => ['nullable', 'string', 'max:100'],
+            'imei' => ['nullable', 'string', 'max:50', 'unique:consignment_stock_items,imei,' . $item->id],
+            'supplier_cost' => ['required', 'numeric', 'min:0'],
+            'suggested_price' => ['nullable', 'numeric', 'min:0'],
+            'quantity' => ['required', 'integer', 'min:1'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+            'received_at' => ['nullable', 'date'],
+        ]);
+
+        $oldQuantity = $item->quantity;
+        $newQuantity = (int) $validated['quantity'];
+        $quantityDiff = $newQuantity - $oldQuantity;
+
+        $item->update(array_merge($validated, [
+            'available_quantity' => max(0, $item->available_quantity + $quantityDiff),
+        ]));
+
+        return redirect()
+            ->route('stock.consignment.index')
+            ->with('success', 'Item consignado atualizado com sucesso!');
+    }
+
     public function returnItem(Request $request, ConsignmentStockItem $item): RedirectResponse
     {
         if (!$item->isAvailable()) {

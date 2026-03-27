@@ -381,25 +381,49 @@
                         Nenhum seminovo disponivel em estoque
                     </div>
 
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;" x-show="resaleUsed.length > 0">
+                        <button type="button" @click="resaleUsed.forEach(i => i._collapsed = false)"
+                                style="padding: 0.25rem 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 500; color: #374151; cursor: pointer;"
+                                onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                            Expandir Todos
+                        </button>
+                        <button type="button" @click="resaleUsed.forEach(i => i._collapsed = true)"
+                                style="padding: 0.25rem 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 500; color: #374151; cursor: pointer;"
+                                onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                            Minimizar Todos
+                        </button>
+                    </div>
+
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem;" x-show="resaleUsed.length > 0">
                         <template x-for="item in resaleUsed" :key="item.id">
                             <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
-                                <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;">
-                                    <div style="min-width: 0; flex: 1;">
-                                        <div style="font-size: 0.875rem; font-weight: 600; color: #111827;" x-text="item.name"></div>
-                                        <div style="font-size: 0.7rem; color: #9ca3af; margin-top: 2px;">
-                                            <span x-text="item.storage || ''"></span>
-                                            <span x-show="item.color"> · <span x-text="item.color"></span></span>
+                                <div @click="item._collapsed = !item._collapsed"
+                                     style="padding: 0.75rem 1rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;"
+                                     :style="item._collapsed ? 'border-bottom: none;' : 'border-bottom: 1px solid #f3f4f6;'">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0; flex: 1;">
+                                        <svg :style="item._collapsed ? 'width:1rem;height:1rem;color:#9ca3af;flex-shrink:0;transition:transform 0.2s;transform:rotate(0deg);' : 'width:1rem;height:1rem;color:#9ca3af;flex-shrink:0;transition:transform 0.2s;transform:rotate(90deg);'"
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                        </svg>
+                                        <div style="min-width: 0;">
+                                            <div style="font-size: 0.875rem; font-weight: 600; color: #111827;" x-text="item.name"></div>
+                                            <div style="font-size: 0.7rem; color: #9ca3af; margin-top: 2px;">
+                                                <span x-text="item.storage || ''"></span>
+                                                <span x-show="item.color"> · <span x-text="item.color"></span></span>
+                                                <template x-if="item._collapsed && item.resale.resale_price">
+                                                    <span style="color: #059669; font-weight: 600;"> · R$ <span x-text="parseFloat(item.resale.resale_price).toLocaleString('pt-BR')"></span></span>
+                                                </template>
+                                            </div>
                                         </div>
                                     </div>
-                                    <label style="display: flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; color: #374151; cursor: pointer; flex-shrink: 0;">
+                                    <label @click.stop style="display: flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; color: #374151; cursor: pointer; flex-shrink: 0;">
                                         <input type="checkbox" x-model="item.resale.visible"
                                                style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
                                         Exibir
                                     </label>
                                 </div>
 
-                                <div style="padding: 0.75rem 1rem;">
+                                <div x-show="!item._collapsed" x-transition.duration.200ms style="padding: 0.75rem 1rem;">
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.625rem;">
                                         <div>
                                             <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Preco Repasse</label>
@@ -687,6 +711,7 @@
             resaleUsed: usedForResale.map(p => ({
                 ...p,
                 resale: buildResaleData(p),
+                _collapsed: true,
                 _saving: false,
             })),
 

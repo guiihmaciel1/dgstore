@@ -150,6 +150,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/stock/consignment', [ConsignmentStockController::class, 'index'])->name('stock.consignment.index');
         Route::get('/stock/consignment/create', [ConsignmentStockController::class, 'create'])->name('stock.consignment.create');
         Route::post('/stock/consignment', [ConsignmentStockController::class, 'store'])->name('stock.consignment.store');
+        Route::get('/stock/consignment/{item}/edit', [ConsignmentStockController::class, 'edit'])->name('stock.consignment.edit');
+        Route::put('/stock/consignment/{item}', [ConsignmentStockController::class, 'update'])->name('stock.consignment.update');
         Route::post('/stock/consignment/{item}/return', [ConsignmentStockController::class, 'returnItem'])->name('stock.consignment.return');
         Route::get('/stock/consignment/report', [ConsignmentStockController::class, 'report'])->name('stock.consignment.report');
         Route::get('/api/consignment/search', [ConsignmentStockController::class, 'search'])->name('stock.consignment.search');

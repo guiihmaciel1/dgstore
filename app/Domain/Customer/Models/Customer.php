@@ -23,6 +23,7 @@ class Customer extends Model
         'address',
         'notes',
         'birth_date',
+        'instagram',
     ];
 
     protected function casts(): array
@@ -110,5 +111,16 @@ class Customer extends Model
         }
 
         return $this->birth_date->age;
+    }
+
+    public function getFormattedInstagramAttribute(): ?string
+    {
+        if (!$this->instagram) {
+            return null;
+        }
+
+        $handle = ltrim($this->instagram, '@');
+
+        return '@' . $handle;
     }
 }

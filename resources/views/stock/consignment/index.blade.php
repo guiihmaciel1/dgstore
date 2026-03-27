@@ -136,23 +136,30 @@
                                         {{ $item->received_at->format('d/m/Y') }}
                                     </td>
                                     <td style="padding: 0.75rem; text-align: center;">
-                                        @if($item->isAvailable())
-                                            <form method="POST" action="{{ route('stock.consignment.return', $item) }}"
-                                                  onsubmit="return confirm('Devolver este item ao fornecedor?')" style="display: inline;">
-                                                @csrf
-                                                <button type="submit" title="Devolver ao fornecedor"
-                                                        style="padding: 0.375rem; color: #f59e0b; background: none; border: none; cursor: pointer; border-radius: 0.25rem;"
-                                                        onmouseover="this.style.background='#fffbeb'" onmouseout="this.style.background='transparent'">
-                                                    <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        @elseif($item->status === \App\Domain\ConsignmentStock\Enums\ConsignmentStatus::Sold)
-                                            <span style="font-size: 0.7rem; color: #6b7280;">Vendido</span>
-                                        @else
-                                            <span style="font-size: 0.7rem; color: #9ca3af;">-</span>
-                                        @endif
+                                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                                            <a href="{{ route('stock.consignment.edit', $item) }}" title="Editar"
+                                               style="padding: 0.375rem; color: #2563eb; background: none; border: none; cursor: pointer; border-radius: 0.25rem; display: inline-flex;"
+                                               onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='transparent'">
+                                                <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </a>
+                                            @if($item->isAvailable())
+                                                <form method="POST" action="{{ route('stock.consignment.return', $item) }}"
+                                                      onsubmit="return confirm('Devolver este item ao fornecedor?')" style="display: inline;">
+                                                    @csrf
+                                                    <button type="submit" title="Devolver ao fornecedor"
+                                                            style="padding: 0.375rem; color: #f59e0b; background: none; border: none; cursor: pointer; border-radius: 0.25rem;"
+                                                            onmouseover="this.style.background='#fffbeb'" onmouseout="this.style.background='transparent'">
+                                                        <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            @elseif($item->status === \App\Domain\ConsignmentStock\Enums\ConsignmentStatus::Sold)
+                                                <span style="font-size: 0.7rem; color: #6b7280;">Vendido</span>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
