@@ -238,6 +238,7 @@ class MarketingController extends Controller
             'has_box' => ['nullable'],
             'has_cable' => ['nullable'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'visible' => ['nullable'],
         ]);
 
         $listing = MarketingUsedListing::updateOrCreate(
@@ -249,6 +250,7 @@ class MarketingController extends Controller
                 'has_box' => $request->boolean('has_box'),
                 'has_cable' => $request->boolean('has_cable'),
                 'notes' => $request->notes,
+                'visible' => $request->boolean('visible'),
             ]
         );
 

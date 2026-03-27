@@ -484,11 +484,17 @@
             {{-- ABA 3: SEMINOVOS DISPONIVEIS --}}
             {{-- ============================================================ --}}
             <div x-show="tab === 'used'" x-cloak>
-                <!-- Busca -->
-                <div style="margin-bottom: 1rem;">
+                <!-- Busca + Copiar Lista -->
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
                     <input type="text" x-model="usedSearch" placeholder="Buscar seminovo por nome..."
-                           style="width: 100%; max-width: 360px; padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                           style="flex: 1; min-width: 200px; max-width: 360px; padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                    <button type="button" @click="copyUsedListToWhatsApp()"
+                            :style="usedListCopied
+                                ? 'padding: 0.5rem 1rem; background: #059669; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: default; display: flex; align-items: center; gap: 0.375rem;'
+                                : 'padding: 0.5rem 1rem; background: #25d366; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;'">
+                        <span x-text="usedListCopied ? '✓ Copiado!' : '📋 Copiar Lista WhatsApp'"></span>
+                    </button>
                 </div>
 
                 <div x-show="filteredUsed.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 3rem; text-align: center;">
@@ -512,6 +518,12 @@
                                     </div>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
+                                    <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; font-weight: 600; color: #059669; cursor: pointer; padding: 2px 6px; border-radius: 9999px; border: 1px solid #d1fae5;"
+                                           :style="item.listing.visible ? 'background:#dcfce7;border-color:#059669;' : 'background:#f3f4f6;border-color:#d1d5db;color:#9ca3af;'">
+                                        <input type="checkbox" x-model="item.listing.visible" @change="saveUsedVisibility(item)"
+                                               style="width: 0.75rem; height: 0.75rem; accent-color: #059669; cursor: pointer;">
+                                        <span x-text="item.listing.visible ? 'Na Lista' : 'Oculto'"></span>
+                                    </label>
                                     <span :style="item.condition === 'used'
                                         ? 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#fef3c7;color:#92400e;'
                                         : 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#dbeafe;color:#1e40af;'"
@@ -686,6 +698,8 @@
             prices: initialPrices.map((p, i) => ({ ...p, _key: 'existing_' + i, _origIdx: i })),
             _priceCounter: initialPrices.length,
 
+            usedListCopied: false,
+
             usedItems: usedProducts.map(p => ({
                 ...p,
                 listing: usedListings[p.id] ? {
@@ -695,6 +709,7 @@
                     has_box: usedListings[p.id].has_box,
                     has_cable: usedListings[p.id].has_cable,
                     notes: usedListings[p.id].notes,
+                    visible: usedListings[p.id].visible ?? true,
                 } : {
                     cost_price: null,
                     final_price: null,
@@ -702,6 +717,7 @@
                     has_box: false,
                     has_cable: false,
                     notes: '',
+                    visible: true,
                 },
                 _saving: false,
                 _copied: false,
@@ -835,6 +851,7 @@
                             has_box: item.listing.has_box ? 1 : 0,
                             has_cable: item.listing.has_cable ? 1 : 0,
                             notes: item.listing.notes || null,
+                            visible: item.listing.visible ? 1 : 0,
                         }),
                     });
                     if (!res.ok) throw new Error('Erro ao salvar');
@@ -843,6 +860,91 @@
                     alert('Erro ao salvar: ' + e.message);
                     item._saving = false;
                 }
+            },
+
+            async saveUsedVisibility(item) {
+                try {
+                    await fetch('{{ route("marketing.used-listings.store") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            product_id: item.id,
+                            cost_price: item.listing.cost_price || null,
+                            final_price: item.listing.final_price || null,
+                            battery_health: item.listing.battery_health || null,
+                            has_box: item.listing.has_box ? 1 : 0,
+                            has_cable: item.listing.has_cable ? 1 : 0,
+                            notes: item.listing.notes || null,
+                            visible: item.listing.visible ? 1 : 0,
+                        }),
+                    });
+                } catch (e) {
+                    // silently fail
+                }
+            },
+
+            copyUsedListToWhatsApp() {
+                const visibleItems = this.usedItems.filter(i => i.listing.visible && i.listing.final_price);
+
+                if (visibleItems.length === 0) {
+                    alert('Nenhum seminovo marcado como "Na Lista" com preço final.');
+                    return;
+                }
+
+                let lines = [];
+                lines.push('📱 *SEMINOVOS DG STORE*');
+                lines.push('━━━━━━━━━━━━━━━━━━━');
+                lines.push('');
+
+                visibleItems.forEach(item => {
+                    const name = (item.name || '').trim();
+                    const storage = item.storage ? ` ${item.storage}` : '';
+                    const color = item.color || '';
+                    const battery = item.listing.battery_health ? `🔋${item.listing.battery_health}%` : '';
+                    const price = parseFloat(item.listing.final_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+
+                    let accessories = '';
+                    if (item.listing.has_box && item.listing.has_cable) {
+                        accessories = '📦 Caixa e cabo';
+                    } else if (item.listing.has_box) {
+                        accessories = '📦 Caixa';
+                    } else if (item.listing.has_cable) {
+                        accessories = '🔌 Cabo';
+                    }
+
+                    let parts = [`*${name}${storage}*${color ? ' ' + color : ''}`];
+                    if (battery) parts.push(battery);
+                    if (accessories) parts.push(accessories);
+                    if (item.listing.notes) parts.push(item.listing.notes);
+                    parts.push(`💰R$ ${price}`);
+
+                    lines.push(parts.join(' - '));
+                });
+
+                lines.push('');
+                lines.push('📲 Consulte disponibilidade!');
+
+                const text = lines.join('\n');
+
+                navigator.clipboard.writeText(text).then(() => {
+                    this.usedListCopied = true;
+                    setTimeout(() => { this.usedListCopied = false; }, 2500);
+                }).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    this.usedListCopied = true;
+                    setTimeout(() => { this.usedListCopied = false; }, 2500);
+                });
             },
 
             copyUsedToWhatsApp(item) {

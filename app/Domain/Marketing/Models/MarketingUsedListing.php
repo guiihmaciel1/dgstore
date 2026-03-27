@@ -16,25 +16,23 @@ class MarketingUsedListing extends Model
     protected $fillable = [
         'product_id',
         'cost_price',
-        'trade_in_price',
-        'resale_price',
         'final_price',
         'battery_health',
         'has_box',
         'has_cable',
         'notes',
+        'visible',
     ];
 
     protected function casts(): array
     {
         return [
             'cost_price' => 'decimal:2',
-            'trade_in_price' => 'decimal:2',
-            'resale_price' => 'decimal:2',
             'final_price' => 'decimal:2',
             'battery_health' => 'integer',
             'has_box' => 'boolean',
             'has_cable' => 'boolean',
+            'visible' => 'boolean',
         ];
     }
 
