@@ -18,6 +18,7 @@ use App\Presentation\Http\Controllers\WarrantyController;
 use App\Presentation\Http\Controllers\CrmController;
 use App\Presentation\Http\Controllers\FinanceController;
 use App\Presentation\Http\Controllers\MarketingController;
+use App\Presentation\Http\Controllers\ScheduleController;
 use App\Presentation\Http\Controllers\CardFeeController;
 use App\Presentation\Http\Controllers\ConsignmentStockController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BDashboardController;
@@ -200,6 +201,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/finance/transactions', [FinanceController::class, 'storeTransaction'])->name('finance.transactions.store');
         Route::post('/finance/transactions/{transaction}/pay', [FinanceController::class, 'payTransaction'])->name('finance.transactions.pay');
         Route::post('/finance/transactions/{transaction}/cancel', [FinanceController::class, 'cancelTransaction'])->name('finance.transactions.cancel');
+
+        // Agenda
+        Route::prefix('schedule')->name('schedule.')->group(function () {
+            Route::get('/', [ScheduleController::class, 'index'])->name('index');
+            Route::post('/', [ScheduleController::class, 'store'])->name('store');
+            Route::put('/{appointment}', [ScheduleController::class, 'update'])->name('update');
+            Route::patch('/{appointment}/status', [ScheduleController::class, 'updateStatus'])->name('update-status');
+            Route::delete('/{appointment}', [ScheduleController::class, 'destroy'])->name('destroy');
+            Route::get('/available-slots', [ScheduleController::class, 'availableSlots'])->name('available-slots');
+            Route::get('/{appointment}/whatsapp/{type}', [ScheduleController::class, 'whatsappMessage'])->name('whatsapp-message');
+        });
 
         // Marketing
         Route::prefix('marketing')->name('marketing.')->group(function () {
