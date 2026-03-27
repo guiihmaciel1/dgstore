@@ -44,9 +44,6 @@ class DashboardController extends Controller
                 ->whereNotNull('expected_close_date')
                 ->where('expected_close_date', '<', today())
                 ->count(),
-            'sales_not_paid' => Sale::whereNot('payment_status', PaymentStatus::Paid)
-                ->whereNot('payment_status', PaymentStatus::Cancelled)
-                ->count(),
         ];
 
         // Notificações do sistema (dados monitorados pelos cron jobs)
@@ -155,16 +152,25 @@ class DashboardController extends Controller
             ];
         }
 
-        // Vendas com pagamento pendente/parcial
-        $salesNotPaid = Sale::whereNot('payment_status', PaymentStatus::Paid)
-            ->whereNot('payment_status', PaymentStatus::Cancelled)
-            ->count();
-        if ($salesNotPaid > 0) {
+        // Vendas com pagamento pendente
+        $salesPending = Sale::where('payment_status', PaymentStatus::Pending)->count();
+        if ($salesPending > 0) {
+            $notifications[] = [
+                'type' => 'danger',
+                'icon' => 'sale',
+                'message' => "{$salesPending} venda(s) com pagamento pendente",
+                'route' => route('sales.index', ['payment_status' => 'pending']),
+            ];
+        }
+
+        // Vendas com pagamento parcial
+        $salesPartial = Sale::where('payment_status', PaymentStatus::Partial)->count();
+        if ($salesPartial > 0) {
             $notifications[] = [
                 'type' => 'warning',
                 'icon' => 'sale',
-                'message' => "{$salesNotPaid} venda(s) com pagamento pendente",
-                'route' => route('sales.index', ['payment_status' => 'pending']),
+                'message' => "{$salesPartial} venda(s) com pagamento parcial",
+                'route' => route('sales.index', ['payment_status' => 'partial']),
             ];
         }
 
