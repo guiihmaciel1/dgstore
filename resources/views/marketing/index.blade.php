@@ -336,6 +336,7 @@
                                     <tr style="border-bottom: 1px solid #f3f4f6;">
                                         <td style="padding: 0.375rem 0.75rem; text-align: center;">
                                             <input type="checkbox" x-model="item.resale.visible"
+                                                   @change="saveResaleVisibility(item)"
                                                    style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
                                         </td>
                                         <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; font-weight: 500; color: #111827;" x-text="item.name"></td>
@@ -413,6 +414,7 @@
                                     </span>
                                     <label @click.stop style="display: inline-flex; align-items: center; gap: 0.25rem; flex-shrink: 0; cursor: pointer; margin-left: 0.25rem;">
                                         <input type="checkbox" x-model="item.resale.visible"
+                                               @change="saveResaleVisibility(item)"
                                                style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
                                     </label>
                                 </div>
@@ -458,7 +460,9 @@
 
                                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                                         <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #374151; cursor: pointer;">
-                                            <input type="checkbox" x-model="item.resale.visible" style="accent-color: #111827; cursor: pointer;">
+                                            <input type="checkbox" x-model="item.resale.visible"
+                                                   @change="saveResaleVisibility(item)"
+                                                   style="accent-color: #111827; cursor: pointer;">
                                             Exibir no repasse
                                         </label>
                                         <button type="button" @click="saveResaleItem(item)" style="margin-left: auto;"
@@ -868,6 +872,32 @@
                 } catch (e) {
                     alert('Erro ao salvar: ' + e.message);
                     item._saving = false;
+                }
+            },
+
+            async saveResaleVisibility(item) {
+                try {
+                    await fetch('{{ route("marketing.resale-items.store") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            resaleable_type: item.morph_type,
+                            resaleable_id: item.id,
+                            resale_price: item.resale.resale_price || null,
+                            battery_health: item.resale.battery_health || null,
+                            warranty_until: item.resale.warranty_until || null,
+                            has_box: item.resale.has_box ? 1 : 0,
+                            has_cable: item.resale.has_cable ? 1 : 0,
+                            notes: item.resale.notes || null,
+                            visible: item.resale.visible ? 1 : 0,
+                        }),
+                    });
+                } catch (e) {
+                    // silently fail
                 }
             },
 
