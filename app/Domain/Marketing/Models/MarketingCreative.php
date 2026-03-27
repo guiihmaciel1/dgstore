@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class MarketingCreative extends Model
 {
@@ -57,6 +58,6 @@ class MarketingCreative extends Model
             return null;
         }
 
-        return asset('storage/' . $this->image_path);
+        return Storage::disk('public')->url($this->image_path);
     }
 }
