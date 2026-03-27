@@ -394,28 +394,31 @@
                         </button>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem;" x-show="resaleUsed.length > 0">
-                        <template x-for="item in resaleUsed" :key="item.id">
-                            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;" x-show="resaleUsed.length > 0">
+                        <template x-for="(item, idx) in resaleUsed" :key="item.id">
+                            <div :style="idx < resaleUsed.length - 1 ? 'border-bottom: 1px solid #e5e7eb;' : ''">
+                                {{-- Header (sempre visivel) --}}
                                 <div @click="item._collapsed = !item._collapsed"
-                                     style="padding: 0.625rem 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none;"
-                                     :style="item._collapsed ? '' : 'border-bottom: 1px solid #f3f4f6;'">
-                                    <svg :style="item._collapsed ? 'width:0.875rem;height:0.875rem;color:#9ca3af;flex-shrink:0;transition:transform 0.2s;transform:rotate(0deg);' : 'width:0.875rem;height:0.875rem;color:#9ca3af;flex-shrink:0;transition:transform 0.2s;transform:rotate(90deg);'"
-                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                     style="padding: 0.5rem 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none;"
+                                     :style="!item._collapsed ? 'background: #f9fafb;' : ''"
+                                     onmouseover="this.style.background='#f9fafb'" onmouseout="if(this.__x_el){ return; } this.style.background=''">
+                                    <svg style="width: 0.75rem; height: 0.75rem; flex-shrink: 0; transition: transform 0.2s;"
+                                         :style="item._collapsed ? 'color:#9ca3af;transform:rotate(0deg);' : 'color:#111827;transform:rotate(90deg);'"
+                                         fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                                     </svg>
-                                    <div style="min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.8125rem; font-weight: 600; color: #111827;" x-text="item.name"></div>
-                                    <template x-if="item._collapsed && item.resale.resale_price">
-                                        <span style="font-size: 0.75rem; color: #059669; font-weight: 600; flex-shrink: 0; white-space: nowrap;">R$ <span x-text="parseFloat(item.resale.resale_price).toLocaleString('pt-BR')"></span></span>
-                                    </template>
-                                    <label @click.stop style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; color: #374151; cursor: pointer; flex-shrink: 0; margin-left: auto; padding-left: 0.5rem;">
+                                    <span style="font-size: 0.8125rem; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1;" x-text="item.name"></span>
+                                    <span x-show="item.resale.resale_price" style="font-size: 0.75rem; color: #059669; font-weight: 600; flex-shrink: 0; white-space: nowrap;">
+                                        R$ <span x-text="item.resale.resale_price ? parseFloat(item.resale.resale_price).toLocaleString('pt-BR') : ''"></span>
+                                    </span>
+                                    <label @click.stop style="display: inline-flex; align-items: center; gap: 0.25rem; flex-shrink: 0; cursor: pointer; margin-left: 0.25rem;">
                                         <input type="checkbox" x-model="item.resale.visible"
                                                style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
-                                        Exibir
                                     </label>
                                 </div>
 
-                                <div x-show="!item._collapsed" x-transition.duration.200ms style="padding: 0.75rem 1rem;">
+                                {{-- Corpo expandido --}}
+                                <div x-show="!item._collapsed" x-transition.duration.150ms style="padding: 0.75rem 1rem; border-top: 1px solid #f3f4f6;">
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.625rem;">
                                         <div>
                                             <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Preco Repasse</label>
@@ -453,13 +456,19 @@
                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
                                     </div>
 
-                                    <button type="button" @click="saveResaleItem(item)"
-                                            :style="item._saving
-                                                ? 'width:100%;padding:0.5rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:default;'
-                                                : 'width:100%;padding:0.5rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:pointer;'"
-                                            :disabled="item._saving">
-                                        <span x-text="item._saving ? 'Salvo!' : 'Salvar'"></span>
-                                    </button>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #374151; cursor: pointer;">
+                                            <input type="checkbox" x-model="item.resale.visible" style="accent-color: #111827; cursor: pointer;">
+                                            Exibir no repasse
+                                        </label>
+                                        <button type="button" @click="saveResaleItem(item)" style="margin-left: auto;"
+                                                :style="item._saving
+                                                    ? 'padding:0.375rem 1.25rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:default;'
+                                                    : 'padding:0.375rem 1.25rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:pointer;'"
+                                                :disabled="item._saving">
+                                            <span x-text="item._saving ? 'Salvo!' : 'Salvar'"></span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </template>

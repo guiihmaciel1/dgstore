@@ -19,7 +19,7 @@
                     <!-- Dropdown: Comercial -->
                     <div class="relative">
                         <button @click="commercialOpen = !commercialOpen; financeOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('customers.*') || request()->routeIs('sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('customers.*') || request()->routeIs('sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') || request()->routeIs('schedule.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Comercial</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': commercialOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -52,6 +52,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                     Reservas
+                                </a>
+                                <a href="{{ route('schedule.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('schedule.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    Agenda
                                 </a>
                                 <a href="{{ route('warranties.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -378,6 +384,9 @@
                 </a>
                 <a href="{{ route('reservations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Reservas
+                </a>
+                <a href="{{ route('schedule.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('schedule.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Agenda
                 </a>
                 <a href="{{ route('warranties.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Garantias
