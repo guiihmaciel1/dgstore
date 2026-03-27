@@ -14,6 +14,8 @@ use App\Domain\Import\Services\ImportOrderService;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
+use App\Domain\Schedule\Enums\AppointmentStatus;
+use App\Domain\Schedule\Models\Appointment;
 use App\Domain\Warranty\Services\WarrantyService;
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
@@ -40,18 +42,22 @@ class DashboardController extends Controller
         // Aniversariantes do mês
         $birthdayCustomers = $this->getBirthdayCustomers();
 
+        // Agenda do dia
+        $todayAppointments = $this->getTodayAppointments();
+        $nextAppointment = $this->getNextAppointment();
+
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
             'todayCount' => $data['today']['count'],
             'monthTotal' => $data['month']['total'],
             'monthCount' => $data['month']['count'],
-            'lowStockCount' => $data['low_stock']['count'],
-            'lowStockProducts' => $data['low_stock']['products'],
             'topProducts' => $data['top_products'],
             'salesChart' => $data['sales_chart'],
             'systemNotifications' => $systemNotifications,
             'newLeadsWaiting' => $newLeadsWaiting,
             'birthdayCustomers' => $birthdayCustomers,
+            'todayAppointments' => $todayAppointments,
+            'nextAppointment' => $nextAppointment,
         ]);
     }
 
@@ -204,5 +210,22 @@ class DashboardController extends Controller
         }
 
         return $notifications;
+    }
+
+    private function getTodayAppointments(): \Illuminate\Support\Collection
+    {
+        return Appointment::forDate(today()->format('Y-m-d'))
+            ->active()
+            ->orderBy('start_time')
+            ->get();
+    }
+
+    private function getNextAppointment(): ?Appointment
+    {
+        return Appointment::forDate(today()->format('Y-m-d'))
+            ->active()
+            ->where('start_time', '>=', now()->format('H:i:s'))
+            ->orderBy('start_time')
+            ->first();
     }
 }

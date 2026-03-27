@@ -257,6 +257,38 @@
             </div>
             @endif
 
+            <!-- PRÓXIMO AGENDAMENTO -->
+            @if($nextAppointment)
+            <div style="margin-bottom: 1rem;">
+                <a href="{{ route('schedule.index') }}" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.75rem 1rem; background: white; border: 1px solid #c7d2fe; border-radius: 0.625rem; text-decoration: none; transition: all 0.15s; box-shadow: 0 1px 3px rgba(99,102,241,0.08);" onmouseover="this.style.borderColor='#818cf8'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.15)'" onmouseout="this.style.borderColor='#c7d2fe'; this.style.boxShadow='0 1px 3px rgba(99,102,241,0.08)'">
+                    <div style="width: 2.5rem; height: 2.5rem; background: #eef2ff; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #4f46e5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #4f46e5;">Próximo agendamento</span>
+                            <span style="font-size: 0.7rem; font-weight: 600; color: #111827; background: #e0e7ff; padding: 0.0625rem 0.5rem; border-radius: 9999px;">{{ substr($nextAppointment->start_time, 0, 5) }}</span>
+                        </div>
+                        <div style="font-size: 0.775rem; color: #374151; margin-top: 0.125rem;">
+                            <span style="font-weight: 600;">{{ $nextAppointment->customer_name }}</span>
+                            <span style="color: #6b7280;">com</span>
+                            <span style="font-weight: 600; color: {{ $nextAppointment->attendant === 'danilo' ? '#2563eb' : '#7c3aed' }};">{{ $nextAppointment->attendant_name }}</span>
+                            @if($nextAppointment->service_description)
+                                <span style="color: #9ca3af;">·</span>
+                                <span style="color: #6b7280;">{{ $nextAppointment->service_description }}</span>
+                            @endif
+                        </div>
+                    </div>
+                    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 600; color: #4f46e5;">
+                        <span>Ver agenda</span>
+                        <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                </a>
+            </div>
+            @endif
+
             <!-- BANNER DG STORE -->
             <div class="mb-4 sm:mb-6">
                 <div id="banner-container" style="width: 100%; aspect-ratio: 1200/280; background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%); border-radius: 0.75rem; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
@@ -269,6 +301,10 @@
                 <a href="{{ route('sales.create') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: linear-gradient(to right, #10b981, #16a34a); color: white; font-size: 0.75rem; font-weight: 700; border-radius: 0.5rem; text-decoration: none; border: 1px solid #10b981; box-shadow: 0 2px 6px rgba(16,185,129,0.3); transition: all 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(16,185,129,0.45)'" onmouseout="this.style.boxShadow='0 2px 6px rgba(16,185,129,0.3)'">
                     <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                     Nova Venda
+                </a>
+                <a href="{{ route('schedule.index') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: linear-gradient(to right, #6366f1, #4f46e5); color: white; font-size: 0.75rem; font-weight: 700; border-radius: 0.5rem; text-decoration: none; border: 1px solid #6366f1; box-shadow: 0 2px 6px rgba(99,102,241,0.3); transition: all 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(99,102,241,0.45)'" onmouseout="this.style.boxShadow='0 2px 6px rgba(99,102,241,0.3)'">
+                    <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Agenda
                 </a>
                 <a href="{{ route('sales.index') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: #111827; color: white; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; border: 1px solid #111827; transition: all 0.15s;" onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='#111827'">
                     <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
@@ -433,22 +469,22 @@
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border {{ $lowStockCount > 0 ? 'border-red-200 bg-red-50' : 'border-gray-100' }}">
+                    <a href="{{ route('schedule.index') }}" class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 block text-decoration-none hover:shadow-md transition-shadow" style="text-decoration: none;">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs sm:text-sm {{ $lowStockCount > 0 ? 'text-red-600' : 'text-gray-500' }}">Estoque Baixo</p>
-                                <p class="text-xl sm:text-2xl font-bold {{ $lowStockCount > 0 ? 'text-red-600' : 'text-gray-900' }}">{{ $lowStockCount }} <span class="text-base">produtos</span></p>
+                                <p class="text-xs sm:text-sm text-gray-500">Agenda Hoje</p>
+                                <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ $todayAppointments->count() }} <span class="text-base font-medium text-gray-500">agendamento{{ $todayAppointments->count() !== 1 ? 's' : '' }}</span></p>
                             </div>
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 {{ $lowStockCount > 0 ? 'bg-red-500' : 'bg-gray-400' }} rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
                             </div>
                         </div>
-                        @if($lowStockCount > 0)
-                            <a href="{{ route('stock.alerts') }}" class="text-xs text-red-600 hover:underline mt-2 inline-block">Ver produtos →</a>
+                        @if($nextAppointment)
+                            <p class="text-xs text-indigo-600 font-medium mt-2">Próximo: {{ substr($nextAppointment->start_time, 0, 5) }} - {{ $nextAppointment->attendant_name }}</p>
                         @endif
-                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -486,23 +522,42 @@
                     @endif
                 </div>
 
-                <!-- Alertas de Estoque Baixo -->
-                @if($lowStockProducts->count() > 0)
+                <!-- Agenda do Dia -->
+                @if($todayAppointments->count() > 0)
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:col-span-2">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-900">Alertas de Estoque Baixo</h3>
-                        <a href="{{ route('stock.alerts') }}" class="text-xs sm:text-sm text-gray-600 hover:text-gray-900">Ver todos →</a>
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-900">Agenda de Hoje</h3>
+                        <a href="{{ route('schedule.index') }}" class="text-xs sm:text-sm text-gray-600 hover:text-gray-900">Ver agenda completa →</a>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        @foreach($lowStockProducts->take(6) as $product)
-                            <div class="flex items-center justify-between p-3 rounded-lg border {{ $product->stock_quantity <= 0 ? 'border-red-200 bg-red-50' : 'border-yellow-200 bg-yellow-50' }}">
-                                <div class="min-w-0 flex-1 mr-2">
-                                    <p class="font-medium text-gray-900 text-sm truncate">{{ $product->name }}</p>
-                                    <p class="text-xs text-gray-500">SKU: {{ $product->sku }}</p>
+                    <div class="space-y-2">
+                        @foreach($todayAppointments as $appt)
+                            @php
+                                $isPast = $appt->end_time <= now()->format('H:i:s');
+                                $isNow = $appt->start_time <= now()->format('H:i:s') && $appt->end_time > now()->format('H:i:s');
+                                $statusColors = [
+                                    'scheduled' => ['border' => '#bfdbfe', 'bg' => '#eff6ff', 'dot' => '#3b82f6'],
+                                    'confirmed' => ['border' => '#bbf7d0', 'bg' => '#f0fdf4', 'dot' => '#16a34a'],
+                                    'completed' => ['border' => '#e5e7eb', 'bg' => '#f9fafb', 'dot' => '#9ca3af'],
+                                    'cancelled' => ['border' => '#fecaca', 'bg' => '#fef2f2', 'dot' => '#dc2626'],
+                                    'no_show'   => ['border' => '#fde68a', 'bg' => '#fefce8', 'dot' => '#d97706'],
+                                ];
+                                $sc = $statusColors[$appt->status->value] ?? $statusColors['scheduled'];
+                            @endphp
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 0.5rem; border: 1px solid {{ $sc['border'] }}; background: {{ $isNow ? '#eef2ff' : $sc['bg'] }}; {{ $isPast && $appt->status->value !== 'completed' ? 'opacity: 0.6;' : '' }}">
+                                <div style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ $isNow ? '#4f46e5' : $sc['dot'] }}; flex-shrink: 0; {{ $isNow ? 'box-shadow: 0 0 0 3px rgba(79,70,229,0.2);' : '' }}"></div>
+                                <div style="min-width: 4.5rem; font-size: 0.8rem; font-weight: 700; color: {{ $isNow ? '#4f46e5' : '#111827' }}; font-variant-numeric: tabular-nums;">
+                                    {{ substr($appt->start_time, 0, 5) }} - {{ substr($appt->end_time, 0, 5) }}
                                 </div>
-                                <span class="px-2 py-1 text-xs font-bold rounded flex-shrink-0 {{ $product->stock_quantity <= 0 ? 'bg-red-500 text-white' : 'bg-yellow-500 text-white' }}">
-                                    {{ $product->stock_quantity }} un
-                                </span>
+                                <div style="flex: 1; min-width: 0;">
+                                    <span style="font-size: 0.8rem; font-weight: 600; color: #111827;">{{ $appt->customer_name }}</span>
+                                    @if($appt->service_description)
+                                        <span style="font-size: 0.7rem; color: #6b7280; margin-left: 0.375rem;">· {{ $appt->service_description }}</span>
+                                    @endif
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.375rem; flex-shrink: 0;">
+                                    <span style="font-size: 0.7rem; font-weight: 600; color: {{ $appt->attendant === 'danilo' ? '#2563eb' : '#7c3aed' }}; background: {{ $appt->attendant === 'danilo' ? '#eff6ff' : '#f5f3ff' }}; padding: 0.125rem 0.5rem; border-radius: 9999px;">{{ $appt->attendant_name }}</span>
+                                    <span style="font-size: 0.65rem; font-weight: 500; padding: 0.125rem 0.375rem; border-radius: 9999px; background: {{ $sc['bg'] }}; color: {{ $sc['dot'] }}; border: 1px solid {{ $sc['border'] }};">{{ $appt->status->label() }}</span>
+                                </div>
                             </div>
                         @endforeach
                     </div>
