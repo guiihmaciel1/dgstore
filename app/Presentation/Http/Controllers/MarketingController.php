@@ -233,9 +233,8 @@ class MarketingController extends Controller
         $request->validate([
             'product_id' => ['required', 'exists:products,id'],
             'cost_price' => ['nullable', 'numeric', 'min:0'],
-            'trade_in_price' => ['nullable', 'numeric', 'min:0'],
-            'resale_price' => ['nullable', 'numeric', 'min:0'],
             'final_price' => ['nullable', 'numeric', 'min:0'],
+            'battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
             'has_box' => ['nullable'],
             'has_cable' => ['nullable'],
             'notes' => ['nullable', 'string', 'max:1000'],
@@ -245,9 +244,8 @@ class MarketingController extends Controller
             ['product_id' => $request->product_id],
             [
                 'cost_price' => $request->cost_price,
-                'trade_in_price' => $request->trade_in_price,
-                'resale_price' => $request->resale_price,
                 'final_price' => $request->final_price,
+                'battery_health' => $request->battery_health,
                 'has_box' => $request->boolean('has_box'),
                 'has_cable' => $request->boolean('has_cable'),
                 'notes' => $request->notes,

@@ -19,6 +19,7 @@ class MarketingUsedListing extends Model
         'trade_in_price',
         'resale_price',
         'final_price',
+        'battery_health',
         'has_box',
         'has_cable',
         'notes',
@@ -31,6 +32,7 @@ class MarketingUsedListing extends Model
             'trade_in_price' => 'decimal:2',
             'resale_price' => 'decimal:2',
             'final_price' => 'decimal:2',
+            'battery_health' => 'integer',
             'has_box' => 'boolean',
             'has_cable' => 'boolean',
         ];

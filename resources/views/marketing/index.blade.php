@@ -523,22 +523,10 @@
 
                             <!-- Campos editaveis -->
                             <div style="padding: 0.875rem 1rem;">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;">
                                     <div>
                                         <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Custo</label>
                                         <input type="number" step="0.01" x-model="item.listing.cost_price" placeholder="0.00"
-                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Entrada</label>
-                                        <input type="number" step="0.01" x-model="item.listing.trade_in_price" placeholder="0.00"
-                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Repasse</label>
-                                        <input type="number" step="0.01" x-model="item.listing.resale_price" placeholder="0.00"
                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
                                                onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                     </div>
@@ -547,6 +535,12 @@
                                         <input type="number" step="0.01" x-model="item.listing.final_price" placeholder="0.00"
                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; font-weight: 600;"
                                                onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.65rem; font-weight: 600; color: #059669; text-transform: uppercase; display: block; margin-bottom: 2px;">Bateria %</label>
+                                        <input type="number" min="0" max="100" x-model="item.listing.battery_health" placeholder="0"
+                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                                               onfocus="this.style.borderColor='#059669'" onblur="this.style.borderColor='#e5e7eb'">
                                     </div>
                                 </div>
 
@@ -569,13 +563,21 @@
                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
                                 </div>
 
-                                <button type="button" @click="saveUsedListing(item)"
-                                        :style="item._saving
-                                            ? 'width:100%;padding:0.5rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:default;'
-                                            : 'width:100%;padding:0.5rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:pointer;'"
-                                        :disabled="item._saving">
-                                    <span x-text="item._saving ? 'Salvo!' : 'Salvar'"></span>
-                                </button>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button type="button" @click="saveUsedListing(item)"
+                                            :style="item._saving
+                                                ? 'flex:1;padding:0.5rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:default;'
+                                                : 'flex:1;padding:0.5rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:pointer;'"
+                                            :disabled="item._saving">
+                                        <span x-text="item._saving ? 'Salvo!' : 'Salvar'"></span>
+                                    </button>
+                                    <button type="button" @click="copyUsedToWhatsApp(item)"
+                                            :style="item._copied
+                                                ? 'padding:0.5rem 0.75rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:default;'
+                                                : 'padding:0.5rem 0.75rem;background:#25d366;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:pointer;'">
+                                        <span x-text="item._copied ? '✓ Copiado' : '📋 WhatsApp'"></span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -688,22 +690,21 @@
                 ...p,
                 listing: usedListings[p.id] ? {
                     cost_price: usedListings[p.id].cost_price,
-                    trade_in_price: usedListings[p.id].trade_in_price,
-                    resale_price: usedListings[p.id].resale_price,
                     final_price: usedListings[p.id].final_price,
+                    battery_health: usedListings[p.id].battery_health,
                     has_box: usedListings[p.id].has_box,
                     has_cable: usedListings[p.id].has_cable,
                     notes: usedListings[p.id].notes,
                 } : {
                     cost_price: null,
-                    trade_in_price: null,
-                    resale_price: null,
                     final_price: null,
+                    battery_health: null,
                     has_box: false,
                     has_cable: false,
                     notes: '',
                 },
                 _saving: false,
+                _copied: false,
             })),
 
             resaleConsignment: consignmentForResale.map(c => ({
@@ -829,9 +830,8 @@
                         body: JSON.stringify({
                             product_id: item.id,
                             cost_price: item.listing.cost_price || null,
-                            trade_in_price: item.listing.trade_in_price || null,
-                            resale_price: item.listing.resale_price || null,
                             final_price: item.listing.final_price || null,
+                            battery_health: item.listing.battery_health || null,
                             has_box: item.listing.has_box ? 1 : 0,
                             has_cable: item.listing.has_cable ? 1 : 0,
                             notes: item.listing.notes || null,
@@ -843,6 +843,56 @@
                     alert('Erro ao salvar: ' + e.message);
                     item._saving = false;
                 }
+            },
+
+            copyUsedToWhatsApp(item) {
+                const name = (item.name || '').trim();
+                const storage = item.storage ? ` ${item.storage}` : '';
+                const color = item.color ? ` ${item.color}` : '';
+                const battery = item.listing.battery_health ? `🔋 Bateria: ${item.listing.battery_health}%` : '';
+                const price = item.listing.final_price
+                    ? parseFloat(item.listing.final_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                    : '';
+
+                let accessories = '';
+                if (item.listing.has_box && item.listing.has_cable) {
+                    accessories = '📦 Caixa e cabo inclusos';
+                } else if (item.listing.has_box) {
+                    accessories = '📦 Caixa inclusa';
+                } else if (item.listing.has_cable) {
+                    accessories = '🔌 Cabo incluso';
+                }
+
+                let lines = [];
+                lines.push(`📱 *${name}${storage}${color}*`);
+                lines.push('');
+                if (battery) lines.push(battery);
+                if (accessories) lines.push(accessories);
+                if (item.listing.notes) lines.push(`📝 ${item.listing.notes}`);
+                if (price) {
+                    lines.push('');
+                    lines.push(`💰 *${price}*`);
+                }
+                lines.push('');
+                lines.push('📲 DG Store - Consulte disponibilidade!');
+
+                const text = lines.join('\n');
+
+                navigator.clipboard.writeText(text).then(() => {
+                    item._copied = true;
+                    setTimeout(() => { item._copied = false; }, 2500);
+                }).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    item._copied = true;
+                    setTimeout(() => { item._copied = false; }, 2500);
+                });
             },
 
             async saveResaleItem(item) {
