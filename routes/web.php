@@ -72,7 +72,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/tabela-precos', [ToolController::class, 'priceTable'])->name('tools.price-table');
         Route::view('/mensagens-whatsapp', 'tools.whatsapp-messages')->name('tools.whatsapp-messages');
         Route::view('/ficha-tecnica', 'tools.specs')->name('tools.specs');
-        Route::view('/calculadora-stone', 'tools.stone-calculator')->name('tools.stone-calculator');
+        Route::get('/calculadora-stone', [ToolController::class, 'stoneCalculator'])->name('tools.stone-calculator');
 
         // Follow-ups (legado - redireciona para CRM)
         Route::get('followups', fn() => redirect()->route('crm.board'))->name('followups.index');
