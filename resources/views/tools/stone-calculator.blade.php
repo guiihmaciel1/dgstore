@@ -226,6 +226,15 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Exibir trade-in na mensagem -->
+                        <div x-show="tradeInValue > 0" style="margin-top: 0.75rem; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" x-model="showTradeInInMessage" id="showTradeInMsg"
+                                   style="width: 16px; height: 16px; accent-color: #111827; cursor: pointer;">
+                            <label for="showTradeInMsg" style="font-size: 13px; color: #6b7280; cursor: pointer; user-select: none;">
+                                Exibir valor trade-in na simulação
+                            </label>
+                        </div>
+
                         <!-- Resumo -->
                         <div x-show="finalAmount > 0" style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-radius: 8px; display: flex; justify-content: space-between; font-size: 13px;">
                             <span x-show="downPayment > 0 || tradeInValue > 0" style="color: #6b7280;">Restante no cartão:</span>
@@ -441,6 +450,7 @@
             downPayment: 0,
             tradeInInput: '',
             tradeInValue: 0,
+            showTradeInInMessage: true,
             remaining: 0,
             finalAmount: 0,
             results: [],
@@ -600,8 +610,9 @@
 
                 const linhas = [header, ''];
 
+                const hasTradeInText = this.tradeInValue > 0 && this.showTradeInInMessage;
                 if (this.downPayment > 0 || this.tradeInValue > 0) {
-                    if (this.tradeInValue > 0) {
+                    if (hasTradeInText) {
                         linhas.push('📱 *Aparelho novo:* R$ ' + this.formatNumber(this.amount));
                         linhas.push('⬇️ *Entrada seminovo:* - R$ ' + this.formatNumber(this.tradeInValue));
                         linhas.push('');
@@ -623,8 +634,8 @@
                         : `*${row.installments}x de R$ ${this.formatNumber(vlr)}*`;
                     linhas.push(parcLabel);
                     linhas.push('');
-                    linhas.push('✅ *À vista (Pix):*');
-                    linhas.push(`*R$ ${this.formatNumber(this.finalAmount)}* _(melhor preço)_`);
+                    linhas.push('✅ *Diferença à vista:*');
+                    linhas.push(`*R$ ${this.formatNumber(this.finalAmount)}*`);
                 }
 
                 linhas.push('');
@@ -642,7 +653,8 @@
 
                 const linhas = [header, ''];
 
-                if (this.tradeInValue > 0) {
+                const showTradeIn = this.tradeInValue > 0 && this.showTradeInInMessage;
+                if (showTradeIn) {
                     linhas.push('📱 *Aparelho novo:* R$ ' + this.formatNumber(this.amount));
                     linhas.push('⬇️ *Entrada seminovo:* - R$ ' + this.formatNumber(this.tradeInValue));
                     linhas.push('');
@@ -654,8 +666,8 @@
                     linhas.push('');
                     linhas.push('💳 *Restante no cartão:*');
                 } else {
-                    linhas.push('✅ *À vista (Pix):*');
-                    linhas.push(`*R$ ${this.formatNumber(this.finalAmount)}* _(melhor preço)_`);
+                    linhas.push('✅ *Diferença à vista:*');
+                    linhas.push(`*R$ ${this.formatNumber(this.finalAmount)}*`);
                     linhas.push('');
                     linhas.push('💳 *No cartão:*');
                 }
@@ -683,13 +695,13 @@
                     if (preset === 'all') {
                         r.selected = true;
                     } else if (preset === 'up_to_12') {
-                        r.selected = r.payment_type === 'debit' || r.installments <= 12;
+                        r.selected = r.payment_type !== 'debit' && r.installments <= 12;
                     } else if (preset === 'above_6') {
-                        r.selected = r.payment_type === 'debit' || r.installments > 6;
+                        r.selected = r.payment_type !== 'debit' && r.installments >= 6;
                     } else if (preset === 'above_8') {
-                        r.selected = r.payment_type === 'debit' || r.installments > 8;
+                        r.selected = r.payment_type !== 'debit' && r.installments >= 8;
                     } else if (preset === 'above_10') {
-                        r.selected = r.payment_type === 'debit' || r.installments > 10;
+                        r.selected = r.payment_type !== 'debit' && r.installments >= 10;
                     }
                 });
             },
