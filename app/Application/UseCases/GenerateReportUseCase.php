@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCases;
 
+use App\Domain\Finance\Models\FinancialTransaction;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Sale\Enums\PaymentStatus;
@@ -247,6 +248,13 @@ class GenerateReportUseCase
             ->sortByDesc('profit')
             ->values();
 
+        $monthExpensesPaid = (float) FinancialTransaction::expense()
+            ->paidThisMonth()
+            ->whereNotNull('account_id')
+            ->sum('amount');
+
+        $realProfit = $monthProfit - $monthExpensesPaid;
+
         return [
             'today_profit' => $todayProfit,
             'today_revenue' => $todayRevenue,
@@ -254,6 +262,8 @@ class GenerateReportUseCase
             'month_profit' => $monthProfit,
             'month_revenue' => $monthRevenue,
             'month_margin' => $monthMargin,
+            'month_expenses_paid' => $monthExpensesPaid,
+            'real_profit' => $realProfit,
             'top_products' => $topProfitProducts,
             'category_ranking' => $categoryRanking,
         ];

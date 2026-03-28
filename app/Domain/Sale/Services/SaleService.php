@@ -20,6 +20,11 @@ class SaleService
         return $this->repository->paginate($perPage, $filters);
     }
 
+    public function getTotals(array $filters = []): array
+    {
+        return $this->repository->getTotals($filters);
+    }
+
     public function updateStatus(Sale $sale, PaymentStatus $status): Sale
     {
         return $this->repository->updateStatus($sale, $status);

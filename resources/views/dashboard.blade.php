@@ -526,16 +526,28 @@
                     <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
                         <div class="flex items-center justify-between">
                             <div class="min-w-0 flex-1">
-                                <p class="text-xs sm:text-sm text-gray-500">Margem Média Mês</p>
-                                <p class="text-xl sm:text-2xl font-bold truncate {{ $profit['month_margin'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
-                                    <span x-show="showValues">{{ number_format($profit['month_margin'], 1, ',', '.') }}%</span>
-                                    <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;%</span>
+                                <p class="text-xs sm:text-sm text-gray-500">Lucro Real do Mês</p>
+                                <p class="text-xl sm:text-2xl font-bold truncate {{ $profit['real_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                    <span x-show="showValues">R$ {{ number_format($profit['real_profit'], 2, ',', '.') }}</span>
+                                    <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;</span>
                                 </p>
+                                <div class="flex items-center gap-2 mt-1.5 text-xs">
+                                    <span class="text-gray-400">Lucro</span>
+                                    <span class="font-semibold {{ $profit['month_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                        <span x-show="showValues">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                    <span class="text-gray-300">−</span>
+                                    <span class="text-gray-400">Contas</span>
+                                    <span class="font-semibold text-red-500">
+                                        <span x-show="showValues">R$ {{ number_format($profit['month_expenses_paid'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
                             </div>
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-500 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 {{ $profit['real_profit'] >= 0 ? 'bg-emerald-500' : 'bg-red-500' }} rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
                                 <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                 </svg>
                             </div>
                         </div>

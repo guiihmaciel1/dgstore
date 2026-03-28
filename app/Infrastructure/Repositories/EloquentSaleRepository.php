@@ -52,39 +52,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     {
         $query = Sale::with(['customer', 'user', 'items']);
 
-        if (!empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('sale_number', 'like', "%{$search}%")
-                    ->orWhereHas('customer', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    });
-            });
-        }
-
-        if (!empty($filters['payment_status'])) {
-            $query->where('payment_status', $filters['payment_status']);
-        }
-
-        if (!empty($filters['payment_method'])) {
-            $query->where('payment_method', $filters['payment_method']);
-        }
-
-        if (!empty($filters['customer_id'])) {
-            $query->where('customer_id', $filters['customer_id']);
-        }
-
-        if (!empty($filters['user_id'])) {
-            $query->where('user_id', $filters['user_id']);
-        }
-
-        if (!empty($filters['date_from'])) {
-            $query->whereDate('sold_at', '>=', $filters['date_from']);
-        }
-
-        if (!empty($filters['date_to'])) {
-            $query->whereDate('sold_at', '<=', $filters['date_to']);
-        }
+        $this->applyFilters($query, $filters);
 
         $sortField = $filters['sort'] ?? 'sold_at';
         $sortDirection = $filters['direction'] ?? 'desc';
@@ -335,6 +303,70 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                     'total_sold' => $item->total_sold,
                 ];
             });
+    }
+
+    public function getTotals(array $filters = []): array
+    {
+        $query = Sale::query();
+        $this->applyFilters($query, $filters);
+
+        $aggregates = (clone $query)->selectRaw('
+            COUNT(*) as count,
+            COALESCE(SUM(total), 0) as total_revenue
+        ')->first();
+
+        $saleIds = (clone $query)->pluck('id');
+
+        $totalCost = (float) DB::table('sale_items')
+            ->whereIn('sale_id', $saleIds)
+            ->selectRaw('COALESCE(SUM(total_cost * quantity), 0) as cost')
+            ->value('cost');
+
+        $totalRevenue = (float) $aggregates->total_revenue;
+
+        return [
+            'count' => (int) $aggregates->count,
+            'total_revenue' => $totalRevenue,
+            'total_cost' => $totalCost,
+            'total_profit' => $totalRevenue - $totalCost,
+        ];
+    }
+
+    private function applyFilters($query, array $filters): void
+    {
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('sale_number', 'like', "%{$search}%")
+                    ->orWhereHas('customer', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if (!empty($filters['payment_status'])) {
+            $query->where('payment_status', $filters['payment_status']);
+        }
+
+        if (!empty($filters['payment_method'])) {
+            $query->where('payment_method', $filters['payment_method']);
+        }
+
+        if (!empty($filters['customer_id'])) {
+            $query->where('customer_id', $filters['customer_id']);
+        }
+
+        if (!empty($filters['user_id'])) {
+            $query->where('user_id', $filters['user_id']);
+        }
+
+        if (!empty($filters['date_from'])) {
+            $query->whereDate('sold_at', '>=', $filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $query->whereDate('sold_at', '<=', $filters['date_to']);
+        }
     }
 
     public function getSalesByDay(int $days = 30): Collection

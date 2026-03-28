@@ -48,10 +48,12 @@ class SaleController extends Controller
         ];
 
         $sales = $this->saleService->list(15, $filters);
+        $totals = $this->saleService->getTotals($filters);
 
         return view('sales.index', [
             'sales' => $sales,
             'filters' => $filters,
+            'totals' => $totals,
             'paymentMethods' => PaymentMethod::cases(),
             'paymentStatuses' => PaymentStatus::cases(),
         ]);
