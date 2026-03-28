@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\UseCases;
 
+use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
+use App\Domain\Sale\Enums\PaymentStatus;
+use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use Carbon\Carbon;
 
@@ -174,6 +177,85 @@ class GenerateReportUseCase
                 'labels' => $chartLabels,
                 'data' => $chartData,
             ],
+            'profit' => $this->profitData($monthStart, $monthEnd),
+        ];
+    }
+
+    /**
+     * Calcula dados de lucro/margem para o dashboard.
+     * Usa uma única query com eager loading para evitar N+1.
+     */
+    private function profitData(Carbon $monthStart, Carbon $monthEnd): array
+    {
+        $monthSales = Sale::with(['items.product'])
+            ->whereBetween('sold_at', [$monthStart, $monthEnd])
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->get();
+
+        $today = Carbon::today();
+        $todaySales = $monthSales->filter(fn (Sale $s) => $s->sold_at->isToday());
+
+        $todayProfit = $todaySales->sum(fn (Sale $s) => $s->profit);
+        $todayRevenue = (float) $todaySales->sum('total');
+
+        $monthProfit = $monthSales->sum(fn (Sale $s) => $s->profit);
+        $monthRevenue = (float) $monthSales->sum('total');
+        $monthMargin = $monthRevenue > 0 ? ($monthProfit / $monthRevenue) * 100 : 0;
+
+        $allItems = $monthSales->flatMap->items;
+
+        $topProfitProducts = $allItems
+            ->groupBy('product_id')
+            ->map(function ($items) {
+                $product = $items->first()->product;
+                $totalProfit = $items->sum(fn ($i) => $i->item_profit);
+                $totalRevenue = (float) $items->sum('subtotal');
+                $totalQty = $items->sum('quantity');
+
+                return [
+                    'product' => $product,
+                    'profit' => $totalProfit,
+                    'revenue' => $totalRevenue,
+                    'margin' => $totalRevenue > 0 ? ($totalProfit / $totalRevenue) * 100 : 0,
+                    'quantity' => $totalQty,
+                ];
+            })
+            ->sortByDesc('profit')
+            ->take(5)
+            ->values();
+
+        $categoryRanking = $allItems
+            ->groupBy(function ($item) {
+                $snapshot = $item->product_snapshot ?? [];
+                return $item->product?->category?->value ?? $snapshot['category'] ?? 'outros';
+            })
+            ->map(function ($items, $categoryValue) {
+                $category = ProductCategory::tryFrom($categoryValue);
+                $totalProfit = $items->sum(fn ($i) => $i->item_profit);
+                $totalRevenue = (float) $items->sum('subtotal');
+                $totalQty = $items->sum('quantity');
+
+                return [
+                    'category' => $categoryValue,
+                    'label' => $category?->label() ?? ucfirst($categoryValue),
+                    'profit' => $totalProfit,
+                    'revenue' => $totalRevenue,
+                    'margin' => $totalRevenue > 0 ? ($totalProfit / $totalRevenue) * 100 : 0,
+                    'quantity' => $totalQty,
+                ];
+            })
+            ->sortByDesc('profit')
+            ->values();
+
+        return [
+            'today_profit' => $todayProfit,
+            'today_revenue' => $todayRevenue,
+            'today_margin' => $todayRevenue > 0 ? ($todayProfit / $todayRevenue) * 100 : 0,
+            'month_profit' => $monthProfit,
+            'month_revenue' => $monthRevenue,
+            'month_margin' => $monthMargin,
+            'top_products' => $topProfitProducts,
+            'category_ranking' => $categoryRanking,
         ];
     }
 }

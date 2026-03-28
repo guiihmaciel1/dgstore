@@ -53,6 +53,7 @@ class DashboardController extends Controller
             'monthCount' => $data['month']['count'],
             'topProducts' => $data['top_products'],
             'salesChart' => $data['sales_chart'],
+            'profit' => $data['profit'],
             'systemNotifications' => $systemNotifications,
             'newLeadsWaiting' => $newLeadsWaiting,
             'birthdayCustomers' => $birthdayCustomers,
