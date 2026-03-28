@@ -21,8 +21,13 @@ enum ProductCategory: string
     // Perfumes
     case Perfume = 'perfume';
     
-    // Acessórios e Serviços
+    // Acessórios
+    case Charger = 'charger';
+    case Cable = 'cable';
+    case Case_ = 'case';
     case Accessory = 'accessory';
+
+    // Serviços
     case Service = 'service';
 
     public function label(): string
@@ -37,6 +42,9 @@ enum ProductCategory: string
             self::Console => 'Console/Videogame',
             self::Camera => 'Câmera',
             self::Perfume => 'Perfume',
+            self::Charger => 'Carregador',
+            self::Cable => 'Cabo',
+            self::Case_ => 'Capinha',
             self::Accessory => 'Acessório',
             self::Service => 'Serviço',
         };
@@ -52,7 +60,7 @@ enum ProductCategory: string
             self::Tablet, self::Notebook, self::Smartwatch, 
             self::Headphone, self::Speaker, self::Console, self::Camera => 'Eletrônicos',
             self::Perfume => 'Perfumes',
-            self::Accessory => 'Acessórios',
+            self::Charger, self::Cable, self::Case_, self::Accessory => 'Acessórios',
             self::Service => 'Serviços',
         };
     }
@@ -72,6 +80,9 @@ enum ProductCategory: string
             self::Console => 'M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664zM21 12a9 9 0 11-18 0 9 9 0 0118 0z',
             self::Camera => 'M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z M15 13a3 3 0 11-6 0 3 3 0 016 0z',
             self::Perfume => 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z',
+            self::Charger => 'M13 10V3L4 14h7v7l9-11h-7z',
+            self::Cable => 'M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+            self::Case_ => 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
             self::Accessory => 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4',
             self::Service => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
         };
@@ -98,8 +109,13 @@ enum ProductCategory: string
             'Perfumes' => [
                 self::Perfume,
             ],
-            'Outros' => [
+            'Acessórios' => [
+                self::Charger,
+                self::Cable,
+                self::Case_,
                 self::Accessory,
+            ],
+            'Outros' => [
                 self::Service,
             ],
         ];

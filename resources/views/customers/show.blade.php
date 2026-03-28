@@ -62,8 +62,14 @@
                                     <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827; font-weight: 500;">{{ $customer->formatted_phone }}</dd>
                                 </div>
                                 <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">E-mail</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $customer->email ?? '-' }}</dd>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Instagram</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">
+                                        @if($customer->instagram)
+                                            <a href="https://instagram.com/{{ ltrim($customer->instagram, '@') }}" target="_blank" style="color: #111827; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ $customer->formatted_instagram }}</a>
+                                        @else
+                                            -
+                                        @endif
+                                    </dd>
                                 </div>
                                 <div>
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">CPF</dt>

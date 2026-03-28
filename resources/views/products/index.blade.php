@@ -27,17 +27,15 @@
                 
                 <!-- Filtros -->
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
-                    <form method="GET" action="{{ route('products.index') }}" x-data x-ref="filterForm" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
+                    <form method="GET" action="{{ route('products.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4 items-end">
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
                             <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nome, SKU, IMEI..." 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
-                                   x-on:input.debounce.400ms="$refs.filterForm.submit()">
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Categoria</label>
-                            <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
-                                    x-on:change="$refs.filterForm.submit()">
+                            <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                                 <option value="">Todas</option>
                                 @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
                                     <optgroup label="{{ $group }}">
@@ -52,8 +50,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Condição</label>
-                            <select name="condition" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
-                                    x-on:change="$refs.filterForm.submit()">
+                            <select name="condition" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                                 <option value="">Todas</option>
                                 @foreach($conditions as $condition)
                                     <option value="{{ $condition->value }}" {{ $filters['condition'] === $condition->value ? 'selected' : '' }}>
@@ -64,20 +61,28 @@
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                            <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
-                                    x-on:change="$refs.filterForm.submit()">
+                            <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
                                 <option value="">Todos</option>
                                 <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Ativo</option>
                                 <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>Inativo</option>
                             </select>
                         </div>
-                        <div class="flex items-center pt-5">
+                        <div class="flex flex-col gap-2 pt-5">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" name="in_stock" value="1" {{ $filters['in_stock'] ? 'checked' : '' }} 
+                                       class="w-4 h-4 rounded border-gray-300 mr-2">
+                                <span class="text-sm text-gray-700">Em Estoque</span>
+                            </label>
                             <label class="flex items-center cursor-pointer">
                                 <input type="checkbox" name="low_stock" value="1" {{ $filters['low_stock'] ? 'checked' : '' }} 
-                                       class="w-4 h-4 rounded border-gray-300 mr-2"
-                                       x-on:change="$refs.filterForm.submit()">
+                                       class="w-4 h-4 rounded border-gray-300 mr-2">
                                 <span class="text-sm text-gray-700">Estoque Baixo</span>
                             </label>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full inline-flex justify-center px-4 py-2 bg-gray-900 text-white font-medium rounded-lg text-sm hover:bg-gray-700 transition-colors">
+                                Filtrar
+                            </button>
                         </div>
                         <div>
                             <a href="{{ route('products.index') }}" class="w-full inline-flex justify-center px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
@@ -105,12 +110,28 @@
                                 <tr style="border-bottom: 1px solid #f3f4f6;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
                                     <td style="padding: 1rem 1.5rem;">
                                         <div style="font-weight: 500; color: #111827;">{{ $product->name }}</div>
-                                        <div style="font-size: 0.75rem; color: #6b7280;">
+                                        <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.125rem;">
                                             SKU: {{ $product->sku }}
                                             @if($product->imei)
                                                 | IMEI: {{ $product->imei }}
                                             @endif
                                         </div>
+                                        @if($product->model || $product->storage || $product->color || $product->battery_health)
+                                        <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.375rem;">
+                                            @if($product->model)
+                                            <span style="display: inline-block; padding: 0.0625rem 0.375rem; background: #f3f4f6; color: #374151; font-size: 0.675rem; font-weight: 500; border-radius: 0.25rem;">{{ $product->model }}</span>
+                                            @endif
+                                            @if($product->storage)
+                                            <span style="display: inline-block; padding: 0.0625rem 0.375rem; background: #eff6ff; color: #1e40af; font-size: 0.675rem; font-weight: 500; border-radius: 0.25rem;">{{ $product->storage }}</span>
+                                            @endif
+                                            @if($product->color)
+                                            <span style="display: inline-block; padding: 0.0625rem 0.375rem; background: #faf5ff; color: #6b21a8; font-size: 0.675rem; font-weight: 500; border-radius: 0.25rem;">{{ $product->color }}</span>
+                                            @endif
+                                            @if($product->battery_health)
+                                            <span style="display: inline-block; padding: 0.0625rem 0.375rem; background: {{ $product->battery_health >= 80 ? '#f0fdf4' : '#fef2f2' }}; color: {{ $product->battery_health >= 80 ? '#166534' : '#991b1b' }}; font-size: 0.675rem; font-weight: 500; border-radius: 0.25rem;">{{ $product->battery_health }}% bat</span>
+                                            @endif
+                                        </div>
+                                        @endif
                                     </td>
                                     <td style="padding: 0.75rem 1rem;">
                                         <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">

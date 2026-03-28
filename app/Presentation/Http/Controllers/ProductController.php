@@ -31,6 +31,7 @@ class ProductController extends Controller
             'category' => $request->get('category'),
             'condition' => $request->get('condition'),
             'status' => $request->get('status'),
+            'in_stock' => $request->has('in_stock') ? $request->boolean('in_stock') : !$request->hasAny(['search', 'category', 'condition', 'status', 'low_stock']),
             'low_stock' => $request->boolean('low_stock'),
             'sort' => $request->get('sort', 'created_at'),
             'direction' => $request->get('direction', 'desc'),

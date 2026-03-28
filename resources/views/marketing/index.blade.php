@@ -370,112 +370,89 @@
 
                 {{-- Seminovos --}}
                 <div>
-                    <h3 style="font-size: 0.9375rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: #fef3c7; border-radius: 0.375rem;">
-                            <svg style="width: 0.875rem; height: 0.875rem; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                        </span>
-                        Semi Novos
-                        <span style="font-size: 0.7rem; font-weight: 500; color: #6b7280;" x-text="'(' + resaleUsed.length + ' itens)'"></span>
-                    </h3>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <h3 style="font-size: 0.9375rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: #fef3c7; border-radius: 0.375rem;">
+                                <svg style="width: 0.875rem; height: 0.875rem; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                            </span>
+                            Semi Novos
+                            <span style="font-size: 0.7rem; font-weight: 500; color: #6b7280;" x-text="'(' + resaleUsed.length + ' itens)'"></span>
+                        </h3>
+                        <button type="button" @click="saveAllResaleUsed()" x-show="resaleUsed.length > 0"
+                                :style="resaleUsedAllSaving
+                                    ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.375rem 0.875rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.75rem;font-weight:600;cursor:default;'
+                                    : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.375rem 0.875rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.75rem;font-weight:600;cursor:pointer;'"
+                                :disabled="resaleUsedAllSaving">
+                            <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            <span x-text="resaleUsedAllSaving ? 'Salvo!' : 'Salvar Tudo'"></span>
+                        </button>
+                    </div>
 
                     <div x-show="resaleUsed.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
                         Nenhum seminovo disponivel em estoque
                     </div>
 
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;" x-show="resaleUsed.length > 0">
-                        <button type="button" @click="resaleUsed.forEach(i => i._collapsed = false)"
-                                style="padding: 0.25rem 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 500; color: #374151; cursor: pointer;"
-                                onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
-                            Expandir Todos
-                        </button>
-                        <button type="button" @click="resaleUsed.forEach(i => i._collapsed = true)"
-                                style="padding: 0.25rem 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 500; color: #374151; cursor: pointer;"
-                                onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
-                            Minimizar Todos
-                        </button>
-                    </div>
-
-                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;" x-show="resaleUsed.length > 0">
-                        <template x-for="(item, idx) in resaleUsed" :key="item.id">
-                            <div :style="idx < resaleUsed.length - 1 ? 'border-bottom: 1px solid #e5e7eb;' : ''">
-                                {{-- Header (sempre visivel) --}}
-                                <div @click="item._collapsed = !item._collapsed"
-                                     style="padding: 0.5rem 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; user-select: none;"
-                                     :style="!item._collapsed ? 'background: #f9fafb;' : ''"
-                                     onmouseover="this.style.background='#f9fafb'" onmouseout="if(this.__x_el){ return; } this.style.background=''">
-                                    <svg width="14" height="14"
-                                         :style="'flex-shrink:0;transition:transform 0.2s;' + (item._collapsed ? 'color:#9ca3af;transform:rotate(0deg);' : 'color:#111827;transform:rotate(90deg);')"
-                                         fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                                    </svg>
-                                    <span style="font-size: 0.8125rem; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1;" x-text="item.name"></span>
-                                    <span x-show="item.resale.resale_price" style="font-size: 0.75rem; color: #059669; font-weight: 600; flex-shrink: 0; white-space: nowrap;">
-                                        R$ <span x-text="item.resale.resale_price ? parseFloat(item.resale.resale_price).toLocaleString('pt-BR') : ''"></span>
-                                    </span>
-                                    <label @click.stop style="display: inline-flex; align-items: center; gap: 0.25rem; flex-shrink: 0; cursor: pointer; margin-left: 0.25rem;">
-                                        <input type="checkbox" x-model="item.resale.visible"
-                                               @change="saveResaleVisibility(item)"
-                                               style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
-                                    </label>
-                                </div>
-
-                                {{-- Corpo expandido --}}
-                                <div x-show="!item._collapsed" x-transition.duration.150ms style="padding: 0.75rem 1rem; border-top: 1px solid #f3f4f6;">
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.625rem;">
-                                        <div>
-                                            <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Preco Repasse</label>
-                                            <input type="number" step="0.01" x-model="item.resale.resale_price" placeholder="0.00"
-                                                   style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                        </div>
-                                        <div>
-                                            <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Bateria %</label>
-                                            <input type="number" min="0" max="100" x-model="item.resale.battery_health" placeholder="0"
-                                                   style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                        </div>
-                                        <div>
-                                            <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Garantia ate</label>
-                                            <input type="date" x-model="item.resale.warranty_until"
-                                                   style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                        </div>
-                                        <div style="display: flex; align-items: flex-end; gap: 0.75rem; padding-bottom: 0.25rem;">
-                                            <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #374151; cursor: pointer;">
-                                                <input type="checkbox" x-model="item.resale.has_box" style="accent-color: #111827; cursor: pointer;">
-                                                Caixa
-                                            </label>
-                                            <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #374151; cursor: pointer;">
-                                                <input type="checkbox" x-model="item.resale.has_cable" style="accent-color: #111827; cursor: pointer;">
-                                                Cabo
-                                            </label>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin-bottom: 0.625rem;">
-                                        <textarea x-model="item.resale.notes" rows="2" placeholder="Observacoes..."
-                                                  style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; resize: vertical;"
-                                                  onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
-                                    </div>
-
-                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                        <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: #374151; cursor: pointer;">
-                                            <input type="checkbox" x-model="item.resale.visible"
-                                                   @change="saveResaleVisibility(item)"
-                                                   style="accent-color: #111827; cursor: pointer;">
-                                            Exibir no repasse
-                                        </label>
-                                        <button type="button" @click="saveResaleItem(item)" style="margin-left: auto;"
-                                                :style="item._saving
-                                                    ? 'padding:0.375rem 1.25rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:default;'
-                                                    : 'padding:0.375rem 1.25rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:pointer;'"
-                                                :disabled="item._saving">
-                                            <span x-text="item._saving ? 'Salvo!' : 'Salvar'"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
+                    <div x-show="resaleUsed.length > 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 700px;">
+                                <thead>
+                                    <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Exibir</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 55px;">Bat.</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;">Cx</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 45px;">Cabo</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Custo</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Final</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #d97706; text-transform: uppercase; width: 110px;">Repasse</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="item in resaleUsed" :key="item.id">
+                                        <tr style="border-bottom: 1px solid #f3f4f6; transition: background 0.1s;"
+                                            onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                            <td style="padding: 0.375rem 0.75rem; text-align: center;">
+                                                <input type="checkbox" x-model="item.resale.visible"
+                                                       @change="saveResaleVisibility(item)"
+                                                       style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
+                                            </td>
+                                            <td style="padding: 0.5rem 0.75rem;">
+                                                <div style="font-size: 0.8125rem; font-weight: 600; color: #111827;" x-text="item.name"></div>
+                                                <div style="font-size: 0.6875rem; color: #9ca3af; display: flex; align-items: center; gap: 0.375rem; margin-top: 1px;">
+                                                    <span :style="item.condition === 'used'
+                                                        ? 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#fef3c7;color:#92400e;'
+                                                        : 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#dbeafe;color:#1e40af;'"
+                                                          x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
+                                                    <span x-show="item._usedListing.notes" style="font-size:0.6rem;color:#6b7280;" x-text="item._usedListing.notes"></span>
+                                                </div>
+                                            </td>
+                                            <td style="padding: 0.375rem 0.5rem; text-align: center; font-size: 0.8rem; color: #374151;">
+                                                <span x-text="item._usedListing.battery_health ? item._usedListing.battery_health + '%' : '-'" :style="item._usedListing.battery_health ? 'color:#059669;font-weight:600;' : 'color:#d1d5db;'"></span>
+                                            </td>
+                                            <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                                <span :style="item._usedListing.has_box ? 'color:#059669;font-size:0.8rem;' : 'color:#d1d5db;font-size:0.8rem;'" x-text="item._usedListing.has_box ? '✓' : '—'"></span>
+                                            </td>
+                                            <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                                <span :style="item._usedListing.has_cable ? 'color:#059669;font-size:0.8rem;' : 'color:#d1d5db;font-size:0.8rem;'" x-text="item._usedListing.has_cable ? '✓' : '—'"></span>
+                                            </td>
+                                            <td style="padding: 0.375rem 0.75rem; text-align: right; font-size: 0.75rem; color: #6b7280;">
+                                                <span x-text="item._usedListing.cost_price ? parseFloat(item._usedListing.cost_price).toLocaleString('pt-BR', {minimumFractionDigits:0}) : '-'"></span>
+                                            </td>
+                                            <td style="padding: 0.375rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #374151;">
+                                                <span x-text="item._usedListing.final_price ? parseFloat(item._usedListing.final_price).toLocaleString('pt-BR', {minimumFractionDigits:0}) : '-'"></span>
+                                            </td>
+                                            <td style="padding: 0.375rem 0.5rem;">
+                                                <input type="number" step="0.01" x-model="item.resale.resale_price" placeholder="0,00"
+                                                       style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600;"
+                                                       onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#e5e7eb'">
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -484,17 +461,31 @@
             {{-- ABA 3: SEMINOVOS DISPONIVEIS --}}
             {{-- ============================================================ --}}
             <div x-show="tab === 'used'" x-cloak>
-                <!-- Busca + Copiar Lista -->
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
                     <input type="text" x-model="usedSearch" placeholder="Buscar seminovo por nome..."
                            style="flex: 1; min-width: 200px; max-width: 360px; padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                    <button type="button" @click="copyUsedListToWhatsApp()"
-                            :style="usedListCopied
-                                ? 'padding: 0.5rem 1rem; background: #059669; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: default; display: flex; align-items: center; gap: 0.375rem;'
-                                : 'padding: 0.5rem 1rem; background: #25d366; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;'">
-                        <span x-text="usedListCopied ? '✓ Copiado!' : '📋 Copiar Lista WhatsApp'"></span>
-                    </button>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" @click="saveAllUsedListings()"
+                                :style="usedAllSaving
+                                    ? 'padding: 0.5rem 1rem; background: #059669; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: default; display: flex; align-items: center; gap: 0.375rem;'
+                                    : 'padding: 0.5rem 1rem; background: #111827; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;'"
+                                :disabled="usedAllSaving">
+                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            <span x-text="usedAllSaving ? 'Salvo!' : 'Salvar Tudo'"></span>
+                        </button>
+                        <button type="button" @click="copyUsedListToWhatsApp()"
+                                :style="usedListCopied
+                                    ? 'padding: 0.5rem 1rem; background: #059669; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: default; display: flex; align-items: center; gap: 0.375rem;'
+                                    : 'padding: 0.5rem 1rem; background: #25d366; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;'">
+                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            <span x-text="usedListCopied ? 'Copiado!' : 'Copiar Lista'"></span>
+                        </button>
+                    </div>
                 </div>
 
                 <div x-show="filteredUsed.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 3rem; text-align: center;">
@@ -504,95 +495,94 @@
                     <p style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem;">Nenhum seminovo disponivel em estoque</p>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1rem;">
-                    <template x-for="item in filteredUsed" :key="item.id">
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
-                            <!-- Header do card -->
-                            <div style="padding: 0.875rem 1rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: flex-start;">
-                                <div style="min-width: 0; flex: 1;">
-                                    <div style="font-size: 0.9375rem; font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.name"></div>
-                                    <div style="font-size: 0.75rem; color: #9ca3af; margin-top: 2px;">
-                                        <span x-text="item.model || ''"></span>
-                                        <span x-show="item.storage"> · <span x-text="item.storage"></span></span>
-                                        <span x-show="item.color"> · <span x-text="item.color"></span></span>
-                                    </div>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;">
-                                    <label style="display: flex; align-items: center; gap: 0.25rem; font-size: 0.7rem; font-weight: 600; color: #059669; cursor: pointer; padding: 2px 6px; border-radius: 9999px; border: 1px solid #d1fae5;"
-                                           :style="item.listing.visible ? 'background:#dcfce7;border-color:#059669;' : 'background:#f3f4f6;border-color:#d1d5db;color:#9ca3af;'">
-                                        <input type="checkbox" x-model="item.listing.visible" @change="saveUsedVisibility(item)"
-                                               style="width: 0.75rem; height: 0.75rem; accent-color: #059669; cursor: pointer;">
-                                        <span x-text="item.listing.visible ? 'Na Lista' : 'Oculto'"></span>
-                                    </label>
-                                    <span :style="item.condition === 'used'
-                                        ? 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#fef3c7;color:#92400e;'
-                                        : 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#dbeafe;color:#1e40af;'"
-                                          x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
-                                    <span style="font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#dcfce7;color:#166534;"
-                                          x-text="'Est: ' + item.stock"></span>
-                                </div>
-                            </div>
-
-                            <!-- Campos editaveis -->
-                            <div style="padding: 0.875rem 1rem;">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                    <div>
-                                        <label style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; display: block; margin-bottom: 2px;">Custo</label>
-                                        <input type="number" step="0.01" x-model="item.listing.cost_price" placeholder="0.00"
-                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.65rem; font-weight: 600; color: #7c3aed; text-transform: uppercase; display: block; margin-bottom: 2px;">Final</label>
-                                        <input type="number" step="0.01" x-model="item.listing.final_price" placeholder="0.00"
-                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; font-weight: 600;"
-                                               onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
-                                    </div>
-                                    <div>
-                                        <label style="font-size: 0.65rem; font-weight: 600; color: #059669; text-transform: uppercase; display: block; margin-bottom: 2px;">Bateria %</label>
-                                        <input type="number" min="0" max="100" x-model="item.listing.battery_health" placeholder="0"
-                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                               onfocus="this.style.borderColor='#059669'" onblur="this.style.borderColor='#e5e7eb'">
-                                    </div>
-                                </div>
-
-                                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem;">
-                                    <label style="display: flex; align-items: center; gap: 0.375rem; font-size: 0.8rem; color: #374151; cursor: pointer;">
-                                        <input type="checkbox" x-model="item.listing.has_box"
-                                               style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
-                                        Caixa
-                                    </label>
-                                    <label style="display: flex; align-items: center; gap: 0.375rem; font-size: 0.8rem; color: #374151; cursor: pointer;">
-                                        <input type="checkbox" x-model="item.listing.has_cable"
-                                               style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
-                                        Cabo
-                                    </label>
-                                </div>
-
-                                <div style="margin-bottom: 0.75rem;">
-                                    <textarea x-model="item.listing.notes" rows="2" placeholder="Observacoes..."
-                                              style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; resize: vertical;"
-                                              onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
-                                </div>
-
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <button type="button" @click="saveUsedListing(item)"
-                                            :style="item._saving
-                                                ? 'flex:1;padding:0.5rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:default;'
-                                                : 'flex:1;padding:0.5rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:pointer;'"
-                                            :disabled="item._saving">
-                                        <span x-text="item._saving ? 'Salvo!' : 'Salvar'"></span>
-                                    </button>
-                                    <button type="button" @click="copyUsedToWhatsApp(item)"
-                                            :style="item._copied
-                                                ? 'padding:0.5rem 0.75rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:default;'
-                                                : 'padding:0.5rem 0.75rem;background:#25d366;color:white;border:none;border-radius:0.375rem;font-size:0.8rem;font-weight:600;cursor:pointer;'">
-                                        <span x-text="item._copied ? '✓ Copiado' : '📋 WhatsApp'"></span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
+                <div x-show="filteredUsed.length > 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 900px;">
+                            <thead>
+                                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Lista</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 95px;">Custo</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 95px;">Final</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 60px;">Bat. %</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Cx</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Cabo</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 160px;">Obs</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="item in filteredUsed" :key="item.id">
+                                    <tr style="border-bottom: 1px solid #f3f4f6; transition: background 0.1s;"
+                                        onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                        <td style="padding: 0.375rem 0.75rem; text-align: center;">
+                                            <input type="checkbox" x-model="item.listing.visible"
+                                                   @change="saveUsedVisibility(item)"
+                                                   style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
+                                        </td>
+                                        <td style="padding: 0.5rem 0.75rem;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <div style="min-width: 0; flex: 1;">
+                                                    <div style="font-size: 0.8125rem; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="item.name"></div>
+                                                    <div style="font-size: 0.6875rem; color: #9ca3af; display: flex; align-items: center; gap: 0.375rem; margin-top: 1px;">
+                                                        <span :style="item.condition === 'used'
+                                                            ? 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#fef3c7;color:#92400e;'
+                                                            : 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#dbeafe;color:#1e40af;'"
+                                                              x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
+                                                        <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#f0fdf4;color:#166534;"
+                                                              x-text="'Est: ' + item.stock"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem;">
+                                            <input type="number" step="0.01" x-model="item.listing.cost_price" placeholder="0,00"
+                                                   style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
+                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem;">
+                                            <input type="number" step="0.01" x-model="item.listing.final_price" placeholder="0,00"
+                                                   style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600;"
+                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem;">
+                                            <input type="number" min="0" max="100" x-model="item.listing.battery_health" placeholder="0"
+                                                   style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: center;"
+                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                            <input type="checkbox" x-model="item.listing.has_box"
+                                                   style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                            <input type="checkbox" x-model="item.listing.has_cable"
+                                                   style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem;">
+                                            <input type="text" x-model="item.listing.notes" placeholder="Obs..."
+                                                   style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.75rem; outline: none;"
+                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                            <button type="button" @click="copyUsedToWhatsApp(item)"
+                                                    :style="item._copied
+                                                        ? 'padding:0.25rem;background:none;border:none;cursor:default;color:#059669;'
+                                                        : 'padding:0.25rem;background:none;border:none;cursor:pointer;color:#9ca3af;border-radius:0.25rem;'"
+                                                    onmouseover="if(!this.dataset.copied)this.style.color='#25d366'" onmouseout="if(!this.dataset.copied)this.style.color='#9ca3af'"
+                                                    title="Copiar para WhatsApp">
+                                                <svg x-show="!item._copied" style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                                </svg>
+                                                <svg x-show="item._copied" style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -699,6 +689,7 @@
             _priceCounter: initialPrices.length,
 
             usedListCopied: false,
+            usedAllSaving: false,
 
             usedItems: usedProducts.map(p => ({
                 ...p,
@@ -730,12 +721,29 @@
                 _saving: false,
             })),
 
-            resaleUsed: usedForResale.map(p => ({
-                ...p,
-                resale: buildResaleData(p),
-                _collapsed: true,
-                _saving: false,
-            })),
+            resaleUsedAllSaving: false,
+
+            resaleUsed: usedForResale.map(p => {
+                const ul = usedListings[p.id] || {};
+                const resale = buildResaleData(p);
+                if (!resale.battery_health && ul.battery_health) resale.battery_health = ul.battery_health;
+                if (!resale.has_box && ul.has_box) resale.has_box = ul.has_box;
+                if (!resale.has_cable && ul.has_cable) resale.has_cable = ul.has_cable;
+                if (!resale.notes && ul.notes) resale.notes = ul.notes;
+                return {
+                    ...p,
+                    resale,
+                    _usedListing: {
+                        cost_price: ul.cost_price || null,
+                        final_price: ul.final_price || null,
+                        battery_health: ul.battery_health || null,
+                        has_box: !!ul.has_box,
+                        has_cable: !!ul.has_cable,
+                        notes: ul.notes || '',
+                    },
+                    _saving: false,
+                };
+            }),
 
             get filteredPrices() {
                 if (!this.priceSearch) return this.prices;
@@ -887,6 +895,37 @@
                 }
             },
 
+            async saveAllUsedListings() {
+                this.usedAllSaving = true;
+                try {
+                    const promises = this.usedItems.map(item =>
+                        fetch('{{ route("marketing.used-listings.store") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                product_id: item.id,
+                                cost_price: item.listing.cost_price || null,
+                                final_price: item.listing.final_price || null,
+                                battery_health: item.listing.battery_health || null,
+                                has_box: item.listing.has_box ? 1 : 0,
+                                has_cable: item.listing.has_cable ? 1 : 0,
+                                notes: item.listing.notes || null,
+                                visible: item.listing.visible ? 1 : 0,
+                            }),
+                        })
+                    );
+                    await Promise.all(promises);
+                    setTimeout(() => { this.usedAllSaving = false; }, 1500);
+                } catch (e) {
+                    alert('Erro ao salvar: ' + e.message);
+                    this.usedAllSaving = false;
+                }
+            },
+
             copyUsedListToWhatsApp() {
                 const visibleItems = this.usedItems.filter(i => i.listing.visible && i.listing.final_price);
 
@@ -1000,6 +1039,7 @@
             async saveResaleItem(item) {
                 item._saving = true;
                 try {
+                    const ul = item._usedListing || {};
                     const res = await fetch('{{ route("marketing.resale-items.store") }}', {
                         method: 'POST',
                         headers: {
@@ -1011,11 +1051,11 @@
                             resaleable_type: item.morph_type,
                             resaleable_id: item.id,
                             resale_price: item.resale.resale_price || null,
-                            battery_health: item.resale.battery_health || null,
+                            battery_health: item.resale.battery_health || ul.battery_health || null,
                             warranty_until: item.resale.warranty_until || null,
-                            has_box: item.resale.has_box ? 1 : 0,
-                            has_cable: item.resale.has_cable ? 1 : 0,
-                            notes: item.resale.notes || null,
+                            has_box: (item.resale.has_box || ul.has_box) ? 1 : 0,
+                            has_cable: (item.resale.has_cable || ul.has_cable) ? 1 : 0,
+                            notes: item.resale.notes || ul.notes || null,
                             visible: item.resale.visible ? 1 : 0,
                         }),
                     });
@@ -1024,6 +1064,39 @@
                 } catch (e) {
                     alert('Erro ao salvar: ' + e.message);
                     item._saving = false;
+                }
+            },
+
+            async saveAllResaleUsed() {
+                this.resaleUsedAllSaving = true;
+                try {
+                    const promises = this.resaleUsed.map(item => {
+                        const ul = item._usedListing || {};
+                        return fetch('{{ route("marketing.resale-items.store") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                resaleable_type: item.morph_type,
+                                resaleable_id: item.id,
+                                resale_price: item.resale.resale_price || null,
+                                battery_health: item.resale.battery_health || ul.battery_health || null,
+                                warranty_until: item.resale.warranty_until || null,
+                                has_box: (item.resale.has_box || ul.has_box) ? 1 : 0,
+                                has_cable: (item.resale.has_cable || ul.has_cable) ? 1 : 0,
+                                notes: item.resale.notes || ul.notes || null,
+                                visible: item.resale.visible ? 1 : 0,
+                            }),
+                        });
+                    });
+                    await Promise.all(promises);
+                    setTimeout(() => { this.resaleUsedAllSaving = false; }, 1500);
+                } catch (e) {
+                    alert('Erro ao salvar: ' + e.message);
+                    this.resaleUsedAllSaving = false;
                 }
             },
 
@@ -1102,16 +1175,20 @@
                     lines.push('');
 
                     visibleUsed.forEach(u => {
+                        const ul = u._usedListing || {};
                         const namePart = (u.name || '') + (u.storage ? ' ' + u.storage : '');
                         const color = u.color || '';
-                        const battery = u.resale.battery_health ? `🔋${u.resale.battery_health}%` : '';
+                        const bat = u.resale.battery_health || ul.battery_health;
+                        const battery = bat ? `🔋${bat}%` : '';
+                        const hasBox = u.resale.has_box || ul.has_box;
+                        const hasCable = u.resale.has_cable || ul.has_cable;
 
                         let accessories = '';
-                        if (u.resale.has_box && u.resale.has_cable) {
+                        if (hasBox && hasCable) {
                             accessories = '📦 Caixa e cabo';
-                        } else if (u.resale.has_box) {
+                        } else if (hasBox) {
                             accessories = '📦 Caixa';
-                        } else if (u.resale.has_cable) {
+                        } else if (hasCable) {
                             accessories = '✅Cabo';
                         } else {
                             accessories = '❌Caixa ❌Cabo';
@@ -1125,12 +1202,13 @@
                         }
 
                         const price = parseFloat(u.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                        const notes = u.resale.notes || ul.notes || '';
 
                         let parts = [`${namePart} ${color}`.trim()];
                         if (battery) parts.push(battery);
                         if (accessories) parts.push(accessories);
                         if (warranty) parts.push(warranty);
-                        if (u.resale.notes) parts.push(u.resale.notes);
+                        if (notes) parts.push(notes);
                         parts.push(`💰R$ ${price}`);
 
                         lines.push(parts.join(' - '));

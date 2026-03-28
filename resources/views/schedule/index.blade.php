@@ -280,8 +280,8 @@
                                            style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                                 <div>
-                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">E-mail</label>
-                                    <input type="email" name="customer_email" x-model="newCustomer.email"
+                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">Instagram</label>
+                                    <input type="text" name="customer_instagram" x-model="newCustomer.instagram" placeholder="@usuario"
                                            style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                                 <div>
@@ -574,7 +574,7 @@
                     notes: '',
                 },
 
-                newCustomer: { name: '', phone: '', instagram: '', birth_date: '', email: '', address: '' },
+                newCustomer: { name: '', phone: '', instagram: '', birth_date: '', address: '' },
 
                 whatsappTypes: [
                     { key: 'confirmation', label: 'Confirmação de Agendamento' },
@@ -592,7 +592,7 @@
                     this.customerSearch = '';
                     this.customerResults = [];
                     this.newForm.start_time = '';
-                    this.newCustomer = { name: '', phone: '', instagram: '', birth_date: '', email: '', address: '' };
+                    this.newCustomer = { name: '', phone: '', instagram: '', birth_date: '', address: '' };
                     if (this.newForm.attendant && this.newForm.date) this.fetchSlots();
                 },
 

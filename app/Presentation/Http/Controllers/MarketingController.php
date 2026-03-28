@@ -30,6 +30,17 @@ class MarketingController extends Controller
             ->latest()
             ->get();
 
+        if ($creatives->isEmpty()) {
+            $lastCreative = MarketingCreative::latest('date')->first();
+            if ($lastCreative) {
+                $creativeDate = $lastCreative->date->toDateString();
+                $creatives = MarketingCreative::with('user')
+                    ->byDate($creativeDate)
+                    ->latest()
+                    ->get();
+            }
+        }
+
         $usedProducts = Product::where('active', true)
             ->where('stock_quantity', '>', 0)
             ->whereIn('condition', ['used', 'refurbished'])

@@ -48,6 +48,24 @@
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Condição</dt>
                                     <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $product->condition->label() }}</dd>
                                 </div>
+                                @if(in_array($product->condition->value, ['used', 'refurbished']))
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Acessórios</dt>
+                                    <dd style="margin-top: 0.25rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 500; border-radius: 9999px; {{ $product->has_box ? 'background: #f0fdf4; color: #16a34a;' : 'background: #fef2f2; color: #dc2626;' }}">
+                                            {{ $product->has_box ? '✓' : '✗' }} Caixa
+                                        </span>
+                                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 500; border-radius: 9999px; {{ $product->has_cable ? 'background: #f0fdf4; color: #16a34a;' : 'background: #fef2f2; color: #dc2626;' }}">
+                                            {{ $product->has_cable ? '✓' : '✗' }} Cabo
+                                        </span>
+                                        @if($product->battery_health !== null)
+                                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 500; border-radius: 9999px; background: #eff6ff; color: #2563eb;">
+                                            🔋 {{ $product->battery_health }}%
+                                        </span>
+                                        @endif
+                                    </dd>
+                                </div>
+                                @endif
                                 <div>
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Status</dt>
                                     <dd style="margin-top: 0.25rem;">

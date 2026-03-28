@@ -18,7 +18,7 @@ class PerfumeCustomer extends Model
         'name',
         'phone',
         'cpf',
-        'email',
+        'instagram',
         'address',
         'birth_date',
         'notes',
@@ -52,7 +52,7 @@ class PerfumeCustomer extends Model
             $q->where('name', 'like', "%{$search}%")
               ->orWhere('phone', 'like', "%{$search}%")
               ->orWhere('cpf', 'like', "%{$search}%")
-              ->orWhere('email', 'like', "%{$search}%");
+              ->orWhere('instagram', 'like', "%{$search}%");
         });
     }
 
@@ -80,6 +80,15 @@ class PerfumeCustomer extends Model
         }
         
         return $this->cpf;
+    }
+
+    public function getFormattedInstagramAttribute(): ?string
+    {
+        if (!$this->instagram) {
+            return null;
+        }
+
+        return '@' . ltrim($this->instagram, '@');
     }
 
     public function getWhatsappLinkAttribute(): string

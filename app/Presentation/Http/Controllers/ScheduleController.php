@@ -64,7 +64,6 @@ class ScheduleController extends Controller
             'customer_id'         => 'nullable|exists:customers,id',
             'customer_name'       => 'required|string|max:255',
             'customer_phone'      => 'nullable|string|max:20',
-            'customer_email'      => 'nullable|email|max:255',
             'customer_instagram'  => 'nullable|string|max:100',
             'customer_address'    => 'nullable|string|max:500',
             'customer_birth_date' => 'nullable|date',
@@ -92,7 +91,6 @@ class ScheduleController extends Controller
             $customer = Customer::create([
                 'name'       => $validated['customer_name'],
                 'phone'      => $validated['customer_phone'] ?? '',
-                'email'      => $validated['customer_email'] ?? null,
                 'instagram'  => $validated['customer_instagram'] ?? null,
                 'address'    => $validated['customer_address'] ?? null,
                 'birth_date' => $validated['customer_birth_date'] ?? null,

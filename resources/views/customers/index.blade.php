@@ -32,7 +32,7 @@
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
-                            <input type="text" name="search" value="{{ $search }}" placeholder="Buscar por nome, telefone, email ou CPF..." 
+                            <input type="text" name="search" value="{{ $search }}" placeholder="Buscar por nome, telefone, Instagram ou CPF..." 
                                    class="w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
                                    x-on:input.debounce.400ms="$refs.filterForm.submit()">
                         </div>
@@ -53,7 +53,7 @@
                             <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                 <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Telefone</th>
-                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Email</th>
+                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Instagram</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">CPF</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Compras</th>
                                 <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Ações</th>
@@ -74,7 +74,7 @@
                                         {{ $customer->formatted_phone }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280;">
-                                        {{ $customer->email ?? '-' }}
+                                        {{ $customer->formatted_instagram ?? '-' }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280;">
                                         {{ $customer->formatted_cpf ?? '-' }}

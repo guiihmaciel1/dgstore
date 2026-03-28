@@ -52,15 +52,26 @@ class CreateSaleUseCase
             $description = "Venda #{$sale->sale_number}";
             $saleDate = $sale->sold_at ?? now();
 
-            // Registrar parcela à vista (dinheiro/PIX)
+            // Registrar parcela em dinheiro
             if ((float) $sale->cash_payment > 0) {
-                $method = $sale->cash_payment_method === 'pix' ? 'PIX' : 'Dinheiro';
                 $this->financeService->registerSaleIncome(
                     userId: $sale->user_id,
                     amount: (float) $sale->cash_payment,
-                    description: "{$description} ({$method})",
+                    description: "{$description} (Dinheiro)",
                     referenceId: $sale->id,
-                    paymentMethod: $sale->cash_payment_method,
+                    paymentMethod: 'cash',
+                    date: $saleDate,
+                );
+            }
+
+            // Registrar parcela em PIX
+            if ((float) $sale->pix_payment > 0) {
+                $this->financeService->registerSaleIncome(
+                    userId: $sale->user_id,
+                    amount: (float) $sale->pix_payment,
+                    description: "{$description} (PIX)",
+                    referenceId: $sale->id,
+                    paymentMethod: 'pix',
                     date: $saleDate,
                 );
             }
@@ -80,7 +91,7 @@ class CreateSaleUseCase
             }
 
             // Se não for pagamento misto, registrar valor total com método principal
-            if ((float) $sale->cash_payment <= 0 && (float) $sale->card_payment <= 0) {
+            if ((float) $sale->cash_payment <= 0 && (float) $sale->pix_payment <= 0 && (float) $sale->card_payment <= 0) {
                 $this->financeService->registerSaleIncome(
                     userId: $sale->user_id,
                     amount: (float) $sale->total,

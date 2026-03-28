@@ -44,9 +44,9 @@ class AdminB2BProductController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'model' => ['nullable', 'string', 'max:255'],
-            'storage' => ['nullable', 'string', 'max:255'],
-            'color' => ['nullable', 'string', 'max:255'],
+            'model' => ['required', 'string', 'max:255'],
+            'storage' => ['required', 'string', 'max:255'],
+            'color' => ['required', 'string', 'max:255'],
             'condition' => ['required', 'in:sealed,semi_new'],
             'cost_price' => ['required', 'numeric', 'min:0'],
             'wholesale_price' => ['required', 'numeric', 'min:0'],
@@ -81,9 +81,9 @@ class AdminB2BProductController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'model' => ['nullable', 'string', 'max:255'],
-            'storage' => ['nullable', 'string', 'max:255'],
-            'color' => ['nullable', 'string', 'max:255'],
+            'model' => ['required', 'string', 'max:255'],
+            'storage' => ['required', 'string', 'max:255'],
+            'color' => ['required', 'string', 'max:255'],
             'condition' => ['required', 'in:sealed,semi_new'],
             'cost_price' => ['required', 'numeric', 'min:0'],
             'wholesale_price' => ['required', 'numeric', 'min:0'],

@@ -31,6 +31,7 @@ class Sale extends Model
         'discount',
         'trade_in_value',
         'cash_payment',
+        'pix_payment',
         'card_payment',
         'cash_payment_method',
         'total',
@@ -48,6 +49,7 @@ class Sale extends Model
             'discount' => 'decimal:2',
             'trade_in_value' => 'decimal:2',
             'cash_payment' => 'decimal:2',
+            'pix_payment' => 'decimal:2',
             'card_payment' => 'decimal:2',
             'total' => 'decimal:2',
             'payment_method' => PaymentMethod::class,
@@ -249,6 +251,7 @@ class Sale extends Model
         $methods = 0;
         if ((float) $this->trade_in_value > 0) $methods++;
         if ((float) $this->cash_payment > 0) $methods++;
+        if ((float) $this->pix_payment > 0) $methods++;
         if ((float) $this->card_payment > 0) $methods++;
         return $methods > 1;
     }
@@ -260,6 +263,11 @@ class Sale extends Model
             'pix' => 'PIX',
             default => null,
         };
+    }
+
+    public function getFormattedPixPaymentAttribute(): string
+    {
+        return 'R$ ' . number_format((float) $this->pix_payment, 2, ',', '.');
     }
 
     public function getInstallmentValueAttribute(): float

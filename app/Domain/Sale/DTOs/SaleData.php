@@ -22,6 +22,7 @@ readonly class SaleData
         public float $discount = 0,
         public float $tradeInValue = 0,
         public float $cashPayment = 0,
+        public float $pixPayment = 0,
         public float $cardPayment = 0,
         public ?string $cashPaymentMethod = null,
         public array $tradeIns = [],
@@ -58,6 +59,7 @@ readonly class SaleData
             discount: (float) ($data['discount'] ?? 0),
             tradeInValue: (float) ($data['trade_in_value'] ?? 0),
             cashPayment: (float) ($data['cash_payment'] ?? 0),
+            pixPayment: (float) ($data['pix_payment'] ?? 0),
             cardPayment: (float) ($data['card_payment'] ?? 0),
             cashPaymentMethod: !empty($data['cash_payment_method']) ? $data['cash_payment_method'] : null,
             tradeIns: $tradeIns,
@@ -98,6 +100,7 @@ readonly class SaleData
         $methods = 0;
         if ($this->tradeInValue > 0) $methods++;
         if ($this->cashPayment > 0) $methods++;
+        if ($this->pixPayment > 0) $methods++;
         if ($this->cardPayment > 0) $methods++;
         return $methods > 1;
     }

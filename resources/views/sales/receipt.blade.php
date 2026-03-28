@@ -112,6 +112,34 @@
             <span class="info-label">Pagamento:</span>
             <span>{{ $sale->payment_method->label() }}@if($sale->installments > 1) ({{ $sale->installments }}x)@endif</span>
         </div>
+        @if($sale->hasMixedPayment())
+        <div style="margin-top: 4px; padding-top: 4px; border-top: 1px dashed #ddd;">
+            @if($sale->cash_payment > 0)
+            <div class="info-row">
+                <span class="info-label">Dinheiro:</span>
+                <span>{{ $sale->formatted_cash_payment }}</span>
+            </div>
+            @endif
+            @if($sale->pix_payment > 0)
+            <div class="info-row">
+                <span class="info-label">PIX:</span>
+                <span>{{ $sale->formatted_pix_payment }}</span>
+            </div>
+            @endif
+            @if($sale->card_payment > 0)
+            <div class="info-row">
+                <span class="info-label">Cartão{{ $sale->installments > 1 ? ' ('.$sale->installments.'x)' : '' }}:</span>
+                <span>{{ $sale->formatted_card_payment }}</span>
+            </div>
+            @endif
+            @if($sale->hasTradeIn())
+            <div class="info-row">
+                <span class="info-label">Trade-in:</span>
+                <span>{{ $sale->formatted_trade_in_value }}</span>
+            </div>
+            @endif
+        </div>
+        @endif
     </div>
 
     @if($sale->customer)

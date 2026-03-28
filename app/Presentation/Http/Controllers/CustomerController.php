@@ -94,7 +94,7 @@ class CustomerController extends Controller
             'id' => $customer->id,
             'name' => $customer->name,
             'phone' => $customer->formatted_phone,
-            'email' => $customer->email,
+            'instagram' => $customer->formatted_instagram,
         ]);
     }
 
@@ -116,7 +116,7 @@ class CustomerController extends Controller
                 'id' => $customer->id,
                 'name' => $customer->name,
                 'phone' => $customer->formatted_phone,
-                'email' => $customer->email,
+                'instagram' => $customer->formatted_instagram,
             ])
         );
     }

@@ -100,8 +100,8 @@
                                     @if($reservation->customer->phone)
                                         <div>{{ $reservation->customer->formatted_phone }}</div>
                                     @endif
-                                    @if($reservation->customer->email)
-                                        <div>{{ $reservation->customer->email }}</div>
+                                    @if($reservation->customer->instagram)
+                                        <div>{{ $reservation->customer->formatted_instagram }}</div>
                                     @endif
                                 </div>
                                 <a href="{{ route('customers.show', $reservation->customer) }}" style="display: inline-block; margin-top: 0.75rem; font-size: 0.875rem; color: #2563eb; text-decoration: none;">

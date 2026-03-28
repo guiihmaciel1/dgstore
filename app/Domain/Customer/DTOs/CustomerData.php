@@ -9,7 +9,7 @@ readonly class CustomerData
     public function __construct(
         public string $name,
         public string $phone,
-        public ?string $email = null,
+        public ?string $instagram = null,
         public ?string $cpf = null,
         public ?string $address = null,
         public ?string $notes = null,
@@ -21,7 +21,7 @@ readonly class CustomerData
         return new self(
             name: $data['name'] ?? throw new \InvalidArgumentException('Campo "name" é obrigatório em CustomerData.'),
             phone: preg_replace('/\D/', '', $data['phone'] ?? throw new \InvalidArgumentException('Campo "phone" é obrigatório em CustomerData.')),
-            email: $data['email'] ?? null,
+            instagram: $data['instagram'] ?? null,
             cpf: isset($data['cpf']) ? preg_replace('/\D/', '', $data['cpf']) : null,
             address: $data['address'] ?? null,
             notes: $data['notes'] ?? null,
@@ -33,7 +33,7 @@ readonly class CustomerData
     {
         return [
             'name' => $this->name,
-            'email' => $this->email,
+            'instagram' => $this->instagram,
             'phone' => $this->phone,
             'cpf' => $this->cpf,
             'address' => $this->address,

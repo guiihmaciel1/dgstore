@@ -533,32 +533,36 @@
                                 </div>
                             </div>
                             <div style="padding: 1rem;">
-                                <!-- Entrada à Vista -->
-                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0;">
-                                    <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #166534; margin-bottom: 0.75rem;">
-                                        <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                        </svg>
-                                        Entrada à Vista
-                                    </label>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                        <div>
-                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Valor</label>
-                                            <div style="position: relative;">
-                                                <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
-                                                <input type="number" name="cash_payment" x-model.number="cashPayment" @input="updateTotals"
-                                                       step="0.01" min="0" placeholder="0,00"
-                                                       style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #86efac; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
-                                            </div>
+                                <!-- Dinheiro + PIX -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                    <!-- Dinheiro -->
+                                    <div style="padding: 1rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0;">
+                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #166534; margin-bottom: 0.75rem;">
+                                            <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                            </svg>
+                                            Dinheiro
+                                        </label>
+                                        <div style="position: relative;">
+                                            <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
+                                            <input type="number" name="cash_payment" x-model.number="cashPayment" @input="updateTotals"
+                                                   step="0.01" min="0" placeholder="0,00"
+                                                   style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #86efac; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
                                         </div>
-                                        <div>
-                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Forma</label>
-                                            <select name="cash_payment_method" x-model="cashPaymentMethod"
-                                                    style="width: 100%; padding: 0.5rem; border: 1px solid #86efac; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
-                                                <option value="">-</option>
-                                                <option value="cash">Dinheiro</option>
-                                                <option value="pix">PIX</option>
-                                            </select>
+                                    </div>
+                                    <!-- PIX -->
+                                    <div style="padding: 1rem; background: #ecfdf5; border-radius: 0.75rem; border: 1px solid #6ee7b7;">
+                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #047857; margin-bottom: 0.75rem;">
+                                            <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                            </svg>
+                                            PIX
+                                        </label>
+                                        <div style="position: relative;">
+                                            <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
+                                            <input type="number" name="pix_payment" x-model.number="pixPayment" @input="updateTotals"
+                                                   step="0.01" min="0" placeholder="0,00"
+                                                   style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
                                         </div>
                                     </div>
                                 </div>
@@ -632,6 +636,7 @@
                                 <input type="hidden" name="card_payment" :value="totalCardPayments">
                                 <input type="hidden" name="installments" :value="cardPayments.length > 0 ? cardPayments[0].installments : 1">
                                 <input type="hidden" name="trade_in_value" :value="hasTradeIn ? totalTradeInValue : 0">
+                                <input type="hidden" name="cash_payment_method" :value="cashPayment > 0 ? 'cash' : (pixPayment > 0 ? 'pix' : '')">
                                 
                                 <!-- Status -->
                                 <div>
@@ -695,7 +700,7 @@
                                     </div>
                                     
                                     <!-- Breakdown do pagamento -->
-                                    <div x-show="hasTradeIn || cashPayment > 0 || totalCardPayments > 0" 
+                                    <div x-show="hasTradeIn || cashPayment > 0 || pixPayment > 0 || totalCardPayments > 0" 
                                          style="padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid #374151;">
                                         <div style="font-size: 0.75rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.5rem;">FORMA DE PAGAMENTO</div>
                                         <template x-for="(ti, tiIdx) in tradeIns" :key="tiIdx">
@@ -705,8 +710,12 @@
                                             </div>
                                         </template>
                                         <div x-show="cashPayment > 0" style="display: flex; justify-content: space-between; color: #86efac; font-size: 0.875rem;">
-                                            <dt x-text="'Entrada (' + (cashPaymentMethod === 'pix' ? 'PIX' : 'Dinheiro') + ')'"></dt>
+                                            <dt>Dinheiro</dt>
                                             <dd x-text="formatMoney(cashPayment)"></dd>
+                                        </div>
+                                        <div x-show="pixPayment > 0" style="display: flex; justify-content: space-between; color: #6ee7b7; font-size: 0.875rem;">
+                                            <dt>PIX</dt>
+                                            <dd x-text="formatMoney(pixPayment)"></dd>
                                         </div>
                                         <template x-for="(card, idx) in cardPayments" :key="idx">
                                             <div x-show="card.amount > 0" style="display: flex; justify-content: space-between; color: #93c5fd; font-size: 0.875rem;">
@@ -836,9 +845,9 @@
                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">E-mail</label>
-                                <input type="email" x-model="customerForm.email"
-                                       placeholder="email@exemplo.com"
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Instagram</label>
+                                <input type="text" x-model="customerForm.instagram"
+                                       placeholder="@usuario"
                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                             </div>
@@ -951,19 +960,63 @@
                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Quantidade <span style="color: #dc2626;">*</span></label>
-                                <input type="number" x-model.number="productForm.stock_quantity" min="1"
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Modelo <span style="color: #dc2626;">*</span></label>
+                                <input type="text" x-model="productForm.model"
+                                       placeholder="Ex: 15 Pro Max"
                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Cor</label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Armazenamento <span style="color: #dc2626;">*</span></label>
+                                <input type="text" x-model="productForm.storage"
+                                       placeholder="Ex: 256GB"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Cor <span style="color: #dc2626;">*</span></label>
                                 <input type="text" x-model="productForm.color"
                                        placeholder="Ex: Preto"
                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                             </div>
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Quantidade <span style="color: #dc2626;">*</span></label>
+                                <input type="number" x-model.number="productForm.stock_quantity" min="1"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
                         </div>
+
+                        <!-- Campos Seminovo -->
+                        <div x-show="productForm.condition === 'used' || productForm.condition === 'refurbished'"
+                             x-transition
+                             style="margin-top: 1rem; padding: 1rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; font-weight: 600; color: #92400e; margin-bottom: 0.75rem;">Informações do Seminovo</p>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                                <div>
+                                    <label style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
+                                        <input type="checkbox" x-model="productForm.has_box"
+                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #111827;">
+                                        <span style="font-size: 0.8125rem; color: #374151;">Tem caixa</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
+                                        <input type="checkbox" x-model="productForm.has_cable"
+                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #111827;">
+                                        <span style="font-size: 0.8125rem; color: #374151;">Tem cabo</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Saúde da Bateria (%)</label>
+                                    <input type="number" x-model.number="productForm.battery_health" min="0" max="100" placeholder="Ex: 87"
+                                           style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                </div>
+                            </div>
+                        </div>
+
                         <p style="margin-top: 1rem; padding: 0.75rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.5rem; font-size: 0.8125rem; color: #1e40af;">
                             Os valores de custo e venda serão informados na hora da venda.
                         </p>
@@ -1220,6 +1273,7 @@
                 
                 // Pagamento
                 cashPayment: 0,
+                pixPayment: 0,
                 cashPaymentMethod: '',
                 
                 // Múltiplos cartões
@@ -1231,13 +1285,13 @@
 
                 // Modal de Cliente
                 showCustomerModal: false,
-                customerForm: { name: '', phone: '', cpf: '', email: '', birth_date: '' },
+                customerForm: { name: '', phone: '', cpf: '', instagram: '', birth_date: '' },
                 customerFormError: '',
                 customerFormSaving: false,
 
                 // Modal de Produto
                 showProductModal: false,
-                productForm: { name: '', sku: '', category: 'smartphone', condition: 'new', imei: '', stock_quantity: 1, color: '', min_stock_alert: 1 },
+                productForm: { name: '', sku: '', category: 'smartphone', condition: 'new', model: '', storage: '', color: '', imei: '', stock_quantity: 1, min_stock_alert: 1, has_box: false, has_cable: false, battery_health: null },
                 productFormError: '',
                 productFormSaving: false,
 
@@ -1307,6 +1361,7 @@
                         total += this.totalTradeInValue;
                     }
                     total += parseFloat(this.cashPayment) || 0;
+                    total += parseFloat(this.pixPayment) || 0;
                     total += this.totalCardPayments;
                     return total;
                 },
@@ -1336,9 +1391,9 @@
                 
                 getMainPaymentMethod() {
                     if (this.totalCardPayments > 0) return 'credit_card';
-                    if (this.cashPaymentMethod === 'pix') return 'pix';
+                    if (this.pixPayment > 0) return 'pix';
                     if (this.cashPayment > 0) return 'cash';
-                    return 'cash';
+                    return 'pix';
                 },
                 
                 getSubmitButtonText() {
@@ -1544,7 +1599,7 @@
 
                 // ========== MODAL CLIENTE ==========
                 resetCustomerForm() {
-                    return { name: '', phone: '', cpf: '', email: '', birth_date: '' };
+                    return { name: '', phone: '', cpf: '', instagram: '', birth_date: '' };
                 },
 
                 async saveCustomer() {
@@ -1663,7 +1718,7 @@
 
                 // ========== MODAL PRODUTO ==========
                 resetProductForm() {
-                    const form = { name: '', sku: '', category: 'smartphone', condition: 'new', imei: '', stock_quantity: 1, color: '', min_stock_alert: 1 };
+                    const form = { name: '', sku: '', category: 'smartphone', condition: 'new', model: '', storage: '', color: '', imei: '', stock_quantity: 1, min_stock_alert: 1 };
                     // Gerar SKU ao resetar
                     this.generateProductSkuFor(form);
                     return form;
@@ -1686,18 +1741,24 @@
                 async saveProduct() {
                     this.productFormError = '';
                     
-                    if (!this.productForm.name || !this.productForm.sku || !this.productForm.category || !this.productForm.condition) {
-                        this.productFormError = 'Preencha os campos obrigatórios: Nome, SKU, Categoria e Condição.';
+                    if (!this.productForm.name || !this.productForm.sku || !this.productForm.category || !this.productForm.condition || !this.productForm.model || !this.productForm.storage || !this.productForm.color) {
+                        this.productFormError = 'Preencha os campos obrigatórios: Nome, SKU, Categoria, Condição, Modelo, Armazenamento e Cor.';
                         return;
                     }
 
                     this.productFormSaving = true;
 
                     try {
-                        const payload = {
-                            ...this.productForm,
-                            active: true,
-                        };
+                        const formData = { ...this.productForm, active: true };
+                        if (formData.condition === 'used' || formData.condition === 'refurbished') {
+                            formData.has_box = formData.has_box ? 1 : 0;
+                            formData.has_cable = formData.has_cable ? 1 : 0;
+                        } else {
+                            delete formData.has_box;
+                            delete formData.has_cable;
+                            delete formData.battery_health;
+                        }
+                        const payload = formData;
 
                         const response = await fetch('{{ route("products.store-quick") }}', {
                             method: 'POST',

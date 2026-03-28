@@ -42,10 +42,10 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                        <input type="email" name="email" value="{{ old('email') }}"
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 @error('email') border-red-500 @enderror">
-                        @error('email')
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
+                        <input type="text" name="instagram" value="{{ old('instagram') }}" placeholder="@usuario"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 @error('instagram') border-red-500 @enderror">
+                        @error('instagram')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>

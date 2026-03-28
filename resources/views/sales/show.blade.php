@@ -277,11 +277,21 @@
                                         <svg style="width: 1.25rem; height: 1.25rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                         </svg>
-                                        <span style="font-size: 0.75rem; font-weight: 600; color: #16a34a; text-transform: uppercase;">
-                                            Entrada ({{ $sale->cash_payment_method_label ?? 'À vista' }})
-                                        </span>
+                                        <span style="font-size: 0.75rem; font-weight: 600; color: #16a34a; text-transform: uppercase;">Dinheiro</span>
                                     </div>
                                     <p style="font-size: 1.25rem; font-weight: 700; color: #166534;">{{ $sale->formatted_cash_payment }}</p>
+                                </div>
+                                @endif
+
+                                @if($sale->pix_payment > 0)
+                                <div style="padding: 1rem; background: #ecfdf5; border-radius: 0.75rem; border: 1px solid #6ee7b7;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <svg style="width: 1.25rem; height: 1.25rem; color: #047857;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                        </svg>
+                                        <span style="font-size: 0.75rem; font-weight: 600; color: #047857; text-transform: uppercase;">PIX</span>
+                                    </div>
+                                    <p style="font-size: 1.25rem; font-weight: 700; color: #065f46;">{{ $sale->formatted_pix_payment }}</p>
                                 </div>
                                 @endif
                                 
@@ -579,10 +589,10 @@
                                         <dt style="font-size: 0.75rem; color: #6b7280;">Telefone</dt>
                                         <dd style="font-size: 0.875rem; color: #111827;">{{ $sale->customer->formatted_phone }}</dd>
                                     </div>
-                                    @if($sale->customer->email)
+                                    @if($sale->customer->instagram)
                                     <div>
-                                        <dt style="font-size: 0.75rem; color: #6b7280;">E-mail</dt>
-                                        <dd style="font-size: 0.875rem; color: #111827;">{{ $sale->customer->email }}</dd>
+                                        <dt style="font-size: 0.75rem; color: #6b7280;">Instagram</dt>
+                                        <dd style="font-size: 0.875rem; color: #111827;">{{ $sale->customer->formatted_instagram }}</dd>
                                     </div>
                                     @endif
                                 </dl>

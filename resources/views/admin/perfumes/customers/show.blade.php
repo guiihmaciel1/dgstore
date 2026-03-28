@@ -36,8 +36,14 @@
                         <div class="font-medium text-gray-900 mt-1">{{ $customer->formatted_cpf ?? '-' }}</div>
                     </div>
                     <div>
-                        <span class="text-gray-600">E-mail:</span>
-                        <div class="font-medium text-gray-900 mt-1">{{ $customer->email ?? '-' }}</div>
+                        <span class="text-gray-600">Instagram:</span>
+                        <div class="font-medium text-gray-900 mt-1">
+                            @if($customer->instagram)
+                                <a href="https://instagram.com/{{ ltrim($customer->instagram, '@') }}" target="_blank" class="text-pink-600 hover:underline">{{ $customer->formatted_instagram }}</a>
+                            @else
+                                -
+                            @endif
+                        </div>
                     </div>
                     <div>
                         <span class="text-gray-600">Data de Nascimento:</span>

@@ -60,8 +60,8 @@
                         <tr class="hover:bg-gray-50">
                             <td class="px-4 py-2.5">
                                 <div class="text-sm font-medium text-gray-900">{{ $customer->name }}</div>
-                                @if($customer->email)
-                                    <div class="text-xs text-gray-500">{{ $customer->email }}</div>
+                                @if($customer->instagram)
+                                    <div class="text-xs text-gray-500">{{ $customer->formatted_instagram }}</div>
                                 @endif
                             </td>
                             <td class="px-4 py-2.5 whitespace-nowrap text-sm text-gray-900">

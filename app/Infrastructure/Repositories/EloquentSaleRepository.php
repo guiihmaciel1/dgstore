@@ -108,6 +108,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 'discount' => $data->discount,
                 'trade_in_value' => $data->tradeInValue,
                 'cash_payment' => $data->cashPayment,
+                'pix_payment' => $data->pixPayment,
                 'card_payment' => $data->cardPayment,
                 'cash_payment_method' => $data->cashPaymentMethod,
                 'total' => $total,

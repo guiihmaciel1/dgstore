@@ -35,7 +35,7 @@ class UpdateCustomerRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('customers', 'email')->ignore($customerId)],
+            'instagram' => ['nullable', 'string', 'max:255'],
             'phone' => ['required', 'string', 'min:10', 'max:11', Rule::unique('customers', 'phone')->ignore($customerId)],
             'cpf' => ['nullable', 'string', 'size:11', Rule::unique('customers', 'cpf')->ignore($customerId)],
             'address' => ['nullable', 'string'],
@@ -48,7 +48,7 @@ class UpdateCustomerRequest extends FormRequest
     {
         return [
             'name' => 'nome',
-            'email' => 'e-mail',
+            'instagram' => 'Instagram',
             'phone' => 'telefone',
             'cpf' => 'CPF',
             'address' => 'endereço',

@@ -39,6 +39,7 @@ class StoreSaleRequest extends FormRequest
             // Campos de pagamento misto
             'trade_in_value' => ['nullable', 'numeric', 'min:0'],
             'cash_payment' => ['nullable', 'numeric', 'min:0'],
+            'pix_payment' => ['nullable', 'numeric', 'min:0'],
             'card_payment' => ['nullable', 'numeric', 'min:0'],
             'cash_payment_method' => ['nullable', 'in:cash,pix'],
             
@@ -74,7 +75,8 @@ class StoreSaleRequest extends FormRequest
             'items.*.freight_type' => 'tipo de frete',
             'items.*.freight_value' => 'valor do frete',
             'trade_in_value' => 'valor do trade-in',
-            'cash_payment' => 'entrada à vista',
+            'cash_payment' => 'valor em dinheiro',
+            'pix_payment' => 'valor em PIX',
             'card_payment' => 'valor no cartão',
             'cash_payment_method' => 'forma de entrada',
             'trade_ins.*.device_name' => 'nome do aparelho',

@@ -26,9 +26,9 @@ class CustomerService
         return $this->repository->findByPhone($phone);
     }
 
-    public function findByEmail(string $email): ?Customer
+    public function findByInstagram(string $instagram): ?Customer
     {
-        return $this->repository->findByEmail($email);
+        return $this->repository->findByInstagram($instagram);
     }
 
     public function findByCpf(string $cpf): ?Customer

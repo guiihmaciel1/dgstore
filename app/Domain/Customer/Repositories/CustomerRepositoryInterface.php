@@ -15,7 +15,7 @@ interface CustomerRepositoryInterface
 
     public function findByPhone(string $phone): ?Customer;
 
-    public function findByEmail(string $email): ?Customer;
+    public function findByInstagram(string $instagram): ?Customer;
 
     public function findByCpf(string $cpf): ?Customer;
 

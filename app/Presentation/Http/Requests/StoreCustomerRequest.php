@@ -33,7 +33,7 @@ class StoreCustomerRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', 'unique:customers,email'],
+            'instagram' => ['nullable', 'string', 'max:255'],
             'phone' => ['required', 'string', 'min:10', 'max:11', 'unique:customers,phone'],
             'cpf' => ['nullable', 'string', 'size:11', 'unique:customers,cpf'],
             'address' => ['nullable', 'string'],
@@ -46,7 +46,7 @@ class StoreCustomerRequest extends FormRequest
     {
         return [
             'name' => 'nome',
-            'email' => 'e-mail',
+            'instagram' => 'Instagram',
             'phone' => 'telefone',
             'cpf' => 'CPF',
             'address' => 'endereço',
@@ -59,7 +59,6 @@ class StoreCustomerRequest extends FormRequest
     {
         return [
             'phone.unique' => 'Este telefone já está cadastrado.',
-            'email.unique' => 'Este e-mail já está cadastrado.',
             'cpf.unique' => 'Este CPF já está cadastrado.',
             'cpf.size' => 'O CPF deve ter 11 dígitos.',
             'phone.min' => 'O telefone deve ter no mínimo 10 dígitos.',

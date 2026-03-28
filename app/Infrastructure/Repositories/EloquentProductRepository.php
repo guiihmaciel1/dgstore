@@ -62,6 +62,10 @@ class EloquentProductRepository implements ProductRepositoryInterface
             $query->where('active', $filters['active']);
         }
 
+        if (!empty($filters['in_stock'])) {
+            $query->inStock();
+        }
+
         if (!empty($filters['low_stock'])) {
             $query->lowStock();
         }
@@ -118,6 +122,7 @@ class EloquentProductRepository implements ProductRepositoryInterface
                 ->orWhere('model', 'like', "%{$term}%");
         })
             ->active()
+            ->inStock()
             ->orderBy('name')
             ->limit(20)
             ->get();

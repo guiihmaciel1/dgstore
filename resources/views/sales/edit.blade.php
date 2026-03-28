@@ -164,30 +164,28 @@
                                 <div style="border-top: 1px solid #e5e7eb; padding-top: 1rem;">
                                     <p style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.75rem;">Pagamento Misto (opcional)</p>
 
-                                    {{-- Entrada à Vista --}}
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                        {{-- Dinheiro --}}
                                         <div>
-                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Entrada (R$)</label>
+                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Dinheiro (R$)</label>
                                             <input type="number" name="cash_payment" step="0.01" min="0"
                                                    value="{{ old('cash_payment', $sale->cash_payment) }}"
                                                    style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;">
                                         </div>
+                                        {{-- PIX --}}
                                         <div>
-                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Forma entrada</label>
-                                            <select name="cash_payment_method" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
-                                                <option value="">-</option>
-                                                <option value="cash" {{ old('cash_payment_method', $sale->cash_payment_method) === 'cash' ? 'selected' : '' }}>Dinheiro</option>
-                                                <option value="pix" {{ old('cash_payment_method', $sale->cash_payment_method) === 'pix' ? 'selected' : '' }}>PIX</option>
-                                            </select>
+                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">PIX (R$)</label>
+                                            <input type="number" name="pix_payment" step="0.01" min="0"
+                                                   value="{{ old('pix_payment', $sale->pix_payment) }}"
+                                                   style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;">
                                         </div>
-                                    </div>
-
-                                    {{-- Cartão --}}
-                                    <div>
-                                        <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Valor no Cartão (R$)</label>
-                                        <input type="number" name="card_payment" step="0.01" min="0"
-                                               value="{{ old('card_payment', $sale->card_payment) }}"
-                                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;">
+                                        {{-- Cartão --}}
+                                        <div>
+                                            <label style="display: block; font-size: 0.75rem; color: #6b7280; margin-bottom: 0.25rem;">Cartão (R$)</label>
+                                            <input type="number" name="card_payment" step="0.01" min="0"
+                                                   value="{{ old('card_payment', $sale->card_payment) }}"
+                                                   style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;">
+                                        </div>
                                     </div>
                                 </div>
 

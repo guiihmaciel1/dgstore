@@ -23,9 +23,9 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         return Customer::where('phone', $phone)->first();
     }
 
-    public function findByEmail(string $email): ?Customer
+    public function findByInstagram(string $instagram): ?Customer
     {
-        return Customer::where('email', $email)->first();
+        return Customer::where('instagram', $instagram)->first();
     }
 
     public function findByCpf(string $cpf): ?Customer
@@ -48,7 +48,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             
             $query->where(function ($q) use ($search, $searchClean) {
                 $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('instagram', 'like', "%{$search}%");
                 
                 if ($searchClean) {
                     $q->orWhere('phone', 'like', "%{$searchClean}%")
@@ -87,7 +87,7 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         return Customer::where(function ($query) use ($term, $termClean) {
             $query->where('name', 'like', "%{$term}%")
-                ->orWhere('email', 'like', "%{$term}%");
+                ->orWhere('instagram', 'like', "%{$term}%");
             
             if ($termClean) {
                 $query->orWhere('phone', 'like', "%{$termClean}%")

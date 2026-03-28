@@ -73,7 +73,7 @@
                                 <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
                                     Condição <span style="color: #dc2626;">*</span>
                                 </label>
-                                <select name="condition" required
+                                <select name="condition" id="condition" required onchange="toggleSeminovoFields()"
                                         style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
                                     @foreach($conditions as $condition)
                                         <option value="{{ $condition->value }}" {{ old('condition') == $condition->value ? 'selected' : '' }}>
@@ -85,22 +85,28 @@
 
                             <!-- Modelo -->
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Modelo</label>
-                                <input type="text" name="model" id="model" value="{{ old('model') }}" placeholder="Ex: 15 Pro Max"
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                    Modelo <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="text" name="model" id="model" value="{{ old('model') }}" placeholder="Ex: 15 Pro Max" required
                                        style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                             </div>
 
                             <!-- Armazenamento -->
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Armazenamento</label>
-                                <input type="text" name="storage" value="{{ old('storage') }}" placeholder="Ex: 256GB"
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                    Armazenamento <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="text" name="storage" value="{{ old('storage') }}" placeholder="Ex: 256GB" required
                                        style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                             </div>
 
                             <!-- Cor -->
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Cor</label>
-                                <input type="text" name="color" value="{{ old('color') }}" placeholder="Ex: Preto"
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                    Cor <span style="color: #dc2626;">*</span>
+                                </label>
+                                <input type="text" name="color" value="{{ old('color') }}" placeholder="Ex: Preto" required
                                        style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                             </div>
 
@@ -143,6 +149,32 @@
                                        style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                             </div>
                         </div>
+
+                        <!-- Campos Seminovo -->
+                        <div id="seminovo-fields" style="display: none; margin-top: 0.875rem; padding: 1rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; font-weight: 600; color: #92400e; margin-bottom: 0.75rem;">Informações do Seminovo</p>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.875rem;">
+                                <div>
+                                    <label style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
+                                        <input type="checkbox" name="has_box" value="1" {{ old('has_box') ? 'checked' : '' }}
+                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #111827;">
+                                        <span style="font-size: 0.8125rem; color: #374151;">Tem caixa</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
+                                        <input type="checkbox" name="has_cable" value="1" {{ old('has_cable') ? 'checked' : '' }}
+                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #111827;">
+                                        <span style="font-size: 0.8125rem; color: #374151;">Tem cabo</span>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Saúde da Bateria (%)</label>
+                                    <input type="number" name="battery_health" value="{{ old('battery_health') }}" min="0" max="100" placeholder="Ex: 87"
+                                           style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Rodapé -->
@@ -177,6 +209,14 @@
                 .then(response => response.json())
                 .then(data => { document.getElementById('sku').value = data.sku; });
         }
+
+        function toggleSeminovoFields() {
+            const condition = document.getElementById('condition').value;
+            const fields = document.getElementById('seminovo-fields');
+            fields.style.display = (condition === 'used' || condition === 'refurbished') ? 'block' : 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', toggleSeminovoFields);
     </script>
 
     <style>

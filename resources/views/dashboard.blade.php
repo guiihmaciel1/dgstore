@@ -488,6 +488,48 @@
                 </div>
             </div>
 
+            <!-- Agenda do Dia -->
+            @if($todayAppointments->count() > 0)
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-4 sm:mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900">Agenda de Hoje</h3>
+                    <a href="{{ route('schedule.index') }}" class="text-xs sm:text-sm text-gray-600 hover:text-gray-900">Ver agenda completa →</a>
+                </div>
+                <div class="space-y-2">
+                    @foreach($todayAppointments as $appt)
+                        @php
+                            $isPast = $appt->end_time <= now()->format('H:i:s');
+                            $isNow = $appt->start_time <= now()->format('H:i:s') && $appt->end_time > now()->format('H:i:s');
+                            $statusColors = [
+                                'scheduled' => ['border' => '#bfdbfe', 'bg' => '#eff6ff', 'dot' => '#3b82f6'],
+                                'confirmed' => ['border' => '#bbf7d0', 'bg' => '#f0fdf4', 'dot' => '#16a34a'],
+                                'completed' => ['border' => '#e5e7eb', 'bg' => '#f9fafb', 'dot' => '#9ca3af'],
+                                'cancelled' => ['border' => '#fecaca', 'bg' => '#fef2f2', 'dot' => '#dc2626'],
+                                'no_show'   => ['border' => '#fde68a', 'bg' => '#fefce8', 'dot' => '#d97706'],
+                            ];
+                            $sc = $statusColors[$appt->status->value] ?? $statusColors['scheduled'];
+                        @endphp
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 0.5rem; border: 1px solid {{ $sc['border'] }}; background: {{ $isNow ? '#eef2ff' : $sc['bg'] }}; {{ $isPast && $appt->status->value !== 'completed' ? 'opacity: 0.6;' : '' }}">
+                            <div style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ $isNow ? '#4f46e5' : $sc['dot'] }}; flex-shrink: 0; {{ $isNow ? 'box-shadow: 0 0 0 3px rgba(79,70,229,0.2);' : '' }}"></div>
+                            <div style="min-width: 4.5rem; font-size: 0.8rem; font-weight: 700; color: {{ $isNow ? '#4f46e5' : '#111827' }}; font-variant-numeric: tabular-nums;">
+                                {{ substr($appt->start_time, 0, 5) }} - {{ substr($appt->end_time, 0, 5) }}
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <span style="font-size: 0.8rem; font-weight: 600; color: #111827;">{{ $appt->customer_name }}</span>
+                                @if($appt->service_description)
+                                    <span style="font-size: 0.7rem; color: #6b7280; margin-left: 0.375rem;">· {{ $appt->service_description }}</span>
+                                @endif
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.375rem; flex-shrink: 0;">
+                                <span style="font-size: 0.7rem; font-weight: 600; color: {{ $appt->attendant === 'danilo' ? '#2563eb' : '#7c3aed' }}; background: {{ $appt->attendant === 'danilo' ? '#eff6ff' : '#f5f3ff' }}; padding: 0.125rem 0.5rem; border-radius: 9999px;">{{ $appt->attendant_name }}</span>
+                                <span style="font-size: 0.65rem; font-weight: 500; padding: 0.125rem 0.375rem; border-radius: 9999px; background: {{ $sc['bg'] }}; color: {{ $sc['dot'] }}; border: 1px solid {{ $sc['border'] }};">{{ $appt->status->label() }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <!-- Gráfico de Vendas -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
@@ -521,48 +563,6 @@
                         <p class="text-gray-500 text-center py-8">Nenhuma venda registrada ainda.</p>
                     @endif
                 </div>
-
-                <!-- Agenda do Dia -->
-                @if($todayAppointments->count() > 0)
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 lg:col-span-2">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-900">Agenda de Hoje</h3>
-                        <a href="{{ route('schedule.index') }}" class="text-xs sm:text-sm text-gray-600 hover:text-gray-900">Ver agenda completa →</a>
-                    </div>
-                    <div class="space-y-2">
-                        @foreach($todayAppointments as $appt)
-                            @php
-                                $isPast = $appt->end_time <= now()->format('H:i:s');
-                                $isNow = $appt->start_time <= now()->format('H:i:s') && $appt->end_time > now()->format('H:i:s');
-                                $statusColors = [
-                                    'scheduled' => ['border' => '#bfdbfe', 'bg' => '#eff6ff', 'dot' => '#3b82f6'],
-                                    'confirmed' => ['border' => '#bbf7d0', 'bg' => '#f0fdf4', 'dot' => '#16a34a'],
-                                    'completed' => ['border' => '#e5e7eb', 'bg' => '#f9fafb', 'dot' => '#9ca3af'],
-                                    'cancelled' => ['border' => '#fecaca', 'bg' => '#fef2f2', 'dot' => '#dc2626'],
-                                    'no_show'   => ['border' => '#fde68a', 'bg' => '#fefce8', 'dot' => '#d97706'],
-                                ];
-                                $sc = $statusColors[$appt->status->value] ?? $statusColors['scheduled'];
-                            @endphp
-                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 0.5rem; border: 1px solid {{ $sc['border'] }}; background: {{ $isNow ? '#eef2ff' : $sc['bg'] }}; {{ $isPast && $appt->status->value !== 'completed' ? 'opacity: 0.6;' : '' }}">
-                                <div style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ $isNow ? '#4f46e5' : $sc['dot'] }}; flex-shrink: 0; {{ $isNow ? 'box-shadow: 0 0 0 3px rgba(79,70,229,0.2);' : '' }}"></div>
-                                <div style="min-width: 4.5rem; font-size: 0.8rem; font-weight: 700; color: {{ $isNow ? '#4f46e5' : '#111827' }}; font-variant-numeric: tabular-nums;">
-                                    {{ substr($appt->start_time, 0, 5) }} - {{ substr($appt->end_time, 0, 5) }}
-                                </div>
-                                <div style="flex: 1; min-width: 0;">
-                                    <span style="font-size: 0.8rem; font-weight: 600; color: #111827;">{{ $appt->customer_name }}</span>
-                                    @if($appt->service_description)
-                                        <span style="font-size: 0.7rem; color: #6b7280; margin-left: 0.375rem;">· {{ $appt->service_description }}</span>
-                                    @endif
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 0.375rem; flex-shrink: 0;">
-                                    <span style="font-size: 0.7rem; font-weight: 600; color: {{ $appt->attendant === 'danilo' ? '#2563eb' : '#7c3aed' }}; background: {{ $appt->attendant === 'danilo' ? '#eff6ff' : '#f5f3ff' }}; padding: 0.125rem 0.5rem; border-radius: 9999px;">{{ $appt->attendant_name }}</span>
-                                    <span style="font-size: 0.65rem; font-weight: 500; padding: 0.125rem 0.375rem; border-radius: 9999px; background: {{ $sc['bg'] }}; color: {{ $sc['dot'] }}; border: 1px solid {{ $sc['border'] }};">{{ $appt->status->label() }}</span>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-                @endif
             </div>
         </div>
     </div>
