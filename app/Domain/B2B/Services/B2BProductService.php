@@ -30,10 +30,11 @@ class B2BProductService
         return $query->paginate($perPage)->withQueryString();
     }
 
-    public function listForCatalog(?string $search = null, ?string $model = null, ?string $condition = null): LengthAwarePaginator
+    public function listForCatalog(?string $search = null, ?string $model = null): LengthAwarePaginator
     {
         $query = B2BProduct::query()
             ->available()
+            ->where('condition', 'sealed')
             ->orderBy('sort_order')
             ->latest();
 
@@ -46,10 +47,6 @@ class B2BProductService
 
         if ($model) {
             $query->where('model', $model);
-        }
-
-        if ($condition) {
-            $query->where('condition', $condition);
         }
 
         return $query->paginate(24)->withQueryString();
@@ -110,6 +107,7 @@ class B2BProductService
     {
         return B2BProduct::query()
             ->available()
+            ->where('condition', 'sealed')
             ->whereNotNull('model')
             ->distinct()
             ->pluck('model')

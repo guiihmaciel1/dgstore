@@ -29,7 +29,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['"Inter"', '"SF Pro Display"', '"SF Pro"', ...defaultTheme.fontFamily.sans],
             },
             colors: {
                 // Paleta DG Store - baseada na logo

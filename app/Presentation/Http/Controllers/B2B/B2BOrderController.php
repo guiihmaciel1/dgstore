@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers\B2B;
 
 use App\Domain\B2B\DTOs\CreateB2BOrderDTO;
+use App\Domain\B2B\Enums\B2BOrderStatus;
 use App\Domain\B2B\Models\B2BOrder;
 use App\Domain\B2B\Models\B2BProduct;
 use App\Domain\B2B\Models\B2BSetting;
@@ -99,7 +100,11 @@ class B2BOrderController extends Controller
 
         $order->load('items');
 
-        return view('b2b.orders.pix', compact('order'));
+        $pixKey = B2BSetting::getPixKey();
+        $companyName = B2BSetting::getCompanyName();
+        $adminWhatsapp = B2BSetting::getAdminWhatsapp();
+
+        return view('b2b.orders.pix', compact('order', 'pixKey', 'companyName', 'adminWhatsapp'));
     }
 
     public function simulatePayment(B2BOrder $order): RedirectResponse
@@ -110,14 +115,17 @@ class B2BOrderController extends Controller
             abort(403);
         }
 
-        try {
-            $this->orderService->confirmPayment($order);
-
-            return redirect()->route('b2b.orders.show', $order)
-                ->with('success', 'Pagamento PIX confirmado! Seu pedido está sendo processado.');
-        } catch (\RuntimeException $e) {
-            return back()->with('error', $e->getMessage());
+        if (!$order->isPendingPayment()) {
+            return redirect()->route('b2b.orders.show', $order);
         }
+
+        $order->update([
+            'status' => B2BOrderStatus::Paid,
+            'paid_at' => now(),
+        ]);
+
+        return redirect()->route('b2b.orders.show', $order)
+            ->with('success', 'Pagamento simulado com sucesso.');
     }
 
     public function repeat(B2BOrder $order, Request $request): RedirectResponse

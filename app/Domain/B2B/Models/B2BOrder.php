@@ -94,16 +94,9 @@ class B2BOrder extends Model
 
     public static function generatePixCode(): string
     {
-        $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $segments = [];
-        for ($i = 0; $i < 4; $i++) {
-            $segment = '';
-            for ($j = 0; $j < 8; $j++) {
-                $segment .= $chars[random_int(0, strlen($chars) - 1)];
-            }
-            $segments[] = $segment;
-        }
+        $timestamp = now()->format('YmdHis');
+        $random = strtoupper(bin2hex(random_bytes(4)));
 
-        return implode('.', $segments);
+        return "PIX-{$timestamp}-{$random}";
     }
 }

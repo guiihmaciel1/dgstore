@@ -1,210 +1,236 @@
 <x-b2b-app-layout>
     <x-slot name="header">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="max-w-2xl mx-auto w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+            <div class="flex items-start sm:items-center gap-3 min-w-0">
+                <div class="shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gray-100 border border-gray-200/80 flex items-center justify-center">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="min-w-0">
+                    <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Pagamento PIX</h2>
+                    <p class="text-sm text-gray-500 mt-0.5 truncate sm:whitespace-normal">
+                        Pedido <span class="font-medium text-gray-700">{{ $order->order_number }}</span>
+                    </p>
+                </div>
             </div>
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900">Pagamento PIX</h2>
-                <p class="text-sm text-gray-500 mt-0.5">Pedido {{ $order->order_number }} - Aguardando pagamento</p>
-            </div>
+            <span class="apple-badge shrink-0 self-start sm:self-center bg-amber-50 text-amber-800 border border-amber-200/80">Aguardando pagamento</span>
         </div>
     </x-slot>
 
-    <div class="max-w-3xl mx-auto" x-data="pixPayment()">
-        <!-- Card principal do PIX -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <!-- Header com valor -->
-            <div class="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-6 text-center">
-                <p class="text-sm text-gray-400 mb-1">Valor a pagar</p>
-                <p class="text-4xl font-extrabold text-white">{{ $order->formatted_total }}</p>
-                <p class="text-xs text-gray-400 mt-2">Pedido {{ $order->order_number }}</p>
+    <div class="max-w-2xl mx-auto px-0 sm:px-0" x-data="pixPayment()">
+        {{-- Valor --}}
+        <div class="apple-card rounded-2xl overflow-hidden mb-4 sm:mb-5">
+            <div class="px-5 py-6 sm:px-8 sm:py-8 text-center border-b border-gray-100 bg-gradient-to-b from-white to-gray-50/80">
+                <p class="text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wide">Valor a pagar</p>
+                <p class="mt-2 text-3xl sm:text-4xl font-semibold text-gray-900 tracking-tight tabular-nums">{{ $order->formatted_total }}</p>
+                <p class="mt-2 text-xs text-gray-400">Pedido {{ $order->order_number }}</p>
             </div>
 
-            <div class="p-6 sm:p-8">
-                <!-- QR Code simulado -->
-                <div class="flex flex-col items-center mb-8">
-                    <div class="relative">
-                        <div class="w-52 h-52 bg-white border-2 border-gray-200 rounded-xl p-3 shadow-inner">
-                            <!-- QR Code SVG simulado -->
-                            <svg viewBox="0 0 200 200" class="w-full h-full">
-                                <!-- Pattern de QR code simulado -->
-                                <rect fill="#000" x="10" y="10" width="50" height="50" rx="4"/>
-                                <rect fill="#fff" x="18" y="18" width="34" height="34" rx="2"/>
-                                <rect fill="#000" x="24" y="24" width="22" height="22" rx="2"/>
-
-                                <rect fill="#000" x="140" y="10" width="50" height="50" rx="4"/>
-                                <rect fill="#fff" x="148" y="18" width="34" height="34" rx="2"/>
-                                <rect fill="#000" x="154" y="24" width="22" height="22" rx="2"/>
-
-                                <rect fill="#000" x="10" y="140" width="50" height="50" rx="4"/>
-                                <rect fill="#fff" x="18" y="148" width="34" height="34" rx="2"/>
-                                <rect fill="#000" x="24" y="154" width="22" height="22" rx="2"/>
-
-                                <!-- Data cells -->
-                                @for($i = 0; $i < 8; $i++)
-                                    @for($j = 0; $j < 8; $j++)
-                                        @if(($i + $j) % 3 !== 0 && !($i < 3 && $j < 3) && !($i < 3 && $j > 4) && !($i > 4 && $j < 3))
-                                            <rect fill="#000" x="{{ 70 + $j * 10 }}" y="{{ 70 + $i * 10 }}" width="8" height="8" rx="1"/>
-                                        @endif
-                                    @endfor
-                                @endfor
-
-                                <!-- Timing patterns -->
-                                @for($i = 0; $i < 6; $i++)
-                                    @if($i % 2 === 0)
-                                        <rect fill="#000" x="{{ 66 + $i * 10 }}" y="10" width="8" height="8"/>
-                                        <rect fill="#000" x="10" y="{{ 66 + $i * 10 }}" width="8" height="8"/>
-                                    @endif
-                                @endfor
-
-                                <!-- Extra random-ish blocks -->
-                                <rect fill="#000" x="70" y="10" width="8" height="8"/>
-                                <rect fill="#000" x="90" y="10" width="8" height="8"/>
-                                <rect fill="#000" x="110" y="10" width="8" height="8"/>
-                                <rect fill="#000" x="70" y="30" width="8" height="8"/>
-                                <rect fill="#000" x="100" y="30" width="8" height="8"/>
-                                <rect fill="#000" x="120" y="30" width="8" height="8"/>
-                                <rect fill="#000" x="80" y="50" width="8" height="8"/>
-                                <rect fill="#000" x="110" y="50" width="8" height="8"/>
-                                <rect fill="#000" x="10" y="70" width="8" height="8"/>
-                                <rect fill="#000" x="30" y="70" width="8" height="8"/>
-                                <rect fill="#000" x="10" y="90" width="8" height="8"/>
-                                <rect fill="#000" x="40" y="100" width="8" height="8"/>
-                                <rect fill="#000" x="10" y="120" width="8" height="8"/>
-                                <rect fill="#000" x="30" y="110" width="8" height="8"/>
-                                <rect fill="#000" x="150" y="70" width="8" height="8"/>
-                                <rect fill="#000" x="170" y="90" width="8" height="8"/>
-                                <rect fill="#000" x="150" y="110" width="8" height="8"/>
-                                <rect fill="#000" x="180" y="100" width="8" height="8"/>
-                                <rect fill="#000" x="70" y="150" width="8" height="8"/>
-                                <rect fill="#000" x="90" y="170" width="8" height="8"/>
-                                <rect fill="#000" x="110" y="150" width="8" height="8"/>
-                                <rect fill="#000" x="130" y="170" width="8" height="8"/>
-                                <rect fill="#000" x="150" y="150" width="8" height="8"/>
-                                <rect fill="#000" x="170" y="170" width="8" height="8"/>
-                                <rect fill="#000" x="180" y="150" width="8" height="8"/>
-                                <rect fill="#000" x="160" y="160" width="8" height="8"/>
-
-                                <!-- PIX text in center -->
-                                <rect fill="#fff" x="75" y="88" width="50" height="24" rx="4"/>
-                                <text x="100" y="105" text-anchor="middle" fill="#000" font-weight="bold" font-size="14" font-family="sans-serif">PIX</text>
-                            </svg>
-                        </div>
-                        <!-- Badge de status -->
-                        <div class="absolute -bottom-3 left-1/2 -translate-x-1/2">
-                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-200 shadow-sm">
-                                <span class="relative flex h-2 w-2">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
-                                </span>
-                                Aguardando pagamento
-                            </span>
-                        </div>
-                    </div>
-                    <p class="text-xs text-gray-400 mt-6">Escaneie o QR Code com o app do seu banco</p>
+            {{-- QR (simulação visual) --}}
+            <div class="p-5 sm:p-8 flex flex-col items-center">
+                <p class="text-sm font-medium text-gray-600 mb-4 tracking-tight">Escaneie no app do banco</p>
+                <div class="w-full max-w-[220px] sm:max-w-[240px] aspect-square rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-inner flex items-center justify-center">
+                    <svg viewBox="0 0 100 100" class="w-full h-full text-gray-900" fill="currentColor" aria-hidden="true">
+                        <rect width="100" height="100" fill="#ffffff"/>
+                        <g fill="#111827">
+                            <rect x="4" y="4" width="28" height="28" rx="2"/>
+                            <rect x="10" y="10" width="16" height="16" fill="#ffffff"/>
+                            <rect x="14" y="14" width="8" height="8"/>
+                            <rect x="68" y="4" width="28" height="28" rx="2"/>
+                            <rect x="74" y="10" width="16" height="16" fill="#ffffff"/>
+                            <rect x="78" y="14" width="8" height="8"/>
+                            <rect x="4" y="68" width="28" height="28" rx="2"/>
+                            <rect x="10" y="74" width="16" height="16" fill="#ffffff"/>
+                            <rect x="14" y="78" width="8" height="8"/>
+                            <rect x="40" y="4" width="6" height="6"/>
+                            <rect x="52" y="4" width="6" height="6"/>
+                            <rect x="40" y="16" width="6" height="6"/>
+                            <rect x="46" y="22" width="6" height="6"/>
+                            <rect x="58" y="16" width="6" height="6"/>
+                            <rect x="40" y="40" width="6" height="6"/>
+                            <rect x="52" y="40" width="6" height="6"/>
+                            <rect x="64" y="40" width="6" height="6"/>
+                            <rect x="40" y="52" width="6" height="6"/>
+                            <rect x="58" y="52" width="6" height="6"/>
+                            <rect x="76" y="40" width="6" height="6"/>
+                            <rect x="88" y="40" width="6" height="6"/>
+                            <rect x="76" y="52" width="6" height="6"/>
+                            <rect x="88" y="52" width="6" height="6"/>
+                            <rect x="40" y="64" width="6" height="6"/>
+                            <rect x="52" y="64" width="6" height="6"/>
+                            <rect x="64" y="64" width="6" height="6"/>
+                            <rect x="76" y="64" width="6" height="6"/>
+                            <rect x="88" y="64" width="6" height="6"/>
+                            <rect x="40" y="76" width="6" height="6"/>
+                            <rect x="52" y="76" width="6" height="6"/>
+                            <rect x="70" y="76" width="6" height="6"/>
+                            <rect x="82" y="76" width="6" height="6"/>
+                            <rect x="88" y="82" width="6" height="6"/>
+                            <rect x="40" y="88" width="6" height="6"/>
+                            <rect x="52" y="88" width="6" height="6"/>
+                            <rect x="64" y="88" width="6" height="6"/>
+                        </g>
+                    </svg>
                 </div>
-
-                <!-- Código PIX Copia e Cola -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Ou copie o código PIX</label>
-                    <div class="flex items-center gap-2">
-                        <div class="flex-1 bg-gray-50 border border-gray-300 rounded-xl px-4 py-3 text-sm font-mono text-gray-700 truncate select-all">
-                            {{ $order->pix_code }}
-                        </div>
-                        <button type="button" @click="copyPix('{{ $order->pix_code }}')"
-                                class="shrink-0 px-4 py-3 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-xl transition active:scale-95 flex items-center gap-2">
-                            <template x-if="!copied">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
-                            </template>
-                            <template x-if="copied">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            </template>
-                            <span x-text="copied ? 'Copiado!' : 'Copiar'"></span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Timer -->
-                <div class="bg-gray-50 rounded-xl p-4 mb-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span class="text-sm text-gray-600">Tempo para pagamento</span>
-                        </div>
-                        <span class="text-lg font-bold font-mono" :class="minutes < 5 ? 'text-red-600' : 'text-gray-900'" x-text="timer"></span>
-                    </div>
-                    <div class="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                        <div class="bg-yellow-500 h-1.5 rounded-full transition-all duration-1000" :style="'width: ' + timerPercent + '%'"></div>
-                    </div>
-                </div>
-
-                <!-- Instruções -->
-                <div class="bg-blue-50 rounded-xl p-4 mb-6">
-                    <h4 class="text-sm font-semibold text-blue-800 mb-2">Como pagar com PIX</h4>
-                    <ol class="space-y-1.5 text-sm text-blue-700">
-                        <li class="flex items-start gap-2">
-                            <span class="shrink-0 w-5 h-5 rounded-full bg-blue-200 text-blue-800 text-xs font-bold flex items-center justify-center mt-0.5">1</span>
-                            Abra o app do seu banco
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="shrink-0 w-5 h-5 rounded-full bg-blue-200 text-blue-800 text-xs font-bold flex items-center justify-center mt-0.5">2</span>
-                            Escolha pagar com PIX (QR Code ou copia e cola)
-                        </li>
-                        <li class="flex items-start gap-2">
-                            <span class="shrink-0 w-5 h-5 rounded-full bg-blue-200 text-blue-800 text-xs font-bold flex items-center justify-center mt-0.5">3</span>
-                            Confirme o pagamento de <strong>{{ $order->formatted_total }}</strong>
-                        </li>
-                    </ol>
-                </div>
-
-                <!-- Separador visual -->
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
-                    <div class="relative flex justify-center">
-                        <span class="bg-white px-4 text-xs text-gray-400 uppercase tracking-wider">Simulação</span>
-                    </div>
-                </div>
-
-                <!-- Botão de simular pagamento -->
-                <form method="POST" action="{{ route('b2b.orders.simulate-payment', $order) }}">
-                    @csrf
-                    <button type="submit"
-                            class="w-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all active:scale-[0.98] text-base flex items-center justify-center gap-3 shadow-lg shadow-emerald-200">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        Simular Pagamento PIX Recebido
-                    </button>
-                    <p class="text-center text-xs text-gray-400 mt-2">
-                        Este botão simula a confirmação do pagamento pelo banco
-                    </p>
-                </form>
+                <p class="mt-4 text-xs text-center text-gray-400 max-w-xs leading-relaxed">Ilustração do QR — use a chave ou o código abaixo para concluir o PIX.</p>
             </div>
         </div>
 
-        <!-- Resumo do pedido -->
-        <div class="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                Resumo do Pedido
+        {{-- Chave PIX + código --}}
+        <div class="apple-card rounded-2xl p-5 sm:p-8 mb-4 sm:mb-5 space-y-6 sm:space-y-8">
+            @if($pixKey)
+                <div>
+                    <label class="apple-label">Chave PIX</label>
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <div class="apple-input flex-1 min-w-0 font-mono text-xs sm:text-sm py-3 truncate select-all text-gray-800" title="{{ $pixKey }}">
+                            {{ $pixKey }}
+                        </div>
+                        <button type="button"
+                                @click="copyPix(@js($pixKey), 'key')"
+                                class="apple-btn-primary rounded-xl py-3 px-4 sm:px-5 text-sm shrink-0 w-full sm:w-auto justify-center">
+                            <template x-if="!copiedKey">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                </svg>
+                            </template>
+                            <template x-if="copiedKey">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </template>
+                            <span x-text="copiedKey ? 'Copiado!' : 'Copiar'"></span>
+                        </button>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500">Beneficiário: <span class="font-medium text-gray-700">{{ $companyName }}</span></p>
+                </div>
+            @else
+                <div class="rounded-2xl border border-amber-200/80 bg-amber-50/90 p-4 sm:p-5">
+                    <p class="text-sm font-medium text-amber-900 tracking-tight">Chave PIX não configurada</p>
+                    <p class="text-xs text-amber-800/90 mt-1.5 leading-relaxed">Entre em contato pelo WhatsApp para obter os dados de pagamento.</p>
+                </div>
+            @endif
+
+            @if($order->pix_code)
+                <div>
+                    <label class="apple-label">Código de referência do pedido</label>
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <div class="apple-input flex-1 min-w-0 font-mono text-xs sm:text-sm py-3 truncate select-all text-gray-800" title="{{ $order->pix_code }}">
+                            {{ $order->pix_code }}
+                        </div>
+                        <button type="button"
+                                @click="copyPix(@js($order->pix_code), 'code')"
+                                class="apple-btn-secondary rounded-xl py-3 px-4 sm:px-5 text-sm shrink-0 w-full sm:w-auto justify-center border border-gray-200/80">
+                            <template x-if="!copiedCode">
+                                <svg class="w-4 h-4 shrink-0 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                </svg>
+                            </template>
+                            <template x-if="copiedCode">
+                                <svg class="w-4 h-4 shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"/>
+                                </svg>
+                            </template>
+                            <span x-text="copiedCode ? 'Copiado!' : 'Copiar'"></span>
+                        </button>
+                    </div>
+                    <p class="mt-2 text-xs text-gray-500">Informe este código na transferência para facilitar a identificação.</p>
+                </div>
+            @endif
+
+            {{-- Timer --}}
+            <div class="rounded-2xl border border-gray-100 bg-gray-50/90 px-4 py-4 sm:px-5 sm:py-5">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <svg class="w-5 h-5 shrink-0 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="text-sm font-medium text-gray-600 truncate">Tempo para pagamento</span>
+                    </div>
+                    <span class="text-lg sm:text-xl font-semibold font-mono tabular-nums shrink-0 tracking-tight"
+                          :class="minutes < 5 ? 'text-red-600' : 'text-gray-900'"
+                          x-text="timer"></span>
+                </div>
+                <div class="mt-3 h-2 w-full rounded-full bg-gray-200/90 overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-1000 ease-linear"
+                         :class="minutes < 5 ? 'bg-red-400' : 'bg-yellow-400'"
+                         :style="'width: ' + timerPercent + '%'"></div>
+                </div>
+            </div>
+
+            {{-- Instruções --}}
+            <div class="rounded-xl bg-blue-50/80 border border-blue-100/80 px-4 py-4 sm:px-5 sm:py-5">
+                <h3 class="text-sm font-semibold text-gray-900 tracking-tight mb-3 sm:mb-4">Como pagar</h3>
+                <ol class="space-y-3 sm:space-y-3.5 text-sm text-gray-700">
+                    <li class="flex gap-3">
+                        <span class="shrink-0 w-7 h-7 rounded-xl bg-white border border-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shadow-sm">1</span>
+                        <span class="pt-0.5 leading-relaxed">Abra o app do seu banco e escolha pagar com PIX.</span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="shrink-0 w-7 h-7 rounded-xl bg-white border border-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shadow-sm">2</span>
+                        <span class="pt-0.5 leading-relaxed">Use a chave PIX acima para transferir <strong class="font-semibold text-gray-900">{{ $order->formatted_total }}</strong>.</span>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="shrink-0 w-7 h-7 rounded-xl bg-white border border-blue-100 text-blue-600 text-xs font-bold flex items-center justify-center shadow-sm">3</span>
+                        <span class="pt-0.5 leading-relaxed">Envie o comprovante pelo WhatsApp para confirmar o pagamento.</span>
+                    </li>
+                </ol>
+            </div>
+
+            @php
+                $waMessage = "Olá! Realizei o pagamento PIX do pedido *{$order->order_number}*.\n\nValor: *{$order->formatted_total}*\nCódigo: {$order->pix_code}\n\nSegue o comprovante.";
+                $waLink = "https://wa.me/{$adminWhatsapp}?text=" . urlencode($waMessage);
+            @endphp
+
+            <form method="POST" action="{{ route('b2b.orders.simulate-payment', $order) }}" class="space-y-3">
+                @csrf
+                <button type="submit"
+                        class="w-full inline-flex items-center justify-center gap-2 rounded-xl py-3.5 px-5 text-sm font-semibold text-white bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-500/25 transition-all duration-200 active:scale-[0.98]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Simular pagamento (teste)
+                </button>
+            </form>
+
+            <a href="{{ $waLink }}" target="_blank" rel="noopener noreferrer"
+               class="w-full inline-flex items-center justify-center gap-2.5 rounded-xl py-3.5 px-5 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 shadow-lg shadow-green-600/20 transition-all duration-200 active:scale-[0.98]">
+                <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                </svg>
+                Enviar comprovante pelo WhatsApp
+            </a>
+            <p class="text-center text-xs text-gray-400 leading-relaxed px-1">
+                Após a confirmação, o status do pedido será atualizado automaticamente.
+            </p>
+        </div>
+
+        {{-- Resumo --}}
+        <div class="apple-card rounded-2xl p-5 sm:p-8">
+            <h3 class="text-base sm:text-lg font-semibold text-gray-900 tracking-tight mb-4 sm:mb-5 flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                Resumo do pedido
             </h3>
-            <div class="divide-y divide-gray-100">
+            <div class="divide-y divide-gray-100 border-t border-b border-gray-100">
                 @foreach($order->items as $item)
-                    <div class="py-3 flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">
+                    <div class="py-3.5 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4">
+                        <div class="min-w-0">
+                            <p class="text-sm font-medium text-gray-900 leading-snug">
                                 {{ $item->product_snapshot['name'] ?? 'Produto' }}
                                 @if(!empty($item->product_snapshot['storage'])) - {{ $item->product_snapshot['storage'] }} @endif
                                 @if(!empty($item->product_snapshot['color'])) - {{ $item->product_snapshot['color'] }} @endif
                             </p>
-                            <p class="text-xs text-gray-500">{{ $item->quantity }}x R$ {{ number_format((float) $item->unit_price, 2, ',', '.') }}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">{{ $item->quantity }}x R$ {{ number_format((float) $item->unit_price, 2, ',', '.') }}</p>
                         </div>
-                        <span class="text-sm font-semibold text-gray-900">R$ {{ number_format((float) $item->subtotal, 2, ',', '.') }}</span>
+                        <span class="text-sm font-semibold text-gray-900 tabular-nums sm:text-right shrink-0">R$ {{ number_format((float) $item->subtotal, 2, ',', '.') }}</span>
                     </div>
                 @endforeach
             </div>
-            <div class="mt-3 pt-3 border-t border-gray-200 flex justify-between">
-                <span class="font-bold text-gray-900">Total</span>
-                <span class="font-extrabold text-xl text-gray-900">{{ $order->formatted_total }}</span>
+            <div class="mt-4 sm:mt-5 pt-4 flex items-center justify-between gap-4 border-t border-gray-200">
+                <span class="text-sm font-semibold text-gray-600 tracking-tight">Total</span>
+                <span class="text-lg sm:text-xl font-semibold text-gray-900 tracking-tight tabular-nums">{{ $order->formatted_total }}</span>
             </div>
         </div>
     </div>
@@ -212,7 +238,8 @@
     <script>
         function pixPayment() {
             return {
-                copied: false,
+                copiedKey: false,
+                copiedCode: false,
                 minutes: 30,
                 seconds: 0,
                 totalSeconds: 30 * 60,
@@ -231,10 +258,15 @@
                         if (this.elapsed < this.totalSeconds) this.elapsed++;
                     }, 1000);
                 },
-                copyPix(code) {
-                    navigator.clipboard.writeText(code).then(() => {
-                        this.copied = true;
-                        setTimeout(() => { this.copied = false; }, 3000);
+                copyPix(text, type) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        if (type === 'key') {
+                            this.copiedKey = true;
+                            setTimeout(() => { this.copiedKey = false; }, 3000);
+                        } else {
+                            this.copiedCode = true;
+                            setTimeout(() => { this.copiedCode = false; }, 3000);
+                        }
                     });
                 }
             }

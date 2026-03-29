@@ -20,7 +20,6 @@ class B2BCatalogController extends Controller
         $products = $this->productService->listForCatalog(
             search: $request->get('search'),
             model: $request->get('model'),
-            condition: $request->get('condition'),
         );
 
         $availableModels = $this->productService->getAvailableModels();
