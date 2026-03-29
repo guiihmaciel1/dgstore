@@ -20,7 +20,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 0h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z"/>
             </svg>
-            <span>Painel Distribuidora</span>
+            <span>Painel B2B</span>
         </div>
 
         {{-- User dropdown --}}
@@ -88,7 +88,7 @@
                 {{-- Drawer header --}}
                 <div class="flex items-center justify-between px-5 h-14 border-b border-gray-100">
                     <div class="flex items-center gap-2.5">
-                        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="{{ \App\Domain\B2B\Models\B2BSetting::getCompanyName() }}" class="h-7 w-auto" />
+                        <x-apple-logo class="h-7 w-auto text-gray-900" />
                         <span class="text-sm font-semibold text-gray-900">{{ \App\Domain\B2B\Models\B2BSetting::getCompanyName() }}</span>
                     </div>
                     <button @click="sidebarOpen = false" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">

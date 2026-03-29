@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
                 'active'   => true,
             ],
             [
-                'name'     => 'Admin Distribuidora',
+                'name'     => 'Admin B2B',
                 'email'    => 'b2b@dgstore.com.br',
                 'password' => Hash::make('DgStore@2026!'),
                 'role'     => UserRole::AdminB2B,

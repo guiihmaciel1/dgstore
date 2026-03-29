@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col gap-1">
             <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Configurações B2B</h2>
-            <p class="text-sm text-gray-500">Gerencie as configurações da distribuidora</p>
+            <p class="text-sm text-gray-500">Gerencie as configurações do B2B</p>
         </div>
     </x-slot>
 
@@ -31,7 +31,7 @@
                         <input type="text" id="company_name" name="company_name"
                                value="{{ old('company_name', $settings['company_name']) }}"
                                class="apple-input"
-                               placeholder="ASDG B2B" required />
+                               placeholder="Apple B2B" required />
                         <p class="mt-1.5 text-xs text-gray-500">Nome exibido para os lojistas no sistema B2B.</p>
                         @error('company_name') <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>

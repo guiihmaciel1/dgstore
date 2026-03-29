@@ -41,7 +41,7 @@ class B2BSetting extends Model
 
     public static function getCompanyName(): string
     {
-        return (string) static::get('company_name', 'ASDG B2B');
+        return (string) static::get('company_name', 'Apple B2B');
     }
 
     public static function getLowStockThreshold(): int

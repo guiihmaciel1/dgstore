@@ -69,7 +69,7 @@
                         @enderror
                         <div style="margin-top: 0.75rem; font-size: 0.75rem; color: #6b7280; line-height: 1.5;">
                             <strong style="color: #374151;">Admin Geral:</strong> acesso total (DG Store + B2B).
-                            <strong style="color: #374151;">Admin Distribuidora:</strong> apenas B2B.
+                            <strong style="color: #374151;">Admin B2B:</strong> apenas B2B.
                             <strong style="color: #374151;">Vendedor:</strong> PDV DG Store.
                         </div>
                     </div>

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex flex-col gap-1">
             <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Pedidos B2B</h2>
-            <p class="text-sm text-gray-500">Lista e filtros de pedidos da distribuidora</p>
+            <p class="text-sm text-gray-500">Lista e filtros de pedidos B2B</p>
         </div>
     </x-slot>
 
@@ -98,9 +98,12 @@
 
                 <div class="mt-3 pt-3 border-t border-gray-100">
                     <a href="{{ route('admin.b2b.orders.show', $order) }}"
-                       class="apple-btn-primary w-full text-xs py-2">
+                       class="apple-btn-primary w-full text-xs py-2 justify-center">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
                         Ver detalhes
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/></svg>
                     </a>
                 </div>
             </article>
@@ -175,8 +178,12 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right">
-                                <a href="{{ route('admin.b2b.orders.show', $order) }}" class="text-sm font-medium text-blue-500 hover:text-blue-600 transition-colors duration-200">
-                                    Detalhes
+                                <a href="{{ route('admin.b2b.orders.show', $order) }}"
+                                   class="rounded-xl p-2 text-gray-400 transition-all duration-200 hover:bg-blue-50 hover:text-blue-500 inline-flex" title="Ver detalhes">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
                                 </a>
                             </td>
                         </tr>

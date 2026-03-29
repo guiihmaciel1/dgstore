@@ -14,7 +14,7 @@
             {{-- Logo + Nav links --}}
             <div class="flex items-center gap-6">
                 <a href="{{ route('b2b.catalog') }}" class="flex items-center gap-2.5 shrink-0">
-                    <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="{{ \App\Domain\B2B\Models\B2BSetting::getCompanyName() }}" class="h-7 sm:h-8 w-auto" />
+                    <x-apple-logo class="h-7 sm:h-8 w-auto text-gray-900" />
                     <span class="hidden sm:inline text-xs font-bold text-blue-500 tracking-widest uppercase">B2B</span>
                 </a>
 

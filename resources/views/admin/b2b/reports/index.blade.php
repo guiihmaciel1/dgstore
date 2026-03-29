@@ -3,7 +3,7 @@
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
             <div class="min-w-0">
                 <h2 class="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight">Relatórios B2B</h2>
-                <p class="text-sm text-gray-500 mt-1">Análise de desempenho da distribuidora</p>
+                <p class="text-sm text-gray-500 mt-1">Análise de desempenho do B2B</p>
             </div>
             <div class="inline-flex items-center gap-2 text-xs text-gray-500 shrink-0">
                 <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

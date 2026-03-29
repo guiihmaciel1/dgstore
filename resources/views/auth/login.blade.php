@@ -43,7 +43,7 @@
             Entrar
         </button>
 
-        <!-- Distribuidora B2B -->
+        <!-- Apple B2B -->
         <div class="mt-4 pt-4 border-t border-gray-200 space-y-3">
             <a href="{{ route('b2b.login') }}"
                class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">

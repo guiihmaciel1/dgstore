@@ -51,15 +51,6 @@
             Entrar na minha conta
         </button>
 
-        <div class="mt-6 pt-6 border-t border-gray-100">
-            <button type="button"
-                    onclick="document.getElementById('email').value='lojista@teste.com'; document.getElementById('password').value='password'; document.getElementById('email').focus();"
-                    class="w-full apple-btn-secondary py-2.5 text-sm text-gray-500">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
-                Preencher com dados demo
-            </button>
-        </div>
-
         <p class="mt-6 text-center text-sm text-gray-400">
             Nao tem conta?
             <a href="{{ route('b2b.register') }}" class="font-semibold text-blue-500 hover:text-blue-600 transition-colors">Cadastre-se</a>

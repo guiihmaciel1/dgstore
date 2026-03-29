@@ -12,7 +12,7 @@ class B2BSeeder extends Seeder
         $defaults = [
             'minimum_order_amount' => '5000',
             'low_stock_threshold' => '5',
-            'company_name' => 'ASDG B2B',
+            'company_name' => 'Apple B2B',
             'admin_whatsapp' => '5517991665442',
         ];
 

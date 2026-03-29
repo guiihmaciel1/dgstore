@@ -84,11 +84,21 @@
                         </div>
 
                         <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
-                            <a href="{{ route('admin.b2b.products.edit', $product) }}" class="apple-btn-secondary py-1.5 px-3 text-xs flex-1">Editar</a>
-                            <form method="POST" action="{{ route('admin.b2b.products.destroy', $product) }}" onsubmit="return confirm('Tem certeza?')" class="flex-1">
+                            <a href="{{ route('admin.b2b.products.edit', $product) }}" class="apple-btn-secondary py-1.5 px-3 text-xs flex-1 justify-center">
+                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Editar
+                            </a>
+                            <form method="POST" action="{{ route('admin.b2b.products.destroy', $product) }}" onsubmit="return confirm('Tem certeza que deseja excluir este produto?')" class="flex-1">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="apple-btn py-1.5 px-3 text-xs text-red-500 bg-red-50 hover:bg-red-100 w-full">Excluir</button>
+                                <button type="submit" class="apple-btn py-1.5 px-3 text-xs text-red-500 bg-red-50 hover:bg-red-100 w-full inline-flex items-center justify-center gap-1.5 rounded-xl font-medium transition-all duration-200">
+                                    <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                    </svg>
+                                    Excluir
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -165,12 +175,21 @@
                                 @endif
                             </td>
                             <td class="px-5 py-3.5 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('admin.b2b.products.edit', $product) }}" class="text-sm text-blue-500 hover:text-blue-600 font-medium transition-colors">Editar</a>
-                                    <form method="POST" action="{{ route('admin.b2b.products.destroy', $product) }}" onsubmit="return confirm('Tem certeza?')">
+                                <div class="flex items-center justify-end gap-1">
+                                    <a href="{{ route('admin.b2b.products.edit', $product) }}"
+                                       class="rounded-xl p-2 text-gray-400 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900" title="Editar">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </a>
+                                    <form method="POST" action="{{ route('admin.b2b.products.destroy', $product) }}" onsubmit="return confirm('Tem certeza que deseja excluir este produto?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-sm text-red-400 hover:text-red-600 font-medium transition-colors">Excluir</button>
+                                        <button type="submit" class="rounded-xl p-2 text-gray-400 transition-all duration-200 hover:bg-red-50 hover:text-red-500" title="Excluir">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                            </svg>
+                                        </button>
                                     </form>
                                 </div>
                             </td>

@@ -7,10 +7,10 @@
 <aside class="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200/60 z-40">
     {{-- Logo --}}
     <div class="flex items-center gap-3 h-16 px-6 border-b border-gray-200/60">
-        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="{{ \App\Domain\B2B\Models\B2BSetting::getCompanyName() }}" class="h-8 w-auto" />
+        <x-apple-logo class="h-8 w-auto text-gray-900" />
         <div>
             <span class="text-sm font-semibold text-gray-900">{{ \App\Domain\B2B\Models\B2BSetting::getCompanyName() }}</span>
-            <span class="block text-[10px] font-semibold text-blue-500 tracking-widest uppercase">Distribuidora</span>
+            <span class="block text-[10px] font-semibold text-blue-500 tracking-widest uppercase">B2B</span>
         </div>
     </div>
 
