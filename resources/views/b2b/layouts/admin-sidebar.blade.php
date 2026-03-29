@@ -10,7 +10,7 @@
         <x-apple-logo class="h-8 w-auto text-gray-900" />
         <div>
             <span class="text-sm font-semibold text-gray-900">{{ \App\Domain\B2B\Models\B2BSetting::getCompanyName() }}</span>
-            <span class="block text-[10px] font-semibold text-blue-500 tracking-widest uppercase">B2B</span>
+            <span class="block text-[10px] font-semibold text-blue-500 tracking-widest uppercase">Distribuidora</span>
         </div>
     </div>
 
