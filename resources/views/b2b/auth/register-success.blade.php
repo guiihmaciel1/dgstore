@@ -17,7 +17,7 @@
 
         @php
             $adminPhone = '5517991665442';
-            $message = "Olá! Gostaria de solicitar acesso à *Distribuidora Apple B2B*.\n\n"
+            $message = "Olá! Gostaria de solicitar acesso à *ASDG B2B*.\n\n"
                 . "*Dados da Loja:*\n"
                 . "Loja: {$store}\n"
                 . "Responsável: {$owner}\n"

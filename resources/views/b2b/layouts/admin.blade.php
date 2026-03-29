@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>B2B Admin - {{ config('app.name') }}</title>
+        <title>ASDG B2B Admin - {{ config('app.name') }}</title>
 
         <link rel="icon" type="image/png" href="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}">
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -36,7 +36,7 @@
 
                 <footer class="border-t border-gray-200 bg-white">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                        <p class="text-center text-xs text-gray-400">&copy; {{ date('Y') }} DG Store - Painel Distribuidora B2B</p>
+                        <p class="text-center text-xs text-gray-400">&copy; {{ date('Y') }} ASDG B2B</p>
                     </div>
                 </footer>
             </div>

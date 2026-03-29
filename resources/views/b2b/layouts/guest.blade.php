@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Distribuidora Apple B2B - {{ config('app.name') }}</title>
+        <title>ASDG B2B - {{ config('app.name') }}</title>
 
         <link rel="icon" type="image-png" href="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}">
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -23,12 +23,12 @@
 
                 <div class="relative z-10">
                     <a href="{{ route('b2b.login') }}">
-                        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" class="h-12 w-auto brightness-0 invert" />
+                        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="ASDG B2B" class="h-12 w-auto brightness-0 invert" />
                     </a>
                 </div>
                 <div class="relative z-10 flex-1 flex flex-col justify-center">
                     <h2 class="text-4xl font-bold text-white leading-tight">
-                        Distribuidora<br>Apple <span class="text-blue-400">B2B</span>
+                        ASDG <span class="text-blue-400">B2B</span>
                     </h2>
                     <p class="text-gray-400 mt-4 text-lg max-w-sm">
                         Plataforma exclusiva de atacado para lojistas. Melhores preços, estoque direto.
@@ -49,7 +49,7 @@
                     </div>
                 </div>
                 <div class="relative z-10">
-                    <p class="text-xs text-gray-600">&copy; {{ date('Y') }} DG Store</p>
+                    <p class="text-xs text-gray-600">&copy; {{ date('Y') }} ASDG B2B</p>
                 </div>
             </div>
 
@@ -58,9 +58,9 @@
                 <!-- Logo mobile -->
                 <div class="lg:hidden mb-8 text-center">
                     <a href="{{ route('b2b.login') }}">
-                        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" class="h-16 w-auto mx-auto" />
+                        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="ASDG B2B" class="h-16 w-auto mx-auto" />
                     </a>
-                    <p class="text-sm font-bold text-blue-600 tracking-widest uppercase mt-2">Distribuidora B2B</p>
+                    <p class="text-sm font-bold text-blue-600 tracking-widest uppercase mt-2">ASDG B2B</p>
                 </div>
 
                 <div class="w-full max-w-md">

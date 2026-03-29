@@ -24,7 +24,7 @@
                     <input type="text" id="company_name" name="company_name"
                            value="{{ old('company_name', $settings['company_name']) }}"
                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           placeholder="Distribuidora Apple B2B" required />
+                           placeholder="ASDG B2B" required />
                     <p class="mt-1 text-xs text-gray-500">Nome exibido para os lojistas no sistema B2B.</p>
                     @error('company_name') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>

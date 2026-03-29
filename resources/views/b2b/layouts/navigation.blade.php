@@ -14,8 +14,8 @@
             <!-- Logo + Links -->
             <div class="flex items-center gap-2 sm:gap-6">
                 <a href="{{ route('b2b.catalog') }}" class="flex items-center gap-2.5 shrink-0">
-                    <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" class="h-8 w-auto brightness-0 invert" />
-                    <span class="hidden sm:inline text-xs font-bold text-blue-400 tracking-widest uppercase">Distribuidora</span>
+                    <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="ASDG B2B" class="h-8 w-auto brightness-0 invert" />
+                    <span class="hidden sm:inline text-xs font-bold text-blue-400 tracking-widest uppercase">ASDG B2B</span>
                 </a>
 
                 <div class="hidden md:flex items-center gap-1">

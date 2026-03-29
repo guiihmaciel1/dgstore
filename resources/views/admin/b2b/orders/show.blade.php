@@ -194,7 +194,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 class="font-semibold text-gray-900 mb-4">Notificar via WhatsApp</h3>
                 @php
-                    $waMessage = "Olá {$order->retailer->owner_name}! Atualização do pedido *{$order->order_number}*:\n\nStatus: *{$order->status->label()}*\nValor: {$order->formatted_total}\n\nDG Store - Distribuidora Apple B2B";
+                    $waMessage = "Olá {$order->retailer->owner_name}! Atualização do pedido *{$order->order_number}*:\n\nStatus: *{$order->status->label()}*\nValor: {$order->formatted_total}\n\nASDG B2B";
                     $waLink = "https://wa.me/{$order->retailer->formatted_whatsapp}?text=" . urlencode($waMessage);
                 @endphp
                 <a href="{{ $waLink }}" target="_blank"

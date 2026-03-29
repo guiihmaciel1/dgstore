@@ -7,10 +7,10 @@
 <aside class="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-gray-900 border-r border-gray-800 z-40">
     <!-- Logo -->
     <div class="flex items-center gap-3 h-16 px-6 border-b border-gray-800">
-        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" class="h-8 w-auto brightness-0 invert" />
+        <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="ASDG B2B" class="h-8 w-auto brightness-0 invert" />
         <div>
-            <span class="text-sm font-bold text-white">DG Store</span>
-            <span class="block text-[10px] font-semibold text-blue-400 tracking-widest uppercase">Distribuidora B2B</span>
+            <span class="text-sm font-bold text-white">ASDG B2B</span>
+            <span class="block text-[10px] font-semibold text-blue-400 tracking-widest uppercase">Distribuidora</span>
         </div>
     </div>
 
