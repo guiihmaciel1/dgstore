@@ -21,7 +21,6 @@ class B2BApproved
 
         if ($retailer->isBlocked()) {
             Auth::guard('b2b')->logout();
-            $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             return redirect()->route('b2b.login')

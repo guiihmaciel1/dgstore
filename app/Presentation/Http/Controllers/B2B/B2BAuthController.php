@@ -92,7 +92,6 @@ class B2BAuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         Auth::guard('b2b')->logout();
-        $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('b2b.login');
