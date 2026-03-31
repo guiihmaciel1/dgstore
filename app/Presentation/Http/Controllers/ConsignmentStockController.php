@@ -28,8 +28,9 @@ class ConsignmentStockController extends Controller
             $query->bySupplier($request->supplier_id);
         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        $statusFilter = $request->get('status', 'available');
+        if ($statusFilter !== 'all') {
+            $query->where('status', $statusFilter);
         }
 
         if ($request->filled('search')) {
@@ -51,7 +52,7 @@ class ConsignmentStockController extends Controller
             'items' => $items,
             'suppliers' => $suppliers,
             'stats' => $stats,
-            'filters' => $request->only(['supplier_id', 'status', 'search']),
+            'filters' => array_merge($request->only(['supplier_id', 'search']), ['status' => $statusFilter]),
         ]);
     }
 

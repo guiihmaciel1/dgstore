@@ -65,10 +65,10 @@
                     <div style="min-width: 140px;">
                         <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Status</label>
                         <select name="status" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
-                            <option value="">Todos</option>
-                            <option value="available" {{ ($filters['status'] ?? '') === 'available' ? 'selected' : '' }}>Disponível</option>
+                            <option value="available" {{ ($filters['status'] ?? 'available') === 'available' ? 'selected' : '' }}>Disponível</option>
                             <option value="sold" {{ ($filters['status'] ?? '') === 'sold' ? 'selected' : '' }}>Vendido</option>
                             <option value="returned" {{ ($filters['status'] ?? '') === 'returned' ? 'selected' : '' }}>Devolvido</option>
+                            <option value="all" {{ ($filters['status'] ?? '') === 'all' ? 'selected' : '' }}>Todos</option>
                         </select>
                     </div>
                     <div style="flex: 1; min-width: 180px;">
@@ -80,7 +80,7 @@
                             style="padding: 0.5rem 1rem; background: #111827; color: white; border: none; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer;">
                         Filtrar
                     </button>
-                    @if(array_filter($filters))
+                    @if(($filters['supplier_id'] ?? '') || ($filters['status'] ?? 'available') !== 'available' || ($filters['search'] ?? ''))
                         <a href="{{ route('stock.consignment.index') }}" style="padding: 0.5rem 1rem; color: #6b7280; font-size: 0.875rem; text-decoration: none;">Limpar</a>
                     @endif
                 </form>
@@ -96,6 +96,9 @@
                                 <th style="padding: 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Fornecedor</th>
                                 <th style="padding: 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">IMEI</th>
                                 <th style="padding: 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo Forn.</th>
+                                <th style="padding: 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Bat%</th>
+                                <th style="padding: 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 35px;">Cx</th>
+                                <th style="padding: 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;">Cabo</th>
                                 <th style="padding: 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Qtd</th>
                                 <th style="padding: 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Status</th>
                                 <th style="padding: 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Entrada</th>
@@ -121,6 +124,27 @@
                                     <td style="padding: 0.75rem; font-size: 0.8125rem; color: #6b7280; font-family: monospace;">{{ $item->imei ?? '-' }}</td>
                                     <td style="padding: 0.75rem; text-align: right; font-size: 0.875rem; font-weight: 600; color: #111827;">
                                         R$ {{ number_format($item->supplier_cost, 2, ',', '.') }}
+                                    </td>
+                                    <td style="padding: 0.75rem; text-align: center; font-size: 0.8rem;">
+                                        @if(($item->condition?->value ?? 'new') === 'used' && $item->battery_health)
+                                            <span style="color: #059669; font-weight: 600;">{{ $item->battery_health }}%</span>
+                                        @else
+                                            <span style="color: #d1d5db;">—</span>
+                                        @endif
+                                    </td>
+                                    <td style="padding: 0.75rem; text-align: center; font-size: 0.8rem;">
+                                        @if(($item->condition?->value ?? 'new') === 'used')
+                                            <span style="{{ $item->has_box ? 'color:#059669;' : 'color:#d1d5db;' }}">{{ $item->has_box ? '✓' : '—' }}</span>
+                                        @else
+                                            <span style="color: #d1d5db;">—</span>
+                                        @endif
+                                    </td>
+                                    <td style="padding: 0.75rem; text-align: center; font-size: 0.8rem;">
+                                        @if(($item->condition?->value ?? 'new') === 'used')
+                                            <span style="{{ $item->has_cable ? 'color:#059669;' : 'color:#d1d5db;' }}">{{ $item->has_cable ? '✓' : '—' }}</span>
+                                        @else
+                                            <span style="color: #d1d5db;">—</span>
+                                        @endif
                                     </td>
                                     <td style="padding: 0.75rem; text-align: center; font-size: 0.875rem;">
                                         {{ $item->available_quantity }}/{{ $item->quantity }}
@@ -169,7 +193,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" style="padding: 3rem; text-align: center; color: #9ca3af;">
+                                    <td colspan="11" style="padding: 3rem; text-align: center; color: #9ca3af;">
                                         Nenhum item no estoque consignado
                                     </td>
                                 </tr>
