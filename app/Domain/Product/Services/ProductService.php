@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Product\Services;
 
+use App\Domain\Marketing\Models\MarketingResaleItem;
+use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Product\DTOs\ProductData;
+use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -38,12 +41,57 @@ class ProductService
 
     public function create(ProductData $data): Product
     {
-        return $this->repository->create($data);
+        $product = $this->repository->create($data);
+        $this->syncMarketingListings($product);
+        return $product;
     }
 
     public function update(Product $product, ProductData $data): Product
     {
-        return $this->repository->update($product, $data);
+        $product = $this->repository->update($product, $data);
+        $this->syncMarketingListings($product);
+        return $product;
+    }
+
+    private function syncMarketingListings(Product $product): void
+    {
+        if (!in_array($product->condition, [ProductCondition::Used, ProductCondition::Refurbished])) {
+            return;
+        }
+
+        $hasPricing = $product->cost_price || $product->sale_price || $product->resale_price;
+        if (!$hasPricing) {
+            return;
+        }
+
+        MarketingUsedListing::updateOrCreate(
+            [
+                'listable_type' => Product::class,
+                'listable_id' => $product->id,
+            ],
+            array_filter([
+                'cost_price' => $product->cost_price,
+                'final_price' => $product->sale_price,
+                'battery_health' => $product->battery_health,
+                'has_box' => $product->has_box ?? false,
+                'has_cable' => $product->has_cable ?? false,
+            ], fn ($v) => $v !== null)
+        );
+
+        if ($product->resale_price) {
+            MarketingResaleItem::updateOrCreate(
+                [
+                    'resaleable_type' => Product::class,
+                    'resaleable_id' => $product->id,
+                ],
+                array_filter([
+                    'resale_price' => $product->resale_price,
+                    'battery_health' => $product->battery_health,
+                    'has_box' => $product->has_box ?? false,
+                    'has_cable' => $product->has_cable ?? false,
+                ], fn ($v) => $v !== null)
+            );
+        }
     }
 
     public function delete(Product $product): bool

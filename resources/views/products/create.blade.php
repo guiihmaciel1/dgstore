@@ -117,6 +117,27 @@
                                        style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                             </div>
 
+                            <!-- Preço Custo -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Preço Custo</label>
+                                <input type="number" step="0.01" min="0" name="cost_price" value="{{ old('cost_price') }}" placeholder="0,00"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
+
+                            <!-- Preço Final -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Preço Final</label>
+                                <input type="number" step="0.01" min="0" name="sale_price" value="{{ old('sale_price') }}" placeholder="0,00"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
+
+                            <!-- Preço Repasse -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Preço Repasse</label>
+                                <input type="number" step="0.01" min="0" name="resale_price" value="{{ old('resale_price') }}" placeholder="0,00"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                            </div>
+
                             <!-- Qtd Estoque -->
                             <div>
                                 <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">

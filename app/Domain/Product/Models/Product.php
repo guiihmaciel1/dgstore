@@ -31,6 +31,8 @@ class Product extends Model
         'condition',
         'imei',
         'cost_price',
+        'sale_price',
+        'resale_price',
         'stock_quantity',
         'min_stock_alert',
         'supplier',
@@ -52,6 +54,8 @@ class Product extends Model
             'has_cable' => 'boolean',
             'battery_health' => 'integer',
             'cost_price' => 'decimal:2',
+            'sale_price' => 'decimal:2',
+            'resale_price' => 'decimal:2',
             'stock_quantity' => 'integer',
             'min_stock_alert' => 'integer',
             'active' => 'boolean',
@@ -179,6 +183,8 @@ class Product extends Model
             'condition' => $this->condition->value,
             'imei' => $this->imei,
             'cost_price' => $this->cost_price,
+            'sale_price' => $this->sale_price,
+            'resale_price' => $this->resale_price,
         ];
     }
 }

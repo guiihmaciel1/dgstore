@@ -186,7 +186,7 @@
                         $tradeIn = $product->tradeIn;
                         $soldItems = $product->saleItems->filter(fn($item) => $item->sale && $item->sale->status !== 'cancelled');
                     @endphp
-                    @if($tradeIn || $product->cost_price)
+                    @if($tradeIn || $product->cost_price || $product->sale_price || $product->resale_price)
                     <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 2px solid #bfdbfe; overflow: hidden;">
                         <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #eff6ff; display: flex; align-items: center; gap: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,11 +195,26 @@
                             <h3 style="font-weight: 600; color: #1d4ed8;">Rastreio do Produto</h3>
                         </div>
                         <div style="padding: 1.5rem;">
-                            {{-- Custo de aquisição --}}
-                            @if($product->cost_price)
-                            <div style="margin-bottom: 1rem; padding: 0.75rem; background: #f0fdf4; border-radius: 0.5rem; border: 1px solid #bbf7d0;">
-                                <p style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Custo de Aquisição</p>
-                                <p style="font-size: 1.5rem; font-weight: 700; color: #16a34a;">{{ $product->formatted_cost_price }}</p>
+                            @if($product->cost_price || $product->sale_price || $product->resale_price)
+                            <div style="display: grid; grid-template-columns: repeat({{ ($product->cost_price ? 1 : 0) + ($product->sale_price ? 1 : 0) + ($product->resale_price ? 1 : 0) }}, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
+                                @if($product->cost_price)
+                                <div style="padding: 0.75rem; background: #f0fdf4; border-radius: 0.5rem; border: 1px solid #bbf7d0;">
+                                    <p style="font-size: 0.65rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Custo</p>
+                                    <p style="font-size: 1.125rem; font-weight: 700; color: #16a34a;">{{ $product->formatted_cost_price }}</p>
+                                </div>
+                                @endif
+                                @if($product->sale_price)
+                                <div style="padding: 0.75rem; background: #eff6ff; border-radius: 0.5rem; border: 1px solid #bfdbfe;">
+                                    <p style="font-size: 0.65rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Final</p>
+                                    <p style="font-size: 1.125rem; font-weight: 700; color: #2563eb;">R$ {{ number_format((float) $product->sale_price, 2, ',', '.') }}</p>
+                                </div>
+                                @endif
+                                @if($product->resale_price)
+                                <div style="padding: 0.75rem; background: #fefce8; border-radius: 0.5rem; border: 1px solid #fde68a;">
+                                    <p style="font-size: 0.65rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Repasse</p>
+                                    <p style="font-size: 1.125rem; font-weight: 700; color: #ca8a04;">R$ {{ number_format((float) $product->resale_price, 2, ',', '.') }}</p>
+                                </div>
+                                @endif
                             </div>
                             @endif
 
