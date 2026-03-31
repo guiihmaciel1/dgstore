@@ -188,7 +188,8 @@
                                 @foreach($reservations as $reservation)
                                     <tr style="border-bottom: 1px solid #f3f4f6;">
                                         <td style="padding: 0.75rem 1rem;">
-                                            <div style="font-weight: 600; color: #111827;">{{ $reservation->reservation_number }}</div>
+                                            <a href="{{ route('reservations.show', $reservation) }}" style="font-weight: 600; color: #2563eb; text-decoration: none;"
+                                               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ $reservation->reservation_number }}</a>
                                             <div style="font-size: 0.75rem; color: #6b7280;">{{ $reservation->created_at->format('d/m/Y') }}</div>
                                         </td>
                                         <td style="padding: 0.75rem 1rem;">
