@@ -16,7 +16,7 @@
             <form method="POST" action="{{ route('stock.consignment.store') }}">
                 @csrf
 
-                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                <div x-data="{ condition: '{{ old('condition', 'new') }}' }" style="background: white; border: 1px solid #e5e7eb; border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
 
                     {{-- Fornecedor --}}
                     <div>
@@ -75,20 +75,43 @@
                             Condição <span style="color: #dc2626;">*</span>
                         </label>
                         <div style="display: flex; gap: 0.75rem;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; border: 2px solid {{ old('condition', 'new') === 'new' ? '#111827' : '#e5e7eb' }}; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 500;">
-                                <input type="radio" name="condition" value="new" {{ old('condition', 'new') === 'new' ? 'checked' : '' }}
-                                       style="accent-color: #111827;"
-                                       onchange="this.closest('div').querySelectorAll('label').forEach(l => l.style.borderColor='#e5e7eb'); this.parentElement.style.borderColor='#111827';">
+                            <label :style="condition === 'new' ? 'display:flex;align-items:center;gap:0.5rem;padding:0.625rem 1rem;border:2px solid #111827;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:500;' : 'display:flex;align-items:center;gap:0.5rem;padding:0.625rem 1rem;border:2px solid #e5e7eb;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:500;'">
+                                <input type="radio" name="condition" value="new" x-model="condition" style="accent-color: #111827;">
                                 Novo
                             </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; border: 2px solid {{ old('condition') === 'used' ? '#111827' : '#e5e7eb' }}; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 500;">
-                                <input type="radio" name="condition" value="used" {{ old('condition') === 'used' ? 'checked' : '' }}
-                                       style="accent-color: #111827;"
-                                       onchange="this.closest('div').querySelectorAll('label').forEach(l => l.style.borderColor='#e5e7eb'); this.parentElement.style.borderColor='#111827';">
+                            <label :style="condition === 'used' ? 'display:flex;align-items:center;gap:0.5rem;padding:0.625rem 1rem;border:2px solid #111827;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:500;' : 'display:flex;align-items:center;gap:0.5rem;padding:0.625rem 1rem;border:2px solid #e5e7eb;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:500;'">
+                                <input type="radio" name="condition" value="used" x-model="condition" style="accent-color: #111827;">
                                 Seminovo
                             </label>
                         </div>
                         @error('condition') <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Campos de Seminovo (bateria, caixa, cabo) --}}
+                    <div x-show="condition === 'used'" x-cloak
+                         style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 0.75rem; padding: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="font-size: 0.8rem; font-weight: 600; color: #92400e; display: flex; align-items: center; gap: 0.375rem;">
+                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            Informações do Seminovo
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; align-items: end;">
+                            <div>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Bateria (%)</label>
+                                <input type="number" name="battery_health" value="{{ old('battery_health') }}" min="0" max="100" placeholder="Ex: 87"
+                                       style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0;">
+                                <input type="checkbox" name="has_box" value="1" {{ old('has_box') ? 'checked' : '' }}
+                                       id="has_box" style="width: 1rem; height: 1rem; accent-color: #111827; cursor: pointer;">
+                                <label for="has_box" style="font-size: 0.875rem; font-weight: 500; color: #374151; cursor: pointer;">Com caixa</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0;">
+                                <input type="checkbox" name="has_cable" value="1" {{ old('has_cable') ? 'checked' : '' }}
+                                       id="has_cable" style="width: 1rem; height: 1rem; accent-color: #111827; cursor: pointer;">
+                                <label for="has_cable" style="font-size: 0.875rem; font-weight: 500; color: #374151; cursor: pointer;">Com cabo</label>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- IMEI --}}

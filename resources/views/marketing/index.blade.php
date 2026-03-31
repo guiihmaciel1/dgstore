@@ -721,9 +721,9 @@
                     } : {
                         cost_price: p.supplier_cost || null,
                         final_price: p.suggested_price || null,
-                        battery_health: null,
-                        has_box: false,
-                        has_cable: false,
+                        battery_health: p.battery_health || null,
+                        has_box: p.has_box || false,
+                        has_cable: p.has_cable || false,
                         notes: '',
                         visible: true,
                     },
@@ -750,19 +750,22 @@
                 const ulKey = (p.morph_type || 'App\\Domain\\Product\\Models\\Product') + '_' + p.id;
                 const ul = usedListingsRaw[ulKey] || {};
                 const resale = buildResaleData(p);
-                if (!resale.battery_health && ul.battery_health) resale.battery_health = ul.battery_health;
-                if (!resale.has_box && ul.has_box) resale.has_box = ul.has_box;
-                if (!resale.has_cable && ul.has_cable) resale.has_cable = ul.has_cable;
+                const bat = ul.battery_health || p.battery_health || null;
+                const box = !!ul.has_box || !!p.has_box;
+                const cable = !!ul.has_cable || !!p.has_cable;
+                if (!resale.battery_health && bat) resale.battery_health = bat;
+                if (!resale.has_box && box) resale.has_box = box;
+                if (!resale.has_cable && cable) resale.has_cable = cable;
                 if (!resale.notes && ul.notes) resale.notes = ul.notes;
                 return {
                     ...p,
                     resale,
                     _usedListing: {
-                        cost_price: ul.cost_price || null,
-                        final_price: ul.final_price || null,
-                        battery_health: ul.battery_health || null,
-                        has_box: !!ul.has_box,
-                        has_cable: !!ul.has_cable,
+                        cost_price: ul.cost_price || p.supplier_cost || null,
+                        final_price: ul.final_price || p.suggested_price || null,
+                        battery_health: bat,
+                        has_box: box,
+                        has_cable: cable,
                         notes: ul.notes || '',
                     },
                     _saving: false,

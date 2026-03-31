@@ -73,6 +73,9 @@ class ConsignmentStockController extends Controller
             'storage' => ['nullable', 'string', 'max:50'],
             'color' => ['nullable', 'string', 'max:100'],
             'condition' => ['required', 'in:new,used'],
+            'battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'has_box' => ['nullable'],
+            'has_cable' => ['nullable'],
             'imei' => ['nullable', 'string', 'max:50', 'unique:consignment_stock_items,imei'],
             'supplier_cost' => ['required', 'numeric', 'min:0'],
             'suggested_price' => ['nullable', 'numeric', 'min:0'],
@@ -80,6 +83,15 @@ class ConsignmentStockController extends Controller
             'notes' => ['nullable', 'string', 'max:1000'],
             'received_at' => ['nullable', 'date'],
         ]);
+
+        $validated['has_box'] = $request->boolean('has_box');
+        $validated['has_cable'] = $request->boolean('has_cable');
+
+        if ($validated['condition'] === 'new') {
+            $validated['battery_health'] = null;
+            $validated['has_box'] = false;
+            $validated['has_cable'] = false;
+        }
 
         $this->service->registerEntry($validated, auth()->id());
 
@@ -107,6 +119,9 @@ class ConsignmentStockController extends Controller
             'storage' => ['nullable', 'string', 'max:50'],
             'color' => ['nullable', 'string', 'max:100'],
             'condition' => ['required', 'in:new,used'],
+            'battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'has_box' => ['nullable'],
+            'has_cable' => ['nullable'],
             'imei' => ['nullable', 'string', 'max:50', 'unique:consignment_stock_items,imei,' . $item->id],
             'supplier_cost' => ['required', 'numeric', 'min:0'],
             'suggested_price' => ['nullable', 'numeric', 'min:0'],
@@ -114,6 +129,15 @@ class ConsignmentStockController extends Controller
             'notes' => ['nullable', 'string', 'max:1000'],
             'received_at' => ['nullable', 'date'],
         ]);
+
+        $validated['has_box'] = $request->boolean('has_box');
+        $validated['has_cable'] = $request->boolean('has_cable');
+
+        if ($validated['condition'] === 'new') {
+            $validated['battery_health'] = null;
+            $validated['has_box'] = false;
+            $validated['has_cable'] = false;
+        }
 
         $oldQuantity = $item->quantity;
         $newQuantity = (int) $validated['quantity'];

@@ -91,6 +91,9 @@ class MarketingController extends Controller
             'stock' => $c->available_quantity,
             'supplier_cost' => (float) $c->supplier_cost,
             'suggested_price' => (float) $c->suggested_price,
+            'battery_health' => $c->battery_health,
+            'has_box' => (bool) $c->has_box,
+            'has_cable' => (bool) $c->has_cable,
         ];
 
         $consignmentUsedJson = $allConsignmentItems
@@ -110,6 +113,9 @@ class MarketingController extends Controller
             'condition' => $c->condition?->value ?? 'new',
             'suggested_price' => (float) $c->suggested_price,
             'available_quantity' => $c->available_quantity,
+            'battery_health' => $c->battery_health,
+            'has_box' => (bool) $c->has_box,
+            'has_cable' => (bool) $c->has_cable,
         ])->values();
 
         $usedResaleJson = $usedProducts->map(fn ($p) => [
