@@ -66,8 +66,8 @@
                     <div class="sale-main">
                         
                         <!-- PASSO 1: BUSCAR PRODUTO -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
-                            <div style="background: #111827; color: white; padding: 1rem 1.5rem;">
+                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: visible;">
+                            <div style="background: #111827; color: white; padding: 1rem 1.5rem; border-radius: 1rem 1rem 0 0;">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center;">
                                         <span style="width: 2rem; height: 2rem; background: white; color: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">1</span>
@@ -526,21 +526,19 @@
                                     </div>
                                 </div>
                                 
-                                <div x-show="selectedCustomer.id" style="margin-top: 0; padding: 0.75rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0; display: flex; justify-content: space-between; align-items: center;">
-                                    <div style="display: flex; align-items: center; gap: 0.625rem;">
-                                        <div style="width: 2.25rem; height: 2.25rem; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                            <svg style="width: 1.125rem; height: 1.125rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p style="font-weight: 600; color: #111827; font-size: 0.9375rem;" x-text="selectedCustomer.name"></p>
-                                            <p style="font-size: 0.8125rem; color: #6b7280;" x-text="selectedCustomer.phone"></p>
-                                        </div>
+                                <div x-show="selectedCustomer.id" style="position: relative; padding: 0.625rem 2.5rem 0.625rem 0.75rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0; display: flex; align-items: center; gap: 0.625rem;">
+                                    <div style="width: 2rem; height: 2rem; min-width: 2rem; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        <svg style="width: 1rem; height: 1rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
                                     </div>
-                                    <button type="button" @click="clearCustomer" style="padding: 0.375rem; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                                    <div style="min-width: 0;">
+                                        <span style="font-weight: 600; color: #111827; font-size: 0.875rem;" x-text="selectedCustomer.name"></span>
+                                        <span style="font-size: 0.75rem; color: #6b7280; margin-left: 0.5rem;" x-text="selectedCustomer.phone"></span>
+                                    </div>
+                                    <button type="button" @click="clearCustomer" style="position: absolute; top: 0.375rem; right: 0.375rem; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
                                             onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
-                                        <svg style="height: 1.25rem; width: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg style="height: 0.875rem; width: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
                                     </button>
