@@ -512,85 +512,94 @@
 
                 <div x-show="filteredUsed.length > 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
                     <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; min-width: 1050px;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 1200px; table-layout: fixed;">
+                            <colgroup>
+                                <col style="width: 46px;">
+                                <col style="width: auto;">
+                                <col style="width: 72px;">
+                                <col style="width: 80px;">
+                                <col style="width: 100px;">
+                                <col style="width: 100px;">
+                                <col style="width: 62px;">
+                                <col style="width: 40px;">
+                                <col style="width: 46px;">
+                                <col style="width: 150px;">
+                                <col style="width: 36px;">
+                            </colgroup>
                             <thead>
                                 <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Lista</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 70px;">Storage</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 70px;">Cor</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Custo</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Final</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 55px;">Bat. %</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 35px;">Cx</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;">Cabo</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 140px;">Obs</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;"></th>
+                                    <th style="padding: 0.5rem 0.5rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Lista</th>
+                                    <th style="padding: 0.5rem 0.5rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
+                                    <th style="padding: 0.5rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Storage</th>
+                                    <th style="padding: 0.5rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cor</th>
+                                    <th style="padding: 0.5rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo</th>
+                                    <th style="padding: 0.5rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Final</th>
+                                    <th style="padding: 0.5rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Bat. %</th>
+                                    <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cx</th>
+                                    <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cabo</th>
+                                    <th style="padding: 0.5rem 0.375rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Obs</th>
+                                    <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template x-for="item in filteredUsed" :key="item.morph_type + '_' + item.id">
                                     <tr style="border-bottom: 1px solid #f3f4f6; transition: background 0.1s;"
                                         onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
-                                        <td style="padding: 0.375rem 0.75rem; text-align: center;">
+                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                             <input type="checkbox" x-model="item.listing.visible"
                                                    @change="saveUsedVisibility(item)"
                                                    style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
                                         </td>
-                                        <td style="padding: 0.5rem 0.75rem;">
-                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                <div style="min-width: 0; flex: 1;">
-                                                    <div style="font-size: 0.8125rem; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="item.name"></div>
-                                                    <div style="font-size: 0.6875rem; color: #9ca3af; display: flex; align-items: center; gap: 0.375rem; margin-top: 1px;">
-                                                        <span :style="item.condition === 'used'
-                                                            ? 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#fef3c7;color:#92400e;'
-                                                            : 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#dbeafe;color:#1e40af;'"
-                                                              x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
-                                                        <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#f0fdf4;color:#166534;"
-                                                              x-text="'Est: ' + item.stock"></span>
-                                                        <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
-                                                            <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#ede9fe;color:#5b21b6;">Consig.</span>
-                                                        </template>
-                                                    </div>
-                                                </div>
+                                        <td style="padding: 0.375rem 0.5rem; overflow: hidden;">
+                                            <div style="font-size: 0.8125rem; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="item.name"></div>
+                                            <div style="font-size: 0.6875rem; color: #9ca3af; display: flex; align-items: center; gap: 0.25rem; margin-top: 1px; flex-wrap: wrap;">
+                                                <span :style="item.condition === 'used'
+                                                    ? 'font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:#fef3c7;color:#92400e;'
+                                                    : 'font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:#dbeafe;color:#1e40af;'"
+                                                      x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
+                                                <span style="font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:#f0fdf4;color:#166534;"
+                                                      x-text="'Est: ' + item.stock"></span>
+                                                <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
+                                                    <span style="font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:#ede9fe;color:#5b21b6;">Consig.</span>
+                                                </template>
                                             </div>
                                         </td>
-                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                        <td style="padding: 0.375rem 0.375rem; text-align: center;">
                                             <span style="font-size: 0.75rem; color: #374151;" x-text="item.storage || '—'"></span>
                                         </td>
-                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                        <td style="padding: 0.375rem 0.375rem; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                             <span style="font-size: 0.75rem; color: #374151;" x-text="item.color || '—'"></span>
                                         </td>
-                                        <td style="padding: 0.375rem 0.5rem;">
+                                        <td style="padding: 0.375rem 0.375rem;">
                                             <input type="number" step="0.01" x-model="item.listing.cost_price" placeholder="0,00"
-                                                   style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
+                                                   style="width: 100%; padding: 0.25rem 0.3rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; box-sizing: border-box;"
                                                    onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                         </td>
-                                        <td style="padding: 0.375rem 0.5rem;">
+                                        <td style="padding: 0.375rem 0.375rem;">
                                             <input type="number" step="0.01" x-model="item.listing.final_price" placeholder="0,00"
-                                                   style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600;"
+                                                   style="width: 100%; padding: 0.25rem 0.3rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600; box-sizing: border-box;"
                                                    onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                         </td>
-                                        <td style="padding: 0.375rem 0.5rem;">
-                                            <input type="number" min="0" max="100" x-model="item.listing.battery_health" placeholder="0"
-                                                   style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: center;"
+                                        <td style="padding: 0.375rem 0.375rem;">
+                                            <input type="number" min="0" max="100" x-model="item.listing.battery_health" placeholder="%"
+                                                   style="width: 100%; padding: 0.25rem 0.2rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: center; box-sizing: border-box;"
                                                    onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                         </td>
-                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                        <td style="padding: 0.375rem 0.25rem; text-align: center;">
                                             <input type="checkbox" x-model="item.listing.has_box"
                                                    style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
                                         </td>
-                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                        <td style="padding: 0.375rem 0.25rem; text-align: center;">
                                             <input type="checkbox" x-model="item.listing.has_cable"
                                                    style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
                                         </td>
-                                        <td style="padding: 0.375rem 0.5rem;">
+                                        <td style="padding: 0.375rem 0.375rem;">
                                             <input type="text" x-model="item.listing.notes" placeholder="Obs..."
                                                    @input="syncUsedToResale(item)"
-                                                   style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.75rem; outline: none;"
+                                                   style="width: 100%; padding: 0.25rem 0.3rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.75rem; outline: none; box-sizing: border-box;"
                                                    onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                         </td>
-                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                        <td style="padding: 0.375rem 0.25rem; text-align: center;">
                                             <button type="button" @click="copyUsedToWhatsApp(item)"
                                                     :style="item._copied
                                                         ? 'padding:0.25rem;background:none;border:none;cursor:default;color:#059669;'
