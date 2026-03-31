@@ -396,7 +396,7 @@
 
                     <div x-show="resaleUsed.length > 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
                         <div style="overflow-x: auto;">
-                            <table style="width: 100%; border-collapse: collapse; min-width: 700px;">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 850px;">
                                 <thead>
                                     <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                         <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Exibir</th>
@@ -404,6 +404,7 @@
                                         <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 55px;">Bat.</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;">Cx</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 45px;">Cabo</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 120px;">Obs</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Custo</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Final</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #d97706; text-transform: uppercase; width: 110px;">Repasse</th>
@@ -428,7 +429,8 @@
                                                     <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
                                                         <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#ede9fe;color:#5b21b6;">Consig.</span>
                                                     </template>
-                                                    <span x-show="item._usedListing.notes" style="font-size:0.6rem;color:#6b7280;" x-text="item._usedListing.notes"></span>
+                                                    <span x-show="item.storage" style="font-size:0.6rem;color:#6b7280;" x-text="item.storage"></span>
+                                                    <span x-show="item.color" style="font-size:0.6rem;color:#6b7280;" x-text="item.color"></span>
                                                 </div>
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem; text-align: center; font-size: 0.8rem; color: #374151;">
@@ -439,6 +441,9 @@
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                                 <span :style="item._usedListing.has_cable ? 'color:#059669;font-size:0.8rem;' : 'color:#d1d5db;font-size:0.8rem;'" x-text="item._usedListing.has_cable ? '✓' : '—'"></span>
+                                            </td>
+                                            <td style="padding: 0.375rem 0.5rem;">
+                                                <span style="font-size: 0.75rem; color: #6b7280;" x-text="item._usedListing.notes || '—'"></span>
                                             </td>
                                             <td style="padding: 0.375rem 0.75rem; text-align: right; font-size: 0.75rem; color: #6b7280;">
                                                 <span x-text="item._usedListing.cost_price ? parseFloat(item._usedListing.cost_price).toLocaleString('pt-BR', {minimumFractionDigits:0}) : '-'"></span>
@@ -507,17 +512,19 @@
 
                 <div x-show="filteredUsed.length > 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
                     <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; min-width: 900px;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 1050px;">
                             <thead>
                                 <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                     <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Lista</th>
                                     <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 95px;">Custo</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 95px;">Final</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 60px;">Bat. %</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Cx</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Cabo</th>
-                                    <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 160px;">Obs</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 70px;">Storage</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 70px;">Cor</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Custo</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Final</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 55px;">Bat. %</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 35px;">Cx</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;">Cabo</th>
+                                    <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 140px;">Obs</th>
                                     <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;"></th>
                                 </tr>
                             </thead>
@@ -548,6 +555,12 @@
                                                 </div>
                                             </div>
                                         </td>
+                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                            <span style="font-size: 0.75rem; color: #374151;" x-text="item.storage || '—'"></span>
+                                        </td>
+                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                            <span style="font-size: 0.75rem; color: #374151;" x-text="item.color || '—'"></span>
+                                        </td>
                                         <td style="padding: 0.375rem 0.5rem;">
                                             <input type="number" step="0.01" x-model="item.listing.cost_price" placeholder="0,00"
                                                    style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
@@ -573,6 +586,7 @@
                                         </td>
                                         <td style="padding: 0.375rem 0.5rem;">
                                             <input type="text" x-model="item.listing.notes" placeholder="Obs..."
+                                                   @input="syncUsedToResale(item)"
                                                    style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.75rem; outline: none;"
                                                    onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                         </td>
@@ -789,7 +803,9 @@
                 const s = this.usedSearch.toLowerCase();
                 return this.usedItems.filter(p =>
                     p.name.toLowerCase().includes(s) ||
-                    (p.model || '').toLowerCase().includes(s)
+                    (p.model || '').toLowerCase().includes(s) ||
+                    (p.storage || '').toLowerCase().includes(s) ||
+                    (p.color || '').toLowerCase().includes(s)
                 );
             },
 
@@ -870,6 +886,18 @@
                 window.location.href = '{{ route("marketing.index") }}?tab=creatives&date=' + this.creativeDate;
             },
 
+            syncUsedToResale(item) {
+                const key = item.morph_type + '_' + item.id;
+                const match = this.resaleUsed.find(r => r.morph_type + '_' + r.id === key);
+                if (!match) return;
+                match._usedListing.notes = item.listing.notes || '';
+                match._usedListing.cost_price = item.listing.cost_price;
+                match._usedListing.final_price = item.listing.final_price;
+                match._usedListing.battery_health = item.listing.battery_health;
+                match._usedListing.has_box = item.listing.has_box;
+                match._usedListing.has_cable = item.listing.has_cable;
+            },
+
             _buildUsedPayload(item) {
                 return {
                     listable_type: item.morph_type,
@@ -886,6 +914,7 @@
 
             async saveUsedListing(item) {
                 item._saving = true;
+                this.syncUsedToResale(item);
                 try {
                     const res = await fetch('{{ route("marketing.used-listings.store") }}', {
                         method: 'POST',
@@ -923,8 +952,9 @@
             async saveAllUsedListings() {
                 this.usedAllSaving = true;
                 try {
-                    const promises = this.usedItems.map(item =>
-                        fetch('{{ route("marketing.used-listings.store") }}', {
+                    const promises = this.usedItems.map(item => {
+                        this.syncUsedToResale(item);
+                        return fetch('{{ route("marketing.used-listings.store") }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -932,8 +962,8 @@
                                 'Accept': 'application/json',
                             },
                             body: JSON.stringify(this._buildUsedPayload(item)),
-                        })
-                    );
+                        });
+                    });
                     await Promise.all(promises);
                     setTimeout(() => { this.usedAllSaving = false; }, 1500);
                 } catch (e) {
