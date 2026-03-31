@@ -250,14 +250,19 @@
                                     <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
-                            <input type="hidden" name="customer_id" :value="selectedCustomer?.id || ''">
-                            <input type="hidden" name="customer_name" :value="selectedCustomer?.name || ''">
-                            <input type="hidden" name="customer_phone" :value="selectedCustomer?.phone || ''">
+                            <template x-if="customerMode === 'search'">
+                                <div>
+                                    <input type="hidden" name="customer_id" :value="selectedCustomer?.id || ''">
+                                    <input type="hidden" name="customer_name" :value="selectedCustomer?.name || ''">
+                                    <input type="hidden" name="customer_phone" :value="selectedCustomer?.phone || ''">
+                                </div>
+                            </template>
                         </div>
 
                         {{-- Cadastrar novo --}}
-                        <div x-show="customerMode === 'new'">
-                            <input type="hidden" name="create_customer" :value="customerMode === 'new' ? 1 : 0">
+                        <template x-if="customerMode === 'new'">
+                        <div>
+                            <input type="hidden" name="create_customer" value="1">
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem;">
                                 <div>
                                     <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">Nome Completo *</label>
@@ -280,17 +285,13 @@
                                            style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                                 <div>
-                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">Instagram</label>
-                                    <input type="text" name="customer_instagram" x-model="newCustomer.instagram" placeholder="@usuario"
-                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
-                                </div>
-                                <div>
                                     <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">Endereço</label>
                                     <input type="text" name="customer_address" x-model="newCustomer.address"
                                            style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                             </div>
                         </div>
+                        </template>
                     </div>
 
                     {{-- Serviço e Observações --}}
