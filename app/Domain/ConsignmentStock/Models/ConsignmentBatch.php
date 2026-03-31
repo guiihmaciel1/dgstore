@@ -43,27 +43,47 @@ class ConsignmentBatch extends Model
     {
         static::creating(function (self $batch) {
             if (!$batch->batch_code) {
-                $batch->batch_code = static::generateBatchCode();
+                $supplier = Supplier::find($batch->supplier_id);
+                $batch->batch_code = static::generateBatchCode(
+                    $supplier?->name ?? '',
+                    $batch->received_at ?? now(),
+                );
             }
         });
     }
 
-    public static function generateBatchCode(): string
+    public static function generateBatchCode(string $supplierName, mixed $receivedAt): string
     {
-        $prefix = 'LOT-' . now()->format('Ym');
+        $initials = static::extractInitials($supplierName);
+        $date = \Carbon\Carbon::parse($receivedAt)->format('ymd');
+        $prefix = $initials . $date;
 
         $lastBatch = static::where('batch_code', 'like', $prefix . '-%')
             ->orderByDesc('batch_code')
             ->first();
 
         if ($lastBatch) {
-            $lastSeq = (int) substr($lastBatch->batch_code, -4);
+            $lastSeq = (int) substr($lastBatch->batch_code, strrpos($lastBatch->batch_code, '-') + 1);
             $nextSeq = $lastSeq + 1;
         } else {
             $nextSeq = 1;
         }
 
-        return $prefix . '-' . str_pad((string) $nextSeq, 4, '0', STR_PAD_LEFT);
+        return $prefix . '-' . str_pad((string) $nextSeq, 2, '0', STR_PAD_LEFT);
+    }
+
+    private static function extractInitials(string $name): string
+    {
+        $words = preg_split('/\s+/', trim($name));
+        $initials = '';
+
+        foreach ($words as $word) {
+            if ($word !== '') {
+                $initials .= mb_strtoupper(mb_substr($word, 0, 1));
+            }
+        }
+
+        return $initials ?: 'XX';
     }
 
     public function supplier(): BelongsTo
