@@ -47,9 +47,13 @@ class MarketingController extends Controller
             ->orderBy('name')
             ->get();
 
-        $usedListings = MarketingUsedListing::whereIn('product_id', $usedProducts->pluck('id'))
-            ->get()
-            ->keyBy('product_id');
+        $consignmentItems = ConsignmentStockItem::available()
+            ->where('available_quantity', '>', 0)
+            ->orderBy('name')
+            ->get();
+
+        $usedListings = MarketingUsedListing::all()
+            ->keyBy(fn ($l) => $l->listable_type . '_' . $l->listable_id);
 
         $pricesJson = $prices->map(function ($p) {
             return [
@@ -66,6 +70,7 @@ class MarketingController extends Controller
         $usedProductsJson = $usedProducts->map(function ($p) {
             return [
                 'id' => $p->id,
+                'morph_type' => Product::class,
                 'name' => $p->name,
                 'model' => $p->model,
                 'storage' => $p->storage,
@@ -75,16 +80,18 @@ class MarketingController extends Controller
             ];
         })->values();
 
-        $consignmentItems = ConsignmentStockItem::available()
-            ->where('available_quantity', '>', 0)
-            ->orderBy('name')
-            ->get();
-
-        $usedForResale = Product::where('active', true)
-            ->where('stock_quantity', '>', 0)
-            ->whereIn('condition', ['used', 'refurbished'])
-            ->orderBy('name')
-            ->get();
+        $consignmentUsedJson = $consignmentItems->map(fn ($c) => [
+            'id' => $c->id,
+            'morph_type' => ConsignmentStockItem::class,
+            'name' => $c->name,
+            'model' => $c->model,
+            'storage' => $c->storage,
+            'color' => $c->color,
+            'condition' => 'used',
+            'stock' => $c->available_quantity,
+            'supplier_cost' => (float) $c->supplier_cost,
+            'suggested_price' => (float) $c->suggested_price,
+        ])->values();
 
         $resaleItems = MarketingResaleItem::all()
             ->keyBy(fn ($r) => $r->resaleable_type . '_' . $r->resaleable_id);
@@ -99,7 +106,7 @@ class MarketingController extends Controller
             'available_quantity' => $c->available_quantity,
         ])->values();
 
-        $usedResaleJson = $usedForResale->map(fn ($p) => [
+        $usedResaleJson = $usedProducts->map(fn ($p) => [
             'id' => $p->id,
             'morph_type' => Product::class,
             'name' => $p->name,
@@ -114,8 +121,8 @@ class MarketingController extends Controller
             'pricesJson' => $pricesJson,
             'creatives' => $creatives,
             'creativeDate' => $creativeDate,
-            'usedProducts' => $usedProducts,
             'usedProductsJson' => $usedProductsJson,
+            'consignmentUsedJson' => $consignmentUsedJson,
             'usedListings' => $usedListings,
             'consignmentResaleJson' => $consignmentResaleJson,
             'usedResaleJson' => $usedResaleJson,
@@ -242,7 +249,8 @@ class MarketingController extends Controller
     public function storeUsedListing(Request $request): JsonResponse
     {
         $request->validate([
-            'product_id' => ['required', 'exists:products,id'],
+            'listable_type' => ['required', 'string'],
+            'listable_id' => ['required', 'string'],
             'cost_price' => ['nullable', 'numeric', 'min:0'],
             'final_price' => ['nullable', 'numeric', 'min:0'],
             'battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
@@ -253,7 +261,10 @@ class MarketingController extends Controller
         ]);
 
         $listing = MarketingUsedListing::updateOrCreate(
-            ['product_id' => $request->product_id],
+            [
+                'listable_type' => $request->listable_type,
+                'listable_id' => $request->listable_id,
+            ],
             [
                 'cost_price' => $request->cost_price,
                 'final_price' => $request->final_price,

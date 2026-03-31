@@ -519,7 +519,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <template x-for="item in filteredUsed" :key="item.id">
+                                <template x-for="item in filteredUsed" :key="item.morph_type + '_' + item.id">
                                     <tr style="border-bottom: 1px solid #f3f4f6; transition: background 0.1s;"
                                         onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
                                         <td style="padding: 0.375rem 0.75rem; text-align: center;">
@@ -538,6 +538,9 @@
                                                               x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
                                                         <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#f0fdf4;color:#166534;"
                                                               x-text="'Est: ' + item.stock"></span>
+                                                        <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
+                                                            <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#ede9fe;color:#5b21b6;">Consig.</span>
+                                                        </template>
                                                     </div>
                                                 </div>
                                             </div>
@@ -614,8 +617,9 @@
         const initialPrices = @json($pricesJson);
 
         const usedProducts = @json($usedProductsJson);
+        const consignmentUsed = @json($consignmentUsedJson);
 
-        const usedListings = @json($usedListings);
+        const usedListingsRaw = @json($usedListings);
 
         const consignmentForResale = @json($consignmentResaleJson);
         const usedForResale = @json($usedResaleJson);
@@ -698,28 +702,32 @@
             usedListCopied: false,
             usedAllSaving: false,
 
-            usedItems: usedProducts.map(p => ({
-                ...p,
-                listing: usedListings[p.id] ? {
-                    cost_price: usedListings[p.id].cost_price,
-                    final_price: usedListings[p.id].final_price,
-                    battery_health: usedListings[p.id].battery_health,
-                    has_box: usedListings[p.id].has_box,
-                    has_cable: usedListings[p.id].has_cable,
-                    notes: usedListings[p.id].notes,
-                    visible: usedListings[p.id].visible ?? true,
-                } : {
-                    cost_price: null,
-                    final_price: null,
-                    battery_health: null,
-                    has_box: false,
-                    has_cable: false,
-                    notes: '',
-                    visible: true,
-                },
-                _saving: false,
-                _copied: false,
-            })),
+            usedItems: [...usedProducts, ...consignmentUsed].map(p => {
+                const listingKey = p.morph_type + '_' + p.id;
+                const existing = usedListingsRaw[listingKey];
+                return {
+                    ...p,
+                    listing: existing ? {
+                        cost_price: existing.cost_price,
+                        final_price: existing.final_price,
+                        battery_health: existing.battery_health,
+                        has_box: existing.has_box,
+                        has_cable: existing.has_cable,
+                        notes: existing.notes,
+                        visible: existing.visible ?? true,
+                    } : {
+                        cost_price: p.supplier_cost || null,
+                        final_price: p.suggested_price || null,
+                        battery_health: null,
+                        has_box: false,
+                        has_cable: false,
+                        notes: '',
+                        visible: true,
+                    },
+                    _saving: false,
+                    _copied: false,
+                };
+            }),
 
             resaleConsignment: consignmentForResale.map(c => ({
                 ...c,
@@ -731,7 +739,8 @@
             resaleUsedAllSaving: false,
 
             resaleUsed: usedForResale.map(p => {
-                const ul = usedListings[p.id] || {};
+                const ulKey = (p.morph_type || 'App\\Domain\\Product\\Models\\Product') + '_' + p.id;
+                const ul = usedListingsRaw[ulKey] || {};
                 const resale = buildResaleData(p);
                 if (!resale.battery_health && ul.battery_health) resale.battery_health = ul.battery_health;
                 if (!resale.has_box && ul.has_box) resale.has_box = ul.has_box;
@@ -848,6 +857,20 @@
                 window.location.href = '{{ route("marketing.index") }}?tab=creatives&date=' + this.creativeDate;
             },
 
+            _buildUsedPayload(item) {
+                return {
+                    listable_type: item.morph_type,
+                    listable_id: item.id,
+                    cost_price: item.listing.cost_price || null,
+                    final_price: item.listing.final_price || null,
+                    battery_health: item.listing.battery_health || null,
+                    has_box: item.listing.has_box ? 1 : 0,
+                    has_cable: item.listing.has_cable ? 1 : 0,
+                    notes: item.listing.notes || null,
+                    visible: item.listing.visible ? 1 : 0,
+                };
+            },
+
             async saveUsedListing(item) {
                 item._saving = true;
                 try {
@@ -858,16 +881,7 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json',
                         },
-                        body: JSON.stringify({
-                            product_id: item.id,
-                            cost_price: item.listing.cost_price || null,
-                            final_price: item.listing.final_price || null,
-                            battery_health: item.listing.battery_health || null,
-                            has_box: item.listing.has_box ? 1 : 0,
-                            has_cable: item.listing.has_cable ? 1 : 0,
-                            notes: item.listing.notes || null,
-                            visible: item.listing.visible ? 1 : 0,
-                        }),
+                        body: JSON.stringify(this._buildUsedPayload(item)),
                     });
                     if (!res.ok) throw new Error('Erro ao salvar');
                     setTimeout(() => { item._saving = false; }, 1200);
@@ -886,16 +900,7 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json',
                         },
-                        body: JSON.stringify({
-                            product_id: item.id,
-                            cost_price: item.listing.cost_price || null,
-                            final_price: item.listing.final_price || null,
-                            battery_health: item.listing.battery_health || null,
-                            has_box: item.listing.has_box ? 1 : 0,
-                            has_cable: item.listing.has_cable ? 1 : 0,
-                            notes: item.listing.notes || null,
-                            visible: item.listing.visible ? 1 : 0,
-                        }),
+                        body: JSON.stringify(this._buildUsedPayload(item)),
                     });
                 } catch (e) {
                     // silently fail
@@ -913,16 +918,7 @@
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                 'Accept': 'application/json',
                             },
-                            body: JSON.stringify({
-                                product_id: item.id,
-                                cost_price: item.listing.cost_price || null,
-                                final_price: item.listing.final_price || null,
-                                battery_health: item.listing.battery_health || null,
-                                has_box: item.listing.has_box ? 1 : 0,
-                                has_cable: item.listing.has_cable ? 1 : 0,
-                                notes: item.listing.notes || null,
-                                visible: item.listing.visible ? 1 : 0,
-                            }),
+                            body: JSON.stringify(this._buildUsedPayload(item)),
                         })
                     );
                     await Promise.all(promises);
