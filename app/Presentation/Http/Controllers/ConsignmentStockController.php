@@ -22,7 +22,7 @@ class ConsignmentStockController extends Controller
 
     public function index(Request $request): View
     {
-        $query = ConsignmentStockItem::with('supplier');
+        $query = ConsignmentStockItem::with('supplier', 'batch');
 
         if ($request->filled('supplier_id')) {
             $query->bySupplier($request->supplier_id);
@@ -65,33 +65,22 @@ class ConsignmentStockController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|View
     {
-        $validated = $request->validate([
-            'supplier_id' => ['required', 'exists:suppliers,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'model' => ['nullable', 'string', 'max:255'],
-            'storage' => ['nullable', 'string', 'max:50'],
-            'color' => ['nullable', 'string', 'max:100'],
-            'condition' => ['required', 'in:new,used'],
-            'battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'has_box' => ['nullable'],
-            'has_cable' => ['nullable'],
-            'imei' => ['nullable', 'string', 'max:50', 'unique:consignment_stock_items,imei'],
-            'supplier_cost' => ['required', 'numeric', 'min:0'],
-            'suggested_price' => ['nullable', 'numeric', 'min:0'],
-            'quantity' => ['required', 'integer', 'min:1'],
-            'notes' => ['nullable', 'string', 'max:1000'],
-            'received_at' => ['nullable', 'date'],
-        ]);
+        $validated = $this->validateEntryData($request);
 
-        $validated['has_box'] = $request->boolean('has_box');
-        $validated['has_cable'] = $request->boolean('has_cable');
+        $divergentItems = $this->service->detectPriceDivergence($validated);
 
-        if ($validated['condition'] === 'new') {
-            $validated['battery_health'] = null;
-            $validated['has_box'] = false;
-            $validated['has_cable'] = false;
+        if ($divergentItems->isNotEmpty()) {
+            $suppliers = Supplier::active()->orderBy('name')->get();
+            $selectedSupplier = Supplier::find($validated['supplier_id']);
+
+            return view('stock.consignment.confirm-entry', [
+                'formData' => $validated,
+                'divergentItems' => $divergentItems,
+                'suppliers' => $suppliers,
+                'selectedSupplier' => $selectedSupplier,
+            ]);
         }
 
         $this->service->registerEntry($validated, auth()->id());
@@ -101,13 +90,51 @@ class ConsignmentStockController extends Controller
             ->with('success', 'Entrada de estoque consignado registrada com sucesso!');
     }
 
+    public function storeConfirmed(Request $request): RedirectResponse
+    {
+        $validated = $this->validateEntryData($request);
+
+        $updatePrices = $request->boolean('update_prices');
+        $reason = $request->input('price_update_reason', '');
+
+        $item = $this->service->registerEntry($validated, auth()->id());
+
+        if ($updatePrices && $item->batch) {
+            $divergentItems = $this->service->detectPriceDivergence(array_merge($validated, [
+                'supplier_cost' => $validated['supplier_cost'],
+            ]));
+
+            $itemsToUpdate = $divergentItems->where('id', '!=', $item->id);
+
+            if ($itemsToUpdate->isNotEmpty()) {
+                $this->service->updatePricesFromBatch(
+                    $item->batch,
+                    $itemsToUpdate,
+                    $reason ?: 'Atualização de preço por novo lote ' . $item->batch->batch_code,
+                    auth()->id(),
+                );
+            }
+        }
+
+        $message = 'Entrada de estoque consignado registrada com sucesso!';
+        if ($updatePrices) {
+            $message .= ' Preços anteriores foram atualizados.';
+        }
+
+        return redirect()
+            ->route('stock.consignment.index')
+            ->with('success', $message);
+    }
+
     public function edit(ConsignmentStockItem $item): View
     {
         $suppliers = Supplier::active()->orderBy('name')->get();
+        $priceHistory = $this->service->getPriceHistoryForItem($item->id);
 
         return view('stock.consignment.edit', [
-            'item' => $item,
+            'item' => $item->load('batch'),
             'suppliers' => $suppliers,
+            'priceHistory' => $priceHistory,
         ]);
     }
 
@@ -185,6 +212,7 @@ class ConsignmentStockController extends Controller
                 'suggested_price' => $item->suggested_price ? (float) $item->suggested_price : null,
                 'supplier_name' => $item->supplier->name,
                 'available_quantity' => $item->available_quantity,
+                'batch_code' => $item->batch?->batch_code,
                 'is_consignment' => true,
                 'consignment_item_id' => $item->id,
             ])
@@ -217,5 +245,37 @@ class ConsignmentStockController extends Controller
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
         ]);
+    }
+
+    private function validateEntryData(Request $request): array
+    {
+        $validated = $request->validate([
+            'supplier_id' => ['required', 'exists:suppliers,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'model' => ['nullable', 'string', 'max:255'],
+            'storage' => ['nullable', 'string', 'max:50'],
+            'color' => ['nullable', 'string', 'max:100'],
+            'condition' => ['required', 'in:new,used'],
+            'battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'has_box' => ['nullable'],
+            'has_cable' => ['nullable'],
+            'imei' => ['nullable', 'string', 'max:50', 'unique:consignment_stock_items,imei'],
+            'supplier_cost' => ['required', 'numeric', 'min:0'],
+            'suggested_price' => ['nullable', 'numeric', 'min:0'],
+            'quantity' => ['required', 'integer', 'min:1'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+            'received_at' => ['nullable', 'date'],
+        ]);
+
+        $validated['has_box'] = $request->boolean('has_box');
+        $validated['has_cable'] = $request->boolean('has_cable');
+
+        if ($validated['condition'] === 'new') {
+            $validated['battery_health'] = null;
+            $validated['has_box'] = false;
+            $validated['has_cable'] = false;
+        }
+
+        return $validated;
     }
 }

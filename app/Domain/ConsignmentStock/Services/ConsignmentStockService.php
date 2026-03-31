@@ -6,6 +6,8 @@ namespace App\Domain\ConsignmentStock\Services;
 
 use App\Domain\ConsignmentStock\Enums\ConsignmentMovementType;
 use App\Domain\ConsignmentStock\Enums\ConsignmentStatus;
+use App\Domain\ConsignmentStock\Models\ConsignmentBatch;
+use App\Domain\ConsignmentStock\Models\ConsignmentPriceHistory;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockMovement;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,8 +20,23 @@ class ConsignmentStockService
         return DB::transaction(function () use ($data, $userId) {
             $quantity = (int) ($data['quantity'] ?? 1);
 
+            $batch = ConsignmentBatch::create([
+                'supplier_id' => $data['supplier_id'],
+                'name' => $data['name'],
+                'model' => $data['model'] ?? null,
+                'storage' => $data['storage'] ?? null,
+                'color' => $data['color'] ?? null,
+                'condition' => $data['condition'] ?? 'new',
+                'supplier_cost' => $data['supplier_cost'],
+                'suggested_price' => $data['suggested_price'] ?? null,
+                'total_quantity' => $quantity,
+                'notes' => $data['notes'] ?? null,
+                'received_at' => $data['received_at'] ?? now(),
+            ]);
+
             $item = ConsignmentStockItem::create([
                 'supplier_id' => $data['supplier_id'],
+                'batch_id' => $batch->id,
                 'name' => $data['name'],
                 'model' => $data['model'] ?? null,
                 'storage' => $data['storage'] ?? null,
@@ -43,11 +60,94 @@ class ConsignmentStockService
                 'user_id' => $userId,
                 'type' => ConsignmentMovementType::In,
                 'quantity' => $quantity,
-                'reason' => 'Entrada de estoque consignado',
+                'reason' => 'Entrada de estoque consignado - Lote ' . $batch->batch_code,
             ]);
 
             return $item;
         });
+    }
+
+    /**
+     * Detecta itens disponíveis do mesmo produto/fornecedor com preço diferente.
+     *
+     * @return Collection<ConsignmentStockItem> Itens com preço divergente
+     */
+    public function detectPriceDivergence(array $data): Collection
+    {
+        return ConsignmentStockItem::where('supplier_id', $data['supplier_id'])
+            ->where('status', ConsignmentStatus::Available)
+            ->where('available_quantity', '>', 0)
+            ->where('name', $data['name'])
+            ->where(function ($q) use ($data) {
+                $q->where('model', $data['model'] ?? null);
+                if (empty($data['model'])) {
+                    $q->orWhereNull('model');
+                }
+            })
+            ->where(function ($q) use ($data) {
+                $q->where('storage', $data['storage'] ?? null);
+                if (empty($data['storage'])) {
+                    $q->orWhereNull('storage');
+                }
+            })
+            ->where(function ($q) use ($data) {
+                $q->where('color', $data['color'] ?? null);
+                if (empty($data['color'])) {
+                    $q->orWhereNull('color');
+                }
+            })
+            ->where('supplier_cost', '!=', $data['supplier_cost'])
+            ->with('supplier', 'batch')
+            ->orderByDesc('received_at')
+            ->get();
+    }
+
+    /**
+     * Atualiza preços de itens existentes com base em um novo lote,
+     * registrando o histórico completo.
+     */
+    public function updatePricesFromBatch(
+        ConsignmentBatch $batch,
+        Collection $itemsToUpdate,
+        string $reason,
+        string $userId,
+    ): ConsignmentPriceHistory {
+        return DB::transaction(function () use ($batch, $itemsToUpdate, $reason, $userId) {
+            $oldCost = (float) $itemsToUpdate->first()->supplier_cost;
+            $oldSuggested = $itemsToUpdate->first()->suggested_price
+                ? (float) $itemsToUpdate->first()->suggested_price
+                : null;
+
+            $itemIds = $itemsToUpdate->pluck('id')->toArray();
+
+            ConsignmentStockItem::whereIn('id', $itemIds)->update([
+                'supplier_cost' => $batch->supplier_cost,
+                'suggested_price' => $batch->suggested_price,
+            ]);
+
+            return ConsignmentPriceHistory::create([
+                'batch_id' => $batch->id,
+                'user_id' => $userId,
+                'old_supplier_cost' => $oldCost,
+                'new_supplier_cost' => $batch->supplier_cost,
+                'old_suggested_price' => $oldSuggested,
+                'new_suggested_price' => $batch->suggested_price,
+                'reason' => $reason,
+                'affected_items_count' => count($itemIds),
+                'affected_item_ids' => $itemIds,
+            ]);
+        });
+    }
+
+    /**
+     * Retorna o histórico de alterações de preço que afetaram um item específico.
+     */
+    public function getPriceHistoryForItem(string $itemId): Collection
+    {
+        return ConsignmentPriceHistory::with('user', 'batch')
+            ->whereJsonContains('affected_item_ids', $itemId)
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     public function registerSaleExit(ConsignmentStockItem $item, string $saleId, string $userId, int $quantity = 1): void
@@ -113,7 +213,7 @@ class ConsignmentStockService
 
     public function getAvailableBySupplier(string $supplierId): Collection
     {
-        return ConsignmentStockItem::with('supplier')
+        return ConsignmentStockItem::with('supplier', 'batch')
             ->bySupplier($supplierId)
             ->available()
             ->orderBy('name')
@@ -122,7 +222,7 @@ class ConsignmentStockService
 
     public function getSoldBySupplier(string $supplierId, ?string $dateFrom = null, ?string $dateTo = null): Collection
     {
-        $query = ConsignmentStockItem::with('supplier')
+        $query = ConsignmentStockItem::with('supplier', 'batch')
             ->bySupplier($supplierId)
             ->sold();
 
@@ -138,7 +238,7 @@ class ConsignmentStockService
 
     public function searchAvailable(?string $term): Collection
     {
-        return ConsignmentStockItem::with('supplier')
+        return ConsignmentStockItem::with('supplier', 'batch')
             ->available()
             ->where('available_quantity', '>', 0)
             ->search($term)

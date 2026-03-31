@@ -21,6 +21,7 @@ class ConsignmentStockItem extends Model
 
     protected $fillable = [
         'supplier_id',
+        'batch_id',
         'product_id',
         'name',
         'model',
@@ -62,6 +63,11 @@ class ConsignmentStockItem extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function batch(): BelongsTo
+    {
+        return $this->belongsTo(ConsignmentBatch::class, 'batch_id');
     }
 
     public function product(): BelongsTo
@@ -121,6 +127,17 @@ class ConsignmentStockItem extends Model
               ->orWhere('imei', 'like', "%{$term}%")
               ->orWhere('color', 'like', "%{$term}%");
         });
+    }
+
+    public function getProductSignatureAttribute(): string
+    {
+        return implode('|', [
+            strtolower(trim($this->name ?? '')),
+            strtolower(trim($this->model ?? '')),
+            strtolower(trim($this->storage ?? '')),
+            strtolower(trim($this->color ?? '')),
+            $this->supplier_id,
+        ]);
     }
 
     public function getFullNameAttribute(): string

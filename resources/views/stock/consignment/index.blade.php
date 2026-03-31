@@ -93,6 +93,7 @@
                         <thead>
                             <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                 <th style="padding: 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
+                                <th style="padding: 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Lote</th>
                                 <th style="padding: 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Fornecedor</th>
                                 <th style="padding: 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">IMEI</th>
                                 <th style="padding: 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo Forn.</th>
@@ -119,6 +120,15 @@
                                                 <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#dbeafe;color:#1e40af;">Novo</span>
                                             @endif
                                         </div>
+                                    </td>
+                                    <td style="padding: 0.75rem;">
+                                        @if($item->batch)
+                                            <span style="font-size: 0.7rem; font-family: monospace; padding: 0.2rem 0.5rem; background: #f3f4f6; border-radius: 0.25rem; color: #374151; font-weight: 500;">
+                                                {{ $item->batch->batch_code }}
+                                            </span>
+                                        @else
+                                            <span style="color: #d1d5db; font-size: 0.75rem;">—</span>
+                                        @endif
                                     </td>
                                     <td style="padding: 0.75rem; font-size: 0.8125rem; color: #374151;">{{ $item->supplier->name }}</td>
                                     <td style="padding: 0.75rem; font-size: 0.8125rem; color: #6b7280; font-family: monospace;">{{ $item->imei ?? '-' }}</td>
@@ -193,7 +203,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="11" style="padding: 3rem; text-align: center; color: #9ca3af;">
+                                    <td colspan="12" style="padding: 3rem; text-align: center; color: #9ca3af;">
                                         Nenhum item no estoque consignado
                                     </td>
                                 </tr>

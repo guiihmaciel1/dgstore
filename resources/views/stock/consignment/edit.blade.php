@@ -176,6 +176,15 @@
                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">{{ old('notes', $item->notes) }}</textarea>
                     </div>
 
+                    {{-- Informação do Lote --}}
+                    @if($item->batch)
+                        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.75rem; display: flex; gap: 1.5rem; font-size: 0.8rem; color: #6b7280;">
+                            <span>Lote: <strong style="color: #111827; font-family: monospace;">{{ $item->batch->batch_code }}</strong></span>
+                            <span>Custo Original do Lote: <strong style="color: #111827;">R$ {{ number_format($item->batch->supplier_cost, 2, ',', '.') }}</strong></span>
+                            <span>Recebido: <strong style="color: #111827;">{{ $item->batch->received_at->format('d/m/Y') }}</strong></span>
+                        </div>
+                    @endif
+
                     <div style="display: flex; justify-content: flex-end; gap: 0.75rem; padding-top: 0.5rem;">
                         <a href="{{ route('stock.consignment.index') }}"
                            style="padding: 0.625rem 1.5rem; color: #6b7280; font-size: 0.875rem; text-decoration: none; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
@@ -189,6 +198,69 @@
                     </div>
                 </div>
             </form>
+
+            {{-- Histórico de Alterações de Preço --}}
+            @if($priceHistory->isNotEmpty())
+                <div style="margin-top: 2rem;">
+                    <h2 style="font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 1.125rem; height: 1.125rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Histórico de Alterações de Preço
+                    </h2>
+
+                    <div style="position: relative; padding-left: 1.5rem;">
+                        <div style="position: absolute; left: 0.5rem; top: 0; bottom: 0; width: 2px; background: #e5e7eb;"></div>
+
+                        @foreach($priceHistory as $history)
+                            <div style="position: relative; margin-bottom: 1.25rem;">
+                                <div style="position: absolute; left: -1.25rem; top: 0.25rem; width: 0.75rem; height: 0.75rem; border-radius: 50%; background: {{ (float) $history->new_supplier_cost < (float) $history->old_supplier_cost ? '#16a34a' : '#dc2626' }}; border: 2px solid white; box-shadow: 0 0 0 2px #e5e7eb;"></div>
+
+                                <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.875rem; margin-left: 0.5rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                        <div style="font-size: 0.75rem; color: #6b7280;">
+                                            {{ $history->created_at->format('d/m/Y H:i') }}
+                                            @if($history->user)
+                                                · por <strong>{{ $history->user->name }}</strong>
+                                            @endif
+                                        </div>
+                                        @if($history->batch)
+                                            <span style="font-size: 0.65rem; font-family: monospace; padding: 0.125rem 0.375rem; background: #f3f4f6; border-radius: 0.25rem; color: #6b7280;">
+                                                {{ $history->batch->batch_code }}
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <span style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-decoration: line-through;">
+                                            R$ {{ number_format((float) $history->old_supplier_cost, 2, ',', '.') }}
+                                        </span>
+                                        <svg style="width: 1rem; height: 1rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                        </svg>
+                                        <span style="font-size: 0.875rem; font-weight: 700; color: {{ (float) $history->new_supplier_cost < (float) $history->old_supplier_cost ? '#16a34a' : '#dc2626' }};">
+                                            R$ {{ number_format((float) $history->new_supplier_cost, 2, ',', '.') }}
+                                        </span>
+                                        @php
+                                            $priceDiff = (float) $history->new_supplier_cost - (float) $history->old_supplier_cost;
+                                        @endphp
+                                        <span style="font-size: 0.7rem; font-weight: 600; padding: 0.125rem 0.375rem; border-radius: 0.25rem; {{ $priceDiff < 0 ? 'background: #dcfce7; color: #16a34a;' : 'background: #fef2f2; color: #dc2626;' }}">
+                                            {{ $priceDiff > 0 ? '+' : '' }}R$ {{ number_format(abs($priceDiff), 2, ',', '.') }}
+                                        </span>
+                                    </div>
+
+                                    <div style="font-size: 0.8125rem; color: #374151; line-height: 1.4;">
+                                        <strong>Motivo:</strong> {{ $history->reason }}
+                                    </div>
+                                    <div style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.25rem;">
+                                        {{ $history->affected_items_count }} {{ $history->affected_items_count === 1 ? 'item afetado' : 'itens afetados' }}
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>
