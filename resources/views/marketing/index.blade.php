@@ -755,7 +755,7 @@
                     _saving: false,
                     _copied: false,
                 };
-            }),
+            }).sort((a, b) => (parseFloat(a.listing.final_price) || 0) - (parseFloat(b.listing.final_price) || 0)),
 
             resaleConsignment: consignmentForResale
                 .filter(c => (c.condition || 'new') === 'new')
@@ -764,7 +764,8 @@
                     resale: buildResaleData(c),
                     _colorHex: getColorHex(c.color),
                     _saving: false,
-                })),
+                }))
+                .sort((a, b) => (parseFloat(a.resale.resale_price) || 0) - (parseFloat(b.resale.resale_price) || 0)),
 
             resaleUsedAllSaving: false,
 
@@ -795,7 +796,7 @@
                     },
                     _saving: false,
                 };
-            }),
+            }).sort((a, b) => (parseFloat(a._usedListing.final_price) || 0) - (parseFloat(b._usedListing.final_price) || 0)),
 
             get filteredPrices() {
                 if (!this.priceSearch) return this.prices;
