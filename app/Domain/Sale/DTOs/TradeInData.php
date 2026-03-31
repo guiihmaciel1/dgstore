@@ -14,6 +14,9 @@ readonly class TradeInData
         public TradeInCondition $condition = TradeInCondition::Good,
         public ?string $deviceModel = null,
         public ?string $imei = null,
+        public ?int $batteryHealth = null,
+        public bool $hasBox = false,
+        public bool $hasCable = false,
         public ?string $notes = null,
     ) {}
 
@@ -29,6 +32,9 @@ readonly class TradeInData
                 : TradeInCondition::Good,
             deviceModel: $data['device_model'] ?? null,
             imei: $data['imei'] ?? null,
+            batteryHealth: isset($data['battery_health']) && $data['battery_health'] !== '' ? (int) $data['battery_health'] : null,
+            hasBox: (bool) ($data['has_box'] ?? false),
+            hasCable: (bool) ($data['has_cable'] ?? false),
             notes: $data['notes'] ?? null,
         );
     }
@@ -41,6 +47,9 @@ readonly class TradeInData
             'imei' => $this->imei,
             'estimated_value' => $this->estimatedValue,
             'condition' => $this->condition->value,
+            'battery_health' => $this->batteryHealth,
+            'has_box' => $this->hasBox,
+            'has_cable' => $this->hasCable,
             'notes' => $this->notes,
         ];
     }

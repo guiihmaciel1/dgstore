@@ -399,10 +399,33 @@
                                                            onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                                 </div>
                                             </div>
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Bateria (%)</label>
+                                                <input type="number" :name="'trade_ins['+tiIndex+'][battery_health]'" x-model.number="ti.battery_health"
+                                                       min="0" max="100" placeholder="Ex: 87"
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                            </div>
+                                            <div style="display: flex; gap: 1.5rem; align-items: center; padding-top: 0.25rem;">
+                                                <label style="display: flex; align-items: center; gap: 0.375rem; cursor: pointer; font-size: 0.8125rem; color: #374151;">
+                                                    <input type="hidden" :name="'trade_ins['+tiIndex+'][has_box]'" value="0">
+                                                    <input type="checkbox" :name="'trade_ins['+tiIndex+'][has_box]'" x-model="ti.has_box" value="1"
+                                                           style="width: 1.125rem; height: 1.125rem; accent-color: #7c3aed;">
+                                                    <svg style="width: 1rem; height: 1rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                                    Com caixa
+                                                </label>
+                                                <label style="display: flex; align-items: center; gap: 0.375rem; cursor: pointer; font-size: 0.8125rem; color: #374151;">
+                                                    <input type="hidden" :name="'trade_ins['+tiIndex+'][has_cable]'" value="0">
+                                                    <input type="checkbox" :name="'trade_ins['+tiIndex+'][has_cable]'" x-model="ti.has_cable" value="1"
+                                                           style="width: 1.125rem; height: 1.125rem; accent-color: #7c3aed;">
+                                                    <svg style="width: 1rem; height: 1rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                                    Com cabo
+                                                </label>
+                                            </div>
                                             <div style="grid-column: span 2;">
                                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Observações</label>
                                                 <textarea :name="'trade_ins['+tiIndex+'][notes]'" x-model="ti.notes" rows="2"
-                                                          placeholder="Estado da tela, bateria, acessórios inclusos..."
+                                                          placeholder="Estado da tela, detalhes adicionais..."
                                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
                                             </div>
@@ -1524,6 +1547,9 @@
                         imei: '',
                         estimated_value: 0,
                         condition: 'good',
+                        battery_health: null,
+                        has_box: false,
+                        has_cable: false,
                         notes: ''
                     });
                 },

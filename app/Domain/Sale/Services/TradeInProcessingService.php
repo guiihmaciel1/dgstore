@@ -38,6 +38,9 @@ class TradeInProcessingService
             'imei' => $tradeIn->imei,
             'cost_price' => (float) $tradeIn->estimated_value,
             'stock_quantity' => 0,
+            'battery_health' => $tradeIn->battery_health,
+            'has_box' => $tradeIn->has_box ?? false,
+            'has_cable' => $tradeIn->has_cable ?? false,
             'notes' => "Origem: Trade-in da venda #{$saleNumber}. Valor estimado: R$ {$formattedValue}. {$tradeIn->notes}",
         ]);
 

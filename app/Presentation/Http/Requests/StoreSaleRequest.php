@@ -54,6 +54,9 @@ class StoreSaleRequest extends FormRequest
             'trade_ins.*.imei' => ['nullable', 'string', 'max:50'],
             'trade_ins.*.estimated_value' => ['required', 'numeric', 'min:0.01'],
             'trade_ins.*.condition' => ['nullable', Rule::enum(TradeInCondition::class)],
+            'trade_ins.*.battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trade_ins.*.has_box' => ['nullable', 'boolean'],
+            'trade_ins.*.has_cable' => ['nullable', 'boolean'],
             'trade_ins.*.notes' => ['nullable', 'string'],
         ];
     }

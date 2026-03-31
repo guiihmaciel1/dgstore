@@ -189,6 +189,9 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                         'imei' => $tradeInData->imei,
                         'estimated_value' => $tradeInData->estimatedValue,
                         'condition' => $tradeInData->condition,
+                        'battery_health' => $tradeInData->batteryHealth,
+                        'has_box' => $tradeInData->hasBox,
+                        'has_cable' => $tradeInData->hasCable,
                         'notes' => $tradeInData->notes,
                         'status' => TradeInStatus::Pending,
                     ]);

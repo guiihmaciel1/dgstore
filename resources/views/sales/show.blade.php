@@ -385,6 +385,21 @@
                                         </dd>
                                     </div>
                                 </div>
+                                @if($tradeInItem->battery_health || $tradeInItem->has_box || $tradeInItem->has_cable)
+                                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; display: flex; gap: 1rem; flex-wrap: wrap;">
+                                    @if($tradeInItem->battery_health)
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: #f3f4f6; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: #374151;">
+                                        🔋 {{ $tradeInItem->battery_health }}%
+                                    </span>
+                                    @endif
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: {{ $tradeInItem->has_box ? '#dcfce7' : '#fee2e2' }}; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: {{ $tradeInItem->has_box ? '#166534' : '#991b1b' }};">
+                                        {{ $tradeInItem->has_box ? '✓' : '✗' }} Caixa
+                                    </span>
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: {{ $tradeInItem->has_cable ? '#dcfce7' : '#fee2e2' }}; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: {{ $tradeInItem->has_cable ? '#166534' : '#991b1b' }};">
+                                        {{ $tradeInItem->has_cable ? '✓' : '✗' }} Cabo
+                                    </span>
+                                </div>
+                                @endif
                                 @if($tradeInItem->notes)
                                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Observações</dt>
