@@ -401,8 +401,16 @@
             <div x-data="{ showValues: localStorage.getItem('dg_show_values') !== 'false' }"
                  x-init="$watch('showValues', v => localStorage.setItem('dg_show_values', v))"
                  class="mb-6 sm:mb-8">
-                {{-- Botão olho --}}
-                <div class="flex justify-end mb-2">
+                {{-- Botões de ação --}}
+                <div class="flex items-center justify-end gap-2 mb-2">
+                    <button type="button" @click="$dispatch('open-month-summary')"
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                            title="Resumo do Mês">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span class="hidden sm:inline">Resumo do Mês</span>
+                    </button>
                     <button type="button" @click="showValues = !showValues"
                             class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors"
                             :class="showValues ? 'text-gray-400 hover:text-gray-600 hover:bg-gray-100' : 'text-gray-500 bg-gray-100 hover:bg-gray-200'"
@@ -740,6 +748,150 @@
                     @else
                         <p class="text-gray-500 text-center py-8">Nenhuma venda registrada ainda.</p>
                     @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Resumo do Mês (Fullscreen) --}}
+    <div x-data="{ open: false, hideValues: false }"
+         x-on:open-month-summary.window="open = true"
+         x-on:keydown.escape.window="open = false"
+         x-show="open" x-cloak
+         style="position: fixed; inset: 0; z-index: 9999;"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+
+        <div id="month-summary-card"
+             style="position: absolute; inset: 0; background: linear-gradient(170deg, #050505 0%, #0a0f1a 30%, #0c1220 60%, #080d15 100%); display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100vh; overflow: hidden; padding: 0;">
+
+            {{-- Ambient glows --}}
+            <div style="position: absolute; top: -15%; right: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 65%); pointer-events: none;"></div>
+            <div style="position: absolute; bottom: -10%; left: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 65%); pointer-events: none;"></div>
+
+            {{-- Top bar: eye + close --}}
+            <div style="position: absolute; top: 0; right: 0; display: flex; align-items: center; gap: 0.5rem; padding: 1rem 1.25rem; z-index: 10;">
+                <button @click="hideValues = !hideValues" style="width: 2.25rem; height: 2.25rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; color: rgba(255,255,255,0.4); transition: all 0.15s;" :style="hideValues ? 'background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7)' : ''" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="">
+                    <svg x-show="!hideValues" style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <svg x-show="hideValues" x-cloak style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.59 6.59m7.532 7.532l3.29 3.29M3 3l18 18"/>
+                    </svg>
+                </button>
+                <button @click="open = false" style="width: 2.25rem; height: 2.25rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); cursor: pointer; color: rgba(255,255,255,0.4); transition: all 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.color='white'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.color='rgba(255,255,255,0.4)'">
+                    <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            {{-- Content wrapper: flex column, justify-between, full height --}}
+            <div style="position: relative; z-index: 1; width: 100%; max-width: 480px; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 2.5vh 1.5rem;">
+
+                {{-- TOP: Logo --}}
+                <div style="text-align: center; padding-top: 1rem;">
+                    <img src="{{ asset('images/logodg.png') }}" alt="DG Store" style="height: 3rem; margin: 0 auto; filter: brightness(1.15) drop-shadow(0 0 20px rgba(255,255,255,0.08));">
+                </div>
+
+                {{-- MIDDLE: All content --}}
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 1.5vh;">
+
+                    {{-- Month Title --}}
+                    <div style="text-align: center;">
+                        <p style="font-size: 0.6rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 0.375rem;">Resumo</p>
+                        <h2 style="font-size: 2rem; font-weight: 800; color: white; line-height: 1; letter-spacing: -0.03em;">{{ ucfirst($monthSummary['month_label']) }}</h2>
+                        <div style="width: 2.5rem; height: 2px; background: linear-gradient(to right, #6366f1, #10b981); margin: 0.625rem auto 0; border-radius: 1px;"></div>
+                    </div>
+
+                    {{-- Faturamento --}}
+                    <div style="text-align: center; padding: 1.25rem 1rem; background: linear-gradient(135deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid rgba(255,255,255,0.06); border-radius: 1rem;">
+                        <p style="font-size: 0.55rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 0.375rem;">Faturamento</p>
+                        <p style="font-size: 2.125rem; font-weight: 800; color: white; line-height: 1; letter-spacing: -0.02em;">
+                            <span x-show="!hideValues">R$ {{ number_format($monthSummary['total_revenue'], 2, ',', '.') }}</span>
+                            <span x-show="hideValues" x-cloak style="letter-spacing: 0.1em; color: rgba(255,255,255,0.25);">R$ &bull;&bull;&bull;&bull;&bull;&bull;</span>
+                        </p>
+                        <p style="font-size: 0.725rem; color: rgba(255,255,255,0.3); margin-top: 0.375rem;">Ticket médio
+                            <span x-show="!hideValues" style="color: rgba(255,255,255,0.6); font-weight: 700;">R$ {{ number_format($monthSummary['average_ticket'], 2, ',', '.') }}</span>
+                            <span x-show="hideValues" x-cloak style="color: rgba(255,255,255,0.25); font-weight: 700; letter-spacing: 0.05em;">&bull;&bull;&bull;&bull;</span>
+                        </p>
+                    </div>
+
+                    {{-- Pedidos + Total itens vendidos --}}
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem;">
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.875rem; text-align: center;">
+                            <p style="font-size: 1.875rem; font-weight: 800; color: white; line-height: 1;">{{ $monthSummary['total_sales'] }}</p>
+                            <p style="font-size: 0.55rem; font-weight: 600; color: rgba(255,255,255,0.35); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.12em;">Pedidos</p>
+                        </div>
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.875rem; text-align: center;">
+                            <p style="font-size: 1.875rem; font-weight: 800; color: white; line-height: 1;">{{ $monthSummary['total_items'] }}</p>
+                            <p style="font-size: 0.55rem; font-weight: 600; color: rgba(255,255,255,0.35); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.12em;">Itens vendidos</p>
+                        </div>
+                    </div>
+
+                    {{-- Categorias --}}
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.875rem; overflow: hidden;">
+                        <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.55rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.25);">Categoria</span>
+                            <span style="font-size: 0.55rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.25);">Qtd</span>
+                        </div>
+
+                        <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: white;">iPhones vendidos</span>
+                            <span style="font-size: 1rem; font-weight: 800; color: white;">{{ $monthSummary['iphone_total'] }}</span>
+                        </div>
+
+                        <div style="padding: 0.4375rem 1rem 0.4375rem 1.875rem; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                <div style="width: 0.3125rem; height: 0.3125rem; border-radius: 50%; background: #34d399;"></div>
+                                <span style="font-size: 0.725rem; color: rgba(255,255,255,0.55);">Novos</span>
+                            </div>
+                            <span style="font-size: 0.85rem; font-weight: 700; color: #34d399;">{{ $monthSummary['iphone_new'] }}</span>
+                        </div>
+
+                        <div style="padding: 0.4375rem 1rem 0.4375rem 1.875rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                <div style="width: 0.3125rem; height: 0.3125rem; border-radius: 50%; background: #fbbf24;"></div>
+                                <span style="font-size: 0.725rem; color: rgba(255,255,255,0.55);">Seminovos (used)</span>
+                            </div>
+                            <span style="font-size: 0.85rem; font-weight: 700; color: #fbbf24;">{{ $monthSummary['iphone_used'] }}</span>
+                        </div>
+
+                        @if($monthSummary['accessories'] > 0)
+                        <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.75);">Acessórios <span style="font-size: 0.625rem; color: rgba(255,255,255,0.25);">(capinhas, fontes)</span></span>
+                            <span style="font-size: 1rem; font-weight: 800; color: white;">{{ $monthSummary['accessories'] }}</span>
+                        </div>
+                        @endif
+
+                        @if($monthSummary['other_apple'] > 0)
+                        <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.75);">Outros Apple <span style="font-size: 0.625rem; color: rgba(255,255,255,0.25);">(MacBooks, iPad, AirPods, Watch)</span></span>
+                            <span style="font-size: 1rem; font-weight: 800; color: white;">{{ $monthSummary['other_apple'] }}</span>
+                        </div>
+                        @endif
+
+                        <div style="padding: 0.75rem 1rem; background: rgba(255,255,255,0.025); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.8rem; font-weight: 800; color: white;">Total de itens</span>
+                            <span style="font-size: 1.125rem; font-weight: 800; color: white;">{{ $monthSummary['total_items'] }}</span>
+                        </div>
+                    </div>
+
+                    {{-- Trade-ins --}}
+                    @if($monthSummary['trade_ins_received'] > 0)
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.625rem; padding: 0.75rem; background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.1); border-radius: 0.875rem;">
+                        <svg style="width: 1rem; height: 1rem; color: #a78bfa;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                        <p style="font-size: 0.85rem; font-weight: 800; color: #a78bfa; line-height: 1;">{{ $monthSummary['trade_ins_received'] }} <span style="font-size: 0.675rem; font-weight: 600; color: rgba(139,92,246,0.55);">trade-ins recebidos</span></p>
+                    </div>
+                    @endif
+                </div>
+
+                {{-- BOTTOM: Footer --}}
+                <div style="text-align: center; padding-bottom: 1rem;">
+                    <p style="font-size: 0.55rem; color: rgba(255,255,255,0.15); letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600;">DG Store · Sistema de Gestão</p>
                 </div>
             </div>
         </div>

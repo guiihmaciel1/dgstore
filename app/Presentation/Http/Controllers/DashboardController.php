@@ -11,9 +11,12 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\Finance\Models\FinancialTransaction;
 use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
+use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
+use App\Domain\Sale\Models\SaleItem;
+use App\Domain\Sale\Models\TradeIn;
 use App\Domain\Schedule\Enums\AppointmentStatus;
 use App\Domain\Schedule\Models\Appointment;
 use App\Domain\Warranty\Services\WarrantyService;
@@ -46,6 +49,8 @@ class DashboardController extends Controller
         $todayAppointments = $this->getTodayAppointments();
         $nextAppointment = $this->getNextAppointment();
 
+        $monthSummary = $this->getMonthSummary();
+
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
             'todayCount' => $data['today']['count'],
@@ -59,6 +64,7 @@ class DashboardController extends Controller
             'birthdayCustomers' => $birthdayCustomers,
             'todayAppointments' => $todayAppointments,
             'nextAppointment' => $nextAppointment,
+            'monthSummary' => $monthSummary,
         ]);
     }
 
@@ -228,5 +234,78 @@ class DashboardController extends Controller
             ->where('start_time', '>=', now()->format('H:i:s'))
             ->orderBy('start_time')
             ->first();
+    }
+
+    private function getMonthSummary(): array
+    {
+        $start = now()->startOfMonth();
+        $end = now()->endOfMonth();
+
+        $sales = Sale::with(['items.product', 'tradeIns'])
+            ->whereBetween('sold_at', [$start, $end])
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->get();
+
+        $totalSales = $sales->count();
+        $totalRevenue = (float) $sales->sum('total');
+        $averageTicket = $totalSales > 0 ? $totalRevenue / $totalSales : 0;
+
+        $allItems = $sales->flatMap->items;
+        $totalItems = (int) $allItems->sum('quantity');
+
+        $accessoryCategories = ['charger', 'cable', 'case', 'accessory'];
+        $otherAppleCategories = ['tablet', 'notebook', 'smartwatch', 'headphone', 'speaker'];
+
+        $iphoneNew = 0;
+        $iphoneUsed = 0;
+        $accessories = 0;
+        $otherApple = 0;
+
+        foreach ($allItems as $item) {
+            $rawCategory = $item->product?->category ?? ($item->product_snapshot['category'] ?? null);
+            $category = $rawCategory instanceof \App\Domain\Product\Enums\ProductCategory
+                ? $rawCategory->value
+                : (is_string($rawCategory) ? $rawCategory : null);
+
+            $rawCondition = $item->product?->condition ?? ($item->product_snapshot['condition'] ?? null);
+            $condition = $rawCondition instanceof ProductCondition
+                ? $rawCondition->value
+                : (is_string($rawCondition) ? $rawCondition : null);
+
+            $qty = $item->quantity;
+
+            if ($category === 'smartphone') {
+                if (in_array($condition, ['used', 'refurbished'])) {
+                    $iphoneUsed += $qty;
+                } else {
+                    $iphoneNew += $qty;
+                }
+            } elseif (in_array($category, $accessoryCategories)) {
+                $accessories += $qty;
+            } elseif (in_array($category, $otherAppleCategories)) {
+                $otherApple += $qty;
+            } else {
+                $otherApple += $qty;
+            }
+        }
+
+        $tradeInsReceived = (int) TradeIn::whereHas('sale', fn ($q) => $q
+            ->whereBetween('sold_at', [$start, $end])
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+        )->count();
+
+        return [
+            'month_label' => now()->translatedFormat('F/Y'),
+            'total_sales' => $totalSales,
+            'total_revenue' => $totalRevenue,
+            'average_ticket' => $averageTicket,
+            'total_items' => $totalItems,
+            'iphone_total' => $iphoneNew + $iphoneUsed,
+            'iphone_new' => $iphoneNew,
+            'iphone_used' => $iphoneUsed,
+            'accessories' => $accessories,
+            'other_apple' => $otherApple,
+            'trade_ins_received' => $tradeInsReceived,
+        ];
     }
 }
