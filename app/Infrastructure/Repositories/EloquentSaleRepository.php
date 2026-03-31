@@ -130,7 +130,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                         $data->userId,
                         $itemData->quantity,
                     );
-                } else {
+                } elseif ($itemData->productId) {
                     $product = Product::findOrFail($itemData->productId);
 
                     SaleItem::create([
@@ -158,6 +158,24 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                     ]);
 
                     $product->decrement('stock_quantity', $itemData->quantity);
+                } else {
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => null,
+                        'product_snapshot' => [
+                            'name' => $itemData->productName ?? 'Item avulso',
+                            'cost_price' => $itemData->costPrice,
+                        ],
+                        'quantity' => $itemData->quantity,
+                        'unit_price' => $itemData->unitPrice,
+                        'cost_price' => $itemData->costPrice,
+                        'supplier_origin' => $itemData->supplierOrigin,
+                        'freight_type' => $itemData->freightType,
+                        'freight_value' => $itemData->freightValue,
+                        'freight_amount' => $freightAmount,
+                        'total_cost' => $totalCost,
+                        'subtotal' => $itemData->subtotal(),
+                    ]);
                 }
             }
 

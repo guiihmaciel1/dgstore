@@ -15,6 +15,7 @@ readonly class SaleItemData
         public ?string $freightType = null,
         public float $freightValue = 0,
         public ?string $consignmentItemId = null,
+        public ?string $productName = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -28,6 +29,7 @@ readonly class SaleItemData
             freightType: $data['freight_type'] ?? null,
             freightValue: (float) ($data['freight_value'] ?? 0),
             consignmentItemId: !empty($data['consignment_item_id']) ? $data['consignment_item_id'] : null,
+            productName: $data['product_name'] ?? null,
         );
     }
 

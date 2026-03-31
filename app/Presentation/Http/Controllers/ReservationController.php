@@ -222,12 +222,9 @@ class ReservationController extends Controller
     public function convert(Reservation $reservation): RedirectResponse
     {
         return redirect()
-            ->route('sales.create', [
+            ->route('sales.create', array_filter([
                 'from_reservation' => $reservation->id,
-                'customer_id' => $reservation->customer_id,
-                'product_id' => $reservation->product_id,
-                'discount' => $reservation->deposit_paid,
-            ]);
+            ]));
     }
 
     public function cancel(Request $request, Reservation $reservation): RedirectResponse

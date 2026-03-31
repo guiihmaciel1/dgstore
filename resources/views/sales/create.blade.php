@@ -171,8 +171,9 @@
                                                             <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; flex-shrink: 0;">TRADE-IN</span>
                                                             <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-weight: 600; flex-shrink: 0;">CONSIGNADO</span>
                                                         </div>
-                                                        <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.is_consignment ? '' : item.id">
+                                                        <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.is_consignment ? '' : (item.id || '')">
                                                         <input type="hidden" :name="'items['+index+'][consignment_item_id]'" :value="item.consignment_item_id || ''">
+                                                        <input type="hidden" :name="'items['+index+'][product_name]'" :value="item.name || ''">
                                                     </div>
                                                     
                                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -1252,8 +1253,15 @@
                     'id' => $reservation->product->id,
                     'name' => $reservation->product->full_name ?? $reservation->product->name,
                     'price' => (float) $reservation->product_price,
+                    'cost_price' => (float) ($reservation->cost_price ?? 0),
                     'stock' => $reservation->product->stock_quantity ?? 1,
-                ] : null,
+                ] : [
+                    'id' => null,
+                    'name' => $reservation->product_description ?? 'Produto da reserva',
+                    'price' => (float) $reservation->product_price,
+                    'cost_price' => (float) ($reservation->cost_price ?? 0),
+                    'stock' => 1,
+                ],
                 'deposit_paid' => (float) $reservation->deposit_paid,
                 'product_price' => (float) $reservation->product_price,
             ] : null) !!};
@@ -1322,13 +1330,12 @@
                 },
 
                 init() {
-                    // Pré-preencher produto da reserva
                     if (reservationData?.product) {
                         this.items.push({
                             id: reservationData.product.id,
                             name: reservationData.product.name,
                             price: reservationData.product.price,
-                            cost_price: 0,
+                            cost_price: reservationData.product.cost_price || 0,
                             supplier_origin: '',
                             freight_type: '',
                             freight_value: 0,
@@ -1340,7 +1347,6 @@
                         this.updateTotals();
                     }
 
-                    // Gerar SKU inicial para o form de produto
                     this.generateProductSku();
                 },
                 

@@ -164,6 +164,10 @@ class CreateSaleUseCase
                 continue;
             }
 
+            if (!$item->productId) {
+                continue;
+            }
+
             $product = $this->productRepository->find($item->productId);
 
             if (!$product) {
