@@ -54,6 +54,19 @@ class ReservationService
             $query->where('status', $filters['status']);
         }
 
+        // Filtro de origem
+        if (!empty($filters['source'])) {
+            $query->where('source', $filters['source']);
+        }
+
+        // Filtro de data (período de criação)
+        if (!empty($filters['date_from'])) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
+        }
+        if (!empty($filters['date_to'])) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
         // Filtro apenas ativas
         if (!empty($filters['active_only'])) {
             $query->active();

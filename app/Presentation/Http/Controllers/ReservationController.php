@@ -34,6 +34,9 @@ class ReservationController extends Controller
         $filters = [
             'search' => $request->get('search'),
             'status' => $request->get('status'),
+            'source' => $request->get('source'),
+            'date_from' => $request->get('date_from'),
+            'date_to' => $request->get('date_to'),
             'active_only' => $request->boolean('active_only'),
             'sort' => $request->get('sort', 'created_at'),
             'direction' => $request->get('direction', 'desc'),

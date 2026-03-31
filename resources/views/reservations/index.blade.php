@@ -25,7 +25,8 @@
 
             <!-- Cards de Estatísticas -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-                <div style="padding: 1.25rem; background: {{ $stats['active'] > 0 ? '#f0fdf4' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['active'] > 0 ? '#bbf7d0' : '#e5e7eb' }};">
+                <a href="{{ route('reservations.index', ['status' => 'active']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['active'] > 0 ? '#f0fdf4' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['active'] > 0 ? '#bbf7d0' : '#e5e7eb' }}; transition: box-shadow 0.15s; cursor: pointer;"
+                   onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.625rem; background: {{ $stats['active'] > 0 ? '#dcfce7' : '#f3f4f6' }}; border-radius: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: {{ $stats['active'] > 0 ? '#16a34a' : '#6b7280' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,9 +38,10 @@
                             <p style="font-size: 0.75rem; color: #6b7280;">Reservas ativas</p>
                         </div>
                     </div>
-                </div>
+                </a>
 
-                <div style="padding: 1.25rem; background: {{ $stats['expiring_soon'] > 0 ? '#fefce8' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['expiring_soon'] > 0 ? '#fde68a' : '#e5e7eb' }};">
+                <a href="{{ route('reservations.index', ['status' => 'active', 'sort' => 'expires_at', 'direction' => 'asc']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['expiring_soon'] > 0 ? '#fefce8' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['expiring_soon'] > 0 ? '#fde68a' : '#e5e7eb' }}; transition: box-shadow 0.15s; cursor: pointer;"
+                   onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.625rem; background: {{ $stats['expiring_soon'] > 0 ? '#fef3c7' : '#f3f4f6' }}; border-radius: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: {{ $stats['expiring_soon'] > 0 ? '#d97706' : '#6b7280' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,9 +53,10 @@
                             <p style="font-size: 0.75rem; color: #6b7280;">Vencendo em 3 dias</p>
                         </div>
                     </div>
-                </div>
+                </a>
 
-                <div style="padding: 1.25rem; background: {{ $stats['overdue'] > 0 ? '#fef2f2' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['overdue'] > 0 ? '#fecaca' : '#e5e7eb' }};">
+                <a href="{{ route('reservations.index', ['status' => 'expired']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['overdue'] > 0 ? '#fef2f2' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['overdue'] > 0 ? '#fecaca' : '#e5e7eb' }}; transition: box-shadow 0.15s; cursor: pointer;"
+                   onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.625rem; background: {{ $stats['overdue'] > 0 ? '#fee2e2' : '#f3f4f6' }}; border-radius: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: {{ $stats['overdue'] > 0 ? '#dc2626' : '#6b7280' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,31 +68,95 @@
                             <p style="font-size: 0.75rem; color: #6b7280;">Vencidas</p>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- Filtros -->
             <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1rem;">
-                <form method="GET" x-data x-ref="filterForm" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
-                    <div style="flex: 1; min-width: 200px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Buscar</label>
-                        <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Número, cliente ou produto..."
-                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
-                               x-on:input.debounce.400ms="$refs.filterForm.submit()">
+                <form method="GET" x-data="{ showMore: {{ ($filters['source'] || $filters['date_from'] || $filters['date_to']) ? 'true' : 'false' }} }" x-ref="filterForm">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
+                        <div style="flex: 1; min-width: 200px;">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Buscar</label>
+                            <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Número, cliente ou produto..."
+                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                                   x-on:input.debounce.400ms="$refs.filterForm.submit()">
+                        </div>
+                        <div style="min-width: 130px;">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Status</label>
+                            <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                    x-on:change="$refs.filterForm.submit()">
+                                <option value="">Todos</option>
+                                @foreach($statuses as $status)
+                                    <option value="{{ $status->value }}" {{ $filters['status'] === $status->value ? 'selected' : '' }}>{{ $status->label() }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div style="min-width: 120px;">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Origem</label>
+                            <select name="source" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                    x-on:change="$refs.filterForm.submit()">
+                                <option value="">Todas</option>
+                                <option value="stock" {{ $filters['source'] === 'stock' ? 'selected' : '' }}>Estoque</option>
+                                <option value="quotation" {{ $filters['source'] === 'quotation' ? 'selected' : '' }}>Cotação</option>
+                                <option value="manual" {{ $filters['source'] === 'manual' ? 'selected' : '' }}>Manual</option>
+                            </select>
+                        </div>
+                        <button type="button" @click="showMore = !showMore"
+                                style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: white; color: #6b7280; font-size: 0.8rem; cursor: pointer;"
+                                onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                            <svg :style="showMore ? 'transform: rotate(180deg)' : ''" style="width: 0.875rem; height: 0.875rem; transition: transform 0.2s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                            <span x-text="showMore ? 'Menos' : 'Mais'"></span>
+                        </button>
+                        @php
+                            $hasFilters = $filters['search'] || $filters['status'] || $filters['source'] || $filters['date_from'] || $filters['date_to'];
+                        @endphp
+                        @if($hasFilters)
+                            <a href="{{ route('reservations.index') }}"
+                               style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; color: #dc2626; font-size: 0.8rem; text-decoration: none; border: 1px solid #fecaca; border-radius: 0.5rem; background: #fef2f2;"
+                               onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+                                <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                Limpar
+                            </a>
+                        @endif
                     </div>
-                    <div style="min-width: 150px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Status</label>
-                        <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
-                                x-on:change="$refs.filterForm.submit()">
-                            <option value="">Todos</option>
-                            @foreach($statuses as $status)
-                                <option value="{{ $status->value }}" {{ $filters['status'] === $status->value ? 'selected' : '' }}>{{ $status->label() }}</option>
-                            @endforeach
-                        </select>
+                    <div x-show="showMore" x-collapse style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
+                            <div style="min-width: 150px;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data inicial</label>
+                                <input type="date" name="date_from" value="{{ $filters['date_from'] }}"
+                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       x-on:change="$refs.filterForm.submit()">
+                            </div>
+                            <div style="min-width: 150px;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data final</label>
+                                <input type="date" name="date_to" value="{{ $filters['date_to'] }}"
+                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       x-on:change="$refs.filterForm.submit()">
+                            </div>
+                            <div style="min-width: 150px;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Ordenar por</label>
+                                <select name="sort" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                        x-on:change="$refs.filterForm.submit()">
+                                    <option value="created_at" {{ ($filters['sort'] ?? 'created_at') === 'created_at' ? 'selected' : '' }}>Data de criação</option>
+                                    <option value="expires_at" {{ ($filters['sort'] ?? '') === 'expires_at' ? 'selected' : '' }}>Vencimento</option>
+                                    <option value="product_price" {{ ($filters['sort'] ?? '') === 'product_price' ? 'selected' : '' }}>Valor do produto</option>
+                                    <option value="deposit_paid" {{ ($filters['sort'] ?? '') === 'deposit_paid' ? 'selected' : '' }}>Sinal pago</option>
+                                </select>
+                            </div>
+                            <div style="min-width: 120px;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Ordem</label>
+                                <select name="direction" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                        x-on:change="$refs.filterForm.submit()">
+                                    <option value="desc" {{ ($filters['direction'] ?? 'desc') === 'desc' ? 'selected' : '' }}>Mais recente</option>
+                                    <option value="asc" {{ ($filters['direction'] ?? '') === 'asc' ? 'selected' : '' }}>Mais antigo</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    @if($filters['search'] || $filters['status'])
-                        <a href="{{ route('reservations.index') }}" style="padding: 0.5rem 1rem; color: #6b7280; font-size: 0.875rem; text-decoration: none;">Limpar</a>
-                    @endif
                 </form>
             </div>
 
