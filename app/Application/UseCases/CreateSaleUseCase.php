@@ -11,6 +11,7 @@ use App\Domain\Sale\DTOs\SaleData;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use App\Domain\Stock\Services\StockService;
+use App\Domain\Warranty\Services\WarrantyService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -21,6 +22,7 @@ class CreateSaleUseCase
         private readonly ProductRepositoryInterface $productRepository,
         private readonly StockService $stockService,
         private readonly FinanceService $financeService,
+        private readonly WarrantyService $warrantyService,
     ) {}
 
     /**
@@ -30,16 +32,37 @@ class CreateSaleUseCase
      */
     public function execute(SaleData $data): Sale
     {
-        // 1. Validar disponibilidade de estoque
         $this->validateStockAvailability($data);
 
-        // 2. Criar a venda (o repository já cuida de criar items e movimentar estoque)
         $sale = $this->saleRepository->create($data);
 
-        // 3. Registrar automaticamente no financeiro
+        $this->registerWarranties($sale);
         $this->registerInFinance($sale);
 
         return $sale;
+    }
+
+    /**
+     * Registra garantia de 3 meses (cliente) para itens seminovos (condition=used).
+     * Não lança exceção para não bloquear a venda.
+     */
+    private function registerWarranties(Sale $sale): void
+    {
+        try {
+            foreach ($sale->items as $item) {
+                $condition = $item->product_snapshot['condition'] ?? null;
+
+                if ($condition === 'used') {
+                    $this->warrantyService->createFromSaleItem(
+                        saleItem: $item,
+                        supplierMonths: 0,
+                        customerMonths: 3,
+                    );
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning("Não foi possível registrar garantias da venda #{$sale->sale_number}: {$e->getMessage()}");
+        }
     }
 
     /**

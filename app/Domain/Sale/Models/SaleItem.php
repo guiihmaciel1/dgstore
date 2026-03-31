@@ -6,10 +6,12 @@ namespace App\Domain\Sale\Models;
 
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Product\Models\Product;
+use App\Domain\Warranty\Models\Warranty;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SaleItem extends Model
 {
@@ -75,6 +77,11 @@ class SaleItem extends Model
     public function consignmentItem(): BelongsTo
     {
         return $this->belongsTo(ConsignmentStockItem::class, 'consignment_item_id');
+    }
+
+    public function warranty(): HasOne
+    {
+        return $this->hasOne(Warranty::class);
     }
 
     public function isConsignment(): bool
