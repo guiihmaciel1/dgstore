@@ -24,6 +24,7 @@ class ConsignmentStockService
                 'model' => $data['model'] ?? null,
                 'storage' => $data['storage'] ?? null,
                 'color' => $data['color'] ?? null,
+                'condition' => $data['condition'] ?? 'new',
                 'imei' => $data['imei'] ?? null,
                 'supplier_cost' => $data['supplier_cost'],
                 'suggested_price' => $data['suggested_price'] ?? null,

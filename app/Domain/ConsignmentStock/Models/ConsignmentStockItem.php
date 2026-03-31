@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\ConsignmentStock\Models;
 
 use App\Domain\ConsignmentStock\Enums\ConsignmentStatus;
+use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Supplier\Models\Supplier;
@@ -25,6 +26,7 @@ class ConsignmentStockItem extends Model
         'model',
         'storage',
         'color',
+        'condition',
         'imei',
         'supplier_cost',
         'suggested_price',
@@ -44,6 +46,7 @@ class ConsignmentStockItem extends Model
             'suggested_price' => 'decimal:2',
             'quantity' => 'integer',
             'available_quantity' => 'integer',
+            'condition' => ProductCondition::class,
             'status' => ConsignmentStatus::class,
             'received_at' => 'datetime',
             'sold_at' => 'datetime',
@@ -83,6 +86,16 @@ class ConsignmentStockItem extends Model
     public function scopeReturned(Builder $query): Builder
     {
         return $query->where('status', ConsignmentStatus::Returned);
+    }
+
+    public function scopeUsed(Builder $query): Builder
+    {
+        return $query->whereIn('condition', [ProductCondition::Used, ProductCondition::Refurbished]);
+    }
+
+    public function scopeNew(Builder $query): Builder
+    {
+        return $query->where('condition', ProductCondition::New);
     }
 
     public function scopeBySupplier(Builder $query, string $supplierId): Builder

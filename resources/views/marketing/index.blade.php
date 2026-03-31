@@ -410,7 +410,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template x-for="item in resaleUsed" :key="item.id">
+                                    <template x-for="item in resaleUsed" :key="item.morph_type + '_' + item.id">
                                         <tr style="border-bottom: 1px solid #f3f4f6; transition: background 0.1s;"
                                             onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
                                             <td style="padding: 0.375rem 0.75rem; text-align: center;">
@@ -425,6 +425,9 @@
                                                         ? 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#fef3c7;color:#92400e;'
                                                         : 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#dbeafe;color:#1e40af;'"
                                                           x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
+                                                    <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
+                                                        <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#ede9fe;color:#5b21b6;">Consig.</span>
+                                                    </template>
                                                     <span x-show="item._usedListing.notes" style="font-size:0.6rem;color:#6b7280;" x-text="item._usedListing.notes"></span>
                                                 </div>
                                             </td>
@@ -729,16 +732,21 @@
                 };
             }),
 
-            resaleConsignment: consignmentForResale.map(c => ({
-                ...c,
-                resale: buildResaleData(c),
-                _colorHex: getColorHex(c.color),
-                _saving: false,
-            })),
+            resaleConsignment: consignmentForResale
+                .filter(c => (c.condition || 'new') === 'new')
+                .map(c => ({
+                    ...c,
+                    resale: buildResaleData(c),
+                    _colorHex: getColorHex(c.color),
+                    _saving: false,
+                })),
 
             resaleUsedAllSaving: false,
 
-            resaleUsed: usedForResale.map(p => {
+            resaleUsed: [
+                ...usedForResale,
+                ...consignmentForResale.filter(c => c.condition === 'used'),
+            ].map(p => {
                 const ulKey = (p.morph_type || 'App\\Domain\\Product\\Models\\Product') + '_' + p.id;
                 const ul = usedListingsRaw[ulKey] || {};
                 const resale = buildResaleData(p);

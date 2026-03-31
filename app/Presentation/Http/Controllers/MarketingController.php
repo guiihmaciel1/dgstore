@@ -47,7 +47,7 @@ class MarketingController extends Controller
             ->orderBy('name')
             ->get();
 
-        $consignmentItems = ConsignmentStockItem::available()
+        $allConsignmentItems = ConsignmentStockItem::available()
             ->where('available_quantity', '>', 0)
             ->orderBy('name')
             ->get();
@@ -80,28 +80,34 @@ class MarketingController extends Controller
             ];
         })->values();
 
-        $consignmentUsedJson = $consignmentItems->map(fn ($c) => [
+        $mapConsignment = fn ($c) => [
             'id' => $c->id,
             'morph_type' => ConsignmentStockItem::class,
             'name' => $c->name,
             'model' => $c->model,
             'storage' => $c->storage,
             'color' => $c->color,
-            'condition' => 'used',
+            'condition' => $c->condition?->value ?? 'new',
             'stock' => $c->available_quantity,
             'supplier_cost' => (float) $c->supplier_cost,
             'suggested_price' => (float) $c->suggested_price,
-        ])->values();
+        ];
+
+        $consignmentUsedJson = $allConsignmentItems
+            ->filter(fn ($c) => ($c->condition?->value ?? 'new') === 'used')
+            ->map($mapConsignment)
+            ->values();
 
         $resaleItems = MarketingResaleItem::all()
             ->keyBy(fn ($r) => $r->resaleable_type . '_' . $r->resaleable_id);
 
-        $consignmentResaleJson = $consignmentItems->map(fn ($c) => [
+        $consignmentResaleJson = $allConsignmentItems->map(fn ($c) => [
             'id' => $c->id,
             'morph_type' => ConsignmentStockItem::class,
             'name' => $c->name,
             'storage' => $c->storage,
             'color' => $c->color,
+            'condition' => $c->condition?->value ?? 'new',
             'suggested_price' => (float) $c->suggested_price,
             'available_quantity' => $c->available_quantity,
         ])->values();

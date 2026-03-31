@@ -107,9 +107,14 @@
                                 <tr style="border-bottom: 1px solid #f3f4f6;">
                                     <td style="padding: 0.75rem;">
                                         <div style="font-weight: 600; color: #111827; font-size: 0.875rem;">{{ $item->name }}</div>
-                                        <div style="font-size: 0.75rem; color: #6b7280;">
+                                        <div style="font-size: 0.75rem; color: #6b7280; display: flex; align-items: center; gap: 0.375rem; margin-top: 1px;">
                                             @if($item->storage) {{ $item->storage }} @endif
                                             @if($item->color) · {{ $item->color }} @endif
+                                            @if(($item->condition?->value ?? 'new') === 'used')
+                                                <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#fef3c7;color:#92400e;">Seminovo</span>
+                                            @else
+                                                <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#dbeafe;color:#1e40af;">Novo</span>
+                                            @endif
                                         </div>
                                     </td>
                                     <td style="padding: 0.75rem; font-size: 0.8125rem; color: #374151;">{{ $item->supplier->name }}</td>

@@ -70,6 +70,28 @@
                         </div>
                     </div>
 
+                    {{-- Condição --}}
+                    <div>
+                        <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.375rem;">
+                            Condição <span style="color: #dc2626;">*</span>
+                        </label>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; border: 2px solid {{ old('condition', $item->condition?->value ?? 'new') === 'new' ? '#111827' : '#e5e7eb' }}; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 500;">
+                                <input type="radio" name="condition" value="new" {{ old('condition', $item->condition?->value ?? 'new') === 'new' ? 'checked' : '' }}
+                                       style="accent-color: #111827;"
+                                       onchange="this.closest('div').querySelectorAll('label').forEach(l => l.style.borderColor='#e5e7eb'); this.parentElement.style.borderColor='#111827';">
+                                Novo
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1rem; border: 2px solid {{ old('condition', $item->condition?->value) === 'used' ? '#111827' : '#e5e7eb' }}; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 500;">
+                                <input type="radio" name="condition" value="used" {{ old('condition', $item->condition?->value) === 'used' ? 'checked' : '' }}
+                                       style="accent-color: #111827;"
+                                       onchange="this.closest('div').querySelectorAll('label').forEach(l => l.style.borderColor='#e5e7eb'); this.parentElement.style.borderColor='#111827';">
+                                Seminovo
+                            </label>
+                        </div>
+                        @error('condition') <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                    </div>
+
                     {{-- IMEI --}}
                     <div>
                         <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">IMEI</label>
