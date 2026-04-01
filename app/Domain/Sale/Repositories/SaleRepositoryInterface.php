@@ -45,7 +45,7 @@ interface SaleRepositoryInterface
 
     public function getTopSellingProducts(int $limit = 10, ?Carbon $startDate = null, ?Carbon $endDate = null): Collection;
 
-    public function getSalesByDay(int $days = 30): Collection;
+    public function getSalesByDay(int $days = 30, ?Carbon $fromDate = null): Collection;
 
     public function getTotals(array $filters = []): array;
 }

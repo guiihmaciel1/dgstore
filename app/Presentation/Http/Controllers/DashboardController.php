@@ -21,6 +21,8 @@ use App\Domain\Schedule\Enums\AppointmentStatus;
 use App\Domain\Schedule\Models\Appointment;
 use App\Domain\Warranty\Services\WarrantyService;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -32,24 +34,22 @@ class DashboardController extends Controller
         private readonly ReservationService $reservationService
     ) {}
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $data = $this->reportUseCase->dashboardData();
+        $month = (int) $request->get('month', now()->month);
+        $year = (int) $request->get('year', now()->year);
+        $referenceDate = Carbon::createFromDate($year, $month, 1);
+        $isCurrentMonth = $referenceDate->isSameMonth(now());
 
-        // Notificações unificadas do sistema
+        $data = $this->reportUseCase->dashboardData($referenceDate);
+
         $systemNotifications = $this->getSystemNotifications();
-
-        // Novos leads aguardando interação (no estágio "Novo Lead" sem atividade real)
         $newLeadsWaiting = $this->getNewLeadsWaiting();
-
-        // Aniversariantes do mês
         $birthdayCustomers = $this->getBirthdayCustomers();
-
-        // Agenda do dia
         $todayAppointments = $this->getTodayAppointments();
         $nextAppointment = $this->getNextAppointment();
 
-        $monthSummary = $this->getMonthSummary();
+        $monthSummary = $this->getMonthSummary($referenceDate);
 
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
@@ -65,6 +65,8 @@ class DashboardController extends Controller
             'todayAppointments' => $todayAppointments,
             'nextAppointment' => $nextAppointment,
             'monthSummary' => $monthSummary,
+            'referenceDate' => $referenceDate,
+            'isCurrentMonth' => $isCurrentMonth,
         ]);
     }
 
@@ -236,10 +238,11 @@ class DashboardController extends Controller
             ->first();
     }
 
-    private function getMonthSummary(): array
+    private function getMonthSummary(?Carbon $referenceDate = null): array
     {
-        $start = now()->startOfMonth();
-        $end = now()->endOfMonth();
+        $ref = $referenceDate ?? now();
+        $start = $ref->copy()->startOfMonth();
+        $end = $ref->copy()->endOfMonth();
 
         $sales = Sale::with(['items.product', 'tradeIns'])
             ->whereBetween('sold_at', [$start, $end])
@@ -295,7 +298,7 @@ class DashboardController extends Controller
         )->count();
 
         return [
-            'month_label' => now()->translatedFormat('F/Y'),
+            'month_label' => $ref->translatedFormat('F/Y'),
             'total_sales' => $totalSales,
             'total_revenue' => $totalRevenue,
             'average_ticket' => $averageTicket,

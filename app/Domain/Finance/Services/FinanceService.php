@@ -19,51 +19,64 @@ class FinanceService
 {
     // ─── Dashboard ───
 
-    public function getDashboardData(): array
+    public function getDashboardData(?\Carbon\Carbon $referenceDate = null): array
     {
+        $ref = $referenceDate ?? now();
+        $monthStart = $ref->copy()->startOfMonth();
+        $monthEnd = $ref->copy()->endOfMonth();
+        $isCurrentMonth = $ref->isSameMonth(now());
+
         $accounts = FinancialAccount::active()->orderByDesc('is_default')->orderBy('name')->get();
         $totalBalance = (float) $accounts->sum('current_balance');
 
-        // Receitas e despesas que passaram por carteira (fluxo de caixa real, por data de pagamento)
-        $monthIncome = (float) FinancialTransaction::income()->paidThisMonth()->whereNotNull('account_id')->sum('amount');
-        $monthExpensePaid = (float) FinancialTransaction::expense()->paidThisMonth()->whereNotNull('account_id')->sum('amount');
+        $monthIncome = (float) FinancialTransaction::income()
+            ->paid()
+            ->whereNotNull('paid_at')
+            ->whereNotNull('account_id')
+            ->whereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()])
+            ->sum('amount');
+
+        $monthExpensePaid = (float) FinancialTransaction::expense()
+            ->paid()
+            ->whereNotNull('paid_at')
+            ->whereNotNull('account_id')
+            ->whereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()])
+            ->sum('amount');
+
         $monthProfit = $monthIncome - $monthExpensePaid;
 
-        // Despesas operacionais pendentes do mês (ainda não pagas, por due_date)
         $monthExpensePending = (float) FinancialTransaction::expense()
-            ->thisMonth()
+            ->whereMonth('due_date', $ref->month)
+            ->whereYear('due_date', $ref->year)
             ->unpaid()
             ->sum('amount');
 
-        // Despesas operacionais totais do mês (pagas via caixa + pendentes)
-        // Exclui lançamentos contábeis sem saída de caixa (CMV, Trade-in)
         $monthExpenseTotal = $monthExpensePaid + $monthExpensePending;
 
-        // Despesas operacionais do próximo mês (exclui lançamentos contábeis)
+        $nextMonth = $ref->copy()->addMonth();
         $nextMonthExpensePending = (float) FinancialTransaction::expense()
-            ->whereMonth('due_date', now()->addMonth()->month)
-            ->whereYear('due_date', now()->addMonth()->year)
+            ->whereMonth('due_date', $nextMonth->month)
+            ->whereYear('due_date', $nextMonth->year)
             ->unpaid()
             ->sum('amount');
 
         $nextMonthExpensePaid = (float) FinancialTransaction::expense()
-            ->whereMonth('due_date', now()->addMonth()->month)
-            ->whereYear('due_date', now()->addMonth()->year)
+            ->whereMonth('due_date', $nextMonth->month)
+            ->whereYear('due_date', $nextMonth->year)
             ->paid()
             ->whereNotNull('account_id')
             ->sum('amount');
 
         $nextMonthExpenseTotal = $nextMonthExpensePaid + $nextMonthExpensePending;
 
-        // Lucro real das vendas do mês (receita de venda - custo de mercadoria)
-        $salesData = $this->getSalesMonthData();
+        $salesData = $this->getSalesMonthData($referenceDate);
 
-        // Lucro líquido: lucro de vendas - despesas operacionais
         $netProfitCurrent = $salesData['salesProfit'] - $monthExpensePaid;
         $netProfitProjected = $salesData['salesProfit'] - $monthExpenseTotal;
 
         $dueSoon = FinancialTransaction::unpaid()
-            ->where('due_date', '<=', now()->addDays(7))
+            ->where('due_date', '<=', ($isCurrentMonth ? now() : $monthEnd)->copy()->addDays(7))
+            ->where('due_date', '>=', $monthStart)
             ->with(['category', 'account'])
             ->orderBy('due_date')
             ->limit(10)
@@ -71,11 +84,15 @@ class FinanceService
 
         $recentTransactions = FinancialTransaction::with(['category', 'account'])
             ->whereIn('status', ['paid', 'pending', 'overdue'])
+            ->where(function ($q) use ($monthStart, $monthEnd) {
+                $q->whereBetween('due_date', [$monthStart, $monthEnd])
+                  ->orWhereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()]);
+            })
             ->orderByDesc('created_at')
             ->limit(10)
             ->get();
 
-        $chartData = $this->getChartData(7);
+        $chartData = $this->getChartDataForMonth($ref);
 
         return compact(
             'accounts',
@@ -96,11 +113,15 @@ class FinanceService
         );
     }
 
-    public function getSalesMonthData(): array
+    public function getSalesMonthData(?\Carbon\Carbon $referenceDate = null): array
     {
+        $ref = $referenceDate ?? now();
+        $monthStart = $ref->copy()->startOfMonth();
+        $monthEnd = $ref->copy()->endOfMonth();
+
         $sales = Sale::with('items')
             ->paid()
-            ->thisMonth()
+            ->whereBetween('sold_at', [$monthStart, $monthEnd->copy()->endOfDay()])
             ->get();
 
         $salesCount = $sales->count();
@@ -121,6 +142,37 @@ class FinanceService
 
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = now()->subDays($i);
+            $labels[] = $date->format('d/m');
+
+            $incomes[] = (float) FinancialTransaction::income()
+                ->paid()
+                ->whereNotNull('account_id')
+                ->whereDate('paid_at', $date->toDateString())
+                ->sum('amount');
+
+            $expenses[] = (float) FinancialTransaction::expense()
+                ->paid()
+                ->whereNotNull('account_id')
+                ->whereDate('paid_at', $date->toDateString())
+                ->sum('amount');
+        }
+
+        return compact('labels', 'incomes', 'expenses');
+    }
+
+    public function getChartDataForMonth(\Carbon\Carbon $ref): array
+    {
+        $start = $ref->copy()->startOfMonth();
+        $end = $ref->copy()->endOfMonth();
+        $isCurrentMonth = $ref->isSameMonth(now());
+        $lastDay = $isCurrentMonth ? min(now()->day, $end->day) : $end->day;
+
+        $labels = [];
+        $incomes = [];
+        $expenses = [];
+
+        for ($day = 1; $day <= $lastDay; $day++) {
+            $date = $start->copy()->day($day);
             $labels[] = $date->format('d/m');
 
             $incomes[] = (float) FinancialTransaction::income()

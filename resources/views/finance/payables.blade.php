@@ -120,6 +120,36 @@
                 </form>
             </div>
 
+            <!-- Navegação de Mês -->
+            @php
+                $currentStart = \Carbon\Carbon::parse($filters['start_date']);
+                $currentEnd = \Carbon\Carbon::parse($filters['end_date']);
+                $refDate = $currentStart->copy()->startOfMonth();
+                $prevMonth = $refDate->copy()->subMonth();
+                $nextMonth = $refDate->copy()->addMonth();
+                $isCurrentMonth = $refDate->isSameMonth(now());
+            @endphp
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 0.625rem 1.25rem;">
+                <a href="{{ route('finance.payables', array_merge(request()->except(['start_date', 'end_date', 'page']), ['start_date' => $prevMonth->startOfMonth()->format('Y-m-d'), 'end_date' => $prevMonth->endOfMonth()->format('Y-m-d')])) }}"
+                   style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
+                   onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </a>
+                <div style="text-align: center; min-width: 160px;">
+                    <span style="font-size: 1rem; font-weight: 700; color: #111827; text-transform: capitalize;">{{ $refDate->translatedFormat('F Y') }}</span>
+                    @if(!$isCurrentMonth)
+                        <a href="{{ route('finance.payables') }}" style="display: block; font-size: 0.6875rem; color: #2563eb; text-decoration: none; font-weight: 500; margin-top: 0.125rem;">Voltar ao mês atual</a>
+                    @endif
+                </div>
+                @if(!$isCurrentMonth || true)
+                    <a href="{{ route('finance.payables', array_merge(request()->except(['start_date', 'end_date', 'page']), ['start_date' => $nextMonth->copy()->startOfMonth()->format('Y-m-d'), 'end_date' => $nextMonth->copy()->endOfMonth()->format('Y-m-d')])) }}"
+                       style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
+                       onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                @endif
+            </div>
+
             <!-- Filtros -->
             <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1.5rem;">
                 <form method="GET" action="{{ route('finance.payables') }}" x-data x-ref="filterForm">

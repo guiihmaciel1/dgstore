@@ -390,19 +390,22 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         }
     }
 
-    public function getSalesByDay(int $days = 30): Collection
+    public function getSalesByDay(int $days = 30, ?Carbon $fromDate = null): Collection
     {
-        $startDate = Carbon::now()->subDays($days - 1)->startOfDay();
+        $startDate = $fromDate ?? Carbon::now()->subDays($days - 1)->startOfDay();
+        $endDate = $fromDate ? $fromDate->copy()->addDays($days - 1)->endOfDay() : null;
 
-        $sales = Sale::select(
+        $query = Sale::select(
             DB::raw('DATE(sold_at) as date'),
             DB::raw('SUM(total) as total')
         )
             ->where('sold_at', '>=', $startDate)
-            ->where('payment_status', '!=', PaymentStatus::Cancelled)
-            ->groupBy('date')
-            ->get();
+            ->where('payment_status', '!=', PaymentStatus::Cancelled);
 
-        return $sales->pluck('total', 'date');
+        if ($endDate) {
+            $query->where('sold_at', '<=', $endDate);
+        }
+
+        return $query->groupBy('date')->get()->pluck('total', 'date');
     }
 }

@@ -17,6 +17,37 @@
                 </div>
             </div>
 
+            <!-- Navegação de Mês -->
+            @php
+                $prevMonth = $referenceDate->copy()->subMonth();
+                $nextMonth = $referenceDate->copy()->addMonth();
+                $canGoNext = !$isCurrentMonth;
+            @endphp
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 0.625rem 1.25rem;">
+                <a href="{{ route('finance.index', ['month' => $prevMonth->month, 'year' => $prevMonth->year]) }}"
+                   style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
+                   onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </a>
+                <div style="text-align: center; min-width: 160px;">
+                    <span style="font-size: 1rem; font-weight: 700; color: #111827; text-transform: capitalize;">{{ $referenceDate->translatedFormat('F Y') }}</span>
+                    @if(!$isCurrentMonth)
+                        <a href="{{ route('finance.index') }}" style="display: block; font-size: 0.6875rem; color: #2563eb; text-decoration: none; font-weight: 500; margin-top: 0.125rem;">Voltar ao mês atual</a>
+                    @endif
+                </div>
+                @if($canGoNext)
+                    <a href="{{ route('finance.index', ['month' => $nextMonth->month, 'year' => $nextMonth->year]) }}"
+                       style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
+                       onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                @else
+                    <div style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f9fafb; display: flex; align-items: center; justify-content: center; color: #d1d5db;">
+                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                @endif
+            </div>
+
             <!-- Cards Principais -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                 <div style="background: linear-gradient(135deg, #111827 0%, #1f2937 100%); border-radius: 0.75rem; padding: 1.25rem; color: white;">
@@ -214,7 +245,7 @@
                 <!-- Gráfico Receitas vs Despesas -->
                 <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
                     <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb;">
-                        <h2 style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Receitas vs Despesas (7 dias)</h2>
+                        <h2 style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Receitas vs Despesas — <span style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('F/Y') }}</span></h2>
                     </div>
                     <div style="padding: 1.25rem;">
                         <canvas id="financeChart" height="200"></canvas>

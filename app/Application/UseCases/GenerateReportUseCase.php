@@ -127,37 +127,40 @@ class GenerateReportUseCase
     /**
      * Gera dados para o dashboard
      */
-    public function dashboardData(): array
+    public function dashboardData(?Carbon $referenceDate = null): array
     {
-        $today = Carbon::today();
-        $todayEnd = Carbon::today()->endOfDay();
-        $monthStart = Carbon::now()->startOfMonth();
-        $monthEnd = Carbon::now()->endOfMonth();
+        $ref = $referenceDate ?? Carbon::now();
+        $monthStart = $ref->copy()->startOfMonth();
+        $monthEnd = $ref->copy()->endOfMonth();
+        $isCurrentMonth = $ref->isSameMonth(Carbon::now());
 
-        // Vendas de hoje
         $todaySales = $this->saleRepository->getTodaySales();
         $todayTotal = $todaySales->sum('total');
         $todayCount = $todaySales->count();
 
-        // Vendas do mês
         $monthTotal = $this->saleRepository->getTotalByDateRange($monthStart, $monthEnd);
         $monthCount = $this->saleRepository->getCountByDateRange($monthStart, $monthEnd);
 
-        // Estoque baixo
         $lowStock = $this->productRepository->getLowStock();
 
-        // Produtos mais vendidos (últimos 30 dias)
-        $topProducts = $this->saleRepository->getTopSellingProducts(5);
+        $topProducts = $this->saleRepository->getTopSellingProducts(5, $monthStart, $monthEnd);
 
-        // Dados para gráfico de vendas (últimos 7 dias)
-        $salesChart = $this->saleRepository->getSalesByDay(7);
+        $salesChart = $this->saleRepository->getSalesByDay($isCurrentMonth ? 7 : $monthEnd->day, $isCurrentMonth ? null : $monthStart);
         $chartLabels = [];
         $chartData = [];
 
-        for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i);
-            $chartLabels[] = $date->format('d/m');
-            $chartData[] = (float) ($salesChart->get($date->format('Y-m-d'), 0));
+        if ($isCurrentMonth) {
+            for ($i = 6; $i >= 0; $i--) {
+                $date = Carbon::now()->subDays($i);
+                $chartLabels[] = $date->format('d/m');
+                $chartData[] = (float) ($salesChart->get($date->format('Y-m-d'), 0));
+            }
+        } else {
+            for ($day = 1; $day <= $monthEnd->day; $day++) {
+                $date = $monthStart->copy()->day($day);
+                $chartLabels[] = $date->format('d/m');
+                $chartData[] = (float) ($salesChart->get($date->format('Y-m-d'), 0));
+            }
         }
 
         return [
@@ -249,8 +252,10 @@ class GenerateReportUseCase
             ->values();
 
         $monthExpensesPaid = (float) FinancialTransaction::expense()
-            ->paidThisMonth()
+            ->paid()
+            ->whereNotNull('paid_at')
             ->whereNotNull('account_id')
+            ->whereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()])
             ->sum('amount');
 
         $realProfit = $monthProfit - $monthExpensesPaid;

@@ -21,10 +21,18 @@ class FinanceController extends Controller
 
     // ─── Dashboard ───
 
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->financeService->markOverdueTransactions();
-        $data = $this->financeService->getDashboardData();
+
+        $month = (int) $request->get('month', now()->month);
+        $year = (int) $request->get('year', now()->year);
+        $referenceDate = \Carbon\Carbon::createFromDate($year, $month, 1);
+
+        $data = $this->financeService->getDashboardData($referenceDate);
+
+        $data['referenceDate'] = $referenceDate;
+        $data['isCurrentMonth'] = $referenceDate->isSameMonth(now());
 
         return view('finance.index', $data);
     }

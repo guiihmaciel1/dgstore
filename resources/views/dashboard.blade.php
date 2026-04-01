@@ -397,6 +397,37 @@
                 .sn-ok svg { width: 1rem; height: 1rem; color: #16a34a; }
             </style>
 
+            <!-- Navegação de Mês -->
+            @php
+                $prevMonth = $referenceDate->copy()->subMonth();
+                $nextMonth = $referenceDate->copy()->addMonth();
+                $canGoNext = !$isCurrentMonth;
+            @endphp
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 0.625rem 1.25rem;">
+                <a href="{{ route('dashboard', ['month' => $prevMonth->month, 'year' => $prevMonth->year]) }}"
+                   style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
+                   onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </a>
+                <div style="text-align: center; min-width: 160px;">
+                    <span style="font-size: 1rem; font-weight: 700; color: #111827; text-transform: capitalize;">{{ $referenceDate->translatedFormat('F Y') }}</span>
+                    @if(!$isCurrentMonth)
+                        <a href="{{ route('dashboard') }}" style="display: block; font-size: 0.6875rem; color: #2563eb; text-decoration: none; font-weight: 500; margin-top: 0.125rem;">Voltar ao mês atual</a>
+                    @endif
+                </div>
+                @if($canGoNext)
+                    <a href="{{ route('dashboard', ['month' => $nextMonth->month, 'year' => $nextMonth->year]) }}"
+                       style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
+                       onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                @else
+                    <div style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f9fafb; display: flex; align-items: center; justify-content: center; color: #d1d5db;">
+                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </div>
+                @endif
+            </div>
+
             <!-- Cards de Estatísticas -->
             <div x-data="{ showValues: localStorage.getItem('dg_show_values') !== 'false' }"
                  x-init="$watch('showValues', v => localStorage.setItem('dg_show_values', v))"
@@ -569,7 +600,7 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-base sm:text-lg font-semibold text-gray-900">Produtos Mais Lucrativos</h3>
-                            <span class="text-xs text-gray-400 font-medium">Mês atual</span>
+                            <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
                         </div>
                         @if($profit['top_products']->count() > 0)
                             @php $maxProfit = $profit['top_products']->max('profit'); @endphp
@@ -614,7 +645,7 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-base sm:text-lg font-semibold text-gray-900">Lucro por Categoria</h3>
-                            <span class="text-xs text-gray-400 font-medium">Mês atual</span>
+                            <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
                         </div>
                         @if($profit['category_ranking']->count() > 0)
                             @php $maxCatRevenue = $profit['category_ranking']->max('revenue'); @endphp
