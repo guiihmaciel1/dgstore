@@ -222,18 +222,20 @@ class ConsignmentStockService
 
     public function getSoldBySupplier(string $supplierId, ?string $dateFrom = null, ?string $dateTo = null): Collection
     {
-        $query = ConsignmentStockItem::with('supplier', 'batch')
-            ->bySupplier($supplierId)
-            ->sold();
+        $query = ConsignmentStockMovement::with('consignmentItem.supplier', 'consignmentItem.batch')
+            ->where('type', ConsignmentMovementType::Out)
+            ->whereHas('consignmentItem', function ($q) use ($supplierId) {
+                $q->where('supplier_id', $supplierId);
+            });
 
         if ($dateFrom) {
-            $query->where('sold_at', '>=', $dateFrom);
+            $query->where('created_at', '>=', $dateFrom);
         }
         if ($dateTo) {
-            $query->where('sold_at', '<=', $dateTo . ' 23:59:59');
+            $query->where('created_at', '<=', $dateTo . ' 23:59:59');
         }
 
-        return $query->orderBy('sold_at', 'desc')->get();
+        return $query->orderBy('created_at', 'desc')->get();
     }
 
     public function searchAvailable(?string $term): Collection

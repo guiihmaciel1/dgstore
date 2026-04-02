@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers;
 
+use App\Domain\ConsignmentStock\Enums\ConsignmentMovementType;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
+use App\Domain\ConsignmentStock\Models\ConsignmentStockMovement;
 use Illuminate\Support\Facades\DB;
 use App\Domain\ConsignmentStock\Services\ConsignmentStockService;
 use App\Domain\Supplier\Models\Supplier;
@@ -41,11 +43,16 @@ class ConsignmentStockController extends Controller
 
         $suppliers = Supplier::active()->orderBy('name')->get();
 
+        $soldMovements = ConsignmentStockMovement::where('type', ConsignmentMovementType::Out);
+
         $stats = [
             'available' => ConsignmentStockItem::available()->sum('available_quantity'),
             'available_value' => ConsignmentStockItem::available()->sum(DB::raw('available_quantity * supplier_cost')),
-            'sold' => ConsignmentStockItem::sold()->count(),
-            'sold_value' => ConsignmentStockItem::sold()->sum(DB::raw('quantity * supplier_cost')),
+            'sold' => (clone $soldMovements)->sum('quantity'),
+            'sold_value' => (float) (clone $soldMovements)
+                ->join('consignment_stock_items', 'consignment_stock_movements.consignment_item_id', '=', 'consignment_stock_items.id')
+                ->selectRaw('COALESCE(SUM(consignment_stock_movements.quantity * consignment_stock_items.supplier_cost), 0) as total')
+                ->value('total'),
         ];
 
         return view('stock.consignment.index', [
