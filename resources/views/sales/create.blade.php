@@ -663,7 +663,7 @@
                                 <!-- Status -->
                                 <div>
                                     <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Status</label>
-                                    <select name="payment_status" required style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background: white;">
+                                    <select name="payment_status" x-model="paymentStatus" required style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background: white;">
                                         @foreach($paymentStatuses as $status)
                                             <option value="{{ $status->value }}" {{ $status->value === 'paid' ? 'selected' : '' }}>{{ $status->label() }}</option>
                                         @endforeach
@@ -1301,6 +1301,7 @@
                 total: 0,
                 
                 // Pagamento
+                paymentStatus: 'paid',
                 cashPayment: 0,
                 pixPayment: 0,
                 cashPaymentMethod: '',
@@ -1401,10 +1402,14 @@
                 // Computed: pode submeter o formulário
                 get canSubmit() {
                     if (this.items.length === 0) return false;
-                    if (this.total > 0) {
-                        return Math.abs(this.paymentDifference) <= 0.01;
-                    }
-                    return true;
+                    if (this.total <= 0) return true;
+                    const diff = this.paymentDifference;
+                    if (Math.abs(diff) <= 0.01) return true;
+                    const allowsOpenBalance =
+                        this.paymentStatus === 'pending' || this.paymentStatus === 'partial';
+                    // Parcial/Pendente: permite finalizar com valor em aberto; excedente continua bloqueado
+                    if (allowsOpenBalance && diff > 0.01) return true;
+                    return false;
                 },
                 
                 addCardPayment() {
