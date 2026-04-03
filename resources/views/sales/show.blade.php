@@ -478,7 +478,7 @@
                                                 por R$ {{ number_format($resalePrice, 2, ',', '.') }}
                                                 — Lucro: R$ {{ number_format($resaleProfit, 2, ',', '.') }}
                                             </p>
-                                        @else
+                                        @elseif($tradeInProduct)
                                             <p style="font-size: 0.8125rem; color: #1d4ed8;">
                                                 Trade-in cadastrado como produto:
                                                 <a href="{{ route('products.show', $tradeInProduct) }}" style="text-decoration: underline; font-weight: 600;">
@@ -486,6 +486,11 @@
                                                 </a>
                                                 — Valor estimado: R$ {{ number_format($tradeInCost, 2, ',', '.') }}
                                                 | Estoque: {{ $tradeInProduct->stock_quantity }} un.
+                                            </p>
+                                        @else
+                                            <p style="font-size: 0.8125rem; color: #6b7280;">
+                                                Trade-in processado — Produto removido do estoque
+                                                — Valor estimado: R$ {{ number_format($tradeInCost, 2, ',', '.') }}
                                             </p>
                                         @endif
                                     </div>

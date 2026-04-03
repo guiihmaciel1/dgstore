@@ -316,7 +316,7 @@
                     </h3>
 
                     <div x-show="resaleConsignment.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
-                        Nenhum item consignado disponivel
+                        Nenhum item novo disponivel
                     </div>
 
                     <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;" x-show="resaleConsignment.length > 0">
@@ -332,7 +332,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <template x-for="item in resaleConsignment" :key="item.id">
+                                <template x-for="item in resaleConsignment" :key="(item.morph_type || 'consignment') + '_' + item.id">
                                     <tr style="border-bottom: 1px solid #f3f4f6;">
                                         <td style="padding: 0.375rem 0.75rem; text-align: center;">
                                             <input type="checkbox" x-model="item.resale.visible"
@@ -649,6 +649,7 @@
 
         const consignmentForResale = @json($consignmentResaleJson);
         const usedForResale = @json($usedResaleJson);
+        const newProductsForResale = @json($newProductsResaleJson);
         const resaleItemsMap = @json($resaleItems);
 
         const colorMap = {
@@ -757,9 +758,10 @@
                 };
             }).sort((a, b) => (parseFloat(a.listing.final_price) || 0) - (parseFloat(b.listing.final_price) || 0)),
 
-            resaleConsignment: consignmentForResale
-                .filter(c => (c.condition || 'new') === 'new')
-                .map(c => ({
+            resaleConsignment: [
+                ...consignmentForResale.filter(c => (c.condition || 'new') === 'new'),
+                ...newProductsForResale,
+            ].map(c => ({
                     ...c,
                     resale: buildResaleData(c),
                     _colorHex: getColorHex(c.color),

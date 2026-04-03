@@ -47,6 +47,12 @@ class MarketingController extends Controller
             ->orderBy('name')
             ->get();
 
+        $newProducts = Product::where('active', true)
+            ->where('stock_quantity', '>', 0)
+            ->where('condition', 'new')
+            ->orderBy('name')
+            ->get();
+
         $allConsignmentItems = ConsignmentStockItem::available()
             ->where('available_quantity', '>', 0)
             ->orderBy('name')
@@ -128,6 +134,16 @@ class MarketingController extends Controller
             'stock' => $p->stock_quantity,
         ])->values();
 
+        $newProductsResaleJson = $newProducts->map(fn ($p) => [
+            'id' => $p->id,
+            'morph_type' => Product::class,
+            'name' => $p->name,
+            'storage' => $p->storage,
+            'color' => $p->color,
+            'condition' => $p->condition->value,
+            'stock' => $p->stock_quantity,
+        ])->values();
+
         return view('marketing.index', [
             'prices' => $prices,
             'pricesJson' => $pricesJson,
@@ -138,6 +154,7 @@ class MarketingController extends Controller
             'usedListings' => $usedListings,
             'consignmentResaleJson' => $consignmentResaleJson,
             'usedResaleJson' => $usedResaleJson,
+            'newProductsResaleJson' => $newProductsResaleJson,
             'resaleItems' => $resaleItems,
         ]);
     }
