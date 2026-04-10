@@ -45,7 +45,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'name'     => 'Sophia',
-                'email'    => 'sophia@dgstore.com.br',
+                'email'    => 'sophia@dgstore.com',
                 'password' => Hash::make('password'),
                 'role'     => UserRole::Intern,
                 'active'   => true,
