@@ -106,7 +106,7 @@
             ],
 
             templates: [
-                // ── ATENDIMENTO ──
+                // ATENDIMENTO
                 {
                     icon: '\uD83D\uDC4B', title: 'Boas-vindas', subtitle: 'Primeiro contato com o cliente', key: 'welcome', cat: 'atendimento',
                     fields: [
@@ -131,7 +131,7 @@
                     ],
                 },
                 {
-                    icon: '\uD83D\uDD04', title: 'Proposta de trade-in', subtitle: 'Upgrade com aparelho usado', key: 'tradein', cat: 'atendimento',
+                    icon: '\uD83D\uDD04', title: 'Proposta de Trade-in', subtitle: 'Upgrade com aparelho usado', key: 'tradein', cat: 'atendimento',
                     fields: [
                         { label: 'Nome do cliente', value: '' },
                         { label: 'Aparelho atual', value: 'iPhone 14 Pro' },
@@ -141,15 +141,25 @@
                     ],
                 },
                 {
-                    icon: '\u2753', title: 'Tire d\u00favidas (seminovo)', subtitle: 'Explicar sobre seminovos', key: 'seminovo', cat: 'atendimento',
+                    icon: '\uD83D\uDCF1', title: 'Seminovo', subtitle: 'Explicar qualidade dos seminovos', key: 'seminovo', cat: 'atendimento',
                     fields: [
                         { label: 'Nome do cliente', value: '' },
                         { label: 'Produto', value: 'iPhone 15 Pro 128GB' },
                         { label: 'Condi\u00e7\u00e3o', value: 'estado excelente, bateria 92%' },
                     ],
                 },
+                {
+                    icon: '\uD83D\uDCCA', title: 'Comparativo de modelos', subtitle: 'Ajudar na escolha entre modelos', key: 'compare', cat: 'atendimento',
+                    fields: [
+                        { label: 'Nome do cliente', value: '' },
+                        { label: 'Modelo 1', value: 'iPhone 15 Pro' },
+                        { label: 'Pre\u00e7o modelo 1', value: '6.499' },
+                        { label: 'Modelo 2', value: 'iPhone 16 Pro' },
+                        { label: 'Pre\u00e7o modelo 2', value: '8.499' },
+                    ],
+                },
 
-                // ── VENDA ──
+                // VENDA
                 {
                     icon: '\u2705', title: 'Confirma\u00e7\u00e3o de venda', subtitle: 'Compra confirmada com sucesso', key: 'confirm', cat: 'venda',
                     fields: [
@@ -175,8 +185,17 @@
                         { label: 'Data limite', value: '' },
                     ],
                 },
+                {
+                    icon: '\uD83D\uDCB3', title: 'Dados para pagamento', subtitle: 'Enviar dados de Pix ou cart\u00e3o', key: 'payment', cat: 'venda',
+                    fields: [
+                        { label: 'Nome do cliente', value: '' },
+                        { label: 'Valor', value: '8.499' },
+                        { label: 'Chave Pix', value: '' },
+                        { label: 'Titular', value: 'DG Store' },
+                    ],
+                },
 
-                // ── P\u00d3S-VENDA ──
+                // P\u00d3S-VENDA
                 {
                     icon: '\uD83D\uDEE1\uFE0F', title: 'Garantia', subtitle: 'Informa\u00e7\u00f5es da garantia', key: 'warranty', cat: 'posvenda',
                     fields: [
@@ -194,13 +213,20 @@
                     ],
                 },
                 {
-                    icon: '\u2B50', title: 'Pedir avalia\u00e7\u00e3o', subtitle: 'Solicitar review no Google', key: 'review', cat: 'posvenda',
+                    icon: '\u2B50', title: 'Avalia\u00e7\u00e3o no Google', subtitle: 'Solicitar avalia\u00e7\u00e3o do cliente', key: 'review', cat: 'posvenda',
                     fields: [
                         { label: 'Nome do cliente', value: '' },
                     ],
                 },
+                {
+                    icon: '\uD83D\uDCF2', title: 'Dicas de uso', subtitle: 'Orienta\u00e7\u00f5es para o aparelho novo', key: 'tips', cat: 'posvenda',
+                    fields: [
+                        { label: 'Nome do cliente', value: '' },
+                        { label: 'Produto', value: 'iPhone 16 Pro' },
+                    ],
+                },
 
-                // ── FOLLOW-UP ──
+                // FOLLOW-UP
                 {
                     icon: '\uD83D\uDCE2', title: 'Produto chegou', subtitle: 'Avisar que o produto est\u00e1 dispon\u00edvel', key: 'arrived', cat: 'followup',
                     fields: [
@@ -217,12 +243,26 @@
                     ],
                 },
                 {
-                    icon: '\uD83C\uDF81', title: 'Promo\u00e7\u00e3o / Oportunidade', subtitle: 'Condi\u00e7\u00e3o especial por tempo limitado', key: 'promo', cat: 'followup',
+                    icon: '\uD83C\uDF1F', title: 'Condi\u00e7\u00e3o especial', subtitle: 'Oportunidade por tempo limitado', key: 'promo', cat: 'followup',
                     fields: [
                         { label: 'Nome do cliente', value: '' },
                         { label: 'Produto', value: 'iPhone 16 Pro 256GB' },
                         { label: 'De (pre\u00e7o anterior)', value: '9.199' },
                         { label: 'Por (pre\u00e7o atual)', value: '8.499' },
+                    ],
+                },
+                {
+                    icon: '\uD83C\uDF82', title: 'Anivers\u00e1rio do cliente', subtitle: 'Parabenizar e oferecer condi\u00e7\u00e3o', key: 'birthday', cat: 'followup',
+                    fields: [
+                        { label: 'Nome do cliente', value: '' },
+                    ],
+                },
+                {
+                    icon: '\uD83D\uDD01', title: 'Upgrade', subtitle: 'Sugerir troca para modelo novo', key: 'upgrade', cat: 'followup',
+                    fields: [
+                        { label: 'Nome do cliente', value: '' },
+                        { label: 'Modelo atual do cliente', value: 'iPhone 13' },
+                        { label: 'Modelo sugerido', value: 'iPhone 16 Pro' },
                     ],
                 },
             ],
@@ -242,51 +282,66 @@
 
                 switch (tpl.key) {
                     case 'welcome':
-                        return 'Ol\u00e1, ' + nome + '! \uD83D\uDC4B\n\nQue bom ter voc\u00ea aqui! Eu sou da *DG Store*, especialista em produtos Apple.\n\nTrabalhamos com *iPhones, iPads, MacBooks, Apple Watch e acess\u00f3rios* \u2014 todos com proced\u00eancia verificada e garantia.\n\nMe conta, o que voc\u00ea est\u00e1 procurando? Vou te ajudar a encontrar a melhor op\u00e7\u00e3o pro seu perfil \uD83D\uDE09';
+                        return 'Ol\u00e1, ' + nome + '! Tudo bem?\n\nSeja muito bem-vinda(o) \u00e0 *DG Store*! Sou a Sophia, consultora especializada em produtos Apple.\n\nTrabalhamos com *iPhones novos e seminovos*, todos com proced\u00eancia verificada e garantia de loja.\n\nPosso ajudar a encontrar o modelo ideal para voc\u00ea. Qual aparelho est\u00e1 buscando?';
 
                     case 'evaluation':
-                        return 'Preciso de algumas informa\u00e7\u00f5es para avaliar seu aparelho:\n\n*Modelo:*\n*Cor:*\n*Capacidade (GB):*\n*Sa\u00fade da bateria (%):*\n*J\u00e1 foi aberto ou trocou alguma pe\u00e7a?*\n*Possui caixa e acess\u00f3rios?*\n*Detalhes est\u00e9ticos (riscos, marcas, etc.):*\n*Observa\u00e7\u00f5es:*\n\nCom esses dados consigo te passar um valor justo.\n\n_DG Store_';
+                        return 'Ol\u00e1, ' + nome + '! Para realizar a avalia\u00e7\u00e3o do seu aparelho, preciso de algumas informa\u00e7\u00f5es:\n\n*Modelo:*\n*Cor:*\n*Capacidade (GB):*\n*Sa\u00fade da bateria (%):*\n*J\u00e1 foi aberto ou trocou alguma pe\u00e7a?*\n*Possui caixa e acess\u00f3rios originais?*\n*Condi\u00e7\u00e3o est\u00e9tica (riscos, marcas):*\n*Alguma observa\u00e7\u00e3o adicional:*\n\nCom essas informa\u00e7\u00f5es, consigo apresentar a melhor proposta para o seu aparelho.\n\nAguardo o retorno!';
 
                     case 'quote':
-                        return 'Ol\u00e1, ' + nome + '! Preparei seu or\u00e7amento \uD83D\uDCCB\n\n\uD83D\uDCF1 *' + f[1].value + '*\n\uD83C\uDFA8 Cor: ' + f[2].value + '\n\n\u2705 *Pix: R$ ' + f[3].value + '* _(melhor pre\u00e7o)_\n\uD83D\uDCB3 Cart\u00e3o: at\u00e9 *' + f[4].value + ' de R$ ' + f[5].value + '*\n\n\uD83D\uDD12 *O que voc\u00ea recebe:*\n\u2022 Produto com proced\u00eancia verificada\n\u2022 Nota fiscal\n\u2022 Garantia DG Store\n\u2022 Suporte p\u00f3s-venda\n\nTem alguma d\u00favida? Pode perguntar, estou aqui pra te ajudar! \uD83D\uDE0A';
+                        return 'Ol\u00e1, ' + nome + '! Segue o or\u00e7amento conforme solicitado:\n\n*' + f[1].value + '*\nCor: ' + f[2].value + '\n\n*Pix/Dinheiro: R$ ' + f[3].value + '* (melhor condi\u00e7\u00e3o)\nCart\u00e3o: at\u00e9 *' + f[4].value + ' de R$ ' + f[5].value + '*\n\n*Incluso na compra:*\n\u2022 Proced\u00eancia verificada\n\u2022 Nota fiscal\n\u2022 Garantia DG Store\n\u2022 Suporte p\u00f3s-venda\n\nCaso tenha alguma d\u00favida sobre o produto ou condi\u00e7\u00f5es, fico \u00e0 disposi\u00e7\u00e3o.';
 
                     case 'tradein':
                         var tradeVal = parseFloat(String(f[2].value).replace(/\./g,'').replace(',','.')) || 0;
                         var novoVal = parseFloat(String(f[4].value).replace(/\./g,'').replace(',','.')) || 0;
                         var resta = Math.max(0, novoVal - tradeVal);
-                        return 'Ol\u00e1, ' + nome + '! Fiz a avalia\u00e7\u00e3o do seu aparelho \uD83D\uDD0D\n\n\uD83D\uDCF1 *Seu aparelho:* ' + f[1].value + '\n\uD83D\uDCB0 *Valor avaliado:* R$ ' + f[2].value + '\n\n\u2728 *Aparelho novo:* ' + f[3].value + '\n\uD83C\uDFF7\uFE0F *Pre\u00e7o:* R$ ' + f[4].value + '\n\n\uD83D\uDE80 *Voc\u00ea paga apenas: R$ ' + resta.toLocaleString('pt-BR') + '*\n_(e o restante pode ser parcelado no cart\u00e3o)_\n\n\u00c9 uma \u00f3tima oportunidade de fazer o upgrade sem pesar no bolso.\n\nQuer seguir com a troca? \uD83D\uDE0A';
+                        return 'Ol\u00e1, ' + nome + '! Conclu\u00ed a avalia\u00e7\u00e3o do seu aparelho.\n\n*Seu aparelho:* ' + f[1].value + '\n*Valor da avalia\u00e7\u00e3o:* R$ ' + f[2].value + '\n\n*Aparelho novo:* ' + f[3].value + '\n*Valor:* R$ ' + f[4].value + '\n\n*Valor com a troca: R$ ' + resta.toLocaleString('pt-BR') + '*\nO restante pode ser parcelado no cart\u00e3o.\n\n\u00c9 uma excelente oportunidade para fazer o upgrade com economia. Posso reservar o aparelho para voc\u00ea?';
 
                     case 'seminovo':
-                        return 'Ol\u00e1, ' + nome + '! Entendo sua d\u00favida sobre seminovos, vou te explicar direitinho \uD83D\uDE09\n\n\uD83D\uDCF1 *' + f[1].value + '*\nCondi\u00e7\u00e3o: *' + f[2].value + '*\n\n\uD83D\uDD0D *O que verificamos antes de vender:*\n\u2022 Teste completo de todas as fun\u00e7\u00f5es\n\u2022 Verifica\u00e7\u00e3o de IMEI (livre de bloqueios)\n\u2022 Sa\u00fade da bateria\n\u2022 Inspe\u00e7\u00e3o visual detalhada\n\u2022 Higieniza\u00e7\u00e3o completa\n\n\uD83D\uDEE1\uFE0F *Vem com garantia DG Store* \u2014 voc\u00ea compra com a mesma seguran\u00e7a de um novo.\n\nSe quiser, posso te enviar fotos e v\u00eddeos do aparelho! \uD83D\uDCF8';
+                        return 'Ol\u00e1, ' + nome + '! Entendo perfeitamente a sua d\u00favida. Vou explicar como funciona.\n\n*' + f[1].value + '*\nCondi\u00e7\u00e3o: *' + f[2].value + '*\n\n*Nosso processo de verifica\u00e7\u00e3o:*\n\u2022 Teste completo de todas as fun\u00e7\u00f5es\n\u2022 Verifica\u00e7\u00e3o de IMEI (livre de bloqueios)\n\u2022 Confer\u00eancia da sa\u00fade da bateria\n\u2022 Inspe\u00e7\u00e3o visual detalhada\n\u2022 Higieniza\u00e7\u00e3o profissional\n\nTodos os nossos seminovos acompanham *garantia DG Store*, oferecendo a mesma seguran\u00e7a de um aparelho novo.\n\nSe desejar, posso enviar fotos e v\u00eddeos do aparelho para a senhora conferir.';
+
+                    case 'compare':
+                        return 'Ol\u00e1, ' + nome + '! Preparei um comparativo para facilitar a sua escolha:\n\n*Op\u00e7\u00e3o 1: ' + f[1].value + '*\nValor: R$ ' + f[2].value + '\n\n*Op\u00e7\u00e3o 2: ' + f[3].value + '*\nValor: R$ ' + f[4].value + '\n\nAmbos os modelos s\u00e3o excelentes. A diferen\u00e7a principal est\u00e1 no processador, c\u00e2mera e recursos exclusivos da gera\u00e7\u00e3o mais recente.\n\nPosso detalhar as diferen\u00e7as conforme o que for mais importante para o seu uso. \u00c9 s\u00f3 me dizer!';
 
                     case 'confirm':
-                        return nome + ', tudo certo! Sua compra foi *confirmada* \u2705\n\n\uD83D\uDCF1 *' + f[1].value + '*\n\uD83D\uDCB0 Valor: *R$ ' + f[2].value + '*\n\uD83D\uDCB3 Pagamento: *' + f[3].value + '*\n\n\uD83D\uDD12 *Voc\u00ea pode ficar tranquilo(a):*\n\u2022 Produto com proced\u00eancia verificada\n\u2022 Garantia DG Store inclusa\n\u2022 Suporte sempre que precisar\n\nVou te avisar assim que estiver tudo pronto, combinado?\n\nObrigado pela confian\u00e7a! \uD83D\uDE4F';
+                        return 'Ol\u00e1, ' + nome + '! Sua compra foi *confirmada com sucesso*.\n\n*' + f[1].value + '*\nValor: *R$ ' + f[2].value + '*\nPagamento: *' + f[3].value + '*\n\n*O que est\u00e1 incluso:*\n\u2022 Produto com proced\u00eancia verificada\n\u2022 Garantia DG Store\n\u2022 Suporte p\u00f3s-venda\n\nAvisarei assim que tudo estiver pronto.\n\nAgradecemos a confian\u00e7a na DG Store!';
 
                     case 'pickup':
-                        return 'Ol\u00e1, ' + nome + '! \uD83C\uDF89\n\nSeu *' + f[1].value + '* j\u00e1 est\u00e1 pronto e te esperando!\n\n\uD83D\uDCCD *Retirada na loja:*\n\uD83D\uDD50 Seg a Sex: 9h \u00e0s 18h\n\uD83D\uDD50 S\u00e1b: 9h \u00e0s 13h\n\n\uD83D\uDCCB *Traga um documento com foto.*\n\nSe precisar de ajuda para configurar o aparelho, fazemos na hora, sem custo! \uD83D\uDE09\n\nTe esperamos!';
+                        return 'Ol\u00e1, ' + nome + '!\n\nSeu *' + f[1].value + '* j\u00e1 est\u00e1 pronto para retirada.\n\n*Hor\u00e1rio de funcionamento:*\nSegunda a Sexta: 9h \u00e0s 18h\nS\u00e1bado: 9h \u00e0s 13h\n\n*Importante:* traga um documento com foto.\n\nSe precisar de aux\u00edlio para configurar o aparelho, faremos na hora, sem custo adicional.\n\nEstamos aguardando a sua visita!';
 
                     case 'reservation':
                         var dataLimite = f[3].value || 'consultar';
-                        return 'Ol\u00e1, ' + nome + '! Passando para lembrar da sua reserva \uD83D\uDE09\n\n\uD83D\uDCF1 *' + f[1].value + '*\n\uD83D\uDCB0 Sinal: *R$ ' + f[2].value + '*\n\uD83D\uDCC5 V\u00e1lida at\u00e9: *' + dataLimite + '*\n\nSeu produto est\u00e1 separado e garantido! Para finalizar, \u00e9 s\u00f3 me chamar aqui.\n\nCaso precise de mais tempo ou tenha alguma d\u00favida, s\u00f3 avisar \u2014 estou \u00e0 disposi\u00e7\u00e3o \uD83D\uDE0A';
+                        return 'Ol\u00e1, ' + nome + '! Passando para lembrar da sua reserva.\n\n*' + f[1].value + '*\nSinal: *R$ ' + f[2].value + '*\nV\u00e1lida at\u00e9: *' + dataLimite + '*\n\nO produto est\u00e1 separado e garantido. Para finalizar, basta entrar em contato.\n\nCaso precise de um prazo maior ou tenha alguma d\u00favida, fico \u00e0 disposi\u00e7\u00e3o.';
+
+                    case 'payment':
+                        return 'Ol\u00e1, ' + nome + '! Seguem os dados para pagamento:\n\n*Valor: R$ ' + f[1].value + '*\n\n*Pix:*\nChave: ' + f[2].value + '\nTitular: ' + f[3].value + '\n\nAp\u00f3s a transfer\u00eancia, por gentileza, envie o comprovante por aqui para que eu possa dar andamento ao pedido.\n\nQualquer d\u00favida, estou \u00e0 disposi\u00e7\u00e3o.';
 
                     case 'warranty':
                         var data = f[3].value || new Date().toLocaleDateString('pt-BR');
-                        return 'Ol\u00e1, ' + nome + '! Aqui est\u00e3o os detalhes da sua garantia \uD83D\uDEE1\uFE0F\n\n\uD83D\uDCF1 *' + f[1].value + '*\n\uD83D\uDCC5 Compra: *' + data + '*\n\u23F0 Garantia: *' + f[2].value + '*\n\n\u2705 *Cobre:*\n\u2022 Defeitos de fabrica\u00e7\u00e3o\n\u2022 Problemas de hardware\n\u2022 Mau funcionamento espont\u00e2neo\n\n\u274C *N\u00e3o cobre:*\n\u2022 Danos por queda ou l\u00edquido\n\u2022 Mau uso ou viola\u00e7\u00e3o\n\nSe notar qualquer coisa diferente no aparelho, me chama aqui. *A gente resolve.* \uD83D\uDCAA\n\nConte sempre com a DG Store!';
+                        return 'Ol\u00e1, ' + nome + '! Seguem os detalhes da sua garantia:\n\n*' + f[1].value + '*\nData da compra: *' + data + '*\nPer\u00edodo de garantia: *' + f[2].value + '*\n\n*A garantia cobre:*\n\u2022 Defeitos de fabrica\u00e7\u00e3o\n\u2022 Problemas de hardware\n\u2022 Mau funcionamento espont\u00e2neo\n\n*A garantia n\u00e3o cobre:*\n\u2022 Danos por queda ou contato com l\u00edquido\n\u2022 Mau uso ou viola\u00e7\u00e3o do aparelho\n\nCaso note qualquer comportamento diferente no aparelho, entre em contato por aqui que resolveremos.\n\nConte sempre com a DG Store!';
 
                     case 'thanks':
-                        return 'Ol\u00e1, ' + nome + '! \uD83D\uDE4F\n\nObrigado por escolher a *DG Store*!\n\nEspero que esteja aproveitando seu *' + f[1].value + '* \uD83D\uDCF1\u2728\n\nLembrando que voc\u00ea tem:\n\u2705 Garantia ativa\n\u2705 Suporte direto por aqui\n\u2705 Condi\u00e7\u00f5es especiais para pr\u00f3ximas compras\n\nSe algum amigo ou familiar estiver procurando um Apple, pode indicar! Terei o prazer de atender com o mesmo cuidado \uD83D\uDE09\n\nUm abra\u00e7o!';
+                        return 'Ol\u00e1, ' + nome + '!\n\nMuito obrigada por escolher a *DG Store*!\n\nEspero que esteja aproveitando o seu *' + f[1].value + '*.\n\nLembrando que voc\u00ea conta com:\n\u2022 Garantia ativa\n\u2022 Suporte direto por aqui\n\u2022 Condi\u00e7\u00f5es especiais para pr\u00f3ximas compras\n\nSe algum familiar ou amigo estiver procurando um iPhone, ficarei muito feliz em atend\u00ea-los com o mesmo cuidado.\n\nUm abra\u00e7o!';
 
                     case 'review':
-                        return 'Ol\u00e1, ' + nome + '! Tudo bem? \uD83D\uDE0A\n\nVoc\u00ea teria *1 minutinho* para deixar uma avalia\u00e7\u00e3o da DG Store no Google? \u2B50\n\nIsso nos ajuda muito a continuar oferecendo o melhor atendimento.\n\nSua opini\u00e3o faz toda a diferen\u00e7a para n\u00f3s! \uD83D\uDE4F\n\nMuito obrigado!';
+                        return 'Ol\u00e1, ' + nome + '! Tudo bem?\n\nGostaria de pedir, se poss\u00edvel, que deixe uma avalia\u00e7\u00e3o da *DG Store* no Google.\n\nSua opini\u00e3o \u00e9 muito importante para que possamos continuar oferecendo o melhor atendimento.\n\nLeva menos de um minuto e nos ajuda imensamente.\n\nDesde j\u00e1, muito obrigada!';
+
+                    case 'tips':
+                        return 'Ol\u00e1, ' + nome + '! Espero que esteja gostando do seu *' + f[1].value + '*!\n\nSeparei algumas dicas para aproveitar ao m\u00e1ximo o seu aparelho:\n\n*Bateria:* evite usar carregadores gen\u00e9ricos. O ideal \u00e9 manter entre 20% e 80% para preservar a sa\u00fade da bateria.\n\n*Pel\u00edcula e capinha:* s\u00e3o essenciais para proteger o investimento. Se precisar, temos acess\u00f3rios na loja.\n\n*iCloud:* ative o backup autom\u00e1tico para n\u00e3o perder fotos e dados.\n\n*Atualiza\u00e7\u00f5es:* mantenha o iOS atualizado para garantir seguran\u00e7a e melhor desempenho.\n\nSe tiver qualquer d\u00favida sobre o uso, estou \u00e0 disposi\u00e7\u00e3o!';
 
                     case 'arrived':
-                        return 'Ol\u00e1, ' + nome + '! Tenho uma boa not\u00edcia \uD83C\uDF89\n\nO *' + f[1].value + '* na cor *' + f[2].value + '* acabou de chegar!\n\n\uD83D\uDD12 Produto com proced\u00eancia verificada e garantia DG Store.\n\nComo voc\u00ea tinha demonstrado interesse, quis te avisar em primeira m\u00e3o \u2014 costuma sair r\u00e1pido \uD83D\uDE09\n\nQuer que eu reserve pra voc\u00ea?';
+                        return 'Ol\u00e1, ' + nome + '! Tenho uma \u00f3tima not\u00edcia.\n\nO *' + f[1].value + '* na cor *' + f[2].value + '* acabou de chegar em nossa loja.\n\nProduto com proced\u00eancia verificada e garantia DG Store.\n\nComo a senhora havia demonstrado interesse, quis avis\u00e1-la em primeira m\u00e3o. Esse modelo costuma ter sa\u00edda r\u00e1pida.\n\nGostaria que eu reserve para voc\u00ea?';
 
                     case 'followup':
-                        return 'Ol\u00e1, ' + nome + '! Tudo bem? \uD83D\uDE0A\n\nVi que voc\u00ea se interessou pelo *' + f[1].value + '* e queria saber se posso te ajudar com alguma d\u00favida.\n\nEstou \u00e0 disposi\u00e7\u00e3o para:\n\u2022 Detalhar as condi\u00e7\u00f5es de pagamento\n\u2022 Enviar fotos/v\u00eddeos do produto\n\u2022 Explicar sobre garantia e proced\u00eancia\n\nSem compromisso! Fico feliz em ajudar \uD83D\uDE09';
+                        return 'Ol\u00e1, ' + nome + '! Tudo bem?\n\nNotei que a senhora demonstrou interesse pelo *' + f[1].value + '* e gostaria de saber se posso ajudar com alguma d\u00favida.\n\nEstou \u00e0 disposi\u00e7\u00e3o para:\n\u2022 Detalhar as condi\u00e7\u00f5es de pagamento\n\u2022 Enviar fotos e v\u00eddeos do produto\n\u2022 Explicar sobre garantia e proced\u00eancia\n\nSem compromisso algum. Ficarei feliz em ajudar!';
 
                     case 'promo':
-                        return 'Ol\u00e1, ' + nome + '! Quero compartilhar uma oportunidade com voc\u00ea \uD83C\uDF1F\n\n\uD83D\uDCF1 *' + f[1].value + '*\n\n\u274C ~De R$ ' + f[2].value + '~\n\u2705 *Por R$ ' + f[3].value + '* (condi\u00e7\u00e3o especial)\n\n\uD83D\uDD12 Produto com proced\u00eancia verificada, nota fiscal e garantia DG Store.\n\n\u23F0 *Condi\u00e7\u00e3o por tempo limitado* \u2014 sujeito a disponibilidade.\n\nTem interesse? Me chama aqui que te passo todos os detalhes! \uD83D\uDE09';
+                        return 'Ol\u00e1, ' + nome + '! Gostaria de compartilhar uma condi\u00e7\u00e3o especial.\n\n*' + f[1].value + '*\n\nDe ~R$ ' + f[2].value + '~\n*Por R$ ' + f[3].value + '*\n\nProduto com proced\u00eancia verificada, nota fiscal e garantia DG Store.\n\n*Condi\u00e7\u00e3o por tempo limitado*, sujeito \u00e0 disponibilidade.\n\nSe tiver interesse, entre em contato para que eu possa reservar o seu!';
+
+                    case 'birthday':
+                        return 'Ol\u00e1, ' + nome + '!\n\nA equipe da *DG Store* gostaria de desejar um *feliz anivers\u00e1rio*!\n\nEsperamos que esse dia seja especial para voc\u00ea.\n\nE, como presente, preparamos uma *condi\u00e7\u00e3o exclusiva* para aniversariantes em qualquer produto da loja.\n\nSe quiser saber mais, \u00e9 s\u00f3 nos chamar. Ser\u00e1 um prazer atend\u00ea-la!\n\nParab\u00e9ns!';
+
+                    case 'upgrade':
+                        return 'Ol\u00e1, ' + nome + '! Tudo bem?\n\nVoc\u00ea est\u00e1 com o *' + f[1].value + '* h\u00e1 algum tempo, correto? Gostaria de apresentar uma oportunidade de upgrade.\n\nO *' + f[2].value + '* traz melhorias significativas em c\u00e2mera, desempenho e autonomia de bateria.\n\nAl\u00e9m disso, aceitamos o seu aparelho atual como parte do pagamento, o que reduz bastante o valor final.\n\nSe quiser, posso fazer uma avalia\u00e7\u00e3o do seu aparelho e apresentar a melhor proposta. Sem compromisso!';
 
                     default:
                         return '';
