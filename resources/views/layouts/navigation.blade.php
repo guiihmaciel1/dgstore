@@ -334,6 +334,24 @@
                         </div>
                     </div>
 
+                    @if($isIntern)
+                    <a href="{{ route('crm.board') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('crm.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                        </svg>
+                        CRM
+                        @if(($openDealsCount ?? 0) > 0)
+                            <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
+                        @endif
+                    </a>
+                    <a href="{{ route('tools.sales-training') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 7l-9-5 9-5 9 5-9 5z"/>
+                        </svg>
+                        Treinamento
+                    </a>
+                    @endif
+
                     @if(auth()->user()->canAccessB2BAdmin())
                     <a href="{{ route('admin.b2b.dashboard') }}" target="_blank"
                        class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition text-blue-400 hover:text-white hover:bg-blue-700 border border-blue-500/30 hover:border-transparent">
@@ -498,6 +516,30 @@
                 </a>
             </div>
 
+            @if($isIntern)
+            <!-- Mobile: CRM (destaque para intern) -->
+            <div class="border-t border-gray-700 mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">CRM</div>
+                <a href="{{ route('crm.board') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Pipeline
+                    @if(($openDealsCount ?? 0) > 0)
+                        <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
+                    @endif
+                </a>
+                <a href="{{ route('crm.history') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.history') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Histórico CRM
+                </a>
+            </div>
+
+            <!-- Mobile: Treinamento (destaque para intern) -->
+            <div class="border-t border-gray-700 mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Treinamento</div>
+                <a href="{{ route('tools.sales-training') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Treinamento de Vendas
+                </a>
+            </div>
+            @endif
+
             <!-- Mobile: Ferramentas -->
             <div class="border-t border-gray-700 mt-2 pt-2">
                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ferramentas</div>
@@ -520,6 +562,7 @@
                 <a href="{{ route('tools.specs') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.specs') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Ficha Tecnica
                 </a>
+                @if(!$isIntern)
                 <a href="{{ route('tools.sales-training') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Treinamento
                 </a>
@@ -534,6 +577,7 @@
                 <a href="{{ route('crm.history') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.history') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Histórico CRM
                 </a>
+                @endif
             </div>
 
             @if(auth()->user()->isAdminGeral())

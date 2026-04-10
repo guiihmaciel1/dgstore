@@ -163,19 +163,29 @@
                                     <div x-show="items.length > 0">
                                         <template x-for="(item, index) in items" :key="index">
                                             <div style="padding: 1rem; background: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 0.75rem;">
-                                                {{-- Linha 1: Nome, Quantidade, Venda, Subtotal, Remover --}}
-                                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                                {{-- Linha 1: Nome + badges + botão remover --}}
+                                                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.75rem;">
                                                     <div style="flex: 1; min-width: 0;">
-                                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                            <p style="font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.name"></p>
-                                                            <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; flex-shrink: 0;">TRADE-IN</span>
-                                                            <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-weight: 600; flex-shrink: 0;">CONSIGNADO</span>
+                                                        <div style="display: flex; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
+                                                            <p style="font-weight: 600; color: #111827; font-size: 0.9375rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" x-text="item.name"></p>
+                                                            <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">TRADE-IN</span>
+                                                            <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">CONSIGNADO</span>
                                                         </div>
                                                         <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.is_consignment ? '' : (item.id || '')">
                                                         <input type="hidden" :name="'items['+index+'][consignment_item_id]'" :value="item.consignment_item_id || ''">
                                                         <input type="hidden" :name="'items['+index+'][product_name]'" :value="item.name || ''">
                                                     </div>
-                                                    
+                                                    <button type="button" @click="removeItem(index)" 
+                                                            style="padding: 0.375rem; color: #ef4444; border-radius: 0.5rem; cursor: pointer; background: none; border: none; flex-shrink: 0;"
+                                                            onmouseover="this.style.backgroundColor='#fef2f2'" onmouseout="this.style.backgroundColor='transparent'">
+                                                        <svg style="height: 1.125rem; width: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                
+                                                {{-- Linha 2: Quantidade, Venda, Subtotal --}}
+                                                <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                                                         <button type="button" @click="item.quantity = Math.max(1, item.quantity - 1); updateTotals()" 
                                                                 style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;">
@@ -188,7 +198,7 @@
                                                             @input="updateTotals"
                                                             min="1"
                                                             :max="Math.max(1, item.stock)"
-                                                            style="width: 4rem; text-align: center; font-weight: 700; font-size: 1.125rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.25rem;"
+                                                            style="width: 3.5rem; text-align: center; font-weight: 700; font-size: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.25rem;"
                                                         >
                                                         <button type="button" @click="item.quantity = Math.min(Math.max(1, item.stock), item.quantity + 1); updateTotals()" 
                                                                 style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;">
@@ -196,7 +206,7 @@
                                                         </button>
                                                     </div>
                                                     
-                                                    <div style="width: 7rem; text-align: right;">
+                                                    <div style="width: 7rem;">
                                                         <label style="display: block; font-size: 0.625rem; color: #6b7280; text-transform: uppercase; margin-bottom: 0.125rem;">Venda</label>
                                                         <input type="hidden" :name="'items['+index+'][unit_price]'" :value="item.price">
                                                         <input 
@@ -209,17 +219,9 @@
                                                         >
                                                     </div>
                                                     
-                                                    <div style="width: 7rem; text-align: right;">
+                                                    <div style="flex: 1; text-align: right;">
                                                         <span style="font-size: 1.125rem; font-weight: 700; color: #111827;" x-text="formatMoney(item.quantity * item.price)"></span>
                                                     </div>
-                                                    
-                                                    <button type="button" @click="removeItem(index)" 
-                                                            style="padding: 0.5rem; color: #ef4444; border-radius: 0.5rem; cursor: pointer; background: none; border: none;"
-                                                            onmouseover="this.style.backgroundColor='#fef2f2'" onmouseout="this.style.backgroundColor='transparent'">
-                                                        <svg style="height: 1.25rem; width: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                        </svg>
-                                                    </button>
                                                 </div>
 
                                                 {{-- Linha 2: Custo, Origem, Frete --}}
@@ -1487,7 +1489,7 @@
                             this.items.push({
                                 id: product.id,
                                 name: product.name,
-                                price: 0,
+                                price: product.sale_price || 0,
                                 cost_price: product.cost_price || 0,
                                 supplier_origin: '',
                                 freight_type: '',

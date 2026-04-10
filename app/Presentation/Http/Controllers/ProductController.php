@@ -144,6 +144,7 @@ class ProductController extends Controller
             'sku' => $product->sku,
             'stock' => $product->stock_quantity,
             'cost_price' => $product->cost_price ? (float) $product->cost_price : null,
+            'sale_price' => $product->sale_price ? (float) $product->sale_price : null,
             'condition' => $product->condition?->value,
             'from_trade_in' => $product->tradeIn !== null,
             'is_consignment' => false,
