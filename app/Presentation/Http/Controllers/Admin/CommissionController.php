@@ -73,13 +73,29 @@ class CommissionController extends Controller
 
     public function updateRate(Request $request, User $user): RedirectResponse
     {
-        $validated = $request->validate([
-            'commission_rate' => ['required', 'numeric', 'min:0', 'max:100'],
+        $type = $request->input('commission_type', 'percentage');
+
+        $rules = [
+            'commission_type' => ['required', 'in:percentage,fixed'],
+            'commission_rate' => ['required', 'numeric', 'min:0'],
+        ];
+
+        if ($type === 'percentage') {
+            $rules['commission_rate'][] = 'max:100';
+        }
+
+        $validated = $request->validate($rules);
+
+        $user->update([
+            'commission_rate' => $validated['commission_rate'],
+            'commission_type' => $validated['commission_type'],
         ]);
 
-        $user->update(['commission_rate' => $validated['commission_rate']]);
+        $label = $validated['commission_type'] === 'fixed'
+            ? "R$ " . number_format((float) $validated['commission_rate'], 2, ',', '.') . " por venda"
+            : "{$validated['commission_rate']}%";
 
-        return back()->with('success', "Taxa de comissão de {$user->name} atualizada para {$validated['commission_rate']}%.");
+        return back()->with('success', "Taxa de comissão de {$user->name} atualizada para {$label}.");
     }
 
     public function storeWithdrawal(Request $request): RedirectResponse

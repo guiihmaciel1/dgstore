@@ -170,7 +170,11 @@ class CreateSaleUseCase
                 return;
             }
 
-            $amount = round((float) $sale->total * $rate / 100, 2);
+            $type = $user->commission_type ?? 'percentage';
+            $amount = $type === 'fixed'
+                ? $rate
+                : round((float) $sale->total * $rate / 100, 2);
+
             if ($amount <= 0) {
                 return;
             }
@@ -181,6 +185,7 @@ class CreateSaleUseCase
                 'sale_number' => $sale->sale_number,
                 'sale_total' => $sale->total,
                 'commission_rate' => $rate,
+                'commission_type' => $type,
                 'commission_amount' => $amount,
                 'status' => 'approved',
             ]);

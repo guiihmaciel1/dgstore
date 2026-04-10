@@ -20,6 +20,7 @@ class Commission extends Model
         'sale_number',
         'sale_total',
         'commission_rate',
+        'commission_type',
         'commission_amount',
         'status',
     ];
@@ -28,6 +29,7 @@ class Commission extends Model
         'sale_total' => 'decimal:2',
         'commission_rate' => 'decimal:2',
         'commission_amount' => 'decimal:2',
+        'commission_type' => 'string',
     ];
 
     public function user(): BelongsTo

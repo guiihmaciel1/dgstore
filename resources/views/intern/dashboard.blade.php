@@ -155,7 +155,13 @@
                         </div>
                     </div>
                     <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.5rem;">
-                        Taxa: <strong style="color: #111827;">{{ $user->commission_rate ?? 0 }}%</strong>
+                        Taxa: <strong style="color: #111827;">
+                            @if(($user->commission_type ?? 'percentage') === 'fixed')
+                                R$ {{ number_format((float)($user->commission_rate ?? 0), 2, ',', '.') }}/venda
+                            @else
+                                {{ $user->commission_rate ?? 0 }}%
+                            @endif
+                        </strong>
                     </p>
                 </div>
 
@@ -212,7 +218,13 @@
                     </div>
                     <div>
                         <span style="color: #6b7280;">Taxa Comissão:</span>
-                        <span style="font-weight: 600; color: #111827; margin-left: 0.25rem;">{{ $user->commission_rate ?? 0 }}%</span>
+                        <span style="font-weight: 600; color: #111827; margin-left: 0.25rem;">
+                            @if(($user->commission_type ?? 'percentage') === 'fixed')
+                                R$ {{ number_format((float)($user->commission_rate ?? 0), 2, ',', '.') }}/venda
+                            @else
+                                {{ $user->commission_rate ?? 0 }}%
+                            @endif
+                        </span>
                     </div>
                 </div>
             </div>

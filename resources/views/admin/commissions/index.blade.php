@@ -63,21 +63,42 @@
                 {{-- Configuração de Taxa + Botão de Saque --}}
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                     {{-- Configurar Taxa --}}
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
+                    <div x-data="{ type: '{{ $selectedUser->commission_type ?? 'percentage' }}' }" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
                         <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
                             <h3 style="font-size: 0.875rem; font-weight: 600; color: #111827;">Taxa de Comissão</h3>
                         </div>
-                        <form method="POST" action="{{ route('admin.commissions.update-rate', $selectedUser) }}" style="padding: 1.25rem; display: flex; align-items: flex-end; gap: 0.75rem;">
+                        <form method="POST" action="{{ route('admin.commissions.update-rate', $selectedUser) }}" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
                             @csrf
                             @method('PUT')
-                            <div style="flex: 1;">
-                                <label style="font-size: 0.75rem; color: #6b7280; display: block; margin-bottom: 0.25rem;">Percentual (%)</label>
-                                <input type="number" name="commission_rate" value="{{ $selectedUser->commission_rate ?? 0 }}" step="0.01" min="0" max="100"
-                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button type="button" @click="type = 'percentage'"
+                                        :style="type === 'percentage'
+                                            ? 'padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 600; border-radius: 0.375rem; cursor: pointer; border: 1px solid #111827; background: #111827; color: white;'
+                                            : 'padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 500; border-radius: 0.375rem; cursor: pointer; border: 1px solid #d1d5db; background: white; color: #374151;'">
+                                    % Percentual
+                                </button>
+                                <button type="button" @click="type = 'fixed'"
+                                        :style="type === 'fixed'
+                                            ? 'padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 600; border-radius: 0.375rem; cursor: pointer; border: 1px solid #111827; background: #111827; color: white;'
+                                            : 'padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 500; border-radius: 0.375rem; cursor: pointer; border: 1px solid #d1d5db; background: white; color: #374151;'">
+                                    R$ Valor fixo
+                                </button>
                             </div>
-                            <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer;">
-                                Salvar
-                            </button>
+                            <input type="hidden" name="commission_type" :value="type">
+                            <div style="display: flex; align-items: flex-end; gap: 0.75rem;">
+                                <div style="flex: 1;">
+                                    <label style="font-size: 0.75rem; color: #6b7280; display: block; margin-bottom: 0.25rem;">
+                                        <span x-show="type === 'percentage'">Percentual (%)</span>
+                                        <span x-show="type === 'fixed'" x-cloak>Valor por venda (R$)</span>
+                                    </label>
+                                    <input type="number" name="commission_rate" value="{{ $selectedUser->commission_rate ?? 0 }}" step="0.01" min="0"
+                                           :max="type === 'percentage' ? 100 : 99999"
+                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                </div>
+                                <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer;">
+                                    Salvar
+                                </button>
+                            </div>
                         </form>
                     </div>
 
@@ -169,7 +190,13 @@
                                                 </a>
                                             </td>
                                             <td style="padding: 0.625rem 1rem; text-align: right; color: #374151;">R$ {{ number_format($commission->sale_total, 2, ',', '.') }}</td>
-                                            <td style="padding: 0.625rem 1rem; text-align: right; color: #374151;">{{ number_format($commission->commission_rate, 2, ',', '.') }}%</td>
+                                            <td style="padding: 0.625rem 1rem; text-align: right; color: #374151;">
+                                                @if($commission->commission_type === 'fixed')
+                                                    R$ {{ number_format($commission->commission_rate, 2, ',', '.') }}/venda
+                                                @else
+                                                    {{ number_format($commission->commission_rate, 2, ',', '.') }}%
+                                                @endif
+                                            </td>
                                             <td style="padding: 0.625rem 1rem; text-align: right; font-weight: 700; color: #059669;">R$ {{ number_format($commission->commission_amount, 2, ',', '.') }}</td>
                                             <td style="padding: 0.625rem 1rem; text-align: center;">
                                                 <span style="font-size: 0.7rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px;

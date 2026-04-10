@@ -27,6 +27,7 @@ class User extends Authenticatable
         'role',
         'active',
         'commission_rate',
+        'commission_type',
     ];
 
     protected $hidden = [
@@ -42,6 +43,7 @@ class User extends Authenticatable
             'role' => UserRole::class,
             'active' => 'boolean',
             'commission_rate' => 'decimal:2',
+            'commission_type' => 'string',
         ];
     }
 
