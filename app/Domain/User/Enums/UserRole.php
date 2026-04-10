@@ -11,6 +11,7 @@ enum UserRole: string
     case AdminPerfumes = 'admin_perfumes';
     case Seller        = 'seller';
     case SellerB2B     = 'seller_b2b';
+    case Intern        = 'intern';
 
     public function label(): string
     {
@@ -20,12 +21,13 @@ enum UserRole: string
             self::AdminPerfumes => 'Admin Perfumes',
             self::Seller        => 'Vendedor',
             self::SellerB2B     => 'Vendedor B2B',
+            self::Intern        => 'Estagiária',
         };
     }
 
     public function canAccessDGStore(): bool
     {
-        return in_array($this, [self::AdminGeral, self::Seller]);
+        return in_array($this, [self::AdminGeral, self::Seller, self::Intern]);
     }
 
     public function canAccessB2BAdmin(): bool
@@ -44,6 +46,16 @@ enum UserRole: string
         return $this->canAccessB2BAdmin();
     }
 
+    public function isAdminGeral(): bool
+    {
+        return $this === self::AdminGeral;
+    }
+
+    public function isIntern(): bool
+    {
+        return $this === self::Intern;
+    }
+
     public function badgeColor(): string
     {
         return match ($this) {
@@ -52,6 +64,7 @@ enum UserRole: string
             self::AdminPerfumes => 'pink',
             self::Seller        => 'green',
             self::SellerB2B     => 'indigo',
+            self::Intern        => 'teal',
         };
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\UseCases;
 
+use App\Domain\Commission\Models\Commission;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Finance\Services\FinanceService;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
@@ -11,6 +12,7 @@ use App\Domain\Sale\DTOs\SaleData;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use App\Domain\Stock\Services\StockService;
+use App\Domain\User\Enums\UserRole;
 use App\Domain\Warranty\Services\WarrantyService;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -38,6 +40,7 @@ class CreateSaleUseCase
 
         $this->registerWarranties($sale);
         $this->registerInFinance($sale);
+        $this->registerCommission($sale);
 
         return $sale;
     }
@@ -150,6 +153,39 @@ class CreateSaleUseCase
             }
         } catch (\Throwable $e) {
             Log::warning("Não foi possível registrar venda #{$sale->sale_number} no financeiro: {$e->getMessage()}");
+        }
+    }
+
+    private function registerCommission(Sale $sale): void
+    {
+        try {
+            $user = $sale->user;
+
+            if (!$user || $user->role !== UserRole::Intern) {
+                return;
+            }
+
+            $rate = (float) $user->commission_rate;
+            if ($rate <= 0) {
+                return;
+            }
+
+            $amount = round((float) $sale->total * $rate / 100, 2);
+            if ($amount <= 0) {
+                return;
+            }
+
+            Commission::create([
+                'user_id' => $user->id,
+                'sale_id' => $sale->id,
+                'sale_number' => $sale->sale_number,
+                'sale_total' => $sale->total,
+                'commission_rate' => $rate,
+                'commission_amount' => $amount,
+                'status' => 'approved',
+            ]);
+        } catch (\Throwable $e) {
+            Log::warning("Não foi possível registrar comissão da venda #{$sale->sale_number}: {$e->getMessage()}");
         }
     }
 

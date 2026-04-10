@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Models;
 
+use App\Domain\Commission\Models\Commission;
+use App\Domain\Commission\Models\CommissionWithdrawal;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Stock\Models\StockMovement;
+use App\Domain\TimeClock\Models\TimeClockEntry;
 use App\Domain\User\Enums\UserRole;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +26,7 @@ class User extends Authenticatable
         'password',
         'role',
         'active',
+        'commission_rate',
     ];
 
     protected $hidden = [
@@ -37,6 +41,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'role' => UserRole::class,
             'active' => 'boolean',
+            'commission_rate' => 'decimal:2',
         ];
     }
 
@@ -102,8 +107,28 @@ class User extends Authenticatable
         return $this->role->canAccessPerfumesAdmin();
     }
 
+    public function isIntern(): bool
+    {
+        return $this->role === UserRole::Intern;
+    }
+
     public function isActive(): bool
     {
         return $this->active;
+    }
+
+    public function commissions(): HasMany
+    {
+        return $this->hasMany(Commission::class);
+    }
+
+    public function commissionWithdrawals(): HasMany
+    {
+        return $this->hasMany(CommissionWithdrawal::class);
+    }
+
+    public function timeClockEntries(): HasMany
+    {
+        return $this->hasMany(TimeClockEntry::class);
     }
 }

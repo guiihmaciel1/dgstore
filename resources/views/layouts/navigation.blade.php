@@ -1,3 +1,4 @@
+@php $isIntern = auth()->user()->isIntern(); @endphp
 <nav x-data="{ open: false, commercialOpen: false, financeOpen: false, stockOpen: false, purchasesOpen: false, toolsOpen: false }" class="bg-gray-900 shadow-lg" @click.away="commercialOpen = false; financeOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -5,14 +6,14 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center">
+                    <a href="{{ $isIntern ? route('intern.dashboard') : route('dashboard') }}" class="flex items-center">
                         <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" class="h-10 w-auto brightness-0 invert" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden sm:-my-px sm:ms-6 sm:flex items-center gap-0.5">
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                    <a href="{{ $isIntern ? route('intern.dashboard') : route('dashboard') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('dashboard') || request()->routeIs('intern.dashboard') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
                         Dashboard
                     </a>
                     
@@ -69,10 +70,11 @@
                         </div>
                     </div>
                     
+                    @if(!$isIntern)
                     <!-- Dropdown: Financeiro -->
                     <div class="relative">
                         <button @click="financeOpen = !financeOpen; commercialOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('finance.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('finance.*') || request()->routeIs('admin.commissions.*') || request()->routeIs('admin.time-clock.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Financeiro</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': financeOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -118,10 +120,27 @@
                                     </svg>
                                     Categorias
                                 </a>
+                                @if(auth()->user()->isAdminGeral())
+                                    <div class="border-t border-gray-700 my-1"></div>
+                                    <a href="{{ route('admin.commissions.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('admin.commissions.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                        <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                        Comissões
+                                    </a>
+                                    <a href="{{ route('admin.time-clock.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('admin.time-clock.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                        <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Registro de Ponto
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>
+                    @endif
                     
+                    @if(!$isIntern)
                     <!-- Dropdown: Estoque -->
                     <div class="relative">
                         <button @click="stockOpen = !stockOpen; commercialOpen = false; financeOpen = false; purchasesOpen = false; toolsOpen = false" 
@@ -203,6 +222,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                     
                     <!-- Link: Marketing -->
                     <a href="{{ route('marketing.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('marketing.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
@@ -325,12 +345,14 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                @if(!$isIntern)
                 <!-- Alerta de Estoque Baixo -->
                 <a href="{{ route('stock.alerts') }}" class="relative mr-4 text-gray-300 hover:text-white transition" title="Alertas de estoque">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
                 </a>
+                @endif
                 
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -380,7 +402,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-gray-800">
         <div class="pt-2 pb-3 space-y-1">
-            <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+            <a href="{{ $isIntern ? route('intern.dashboard') : route('dashboard') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') || request()->routeIs('intern.dashboard') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                 Dashboard
             </a>
             
@@ -404,6 +426,7 @@
                 </a>
             </div>
             
+            @if(!$isIntern)
             <!-- Mobile: Financeiro -->
             <div class="border-t border-gray-700 mt-2 pt-2">
                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Financeiro</div>
@@ -422,6 +445,14 @@
                 <a href="{{ route('finance.categories') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.categories') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Categorias
                 </a>
+                @if(auth()->user()->isAdminGeral())
+                    <a href="{{ route('admin.commissions.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('admin.commissions.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                        Comissões
+                    </a>
+                    <a href="{{ route('admin.time-clock.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('admin.time-clock.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                        Registro de Ponto
+                    </a>
+                @endif
             </div>
             
             <!-- Mobile: Estoque -->
@@ -451,6 +482,7 @@
                     Cotações
                 </a>
             </div>
+            @endif
             
             <!-- Mobile: Marketing -->
             <div class="border-t border-gray-700 mt-2 pt-2">

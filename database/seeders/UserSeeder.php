@@ -43,6 +43,13 @@ class UserSeeder extends Seeder
                 'role'     => UserRole::Seller,
                 'active'   => true,
             ],
+            [
+                'name'     => 'Sophia',
+                'email'    => 'sophia@dgstore.com.br',
+                'password' => Hash::make('password'),
+                'role'     => UserRole::Intern,
+                'active'   => true,
+            ],
         ];
 
         foreach ($users as $userData) {

@@ -28,6 +28,10 @@ use App\Presentation\Http\Controllers\Admin\AdminB2BOrderController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BRetailerController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BSettingController;
 use App\Presentation\Http\Controllers\Admin\AdminUserController;
+use App\Presentation\Http\Controllers\Admin\CommissionController;
+use App\Presentation\Http\Controllers\Admin\TimeClockAdminController;
+use App\Presentation\Http\Controllers\InternDashboardController;
+use App\Presentation\Http\Controllers\TimeClockController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeDashboardController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeProductController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeRetailerController;
@@ -60,9 +64,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // ----------------------------------------------------------------
-    // DG Store — admin_geral e seller
+    // Estagiária — dashboard e ponto (role intern)
     // ----------------------------------------------------------------
-    Route::middleware('role:admin_geral,seller')->group(function () {
+    Route::middleware('role:intern')->group(function () {
+        Route::get('/intern/dashboard', [InternDashboardController::class, 'index'])->name('intern.dashboard');
+        Route::post('/intern/time-clock/punch', [TimeClockController::class, 'punch'])->name('intern.time-clock.punch');
+    });
+
+    // ----------------------------------------------------------------
+    // DG Store — admin_geral, seller e intern
+    // ----------------------------------------------------------------
+    Route::middleware('role:admin_geral,seller,intern')->group(function () {
 
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -252,6 +264,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/{user}/edit', [AdminUserController::class, 'edit'])->name('admin.users.edit');
                 Route::put('/{user}', [AdminUserController::class, 'update'])->name('admin.users.update');
             });
+
+            // Gestão de Comissões
+            Route::prefix('admin/commissions')->group(function () {
+                Route::get('/', [CommissionController::class, 'index'])->name('admin.commissions.index');
+                Route::put('/{user}/rate', [CommissionController::class, 'updateRate'])->name('admin.commissions.update-rate');
+                Route::post('/withdrawals', [CommissionController::class, 'storeWithdrawal'])->name('admin.commissions.withdrawals.store');
+                Route::patch('/withdrawals/{withdrawal}/approve', [CommissionController::class, 'approveWithdrawal'])->name('admin.commissions.withdrawals.approve');
+                Route::patch('/withdrawals/{withdrawal}/reject', [CommissionController::class, 'rejectWithdrawal'])->name('admin.commissions.withdrawals.reject');
+            });
+
+            // Registro de Ponto (Admin)
+            Route::get('/admin/time-clock', [TimeClockAdminController::class, 'index'])->name('admin.time-clock.index');
         });
     });
 
