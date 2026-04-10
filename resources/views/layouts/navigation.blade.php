@@ -292,6 +292,12 @@
                                     </svg>
                                     Ficha Tecnica
                                 </a>
+                                <a href="{{ route('tools.sales-training') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.sales-training') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 7l-9-5 9-5 9 5-9 5z"/>
+                                    </svg>
+                                    Treinamento
+                                </a>
                                 <div class="border-t border-gray-700 my-1"></div>
                                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">CRM</div>
                                 <a href="{{ route('crm.board') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
@@ -513,6 +519,9 @@
                 </a>
                 <a href="{{ route('tools.specs') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.specs') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Ficha Tecnica
+                </a>
+                <a href="{{ route('tools.sales-training') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Treinamento
                 </a>
                 <div class="border-t border-gray-600 mt-1 pt-1 mx-4"></div>
                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">CRM</div>

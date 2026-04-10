@@ -85,6 +85,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/tabela-precos', [ToolController::class, 'priceTable'])->name('tools.price-table');
         Route::view('/mensagens-whatsapp', 'tools.whatsapp-messages')->name('tools.whatsapp-messages');
         Route::view('/ficha-tecnica', 'tools.specs')->name('tools.specs');
+        Route::view('/treinamento-vendas', 'tools.sales-training')->name('tools.sales-training');
         Route::get('/calculadora-stone', [ToolController::class, 'stoneCalculator'])->name('tools.stone-calculator');
 
         // Follow-ups (legado - redireciona para CRM)
