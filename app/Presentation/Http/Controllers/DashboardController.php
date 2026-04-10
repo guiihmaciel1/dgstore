@@ -48,6 +48,7 @@ class DashboardController extends Controller
         $birthdayCustomers = $this->getBirthdayCustomers();
         $todayAppointments = $this->getTodayAppointments();
         $nextAppointment = $this->getNextAppointment();
+        $todayPayables = $this->getTodayPayables();
 
         $monthSummary = $this->getMonthSummary($referenceDate);
 
@@ -64,6 +65,7 @@ class DashboardController extends Controller
             'birthdayCustomers' => $birthdayCustomers,
             'todayAppointments' => $todayAppointments,
             'nextAppointment' => $nextAppointment,
+            'todayPayables' => $todayPayables,
             'monthSummary' => $monthSummary,
             'referenceDate' => $referenceDate,
             'isCurrentMonth' => $isCurrentMonth,
@@ -92,6 +94,7 @@ class DashboardController extends Controller
     {
         return Customer::whereNotNull('birth_date')
             ->whereMonth('birth_date', now()->month)
+            ->whereRaw('DAY(birth_date) >= ?', [now()->day])
             ->orderByRaw('DAY(birth_date) ASC')
             ->get();
     }
@@ -236,6 +239,20 @@ class DashboardController extends Controller
             ->where('start_time', '>=', now()->format('H:i:s'))
             ->orderBy('start_time')
             ->first();
+    }
+
+    private function getTodayPayables(): \Illuminate\Support\Collection
+    {
+        $systemCategoryNames = ['Trade-in', 'Custo de Mercadoria', 'Compra Fornecedor'];
+        $systemCategoryIds = \App\Domain\Finance\Models\FinancialCategory::whereIn('name', $systemCategoryNames)->pluck('id');
+
+        return FinancialTransaction::with(['category'])
+            ->where('type', 'expense')
+            ->whereIn('status', ['pending', 'overdue'])
+            ->where('due_date', today())
+            ->when($systemCategoryIds->isNotEmpty(), fn ($q) => $q->whereNotIn('category_id', $systemCategoryIds))
+            ->orderBy('amount', 'desc')
+            ->get();
     }
 
     private function getMonthSummary(?Carbon $referenceDate = null): array

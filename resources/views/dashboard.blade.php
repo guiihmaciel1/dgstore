@@ -240,11 +240,11 @@
             </style>
             @endif
 
-            <!-- ANIVERSARIANTES DO MÊS -->
+            <!-- PRÓXIMOS ANIVERSARIANTES DO MÊS -->
             @if($birthdayCustomers->count() > 0)
             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
                 <span style="font-size: 0.9rem;">&#127874;</span>
-                <span style="color: #6b7280; font-weight: 500;">Aniversariantes:</span>
+                <span style="color: #6b7280; font-weight: 500;">Próximos aniversariantes do mês:</span>
                 @foreach($birthdayCustomers as $customer)
                     <a href="{{ route('customers.show', $customer) }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; {{ $customer->birth_date->day === now()->day ? 'background: #fef3c7; color: #92400e;' : 'background: #f3f4f6; color: #374151;' }}" title="{{ $customer->phone }}">
                         <span style="color: #ec4899; font-weight: 800;">{{ $customer->birth_date->format('d') }}</span>
@@ -254,6 +254,28 @@
                         @endif
                     </a>
                 @endforeach
+            </div>
+            @endif
+
+            <!-- CONTAS A PAGAR HOJE -->
+            @if($todayPayables->count() > 0)
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.875rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
+                <svg style="width: 1rem; height: 1rem; color: #dc2626; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                </svg>
+                <span style="color: #991b1b; font-weight: 600;">Contas a pagar hoje:</span>
+                @foreach($todayPayables as $payable)
+                    <a href="{{ route('finance.payables') }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; background: #fee2e2; color: #991b1b;" title="{{ $payable->description }}">
+                        <span style="font-weight: 800;">R$ {{ number_format($payable->amount, 2, ',', '.') }}</span>
+                        {{ $payable->description }}
+                        @if($payable->category)
+                            <span style="font-size: 0.625rem; color: #b91c1c; opacity: 0.7;">({{ $payable->category->name }})</span>
+                        @endif
+                    </a>
+                @endforeach
+                <a href="{{ route('finance.payables') }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; font-size: 0.7rem; font-weight: 700; color: #dc2626; text-decoration: none;">
+                    Ver todas →
+                </a>
             </div>
             @endif
 
