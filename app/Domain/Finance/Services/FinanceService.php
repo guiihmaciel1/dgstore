@@ -10,6 +10,8 @@ use App\Domain\Finance\Models\AccountTransfer;
 use App\Domain\Finance\Models\FinancialAccount;
 use App\Domain\Finance\Models\FinancialCategory;
 use App\Domain\Finance\Models\FinancialTransaction;
+use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
+use App\Domain\Product\Models\Product;
 use App\Domain\Sale\Models\Sale;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -557,6 +559,73 @@ class FinanceService
 
         $category->delete();
         return true;
+    }
+
+    // ─── Inventário Seminovos ───
+
+    public function getInventoryData(): array
+    {
+        $ownProducts = Product::active()->inStock()
+            ->whereIn('condition', ['used', 'refurbished'])
+            ->get();
+
+        $consignmentItems = ConsignmentStockItem::available()->used()->get();
+
+        $ownData = $this->calculateInventoryGroup($ownProducts, 'own');
+        $consignmentData = $this->calculateInventoryGroup($consignmentItems, 'consignment');
+
+        $totalItems = $ownData['itemCount'] + $consignmentData['itemCount'];
+        $totalCost = $ownData['totalCost'] + $consignmentData['totalCost'];
+        $totalSaleValue = $ownData['totalSaleValue'] + $consignmentData['totalSaleValue'];
+        $potentialProfit = $totalSaleValue - $totalCost;
+        $potentialMargin = $totalSaleValue > 0
+            ? round(($potentialProfit / $totalSaleValue) * 100, 1)
+            : 0;
+
+        $allDays = array_merge($ownData['daysInStock'], $consignmentData['daysInStock']);
+        $avgDaysInStock = count($allDays) > 0 ? (int) round(array_sum($allDays) / count($allDays)) : 0;
+
+        $withoutPrice = $ownData['withoutPrice'] + $consignmentData['withoutPrice'];
+
+        return compact(
+            'totalItems', 'totalCost', 'totalSaleValue',
+            'potentialProfit', 'potentialMargin', 'avgDaysInStock',
+            'withoutPrice', 'ownData', 'consignmentData',
+        );
+    }
+
+    private function calculateInventoryGroup(Collection $items, string $type): array
+    {
+        $isOwn = $type === 'own';
+        $itemCount = 0;
+        $totalCost = 0.0;
+        $totalSaleValue = 0.0;
+        $daysInStock = [];
+        $withoutPrice = 0;
+
+        foreach ($items as $item) {
+            $qty = $isOwn ? (int) $item->stock_quantity : (int) $item->available_quantity;
+            $cost = (float) ($isOwn ? $item->cost_price : $item->supplier_cost);
+            $sale = (float) ($isOwn ? $item->sale_price : $item->suggested_price);
+
+            $itemCount += $qty;
+            $totalCost += $cost * $qty;
+            $totalSaleValue += $sale * $qty;
+
+            if ($sale <= 0) {
+                $withoutPrice += $qty;
+            }
+
+            $dateRef = $isOwn ? $item->created_at : $item->received_at;
+            if ($dateRef) {
+                $daysInStock[] = (int) $dateRef->diffInDays(now());
+            }
+        }
+
+        $profit = $totalSaleValue - $totalCost;
+        $margin = $totalSaleValue > 0 ? round(($profit / $totalSaleValue) * 100, 1) : 0;
+
+        return compact('itemCount', 'totalCost', 'totalSaleValue', 'profit', 'margin', 'daysInStock', 'withoutPrice');
     }
 
     // ─── Overdue check ───

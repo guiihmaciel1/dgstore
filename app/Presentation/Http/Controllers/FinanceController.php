@@ -33,6 +33,7 @@ class FinanceController extends Controller
 
         $data['referenceDate'] = $referenceDate;
         $data['isCurrentMonth'] = $referenceDate->isSameMonth(now());
+        $data['inventoryData'] = $this->financeService->getInventoryData();
 
         return view('finance.index', $data);
     }

@@ -167,6 +167,114 @@
                 </div>
             @endif
 
+            <!-- Inventário de Seminovos -->
+            @if($inventoryData['totalItems'] > 0)
+                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 1.25rem; height: 1.25rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                            <span style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Inventário de Seminovos</span>
+                            <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; font-weight: 600;">{{ $inventoryData['totalItems'] }} {{ $inventoryData['totalItems'] === 1 ? 'item' : 'itens' }}</span>
+                        </div>
+                        @if($inventoryData['withoutPrice'] > 0)
+                            <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fef3c7; color: #92400e; font-weight: 600;">{{ $inventoryData['withoutPrice'] }} sem preço de venda</span>
+                        @endif
+                    </div>
+
+                    {{-- Cards resumo --}}
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-4">
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Valor em Estoque</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: #111827;">R$ {{ number_format($inventoryData['totalCost'], 2, ',', '.') }}</div>
+                            <div style="font-size: 0.6875rem; color: #9ca3af;">Custo total investido</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Valor Potencial</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: #2563eb;">R$ {{ number_format($inventoryData['totalSaleValue'], 2, ',', '.') }}</div>
+                            <div style="font-size: 0.6875rem; color: #9ca3af;">Se vender tudo</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Lucro Possível</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: {{ $inventoryData['potentialProfit'] >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($inventoryData['potentialProfit'], 2, ',', '.') }}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Margem Potencial</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: {{ $inventoryData['potentialMargin'] >= 0 ? '#16a34a' : '#dc2626' }};">{{ $inventoryData['potentialMargin'] }}%</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Tempo Médio</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: {{ $inventoryData['avgDaysInStock'] > 30 ? '#dc2626' : ($inventoryData['avgDaysInStock'] > 15 ? '#d97706' : '#111827') }};">{{ $inventoryData['avgDaysInStock'] }} dias</div>
+                            <div style="font-size: 0.6875rem; color: {{ $inventoryData['avgDaysInStock'] > 30 ? '#dc2626' : '#9ca3af' }};">
+                                {{ $inventoryData['avgDaysInStock'] > 30 ? 'Atenção: estoque parado' : 'Em estoque' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Breakdown: Próprios vs Consignação --}}
+                    @if($inventoryData['ownData']['itemCount'] > 0 || $inventoryData['consignmentData']['itemCount'] > 0)
+                        <div style="border-top: 1px solid #f3f4f6; padding-top: 0.75rem;">
+                            <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #9ca3af; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Detalhamento por Origem</div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                @if($inventoryData['ownData']['itemCount'] > 0)
+                                    <div style="background: #f9fafb; border-radius: 0.5rem; padding: 0.75rem 1rem; border: 1px solid #e5e7eb;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.375rem;">
+                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #111827;">Próprios</span>
+                                            <span style="font-size: 0.6875rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #e0e7ff; color: #3730a3; font-weight: 600;">{{ $inventoryData['ownData']['itemCount'] }} {{ $inventoryData['ownData']['itemCount'] === 1 ? 'item' : 'itens' }}</span>
+                                        </div>
+                                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                            <div>
+                                                <div style="font-size: 0.625rem; color: #6b7280;">Custo</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: #111827;">R$ {{ number_format($inventoryData['ownData']['totalCost'], 2, ',', '.') }}</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 0.625rem; color: #6b7280;">Venda</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: #2563eb;">R$ {{ number_format($inventoryData['ownData']['totalSaleValue'], 2, ',', '.') }}</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 0.625rem; color: #6b7280;">Lucro</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: {{ $inventoryData['ownData']['profit'] >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($inventoryData['ownData']['profit'], 2, ',', '.') }}</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 0.625rem; color: #6b7280;">Margem</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: {{ $inventoryData['ownData']['margin'] >= 0 ? '#16a34a' : '#dc2626' }};">{{ $inventoryData['ownData']['margin'] }}%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if($inventoryData['consignmentData']['itemCount'] > 0)
+                                    <div style="background: #f9fafb; border-radius: 0.5rem; padding: 0.75rem 1rem; border: 1px solid #e5e7eb;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.375rem;">
+                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #111827;">Consignação</span>
+                                            <span style="font-size: 0.6875rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #fef3c7; color: #92400e; font-weight: 600;">{{ $inventoryData['consignmentData']['itemCount'] }} {{ $inventoryData['consignmentData']['itemCount'] === 1 ? 'item' : 'itens' }}</span>
+                                        </div>
+                                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                            <div>
+                                                <div style="font-size: 0.625rem; color: #6b7280;">Custo Fornecedor</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: #111827;">R$ {{ number_format($inventoryData['consignmentData']['totalCost'], 2, ',', '.') }}</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 0.625rem; color: #6b7280;">Venda Sugerida</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: #2563eb;">R$ {{ number_format($inventoryData['consignmentData']['totalSaleValue'], 2, ',', '.') }}</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 0.625rem; color: #6b7280;">Lucro</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: {{ $inventoryData['consignmentData']['profit'] >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($inventoryData['consignmentData']['profit'], 2, ',', '.') }}</div>
+                                            </div>
+                                            <div>
+                                                <div style="font-size: 0.625rem; color: #6b7280;">Margem</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: {{ $inventoryData['consignmentData']['margin'] >= 0 ? '#16a34a' : '#dc2626' }};">{{ $inventoryData['consignmentData']['margin'] }}%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             <!-- Lucro Líquido -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                 {{-- Lucro Líquido Atual --}}
