@@ -24,8 +24,7 @@ class CrmController extends Controller
         $user = auth()->user();
         $isAdmin = $user->isAdmin();
 
-        // Admin pode filtrar por vendedor
-        $filterUserId = $isAdmin ? $request->get('user_id') : $user->id;
+        $filterUserId = $request->get('user_id') ?: null;
 
         $allStages = PipelineStage::ordered()->get();
         $activeStages = PipelineStage::where('is_won', false)
@@ -42,12 +41,10 @@ class CrmController extends Controller
 
         $deals = $dealsQuery->orderBy('position')->get();
 
-        // Agrupa deals por stage
         $dealsByStage = $activeStages->mapWithKeys(function ($stage) use ($deals) {
             return [$stage->id => $deals->where('pipeline_stage_id', $stage->id)->values()];
         });
 
-        // Métricas
         $metricsQuery = Deal::query();
         if ($filterUserId) {
             $metricsQuery->forUser($filterUserId);
@@ -70,10 +67,7 @@ class CrmController extends Controller
                 ->count(),
         ];
 
-        // Lista de vendedores para filtro (admin)
-        $sellers = $isAdmin
-            ? \App\Domain\User\Models\User::where('active', true)->orderBy('name')->get(['id', 'name', 'role'])
-            : collect();
+        $sellers = \App\Domain\User\Models\User::where('active', true)->orderBy('name')->get(['id', 'name', 'role']);
 
         return view('crm.board', [
             'stages' => $allStages,
@@ -133,7 +127,6 @@ class CrmController extends Controller
 
     public function show(Deal $deal): View
     {
-        $this->authorizeDeal($deal);
 
         $deal->load(['customer', 'user', 'stage', 'activities.user']);
 
@@ -157,7 +150,6 @@ class CrmController extends Controller
 
     public function update(Request $request, Deal $deal): RedirectResponse
     {
-        $this->authorizeDeal($deal);
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -177,7 +169,7 @@ class CrmController extends Controller
 
     public function destroy(Deal $deal): RedirectResponse
     {
-        $this->authorizeDeal($deal);
+        $this->authorizeDealOwnership($deal);
 
         $deal->delete();
 
@@ -189,7 +181,6 @@ class CrmController extends Controller
 
     public function moveStage(Request $request, Deal $deal): JsonResponse
     {
-        $this->authorizeDeal($deal);
 
         $validated = $request->validate([
             'pipeline_stage_id' => 'required|exists:pipeline_stages,id',
@@ -214,7 +205,6 @@ class CrmController extends Controller
 
     public function win(Deal $deal): RedirectResponse
     {
-        $this->authorizeDeal($deal);
 
         $deal->markAsWon();
 
@@ -223,7 +213,6 @@ class CrmController extends Controller
 
     public function lose(Request $request, Deal $deal): RedirectResponse
     {
-        $this->authorizeDeal($deal);
 
         $reason = $request->input('lost_reason', '');
         $deal->markAsLost($reason);
@@ -233,7 +222,6 @@ class CrmController extends Controller
 
     public function reopen(Request $request, Deal $deal): RedirectResponse
     {
-        $this->authorizeDeal($deal);
 
         $stageId = $request->input('pipeline_stage_id')
             ?? PipelineStage::where('is_default', true)->first()?->id;
@@ -248,7 +236,6 @@ class CrmController extends Controller
 
     public function storeActivity(Request $request, Deal $deal): RedirectResponse
     {
-        $this->authorizeDeal($deal);
 
         $validated = $request->validate([
             'type' => 'required|string|in:note,whatsapp,call',
@@ -268,7 +255,6 @@ class CrmController extends Controller
 
     public function aiSuggestMessage(Request $request, Deal $deal): JsonResponse
     {
-        $this->authorizeDeal($deal);
 
         $gemini = app(GeminiService::class);
 
@@ -299,7 +285,6 @@ class CrmController extends Controller
 
     public function aiAnalyzeDeal(Request $request, Deal $deal): JsonResponse
     {
-        $this->authorizeDeal($deal);
 
         $gemini = app(GeminiService::class);
 
@@ -336,7 +321,7 @@ class CrmController extends Controller
     {
         $user = auth()->user();
         $isAdmin = $user->isAdmin();
-        $filterUserId = $isAdmin ? $request->get('user_id') : $user->id;
+        $filterUserId = $request->get('user_id') ?: null;
 
         $tab = $request->get('tab', 'won');
 
@@ -354,9 +339,7 @@ class CrmController extends Controller
 
         $deals = $query->paginate(20)->withQueryString();
 
-        $sellers = $isAdmin
-            ? \App\Domain\User\Models\User::where('active', true)->orderBy('name')->get(['id', 'name', 'role'])
-            : collect();
+        $sellers = \App\Domain\User\Models\User::where('active', true)->orderBy('name')->get(['id', 'name', 'role']);
 
         return view('crm.history', [
             'deals' => $deals,
@@ -369,17 +352,16 @@ class CrmController extends Controller
 
     // ─── Helpers privados ────────────────────────────────────
 
-    private function authorizeDeal(Deal $deal): void
+    private function authorizeDealOwnership(Deal $deal): void
     {
         $user = auth()->user();
 
-        // Admin pode acessar qualquer deal
         if ($user->isAdmin()) {
             return;
         }
 
         if ($deal->user_id !== $user->id) {
-            abort(403, 'Você não tem permissão para acessar este negócio.');
+            abort(403, 'Apenas o responsável ou admin pode realizar esta ação.');
         }
     }
 

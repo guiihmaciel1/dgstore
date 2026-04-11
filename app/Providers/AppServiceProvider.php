@@ -38,9 +38,7 @@ class AppServiceProvider extends ServiceProvider
             $openDealsCount = 0;
 
             if (auth()->check()) {
-                $openDealsCount = Deal::where('user_id', auth()->id())
-                    ->open()
-                    ->count();
+                $openDealsCount = Deal::open()->count();
             }
 
             $view->with('openDealsCount', $openDealsCount);

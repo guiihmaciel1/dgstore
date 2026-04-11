@@ -31,17 +31,15 @@
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                    @if($isAdmin)
-                        <select onchange="window.location.href='{{ route('crm.board') }}?user_id=' + this.value"
-                                style="padding: 0.4rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.8rem; background: white;">
-                            <option value="">Todos os vendedores</option>
-                            @foreach($sellers as $seller)
-                                <option value="{{ $seller->id }}" {{ $filterUserId === $seller->id ? 'selected' : '' }}>
-                                    {{ $seller->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    @endif
+                    <select onchange="window.location.href='{{ route('crm.board') }}?user_id=' + this.value"
+                            style="padding: 0.4rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.8rem; background: white;">
+                        <option value="">Todos os vendedores</option>
+                        @foreach($sellers as $seller)
+                            <option value="{{ $seller->id }}" {{ $filterUserId === $seller->id ? 'selected' : '' }}>
+                                {{ $seller->name }}
+                            </option>
+                        @endforeach
+                    </select>
                     <a href="{{ route('crm.history') }}" style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; color: #374151; text-decoration: none; background: white; font-weight: 500;">
                         Histórico
                     </a>
@@ -232,7 +230,7 @@
                                         </div>
                                     </div>
 
-                                    @if($isAdmin && $deal->user)
+                                    @if($deal->user)
                                         <div style="font-size: 0.6rem; color: #9ca3af; margin-top: 0.375rem;">
                                             {{ $deal->user->name }}
                                         </div>

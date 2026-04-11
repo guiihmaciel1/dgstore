@@ -14,17 +14,15 @@
                 <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Histórico de Negócios</h1>
 
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    @if($isAdmin)
-                        <select onchange="window.location.href='{{ route('crm.history') }}?tab={{ $tab }}&user_id=' + this.value"
-                                style="padding: 0.4rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.8rem; background: white;">
-                            <option value="">Todos</option>
-                            @foreach($sellers as $seller)
-                                <option value="{{ $seller->id }}" {{ $filterUserId === $seller->id ? 'selected' : '' }}>
-                                    {{ $seller->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    @endif
+                    <select onchange="window.location.href='{{ route('crm.history') }}?tab={{ $tab }}&user_id=' + this.value"
+                            style="padding: 0.4rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.8rem; background: white;">
+                        <option value="">Todos</option>
+                        @foreach($sellers as $seller)
+                            <option value="{{ $seller->id }}" {{ $filterUserId === $seller->id ? 'selected' : '' }}>
+                                {{ $seller->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
@@ -63,7 +61,7 @@
                                         <span>{{ $deal->customer->name }}</span>
                                     @endif
                                     <span>{{ $tab === 'won' ? $deal->won_at->format('d/m/Y') : $deal->lost_at->format('d/m/Y') }}</span>
-                                    @if($isAdmin && $deal->user)
+                                    @if($deal->user)
                                         <span>{{ $deal->user->name }}</span>
                                     @endif
                                     @if($deal->lost_reason)
