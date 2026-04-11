@@ -356,32 +356,43 @@
                                                 </svg>
                                             </button>
                                         </div>
-                                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
-                                            <div style="grid-column: span 2;">
+                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+                                            <!-- Nome/Descrição -->
+                                            <div style="grid-column: span 3;">
                                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
                                                     Nome/Descrição <span style="color: #dc2626;">*</span>
                                                 </label>
                                                 <input type="text" :name="'trade_ins['+tiIndex+'][device_name]'" x-model="ti.device_name" 
-                                                       placeholder="Ex: iPhone 13 Pro Max Azul"
+                                                       placeholder="Ex: iPhone 13 Pro Max"
                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                        onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                             </div>
+                                            <!-- Categoria -->
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Categoria</label>
+                                                <select :name="'trade_ins['+tiIndex+'][category]'" x-model="ti.category"
+                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                                    <option value="">Selecione...</option>
+                                                    @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
+                                                        <optgroup label="{{ $group }}">
+                                                            @foreach($items as $cat)
+                                                                <option value="{{ $cat->value }}">{{ $cat->label() }}</option>
+                                                            @endforeach
+                                                        </optgroup>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <!-- Modelo -->
                                             <div>
                                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Modelo</label>
                                                 <input type="text" :name="'trade_ins['+tiIndex+'][device_model]'" x-model="ti.device_model" 
-                                                       placeholder="Ex: A2643"
+                                                       placeholder="Ex: 15 Pro Max"
                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                        onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                             </div>
+                                            <!-- Condição Cosmética -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">IMEI</label>
-                                                <input type="text" :name="'trade_ins['+tiIndex+'][imei]'" x-model="ti.imei" 
-                                                       placeholder="Ex: 123456789012345"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
-                                            </div>
-                                            <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Condição</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Condição Cosmética</label>
                                                 <select :name="'trade_ins['+tiIndex+'][condition]'" x-model="ti.condition"
                                                         style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
                                                     @foreach($tradeInConditions as $condition)
@@ -389,18 +400,87 @@
                                                     @endforeach
                                                 </select>
                                             </div>
+                                            <!-- Armazenamento -->
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Armazenamento</label>
+                                                <input type="text" :name="'trade_ins['+tiIndex+'][storage]'" x-model="ti.storage" 
+                                                       placeholder="Ex: 256GB"
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                            </div>
+                                            <!-- Cor -->
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Cor</label>
+                                                <input type="text" :name="'trade_ins['+tiIndex+'][color]'" x-model="ti.color" 
+                                                       placeholder="Ex: Preto"
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                            </div>
+                                            <!-- IMEI -->
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">IMEI</label>
+                                                <input type="text" :name="'trade_ins['+tiIndex+'][imei]'" x-model="ti.imei" 
+                                                       placeholder="Ex: 123456789012345"
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                            </div>
+
+                                            <!-- Separador Valores -->
+                                            <div style="grid-column: span 3; border-top: 1px solid #e5e7eb; margin-top: 0.25rem; padding-top: 0.75rem;">
+                                                <span style="font-size: 0.75rem; font-weight: 600; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.05em;">Valores</span>
+                                            </div>
+                                            <!-- Valor Negociado -->
                                             <div>
                                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
                                                     Valor Negociado <span style="color: #dc2626;">*</span>
                                                 </label>
                                                 <div style="position: relative;">
-                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280;">R$</span>
+                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
                                                     <input type="number" :name="'trade_ins['+tiIndex+'][estimated_value]'" x-model.number="ti.estimated_value" 
                                                            @input="updateTotals" step="0.01" min="0"
-                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.5rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                            onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                                 </div>
                                             </div>
+                                            <!-- Preço de Custo -->
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço Custo</label>
+                                                <div style="position: relative;">
+                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
+                                                    <input type="number" :name="'trade_ins['+tiIndex+'][cost_price]'" x-model.number="ti.cost_price" 
+                                                           step="0.01" min="0" placeholder="0,00"
+                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                </div>
+                                            </div>
+                                            <!-- Preço Final -->
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço Final</label>
+                                                <div style="position: relative;">
+                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
+                                                    <input type="number" :name="'trade_ins['+tiIndex+'][sale_price]'" x-model.number="ti.sale_price" 
+                                                           step="0.01" min="0" placeholder="0,00"
+                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                </div>
+                                            </div>
+                                            <!-- Preço Repasse -->
+                                            <div>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço Repasse</label>
+                                                <div style="position: relative;">
+                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
+                                                    <input type="number" :name="'trade_ins['+tiIndex+'][resale_price]'" x-model.number="ti.resale_price" 
+                                                           step="0.01" min="0" placeholder="0,00"
+                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                </div>
+                                            </div>
+
+                                            <!-- Separador Seminovo -->
+                                            <div style="grid-column: span 3; border-top: 1px solid #e5e7eb; margin-top: 0.25rem; padding-top: 0.75rem;">
+                                                <span style="font-size: 0.75rem; font-weight: 600; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.05em;">Informações do Seminovo</span>
+                                            </div>
+                                            <!-- Bateria -->
                                             <div>
                                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Bateria (%)</label>
                                                 <input type="number" :name="'trade_ins['+tiIndex+'][battery_health]'" x-model.number="ti.battery_health"
@@ -408,7 +488,8 @@
                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                        onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                             </div>
-                                            <div style="display: flex; gap: 1.5rem; align-items: center; padding-top: 0.25rem;">
+                                            <!-- Checkboxes -->
+                                            <div style="display: flex; gap: 1.5rem; align-items: center; padding-top: 0.25rem; grid-column: span 2;">
                                                 <label style="display: flex; align-items: center; gap: 0.375rem; cursor: pointer; font-size: 0.8125rem; color: #374151;">
                                                     <input type="hidden" :name="'trade_ins['+tiIndex+'][has_box]'" value="0">
                                                     <input type="checkbox" :name="'trade_ins['+tiIndex+'][has_box]'" x-model="ti.has_box" value="1"
@@ -424,7 +505,8 @@
                                                     Com cabo
                                                 </label>
                                             </div>
-                                            <div style="grid-column: span 2;">
+                                            <!-- Observações -->
+                                            <div style="grid-column: span 3;">
                                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Observações</label>
                                                 <textarea :name="'trade_ins['+tiIndex+'][notes]'" x-model="ti.notes" rows="2"
                                                           placeholder="Estado da tela, detalhes adicionais..."
