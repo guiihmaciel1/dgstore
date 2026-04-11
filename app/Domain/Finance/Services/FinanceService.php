@@ -586,11 +586,12 @@ class FinanceService
         $avgDaysInStock = count($allDays) > 0 ? (int) round(array_sum($allDays) / count($allDays)) : 0;
 
         $withoutPrice = $ownData['withoutPrice'] + $consignmentData['withoutPrice'];
+        $itemsWithoutPrice = array_merge($ownData['itemsWithoutPrice'], $consignmentData['itemsWithoutPrice']);
 
         return compact(
             'totalItems', 'totalCost', 'totalSaleValue',
             'potentialProfit', 'potentialMargin', 'avgDaysInStock',
-            'withoutPrice', 'ownData', 'consignmentData',
+            'withoutPrice', 'itemsWithoutPrice', 'ownData', 'consignmentData',
         );
     }
 
@@ -602,6 +603,7 @@ class FinanceService
         $totalSaleValue = 0.0;
         $daysInStock = [];
         $withoutPrice = 0;
+        $itemsWithoutPrice = [];
 
         foreach ($items as $item) {
             $qty = $isOwn ? (int) $item->stock_quantity : (int) $item->available_quantity;
@@ -614,6 +616,12 @@ class FinanceService
 
             if ($sale <= 0) {
                 $withoutPrice += $qty;
+                $itemsWithoutPrice[] = [
+                    'id' => $item->id,
+                    'name' => $isOwn ? $item->full_name : $item->full_name,
+                    'cost' => $cost,
+                    'type' => $isOwn ? 'own' : 'consignment',
+                ];
             }
 
             $dateRef = $isOwn ? $item->created_at : $item->received_at;
@@ -625,7 +633,7 @@ class FinanceService
         $profit = $totalSaleValue - $totalCost;
         $margin = $totalSaleValue > 0 ? round(($profit / $totalSaleValue) * 100, 1) : 0;
 
-        return compact('itemCount', 'totalCost', 'totalSaleValue', 'profit', 'margin', 'daysInStock', 'withoutPrice');
+        return compact('itemCount', 'totalCost', 'totalSaleValue', 'profit', 'margin', 'daysInStock', 'withoutPrice', 'itemsWithoutPrice');
     }
 
     // ─── Overdue check ───

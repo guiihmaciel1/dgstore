@@ -179,7 +179,27 @@
                             <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; font-weight: 600;">{{ $inventoryData['totalItems'] }} {{ $inventoryData['totalItems'] === 1 ? 'item' : 'itens' }}</span>
                         </div>
                         @if($inventoryData['withoutPrice'] > 0)
-                            <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fef3c7; color: #92400e; font-weight: 600;">{{ $inventoryData['withoutPrice'] }} sem preço de venda</span>
+                            <div x-data="{ showMissing: false }" style="position: relative;">
+                                <button @click="showMissing = !showMissing" style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fef3c7; color: #92400e; font-weight: 600; border: 1px solid #fcd34d; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">
+                                    {{ $inventoryData['withoutPrice'] }} sem preço de venda
+                                    <svg style="width: 0.75rem; height: 0.75rem; display: inline; vertical-align: middle; margin-left: 0.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                                <div x-show="showMissing" @click.away="showMissing = false" x-transition
+                                     style="position: absolute; right: 0; top: 100%; margin-top: 0.375rem; background: white; border-radius: 0.5rem; border: 1px solid #e5e7eb; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); min-width: 280px; z-index: 50; overflow: hidden;">
+                                    <div style="padding: 0.625rem 0.75rem; border-bottom: 1px solid #f3f4f6; font-size: 0.6875rem; font-weight: 600; color: #92400e; background: #fffbeb;">
+                                        Produtos sem preço de venda
+                                    </div>
+                                    @foreach($inventoryData['itemsWithoutPrice'] as $missingItem)
+                                        <a href="{{ route('products.edit', $missingItem['id']) }}" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; border-bottom: 1px solid #f9fafb; text-decoration: none; transition: background 0.1s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                            <div>
+                                                <div style="font-size: 0.8125rem; font-weight: 500; color: #111827;">{{ $missingItem['name'] }}</div>
+                                                <div style="font-size: 0.6875rem; color: #6b7280;">Custo: R$ {{ number_format($missingItem['cost'], 2, ',', '.') }}</div>
+                                            </div>
+                                            <svg style="width: 1rem; height: 1rem; color: #9ca3af; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
                         @endif
                     </div>
 

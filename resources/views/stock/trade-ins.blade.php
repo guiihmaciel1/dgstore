@@ -116,7 +116,11 @@
                                     <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Aparelho</th>
                                     <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Venda</th>
                                     <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Condição</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Valor</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Bat.</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Valor Neg.</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Final</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Repasse</th>
                                     <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Status</th>
                                     <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ações</th>
                                 </tr>
@@ -126,6 +130,14 @@
                                     <tr style="border-bottom: 1px solid #f3f4f6;">
                                         <td style="padding: 1rem 1.5rem;">
                                             <div style="font-weight: 600; color: #111827;">{{ $tradeIn->full_name }}</div>
+                                            <div style="display: flex; gap: 0.375rem; flex-wrap: wrap; margin-top: 0.25rem;">
+                                                @if($tradeIn->storage)
+                                                    <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #374151; font-size: 0.6875rem; border-radius: 9999px;">{{ $tradeIn->storage }}</span>
+                                                @endif
+                                                @if($tradeIn->color)
+                                                    <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #374151; font-size: 0.6875rem; border-radius: 9999px;">{{ $tradeIn->color }}</span>
+                                                @endif
+                                            </div>
                                             @if($tradeIn->imei)
                                                 <div style="font-size: 0.75rem; color: #9ca3af; font-family: monospace;">IMEI: {{ $tradeIn->imei }}</div>
                                             @endif
@@ -158,8 +170,20 @@
                                                 {{ $tradeIn->condition->label() }}
                                             </span>
                                         </td>
+                                        <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.8125rem; color: #374151;">
+                                            {{ $tradeIn->battery_health ? $tradeIn->battery_health . '%' : '-' }}
+                                        </td>
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
                                             <div style="font-weight: 600; color: #7c3aed;">{{ $tradeIn->formatted_value }}</div>
+                                        </td>
+                                        <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.8125rem; color: #374151;">
+                                            {{ $tradeIn->cost_price ? 'R$ ' . number_format((float) $tradeIn->cost_price, 2, ',', '.') : '-' }}
+                                        </td>
+                                        <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.8125rem; color: #374151;">
+                                            {{ $tradeIn->sale_price ? 'R$ ' . number_format((float) $tradeIn->sale_price, 2, ',', '.') : '-' }}
+                                        </td>
+                                        <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.8125rem; color: #374151;">
+                                            {{ $tradeIn->resale_price ? 'R$ ' . number_format((float) $tradeIn->resale_price, 2, ',', '.') : '-' }}
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @php

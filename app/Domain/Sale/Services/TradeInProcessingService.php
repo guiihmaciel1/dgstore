@@ -24,24 +24,35 @@ class TradeInProcessingService
      */
     public function createProductFromTradeIn(TradeIn $tradeIn, string $userId): Product
     {
-        $sku = $this->productService->generateSku('iphone', $tradeIn->device_model ?? '');
+        $category = $tradeIn->category ?? ProductCategory::Smartphone->value;
+        $sku = $this->productService->generateSku($category, $tradeIn->device_model ?? '');
 
         $saleNumber = $tradeIn->sale?->sale_number;
         $formattedValue = number_format((float) $tradeIn->estimated_value, 2, ',', '.');
 
+        $costPrice = $tradeIn->cost_price !== null
+            ? (float) $tradeIn->cost_price
+            : (float) $tradeIn->estimated_value;
+
+        $notes = trim("Origem: Trade-in da venda #{$saleNumber}. Valor negociado: R$ {$formattedValue}. {$tradeIn->notes}");
+
         $productData = ProductData::fromArray([
             'name' => $tradeIn->device_name,
             'sku' => $sku,
-            'category' => ProductCategory::Smartphone->value,
+            'category' => $category,
             'model' => $tradeIn->device_model,
+            'storage' => $tradeIn->storage,
+            'color' => $tradeIn->color,
             'condition' => ProductCondition::Used->value,
             'imei' => $tradeIn->imei,
-            'cost_price' => (float) $tradeIn->estimated_value,
+            'cost_price' => $costPrice,
+            'sale_price' => $tradeIn->sale_price !== null ? (float) $tradeIn->sale_price : null,
+            'resale_price' => $tradeIn->resale_price !== null ? (float) $tradeIn->resale_price : null,
             'stock_quantity' => 0,
             'battery_health' => $tradeIn->battery_health,
             'has_box' => $tradeIn->has_box ?? false,
             'has_cable' => $tradeIn->has_cable ?? false,
-            'notes' => "Origem: Trade-in da venda #{$saleNumber}. Valor estimado: R$ {$formattedValue}. {$tradeIn->notes}",
+            'notes' => $notes,
         ]);
 
         $product = $this->productService->create($productData);

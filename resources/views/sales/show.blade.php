@@ -352,21 +352,23 @@
                                         {{ $tradeInItem->status->label() }}
                                     </span>
                                 </div>
-                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
-                                    <div>
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                                    <div style="grid-column: span 2;">
                                         <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Aparelho</dt>
-                                        <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #111827;">{{ $tradeInItem->full_name }}</dd>
+                                        <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #111827;">
+                                            {{ $tradeInItem->full_name }}
+                                            @if($tradeInItem->storage || $tradeInItem->color)
+                                                <div style="display: flex; gap: 0.375rem; margin-top: 0.25rem;">
+                                                    @if($tradeInItem->storage)
+                                                        <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #374151; font-size: 0.6875rem; border-radius: 9999px;">{{ $tradeInItem->storage }}</span>
+                                                    @endif
+                                                    @if($tradeInItem->color)
+                                                        <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #374151; font-size: 0.6875rem; border-radius: 9999px;">{{ $tradeInItem->color }}</span>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        </dd>
                                     </div>
-                                    <div>
-                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Valor</dt>
-                                        <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #7c3aed;">{{ $tradeInItem->formatted_value }}</dd>
-                                    </div>
-                                    @if($tradeInItem->imei)
-                                    <div>
-                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">IMEI</dt>
-                                        <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827; font-family: monospace;">{{ $tradeInItem->imei }}</dd>
-                                    </div>
-                                    @endif
                                     <div>
                                         <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Condição</dt>
                                         <dd style="margin-top: 0.25rem;">
@@ -384,6 +386,34 @@
                                             </span>
                                         </dd>
                                     </div>
+                                    @if($tradeInItem->imei)
+                                    <div>
+                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">IMEI</dt>
+                                        <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827; font-family: monospace;">{{ $tradeInItem->imei }}</dd>
+                                    </div>
+                                    @endif
+                                    <div>
+                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Valor Negociado</dt>
+                                        <dd style="margin-top: 0.25rem; font-size: 1rem; font-weight: 600; color: #7c3aed;">{{ $tradeInItem->formatted_value }}</dd>
+                                    </div>
+                                    @if($tradeInItem->cost_price)
+                                    <div>
+                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Preço Custo</dt>
+                                        <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 600; color: #374151;">R$ {{ number_format((float) $tradeInItem->cost_price, 2, ',', '.') }}</dd>
+                                    </div>
+                                    @endif
+                                    @if($tradeInItem->sale_price)
+                                    <div>
+                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Preço Final</dt>
+                                        <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 600; color: #374151;">R$ {{ number_format((float) $tradeInItem->sale_price, 2, ',', '.') }}</dd>
+                                    </div>
+                                    @endif
+                                    @if($tradeInItem->resale_price)
+                                    <div>
+                                        <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Preço Repasse</dt>
+                                        <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 600; color: #374151;">R$ {{ number_format((float) $tradeInItem->resale_price, 2, ',', '.') }}</dd>
+                                    </div>
+                                    @endif
                                 </div>
                                 @if($tradeInItem->battery_health || $tradeInItem->has_box || $tradeInItem->has_cable)
                                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; display: flex; gap: 1rem; flex-wrap: wrap;">

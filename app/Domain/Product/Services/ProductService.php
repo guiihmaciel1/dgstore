@@ -153,7 +153,18 @@ class ProductService
     public function generateSku(string $category, string $model = ''): string
     {
         $prefix = match ($category) {
-            'iphone' => 'IPH',
+            'iphone', 'smartphone' => 'IPH',
+            'tablet' => 'TAB',
+            'notebook' => 'NTB',
+            'smartwatch' => 'SWT',
+            'headphone' => 'FON',
+            'speaker' => 'SPK',
+            'console' => 'CSL',
+            'camera' => 'CAM',
+            'perfume' => 'PRF',
+            'charger' => 'CRG',
+            'cable' => 'CBL',
+            'case' => 'CAP',
             'accessory' => 'ACC',
             'service' => 'SRV',
             default => 'PRD',
