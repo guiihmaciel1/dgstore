@@ -125,7 +125,9 @@
                                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
                                                         <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #4b5563; border-radius: 0.25rem;" x-text="product.sku"></span>
                                                         <span style="font-size: 0.75rem;" :style="{ color: product.stock > 0 ? '#6b7280' : '#ea580c', fontWeight: product.stock <= 0 ? '600' : '400' }" x-text="product.stock > 0 ? product.stock + ' em estoque' : 'Sem estoque'"></span>
+                                                        @if(auth()->user()->canViewFinancials())
                                                         <span x-show="product.cost_price" style="font-size: 0.75rem; color: #059669; font-weight: 500;" x-text="product.cost_price ? 'Custo: R$ ' + product.cost_price.toFixed(2).replace('.', ',') : ''"></span>
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <svg style="width: 1.25rem; height: 1.25rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,12 +227,13 @@
                                                 </div>
 
                                                 {{-- Linha 2: Custo, Origem, Frete --}}
+                                                <input type="hidden" :name="'items['+index+'][cost_price]'" :value="item.cost_price">
+                                                @if(auth()->user()->canViewFinancials())
                                                 <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
                                                     <div>
                                                         <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
                                                             Custo (R$) <span style="color: #dc2626;">*</span>
                                                         </label>
-                                                        <input type="hidden" :name="'items['+index+'][cost_price]'" :value="item.cost_price">
                                                         <input type="text"
                                                                inputmode="numeric"
                                                                :value="toMoneyMask(item.cost_price)"
@@ -287,6 +290,7 @@
                                                         Lucro: <span x-text="formatMoney(getItemProfit(item))"></span>
                                                     </span>
                                                 </div>
+                                                @endif
 
                                                 {{-- Alerta de sem estoque --}}
                                                 <div x-show="item.stock <= 0"
@@ -309,6 +313,7 @@
                                                     </button>
                                                 </div>
                                                 {{-- Alerta de preço abaixo do custo total --}}
+                                                @if(auth()->user()->canViewFinancials())
                                                 <div x-show="item.cost_price > 0 && item.price > 0 && item.price < getItemTotalCost(item)"
                                                      style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.375rem; display: flex; align-items: center; gap: 0.375rem;">
                                                     <svg style="width: 1rem; height: 1rem; color: #dc2626; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -318,6 +323,7 @@
                                                         Preço abaixo do custo total! Custo: <span x-text="formatMoney(getItemTotalCost(item))"></span>
                                                     </span>
                                                 </div>
+                                                @endif
                                             </div>
                                         </template>
                                     </div>
@@ -770,6 +776,7 @@
                                         <dt>Subtotal</dt>
                                         <dd x-text="formatMoney(subtotal)"></dd>
                                     </div>
+                                    @if(auth()->user()->canViewFinancials())
                                     <div x-show="totalCost > 0" style="display: flex; justify-content: space-between; color: #9ca3af; font-size: 0.8125rem;">
                                         <dt>Custo total</dt>
                                         <dd x-text="formatMoney(totalCost)"></dd>
@@ -783,6 +790,7 @@
                                         <dt>Lucro estimado</dt>
                                         <dd x-text="formatMoney(totalProfit)"></dd>
                                     </div>
+                                    @endif
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <dt style="color: #d1d5db;">Desconto</dt>
                                         <dd>

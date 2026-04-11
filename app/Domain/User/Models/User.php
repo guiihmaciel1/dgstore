@@ -114,6 +114,11 @@ class User extends Authenticatable
         return $this->role === UserRole::Intern;
     }
 
+    public function canViewFinancials(): bool
+    {
+        return !$this->isIntern();
+    }
+
     public function isActive(): bool
     {
         return $this->active;

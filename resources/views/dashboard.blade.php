@@ -549,6 +549,7 @@
                 </div>
 
                 {{-- Cards de Lucro --}}
+                @if(auth()->user()->canViewFinancials())
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-3 sm:mt-4">
                     <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
                         <div class="flex items-center justify-between">
@@ -614,9 +615,10 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 {{-- Inteligência de Lucro --}}
-                @if($profit['top_products']->count() > 0 || $profit['category_ranking']->count() > 0)
+                @if(auth()->user()->canViewFinancials() && ($profit['top_products']->count() > 0 || $profit['category_ranking']->count() > 0))
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
                     {{-- Top Produtos por Lucro --}}
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">

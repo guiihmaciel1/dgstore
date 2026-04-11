@@ -195,7 +195,8 @@
                             <h3 style="font-weight: 600; color: #1d4ed8;">Rastreio do Produto</h3>
                         </div>
                         <div style="padding: 1.5rem;">
-                            @if($product->cost_price || $product->sale_price || $product->resale_price)
+                            @php $canViewFinancials = auth()->user()->canViewFinancials(); @endphp
+                            @if($canViewFinancials && ($product->cost_price || $product->sale_price || $product->resale_price))
                             <div style="display: grid; grid-template-columns: repeat({{ ($product->cost_price ? 1 : 0) + ($product->sale_price ? 1 : 0) + ($product->resale_price ? 1 : 0) }}, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
                                 @if($product->cost_price)
                                 <div style="padding: 0.75rem; background: #f0fdf4; border-radius: 0.5rem; border: 1px solid #bbf7d0;">
@@ -215,6 +216,13 @@
                                     <p style="font-size: 1.125rem; font-weight: 700; color: #ca8a04;">R$ {{ number_format((float) $product->resale_price, 2, ',', '.') }}</p>
                                 </div>
                                 @endif
+                            </div>
+                            @elseif(!$canViewFinancials && $product->sale_price)
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                <div style="padding: 0.75rem; background: #eff6ff; border-radius: 0.5rem; border: 1px solid #bfdbfe;">
+                                    <p style="font-size: 0.65rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Preço de Venda</p>
+                                    <p style="font-size: 1.125rem; font-weight: 700; color: #2563eb;">R$ {{ number_format((float) $product->sale_price, 2, ',', '.') }}</p>
+                                </div>
                             </div>
                             @endif
 
@@ -271,12 +279,14 @@
                                     @endif
                                     <div style="display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.75rem;">
                                         <span style="color: #6b7280;">Venda: <span style="font-weight: 600; color: #111827;">R$ {{ number_format((float) $saleItem->unit_price, 2, ',', '.') }}</span></span>
+                                        @if(auth()->user()->canViewFinancials())
                                         @if($saleItem->cost_price)
                                         <span style="color: #6b7280;">Custo: <span style="font-weight: 600; color: #111827;">R$ {{ number_format((float) $saleItem->cost_price, 2, ',', '.') }}</span></span>
                                         @endif
                                         <span style="color: {{ $saleItem->item_profit >= 0 ? '#16a34a' : '#dc2626' }}; font-weight: 600;">
                                             Lucro: R$ {{ number_format($saleItem->item_profit, 2, ',', '.') }}
                                         </span>
+                                        @endif
                                     </div>
                                 </div>
                                 @endforeach

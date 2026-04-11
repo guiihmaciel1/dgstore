@@ -138,12 +138,14 @@ class ProductController extends Controller
         $products = $this->productService->search($term);
         $products->load('tradeIn:id,product_id,sale_id,estimated_value');
 
+        $canViewFinancials = auth()->user()->canViewFinancials();
+
         $results = $products->map(fn(Product $product) => [
             'id' => $product->id,
             'name' => $product->full_name,
             'sku' => $product->sku,
             'stock' => $product->stock_quantity,
-            'cost_price' => $product->cost_price ? (float) $product->cost_price : null,
+            'cost_price' => $canViewFinancials && $product->cost_price ? (float) $product->cost_price : null,
             'sale_price' => $product->sale_price ? (float) $product->sale_price : null,
             'condition' => $product->condition?->value,
             'from_trade_in' => $product->tradeIn !== null,
@@ -163,7 +165,7 @@ class ProductController extends Controller
             'name' => $item->full_name . ' [' . $item->supplier->name . ']',
             'sku' => $item->imei ?? '-',
             'stock' => $item->available_quantity,
-            'cost_price' => (float) $item->supplier_cost,
+            'cost_price' => $canViewFinancials ? (float) $item->supplier_cost : null,
             'condition' => 'new',
             'from_trade_in' => false,
             'is_consignment' => true,

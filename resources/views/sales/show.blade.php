@@ -97,11 +97,15 @@
                                     <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                         <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
                                         <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Qtd</th>
+                                        @if(auth()->user()->canViewFinancials())
                                         <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo</th>
                                         <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Frete</th>
+                                        @endif
                                         <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Venda</th>
                                         <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Subtotal</th>
+                                        @if(auth()->user()->canViewFinancials())
                                         <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Lucro</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -141,6 +145,7 @@
                                             <td style="padding: 0.75rem 1rem; text-align: center; color: #6b7280;">
                                                 {{ $item->quantity }}
                                             </td>
+                                            @if(auth()->user()->canViewFinancials())
                                             <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280; font-size: 0.875rem;">
                                                 {{ $item->formatted_cost_price }}
                                             </td>
@@ -154,15 +159,18 @@
                                                     -
                                                 @endif
                                             </td>
+                                            @endif
                                             <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280;">
                                                 {{ $item->formatted_unit_price }}
                                             </td>
                                             <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #111827;">
                                                 {{ $item->formatted_subtotal }}
                                             </td>
+                                            @if(auth()->user()->canViewFinancials())
                                             <td style="padding: 0.75rem 1.5rem; text-align: right; font-weight: 600; color: {{ $profitColor }};">
                                                 R$ {{ number_format($itemProfit, 2, ',', '.') }}
                                             </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -196,6 +204,7 @@
                         $profit = $sale->profit;
                         $margin = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
                     @endphp
+                    @if(auth()->user()->canViewFinancials())
                     <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                         <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f0fdf4;">
                             <h3 style="font-weight: 600; color: #166534; display: flex; align-items: center; gap: 0.5rem;">
@@ -250,6 +259,7 @@
                             @endif
                         </div>
                     </div>
+                    @endif
 
                     <!-- Detalhes do Pagamento (quando há pagamento misto) -->
                     @if($sale->hasMixedPayment() || $sale->hasTradeIn())

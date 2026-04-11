@@ -92,7 +92,9 @@
                                 <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Venda</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</th>
                                 <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Total</th>
+                                @if(auth()->user()->canViewFinancials())
                                 <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Lucro</th>
+                                @endif
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Pagamento</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Status</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
@@ -112,9 +114,11 @@
                                     <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; font-size: 1rem; color: #111827;">
                                         {{ $sale->formatted_total }}
                                     </td>
+                                    @if(auth()->user()->canViewFinancials())
                                     <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; font-size: 0.875rem; color: {{ $sale->profit >= 0 ? '#16a34a' : '#dc2626' }};">
                                         {{ $sale->formatted_profit }}
                                     </td>
+                                    @endif
                                     <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280;">
                                         {{ $sale->payment_method->label() }}
                                         @if($sale->installments > 1)
@@ -163,6 +167,7 @@
                                 <td style="padding: 0.875rem 1rem; text-align: right; font-weight: 700; font-size: 1rem; color: #111827;">
                                     R$ {{ number_format($totals['total_revenue'], 2, ',', '.') }}
                                 </td>
+                                @if(auth()->user()->canViewFinancials())
                                 <td style="padding: 0.875rem 1rem; text-align: right; font-weight: 700; font-size: 0.95rem; color: {{ $totals['total_profit'] >= 0 ? '#16a34a' : '#dc2626' }};">
                                     R$ {{ number_format($totals['total_profit'], 2, ',', '.') }}
                                 </td>
@@ -173,6 +178,9 @@
                                         </span>
                                     @endif
                                 </td>
+                                @else
+                                <td colspan="4" style="padding: 0.875rem 1rem;"></td>
+                                @endif
                             </tr>
                         </tfoot>
                         @endif
