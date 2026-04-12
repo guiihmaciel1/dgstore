@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers;
 
 use App\Domain\Customer\Services\CustomerService;
+use App\Domain\Product\Models\Product;
 use App\Domain\Product\Services\ProductService;
 use App\Domain\Reservation\Enums\ReservationStatus;
 use App\Domain\Reservation\Models\Reservation;
@@ -252,10 +253,23 @@ class ReservationController extends Controller
             return response()->json([]);
         }
 
-        $results = $this->productService->search($query)
-            ->filter(fn($p) => !$p->reserved)
-            ->when(!empty($excludeIds), fn($col) => $col->filter(fn($p) => !in_array($p->id, $excludeIds)))
-            ->take(10)
+        $dbQuery = Product::where(function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('sku', 'like', "%{$query}%")
+                  ->orWhere('imei', 'like', "%{$query}%")
+                  ->orWhere('model', 'like', "%{$query}%");
+            })
+            ->active()
+            ->where('reserved', false);
+
+        if (!empty($excludeIds)) {
+            $dbQuery->whereNotIn('id', $excludeIds);
+        }
+
+        $results = $dbQuery->orderByDesc('stock_quantity')
+            ->orderBy('name')
+            ->limit(15)
+            ->get()
             ->map(fn($p) => [
                 'id' => $p->id,
                 'name' => $p->full_name,
@@ -266,7 +280,7 @@ class ReservationController extends Controller
                 'condition' => $p->condition instanceof \BackedEnum ? $p->condition->value : $p->condition,
                 'formatted_price' => $p->sale_price > 0 ? 'R$ ' . number_format((float) $p->sale_price, 2, ',', '.') : null,
                 'formatted_cost' => $p->cost_price > 0 ? 'R$ ' . number_format((float) $p->cost_price, 2, ',', '.') : null,
-            ])->values();
+            ]);
 
         return response()->json($results);
     }
