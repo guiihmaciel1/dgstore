@@ -16,11 +16,13 @@ use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
+use App\Domain\Sale\Models\SaleFollowup;
 use App\Domain\Sale\Models\SaleItem;
 use App\Domain\Sale\Models\TradeIn;
 use App\Domain\Schedule\Enums\AppointmentStatus;
 use App\Domain\Schedule\Models\Appointment;
 use App\Domain\Warranty\Services\WarrantyService;
+use App\Domain\News\Services\AppleNewsService;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -52,6 +54,8 @@ class DashboardController extends Controller
         $todayPayables = $this->getTodayPayables();
 
         $monthSummary = $this->getMonthSummary($referenceDate);
+        $followupSales = $this->getFollowupSales();
+        $appleNews = $this->appleNewsService->getCached();
 
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
@@ -68,6 +72,8 @@ class DashboardController extends Controller
             'nextAppointment' => $nextAppointment,
             'todayPayables' => $todayPayables,
             'monthSummary' => $monthSummary,
+            'followupSales' => $followupSales,
+            'appleNews' => $appleNews,
             'referenceDate' => $referenceDate,
             'isCurrentMonth' => $isCurrentMonth,
         ]);
@@ -235,7 +241,36 @@ class DashboardController extends Controller
             ];
         }
 
+        $followupCount = Sale::whereNotNull('customer_id')
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->whereNotNull('sold_at')
+            ->where('sold_at', '<=', now()->subDays(7))
+            ->where('sold_at', '>=', now()->subDays(30))
+            ->whereDoesntHave('followups')
+            ->count();
+        if ($followupCount > 0) {
+            $notifications[] = [
+                'type' => 'info', 'icon' => 'followup', 'count' => $followupCount,
+                'label' => 'Follow-ups pendentes',
+                'route' => '#followup-modal',
+            ];
+        }
+
         return $notifications;
+    }
+
+    private function getFollowupSales(): \Illuminate\Support\Collection
+    {
+        return Sale::with(['customer', 'items'])
+            ->whereNotNull('customer_id')
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->whereNotNull('sold_at')
+            ->where('sold_at', '<=', now()->subDays(7))
+            ->where('sold_at', '>=', now()->subDays(30))
+            ->whereDoesntHave('followups')
+            ->orderBy('sold_at')
+            ->limit(20)
+            ->get();
     }
 
     private function getTodayAppointments(): \Illuminate\Support\Collection

@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot name="title">Produtos</x-slot>
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @if(session('success'))
@@ -13,13 +14,22 @@
                     <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Produtos</h1>
                     <p class="text-sm text-gray-500">Gerencie o catálogo de produtos da loja</p>
                 </div>
-                <a href="{{ route('products.create') }}" 
-                   class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    <span>Novo Produto</span>
-                </a>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('products.label-batch', request()->only(['search', 'category', 'condition'])) }}" target="_blank"
+                       class="inline-flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                        </svg>
+                        Gerar Etiquetas
+                    </a>
+                    <a href="{{ route('products.create') }}" 
+                       class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span>Novo Produto</span>
+                    </a>
+                </div>
             </div>
 
             <!-- Card Principal -->
@@ -159,6 +169,9 @@
                                     </td>
                                     <td style="padding: 0.75rem 1.5rem; text-align: right;">
                                         <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                                            <a href="{{ route('products.label', $product) }}" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'" title="Gerar Etiqueta">
+                                                <svg style="width: 1rem; height: 1rem; display: inline;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                                            </a>
                                             <a href="{{ route('products.show', $product) }}" style="color: #6b7280; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'">Ver</a>
                                             <a href="{{ route('products.edit', $product) }}" style="color: #6b7280; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'">Editar</a>
                                         </div>

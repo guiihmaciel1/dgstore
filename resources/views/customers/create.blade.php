@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot name="title">Novo Cliente</x-slot>
     <div class="py-4">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Cabeçalho compacto -->

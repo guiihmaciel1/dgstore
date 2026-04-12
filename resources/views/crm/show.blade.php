@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot name="title">CRM - Negócio</x-slot>
     @php
         $activeStages = \App\Domain\CRM\Models\PipelineStage::where('is_won', false)->where('is_lost', false)->orderBy('position')->get();
     @endphp

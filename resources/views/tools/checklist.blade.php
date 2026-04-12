@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot name="title">Checklist Seminovo</x-slot>
     <div class="py-6">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8" x-data="checklistApp()">
 

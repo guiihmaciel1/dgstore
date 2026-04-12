@@ -13,9 +13,11 @@ use App\Domain\Product\Services\ProductService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreProductRequest;
 use App\Presentation\Http\Requests\UpdateProductRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -187,5 +189,49 @@ class ProductController extends Controller
         $sku = $this->productService->generateSku($category, $model);
 
         return response()->json(['sku' => $sku]);
+    }
+
+    public function label(Product $product): Response
+    {
+        $pdf = Pdf::loadView('products.label', ['products' => collect([$product])])
+            ->setPaper([0, 0, 198.43, 141.73]); // 7cm x 5cm
+
+        return $pdf->stream("etiqueta-{$product->sku}.pdf");
+    }
+
+    public function labelBatch(Request $request): Response|RedirectResponse
+    {
+        $query = Product::where('active', true);
+
+        if ($request->filled('ids')) {
+            $query->whereIn('id', $request->input('ids'));
+        } else {
+            if ($request->filled('search')) {
+                $search = $request->input('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('sku', 'like', "%{$search}%")
+                      ->orWhere('color', 'like', "%{$search}%");
+                });
+            }
+            if ($request->filled('category')) {
+                $query->where('category', $request->input('category'));
+            }
+            if ($request->filled('condition')) {
+                $query->where('condition', $request->input('condition'));
+            }
+            $query->where('stock_quantity', '>', 0);
+        }
+
+        $products = $query->orderBy('name')->get();
+
+        if ($products->isEmpty()) {
+            return back()->with('error', 'Nenhum produto encontrado para gerar etiquetas.');
+        }
+
+        $pdf = Pdf::loadView('products.label', ['products' => $products])
+            ->setPaper([0, 0, 198.43, 141.73]);
+
+        return $pdf->stream('etiquetas-lote.pdf');
     }
 }

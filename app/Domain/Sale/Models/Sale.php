@@ -100,6 +100,24 @@ class Sale extends Model
         return $this->hasMany(TradeIn::class);
     }
 
+    public function followups(): HasMany
+    {
+        return $this->hasMany(SaleFollowup::class);
+    }
+
+    public function needsFollowup(int $daysAfter = 7, int $maxDays = 30): bool
+    {
+        if (!$this->customer_id || $this->isCancelled() || !$this->sold_at) {
+            return false;
+        }
+
+        $daysSinceSale = $this->sold_at->diffInDays(now());
+
+        return $daysSinceSale >= $daysAfter
+            && $daysSinceSale <= $maxDays
+            && $this->followups()->count() === 0;
+    }
+
     // Scopes
 
     public function scopePaid(Builder $query): Builder

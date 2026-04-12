@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot name="title">Novo Usuário</x-slot>
     <div class="py-6">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 

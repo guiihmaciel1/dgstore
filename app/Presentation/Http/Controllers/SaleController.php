@@ -15,10 +15,12 @@ use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Enums\TradeInCondition;
 use App\Domain\Sale\Models\Sale;
+use App\Domain\Sale\Models\SaleFollowup;
 use App\Domain\Sale\Services\SaleService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreSaleRequest;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -245,6 +247,27 @@ class SaleController extends Controller
         ]);
 
         return $pdf->stream("comprovante-{$sale->sale_number}.pdf");
+    }
+
+    public function followup(Request $request, Sale $sale): JsonResponse
+    {
+        $request->validate([
+            'method' => 'sometimes|string|in:whatsapp,phone,in_person',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $followup = SaleFollowup::create([
+            'sale_id' => $sale->id,
+            'user_id' => auth()->id(),
+            'contacted_at' => now(),
+            'method' => $request->input('method', 'whatsapp'),
+            'notes' => $request->input('notes'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'followup_id' => $followup->id,
+        ]);
     }
 
     public function destroy(Sale $sale): RedirectResponse

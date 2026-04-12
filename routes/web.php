@@ -107,7 +107,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/api/crm/deals/{deal}/ai-analysis', [CrmController::class, 'aiAnalyzeDeal'])->name('crm.deals.ai-analysis');
 
         // Produtos
+        Route::get('/products/labels/batch', [ProductController::class, 'labelBatch'])->name('products.label-batch');
         Route::resource('products', ProductController::class);
+        Route::get('/products/{product}/label', [ProductController::class, 'label'])->name('products.label');
         Route::get('/api/products/search', [ProductController::class, 'search'])->name('products.search');
         Route::get('/api/products/generate-sku', [ProductController::class, 'generateSku'])->name('products.generate-sku');
         Route::post('/api/products/store-quick', [ProductController::class, 'storeQuick'])->name('products.store-quick');
@@ -142,6 +144,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
         Route::patch('/sales/{sale}/status', [SaleController::class, 'updateStatus'])->name('sales.update-status');
         Route::get('/sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
+        Route::post('/sales/{sale}/followup', [SaleController::class, 'followup'])->name('sales.followup');
 
         // API - Calculadora de Taxas de Cartão
         Route::post('/api/card-fees/calculate', [CardFeeController::class, 'calculate'])->name('card-fees.calculate');

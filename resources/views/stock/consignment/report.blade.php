@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot name="title">Relatório Consignado</x-slot>
     <div class="py-6">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8" x-data="consignmentReport()">
             <div class="flex items-center mb-6">

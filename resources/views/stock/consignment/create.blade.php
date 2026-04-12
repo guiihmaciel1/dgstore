@@ -1,4 +1,5 @@
 <x-app-layout>
+    <x-slot name="title">Nova Entrada Consignada</x-slot>
     <div class="py-6">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center mb-6">
