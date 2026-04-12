@@ -408,16 +408,20 @@
                                             </div>
                                             <!-- Armazenamento -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Armazenamento</label>
-                                                <input type="text" :name="'trade_ins['+tiIndex+'][storage]'" x-model="ti.storage" 
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+                                                    Armazenamento <span style="color: #dc2626;">*</span>
+                                                </label>
+                                                <input type="text" :name="'trade_ins['+tiIndex+'][storage]'" x-model="ti.storage" required
                                                        placeholder="Ex: 256GB"
                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                        onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                             </div>
                                             <!-- Cor -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Cor</label>
-                                                <input type="text" :name="'trade_ins['+tiIndex+'][color]'" x-model="ti.color" 
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+                                                    Cor <span style="color: #dc2626;">*</span>
+                                                </label>
+                                                <input type="text" :name="'trade_ins['+tiIndex+'][color]'" x-model="ti.color" required
                                                        placeholder="Ex: Preto"
                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                        onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
@@ -435,7 +439,7 @@
                                             <div style="grid-column: span 3; border-top: 1px solid #e5e7eb; margin-top: 0.25rem; padding-top: 0.75rem;">
                                                 <span style="font-size: 0.75rem; font-weight: 600; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.05em;">Valores</span>
                                             </div>
-                                            <!-- Valor Negociado -->
+                                            <!-- Valor Negociado (= Preço Custo) -->
                                             <div>
                                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
                                                     Valor Negociado <span style="color: #dc2626;">*</span>
@@ -443,40 +447,33 @@
                                                 <div style="position: relative;">
                                                     <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
                                                     <input type="number" :name="'trade_ins['+tiIndex+'][estimated_value]'" x-model.number="ti.estimated_value" 
-                                                           @input="updateTotals" step="0.01" min="0"
-                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
-                                                </div>
-                                            </div>
-                                            <!-- Preço de Custo -->
-                                            <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço Custo</label>
-                                                <div style="position: relative;">
-                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
-                                                    <input type="number" :name="'trade_ins['+tiIndex+'][cost_price]'" x-model.number="ti.cost_price" 
-                                                           step="0.01" min="0" placeholder="0,00"
+                                                           @input="updateTotals" step="0.01" min="0" required
                                                            style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                            onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                                 </div>
                                             </div>
                                             <!-- Preço Final -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço Final</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+                                                    Preço Final <span style="color: #dc2626;">*</span>
+                                                </label>
                                                 <div style="position: relative;">
                                                     <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
                                                     <input type="number" :name="'trade_ins['+tiIndex+'][sale_price]'" x-model.number="ti.sale_price" 
-                                                           step="0.01" min="0" placeholder="0,00"
+                                                           step="0.01" min="0" placeholder="0,00" required
                                                            style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                            onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                                 </div>
                                             </div>
                                             <!-- Preço Repasse -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Preço Repasse</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+                                                    Preço Repasse <span style="color: #dc2626;">*</span>
+                                                </label>
                                                 <div style="position: relative;">
                                                     <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
                                                     <input type="number" :name="'trade_ins['+tiIndex+'][resale_price]'" x-model.number="ti.resale_price" 
-                                                           step="0.01" min="0" placeholder="0,00"
+                                                           step="0.01" min="0" placeholder="0,00" required
                                                            style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                            onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                                 </div>
@@ -488,9 +485,11 @@
                                             </div>
                                             <!-- Bateria -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Bateria (%)</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
+                                                    Bateria (%) <span style="color: #dc2626;">*</span>
+                                                </label>
                                                 <input type="number" :name="'trade_ins['+tiIndex+'][battery_health]'" x-model.number="ti.battery_health"
-                                                       min="0" max="100" placeholder="Ex: 87"
+                                                       min="0" max="100" placeholder="Ex: 87" required
                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                                        onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
                                             </div>
@@ -566,7 +565,7 @@
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center;">
                                         <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">2</span>
-                                        <span style="font-weight: 600;">Cliente (opcional)</span>
+                                        <span style="font-weight: 600;">Cliente <span style="color: #fca5a5;">*</span></span>
                                     </div>
                                     <button type="button" @click="showCustomerModal = true; customerForm = resetCustomerForm()"
                                             style="display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 0.375rem; font-size: 0.75rem; font-weight: 500; cursor: pointer;"
@@ -1494,14 +1493,27 @@
                 // Computed: pode submeter o formulário
                 get canSubmit() {
                     if (this.items.length === 0) return false;
+                    if (!this.selectedCustomer.id) return false;
+                    if (this.hasTradeIn && !this.tradeInsValid) return false;
                     if (this.total <= 0) return true;
                     const diff = this.paymentDifference;
                     if (Math.abs(diff) <= 0.01) return true;
                     const allowsOpenBalance =
                         this.paymentStatus === 'pending' || this.paymentStatus === 'partial';
-                    // Parcial/Pendente: permite finalizar com valor em aberto; excedente continua bloqueado
                     if (allowsOpenBalance && diff > 0.01) return true;
                     return false;
+                },
+
+                get tradeInsValid() {
+                    return this.tradeIns.every(ti =>
+                        ti.device_name &&
+                        ti.storage &&
+                        ti.color &&
+                        ti.estimated_value > 0 &&
+                        ti.sale_price > 0 &&
+                        ti.resale_price !== null && ti.resale_price !== '' &&
+                        ti.battery_health !== null && ti.battery_health !== ''
+                    );
                 },
                 
                 addCardPayment() {
@@ -1523,6 +1535,12 @@
                 getSubmitButtonText() {
                     if (this.items.length === 0) {
                         return 'Adicione produtos para continuar';
+                    }
+                    if (!this.selectedCustomer.id) {
+                        return 'Selecione um cliente';
+                    }
+                    if (this.hasTradeIn && !this.tradeInsValid) {
+                        return 'Preencha todos os campos do trade-in';
                     }
                     if (this.paymentDifference > 0.01) {
                         return 'Faltam ' + this.formatMoney(this.paymentDifference);
@@ -1644,7 +1662,6 @@
                         color: '',
                         imei: '',
                         estimated_value: 0,
-                        cost_price: null,
                         sale_price: null,
                         resale_price: null,
                         condition: 'good',

@@ -176,9 +176,10 @@
 
                                         <button type="button" @click="confirmManualProduct()"
                                                 :disabled="!manualProductName"
-                                                style="width: 100%; padding: 0.5rem; background: #2563eb; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;"
-                                                :style="!manualProductName ? 'opacity: 0.5; cursor: not-allowed;' : ''"
-                                                onmouseover="if(!this.disabled) this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                                                style="width: 100%; padding: 0.75rem 1.25rem; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem; letter-spacing: 0.025em; transition: all 0.2s; box-shadow: 0 2px 8px rgba(37,99,235,0.3);"
+                                                :style="!manualProductName ? 'opacity: 0.4; cursor: not-allowed; box-shadow: none; filter: grayscale(0.3);' : ''"
+                                                onmouseover="if(!this.disabled) { this.style.boxShadow='0 6px 16px rgba(37,99,235,0.4)'; this.style.transform='translateY(-1px)'; }"
+                                                onmouseout="this.style.boxShadow='0 2px 8px rgba(37,99,235,0.3)'; this.style.transform='none';">
                                             Confirmar Produto
                                         </button>
                                     </div>

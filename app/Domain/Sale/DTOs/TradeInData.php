@@ -41,7 +41,7 @@ readonly class TradeInData
             storage: $data['storage'] ?? null,
             color: $data['color'] ?? null,
             imei: $data['imei'] ?? null,
-            costPrice: isset($data['cost_price']) && $data['cost_price'] !== '' ? (float) $data['cost_price'] : null,
+            costPrice: (float) ($data['estimated_value']),
             salePrice: isset($data['sale_price']) && $data['sale_price'] !== '' ? (float) $data['sale_price'] : null,
             resalePrice: isset($data['resale_price']) && $data['resale_price'] !== '' ? (float) $data['resale_price'] : null,
             batteryHealth: isset($data['battery_health']) && $data['battery_health'] !== '' ? (int) $data['battery_health'] : null,

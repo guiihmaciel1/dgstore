@@ -20,7 +20,7 @@ class StoreSaleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => ['nullable', 'exists:customers,id'],
+            'customer_id' => ['required', 'exists:customers,id'],
             'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
             'payment_status' => ['required', Rule::enum(PaymentStatus::class)],
             'discount' => ['nullable', 'numeric', 'min:0'],
@@ -52,15 +52,14 @@ class StoreSaleRequest extends FormRequest
             'trade_ins.*.device_name' => ['required', 'string', 'max:255'],
             'trade_ins.*.device_model' => ['nullable', 'string', 'max:255'],
             'trade_ins.*.category' => ['nullable', 'string', 'max:100'],
-            'trade_ins.*.storage' => ['nullable', 'string', 'max:50'],
-            'trade_ins.*.color' => ['nullable', 'string', 'max:50'],
+            'trade_ins.*.storage' => ['required', 'string', 'max:50'],
+            'trade_ins.*.color' => ['required', 'string', 'max:50'],
             'trade_ins.*.imei' => ['nullable', 'string', 'max:50'],
             'trade_ins.*.estimated_value' => ['required', 'numeric', 'min:0.01'],
-            'trade_ins.*.cost_price' => ['nullable', 'numeric', 'min:0'],
-            'trade_ins.*.sale_price' => ['nullable', 'numeric', 'min:0'],
-            'trade_ins.*.resale_price' => ['nullable', 'numeric', 'min:0'],
+            'trade_ins.*.sale_price' => ['required', 'numeric', 'min:0.01'],
+            'trade_ins.*.resale_price' => ['required', 'numeric', 'min:0'],
             'trade_ins.*.condition' => ['nullable', Rule::enum(TradeInCondition::class)],
-            'trade_ins.*.battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'trade_ins.*.battery_health' => ['required', 'integer', 'min:0', 'max:100'],
             'trade_ins.*.has_box' => ['nullable', 'boolean'],
             'trade_ins.*.has_cable' => ['nullable', 'boolean'],
             'trade_ins.*.notes' => ['nullable', 'string'],
@@ -96,7 +95,6 @@ class StoreSaleRequest extends FormRequest
             'trade_ins.*.color' => 'cor do aparelho',
             'trade_ins.*.imei' => 'IMEI',
             'trade_ins.*.estimated_value' => 'valor negociado',
-            'trade_ins.*.cost_price' => 'preço de custo',
             'trade_ins.*.sale_price' => 'preço final',
             'trade_ins.*.resale_price' => 'preço de repasse',
             'trade_ins.*.condition' => 'condição do aparelho',
@@ -107,14 +105,22 @@ class StoreSaleRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'customer_id.required' => 'Selecione um cliente para a venda.',
+            'customer_id.exists' => 'Cliente selecionado não encontrado.',
             'items.required' => 'Adicione pelo menos um item à venda.',
             'items.min' => 'Adicione pelo menos um item à venda.',
             'items.*.product_id.required' => 'Selecione o produto para cada item.',
             'items.*.product_id.exists' => 'Produto inválido selecionado.',
             'items.*.quantity.min' => 'A quantidade deve ser pelo menos 1.',
             'trade_ins.*.device_name.required' => 'Informe o nome do aparelho para o trade-in.',
-            'trade_ins.*.estimated_value.required' => 'Informe o valor do aparelho para o trade-in.',
-            'trade_ins.*.estimated_value.min' => 'O valor do aparelho deve ser maior que zero.',
+            'trade_ins.*.estimated_value.required' => 'Informe o valor negociado do aparelho.',
+            'trade_ins.*.estimated_value.min' => 'O valor negociado deve ser maior que zero.',
+            'trade_ins.*.storage.required' => 'Informe o armazenamento do aparelho.',
+            'trade_ins.*.color.required' => 'Informe a cor do aparelho.',
+            'trade_ins.*.sale_price.required' => 'Informe o preço final do aparelho.',
+            'trade_ins.*.sale_price.min' => 'O preço final deve ser maior que zero.',
+            'trade_ins.*.resale_price.required' => 'Informe o preço de repasse do aparelho.',
+            'trade_ins.*.battery_health.required' => 'Informe a bateria do aparelho.',
         ];
     }
 }
