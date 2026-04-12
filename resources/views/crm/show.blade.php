@@ -11,11 +11,18 @@
                 </div>
             @endif
 
-            {{-- Breadcrumb --}}
-            <div style="margin-bottom: 1rem; font-size: 0.8rem; color: #6b7280;">
-                <a href="{{ route('crm.board') }}" style="color: #3b82f6; text-decoration: none;">Pipeline</a>
-                <span style="margin: 0 0.375rem;">/</span>
-                <span>{{ $deal->title }}</span>
+            {{-- Breadcrumb com botão voltar --}}
+            <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                <a href="{{ route('crm.board') }}" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 0.375rem; border: 1px solid #e5e7eb; background: white; color: #374151; text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='white'" title="Voltar ao Pipeline">
+                    <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+                <div style="font-size: 0.8rem; color: #6b7280;">
+                    <a href="{{ route('crm.board') }}" style="color: #3b82f6; text-decoration: none;">Pipeline</a>
+                    <span style="margin: 0 0.375rem;">/</span>
+                    <span>{{ $deal->title }}</span>
+                </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; {{ !$deal->isOpen() ? '' : '' }}">
