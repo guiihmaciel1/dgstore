@@ -103,8 +103,12 @@
                                                     <span style="font-size: 0.75rem; color: #6b7280;" x-text="product.sku"></span>
                                                 </div>
                                                 <div style="text-align: right; white-space: nowrap; margin-left: 0.75rem;">
-                                                    <div style="font-weight: 600; color: #16a34a; font-size: 0.875rem;" x-text="product.formatted_price"></div>
-                                                    <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500; background: #dcfce7; color: #16a34a;" x-text="'Estoque: ' + product.stock"></span>
+                                                    <template x-if="product.formatted_price">
+                                                        <div style="font-weight: 600; color: #16a34a; font-size: 0.875rem;" x-text="product.formatted_price"></div>
+                                                    </template>
+                                                    <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500;"
+                                                          :style="product.stock > 0 ? 'background: #dcfce7; color: #16a34a;' : 'background: #fef3c7; color: #d97706;'"
+                                                          x-text="product.stock > 0 ? 'Estoque: ' + product.stock : 'Sem estoque'"></span>
                                                 </div>
                                             </button>
                                         </template>
@@ -113,7 +117,7 @@
                                     <!-- Nenhum resultado -->
                                     <div x-show="searchTerm.length >= 2 && searchResults.length === 0 && searched && !searching" x-cloak
                                          style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.5rem; text-align: center;">
-                                        <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">Nenhum produto em estoque encontrado</p>
+                                        <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">Nenhum produto encontrado</p>
                                         <a href="{{ route('products.create') }}" target="_blank"
                                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; text-decoration: none;">
                                             <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -253,7 +253,7 @@ class ReservationController extends Controller
         }
 
         $results = $this->productService->search($query)
-            ->filter(fn($p) => !$p->reserved && $p->stock_quantity > 0)
+            ->filter(fn($p) => !$p->reserved)
             ->when(!empty($excludeIds), fn($col) => $col->filter(fn($p) => !in_array($p->id, $excludeIds)))
             ->take(10)
             ->map(fn($p) => [
