@@ -1,6 +1,5 @@
 <x-app-layout>
     @php
-        // Query direta para garantir que sempre temos os stages ativos
         $activeStages = \App\Domain\CRM\Models\PipelineStage::where('is_won', false)->where('is_lost', false)->orderBy('position')->get();
     @endphp
     <div class="py-4" x-data="crmBoard()" x-init="init()">
@@ -43,6 +42,20 @@
                     <a href="{{ route('crm.history') }}" style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; color: #374151; text-decoration: none; background: white; font-weight: 500;">
                         Histórico
                     </a>
+                    <button @click="showCustomerForm = true" type="button"
+                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: white; color: #374151; font-size: 0.8rem; font-weight: 500; border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer;">
+                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                        + Cliente
+                    </button>
+                    <button @click="showScheduleForm = true" type="button"
+                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: white; color: #374151; font-size: 0.8rem; font-weight: 500; border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer;">
+                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        + Agendamento
+                    </button>
                     <button @click="showNewDealForm = true" type="button"
                             style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; font-size: 0.8rem; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer;">
                         <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,100 +66,9 @@
                 </div>
             </div>
 
-            {{-- Modal: Novo Negócio --}}
-            <div x-show="showNewDealForm" x-transition.opacity style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4);" x-cloak>
-                <div @click.away="showNewDealForm = false" style="background: white; border-radius: 0.75rem; padding: 1.5rem; width: 100%; max-width: 32rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto;">
-                    <h2 style="font-size: 1.125rem; font-weight: 700; color: #111827; margin-bottom: 1rem;">Novo Negócio</h2>
-                    <form method="POST" action="{{ route('crm.deals.store') }}">
-                        @csrf
-                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                            <div>
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Título <span style="color: #dc2626;">*</span></label>
-                                <input type="text" name="title" required value="{{ old('title') }}" placeholder="Ex: iPhone 16 Pro Max - João"
-                                       style="width: 100%; padding: 0.5rem; border: 1px solid {{ $errors->has('title') ? '#fca5a5' : '#e5e7eb' }}; border-radius: 0.375rem; font-size: 0.875rem;">
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                <div>
-                                    <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Produto de Interesse</label>
-                                    <input type="text" name="product_interest" value="{{ old('product_interest') }}" placeholder="iPhone 16 Pro Max 256GB"
-                                           style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
-                                </div>
-                                <div>
-                                    <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Valor (R$)</label>
-                                    <input type="number" name="value" step="0.01" value="{{ old('value') }}" placeholder="0,00"
-                                           style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
-                                </div>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                <div>
-                                    <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Telefone / WhatsApp</label>
-                                    <input type="text" name="phone" value="{{ old('phone') }}" placeholder="5517996498338"
-                                           style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
-                                </div>
-                                <div>
-                                    <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Previsão de Fechamento</label>
-                                    <input type="date" name="expected_close_date" value="{{ old('expected_close_date') }}"
-                                           style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
-                                </div>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Etapa</label>
-                                <select name="pipeline_stage_id" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
-                                    @foreach($activeStages as $stage)
-                                        <option value="{{ $stage->id }}" {{ $stage->is_default ? 'selected' : '' }}>{{ $stage->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Buscar Cliente</label>
-                                <div style="position: relative;">
-                                    <input type="text" x-model="customerSearch" @input.debounce.300ms="searchCustomers()"
-                                           placeholder="Digite o nome do cliente..."
-                                           style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
-                                    <input type="hidden" name="customer_id" x-model="selectedCustomerId">
-                                    <div x-show="customerResults.length > 0" style="position: absolute; z-index: 10; width: 100%; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; margin-top: 2px; max-height: 150px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                                        <template x-for="c in customerResults" :key="c.id">
-                                            <div @click="selectCustomer(c)" style="padding: 0.5rem; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid #f3f4f6;"
-                                                 class="hover:bg-gray-50">
-                                                <span x-text="c.name" style="font-weight: 600;"></span>
-                                                <span x-text="c.phone ? ' - ' + c.phone : ''" style="color: #6b7280;"></span>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </div>
-                                <div x-show="selectedCustomerName" style="margin-top: 0.25rem; font-size: 0.75rem; color: #059669;">
-                                    Selecionado: <strong x-text="selectedCustomerName"></strong>
-                                    <button type="button" @click="clearCustomer()" style="color: #dc2626; margin-left: 0.5rem; font-size: 0.7rem; border: none; background: none; cursor: pointer;">[remover]</button>
-                                </div>
-                            </div>
-                            <div>
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Observações</label>
-                                <textarea name="description" rows="2" placeholder="Detalhes sobre o interesse, condições, etc."
-                                          style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;">{{ old('description') }}</textarea>
-                            </div>
-                        </div>
-
-                        @if($errors->any())
-                            <div style="margin-top: 0.75rem; color: #dc2626; font-size: 0.75rem;">
-                                @foreach($errors->all() as $error)
-                                    <div>{{ $error }}</div>
-                                @endforeach
-                            </div>
-                        @endif
-
-                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
-                            <button @click.prevent="showNewDealForm = false" type="button"
-                                    style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white; color: #6b7280; cursor: pointer;">
-                                Cancelar
-                            </button>
-                            <button type="submit"
-                                    style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #111827; color: white; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600;">
-                                Criar Negócio
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            @include('crm.partials.modal-new-deal')
+            @include('crm.partials.modal-new-customer')
+            @include('crm.partials.modal-new-schedule')
 
             {{-- Kanban Board --}}
             <div style="display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 1rem; min-height: 65vh;">
@@ -175,15 +97,24 @@
                         <div class="deal-column" data-stage-id="{{ $stage->id }}"
                              style="flex: 1; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; min-height: 100px;">
                             @foreach(($dealsByStage[$stage->id] ?? collect()) as $deal)
+                                @php $interest = $deal->productInterests->first(); @endphp
                                 <a href="{{ route('crm.show', $deal) }}" class="deal-card" data-deal-id="{{ $deal->id }}"
                                    style="display: block; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.75rem; cursor: grab; text-decoration: none; transition: box-shadow 0.15s; {{ $deal->isOverdue() ? 'border-left: 3px solid #dc2626;' : '' }}"
                                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
-                                    {{-- Product interest badge --}}
-                                    @if($deal->product_interest)
-                                        <div style="font-size: 0.65rem; font-weight: 600; color: #374151; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 0.375rem;">
-                                            {{ $deal->product_interest }}
-                                        </div>
-                                    @endif
+
+                                    {{-- Badges: produto + condição --}}
+                                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 0.375rem;">
+                                        @if($deal->product_interest)
+                                            <span style="font-size: 0.65rem; font-weight: 600; color: #374151; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">
+                                                {{ $deal->product_interest }}
+                                            </span>
+                                        @endif
+                                        @if($interest && $interest->condition)
+                                            <span style="font-size: 0.6rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: #dbeafe; color: #1e40af;' : 'background: #fef3c7; color: #92400e;' }}">
+                                                {{ $interest->condition === 'novo' ? 'Novo' : 'Seminovo' }}
+                                            </span>
+                                        @endif
+                                    </div>
 
                                     <div style="font-size: 0.8125rem; font-weight: 600; color: #111827; line-height: 1.3;">{{ $deal->title }}</div>
 
@@ -224,7 +155,7 @@
                                                 </span>
                                             @endif
 
-                                            @if(!$isAdmin && $deal->days_since_last_activity >= 3)
+                                            @if($deal->days_since_last_activity >= 3)
                                                 <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;" title="{{ $deal->days_since_last_activity }} dias sem interação"></span>
                                             @endif
                                         </div>
@@ -249,10 +180,14 @@
     function crmBoard() {
         return {
             showNewDealForm: {{ $errors->any() ? 'true' : 'false' }},
+            showCustomerForm: false,
+            showScheduleForm: false,
             customerSearch: '',
             customerResults: [],
             selectedCustomerId: '',
             selectedCustomerName: '',
+            scheduleCustomerSearch: '',
+            scheduleCustomerResults: [],
 
             init() {
                 this.initSortable();
@@ -272,7 +207,6 @@
                             const newStageId = evt.to.dataset.stageId;
                             const newIndex = evt.newIndex;
 
-                            // Prevent navigation on drag
                             evt.item.addEventListener('click', function preventClick(e) {
                                 e.preventDefault();
                                 evt.item.removeEventListener('click', preventClick);
@@ -303,7 +237,6 @@
                     this.customerResults = [];
                     return;
                 }
-
                 try {
                     const res = await fetch(`/api/customers/search?q=${encodeURIComponent(this.customerSearch)}`);
                     const data = await res.json();
@@ -324,6 +257,28 @@
                 this.selectedCustomerId = '';
                 this.selectedCustomerName = '';
                 this.customerSearch = '';
+            },
+
+            async searchScheduleCustomers() {
+                if (this.scheduleCustomerSearch.length < 2) {
+                    this.scheduleCustomerResults = [];
+                    return;
+                }
+                try {
+                    const res = await fetch(`/api/customers/search?q=${encodeURIComponent(this.scheduleCustomerSearch)}`);
+                    const data = await res.json();
+                    this.scheduleCustomerResults = data.slice(0, 5);
+                } catch (e) {
+                    this.scheduleCustomerResults = [];
+                }
+            },
+
+            selectScheduleCustomer(customer) {
+                document.getElementById('schedule_customer_id').value = customer.id;
+                document.getElementById('schedule_customer_name').value = customer.name;
+                document.getElementById('schedule_customer_phone').value = customer.phone || '';
+                this.scheduleCustomerSearch = '';
+                this.scheduleCustomerResults = [];
             },
         };
     }

@@ -42,8 +42,9 @@ class CustomerController extends Controller
         $data = CustomerData::fromArray($request->validated());
         $customer = $this->customerService->create($data);
 
-        return redirect()
-            ->route('customers.show', $customer)
+        $redirect = $request->input('_redirect');
+
+        return redirect($redirect ?: route('customers.show', $customer))
             ->with('success', 'Cliente cadastrado com sucesso!');
     }
 

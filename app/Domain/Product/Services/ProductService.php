@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Product\Services;
 
+use App\Domain\CRM\Services\ProductInterestService;
 use App\Domain\Marketing\Models\MarketingResaleItem;
 use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Product\DTOs\ProductData;
@@ -43,6 +44,11 @@ class ProductService
     {
         $product = $this->repository->create($data);
         $this->syncMarketingListings($product);
+
+        if ($product->stock_quantity > 0) {
+            app(ProductInterestService::class)->checkMatchesForProduct($product);
+        }
+
         return $product;
     }
 

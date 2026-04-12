@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Stock\Services;
 
+use App\Domain\CRM\Services\ProductInterestService;
 use App\Domain\Product\Models\Product;
 use App\Domain\Stock\Enums\StockMovementType;
 use App\Domain\Stock\Models\StockMovement;
@@ -21,13 +22,18 @@ class StockService
         ?string $userId = null,
         ?string $reason = null
     ): StockMovement {
-        return $this->createMovement(
+        $movement = $this->createMovement(
             product: $product,
             type: StockMovementType::In,
             quantity: $quantity,
             userId: $userId,
             reason: $reason ?? 'Entrada de estoque'
         );
+
+        $product->refresh();
+        app(ProductInterestService::class)->checkMatchesForProduct($product);
+
+        return $movement;
     }
 
     /**

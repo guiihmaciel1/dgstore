@@ -77,6 +77,11 @@ class Deal extends Model
         return $this->hasMany(WhatsAppMessage::class);
     }
 
+    public function productInterests(): HasMany
+    {
+        return $this->hasMany(ProductInterest::class);
+    }
+
     // Scopes
 
     public function scopeOpen(Builder $query): Builder

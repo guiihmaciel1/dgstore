@@ -404,6 +404,7 @@
                 .sn-card-danger { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
                 .sn-card-warning { background: #fffbeb; border-color: #fde68a; color: #92400e; }
                 .sn-card-info { background: #f0f9ff; border-color: #bae6fd; color: #0c4a6e; }
+                .sn-card-success { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
                 .sn-ok {
                     display: inline-flex;
                     align-items: center;

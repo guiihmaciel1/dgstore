@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controllers;
 use App\Application\UseCases\GenerateReportUseCase;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\PipelineStage;
+use App\Domain\CRM\Models\ProductInterest;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Finance\Models\FinancialTransaction;
 use App\Domain\Import\Models\ImportOrder;
@@ -160,6 +161,19 @@ class DashboardController extends Controller
             $notifications[] = [
                 'type' => 'info', 'icon' => 'crm', 'count' => $staleDeals,
                 'label' => 'Negócios parados',
+                'route' => route('crm.board'),
+            ];
+        }
+
+        $interestsMatched = ProductInterest::pending()
+            ->whereHas('deal', fn ($q) => $q->open())
+            ->get()
+            ->filter(fn (ProductInterest $pi) => $pi->hasMatchInStock())
+            ->count();
+        if ($interestsMatched > 0) {
+            $notifications[] = [
+                'type' => 'success', 'icon' => 'crm', 'count' => $interestsMatched,
+                'label' => 'Interesses com estoque',
                 'route' => route('crm.board'),
             ];
         }

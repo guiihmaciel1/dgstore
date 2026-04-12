@@ -107,6 +107,42 @@
                                 </div>
                             @endif
 
+                            {{-- Interesses de Produto --}}
+                            @if($deal->productInterests->isNotEmpty())
+                                <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6;">
+                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block; margin-bottom: 0.5rem;">Interesse de Produto</span>
+                                    @foreach($deal->productInterests as $interest)
+                                        @php $inStock = $interest->hasMatchInStock(); @endphp
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: {{ $inStock ? '#f0fdf4' : '#fef2f2' }}; border: 1px solid {{ $inStock ? '#bbf7d0' : '#fecaca' }}; border-radius: 0.375rem; margin-bottom: 0.375rem;">
+                                            <div style="flex: 1;">
+                                                <div style="font-size: 0.8rem; font-weight: 600; color: #111827;">
+                                                    {{ $interest->model }}
+                                                    @if($interest->storage)
+                                                        <span style="font-weight: 400; color: #6b7280;">{{ $interest->storage }}</span>
+                                                    @endif
+                                                </div>
+                                                <div style="display: flex; gap: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap;">
+                                                    @if($interest->color)
+                                                        <span style="font-size: 0.7rem; color: #6b7280;">{{ $interest->color }}</span>
+                                                    @endif
+                                                    @if($interest->condition)
+                                                        <span style="font-size: 0.65rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: #dbeafe; color: #1e40af;' : 'background: #fef3c7; color: #92400e;' }}">
+                                                            {{ $interest->condition === 'novo' ? 'Novo' : 'Seminovo' }}
+                                                        </span>
+                                                    @endif
+                                                    @if($interest->max_budget)
+                                                        <span style="font-size: 0.7rem; color: #6b7280;">Até R$ {{ number_format((float)$interest->max_budget, 2, ',', '.') }}</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; {{ $inStock ? 'background: #dcfce7; color: #166534;' : 'background: #fee2e2; color: #991b1b;' }}">
+                                                {{ $inStock ? 'Em estoque' : 'Sem estoque' }}
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+
                             {{-- Ações rápidas --}}
                             @if($deal->isOpen())
                                 <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6; display: flex; gap: 0.5rem; flex-wrap: wrap;">

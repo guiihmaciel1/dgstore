@@ -112,8 +112,9 @@ class ScheduleController extends Controller
             'status'              => AppointmentStatus::Scheduled,
         ]);
 
-        return redirect()
-            ->route('schedule.index', ['date' => $validated['date']])
+        $redirect = $request->input('_redirect');
+
+        return redirect($redirect ?: route('schedule.index', ['date' => $validated['date']]))
             ->with('success', 'Agendamento criado com sucesso!');
     }
 

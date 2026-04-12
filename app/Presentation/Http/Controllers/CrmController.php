@@ -8,7 +8,9 @@ use App\Domain\CRM\Enums\DealActivityType;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\DealActivity;
 use App\Domain\CRM\Models\PipelineStage;
+use App\Domain\CRM\Models\ProductInterest;
 use App\Domain\AI\Services\GeminiService;
+use App\Domain\Schedule\Models\Appointment;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -32,7 +34,7 @@ class CrmController extends Controller
             ->ordered()
             ->get();
 
-        $dealsQuery = Deal::with(['customer', 'user', 'stage'])
+        $dealsQuery = Deal::with(['customer', 'user', 'stage', 'productInterests'])
             ->open();
 
         if ($filterUserId) {
@@ -77,6 +79,8 @@ class CrmController extends Controller
             'sellers' => $sellers,
             'filterUserId' => $filterUserId,
             'isAdmin' => $isAdmin,
+            'attendants' => Appointment::ATTENDANTS,
+            'durationOptions' => Appointment::DURATION_OPTIONS,
         ]);
     }
 
@@ -93,9 +97,13 @@ class CrmController extends Controller
             'expected_close_date' => 'nullable|date',
             'customer_id' => 'nullable|exists:customers,id',
             'pipeline_stage_id' => 'nullable|exists:pipeline_stages,id',
+            'interest_model' => 'nullable|string|max:255',
+            'interest_storage' => 'nullable|string|max:50',
+            'interest_color' => 'nullable|string|max:50',
+            'interest_condition' => 'nullable|string|in:novo,seminovo',
+            'interest_max_budget' => 'nullable|numeric|min:0',
         ]);
 
-        // Garante um stage válido: enviado > default > primeiro ativo
         $stageId = ! empty($validated['pipeline_stage_id'])
             ? $validated['pipeline_stage_id']
             : (PipelineStage::where('is_default', true)->value('id')
@@ -107,8 +115,23 @@ class CrmController extends Controller
                 ->withErrors(['pipeline_stage_id' => 'Nenhuma etapa de pipeline configurada. Execute o seeder.']);
         }
 
-        // Remove pipeline_stage_id do validated para não conflitar com o override
         unset($validated['pipeline_stage_id']);
+
+        if (! empty($validated['interest_model']) && empty($validated['product_interest'])) {
+            $parts = array_filter([
+                $validated['interest_model'],
+                $validated['interest_storage'] ?? null,
+                $validated['interest_color'] ?? null,
+                isset($validated['interest_condition']) ? ($validated['interest_condition'] === 'novo' ? 'Novo' : 'Seminovo') : null,
+            ]);
+            $validated['product_interest'] = implode(' - ', $parts);
+        }
+
+        $interestFields = ['interest_model', 'interest_storage', 'interest_color', 'interest_condition', 'interest_max_budget'];
+        $interestData = collect($interestFields)->mapWithKeys(fn ($k) => [$k => $validated[$k] ?? null])->toArray();
+        foreach ($interestFields as $f) {
+            unset($validated[$f]);
+        }
 
         $maxPosition = Deal::where('pipeline_stage_id', $stageId)->max('position') ?? 0;
 
@@ -119,6 +142,17 @@ class CrmController extends Controller
             'position' => $maxPosition + 1,
         ]);
 
+        if (! empty($interestData['interest_model'])) {
+            $deal->productInterests()->create([
+                'customer_id' => $deal->customer_id,
+                'model'       => $interestData['interest_model'],
+                'storage'     => $interestData['interest_storage'],
+                'color'       => $interestData['interest_color'],
+                'condition'   => $interestData['interest_condition'],
+                'max_budget'  => $interestData['interest_max_budget'],
+            ]);
+        }
+
         $deal->logActivity(DealActivityType::Created, "Negócio criado: {$deal->title}");
 
         return redirect()->route('crm.board')
@@ -127,8 +161,7 @@ class CrmController extends Controller
 
     public function show(Deal $deal): View
     {
-
-        $deal->load(['customer', 'user', 'stage', 'activities.user']);
+        $deal->load(['customer', 'user', 'stage', 'activities.user', 'productInterests']);
 
         $allStages = PipelineStage::ordered()->get();
         $activeStages = PipelineStage::where('is_won', false)
