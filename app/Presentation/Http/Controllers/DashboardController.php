@@ -34,7 +34,8 @@ class DashboardController extends Controller
         private readonly GenerateReportUseCase $reportUseCase,
         private readonly WarrantyService $warrantyService,
         private readonly ImportOrderService $importService,
-        private readonly ReservationService $reservationService
+        private readonly ReservationService $reservationService,
+        private readonly AppleNewsService $appleNewsService
     ) {}
 
     public function index(Request $request): View
