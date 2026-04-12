@@ -33,7 +33,7 @@
                     </a>
                     <div>
                         <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Nova Reserva</h1>
-                        <p style="font-size: 0.875rem; color: #6b7280;">Selecione o produto e o cliente para reservar</p>
+                        <p style="font-size: 0.875rem; color: #6b7280;">Selecione os produtos e o cliente para reservar</p>
                     </div>
                 </div>
                 <span style="font-size: 0.875rem; color: #9ca3af;">ESC para cancelar</span>
@@ -42,33 +42,41 @@
             <div x-data="reservationForm()" @keydown.escape.window="window.location.href='{{ route('reservations.index') }}'">
             <form method="POST" action="{{ route('reservations.store') }}" @submit="handleSubmit($event)">
                 @csrf
+
                 <input type="hidden" name="customer_id" x-model="customerId">
-                <input type="hidden" name="product_id" x-model="productId">
-                <input type="hidden" name="product_description" x-model="productDescription">
-                <input type="hidden" name="source" x-model="source">
+
+                <template x-for="(item, idx) in items" :key="idx">
+                    <div>
+                        <input type="hidden" :name="'items['+idx+'][product_id]'" :value="item.id">
+                        <input type="hidden" :name="'items['+idx+'][cost_price]'" :value="item.cost_price">
+                        <input type="hidden" :name="'items['+idx+'][sale_price]'" :value="item.sale_price">
+                    </div>
+                </template>
 
                 <div class="res-grid">
                     <!-- COLUNA PRINCIPAL -->
                     <div class="res-main">
 
-                        <!-- PASSO 1: PRODUTO -->
+                        <!-- PASSO 1: PRODUTOS -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: visible;">
                             <div style="background: #111827; color: white; padding: 1rem 1.5rem; border-radius: 1rem 1rem 0 0;">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center;">
                                         <span style="width: 2rem; height: 2rem; background: white; color: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">1</span>
-                                        <span style="font-size: 1.125rem; font-weight: 600;">Produto</span>
+                                        <span style="font-size: 1.125rem; font-weight: 600;">Adicionar Produtos</span>
                                     </div>
-                                    <button type="button" @click="toggleManualMode()"
-                                            style="display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; cursor: pointer;"
-                                            onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-                                        <span x-text="manualMode ? '← Buscar produto' : '+ Digitar manualmente'"></span>
-                                    </button>
+                                    <a href="{{ route('products.create') }}" target="_blank"
+                                       style="display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; text-decoration: none;"
+                                       onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+                                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                        </svg>
+                                        Cadastrar Produto
+                                    </a>
                                 </div>
                             </div>
                             <div style="padding: 1.5rem;">
-                                <!-- Modo Busca -->
-                                <div x-show="!manualMode && !selectedProduct" style="position: relative;">
+                                <div style="position: relative;">
                                     <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
                                         Buscar produto por nome, SKU ou código
                                     </label>
@@ -76,18 +84,18 @@
                                         <svg style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 1.25rem; height: 1.25rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                         </svg>
-                                        <input type="text" x-model="productSearch" @input.debounce.300ms="searchProducts()"
+                                        <input type="text" x-model="searchTerm" @input.debounce.300ms="searchProducts()"
+                                               @keydown.enter.prevent="if(searchResults.length > 0) addProduct(searchResults[0])"
                                                placeholder="Digite para buscar... (Enter para o primeiro)"
-                                               @keydown.enter.prevent="if(productResults.length > 0) selectProduct(productResults[0])"
                                                style="width: 100%; padding: 0.875rem 1rem 0.875rem 2.75rem; border: 2px solid #e5e7eb; border-radius: 0.75rem; font-size: 0.9375rem; outline: none;"
                                                onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                     </div>
 
-                                    <!-- Dropdown de resultados -->
-                                    <div x-show="productResults.length > 0" x-cloak @click.outside="productResults = []"
+                                    <!-- Dropdown resultados -->
+                                    <div x-show="searchResults.length > 0" x-cloak @click.outside="searchResults = []"
                                          style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border-radius: 0.75rem; border: 1px solid #e5e7eb; max-height: 20rem; overflow: auto;">
-                                        <template x-for="(product, idx) in productResults" :key="idx">
-                                            <button type="button" @click="selectProduct(product)"
+                                        <template x-for="(product, idx) in searchResults" :key="product.id">
+                                            <button type="button" @click="addProduct(product)"
                                                     style="width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #f3f4f6; cursor: pointer; background: white; display: flex; justify-content: space-between; align-items: center;"
                                                     onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
                                                 <div style="min-width: 0; flex: 1;">
@@ -95,128 +103,85 @@
                                                     <span style="font-size: 0.75rem; color: #6b7280;" x-text="product.sku"></span>
                                                 </div>
                                                 <div style="text-align: right; white-space: nowrap; margin-left: 0.75rem;">
-                                                    <template x-if="product.formatted_price">
-                                                        <div style="font-weight: 600; color: #16a34a; font-size: 0.875rem;" x-text="product.formatted_price"></div>
-                                                    </template>
-                                                    <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500;"
-                                                          :style="product.source === 'stock'
-                                                              ? (product.stock > 0 ? 'background: #dcfce7; color: #16a34a;' : 'background: #fef3c7; color: #d97706;')
-                                                              : 'background: #dbeafe; color: #2563eb;'"
-                                                          x-text="product.source_label"></span>
+                                                    <div style="font-weight: 600; color: #16a34a; font-size: 0.875rem;" x-text="product.formatted_price"></div>
+                                                    <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500; background: #dcfce7; color: #16a34a;" x-text="'Estoque: ' + product.stock"></span>
                                                 </div>
                                             </button>
                                         </template>
-                                        <!-- Não encontrou -->
-                                        <div x-show="productSearch.length >= 2 && productResults.length === 0 && searchedProduct"
-                                             style="padding: 0.75rem 1rem; text-align: center; border-top: 1px solid #f3f4f6;">
-                                            <p style="font-size: 0.8125rem; color: #6b7280; margin-bottom: 0.5rem;">Nenhum produto encontrado</p>
-                                            <button type="button" @click="manualMode = true; manualProductName = productSearch; productSearch = ''; productResults = [];"
-                                                    style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: #111827; color: white; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 500; border: none; cursor: pointer;">
-                                                <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                                                </svg>
-                                                Digitar Manualmente
-                                            </button>
-                                        </div>
                                     </div>
 
-                                    <div x-show="!productSearch && productResults.length === 0" style="padding: 2.5rem 1rem; text-align: center; color: #9ca3af;">
-                                        <svg style="width: 3rem; height: 3rem; margin: 0 auto 0.75rem; opacity: 0.4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                                        </svg>
-                                        <p style="font-size: 0.875rem;">Busque no estoque ou cotações de fornecedores</p>
-                                        <p style="font-size: 0.75rem; margin-top: 0.25rem;">Use o campo acima para buscar e adicionar o produto</p>
-                                    </div>
-                                </div>
-
-                                <!-- Modo Manual -->
-                                <div x-show="manualMode && !selectedProduct" x-cloak>
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Descrição do Produto <span style="color: #dc2626;">*</span></label>
-                                    <input type="text" x-model="manualProductName"
-                                           placeholder="Ex: iPhone 15 Pro Max 256GB - Preto"
-                                           style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; margin-bottom: 1rem;"
-                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-
-                                    <button type="button" @click="confirmManualProduct()"
-                                            :disabled="!manualProductName"
-                                            style="width: 100%; padding: 0.75rem; background: #111827; color: white; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;"
-                                            :style="!manualProductName ? 'opacity: 0.4; cursor: not-allowed;' : ''">
-                                        Confirmar Produto
-                                    </button>
-                                </div>
-
-                                <!-- Produto selecionado -->
-                                <div x-show="selectedProduct" x-cloak
-                                     style="padding: 1rem; border-radius: 0.75rem; display: flex; justify-content: space-between; align-items: center;"
-                                     :style="source === 'stock'
-                                         ? 'background: #f0fdf4; border: 2px solid #bbf7d0;'
-                                         : (source === 'quotation' ? 'background: #eff6ff; border: 2px solid #bfdbfe;' : 'background: #fefce8; border: 2px solid #fde68a;')">
-                                    <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1;">
-                                        <div style="width: 2.5rem; height: 2.5rem; min-width: 2.5rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;"
-                                             :style="source === 'stock' ? 'background: #dcfce7;' : (source === 'quotation' ? 'background: #dbeafe;' : 'background: #fef3c7;')">
-                                            <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                                 :style="source === 'stock' ? 'color: #16a34a;' : (source === 'quotation' ? 'color: #2563eb;' : 'color: #d97706;')">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    <!-- Nenhum resultado -->
+                                    <div x-show="searchTerm.length >= 2 && searchResults.length === 0 && searched && !searching" x-cloak
+                                         style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.5rem; text-align: center;">
+                                        <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">Nenhum produto em estoque encontrado</p>
+                                        <a href="{{ route('products.create') }}" target="_blank"
+                                           style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; text-decoration: none;">
+                                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                             </svg>
-                                        </div>
-                                        <div style="min-width: 0; flex: 1;">
-                                            <div style="font-weight: 600; font-size: 0.9375rem; color: #111827;" x-text="selectedProduct?.name"></div>
-                                            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: #6b7280; margin-top: 0.125rem;">
-                                                <span x-text="selectedProduct?.sku || ''"></span>
-                                                <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500;"
-                                                      :style="source === 'stock' ? 'background: #dcfce7; color: #16a34a;' : (source === 'quotation' ? 'background: #dbeafe; color: #2563eb;' : 'background: #fef3c7; color: #d97706;')"
-                                                      x-text="source === 'stock' ? 'Estoque' : (source === 'quotation' ? 'Cotação' : 'Manual')"></span>
+                                            Cadastrar Produto
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Lista de produtos adicionados -->
+                                <div x-show="items.length > 0" style="margin-top: 1.25rem;">
+                                    <template x-for="(item, idx) in items" :key="idx">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.875rem; border-radius: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #e5e7eb; background: #fafafa;">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0;">
+                                                <div style="width: 2.25rem; height: 2.25rem; min-width: 2.25rem; background: #f0fdf4; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                                                    <svg style="width: 1.125rem; height: 1.125rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                                    </svg>
+                                                </div>
+                                                <div style="min-width: 0; flex: 1;">
+                                                    <div style="font-weight: 600; font-size: 0.875rem; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="item.name"></div>
+                                                    <div style="font-size: 0.75rem; color: #6b7280;" x-text="item.sku"></div>
+                                                </div>
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 1rem; flex-shrink: 0;">
+                                                <div style="text-align: right;">
+                                                    <div style="font-size: 0.6875rem; color: #9ca3af;">Custo</div>
+                                                    <div style="font-size: 0.8125rem; color: #374151; font-weight: 500;" x-text="formatMoney(item.cost_price)"></div>
+                                                </div>
+                                                <div style="text-align: right;">
+                                                    <div style="font-size: 0.6875rem; color: #9ca3af;">Venda</div>
+                                                    <input type="number" x-model.number="item.sale_price" step="0.01" min="0"
+                                                           style="width: 7rem; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 600; color: #16a34a; text-align: right;"
+                                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                </div>
+                                                <button type="button" @click="removeProduct(idx)"
+                                                        style="width: 1.75rem; height: 1.75rem; display: flex; align-items: center; justify-content: center; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                                                        onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
+                                                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                    </svg>
+                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <button type="button" @click="clearProduct()" style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                            onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
-                                        <svg style="height: 1rem; width: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                        </svg>
-                                    </button>
+                                    </template>
+                                </div>
+
+                                <!-- Vazio -->
+                                <div x-show="items.length === 0 && !searchTerm" style="padding: 2.5rem 1rem; text-align: center; color: #9ca3af;">
+                                    <svg style="width: 3rem; height: 3rem; margin: 0 auto 0.75rem; opacity: 0.4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                    <p style="font-size: 0.875rem;">Nenhum produto adicionado</p>
+                                    <p style="font-size: 0.75rem; margin-top: 0.25rem;">Use o campo acima para buscar e adicionar produtos</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- PASSO 2: VALORES -->
+                        <!-- PASSO 2: SINAL E PRAZO -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
                             <div style="background: #374151; color: white; padding: 0.75rem 1.5rem; border-radius: 1rem 1rem 0 0;">
                                 <div style="display: flex; align-items: center;">
                                     <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">2</span>
-                                    <span style="font-weight: 600;">Valores e Prazo</span>
+                                    <span style="font-weight: 600;">Sinal e Prazo</span>
                                 </div>
                             </div>
                             <div style="padding: 1.25rem;">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                                    <div>
-                                        <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">
-                                            Valor de Compra (R$) <span style="color: #dc2626;">*</span>
-                                        </label>
-                                        <input type="number" name="cost_price" x-model.number="costPrice" required min="0" step="0.01"
-                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                        <p style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.25rem;">Custo do produto</p>
-                                    </div>
-                                    <div>
-                                        <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">
-                                            Valor de Venda (R$) <span style="color: #dc2626;">*</span>
-                                        </label>
-                                        <input type="number" name="product_price" x-model.number="productPrice" required min="0" step="0.01"
-                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                        <p style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.25rem;">Preço para o cliente</p>
-                                    </div>
-                                </div>
-
-                                <!-- Lucro estimado -->
-                                <div x-show="costPrice > 0 && productPrice > 0" x-cloak
-                                     style="padding: 0.625rem 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.8125rem;"
-                                     :style="(productPrice - costPrice) > 0 ? 'background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a;' : 'background: #fef2f2; border: 1px solid #fecaca; color: #dc2626;'">
-                                    <span style="font-weight: 500;">Lucro estimado:</span>
-                                    <span style="font-weight: 700;" x-text="formatMoney(productPrice - costPrice)"></span>
-                                </div>
-
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                     <div>
                                         <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">
@@ -351,31 +316,42 @@
                                 </svg>
                                 Resumo da Reserva
                             </h3>
+
                             <div style="font-size: 0.875rem; margin-bottom: 0.75rem;">
                                 <div style="opacity: 0.6; margin-bottom: 0.25rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</div>
                                 <div style="font-weight: 500;" x-text="selectedCustomer?.name || '—'"></div>
                             </div>
+
                             <div style="font-size: 0.875rem; margin-bottom: 0.75rem;">
-                                <div style="opacity: 0.6; margin-bottom: 0.25rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Produto</div>
-                                <div style="font-weight: 500;" x-text="productDescription || '—'"></div>
+                                <div style="opacity: 0.6; margin-bottom: 0.375rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                                    Produtos (<span x-text="items.length"></span>)
+                                </div>
+                                <template x-for="(item, idx) in items" :key="idx">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; margin-bottom: 0.25rem; opacity: 0.9;">
+                                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%;" x-text="item.name"></span>
+                                        <span style="font-weight: 500;" x-text="formatMoney(item.sale_price)"></span>
+                                    </div>
+                                </template>
+                                <div x-show="items.length === 0" style="opacity: 0.5;">—</div>
                             </div>
+
                             <div style="font-size: 0.875rem; margin-bottom: 0.75rem;">
                                 <div style="opacity: 0.6; margin-bottom: 0.25rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Validade</div>
                                 <div style="font-weight: 500;" x-text="expiresAt ? new Date(expiresAt + 'T12:00:00').toLocaleDateString('pt-BR') : '—'"></div>
                             </div>
 
                             <div style="border-top: 1px solid rgba(255,255,255,0.15); padding-top: 1rem; margin-top: 0.75rem;">
-                                <div x-show="costPrice > 0" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8125rem; opacity: 0.7;">
-                                    <span>Custo:</span>
-                                    <span x-text="formatMoney(costPrice)"></span>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8125rem; opacity: 0.7;">
+                                    <span>Custo total:</span>
+                                    <span x-text="formatMoney(totalCost)"></span>
                                 </div>
                                 <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9375rem;">
-                                    <span style="opacity: 0.8;">Venda:</span>
-                                    <span style="font-weight: 600;" x-text="formatMoney(productPrice)"></span>
+                                    <span style="opacity: 0.8;">Venda total:</span>
+                                    <span style="font-weight: 600;" x-text="formatMoney(totalSale)"></span>
                                 </div>
-                                <div x-show="costPrice > 0 && productPrice > 0" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8125rem; color: #86efac;">
+                                <div x-show="totalCost > 0 && totalSale > 0" style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8125rem; color: #86efac;">
                                     <span>Lucro:</span>
-                                    <span style="font-weight: 600;" x-text="formatMoney(productPrice - costPrice)"></span>
+                                    <span style="font-weight: 600;" x-text="formatMoney(totalSale - totalCost)"></span>
                                 </div>
 
                                 <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.75rem; margin-top: 0.5rem;">
@@ -391,7 +367,7 @@
 
                                 <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 0.75rem; margin-top: 0.5rem; display: flex; justify-content: space-between; font-size: 1.125rem;">
                                     <span style="font-weight: 600;">Restante:</span>
-                                    <span style="font-weight: 700;" x-text="formatMoney(Math.max(0, productPrice - initialPayment))"></span>
+                                    <span style="font-weight: 700;" x-text="formatMoney(Math.max(0, totalSale - initialPayment))"></span>
                                 </div>
                             </div>
                         </div>
@@ -440,43 +416,37 @@
                 selectedCustomer: null,
                 searchedCustomer: false,
 
-                productId: '{{ $selectedProduct?->id ?? '' }}',
-                productSearch: '',
-                productResults: [],
-                selectedProduct: {!! $selectedProduct ? json_encode([
-                    'id' => $selectedProduct->id,
-                    'name' => $selectedProduct->full_name,
-                    'sku' => $selectedProduct->sku,
-                    'cost_price' => (float) $selectedProduct->cost_price,
-                    'sale_price' => (float) $selectedProduct->sale_price,
-                    'source' => 'stock',
-                    'source_label' => 'Estoque',
-                ]) : 'null' !!},
-                searchedProduct: false,
-                manualMode: false,
-                manualProductName: '',
+                searchTerm: '',
+                searchResults: [],
+                searched: false,
+                searching: false,
 
-                productDescription: '{{ $selectedProduct ? $selectedProduct->full_name : '' }}',
-                source: '{{ $selectedProduct ? "stock" : "manual" }}',
+                items: [],
 
-                costPrice: {{ $selectedProduct ? (float) $selectedProduct->cost_price : 0 }},
-                productPrice: {{ $selectedProduct ? (float) $selectedProduct->sale_price : 0 }},
                 depositAmount: 0,
                 initialPayment: 0,
                 expiresAt: '{{ date("Y-m-d", strtotime("+7 days")) }}',
                 submitting: false,
 
+                get totalCost() {
+                    return this.items.reduce((sum, i) => sum + (parseFloat(i.cost_price) || 0), 0);
+                },
+
+                get totalSale() {
+                    return this.items.reduce((sum, i) => sum + (parseFloat(i.sale_price) || 0), 0);
+                },
+
                 get canSubmit() {
+                    if (this.items.length === 0) return false;
                     if (!this.customerId) return false;
-                    if (!this.productDescription) return false;
-                    if (this.productPrice <= 0) return false;
+                    if (this.items.some(i => !i.sale_price || i.sale_price <= 0)) return false;
                     return true;
                 },
 
                 getSubmitButtonText() {
-                    if (!this.productDescription) return 'Selecione um produto';
+                    if (this.items.length === 0) return 'Adicione produtos para continuar';
                     if (!this.customerId) return 'Selecione um cliente';
-                    if (this.productPrice <= 0) return 'Informe o valor de venda';
+                    if (this.items.some(i => !i.sale_price || i.sale_price <= 0)) return 'Informe o preço de venda';
                     return 'Verifique os dados';
                 },
 
@@ -517,67 +487,42 @@
 
                 // === PRODUTOS ===
                 async searchProducts() {
-                    this.searchedProduct = false;
-                    if (this.productSearch.length < 2) { this.productResults = []; return; }
+                    this.searched = false;
+                    this.searching = true;
+                    if (this.searchTerm.length < 2) { this.searchResults = []; this.searching = false; return; }
                     try {
-                        const response = await fetch(`/reservations/search-products?q=${encodeURIComponent(this.productSearch)}`);
-                        this.productResults = await response.json();
-                        this.searchedProduct = true;
-                    } catch (e) { console.error('Erro ao buscar produtos:', e); }
-                },
+                        const excludeIds = this.items.map(i => i.id);
+                        const params = new URLSearchParams({ q: this.searchTerm });
+                        excludeIds.forEach(id => params.append('exclude[]', id));
 
-                selectProduct(product) {
-                    this.productId = product.id || '';
-                    this.selectedProduct = product;
-                    this.productDescription = product.name;
-                    this.source = product.source || 'stock';
-
-                    if (product.source === 'stock') {
-                        this.costPrice = product.cost_price || 0;
-                        this.productPrice = product.sale_price || 0;
-                    } else if (product.source === 'quotation') {
-                        this.costPrice = product.final_price || product.price || 0;
-                        this.productPrice = 0;
-                    } else {
-                        this.costPrice = 0;
-                        this.productPrice = 0;
+                        const response = await fetch(`/reservations/search-products?${params.toString()}`);
+                        this.searchResults = await response.json();
+                        this.searched = true;
+                    } catch (e) {
+                        console.error('Erro ao buscar produtos:', e);
+                    } finally {
+                        this.searching = false;
                     }
-
-                    this.productSearch = '';
-                    this.productResults = [];
                 },
 
-                clearProduct() {
-                    this.productId = '';
-                    this.selectedProduct = null;
-                    this.productDescription = '';
-                    this.source = 'manual';
-                    this.costPrice = 0;
-                    this.productPrice = 0;
-                    this.productSearch = '';
-                    this.searchedProduct = false;
-                    this.manualMode = false;
-                    this.manualProductName = '';
+                addProduct(product) {
+                    if (this.items.find(i => i.id === product.id)) return;
+
+                    this.items.push({
+                        id: product.id,
+                        name: product.name,
+                        sku: product.sku,
+                        cost_price: product.cost_price || 0,
+                        sale_price: product.sale_price || 0,
+                        stock: product.stock,
+                    });
+
+                    this.searchTerm = '';
+                    this.searchResults = [];
                 },
 
-                toggleManualMode() {
-                    this.manualMode = !this.manualMode;
-                    this.productSearch = '';
-                    this.productResults = [];
-                },
-
-                confirmManualProduct() {
-                    if (!this.manualProductName) return;
-                    this.selectedProduct = {
-                        id: null,
-                        name: this.manualProductName,
-                        sku: 'Produto manual',
-                        source: 'manual',
-                        source_label: 'Manual',
-                    };
-                    this.productId = '';
-                    this.productDescription = this.manualProductName;
-                    this.source = 'manual';
+                removeProduct(index) {
+                    this.items.splice(index, 1);
                 },
             };
         }
@@ -586,11 +531,7 @@
     <style>
         [x-cloak] { display: none !important; }
 
-        .res-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
+        .res-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
         .res-main { display: flex; flex-direction: column; gap: 1.5rem; }
         .res-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
 
@@ -610,11 +551,7 @@
             overflow: hidden;
             border-radius: 1rem;
         }
-        .res-submit-btn-disabled {
-            background: #374151;
-            color: #9ca3af;
-            cursor: not-allowed;
-        }
+        .res-submit-btn-disabled { background: #374151; color: #9ca3af; cursor: not-allowed; }
         .res-submit-btn-active {
             background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
             color: white;
@@ -635,9 +572,6 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             animation: res-shimmer 3s infinite;
         }
-        @keyframes res-shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
+        @keyframes res-shimmer { 0% { left: -100%; } 100% { left: 100%; } }
     </style>
 </x-app-layout>

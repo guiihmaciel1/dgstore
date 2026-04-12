@@ -11,7 +11,6 @@ use App\Domain\Reservation\Models\Reservation;
 use App\Domain\Reservation\Models\ReservationPayment;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\Enums\PaymentMethod;
-use App\Domain\Supplier\Models\Quotation;
 use App\Domain\Supplier\Services\QuotationService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreReservationRequest;
@@ -90,28 +89,10 @@ class ReservationController extends Controller
     public function store(StoreReservationRequest $request): RedirectResponse
     {
         try {
-            $data = $request->only([
-                'customer_id', 'product_description',
-                'source', 'product_price', 'cost_price', 'deposit_amount',
-                'expires_at', 'notes'
-            ]);
+            $validated = $request->validated();
+            $validated['user_id'] = auth()->id();
 
-            $data['user_id'] = auth()->id();
-
-            // product_id só se for válido
-            $productId = $request->input('product_id');
-            if ($productId) {
-                $data['product_id'] = $productId;
-            }
-
-            // Pagamento inicial só se tiver valor > 0
-            $initialPayment = (float) $request->input('initial_payment', 0);
-            if ($initialPayment > 0) {
-                $data['initial_payment'] = $initialPayment;
-                $data['payment_method'] = $request->input('payment_method', 'pix');
-            }
-
-            $reservation = $this->reservationService->create($data);
+            $reservation = $this->reservationService->create($validated);
 
             return redirect()
                 ->route('reservations.show', $reservation)
@@ -126,7 +107,7 @@ class ReservationController extends Controller
 
     public function show(Reservation $reservation): View
     {
-        $reservation->load(['customer', 'product', 'user', 'payments.user', 'convertedSale']);
+        $reservation->load(['customer', 'product', 'user', 'payments.user', 'convertedSale', 'items.product']);
 
         $productName = $reservation->product_description
             ?? $reservation->product?->full_name
@@ -265,13 +246,15 @@ class ReservationController extends Controller
     public function searchProducts(Request $request)
     {
         $query = $request->get('q', '');
+        $excludeIds = $request->get('exclude', []);
 
         if (strlen($query) < 2) {
             return response()->json([]);
         }
 
-        $stockProducts = $this->productService->search($query)
-            ->filter(fn($p) => !$p->reserved)
+        $results = $this->productService->search($query)
+            ->filter(fn($p) => !$p->reserved && $p->stock_quantity > 0)
+            ->when(!empty($excludeIds), fn($col) => $col->filter(fn($p) => !in_array($p->id, $excludeIds)))
             ->take(10)
             ->map(fn($p) => [
                 'id' => $p->id,
@@ -282,45 +265,8 @@ class ReservationController extends Controller
                 'sale_price' => (float) $p->sale_price,
                 'condition' => $p->condition instanceof \BackedEnum ? $p->condition->value : $p->condition,
                 'formatted_price' => $p->sale_price > 0 ? 'R$ ' . number_format((float) $p->sale_price, 2, ',', '.') : null,
-                'source' => 'stock',
-                'source_label' => $p->stock_quantity > 0 ? 'Em estoque' : 'Sem estoque',
+                'formatted_cost' => $p->cost_price > 0 ? 'R$ ' . number_format((float) $p->cost_price, 2, ',', '.') : null,
             ])->values();
-
-        // Busca cotações de fornecedores (últimos preços únicos)
-        $quotations = Quotation::with('supplier')
-            ->where('product_name', 'like', "%{$query}%")
-            ->orderByDesc('quoted_at')
-            ->limit(20)
-            ->get()
-            ->unique('product_name')
-            ->take(10)
-            ->map(function ($q) {
-                $basePrice = (float) $q->unit_price;
-                // PY = 4%, BR = 0%, null = 4% (padrão PY)
-                $origin = $q->supplier?->origin;
-                $freightPercent = ($origin === null || $origin->value === 'py') ? 0.04 : 0.0;
-                $freightCost = round($basePrice * $freightPercent, 2);
-                $finalPrice = round($basePrice + $freightCost, 2);
-                $freightLabel = $freightPercent > 0
-                    ? ' +' . number_format($freightPercent * 100, 0) . '% frete'
-                    : '';
-
-                return [
-                    'id' => null,
-                    'name' => $q->product_name,
-                    'sku' => $q->supplier->name ?? 'Fornecedor',
-                    'price' => $basePrice,
-                    'final_price' => $finalPrice,
-                    'formatted_price' => 'R$ ' . number_format($finalPrice, 2, ',', '.'),
-                    'formatted_base_price' => $q->formatted_unit_price . $freightLabel,
-                    'stock' => null,
-                    'source' => 'quotation',
-                    'source_label' => 'Cotação - ' . ($q->supplier->name ?? ''),
-                ];
-            })->values();
-
-        // Mescla resultados: estoque primeiro, depois cotações
-        $results = $stockProducts->concat($quotations)->take(15);
 
         return response()->json($results);
     }

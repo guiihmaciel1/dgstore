@@ -89,6 +89,11 @@ class Reservation extends Model
         return $this->hasMany(ReservationPayment::class);
     }
 
+    public function items(): HasMany
+    {
+        return $this->hasMany(ReservationItem::class);
+    }
+
     // Scopes
 
     public function scopeActive(Builder $query): Builder
@@ -270,24 +275,21 @@ class Reservation extends Model
             'converted_sale_id' => $saleId,
         ]);
 
-        // Libera o produto
-        $this->product?->update(['reserved' => false, 'reserved_by' => null]);
+        $this->releaseAllProducts();
     }
 
     public function cancel(): void
     {
         $this->update(['status' => ReservationStatus::Cancelled]);
 
-        // Libera o produto
-        $this->product?->update(['reserved' => false, 'reserved_by' => null]);
+        $this->releaseAllProducts();
     }
 
     public function markAsExpired(): void
     {
         $this->update(['status' => ReservationStatus::Expired]);
 
-        // Libera o produto
-        $this->product?->update(['reserved' => false, 'reserved_by' => null]);
+        $this->releaseAllProducts();
     }
 
     public function reserveProduct(): void
@@ -296,5 +298,14 @@ class Reservation extends Model
             'reserved' => true,
             'reserved_by' => $this->id,
         ]);
+    }
+
+    private function releaseAllProducts(): void
+    {
+        $this->load('items.product');
+        foreach ($this->items as $item) {
+            $item->product?->update(['reserved' => false, 'reserved_by' => null]);
+        }
+        $this->product?->update(['reserved' => false, 'reserved_by' => null]);
     }
 }

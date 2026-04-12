@@ -8,6 +8,7 @@ use App\Domain\Finance\Services\FinanceService;
 use App\Domain\Product\Models\Product;
 use App\Domain\Reservation\Enums\ReservationStatus;
 use App\Domain\Reservation\Models\Reservation;
+use App\Domain\Reservation\Models\ReservationItem;
 use App\Domain\Reservation\Models\ReservationPayment;
 use App\Domain\Sale\Enums\PaymentMethod;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -86,58 +87,77 @@ class ReservationService
     }
 
     /**
-     * Cria nova reserva
+     * Cria nova reserva (suporta múltiplos produtos via items[])
      */
     public function create(array $data): Reservation
     {
         return DB::transaction(function () use ($data) {
-            $product = null;
-            $source = $data['source'] ?? 'stock';
+            $items = $data['items'] ?? [];
 
-            // Se tiver product_id, é do estoque
-            if (!empty($data['product_id'])) {
-                $product = Product::find($data['product_id']);
+            $totalCost = 0;
+            $totalSale = 0;
+            $descriptions = [];
+            $firstProductId = null;
 
-                if ($product && $product->reserved) {
-                    throw new \Exception('Este produto já está reservado.');
+            foreach ($items as $item) {
+                $product = Product::find($item['product_id']);
+                if (!$product) {
+                    throw new \Exception('Produto não encontrado.');
+                }
+                if ($product->reserved) {
+                    throw new \Exception("O produto \"{$product->full_name}\" já está reservado.");
+                }
+                $totalCost += (float) ($item['cost_price'] ?? $product->cost_price);
+                $totalSale += (float) $item['sale_price'];
+                $descriptions[] = $product->full_name;
+                if (!$firstProductId) {
+                    $firstProductId = $product->id;
                 }
             }
 
-            // Cria a reserva
             $reservation = Reservation::create([
                 'customer_id' => $data['customer_id'],
-                'product_id' => $product?->id,
-                'product_description' => $data['product_description'] ?? $product?->full_name ?? $product?->name,
-                'source' => $source,
+                'product_id' => $firstProductId,
+                'product_description' => implode(' + ', $descriptions),
+                'source' => 'stock',
                 'user_id' => $data['user_id'],
                 'status' => ReservationStatus::Active,
-                'product_price' => $data['product_price'] ?? 0,
-                'cost_price' => $data['cost_price'] ?? 0,
+                'product_price' => $totalSale,
+                'cost_price' => $totalCost,
                 'deposit_amount' => $data['deposit_amount'] ?? 0,
                 'deposit_paid' => 0,
                 'expires_at' => $data['expires_at'],
                 'notes' => $data['notes'] ?? null,
             ]);
 
-            // Marca produto como reservado (apenas se for do estoque)
-            if ($product) {
+            foreach ($items as $item) {
+                $product = Product::find($item['product_id']);
+
+                ReservationItem::create([
+                    'reservation_id' => $reservation->id,
+                    'product_id' => $product->id,
+                    'cost_price' => $item['cost_price'] ?? $product->cost_price,
+                    'sale_price' => $item['sale_price'],
+                    'quantity' => 1,
+                ]);
+
                 $product->update([
                     'reserved' => true,
                     'reserved_by' => $reservation->id,
                 ]);
             }
 
-            // Se houver pagamento inicial
-            if (!empty($data['initial_payment']) && $data['initial_payment'] > 0) {
+            $initialPayment = (float) ($data['initial_payment'] ?? 0);
+            if ($initialPayment > 0) {
                 $this->addPayment(
                     $reservation,
                     $data['user_id'],
-                    $data['initial_payment'],
+                    $initialPayment,
                     PaymentMethod::from($data['payment_method'] ?? 'cash')
                 );
             }
 
-            return $reservation->load(['customer', 'product', 'payments']);
+            return $reservation->load(['customer', 'product', 'items.product', 'payments']);
         });
     }
 
