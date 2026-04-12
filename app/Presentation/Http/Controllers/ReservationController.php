@@ -270,7 +270,6 @@ class ReservationController extends Controller
             return response()->json([]);
         }
 
-        // Busca produtos do estoque (incluindo sem estoque)
         $stockProducts = $this->productService->search($query)
             ->filter(fn($p) => !$p->reserved)
             ->take(10)
@@ -279,8 +278,12 @@ class ReservationController extends Controller
                 'name' => $p->full_name,
                 'sku' => $p->sku,
                 'stock' => $p->stock_quantity,
+                'cost_price' => (float) $p->cost_price,
+                'sale_price' => (float) $p->sale_price,
+                'condition' => $p->condition instanceof \BackedEnum ? $p->condition->value : $p->condition,
+                'formatted_price' => $p->sale_price > 0 ? 'R$ ' . number_format((float) $p->sale_price, 2, ',', '.') : null,
                 'source' => 'stock',
-                'source_label' => $p->stock_quantity > 0 ? 'Estoque' : 'Sem estoque',
+                'source_label' => $p->stock_quantity > 0 ? 'Em estoque' : 'Sem estoque',
             ])->values();
 
         // Busca cotações de fornecedores (últimos preços únicos)
