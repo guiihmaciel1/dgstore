@@ -135,20 +135,59 @@
                             <div style="margin-bottom: 0.75rem;" x-data="{ open: false, search: '' }">
                                 <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Modelo</label>
                                 <div style="position: relative;">
-                                    <input type="text" x-model="search" @focus="open = true" @click.away="open = false"
-                                           :placeholder="tradeIn.model || 'Buscar modelo...'"
-                                           style="width: 100%; padding: 10px 14px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; font-size: 14px; color: #92400e; outline: none;"
-                                           onfocus="this.style.borderColor='#d97706'"
-                                           onblur="this.style.borderColor='#fde68a'">
-                                    <div x-show="open" x-transition
-                                         style="position: absolute; z-index: 20; margin-top: 4px; width: 100%; background: white; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 240px; overflow-y: auto; border: 1px solid #e5e7eb;">
-                                        <template x-for="(storages, name) in filteredTradeInModels(search)" :key="name">
-                                            <button type="button" @click="selectTradeInModel(name); open = false; search = ''"
-                                                    style="width: 100%; padding: 10px 14px; text-align: left; font-size: 13px; border: none; background: none; cursor: pointer;"
-                                                    :style="tradeIn.model === name ? 'color: #d97706; font-weight: 600;' : 'color: #374151;'"
-                                                    onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='none'"
-                                                    x-text="name"></button>
-                                        </template>
+                                    <div @click="open = !open; $nextTick(() => { if(open) $refs.modelSearch.focus(); })" style="width: 100%; padding: 10px 14px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; font-size: 14px; color: #92400e; cursor: pointer; display: flex; align-items: center; justify-content: space-between; min-height: 42px;"
+                                         :style="open ? 'border-color: #d97706; background: white;' : ''">
+                                        <span :style="tradeIn.model ? 'font-weight: 600;' : 'opacity: 0.6;'" x-text="tradeIn.model || 'Selecionar modelo...'"></span>
+                                        <svg style="width: 16px; height: 16px; flex-shrink: 0; transition: transform 0.2s;" :style="open ? 'transform: rotate(180deg);' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                        </svg>
+                                    </div>
+
+                                    <div x-show="open" x-transition @click.away="open = false; search = ''"
+                                         style="position: absolute; z-index: 20; margin-top: 4px; width: 100%; background: white; border-radius: 12px; box-shadow: 0 12px 28px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; overflow: hidden;">
+
+                                        <div style="padding: 8px; border-bottom: 1px solid #f3f4f6;">
+                                            <div style="position: relative;">
+                                                <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                                <input type="text" x-model="search" x-ref="modelSearch"
+                                                       placeholder="Buscar modelo..."
+                                                       @keydown.escape="open = false; search = ''"
+                                                       style="width: 100%; padding: 8px 12px 8px 32px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; color: #111827; outline: none;"
+                                                       onfocus="this.style.borderColor='#d97706'; this.style.background='white'"
+                                                       onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                                            </div>
+                                        </div>
+
+                                        <div style="max-height: 280px; overflow-y: auto; padding: 4px 0;">
+                                            <template x-for="group in groupedTradeInModels(search)" :key="group.generation">
+                                                <div>
+                                                    <div style="padding: 6px 14px 4px; font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; position: sticky; top: 0; background: white;" x-text="group.generation"></div>
+                                                    <template x-for="name in group.models" :key="name">
+                                                        <button type="button"
+                                                                @click="selectTradeInModel(name); open = false; search = ''"
+                                                                style="display: block; width: 100%; padding: 8px 14px 8px 24px; text-align: left; font-size: 13px; border: none; background: none; cursor: pointer; transition: background 0.1s;"
+                                                                :style="tradeIn.model === name
+                                                                    ? 'color: #d97706; font-weight: 600; background: #fffbeb;'
+                                                                    : 'color: #374151;'"
+                                                                @mouseenter="$el.style.background = tradeIn.model === name ? '#fffbeb' : '#f9fafb'"
+                                                                @mouseleave="$el.style.background = tradeIn.model === name ? '#fffbeb' : 'transparent'">
+                                                            <span x-text="name"></span>
+                                                            <template x-if="tradeIn.model === name">
+                                                                <svg style="display: inline; width: 14px; height: 14px; margin-left: 6px; vertical-align: middle; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                                                </svg>
+                                                            </template>
+                                                        </button>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                            <div x-show="Object.keys(filteredTradeInModels(search)).length === 0"
+                                                 style="padding: 16px; text-align: center; font-size: 13px; color: #9ca3af;">
+                                                Nenhum modelo encontrado
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -596,6 +635,17 @@
                 return Object.fromEntries(
                     Object.entries(this.tradeInModels).filter(([k]) => k.toLowerCase().includes(s))
                 );
+            },
+            groupedTradeInModels(search) {
+                const filtered = this.filteredTradeInModels(search);
+                const groups = {};
+                for (const name of Object.keys(filtered)) {
+                    const match = name.match(/iPhone (\d+)/);
+                    const gen = match ? `iPhone ${match[1]}` : 'Outros';
+                    if (!groups[gen]) groups[gen] = [];
+                    groups[gen].push(name);
+                }
+                return Object.entries(groups).map(([generation, models]) => ({ generation, models }));
             },
             selectTradeInModel(name) {
                 this.tradeIn.model = name;
