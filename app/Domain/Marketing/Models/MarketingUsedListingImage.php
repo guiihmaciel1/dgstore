@@ -35,10 +35,10 @@ class MarketingUsedListingImage extends Model
 
     public function getUrlAttribute(): ?string
     {
-        if (! $this->path) {
+        if (! $this->path || ! $this->id) {
             return null;
         }
 
-        return '/storage/' . $this->path;
+        return '/marketing/used-listing-images/' . $this->id . '/show';
     }
 }

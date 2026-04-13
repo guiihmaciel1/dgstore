@@ -394,6 +394,34 @@ class MarketingController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function showPriceImage(MarketingPriceImage $image)
+    {
+        if (! $image->path || ! Storage::disk('public')->exists($image->path)) {
+            abort(404);
+        }
+
+        $file = Storage::disk('public')->get($image->path);
+        $mime = Storage::disk('public')->mimeType($image->path);
+
+        return response($file, 200)
+            ->header('Content-Type', $mime)
+            ->header('Cache-Control', 'public, max-age=86400');
+    }
+
+    public function showUsedListingImage(MarketingUsedListingImage $image)
+    {
+        if (! $image->path || ! Storage::disk('public')->exists($image->path)) {
+            abort(404);
+        }
+
+        $file = Storage::disk('public')->get($image->path);
+        $mime = Storage::disk('public')->mimeType($image->path);
+
+        return response($file, 200)
+            ->header('Content-Type', $mime)
+            ->header('Cache-Control', 'public, max-age=86400');
+    }
+
     public function storeResaleItem(Request $request): JsonResponse
     {
         $request->validate([
