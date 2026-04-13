@@ -150,62 +150,45 @@
                                     <div style="margin-bottom: 1rem;">
                                         <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Modelo</label>
                                         <div style="position: relative;" @keydown.escape.prevent="evalDropdownOpen = false">
-                                            <!-- Trigger -->
                                             <button type="button" @click="evalDropdownOpen = !evalDropdownOpen"
-                                                    style="width: 100%; padding: 10px 14px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; color: #111827; outline: none; cursor: pointer; text-align: left; display: flex; align-items: center; justify-content: space-between;"
+                                                    style="width: 100%; padding: 10px 14px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; color: #111827; outline: none; cursor: pointer; text-align: left; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box;"
                                                     :style="evalDropdownOpen ? 'border-color: #d97706; box-shadow: 0 0 0 3px rgba(217,119,6,0.1);' : ''">
                                                 <span :style="tradeIn.model ? 'color: #111827; font-weight: 500;' : 'color: #9ca3af;'"
                                                       x-text="tradeIn.model || 'Selecione o modelo...'"></span>
-                                                <svg style="width: 16px; height: 16px; color: #9ca3af; flex-shrink: 0; transition: transform 0.2s;" :style="evalDropdownOpen ? 'transform: rotate(180deg);' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                                </svg>
+                                                <span style="color: #9ca3af; font-size: 12px; transition: transform 0.2s; display: inline-block;"
+                                                      :style="evalDropdownOpen ? 'transform: rotate(180deg);' : ''">&darr;</span>
                                             </button>
 
-                                            <!-- Dropdown -->
-                                            <div x-show="evalDropdownOpen"
-                                                 x-transition:enter="transition ease-out duration-150"
-                                                 x-transition:enter-start="opacity-0 transform -translate-y-1"
-                                                 x-transition:enter-end="opacity-100 transform translate-y-0"
-                                                 x-transition:leave="transition ease-in duration-100"
-                                                 x-transition:leave-start="opacity-100"
-                                                 x-transition:leave-end="opacity-0"
+                                            <div x-show="evalDropdownOpen" x-cloak
                                                  @click.outside="evalDropdownOpen = false"
                                                  style="position: absolute; z-index: 50; margin-top: 6px; width: 100%; background: white; border-radius: 12px; box-shadow: 0 12px 28px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; overflow: hidden;">
 
-                                                <!-- Search -->
                                                 <div style="padding: 10px 12px; border-bottom: 1px solid #f3f4f6;">
-                                                    <div style="position: relative;">
-                                                        <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                                        </svg>
-                                                        <input type="text" x-model="evalSearch" x-ref="evalSearchInput"
-                                                               x-init="$watch('evalDropdownOpen', v => { if(v) $nextTick(() => $refs.evalSearchInput.focus()) })"
-                                                               placeholder="Buscar modelo..."
-                                                               @keydown.escape.prevent="evalDropdownOpen = false"
-                                                               style="width: 100%; padding: 8px 10px 8px 32px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; color: #111827; outline: none;"
-                                                               onfocus="this.style.borderColor='#d97706'; this.style.background='white'"
-                                                               onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
-                                                    </div>
+                                                    <input type="text" x-model="evalSearch" x-ref="evalSearchInput"
+                                                           x-init="$watch('evalDropdownOpen', v => { if(v) $nextTick(() => $refs.evalSearchInput.focus()) })"
+                                                           placeholder="🔍 Buscar modelo..."
+                                                           @keydown.escape.prevent="evalDropdownOpen = false"
+                                                           style="width: 100%; padding: 8px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; color: #111827; outline: none; box-sizing: border-box;"
+                                                           onfocus="this.style.borderColor='#d97706'; this.style.background='white'"
+                                                           onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
                                                 </div>
 
-                                                <!-- Models list grouped -->
                                                 <div style="max-height: 280px; overflow-y: auto; padding: 4px 0;">
                                                     <template x-for="group in groupedTradeInModels(evalSearch)" :key="group.generation">
-                                                        <div>
-                                                            <div style="padding: 6px 14px 4px; font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: white;"
+                                                        <div style="display: block;">
+                                                            <div style="display: block; padding: 8px 14px 4px; font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.08em; background: #f9fafb; position: sticky; top: 0;"
                                                                  x-text="group.generation"></div>
-                                                            <template x-for="name in group.models" :key="name">
-                                                                <button type="button"
-                                                                        @click="selectTradeInModel(name); evalDropdownOpen = false; evalSearch = ''"
-                                                                        style="display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 14px; text-align: left; font-size: 13px; border: none; background: none; cursor: pointer; transition: background 0.1s;"
-                                                                        :style="tradeIn.model === name ? 'background: #fffbeb; color: #d97706; font-weight: 600;' : 'color: #374151;'"
-                                                                        @mouseenter="if(tradeIn.model !== name) $el.style.background='#f9fafb'"
-                                                                        @mouseleave="if(tradeIn.model !== name) $el.style.background= tradeIn.model === name ? '#fffbeb' : 'transparent'">
-                                                                    <svg x-show="tradeIn.model === name" style="width: 14px; height: 14px; flex-shrink: 0; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-                                                                    </svg>
-                                                                    <span x-text="name"></span>
-                                                                </button>
+                                                            <template x-for="modelName in group.models" :key="modelName">
+                                                                <div style="display: block;"
+                                                                     @click="selectTradeInModel(modelName); evalDropdownOpen = false; evalSearch = ''"
+                                                                     :style="tradeIn.model === modelName
+                                                                         ? 'padding: 10px 14px; font-size: 13px; cursor: pointer; background: #fffbeb; color: #d97706; font-weight: 600; border-bottom: 1px solid #f9fafb;'
+                                                                         : 'padding: 10px 14px; font-size: 13px; cursor: pointer; color: #374151; border-bottom: 1px solid #f9fafb;'"
+                                                                     @mouseenter="if(tradeIn.model !== modelName) $el.style.background='#f3f4f6'"
+                                                                     @mouseleave="if(tradeIn.model !== modelName) $el.style.background='transparent'">
+                                                                    <span x-show="tradeIn.model === modelName" style="margin-right: 6px; color: #d97706;">✓</span>
+                                                                    <span x-text="modelName"></span>
+                                                                </div>
                                                             </template>
                                                         </div>
                                                     </template>
