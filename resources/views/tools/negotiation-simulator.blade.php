@@ -123,6 +123,22 @@
                             </div>
                         </div>
 
+                        <!-- Desconto Pix -->
+                        <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 10px;">
+                            <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;">Desconto Pix</label>
+                            <div style="position: relative; width: 90px; flex-shrink: 0;">
+                                <input type="text" x-model="pixDiscountPercent"
+                                       placeholder="0"
+                                       style="width: 100%; padding: 8px 28px 8px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-weight: 600; color: #111827; outline: none; text-align: right; box-sizing: border-box;"
+                                       onfocus="this.style.borderColor='#111827'; this.style.background='white'"
+                                       onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                                <span style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 13px; font-weight: 600; pointer-events: none;">%</span>
+                            </div>
+                            <span x-show="pixDiscount > 0 && cardBalance > 0"
+                                  style="font-size: 13px; font-weight: 600; color: #059669;"
+                                  x-text="'- R$ ' + fmt(cardBalance - pixPrice)"></span>
+                        </div>
+
                         <!-- Avaliador DGiFipe -->
                         <div style="margin-top: 0.75rem; border-top: 1px solid #f3f4f6; padding-top: 0.75rem;">
                             <div @click="tradeIn.showEval = !tradeIn.showEval"
@@ -380,10 +396,20 @@
                         <!-- Pix -->
                         <div x-show="cardBalance > 0" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                             <div>
-                                <div style="font-size: 15px; font-weight: 700; color: #059669;">Pix / Dinheiro</div>
+                                <div style="font-size: 15px; font-weight: 700; color: #059669;">
+                                    Pix / Dinheiro
+                                    <span x-show="pixDiscount > 0"
+                                          style="margin-left: 6px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 9999px; background: #059669; color: white;"
+                                          x-text="'-' + pixDiscount + '% off'"></span>
+                                </div>
                                 <div style="font-size: 12px; color: #6b7280;">Melhor preço - sem taxa</div>
                             </div>
-                            <div style="font-size: 22px; font-weight: 800; color: #059669;" x-text="'R$ ' + fmt(cardBalance)"></div>
+                            <div style="text-align: right;">
+                                <div x-show="pixDiscount > 0"
+                                     style="font-size: 13px; font-weight: 500; color: #9ca3af; text-decoration: line-through;"
+                                     x-text="'R$ ' + fmt(cardBalance)"></div>
+                                <div style="font-size: 22px; font-weight: 800; color: #059669;" x-text="'R$ ' + fmt(pixPrice)"></div>
+                            </div>
                         </div>
 
                         <!-- Presets -->
@@ -448,6 +474,12 @@
                                 <span style="font-size: 14px; font-weight: 700; color: #111827;">Saldo no cartão</span>
                                 <span style="font-size: 18px; font-weight: 800; color: #111827;" x-text="'R$ ' + fmt(cardBalance)"></span>
                             </div>
+                            <template x-if="pixDiscount > 0 && cardBalance > 0">
+                                <div style="display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px;">
+                                    <span style="color: #059669;" x-text="'Desconto Pix (' + pixDiscount + '%)'"></span>
+                                    <span style="font-weight: 700; color: #059669;" x-text="'R$ ' + fmt(pixPrice)"></span>
+                                </div>
+                            </template>
                         </div>
 
                         <!-- Ações finais -->
@@ -515,6 +547,7 @@
                 result: null, error: null, loading: false, offeredInput: '',
             },
             downPaymentInput: '',
+            pixDiscountPercent: '',
             cardResults: [],
 
             presets: [
@@ -536,6 +569,14 @@
             get downPayment() { return this.parseNum(this.downPaymentInput); },
             get cardBalance() {
                 return Math.max(0, this.productPrice - this.tradeInValue - this.downPayment);
+            },
+            get pixDiscount() {
+                return parseFloat(this.pixDiscountPercent) || 0;
+            },
+            get pixPrice() {
+                const disc = this.pixDiscount;
+                if (disc <= 0 || disc > 100) return this.cardBalance;
+                return this.cardBalance * (1 - disc / 100);
             },
             get tradeInStorages() {
                 return this.tradeInModels[this.tradeIn.model] || [];
@@ -734,7 +775,11 @@
                 if (balance > 0) {
                     lines.push('');
                     lines.push(`━━━━━━━━━━━━━━━`);
-                    lines.push(`✅ *Pix/À vista: R$ ${this.fmt(balance)}*`);
+                    if (this.pixDiscount > 0) {
+                        lines.push(`✅ *Pix/À vista: R$ ${this.fmt(this.pixPrice)}* _(${this.pixDiscount}% off)_`);
+                    } else {
+                        lines.push(`✅ *Pix/À vista: R$ ${this.fmt(balance)}*`);
+                    }
 
                     const selected = this.cardResults.filter(r => r.selected);
                     if (selected.length > 0) {
@@ -785,8 +830,9 @@
                     result: null, error: null, loading: false, offeredInput: '',
                 };
                 this.downPaymentInput = '';
+                this.pixDiscountPercent = '';
                 this.cardResults = [];
-                this.activePreset = 'all';
+                this.activePreset = 'even';
                 this.evalSearch = '';
                 this.evalDropdownOpen = false;
             },
