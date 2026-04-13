@@ -10,6 +10,7 @@ use App\Domain\Marketing\Models\MarketingPrice;
 use App\Domain\Marketing\Models\MarketingPriceImage;
 use App\Domain\Marketing\Models\MarketingResaleItem;
 use App\Domain\Marketing\Models\MarketingUsedListing;
+use App\Domain\Marketing\Models\MarketingUsedListingImage;
 use App\Domain\Product\Models\Product;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -59,7 +60,7 @@ class MarketingController extends Controller
             ->orderBy('name')
             ->get();
 
-        $usedListings = MarketingUsedListing::all()
+        $usedListings = MarketingUsedListing::with('images')->get()
             ->keyBy(fn ($l) => $l->listable_type . '_' . $l->listable_id);
 
         $pricesJson = $prices->map(function ($p) {
@@ -324,12 +325,73 @@ class MarketingController extends Controller
 
     public function deleteUsedListing(MarketingUsedListing $listing): JsonResponse
     {
+        foreach ($listing->images as $img) {
+            Storage::disk('public')->delete($img->path);
+        }
+
         $listing->delete();
 
         return response()->json([
             'success' => true,
             'message' => 'Dados do seminovo removidos!',
         ]);
+    }
+
+    public function storeUsedListingImage(Request $request): JsonResponse
+    {
+        $request->validate([
+            'marketing_used_listing_id' => ['required', 'string', 'exists:marketing_used_listings,id'],
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+        ]);
+
+        $listingId = $request->input('marketing_used_listing_id');
+        $existing = MarketingUsedListingImage::where('marketing_used_listing_id', $listingId)->count();
+
+        if ($existing >= 5) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Limite de 5 imagens por seminovo atingido.',
+            ], 422);
+        }
+
+        $file = $request->file('image');
+        $originalName = $file->getClientOriginalName();
+
+        $directory = "marketing-used-listings/{$listingId}";
+        Storage::disk('public')->makeDirectory($directory);
+
+        $filename = uniqid() . '.jpg';
+        $relativePath = "{$directory}/{$filename}";
+        $fullPath = Storage::disk('public')->path($relativePath);
+
+        $this->compressAndSaveImage($file->getRealPath(), $fullPath);
+
+        $image = MarketingUsedListingImage::create([
+            'marketing_used_listing_id' => $listingId,
+            'path' => $relativePath,
+            'original_name' => $originalName,
+            'sort_order' => $existing,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'image' => [
+                'id' => $image->id,
+                'url' => $image->url,
+                'original_name' => $image->original_name,
+            ],
+        ]);
+    }
+
+    public function deleteUsedListingImage(MarketingUsedListingImage $image): JsonResponse
+    {
+        if ($image->path) {
+            Storage::disk('public')->delete($image->path);
+        }
+
+        $image->delete();
+
+        return response()->json(['success' => true]);
     }
 
     public function storeResaleItem(Request $request): JsonResponse

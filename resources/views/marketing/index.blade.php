@@ -247,6 +247,69 @@
                 </div>
             </div>
 
+            <!-- Modal de Imagens — Seminovos -->
+            <div x-show="usedImgModal.open" x-cloak
+                 style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;"
+                 @keydown.escape.window="closeUsedImageModal()">
+                <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4);" @click="closeUsedImageModal()"></div>
+                <div style="position: relative; background: white; border-radius: 12px; padding: 1.25rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <div>
+                            <h3 style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="usedImgModalItem ? 'Fotos: ' + usedImgModalItem.name + (usedImgModalItem.storage ? ' ' + usedImgModalItem.storage : '') : 'Fotos'"></h3>
+                            <p style="font-size: 0.75rem; color: #9ca3af;" x-text="usedImgModalItem ? (usedImgModalItem.images || []).length + '/5 imagens' : ''"></p>
+                        </div>
+                        <button type="button" @click="closeUsedImageModal()"
+                                style="padding: 4px; background: none; border: none; cursor: pointer; color: #9ca3af; border-radius: 4px;"
+                                onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9ca3af'">
+                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Galeria -->
+                    <div x-show="usedImgModalItem && (usedImgModalItem.images || []).length > 0" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem;">
+                        <template x-for="img in (usedImgModalItem ? usedImgModalItem.images : [])" :key="img.id">
+                            <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #f3f4f6; border: 1px solid #e5e7eb;">
+                                <img :src="img.url" :alt="img.original_name"
+                                     style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;"
+                                     @click="window.open(img.url, '_blank')">
+                                <button type="button" @click="deleteUsedListingImage(img.id)"
+                                        style="position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.6); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; line-height: 1;"
+                                        onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='rgba(0,0,0,0.6)'">&times;</button>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Vazio -->
+                    <div x-show="usedImgModalItem && (usedImgModalItem.images || []).length === 0"
+                         style="padding: 2rem; text-align: center; color: #9ca3af; border: 2px dashed #e5e7eb; border-radius: 8px; margin-bottom: 1rem;">
+                        <svg style="width: 32px; height: 32px; margin: 0 auto 0.5rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p style="font-size: 0.8rem;">Nenhuma foto adicionada</p>
+                    </div>
+
+                    <!-- Upload -->
+                    <div x-show="usedImgModalItem && usedImgModalItem.listing_id && (usedImgModalItem.images || []).length < 5">
+                        <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 2px dashed #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #6b7280; transition: all 0.15s;"
+                               onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.color='#6b7280'">
+                            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span x-text="usedImgModal.uploading ? 'Enviando...' : 'Adicionar foto'"></span>
+                            <input type="file" accept="image/jpeg,image/png,image/webp" @change="uploadUsedListingImage($event)" style="display: none;" :disabled="usedImgModal.uploading">
+                        </label>
+                    </div>
+
+                    <!-- Aviso para itens não salvos -->
+                    <div x-show="usedImgModalItem && !usedImgModalItem.listing_id"
+                         style="padding: 12px; background: #fef3c7; border-radius: 8px; font-size: 12px; color: #92400e; text-align: center;">
+                        Salve os seminovos primeiro (clique em "Salvar Tudo") para poder adicionar fotos.
+                    </div>
+                </div>
+            </div>
+
             {{-- ============================================================ --}}
             {{-- ABA 2: CRIATIVOS DO DIA --}}
             {{-- ============================================================ --}}
@@ -607,6 +670,7 @@
                                 <col style="width: 46px;">
                                 <col style="width: 150px;">
                                 <col style="width: 36px;">
+                                <col style="width: 40px;">
                             </colgroup>
                             <thead>
                                 <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
@@ -621,6 +685,7 @@
                                     <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cabo</th>
                                     <th style="padding: 0.5rem 0.375rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Obs</th>
                                     <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;"></th>
+                                    <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Fotos</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -694,6 +759,23 @@
                                                 <svg x-show="item._copied" style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                 </svg>
+                                            </button>
+                                        </td>
+                                        <td style="padding: 0.375rem 0.25rem; text-align: center;">
+                                            <button type="button" @click="openUsedImageModal(item)"
+                                                    :style="(item.images || []).length > 0
+                                                        ? 'position:relative;padding:0.25rem;background:none;border:none;cursor:pointer;color:#059669;'
+                                                        : 'position:relative;padding:0.25rem;background:none;border:none;cursor:pointer;color:#9ca3af;'"
+                                                    onmouseover="this.style.color='#111827'" onmouseout="this.style.color=this.dataset.hasimg==='1'?'#059669':'#9ca3af'"
+                                                    :data-hasimg="(item.images || []).length > 0 ? '1' : '0'"
+                                                    title="Gerenciar fotos">
+                                                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                </svg>
+                                                <span x-show="(item.images || []).length > 0"
+                                                      style="position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:#059669;color:white;font-size:0.55rem;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;"
+                                                      x-text="(item.images || []).length"></span>
                                             </button>
                                         </td>
                                     </tr>
@@ -812,6 +894,8 @@
 
             imgModal: { open: false, priceIdx: null, uploading: false },
 
+            usedImgModal: { open: false, itemKey: null, uploading: false },
+
             usedListCopied: false,
             usedAllSaving: false,
 
@@ -820,6 +904,7 @@
                 const existing = usedListingsRaw[listingKey];
                 return {
                     ...p,
+                    listing_id: existing ? existing.id : null,
                     listing: existing ? {
                         cost_price: existing.cost_price,
                         final_price: existing.final_price,
@@ -837,6 +922,11 @@
                         notes: '',
                         visible: true,
                     },
+                    images: existing && existing.images ? existing.images.map(img => ({
+                        id: img.id,
+                        url: img.url,
+                        original_name: img.original_name,
+                    })) : [],
                     _saving: false,
                     _copied: false,
                 };
@@ -1056,6 +1146,88 @@
                 }
             },
 
+            openUsedImageModal(item) {
+                this.usedImgModal = { open: true, itemKey: item.morph_type + '_' + item.id, uploading: false };
+            },
+
+            closeUsedImageModal() {
+                this.usedImgModal = { open: false, itemKey: null, uploading: false };
+            },
+
+            get usedImgModalItem() {
+                if (!this.usedImgModal.itemKey) return null;
+                return this.usedItems.find(i => i.morph_type + '_' + i.id === this.usedImgModal.itemKey) || null;
+            },
+
+            async uploadUsedListingImage(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const item = this.usedImgModalItem;
+                if (!item) return;
+
+                if (!item.listing_id) {
+                    alert('Salve o seminovo primeiro (clique em "Salvar Tudo") antes de adicionar fotos.');
+                    event.target.value = '';
+                    return;
+                }
+
+                if ((item.images || []).length >= 5) {
+                    alert('Limite de 5 imagens atingido.');
+                    event.target.value = '';
+                    return;
+                }
+
+                this.usedImgModal.uploading = true;
+                const formData = new FormData();
+                formData.append('marketing_used_listing_id', item.listing_id);
+                formData.append('image', file);
+
+                try {
+                    const res = await fetch('{{ route("marketing.used-listing-images.store") }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                        },
+                        body: formData,
+                    });
+                    const json = await res.json();
+                    if (json.success) {
+                        if (!item.images) item.images = [];
+                        item.images.push(json.image);
+                    } else {
+                        alert(json.message || 'Erro ao enviar imagem.');
+                    }
+                } catch (e) {
+                    alert('Erro de conexão ao enviar imagem.');
+                } finally {
+                    this.usedImgModal.uploading = false;
+                    event.target.value = '';
+                }
+            },
+
+            async deleteUsedListingImage(imageId) {
+                if (!confirm('Remover esta imagem?')) return;
+
+                const item = this.usedImgModalItem;
+                try {
+                    const res = await fetch('/marketing/used-listing-images/' + imageId, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                        },
+                    });
+                    const json = await res.json();
+                    if (json.success && item) {
+                        item.images = (item.images || []).filter(img => img.id !== imageId);
+                    }
+                } catch (e) {
+                    alert('Erro ao remover imagem.');
+                }
+            },
+
             loadCreativesByDate() {
                 window.location.href = '{{ route("marketing.index") }}?tab=creatives&date=' + this.creativeDate;
             },
@@ -1100,6 +1272,10 @@
                         body: JSON.stringify(this._buildUsedPayload(item)),
                     });
                     if (!res.ok) throw new Error('Erro ao salvar');
+                    const json = await res.json();
+                    if (json.success && json.listing && json.listing.id) {
+                        item.listing_id = json.listing.id;
+                    }
                     setTimeout(() => { item._saving = false; }, 1200);
                 } catch (e) {
                     alert('Erro ao salvar: ' + e.message);
@@ -1109,7 +1285,7 @@
 
             async saveUsedVisibility(item) {
                 try {
-                    await fetch('{{ route("marketing.used-listings.store") }}', {
+                    const res = await fetch('{{ route("marketing.used-listings.store") }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1118,6 +1294,10 @@
                         },
                         body: JSON.stringify(this._buildUsedPayload(item)),
                     });
+                    const json = await res.json();
+                    if (json.success && json.listing && json.listing.id) {
+                        item.listing_id = json.listing.id;
+                    }
                 } catch (e) {
                     // silently fail
                 }
@@ -1126,9 +1306,9 @@
             async saveAllUsedListings() {
                 this.usedAllSaving = true;
                 try {
-                    const promises = this.usedItems.map(item => {
+                    const promises = this.usedItems.map(async (item) => {
                         this.syncUsedToResale(item);
-                        return fetch('{{ route("marketing.used-listings.store") }}', {
+                        const res = await fetch('{{ route("marketing.used-listings.store") }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -1137,6 +1317,10 @@
                             },
                             body: JSON.stringify(this._buildUsedPayload(item)),
                         });
+                        const json = await res.json();
+                        if (json.success && json.listing && json.listing.id) {
+                            item.listing_id = json.listing.id;
+                        }
                     });
                     await Promise.all(promises);
                     setTimeout(() => { this.usedAllSaving = false; }, 1500);

@@ -9,6 +9,7 @@ use App\Domain\Product\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class MarketingUsedListing extends Model
@@ -62,5 +63,10 @@ class MarketingUsedListing extends Model
     public function isConsignment(): bool
     {
         return $this->listable_type === ConsignmentStockItem::class;
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(MarketingUsedListingImage::class)->orderBy('sort_order');
     }
 }

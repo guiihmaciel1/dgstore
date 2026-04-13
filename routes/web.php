@@ -248,6 +248,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/price-images', [MarketingController::class, 'storePriceImage'])->name('price-images.store');
             Route::delete('/price-images/{image}', [MarketingController::class, 'deletePriceImage'])->name('price-images.destroy');
             Route::post('/price-images/reorder', [MarketingController::class, 'reorderPriceImages'])->name('price-images.reorder');
+            Route::post('/used-listing-images', [MarketingController::class, 'storeUsedListingImage'])->name('used-listing-images.store');
+            Route::delete('/used-listing-images/{image}', [MarketingController::class, 'deleteUsedListingImage'])->name('used-listing-images.destroy');
         });
 
         // Avaliação de Seminovos
