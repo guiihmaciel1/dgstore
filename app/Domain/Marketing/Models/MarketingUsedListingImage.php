@@ -7,7 +7,6 @@ namespace App\Domain\Marketing\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 
 class MarketingUsedListingImage extends Model
 {
@@ -40,6 +39,6 @@ class MarketingUsedListingImage extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->path);
+        return '/storage/' . $this->path;
     }
 }
