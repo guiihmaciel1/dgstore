@@ -135,7 +135,7 @@
                             </div>
                         </div>
 
-                        <!-- Avaliação automática -->
+                        <!-- Avaliação automática (padrão DGiFipe) -->
                         <div style="margin-top: 0.75rem; border-top: 1px solid #f3f4f6; padding-top: 0.75rem;">
                             <button @click="tradeIn.showEval = !tradeIn.showEval" type="button"
                                     style="display: flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-size: 12px; color: #9ca3af; padding: 0;"
@@ -143,136 +143,194 @@
                                 <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                 </svg>
-                                <span x-text="tradeIn.showEval ? 'Ocultar avaliador' : 'Avaliar seminovo automaticamente'"></span>
+                                <span x-text="tradeIn.showEval ? 'Ocultar avaliador' : 'Avaliar seminovo (DGiFipe)'"></span>
                                 <svg style="width: 12px; height: 12px; transition: transform 0.2s;" :style="tradeIn.showEval ? 'transform: rotate(180deg);' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                 </svg>
                             </button>
 
                             <div x-show="tradeIn.showEval" x-collapse style="margin-top: 0.75rem;">
-                                <!-- Modelo + Storage em linha -->
-                                <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                    <div style="position: relative;" x-data="{ open: false, search: '' }">
-                                        <input type="text" x-model="search"
-                                               @focus="open = true"
-                                               @keydown.escape="open = false; search = ''"
-                                               :placeholder="tradeIn.model || 'Buscar modelo...'"
-                                               :style="tradeIn.model && !search
-                                                   ? 'width: 100%; padding: 8px 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: 13px; font-weight: 600; color: #92400e; outline: none;'
-                                                   : 'width: 100%; padding: 8px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; color: #374151; outline: none;'"
-                                               onfocus="this.style.borderColor='#d97706'"
-                                               onblur="this.style.borderColor='#e5e7eb'">
+                                <div style="background: #f9fafb; border-radius: 10px; padding: 1rem;">
+                                    <div style="display: flex; flex-direction: column; gap: 1rem;">
 
-                                        <div x-show="open" x-transition @click.away="open = false; search = ''"
-                                             style="position: absolute; z-index: 30; margin-top: 4px; width: 100%; min-width: 280px; background: white; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; overflow: hidden;">
-                                            <div style="max-height: 240px; overflow-y: auto;">
-                                                <template x-for="group in groupedTradeInModels(search)" :key="group.generation">
-                                                    <div>
-                                                        <div style="padding: 6px 12px 2px; font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; position: sticky; top: 0; background: white;" x-text="group.generation"></div>
-                                                        <template x-for="name in group.models" :key="name">
-                                                            <button type="button"
-                                                                    @click="selectTradeInModel(name); open = false; search = ''"
-                                                                    style="display: block; width: 100%; padding: 7px 12px 7px 20px; text-align: left; font-size: 13px; border: none; background: none; cursor: pointer;"
-                                                                    :style="tradeIn.model === name ? 'color: #d97706; font-weight: 600; background: #fffbeb;' : 'color: #374151;'"
-                                                                    @mouseenter="if(tradeIn.model !== name) $el.style.background='#f9fafb'"
-                                                                    @mouseleave="$el.style.background = tradeIn.model === name ? '#fffbeb' : 'transparent'"
-                                                                    x-text="name"></button>
-                                                        </template>
-                                                    </div>
-                                                </template>
-                                                <div x-show="groupedTradeInModels(search).length === 0"
-                                                     style="padding: 12px; text-align: center; font-size: 12px; color: #9ca3af;">
-                                                    Nenhum modelo encontrado
+                                        <!-- Modelo -->
+                                        <div>
+                                            <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Modelo</label>
+                                            <div style="position: relative;" x-data="{ open: false, search: '' }">
+                                                <input type="text" x-model="search"
+                                                       @focus="open = true"
+                                                       @keydown.escape="open = false; search = ''"
+                                                       :placeholder="tradeIn.model || 'Buscar modelo...'"
+                                                       style="width: 100%; padding: 10px 14px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; color: #111827; outline: none;"
+                                                       onfocus="this.style.borderColor='#d97706'"
+                                                       onblur="this.style.borderColor='#e5e7eb'">
+
+                                                <div x-show="open" x-transition @click.away="open = false; search = ''"
+                                                     style="position: absolute; z-index: 30; margin-top: 4px; width: 100%; background: white; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); max-height: 240px; overflow-y: auto;">
+                                                    <template x-for="(storages, name) in filteredTradeInModels(search)" :key="name">
+                                                        <button type="button"
+                                                                @click="selectTradeInModel(name); open = false; search = ''"
+                                                                style="display: block; width: 100%; padding: 10px 16px; text-align: left; font-size: 14px; border: none; background: none; cursor: pointer; transition: background 0.1s;"
+                                                                :style="tradeIn.model === name ? 'color: #d97706; font-weight: 600;' : 'color: #374151;'"
+                                                                @mouseenter="$el.style.background='#f9fafb'"
+                                                                @mouseleave="$el.style.background='transparent'"
+                                                                x-text="name"></button>
+                                                    </template>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div style="display: flex; gap: 4px;">
-                                        <template x-for="s in tradeInStorages" :key="s">
-                                            <button type="button" @click="tradeIn.storage = s; debouncedEvaluate()"
-                                                    :style="tradeIn.storage === s
-                                                        ? 'padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #d97706; background: #d97706; color: white; white-space: nowrap;'
-                                                        : 'padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: white; color: #374151; white-space: nowrap;'"
-                                                    x-text="s"></button>
-                                        </template>
-                                    </div>
-                                </div>
 
-                                <!-- Bateria + Estado + Acessórios em linha compacta -->
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                    <div>
-                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">
-                                            Bateria
-                                            <span style="font-weight: 700; color: #111827;" x-text="tradeIn.battery + '%'"></span>
-                                            <span style="font-size: 10px; padding: 1px 5px; border-radius: 9999px;"
-                                                  :style="tradeIn.battery >= 90 ? 'background: #dcfce7; color: #166534;' : (tradeIn.battery >= 80 ? 'background: #fef9c3; color: #854d0e;' : (tradeIn.battery >= 70 ? 'background: #ffedd5; color: #9a3412;' : 'background: #fee2e2; color: #991b1b;'))"
-                                                  x-text="tradeIn.battery >= 90 ? 'OK' : (tradeIn.battery >= 80 ? 'Bom' : (tradeIn.battery >= 70 ? 'Regular' : 'Ruim'))"></span>
-                                        </label>
-                                        <input type="range" x-model.number="tradeIn.battery" min="0" max="100" step="1"
-                                               @input.debounce.500ms="debouncedEvaluate()"
-                                               style="width: 100%; height: 6px; border-radius: 3px; appearance: none; cursor: pointer; accent-color: #d97706; background: #fef3c7;">
-                                    </div>
-                                    <div>
-                                        <label style="display: block; font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Estado</label>
-                                        <div style="display: flex; gap: 4px;">
-                                            <button type="button" @click="tradeIn.deviceState = 'original'; debouncedEvaluate()"
-                                                    :style="tradeIn.deviceState === 'original'
-                                                        ? 'flex: 1; padding: 6px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 2px solid #d97706; background: #d97706; color: white; cursor: pointer;'
-                                                        : 'flex: 1; padding: 6px; border-radius: 8px; font-size: 12px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
-                                                Original
-                                            </button>
-                                            <button type="button" @click="tradeIn.deviceState = 'repaired'; debouncedEvaluate()"
-                                                    :style="tradeIn.deviceState === 'repaired'
-                                                        ? 'flex: 1; padding: 6px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 2px solid #d97706; background: #d97706; color: white; cursor: pointer;'
-                                                        : 'flex: 1; padding: 6px; border-radius: 8px; font-size: 12px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
-                                                Reparado
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style="display: flex; gap: 0.75rem; margin-bottom: 0.5rem;">
-                                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 12px; color: #374151;">
-                                        <input type="checkbox" x-model="tradeIn.noBox" @change="debouncedEvaluate()" style="accent-color: #d97706; width: 14px; height: 14px;">
-                                        Sem caixa
-                                    </label>
-                                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 12px; color: #374151;">
-                                        <input type="checkbox" x-model="tradeIn.noCable" @change="debouncedEvaluate()" style="accent-color: #d97706; width: 14px; height: 14px;">
-                                        Sem cabo
-                                    </label>
-                                </div>
-
-                                <!-- Resultado -->
-                                <div x-show="tradeIn.loading" style="text-align: center; padding: 0.75rem; color: #9ca3af; font-size: 12px;">
-                                    Avaliando...
-                                </div>
-
-                                <div x-show="tradeIn.result && !tradeIn.loading" x-transition
-                                     style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.75rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <!-- Armazenamento -->
                                         <div>
-                                            <div style="font-size: 10px; color: #92400e; font-weight: 600; text-transform: uppercase;">Sugestão de Compra</div>
-                                            <div style="font-size: 20px; font-weight: 800; color: #92400e;" x-text="'R$ ' + fmt(tradeIn.result?.suggested_price)"></div>
+                                            <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Armazenamento</label>
+                                            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                                <template x-for="s in tradeInStorages" :key="s">
+                                                    <button type="button" @click="tradeIn.storage = s; debouncedEvaluate()"
+                                                            :style="tradeIn.storage === s
+                                                                ? 'padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: #d97706; color: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);'
+                                                                : 'padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: white; color: #374151;'"
+                                                            @mouseenter="if(tradeIn.storage !== s) $el.style.background='#f3f4f6'"
+                                                            @mouseleave="if(tradeIn.storage !== s) $el.style.background='white'"
+                                                            x-text="s"></button>
+                                                </template>
+                                            </div>
                                         </div>
-                                        <div style="text-align: right; font-size: 11px; color: #92400e;">
-                                            <div>Revenda: <b x-text="'R$ ' + fmt(tradeIn.result?.resale_price)"></b></div>
-                                            <div>Mercado: <span x-text="'R$ ' + fmt(tradeIn.result?.market_average)"></span> · <span x-text="tradeIn.result?.listings_count + ' anúncios'"></span></div>
-                                            <span style="padding: 1px 6px; border-radius: 9999px; font-weight: 600; font-size: 10px;"
-                                                  :style="tradeIn.result?.confidence === 'high' ? 'background: #dcfce7; color: #166534;' : (tradeIn.result?.confidence === 'medium' ? 'background: #fef9c3; color: #854d0e;' : 'background: #fee2e2; color: #991b1b;')"
-                                                  x-text="tradeIn.result?.confidence === 'high' ? 'Confiança Alta' : (tradeIn.result?.confidence === 'medium' ? 'Confiança Média' : 'Confiança Baixa')"></span>
+
+                                        <!-- Saúde da Bateria -->
+                                        <div>
+                                            <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">
+                                                Saúde da Bateria: <span style="color: #111827;" x-text="tradeIn.battery + '%'"></span>
+                                                <span style="margin-left: 6px; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 9999px;"
+                                                      :style="tradeIn.battery >= 90 ? 'background: #dcfce7; color: #166534;' : (tradeIn.battery >= 80 ? 'background: #fef9c3; color: #854d0e;' : (tradeIn.battery >= 70 ? 'background: #ffedd5; color: #9a3412;' : 'background: #fee2e2; color: #991b1b;'))"
+                                                      x-text="tradeIn.battery >= 90 ? 'Excelente' : (tradeIn.battery >= 80 ? 'Bom' : (tradeIn.battery >= 70 ? 'Regular' : 'Ruim'))"></span>
+                                            </label>
+                                            <input type="range" x-model.number="tradeIn.battery" min="0" max="100" step="1"
+                                                   @input.debounce.500ms="debouncedEvaluate()"
+                                                   style="width: 100%; height: 8px; border-radius: 4px; appearance: none; cursor: pointer; accent-color: #d97706; background: #e5e7eb;">
+                                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #9ca3af; margin-top: 2px;">
+                                                <span>0%</span><span>100%</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Estado do Aparelho -->
+                                        <div>
+                                            <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Estado do Aparelho</label>
+                                            <div style="display: flex; gap: 8px;">
+                                                <button type="button" @click="tradeIn.deviceState = 'original'; debouncedEvaluate()"
+                                                        :style="tradeIn.deviceState === 'original'
+                                                            ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: none; background: #d97706; color: white; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);'
+                                                            : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; border: none; background: white; color: #374151; cursor: pointer;'"
+                                                        @mouseenter="if(tradeIn.deviceState !== 'original') $el.style.background='#f3f4f6'"
+                                                        @mouseleave="if(tradeIn.deviceState !== 'original') $el.style.background='white'">
+                                                    Original
+                                                </button>
+                                                <button type="button" @click="tradeIn.deviceState = 'repaired'; debouncedEvaluate()"
+                                                        :style="tradeIn.deviceState === 'repaired'
+                                                            ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: none; background: #d97706; color: white; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);'
+                                                            : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; border: none; background: white; color: #374151; cursor: pointer;'"
+                                                        @mouseenter="if(tradeIn.deviceState !== 'repaired') $el.style.background='#f3f4f6'"
+                                                        @mouseleave="if(tradeIn.deviceState !== 'repaired') $el.style.background='white'">
+                                                    Já foi aberto / trocou peça
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Acessórios -->
+                                        <div>
+                                            <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">
+                                                Acessórios
+                                                <span style="margin-left: 6px; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 9999px;"
+                                                      :style="(!tradeIn.noBox && !tradeIn.noCable) ? 'background: #dcfce7; color: #166534;' : ((tradeIn.noBox && tradeIn.noCable) ? 'background: #fee2e2; color: #991b1b;' : 'background: #fef9c3; color: #854d0e;')"
+                                                      x-text="(!tradeIn.noBox && !tradeIn.noCable) ? 'Completo (+3%)' : ((tradeIn.noBox && tradeIn.noCable) ? 'Nenhum (-3%)' : 'Parcial (0%)')"></span>
+                                            </label>
+                                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                                <label style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: white; cursor: pointer; transition: background 0.1s;"
+                                                       onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='white'">
+                                                    <input type="checkbox" x-model="tradeIn.noBox" @change="debouncedEvaluate()"
+                                                           style="width: 18px; height: 18px; border-radius: 4px; accent-color: #d97706; cursor: pointer;">
+                                                    <span style="font-size: 13px; color: #374151;">Sem caixa</span>
+                                                </label>
+                                                <label style="display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: white; cursor: pointer; transition: background 0.1s;"
+                                                       onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='white'">
+                                                    <input type="checkbox" x-model="tradeIn.noCable" @change="debouncedEvaluate()"
+                                                           style="width: 18px; height: 18px; border-radius: 4px; accent-color: #d97706; cursor: pointer;">
+                                                    <span style="font-size: 13px; color: #374151;">Sem cabo</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Loading -->
+                                        <div x-show="tradeIn.loading" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; font-size: 13px; color: #9ca3af;">
+                                            <svg style="width: 16px; height: 16px; animation: ngSpin 1s linear infinite;" viewBox="0 0 24 24">
+                                                <circle style="opacity: 0.25;" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+                                                <path style="opacity: 0.75;" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                                            </svg>
+                                            Calculando...
+                                        </div>
+
+                                        <!-- Resultado da avaliação -->
+                                        <div x-show="tradeIn.result && !tradeIn.loading" x-transition>
+                                            <!-- Preço de Compra -->
+                                            <div style="background: white; border-radius: 10px; padding: 1rem; margin-bottom: 8px;">
+                                                <div style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Preço Sugerido de Compra</div>
+                                                <div style="font-size: 1.75rem; font-weight: 800; color: #059669; letter-spacing: -0.5px;" x-text="'R$ ' + fmt(tradeIn.result?.suggested_price)"></div>
+                                                <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">Valor ideal para adquirir este aparelho.</div>
+                                            </div>
+
+                                            <!-- Preço de Revenda -->
+                                            <div style="background: white; border-radius: 10px; padding: 1rem; margin-bottom: 8px;">
+                                                <div style="font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Preço Sugerido de Revenda</div>
+                                                <div style="font-size: 1.5rem; font-weight: 700; color: #2563eb; letter-spacing: -0.5px;" x-text="'R$ ' + fmt(tradeIn.result?.resale_price)"></div>
+                                                <div style="font-size: 12px; color: #9ca3af; margin-top: 2px;">Margem de <span x-text="tradeIn.result?.resale_margin + '%'"></span> sobre a compra.</div>
+                                            </div>
+
+                                            <!-- Estatísticas do mercado -->
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                                                <div style="background: white; border-radius: 10px; padding: 0.75rem;">
+                                                    <div style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Média do Mercado</div>
+                                                    <div style="font-size: 1.1rem; font-weight: 600; color: #111827;" x-text="'R$ ' + fmt(tradeIn.result?.market_average)"></div>
+                                                </div>
+                                                <div style="background: white; border-radius: 10px; padding: 0.75rem;">
+                                                    <div style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Mediana</div>
+                                                    <div style="font-size: 1.1rem; font-weight: 600; color: #111827;" x-text="'R$ ' + fmt(tradeIn.result?.median)"></div>
+                                                </div>
+                                                <div style="background: white; border-radius: 10px; padding: 0.75rem;">
+                                                    <div style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Menor Preço</div>
+                                                    <div style="font-size: 1rem; font-weight: 600; color: #111827;" x-text="'R$ ' + fmt(tradeIn.result?.price_min)"></div>
+                                                </div>
+                                                <div style="background: white; border-radius: 10px; padding: 0.75rem;">
+                                                    <div style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Maior Preço</div>
+                                                    <div style="font-size: 1rem; font-weight: 600; color: #111827;" x-text="'R$ ' + fmt(tradeIn.result?.price_max)"></div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Anúncios + Confiança -->
+                                            <div style="background: white; border-radius: 10px; padding: 0.75rem; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                                                <div>
+                                                    <div style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Anúncios Analisados</div>
+                                                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 2px;">
+                                                        <span style="font-size: 1.1rem; font-weight: 600; color: #111827;" x-text="tradeIn.result?.listings_count"></span>
+                                                        <span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 9999px;"
+                                                              :style="tradeIn.result?.confidence === 'high' ? 'background: #dcfce7; color: #166534;' : (tradeIn.result?.confidence === 'medium' ? 'background: #fef9c3; color: #854d0e;' : 'background: #fee2e2; color: #991b1b;')"
+                                                              x-text="tradeIn.result?.confidence === 'high' ? 'Confiança Alta' : (tradeIn.result?.confidence === 'medium' ? 'Confiança Média' : 'Confiança Baixa')"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Botão usar valor -->
+                                            <button @click="tradeIn.offeredInput = fmt(tradeIn.result?.suggested_price); recalculate()" type="button"
+                                                    style="width: 100%; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; background: #d97706; color: white;"
+                                                    onmouseover="this.style.background='#b45309'" onmouseout="this.style.background='#d97706'">
+                                                Usar valor sugerido (R$ <span x-text="fmt(tradeIn.result?.suggested_price)"></span>)
+                                            </button>
+                                        </div>
+
+                                        <!-- Erro -->
+                                        <div x-show="tradeIn.error && !tradeIn.loading" x-transition
+                                             style="padding: 12px; border-radius: 10px; background: #fef2f2; font-size: 13px; color: #991b1b; text-align: center;">
+                                            <span x-text="tradeIn.error"></span>
                                         </div>
                                     </div>
-                                    <button @click="tradeIn.offeredInput = fmt(tradeIn.result?.suggested_price); recalculate()" type="button"
-                                            style="margin-top: 8px; width: 100%; padding: 6px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #d97706; background: transparent; color: #d97706;"
-                                            onmouseover="this.style.background='#d97706'; this.style.color='white'"
-                                            onmouseout="this.style.background='transparent'; this.style.color='#d97706'">
-                                        Usar valor sugerido
-                                    </button>
-                                </div>
-
-                                <div x-show="tradeIn.error && !tradeIn.loading" x-transition
-                                     style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 12px; color: #991b1b;">
-                                    <span x-text="tradeIn.error"></span>
                                 </div>
                             </div>
                         </div>
