@@ -85,7 +85,6 @@
                             <div style="position: relative;">
                                 <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 16px; font-weight: 500;">R$</span>
                                 <input type="text" x-model="product.priceInput" x-ref="priceField"
-                                       @input.debounce.300ms="recalculate()"
                                        placeholder="0,00"
                                        style="width: 100%; padding: 16px 16px 16px 44px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 24px; font-weight: 700; color: #111827; outline: none; text-align: right;"
                                        onfocus="this.style.borderColor='#111827'; this.style.background='white'"
@@ -102,7 +101,6 @@
                                 <div style="position: relative;">
                                     <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #6ee7b7; font-size: 14px; font-weight: 500;">R$</span>
                                     <input type="text" x-model="downPaymentInput"
-                                           @input.debounce.300ms="recalculate()"
                                            placeholder="0,00"
                                            style="width: 100%; padding: 12px 14px 12px 40px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; font-size: 18px; font-weight: 600; color: #059669; outline: none; text-align: right;"
                                            onfocus="this.style.borderColor='#059669'; this.style.background='white'"
@@ -114,7 +112,6 @@
                                 <div style="position: relative;">
                                     <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #fcd34d; font-size: 14px; font-weight: 500;">R$</span>
                                     <input type="text" x-model="tradeIn.offeredInput"
-                                           @input.debounce.300ms="recalculate()"
                                            placeholder="0,00"
                                            style="width: 100%; padding: 12px 14px 12px 40px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; font-size: 18px; font-weight: 600; color: #d97706; outline: none; text-align: right;"
                                            onfocus="this.style.borderColor='#d97706'; this.style.background='white'"
@@ -559,8 +556,17 @@
             ],
 
             _evalTimer: null,
+            _recalcTimer: null,
 
-            init() {},
+            init() {
+                const debouncedRecalc = () => {
+                    clearTimeout(this._recalcTimer);
+                    this._recalcTimer = setTimeout(() => this.recalculate(), 300);
+                };
+                this.$watch('product.priceInput', debouncedRecalc);
+                this.$watch('downPaymentInput', debouncedRecalc);
+                this.$watch('tradeIn.offeredInput', debouncedRecalc);
+            },
 
             get productPrice() { return this.parseNum(this.product.priceInput); },
             get tradeInValue() {
