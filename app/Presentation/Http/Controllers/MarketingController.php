@@ -514,6 +514,11 @@ class MarketingController extends Controller
 
     private function compressAndSaveImage(string $sourcePath, string $destinationPath): void
     {
+        $dir = dirname($destinationPath);
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
         $imageData = file_get_contents($sourcePath);
         $gdImage = @imagecreatefromstring($imageData);
 
