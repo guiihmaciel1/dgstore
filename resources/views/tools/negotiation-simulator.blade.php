@@ -92,18 +92,6 @@
                                        onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
                             </div>
                         </div>
-                        <div style="margin-top: 0.75rem;">
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Custo de Aquisição (interno)</label>
-                            <div style="position: relative;">
-                                <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px;">R$</span>
-                                <input type="text" x-model="product.costInput"
-                                       @input.debounce.300ms="recalculate()"
-                                       placeholder="0,00"
-                                       style="width: 100%; padding: 10px 14px 10px 40px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 16px; font-weight: 600; color: #6b7280; outline: none; text-align: right;"
-                                       onfocus="this.style.borderColor='#111827'; this.style.background='white'"
-                                       onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Entrada + Trade-in -->
@@ -374,44 +362,6 @@
 
                 <!-- COLUNA DIREITA: Resultados -->
                 <div>
-                    <!-- Visão do Vendedor (margem) -->
-                    <div x-show="productPrice > 0 && productCost > 0" x-transition
-                         style="background: #f9fafb; border-radius: 0.75rem; border: 1px dashed #d1d5db; padding: 1rem 1.25rem; margin-bottom: 1rem;">
-                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.75rem;">
-                            <svg style="width: 14px; height: 14px; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                            <span style="font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Visão do Vendedor</span>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                            <div>
-                                <div style="font-size: 11px; color: #9ca3af;">Receita total</div>
-                                <div style="font-size: 16px; font-weight: 700; color: #111827;" x-text="'R$ ' + fmt(revenueTotal)"></div>
-                            </div>
-                            <div>
-                                <div style="font-size: 11px; color: #9ca3af;">Custo total</div>
-                                <div style="font-size: 16px; font-weight: 700; color: #111827;" x-text="'R$ ' + fmt(costTotal)"></div>
-                            </div>
-                            <div>
-                                <div style="font-size: 11px; color: #9ca3af;">Taxa Stone</div>
-                                <div style="font-size: 16px; font-weight: 700; color: #ef4444;" x-text="'- R$ ' + fmt(stoneFee)"></div>
-                            </div>
-                            <div>
-                                <div style="font-size: 11px; color: #9ca3af;">Margem líquida</div>
-                                <div style="font-size: 16px; font-weight: 800;"
-                                     :style="netMargin >= 0 ? 'color: #059669;' : 'color: #ef4444;'"
-                                     x-text="'R$ ' + fmt(netMargin)"></div>
-                            </div>
-                        </div>
-                        <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
-                            <span style="font-size: 13px; font-weight: 600; color: #6b7280;">Margem %</span>
-                            <span style="font-size: 18px; font-weight: 800; padding: 2px 10px; border-radius: 8px;"
-                                  :style="marginPercent >= 15 ? 'background: #dcfce7; color: #166534;' : (marginPercent >= 10 ? 'background: #fef9c3; color: #854d0e;' : (marginPercent >= 0 ? 'background: #ffedd5; color: #9a3412;' : 'background: #fee2e2; color: #991b1b;'))"
-                                  x-text="marginPercent.toFixed(1) + '%'"></span>
-                        </div>
-                    </div>
-
                     <!-- Loading -->
                     <div x-show="cardLoading" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 3rem; text-align: center;">
                         <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f4f6; border-top-color: #111827; border-radius: 50%; animation: ngSpin 1s linear infinite;"></div>
@@ -558,7 +508,7 @@
             evalSearch: '',
             evalDropdownOpen: false,
 
-            product: { description: '', priceInput: '', costInput: '' },
+            product: { description: '', priceInput: '' },
             tradeIn: {
                 showEval: false, model: '', storage: '', battery: 100,
                 deviceState: 'original', noBox: false, noCable: false,
@@ -580,7 +530,6 @@
             init() {},
 
             get productPrice() { return this.parseNum(this.product.priceInput); },
-            get productCost() { return this.parseNum(this.product.costInput); },
             get tradeInValue() {
                 return this.parseNum(this.tradeIn.offeredInput);
             },
@@ -605,16 +554,6 @@
                     rev += (this.tradeIn.result.resale_price || 0) - this.tradeInValue;
                 }
                 return rev;
-            },
-            get costTotal() {
-                return this.productCost + this.tradeInValue;
-            },
-            get netMargin() {
-                return this.revenueTotal - this.costTotal - this.stoneFee;
-            },
-            get marginPercent() {
-                if (this.productPrice <= 0) return 0;
-                return (this.netMargin / this.productPrice) * 100;
             },
 
             selectQuickValue(name, value) {
@@ -839,7 +778,7 @@
             },
 
             clearAll() {
-                this.product = { description: '', priceInput: '', costInput: '' };
+                this.product = { description: '', priceInput: '' };
                 this.tradeIn = {
                     showEval: false, model: '', storage: '', battery: 100,
                     deviceState: 'original', noBox: false, noCable: false,
