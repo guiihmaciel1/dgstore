@@ -22,83 +22,78 @@
 
                 <!-- COLUNA ESQUERDA: Inputs -->
                 <div>
-                    <!-- 1. Produto Desejado -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1rem;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
-                            1. Produto Desejado
-                        </label>
-
-                        <!-- Quick Values -->
-                        <div style="margin-bottom: 1rem;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.375rem;">
-                                <span style="font-size: 11px; color: #9ca3af; font-weight: 500;">VALORES RÁPIDOS</span>
-                                <a href="{{ route('marketing.index', ['tab' => 'prices']) }}"
-                                   style="font-size: 11px; color: #9ca3af; text-decoration: none; display: flex; align-items: center; gap: 3px;"
-                                   onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9ca3af'">
-                                    <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    Editar
-                                </a>
-                            </div>
-                            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                                <template x-for="(qv, idx) in quickValues" :key="idx">
-                                    <div style="display: inline-flex;">
-                                        <template x-if="!qv.variants || qv.variants.length === 0">
-                                            <button @click="selectQuickValue(qv.name, qv.value)" type="button"
-                                                    :style="isQuickValueActive(qv.name, qv.value)
-                                                        ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #111827; background: #111827; color: white; white-space: nowrap;'
-                                                        : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: white; color: #374151; white-space: nowrap;'">
-                                                <span x-text="qv.name"></span>
-                                                <span style="opacity: 0.6; margin-left: 4px;" x-text="'R$ ' + fmt(qv.value)"></span>
-                                            </button>
-                                        </template>
-                                        <template x-if="qv.variants && qv.variants.length > 0">
-                                            <div :style="isQuickValueActiveByName(qv.name)
-                                                    ? 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #111827; overflow: hidden;'
-                                                    : 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #e5e7eb; overflow: hidden;'">
-                                                <span style="padding: 6px 8px 6px 12px; font-size: 12px; font-weight: 600; color: #374151; white-space: nowrap;" x-text="qv.name"></span>
-                                                <template x-for="(v, vi) in qv.variants" :key="vi">
-                                                    <button @click="selectQuickValue(qv.name + ' ' + v.label, v.value)" type="button"
-                                                            :style="isQuickValueActive(qv.name + ' ' + v.label, v.value)
-                                                                ? 'padding: 4px 8px; cursor: pointer; border: none; background: #111827; display: flex; align-items: center; gap: 4px;'
-                                                                : 'padding: 4px 8px; cursor: pointer; border: none; background: transparent; display: flex; align-items: center; gap: 4px;'"
-                                                            :title="v.label + ' - R$ ' + fmt(v.value)">
-                                                        <span :style="'width: 14px; height: 14px; border-radius: 50%; border: 2px solid ' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'white' : '#d1d5db') + '; background: ' + v.color + ';'"></span>
-                                                        <span :style="'font-size: 11px; font-weight: 600;' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? ' color: white;' : ' color: #6b7280;')"
-                                                              x-text="fmt(v.value)"></span>
-                                                    </button>
-                                                </template>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </template>
-                            </div>
+                    <!-- Valores Rápidos -->
+                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem 1.25rem; margin-bottom: 1rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Valores Rápidos</label>
+                            <a href="{{ route('marketing.index', ['tab' => 'prices']) }}"
+                               style="font-size: 11px; color: #9ca3af; text-decoration: none; display: flex; align-items: center; gap: 3px;"
+                               onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9ca3af'">
+                                <svg style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                <span>Editar</span>
+                            </a>
                         </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                            <template x-for="(qv, idx) in quickValues" :key="idx">
+                                <div style="display: inline-flex;">
+                                    <template x-if="!qv.variants || qv.variants.length === 0">
+                                        <button @click="selectQuickValue(qv.name, qv.value)" type="button"
+                                                :style="isQuickValueActive(qv.name, qv.value)
+                                                    ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #111827; background: #111827; color: white; white-space: nowrap;'
+                                                    : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: white; color: #374151; white-space: nowrap;'">
+                                            <span x-text="qv.name"></span>
+                                            <span style="opacity: 0.6; margin-left: 4px;" x-text="'R$ ' + fmt(qv.value)"></span>
+                                        </button>
+                                    </template>
+                                    <template x-if="qv.variants && qv.variants.length > 0">
+                                        <div :style="isQuickValueActiveByName(qv.name)
+                                                ? 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #111827; overflow: hidden;'
+                                                : 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #e5e7eb; overflow: hidden;'">
+                                            <span style="padding: 6px 8px 6px 12px; font-size: 12px; font-weight: 600; color: #374151; white-space: nowrap;" x-text="qv.name"></span>
+                                            <template x-for="(v, vi) in qv.variants" :key="vi">
+                                                <button @click="selectQuickValue(qv.name + ' ' + v.label, v.value)" type="button"
+                                                        :style="isQuickValueActive(qv.name + ' ' + v.label, v.value)
+                                                            ? 'padding: 4px 8px; cursor: pointer; border: none; background: #111827; display: flex; align-items: center; gap: 4px;'
+                                                            : 'padding: 4px 8px; cursor: pointer; border: none; background: transparent; display: flex; align-items: center; gap: 4px;'"
+                                                        :title="v.label + ' - R$ ' + fmt(v.value)">
+                                                    <span :style="'width: 14px; height: 14px; border-radius: 50%; border: 2px solid ' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'white' : '#d1d5db') + '; background: ' + v.color + ';'"></span>
+                                                    <span :style="'font-size: 11px; font-weight: 600;' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? ' color: white;' : ' color: #6b7280;')"
+                                                          x-text="fmt(v.value)"></span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
 
-                        <div style="margin-bottom: 0.75rem;">
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Descrição</label>
-                            <input type="text" x-model="product.description" placeholder="Ex: iPhone 16 Pro Max 256GB"
-                                   style="width: 100%; padding: 10px 14px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; color: #111827; outline: none;"
+                    <!-- Descrição + Valor -->
+                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1rem;">
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Descrição do produto</label>
+                            <input type="text" x-model="product.description" x-ref="descField"
+                                   placeholder="Ex: iPhone 16 Pro Max 256GB"
+                                   style="width: 100%; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 15px; color: #111827; outline: none;"
                                    onfocus="this.style.borderColor='#111827'; this.style.background='white'"
                                    onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
                         </div>
-
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #111827; margin-bottom: 0.25rem;">Preço de Venda *</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #111827; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Preço de Venda *</label>
                             <div style="position: relative;">
-                                <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 15px;">R$</span>
-                                <input type="text" x-model="product.priceInput"
+                                <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 16px; font-weight: 500;">R$</span>
+                                <input type="text" x-model="product.priceInput" x-ref="priceField"
                                        @input.debounce.300ms="recalculate()"
                                        placeholder="0,00"
-                                       style="width: 100%; padding: 14px 14px 14px 40px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 22px; font-weight: 700; color: #111827; outline: none; text-align: right;"
+                                       style="width: 100%; padding: 16px 16px 16px 44px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 24px; font-weight: 700; color: #111827; outline: none; text-align: right;"
                                        onfocus="this.style.borderColor='#111827'; this.style.background='white'"
                                        onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
                             </div>
                         </div>
-
                         <div style="margin-top: 0.75rem;">
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Custo de Aquisição (interno)</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Custo de Aquisição (interno)</label>
                             <div style="position: relative;">
                                 <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px;">R$</span>
                                 <input type="text" x-model="product.costInput"
@@ -111,229 +106,179 @@
                         </div>
                     </div>
 
-                    <!-- 2. Trade-in -->
+                    <!-- Entrada + Trade-in -->
                     <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1rem;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                            <label style="font-size: 0.75rem; font-weight: 600; color: #d97706; text-transform: uppercase; letter-spacing: 0.05em;">
-                                2. Trade-in (Aparelho do Cliente)
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                                <span style="font-size: 12px; color: #6b7280;" x-text="tradeIn.enabled ? 'Ativo' : 'Inativo'"></span>
-                                <div @click="tradeIn.enabled = !tradeIn.enabled; if(!tradeIn.enabled) clearTradeIn();"
-                                     :style="tradeIn.enabled
-                                         ? 'width: 40px; height: 22px; background: #d97706; border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s;'
-                                         : 'width: 40px; height: 22px; background: #d1d5db; border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s;'">
-                                    <div :style="tradeIn.enabled
-                                             ? 'width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 20px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);'
-                                             : 'width: 18px; height: 18px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);'"></div>
-                                </div>
-                            </label>
-                        </div>
-
-                        <div x-show="tradeIn.enabled" x-transition>
-                            <!-- Modelo -->
-                            <div style="margin-bottom: 0.75rem;" x-data="{ open: false, search: '' }">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Modelo</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #059669; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Entrada (Pix)</label>
                                 <div style="position: relative;">
-                                    <div @click="open = !open; $nextTick(() => { if(open) $refs.modelSearch.focus(); })" style="width: 100%; padding: 10px 14px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; font-size: 14px; color: #92400e; cursor: pointer; display: flex; align-items: center; justify-content: space-between; min-height: 42px;"
-                                         :style="open ? 'border-color: #d97706; background: white;' : ''">
-                                        <span :style="tradeIn.model ? 'font-weight: 600;' : 'opacity: 0.6;'" x-text="tradeIn.model || 'Selecionar modelo...'"></span>
-                                        <svg style="width: 16px; height: 16px; flex-shrink: 0; transition: transform 0.2s;" :style="open ? 'transform: rotate(180deg);' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                        </svg>
-                                    </div>
-
-                                    <div x-show="open" x-transition @click.away="open = false; search = ''"
-                                         style="position: absolute; z-index: 20; margin-top: 4px; width: 100%; background: white; border-radius: 12px; box-shadow: 0 12px 28px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; overflow: hidden;">
-
-                                        <div style="padding: 8px; border-bottom: 1px solid #f3f4f6;">
-                                            <div style="position: relative;">
-                                                <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                                </svg>
-                                                <input type="text" x-model="search" x-ref="modelSearch"
-                                                       placeholder="Buscar modelo..."
-                                                       @keydown.escape="open = false; search = ''"
-                                                       style="width: 100%; padding: 8px 12px 8px 32px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; color: #111827; outline: none;"
-                                                       onfocus="this.style.borderColor='#d97706'; this.style.background='white'"
-                                                       onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
-                                            </div>
-                                        </div>
-
-                                        <div style="max-height: 280px; overflow-y: auto; padding: 4px 0;">
-                                            <template x-for="group in groupedTradeInModels(search)" :key="group.generation">
-                                                <div>
-                                                    <div style="padding: 6px 14px 4px; font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; position: sticky; top: 0; background: white;" x-text="group.generation"></div>
-                                                    <template x-for="name in group.models" :key="name">
-                                                        <button type="button"
-                                                                @click="selectTradeInModel(name); open = false; search = ''"
-                                                                style="display: block; width: 100%; padding: 8px 14px 8px 24px; text-align: left; font-size: 13px; border: none; background: none; cursor: pointer; transition: background 0.1s;"
-                                                                :style="tradeIn.model === name
-                                                                    ? 'color: #d97706; font-weight: 600; background: #fffbeb;'
-                                                                    : 'color: #374151;'"
-                                                                @mouseenter="$el.style.background = tradeIn.model === name ? '#fffbeb' : '#f9fafb'"
-                                                                @mouseleave="$el.style.background = tradeIn.model === name ? '#fffbeb' : 'transparent'">
-                                                            <span x-text="name"></span>
-                                                            <template x-if="tradeIn.model === name">
-                                                                <svg style="display: inline; width: 14px; height: 14px; margin-left: 6px; vertical-align: middle; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-                                                                </svg>
-                                                            </template>
-                                                        </button>
-                                                    </template>
-                                                </div>
-                                            </template>
-                                            <div x-show="Object.keys(filteredTradeInModels(search)).length === 0"
-                                                 style="padding: 16px; text-align: center; font-size: 13px; color: #9ca3af;">
-                                                Nenhum modelo encontrado
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #6ee7b7; font-size: 14px; font-weight: 500;">R$</span>
+                                    <input type="text" x-model="downPaymentInput"
+                                           @input.debounce.300ms="recalculate()"
+                                           placeholder="0,00"
+                                           style="width: 100%; padding: 12px 14px 12px 40px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; font-size: 18px; font-weight: 600; color: #059669; outline: none; text-align: right;"
+                                           onfocus="this.style.borderColor='#059669'; this.style.background='white'"
+                                           onblur="this.style.borderColor='#bbf7d0'; this.style.background='#f0fdf4'">
                                 </div>
                             </div>
-
-                            <!-- Storage -->
-                            <div style="margin-bottom: 0.75rem;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Armazenamento</label>
-                                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
-                                    <template x-for="s in tradeInStorages" :key="s">
-                                        <button type="button" @click="tradeIn.storage = s; debouncedEvaluate()"
-                                                :style="tradeIn.storage === s
-                                                    ? 'padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 2px solid #d97706; background: #d97706; color: white;'
-                                                    : 'padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: white; color: #374151;'"
-                                                x-text="s"></button>
-                                    </template>
-                                </div>
-                            </div>
-
-                            <!-- Bateria -->
-                            <div style="margin-bottom: 0.75rem;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">
-                                    Bateria: <span x-text="tradeIn.battery + '%'" style="color: #111827;"></span>
-                                    <span style="margin-left: 6px; font-size: 11px; padding: 2px 8px; border-radius: 9999px;"
-                                          :style="tradeIn.battery >= 90 ? 'background: #dcfce7; color: #166534;' : (tradeIn.battery >= 80 ? 'background: #fef9c3; color: #854d0e;' : (tradeIn.battery >= 70 ? 'background: #ffedd5; color: #9a3412;' : 'background: #fee2e2; color: #991b1b;'))"
-                                          x-text="tradeIn.battery >= 90 ? 'Excelente' : (tradeIn.battery >= 80 ? 'Bom' : (tradeIn.battery >= 70 ? 'Regular' : 'Ruim'))"></span>
-                                </label>
-                                <input type="range" x-model.number="tradeIn.battery" min="0" max="100" step="1"
-                                       @input.debounce.500ms="debouncedEvaluate()"
-                                       style="width: 100%; height: 8px; border-radius: 4px; appearance: none; cursor: pointer; accent-color: #d97706; background: #fef3c7;">
-                                <div style="display: flex; justify-content: space-between; font-size: 11px; color: #9ca3af; margin-top: 2px;">
-                                    <span>0%</span><span>100%</span>
-                                </div>
-                            </div>
-
-                            <!-- Estado -->
-                            <div style="margin-bottom: 0.75rem;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Estado</label>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <button type="button" @click="tradeIn.deviceState = 'original'; debouncedEvaluate()"
-                                            :style="tradeIn.deviceState === 'original'
-                                                ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 2px solid #d97706; background: #d97706; color: white; cursor: pointer;'
-                                                : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
-                                        Original
-                                    </button>
-                                    <button type="button" @click="tradeIn.deviceState = 'repaired'; debouncedEvaluate()"
-                                            :style="tradeIn.deviceState === 'repaired'
-                                                ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 2px solid #d97706; background: #d97706; color: white; cursor: pointer;'
-                                                : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
-                                        Reparado
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Acessórios -->
-                            <div style="margin-bottom: 0.75rem;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Acessórios</label>
-                                <div style="display: flex; gap: 0.75rem;">
-                                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: #374151;">
-                                        <input type="checkbox" x-model="tradeIn.noBox" @change="debouncedEvaluate()" style="accent-color: #d97706; width: 16px; height: 16px;">
-                                        Sem caixa
-                                    </label>
-                                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: #374151;">
-                                        <input type="checkbox" x-model="tradeIn.noCable" @change="debouncedEvaluate()" style="accent-color: #d97706; width: 16px; height: 16px;">
-                                        Sem cabo
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Resultado da avaliação -->
-                            <div x-show="tradeIn.loading" style="text-align: center; padding: 1rem; color: #9ca3af; font-size: 13px;">
-                                Avaliando...
-                            </div>
-
-                            <div x-show="tradeIn.result && !tradeIn.loading" x-transition
-                                 style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; padding: 1rem; margin-top: 0.5rem;">
-                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
-                                    <div>
-                                        <div style="font-size: 11px; color: #92400e; font-weight: 600; text-transform: uppercase;">Sugestão de Compra</div>
-                                        <div style="font-size: 22px; font-weight: 800; color: #92400e;" x-text="'R$ ' + fmt(tradeIn.result?.suggested_price)"></div>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <div style="font-size: 11px; color: #92400e;">Revenda: <span x-text="'R$ ' + fmt(tradeIn.result?.resale_price)" style="font-weight: 700;"></span></div>
-                                        <div style="font-size: 11px; color: #92400e;">
-                                            Mercado: <span x-text="'R$ ' + fmt(tradeIn.result?.market_average)" style="font-weight: 600;"></span>
-                                            · <span x-text="tradeIn.result?.listings_count + ' anúncios'"></span>
-                                        </div>
-                                        <div style="font-size: 11px; margin-top: 2px;">
-                                            <span style="padding: 1px 6px; border-radius: 9999px; font-weight: 600;"
-                                                  :style="tradeIn.result?.confidence === 'high' ? 'background: #dcfce7; color: #166534;' : (tradeIn.result?.confidence === 'medium' ? 'background: #fef9c3; color: #854d0e;' : 'background: #fee2e2; color: #991b1b;')"
-                                                  x-text="tradeIn.result?.confidence === 'high' ? 'Alta' : (tradeIn.result?.confidence === 'medium' ? 'Média' : 'Baixa')"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label style="display: block; font-size: 11px; font-weight: 600; color: #92400e; margin-bottom: 0.25rem;">Valor oferecido ao cliente</label>
-                                    <div style="position: relative;">
-                                        <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #b45309; font-size: 14px;">R$</span>
-                                        <input type="text" x-model="tradeIn.offeredInput"
-                                               @input.debounce.300ms="recalculate()"
-                                               style="width: 100%; padding: 10px 14px 10px 36px; background: white; border: 2px solid #d97706; border-radius: 10px; font-size: 18px; font-weight: 700; color: #92400e; outline: none; text-align: right;">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div x-show="tradeIn.error && !tradeIn.loading" x-transition
-                                 style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; padding: 0.75rem; margin-top: 0.5rem; font-size: 13px; color: #991b1b;">
-                                <span x-text="tradeIn.error"></span>
-                            </div>
-
-                            <!-- Valor manual (sem avaliação) -->
-                            <div x-show="!tradeIn.result && !tradeIn.loading && !tradeIn.error" style="margin-top: 0.5rem;">
-                                <label style="display: block; font-size: 11px; font-weight: 600; color: #92400e; margin-bottom: 0.25rem;">Valor do trade-in (manual)</label>
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #d97706; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Trade-in</label>
                                 <div style="position: relative;">
-                                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #b45309; font-size: 14px;">R$</span>
+                                    <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #fcd34d; font-size: 14px; font-weight: 500;">R$</span>
                                     <input type="text" x-model="tradeIn.offeredInput"
                                            @input.debounce.300ms="recalculate()"
                                            placeholder="0,00"
-                                           style="width: 100%; padding: 10px 14px 10px 36px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; font-size: 18px; font-weight: 700; color: #92400e; outline: none; text-align: right;"
-                                           onfocus="this.style.borderColor='#d97706'"
-                                           onblur="this.style.borderColor='#fde68a'">
+                                           style="width: 100%; padding: 12px 14px 12px 40px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; font-size: 18px; font-weight: 600; color: #d97706; outline: none; text-align: right;"
+                                           onfocus="this.style.borderColor='#d97706'; this.style.background='white'"
+                                           onblur="this.style.borderColor='#fde68a'; this.style.background='#fef3c7'">
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- 3. Pagamento -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1rem;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #059669; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
-                            3. Pagamento
-                        </label>
+                        <!-- Avaliação automática -->
+                        <div style="margin-top: 0.75rem; border-top: 1px solid #f3f4f6; padding-top: 0.75rem;">
+                            <button @click="tradeIn.showEval = !tradeIn.showEval" type="button"
+                                    style="display: flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-size: 12px; color: #9ca3af; padding: 0;"
+                                    onmouseover="this.style.color='#d97706'" onmouseout="this.style.color='#9ca3af'">
+                                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                </svg>
+                                <span x-text="tradeIn.showEval ? 'Ocultar avaliador' : 'Avaliar seminovo automaticamente'"></span>
+                                <svg style="width: 12px; height: 12px; transition: transform 0.2s;" :style="tradeIn.showEval ? 'transform: rotate(180deg);' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
 
-                        <div style="margin-bottom: 0.75rem;">
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #059669; margin-bottom: 0.25rem;">Entrada (Pix/Dinheiro)</label>
-                            <div style="position: relative;">
-                                <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #6ee7b7; font-size: 14px;">R$</span>
-                                <input type="text" x-model="downPaymentInput"
-                                       @input.debounce.300ms="recalculate()"
-                                       placeholder="0,00"
-                                       style="width: 100%; padding: 10px 14px 10px 40px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; font-size: 18px; font-weight: 600; color: #059669; outline: none; text-align: right;"
-                                       onfocus="this.style.borderColor='#059669'; this.style.background='white'"
-                                       onblur="this.style.borderColor='#bbf7d0'; this.style.background='#f0fdf4'">
+                            <div x-show="tradeIn.showEval" x-collapse style="margin-top: 0.75rem;">
+                                <!-- Modelo + Storage em linha -->
+                                <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <div style="position: relative;" x-data="{ open: false, search: '' }">
+                                        <input type="text" x-model="search"
+                                               @focus="open = true"
+                                               @keydown.escape="open = false; search = ''"
+                                               :placeholder="tradeIn.model || 'Buscar modelo...'"
+                                               :style="tradeIn.model && !search
+                                                   ? 'width: 100%; padding: 8px 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: 13px; font-weight: 600; color: #92400e; outline: none;'
+                                                   : 'width: 100%; padding: 8px 12px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; color: #374151; outline: none;'"
+                                               onfocus="this.style.borderColor='#d97706'"
+                                               onblur="this.style.borderColor='#e5e7eb'">
+
+                                        <div x-show="open" x-transition @click.away="open = false; search = ''"
+                                             style="position: absolute; z-index: 30; margin-top: 4px; width: 100%; min-width: 280px; background: white; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; overflow: hidden;">
+                                            <div style="max-height: 240px; overflow-y: auto;">
+                                                <template x-for="group in groupedTradeInModels(search)" :key="group.generation">
+                                                    <div>
+                                                        <div style="padding: 6px 12px 2px; font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; position: sticky; top: 0; background: white;" x-text="group.generation"></div>
+                                                        <template x-for="name in group.models" :key="name">
+                                                            <button type="button"
+                                                                    @click="selectTradeInModel(name); open = false; search = ''"
+                                                                    style="display: block; width: 100%; padding: 7px 12px 7px 20px; text-align: left; font-size: 13px; border: none; background: none; cursor: pointer;"
+                                                                    :style="tradeIn.model === name ? 'color: #d97706; font-weight: 600; background: #fffbeb;' : 'color: #374151;'"
+                                                                    @mouseenter="if(tradeIn.model !== name) $el.style.background='#f9fafb'"
+                                                                    @mouseleave="$el.style.background = tradeIn.model === name ? '#fffbeb' : 'transparent'"
+                                                                    x-text="name"></button>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                                <div x-show="groupedTradeInModels(search).length === 0"
+                                                     style="padding: 12px; text-align: center; font-size: 12px; color: #9ca3af;">
+                                                    Nenhum modelo encontrado
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 4px;">
+                                        <template x-for="s in tradeInStorages" :key="s">
+                                            <button type="button" @click="tradeIn.storage = s; debouncedEvaluate()"
+                                                    :style="tradeIn.storage === s
+                                                        ? 'padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #d97706; background: #d97706; color: white; white-space: nowrap;'
+                                                        : 'padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: white; color: #374151; white-space: nowrap;'"
+                                                    x-text="s"></button>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <!-- Bateria + Estado + Acessórios em linha compacta -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <div>
+                                        <label style="display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">
+                                            Bateria
+                                            <span style="font-weight: 700; color: #111827;" x-text="tradeIn.battery + '%'"></span>
+                                            <span style="font-size: 10px; padding: 1px 5px; border-radius: 9999px;"
+                                                  :style="tradeIn.battery >= 90 ? 'background: #dcfce7; color: #166534;' : (tradeIn.battery >= 80 ? 'background: #fef9c3; color: #854d0e;' : (tradeIn.battery >= 70 ? 'background: #ffedd5; color: #9a3412;' : 'background: #fee2e2; color: #991b1b;'))"
+                                                  x-text="tradeIn.battery >= 90 ? 'OK' : (tradeIn.battery >= 80 ? 'Bom' : (tradeIn.battery >= 70 ? 'Regular' : 'Ruim'))"></span>
+                                        </label>
+                                        <input type="range" x-model.number="tradeIn.battery" min="0" max="100" step="1"
+                                               @input.debounce.500ms="debouncedEvaluate()"
+                                               style="width: 100%; height: 6px; border-radius: 3px; appearance: none; cursor: pointer; accent-color: #d97706; background: #fef3c7;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Estado</label>
+                                        <div style="display: flex; gap: 4px;">
+                                            <button type="button" @click="tradeIn.deviceState = 'original'; debouncedEvaluate()"
+                                                    :style="tradeIn.deviceState === 'original'
+                                                        ? 'flex: 1; padding: 6px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 2px solid #d97706; background: #d97706; color: white; cursor: pointer;'
+                                                        : 'flex: 1; padding: 6px; border-radius: 8px; font-size: 12px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
+                                                Original
+                                            </button>
+                                            <button type="button" @click="tradeIn.deviceState = 'repaired'; debouncedEvaluate()"
+                                                    :style="tradeIn.deviceState === 'repaired'
+                                                        ? 'flex: 1; padding: 6px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 2px solid #d97706; background: #d97706; color: white; cursor: pointer;'
+                                                        : 'flex: 1; padding: 6px; border-radius: 8px; font-size: 12px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
+                                                Reparado
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 12px; color: #374151;">
+                                        <input type="checkbox" x-model="tradeIn.noBox" @change="debouncedEvaluate()" style="accent-color: #d97706; width: 14px; height: 14px;">
+                                        Sem caixa
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 12px; color: #374151;">
+                                        <input type="checkbox" x-model="tradeIn.noCable" @change="debouncedEvaluate()" style="accent-color: #d97706; width: 14px; height: 14px;">
+                                        Sem cabo
+                                    </label>
+                                </div>
+
+                                <!-- Resultado -->
+                                <div x-show="tradeIn.loading" style="text-align: center; padding: 0.75rem; color: #9ca3af; font-size: 12px;">
+                                    Avaliando...
+                                </div>
+
+                                <div x-show="tradeIn.result && !tradeIn.loading" x-transition
+                                     style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.75rem;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <div style="font-size: 10px; color: #92400e; font-weight: 600; text-transform: uppercase;">Sugestão de Compra</div>
+                                            <div style="font-size: 20px; font-weight: 800; color: #92400e;" x-text="'R$ ' + fmt(tradeIn.result?.suggested_price)"></div>
+                                        </div>
+                                        <div style="text-align: right; font-size: 11px; color: #92400e;">
+                                            <div>Revenda: <b x-text="'R$ ' + fmt(tradeIn.result?.resale_price)"></b></div>
+                                            <div>Mercado: <span x-text="'R$ ' + fmt(tradeIn.result?.market_average)"></span> · <span x-text="tradeIn.result?.listings_count + ' anúncios'"></span></div>
+                                            <span style="padding: 1px 6px; border-radius: 9999px; font-weight: 600; font-size: 10px;"
+                                                  :style="tradeIn.result?.confidence === 'high' ? 'background: #dcfce7; color: #166534;' : (tradeIn.result?.confidence === 'medium' ? 'background: #fef9c3; color: #854d0e;' : 'background: #fee2e2; color: #991b1b;')"
+                                                  x-text="tradeIn.result?.confidence === 'high' ? 'Confiança Alta' : (tradeIn.result?.confidence === 'medium' ? 'Confiança Média' : 'Confiança Baixa')"></span>
+                                        </div>
+                                    </div>
+                                    <button @click="tradeIn.offeredInput = fmt(tradeIn.result?.suggested_price); recalculate()" type="button"
+                                            style="margin-top: 8px; width: 100%; padding: 6px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid #d97706; background: transparent; color: #d97706;"
+                                            onmouseover="this.style.background='#d97706'; this.style.color='white'"
+                                            onmouseout="this.style.background='transparent'; this.style.color='#d97706'">
+                                        Usar valor sugerido
+                                    </button>
+                                </div>
+
+                                <div x-show="tradeIn.error && !tradeIn.loading" x-transition
+                                     style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 12px; color: #991b1b;">
+                                    <span x-text="tradeIn.error"></span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Saldo no cartão -->
-                        <div x-show="cardBalance > 0" style="padding: 0.75rem; background: #f9fafb; border-radius: 8px; display: flex; justify-content: space-between; font-size: 13px;">
+                        <!-- Resumo -->
+                        <div x-show="cardBalance > 0" style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-radius: 8px; display: flex; justify-content: space-between; font-size: 13px;">
                             <span style="color: #6b7280;">Saldo no cartão:</span>
                             <span style="font-weight: 700; color: #111827;" x-text="'R$ ' + fmt(cardBalance)"></span>
                         </div>
@@ -342,7 +287,7 @@
                     <!-- Preview da mensagem -->
                     <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                            <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Preview</label>
+                            <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Preview da mensagem</label>
                             <div style="display: flex; gap: 0.5rem;">
                                 <button @click="copyMessage()" type="button"
                                         :style="copied
@@ -363,42 +308,13 @@
                                 </a>
                             </div>
                         </div>
-                        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; font-size: 13px; color: #374151; white-space: pre-wrap; font-family: monospace; line-height: 1.6; min-height: 80px; max-height: 250px; overflow-y: auto;"
-                             x-text="productPrice > 0 ? buildMessage() : 'Preencha o valor do produto para visualizar...'"></div>
+                        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; font-size: 13px; color: #374151; white-space: pre-wrap; font-family: monospace; line-height: 1.6; min-height: 100px; max-height: 280px; overflow-y: auto;"
+                             x-text="productPrice > 0 ? buildMessage() : 'Preencha o valor do produto para visualizar a mensagem...'"></div>
                     </div>
                 </div>
 
-                <!-- COLUNA DIREITA: Resumo + Parcelas -->
+                <!-- COLUNA DIREITA: Resultados -->
                 <div>
-                    <!-- Resumo da Negociação -->
-                    <div x-show="productPrice > 0" x-transition style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1rem;">
-                        <div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">Resumo da Negociação</div>
-
-                        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
-                            <span style="font-size: 14px; color: #374151;" x-text="product.description || 'Produto'"></span>
-                            <span style="font-size: 14px; font-weight: 700; color: #111827;" x-text="'R$ ' + fmt(productPrice)"></span>
-                        </div>
-
-                        <template x-if="tradeInValue > 0">
-                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
-                                <span style="font-size: 14px; color: #d97706;" x-text="'Trade-in: ' + (tradeIn.model ? tradeIn.model + ' ' + (tradeIn.storage || '') : 'Seminovo')"></span>
-                                <span style="font-size: 14px; font-weight: 700; color: #d97706;" x-text="'- R$ ' + fmt(tradeInValue)"></span>
-                            </div>
-                        </template>
-
-                        <template x-if="downPayment > 0">
-                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6;">
-                                <span style="font-size: 14px; color: #059669;">Entrada (Pix)</span>
-                                <span style="font-size: 14px; font-weight: 700; color: #059669;" x-text="'- R$ ' + fmt(downPayment)"></span>
-                            </div>
-                        </template>
-
-                        <div style="display: flex; justify-content: space-between; padding: 12px 0; margin-top: 4px;">
-                            <span style="font-size: 16px; font-weight: 700; color: #111827;">Saldo Restante</span>
-                            <span style="font-size: 20px; font-weight: 800; color: #111827;" x-text="'R$ ' + fmt(cardBalance)"></span>
-                        </div>
-                    </div>
-
                     <!-- Visão do Vendedor (margem) -->
                     <div x-show="productPrice > 0 && productCost > 0" x-transition
                          style="background: #f9fafb; border-radius: 0.75rem; border: 1px dashed #d1d5db; padding: 1rem 1.25rem; margin-bottom: 1rem;">
@@ -437,23 +353,30 @@
                         </div>
                     </div>
 
-                    <!-- Pix destaque -->
-                    <div x-show="cardBalance > 0" x-transition
-                         style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-                        <div>
-                            <div style="font-size: 15px; font-weight: 700; color: #059669;">Pix / Dinheiro</div>
-                            <div style="font-size: 12px; color: #6b7280;">Melhor preço - sem taxa</div>
-                        </div>
-                        <div style="font-size: 22px; font-weight: 800; color: #059669;" x-text="'R$ ' + fmt(cardBalance)"></div>
-                    </div>
-
                     <!-- Loading -->
                     <div x-show="cardLoading" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 3rem; text-align: center;">
                         <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f4f6; border-top-color: #111827; border-radius: 50%; animation: ngSpin 1s linear infinite;"></div>
                     </div>
 
-                    <!-- Tabela de parcelas -->
+                    <!-- Estado vazio -->
+                    <div x-show="!cardLoading && cardResults.length === 0 && productPrice <= 0" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 3rem; text-align: center;">
+                        <svg style="width: 48px; height: 48px; color: #d1d5db; margin: 0 auto 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                        <p style="font-size: 14px; color: #9ca3af;">Preencha o valor do produto para montar a proposta</p>
+                    </div>
+
+                    <!-- Resultados -->
                     <div x-show="!cardLoading && cardResults.length > 0" x-transition>
+                        <!-- Pix -->
+                        <div x-show="cardBalance > 0" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                            <div>
+                                <div style="font-size: 15px; font-weight: 700; color: #059669;">Pix / Dinheiro</div>
+                                <div style="font-size: 12px; color: #6b7280;">Melhor preço - sem taxa</div>
+                            </div>
+                            <div style="font-size: 22px; font-weight: 800; color: #059669;" x-text="'R$ ' + fmt(cardBalance)"></div>
+                        </div>
+
                         <!-- Presets -->
                         <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.75rem;">
                             <template x-for="p in presets" :key="p.key">
@@ -465,10 +388,11 @@
                             </template>
                         </div>
 
+                        <!-- Tabela -->
                         <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
                             <div style="display: grid; grid-template-columns: 32px 1fr auto; background: #111827; color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
                                 <div style="padding: 10px 0 10px 10px; display: flex; align-items: center;">
-                                    <input type="checkbox" :checked="cardResults.every(r => r.selected)" @change="cardResults.forEach(r => r.selected = $event.target.checked)"
+                                    <input type="checkbox" :checked="cardResults.every(r => r.selected)" @change="cardResults.forEach(r => r.selected = $event.target.checked); activePreset = $event.target.checked ? 'all' : null"
                                            style="width: 15px; height: 15px; accent-color: white; cursor: pointer;">
                                 </div>
                                 <div style="padding: 10px 14px;">Forma</div>
@@ -490,6 +414,31 @@
                                     </div>
                                 </div>
                             </template>
+                        </div>
+
+                        <!-- Resumo Negociação -->
+                        <div x-show="productPrice > 0" style="margin-top: 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem 1.25rem;">
+                            <div style="font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Resumo</div>
+                            <div style="display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px;">
+                                <span style="color: #374151;" x-text="product.description || 'Produto'"></span>
+                                <span style="font-weight: 700; color: #111827;" x-text="'R$ ' + fmt(productPrice)"></span>
+                            </div>
+                            <template x-if="tradeInValue > 0">
+                                <div style="display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px;">
+                                    <span style="color: #d97706;" x-text="'Trade-in: ' + (tradeIn.model ? tradeIn.model + ' ' + (tradeIn.storage || '') : 'Seminovo')"></span>
+                                    <span style="font-weight: 700; color: #d97706;" x-text="'- R$ ' + fmt(tradeInValue)"></span>
+                                </div>
+                            </template>
+                            <template x-if="downPayment > 0">
+                                <div style="display: flex; justify-content: space-between; padding: 5px 0; font-size: 13px;">
+                                    <span style="color: #059669;">Entrada (Pix)</span>
+                                    <span style="font-weight: 700; color: #059669;" x-text="'- R$ ' + fmt(downPayment)"></span>
+                                </div>
+                            </template>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0 0; margin-top: 4px; border-top: 1px solid #f3f4f6;">
+                                <span style="font-size: 14px; font-weight: 700; color: #111827;">Saldo no cartão</span>
+                                <span style="font-size: 18px; font-weight: 800; color: #111827;" x-text="'R$ ' + fmt(cardBalance)"></span>
+                            </div>
                         </div>
 
                         <!-- Ações finais -->
@@ -514,14 +463,6 @@
                             </a>
                         </div>
                     </div>
-
-                    <!-- Estado vazio -->
-                    <div x-show="!cardLoading && cardResults.length === 0 && productPrice <= 0" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 3rem; text-align: center;">
-                        <svg style="width: 48px; height: 48px; color: #d1d5db; margin: 0 auto 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                        </svg>
-                        <p style="font-size: 14px; color: #9ca3af;">Preencha o valor do produto para montar a proposta</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -542,6 +483,7 @@
         @media (max-width: 768px) {
             [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
         }
+        [x-cloak] { display: none !important; }
     </style>
 
     @push('scripts')
@@ -557,7 +499,7 @@
 
             product: { description: '', priceInput: '', costInput: '' },
             tradeIn: {
-                enabled: false, model: '', storage: '', battery: 100,
+                showEval: false, model: '', storage: '', battery: 100,
                 deviceState: 'original', noBox: false, noCable: false,
                 result: null, error: null, loading: false, offeredInput: '',
             },
@@ -575,11 +517,9 @@
 
             init() {},
 
-            // --- Computed ---
             get productPrice() { return this.parseNum(this.product.priceInput); },
             get productCost() { return this.parseNum(this.product.costInput); },
             get tradeInValue() {
-                if (!this.tradeIn.enabled) return 0;
                 return this.parseNum(this.tradeIn.offeredInput);
             },
             get downPayment() { return this.parseNum(this.downPaymentInput); },
@@ -599,7 +539,7 @@
             },
             get revenueTotal() {
                 let rev = this.productPrice;
-                if (this.tradeIn.enabled && this.tradeIn.result) {
+                if (this.tradeIn.result) {
                     rev += (this.tradeIn.result.resale_price || 0) - this.tradeInValue;
                 }
                 return rev;
@@ -615,7 +555,6 @@
                 return (this.netMargin / this.productPrice) * 100;
             },
 
-            // --- Quick Values ---
             selectQuickValue(name, value) {
                 this.product.description = name;
                 this.product.priceInput = this.fmt(value);
@@ -628,7 +567,6 @@
                 return this.product.description.startsWith(baseName);
             },
 
-            // --- Trade-in ---
             filteredTradeInModels(search) {
                 if (!search) return this.tradeInModels;
                 const s = search.toLowerCase();
@@ -713,8 +651,6 @@
                     }
 
                     this.tradeIn.result = data;
-                    this.tradeIn.offeredInput = this.fmt(data.suggested_price);
-                    this.recalculate();
                 } catch (e) {
                     this.tradeIn.error = 'Erro de conexão com o avaliador.';
                     this.tradeIn.result = null;
@@ -723,7 +659,6 @@
                 }
             },
 
-            // --- Payment ---
             async recalculate() {
                 const balance = this.cardBalance;
                 if (balance <= 0) {
@@ -771,7 +706,6 @@
                 });
             },
 
-            // --- Message ---
             buildMessage() {
                 const lines = [];
                 lines.push(`*Proposta DG Store* 📱`);
@@ -825,11 +759,10 @@
                 } catch (e) {}
             },
 
-            // --- Helpers ---
             clearAll() {
                 this.product = { description: '', priceInput: '', costInput: '' };
                 this.tradeIn = {
-                    enabled: false, model: '', storage: '', battery: 100,
+                    showEval: false, model: '', storage: '', battery: 100,
                     deviceState: 'original', noBox: false, noCable: false,
                     result: null, error: null, loading: false, offeredInput: '',
                 };
