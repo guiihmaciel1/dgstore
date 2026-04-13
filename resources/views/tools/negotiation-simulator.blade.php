@@ -479,7 +479,7 @@
                     <!-- Estado vazio -->
                     <div x-show="!cardLoading && cardResults.length === 0 && productPrice <= 0" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 3rem; text-align: center;">
                         <svg style="width: 48px; height: 48px; color: #d1d5db; margin: 0 auto 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 003-3V8a2 2 0 00-3-3H6a2 2 0 00-3 3v8a2 2 0 003 3z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
                         <p style="font-size: 14px; color: #9ca3af;">Preencha o valor do produto para montar a proposta</p>
                     </div>
@@ -510,7 +510,7 @@
     function negotiationSimulator() {
         return {
             quickValues: @json($quickValuesFromMarketing ?? []),
-            tradeInModels: @json($tradeInModels ?? {}),
+            tradeInModels: @json($tradeInModels ?? []),
             toast: '',
             copied: false,
             cardLoading: false,
