@@ -149,28 +149,70 @@
                                     <!-- Modelo -->
                                     <div style="margin-bottom: 1rem;">
                                         <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Modelo</label>
-                                        <div style="position: relative;">
-                                            <input type="text" x-model="evalSearch"
-                                                   @focus="evalDropdownOpen = true"
-                                                   @keydown.escape="evalDropdownOpen = false"
-                                                   :placeholder="tradeIn.model || 'Buscar modelo...'"
-                                                   style="width: 100%; padding: 10px 14px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; color: #111827; outline: none;"
-                                                   onfocus="this.style.borderColor='#d97706'"
-                                                   onblur="this.style.borderColor='#e5e7eb'">
-                                            <div x-show="evalDropdownOpen" x-transition @click.away="evalDropdownOpen = false"
-                                                 style="position: absolute; z-index: 30; margin-top: 4px; width: 100%; background: white; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; max-height: 240px; overflow-y: auto;">
-                                                <template x-for="(storages, name) in filteredTradeInModels(evalSearch)" :key="name">
-                                                    <button type="button"
-                                                            @click="selectTradeInModel(name); evalDropdownOpen = false; evalSearch = ''"
-                                                            style="display: block; width: 100%; padding: 10px 16px; text-align: left; font-size: 14px; border: none; background: none; cursor: pointer; transition: background 0.15s;"
-                                                            :style="tradeIn.model === name ? 'color: #d97706; font-weight: 600;' : 'color: #374151;'"
-                                                            @mouseenter="$el.style.background='#f9fafb'"
-                                                            @mouseleave="$el.style.background='transparent'"
-                                                            x-text="name"></button>
-                                                </template>
-                                                <div x-show="Object.keys(filteredTradeInModels(evalSearch)).length === 0"
-                                                     style="padding: 16px; text-align: center; font-size: 13px; color: #9ca3af;">
-                                                    Nenhum modelo encontrado
+                                        <div style="position: relative;" @keydown.escape.prevent="evalDropdownOpen = false">
+                                            <!-- Trigger -->
+                                            <button type="button" @click="evalDropdownOpen = !evalDropdownOpen"
+                                                    style="width: 100%; padding: 10px 14px; background: white; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; color: #111827; outline: none; cursor: pointer; text-align: left; display: flex; align-items: center; justify-content: space-between;"
+                                                    :style="evalDropdownOpen ? 'border-color: #d97706; box-shadow: 0 0 0 3px rgba(217,119,6,0.1);' : ''">
+                                                <span :style="tradeIn.model ? 'color: #111827; font-weight: 500;' : 'color: #9ca3af;'"
+                                                      x-text="tradeIn.model || 'Selecione o modelo...'"></span>
+                                                <svg style="width: 16px; height: 16px; color: #9ca3af; flex-shrink: 0; transition: transform 0.2s;" :style="evalDropdownOpen ? 'transform: rotate(180deg);' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                </svg>
+                                            </button>
+
+                                            <!-- Dropdown -->
+                                            <div x-show="evalDropdownOpen"
+                                                 x-transition:enter="transition ease-out duration-150"
+                                                 x-transition:enter-start="opacity-0 transform -translate-y-1"
+                                                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                                                 x-transition:leave="transition ease-in duration-100"
+                                                 x-transition:leave-start="opacity-100"
+                                                 x-transition:leave-end="opacity-0"
+                                                 @click.outside="evalDropdownOpen = false"
+                                                 style="position: absolute; z-index: 50; margin-top: 6px; width: 100%; background: white; border-radius: 12px; box-shadow: 0 12px 28px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; overflow: hidden;">
+
+                                                <!-- Search -->
+                                                <div style="padding: 10px 12px; border-bottom: 1px solid #f3f4f6;">
+                                                    <div style="position: relative;">
+                                                        <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                        </svg>
+                                                        <input type="text" x-model="evalSearch" x-ref="evalSearchInput"
+                                                               x-init="$watch('evalDropdownOpen', v => { if(v) $nextTick(() => $refs.evalSearchInput.focus()) })"
+                                                               placeholder="Buscar modelo..."
+                                                               @keydown.escape.prevent="evalDropdownOpen = false"
+                                                               style="width: 100%; padding: 8px 10px 8px 32px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; color: #111827; outline: none;"
+                                                               onfocus="this.style.borderColor='#d97706'; this.style.background='white'"
+                                                               onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Models list grouped -->
+                                                <div style="max-height: 280px; overflow-y: auto; padding: 4px 0;">
+                                                    <template x-for="group in groupedTradeInModels(evalSearch)" :key="group.generation">
+                                                        <div>
+                                                            <div style="padding: 6px 14px 4px; font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.08em; position: sticky; top: 0; background: white;"
+                                                                 x-text="group.generation"></div>
+                                                            <template x-for="name in group.models" :key="name">
+                                                                <button type="button"
+                                                                        @click="selectTradeInModel(name); evalDropdownOpen = false; evalSearch = ''"
+                                                                        style="display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 14px; text-align: left; font-size: 13px; border: none; background: none; cursor: pointer; transition: background 0.1s;"
+                                                                        :style="tradeIn.model === name ? 'background: #fffbeb; color: #d97706; font-weight: 600;' : 'color: #374151;'"
+                                                                        @mouseenter="if(tradeIn.model !== name) $el.style.background='#f9fafb'"
+                                                                        @mouseleave="if(tradeIn.model !== name) $el.style.background= tradeIn.model === name ? '#fffbeb' : 'transparent'">
+                                                                    <svg x-show="tradeIn.model === name" style="width: 14px; height: 14px; flex-shrink: 0; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                                                    </svg>
+                                                                    <span x-text="name"></span>
+                                                                </button>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                    <div x-show="groupedTradeInModels(evalSearch).length === 0"
+                                                         style="padding: 20px; text-align: center; font-size: 13px; color: #9ca3af;">
+                                                        Nenhum modelo encontrado
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -529,7 +571,7 @@
             toast: '',
             copied: false,
             cardLoading: false,
-            activePreset: 'all',
+            activePreset: 'even',
             evalSearch: '',
             evalDropdownOpen: false,
 
@@ -544,9 +586,10 @@
 
             presets: [
                 { key: 'all', label: 'Todas' },
+                { key: 'even', label: 'Pares' },
                 { key: 'up_to_12', label: 'Até 12x' },
-                { key: 'above_6', label: 'Acima de 6x' },
-                { key: 'above_10', label: 'Acima de 10x' },
+                { key: 'above_6', label: '6x+' },
+                { key: 'above_10', label: '10x+' },
             ],
 
             _evalTimer: null,
@@ -717,13 +760,13 @@
                     const json = await res.json();
 
                     if (json.success) {
-                        const prev = this.activePreset;
+                        const prev = this.activePreset || 'even';
                         this.cardResults = json.data.map(r => ({
                             ...r,
                             label: r.payment_type === 'debit' ? 'Débito' : (r.installments === 1 ? 'Crédito 1x' : `Crédito ${r.installments}x`),
                             selected: true,
                         }));
-                        if (prev && prev !== 'all') this.setSelection(prev);
+                        this.setSelection(prev);
                     } else {
                         this.cardResults = [];
                     }
@@ -738,52 +781,56 @@
                 this.activePreset = preset;
                 this.cardResults.forEach(r => {
                     if (preset === 'all') r.selected = true;
-                    else if (preset === 'up_to_12') r.selected = r.payment_type !== 'debit' && r.installments <= 12;
-                    else if (preset === 'above_6') r.selected = r.payment_type !== 'debit' && r.installments >= 6;
-                    else if (preset === 'above_10') r.selected = r.payment_type !== 'debit' && r.installments >= 10;
+                    else if (preset === 'even') r.selected = r.installments % 2 === 0;
+                    else if (preset === 'up_to_12') r.selected = r.installments >= 2 && r.installments <= 12 && r.installments % 2 === 0;
+                    else if (preset === 'above_6') r.selected = r.payment_type !== 'debit' && r.installments >= 6 && r.installments % 2 === 0;
+                    else if (preset === 'above_10') r.selected = r.payment_type !== 'debit' && r.installments >= 10 && r.installments % 2 === 0;
                 });
             },
 
             buildMessage() {
                 const lines = [];
-                lines.push(`*Proposta DG Store* 📱`);
-                lines.push('');
+                const desc = this.product.description || 'Produto';
 
-                if (this.product.description) {
-                    lines.push(`*${this.product.description}*`);
-                }
-                lines.push(`Preço: *R$ ${this.fmt(this.productPrice)}*`);
+                lines.push(`📱 *${desc}*`);
+                lines.push(`💰 *R$ ${this.fmt(this.productPrice)}*`);
 
                 if (this.tradeInValue > 0) {
+                    const tiDesc = this.tradeIn.model
+                        ? this.tradeIn.model + (this.tradeIn.storage ? ' ' + this.tradeIn.storage : '')
+                        : 'Seu aparelho';
                     lines.push('');
-                    const tiDesc = this.tradeIn.model ? this.tradeIn.model + ' ' + (this.tradeIn.storage || '') : 'Seminovo';
-                    lines.push(`📱 *Trade-in:* ${tiDesc}`);
-                    lines.push(`Valor: *- R$ ${this.fmt(this.tradeInValue)}*`);
+                    lines.push(`🔄 *Trade-in:* ${tiDesc}`);
+                    lines.push(`Desconto: *- R$ ${this.fmt(this.tradeInValue)}*`);
                 }
 
                 if (this.downPayment > 0) {
-                    lines.push('');
-                    lines.push(`💵 *Entrada (Pix):* R$ ${this.fmt(this.downPayment)}`);
+                    lines.push(`💵 Entrada: *R$ ${this.fmt(this.downPayment)}*`);
                 }
 
-                if (this.cardBalance > 0) {
+                const balance = this.cardBalance;
+                if (balance > 0) {
                     lines.push('');
-                    lines.push(`✅ *À vista (Pix):* R$ ${this.fmt(this.cardBalance)}`);
-                    lines.push('');
-                    lines.push('💳 *Parcelamento:*');
-                    this.cardResults.forEach(r => {
-                        if (!r.selected) return;
-                        if (r.payment_type === 'debit') {
-                            lines.push(`Débito R$ ${this.fmt(r.installment_value)}`);
-                        } else {
-                            lines.push(`${r.installments}x de R$ ${this.fmt(r.installment_value)}`);
-                        }
-                    });
+                    lines.push(`━━━━━━━━━━━━━━━`);
+                    lines.push(`✅ *Pix/À vista: R$ ${this.fmt(balance)}*`);
+
+                    const selected = this.cardResults.filter(r => r.selected);
+                    if (selected.length > 0) {
+                        lines.push('');
+                        lines.push(`💳 *Parcele em até ${selected[selected.length - 1].installments}x:*`);
+                        selected.forEach(r => {
+                            if (r.payment_type === 'debit') {
+                                lines.push(`  Débito › R$ ${this.fmt(r.installment_value)}`);
+                            } else {
+                                lines.push(`  ${r.installments}x › R$ ${this.fmt(r.installment_value)}`);
+                            }
+                        });
+                    }
                 }
 
                 lines.push('');
-                lines.push('🔒 *Garantia e procedência verificada*');
-                lines.push('🏢 _Atendimento DG Store_');
+                lines.push(`🔒 Garantia e procedência verificada`);
+                lines.push(`📍 *DG Store* — _Atendimento especializado_`);
 
                 return lines.join('\n');
             },
