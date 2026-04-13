@@ -245,6 +245,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/used-listings/{listing}', [MarketingController::class, 'deleteUsedListing'])->name('used-listings.destroy');
             Route::post('/resale-items', [MarketingController::class, 'storeResaleItem'])->name('resale-items.store');
             Route::post('/resale-items/{item}/toggle', [MarketingController::class, 'toggleResaleVisibility'])->name('resale-items.toggle');
+            Route::post('/price-images', [MarketingController::class, 'storePriceImage'])->name('price-images.store');
+            Route::delete('/price-images/{image}', [MarketingController::class, 'deletePriceImage'])->name('price-images.destroy');
+            Route::post('/price-images/reorder', [MarketingController::class, 'reorderPriceImages'])->name('price-images.reorder');
         });
 
         // Avaliação de Seminovos

@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controllers;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Marketing\Models\MarketingCreative;
 use App\Domain\Marketing\Models\MarketingPrice;
+use App\Domain\Marketing\Models\MarketingPriceImage;
 use App\Domain\Marketing\Models\MarketingResaleItem;
 use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Product\Models\Product;
@@ -22,7 +23,7 @@ class MarketingController extends Controller
 {
     public function index(Request $request): View
     {
-        $prices = MarketingPrice::ordered()->get();
+        $prices = MarketingPrice::with('images')->ordered()->get();
 
         $creativeDate = $request->get('date', today()->toDateString());
         $creatives = MarketingCreative::with('user')
@@ -70,6 +71,11 @@ class MarketingController extends Controller
                 'price' => $p->price,
                 'notes' => $p->notes,
                 'active' => $p->active,
+                'images' => $p->images->map(fn ($img) => [
+                    'id' => $img->id,
+                    'url' => $img->url,
+                    'original_name' => $img->original_name,
+                ])->values(),
             ];
         })->values();
 
@@ -201,6 +207,10 @@ class MarketingController extends Controller
 
             $toDelete = array_diff($existingIds, $sentIds);
             if ($toDelete) {
+                $orphanImages = MarketingPriceImage::whereIn('marketing_price_id', $toDelete)->get();
+                foreach ($orphanImages as $img) {
+                    Storage::disk('public')->delete($img->path);
+                }
                 MarketingPrice::whereIn('id', $toDelete)->delete();
             }
         });
@@ -367,5 +377,103 @@ class MarketingController extends Controller
             'success' => true,
             'visible' => $item->visible,
         ]);
+    }
+
+    public function storePriceImage(Request $request): JsonResponse
+    {
+        $request->validate([
+            'marketing_price_id' => ['required', 'string', 'exists:marketing_prices,id'],
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+        ]);
+
+        $priceId = $request->input('marketing_price_id');
+        $existing = MarketingPriceImage::where('marketing_price_id', $priceId)->count();
+
+        if ($existing >= 5) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Limite de 5 imagens por produto atingido.',
+            ], 422);
+        }
+
+        $file = $request->file('image');
+        $originalName = $file->getClientOriginalName();
+
+        $directory = "marketing-prices/{$priceId}";
+        Storage::disk('public')->makeDirectory($directory);
+
+        $filename = uniqid() . '.jpg';
+        $relativePath = "{$directory}/{$filename}";
+        $fullPath = Storage::disk('public')->path($relativePath);
+
+        $this->compressAndSaveImage($file->getRealPath(), $fullPath);
+
+        $image = MarketingPriceImage::create([
+            'marketing_price_id' => $priceId,
+            'path' => $relativePath,
+            'original_name' => $originalName,
+            'sort_order' => $existing,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'image' => [
+                'id' => $image->id,
+                'url' => $image->url,
+                'original_name' => $image->original_name,
+            ],
+        ]);
+    }
+
+    public function deletePriceImage(MarketingPriceImage $image): JsonResponse
+    {
+        if ($image->path) {
+            Storage::disk('public')->delete($image->path);
+        }
+
+        $image->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function reorderPriceImages(Request $request): JsonResponse
+    {
+        $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['required', 'string'],
+        ]);
+
+        foreach ($request->input('ids') as $index => $id) {
+            MarketingPriceImage::where('id', $id)->update(['sort_order' => $index]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    private function compressAndSaveImage(string $sourcePath, string $destinationPath): void
+    {
+        $imageData = file_get_contents($sourcePath);
+        $gdImage = @imagecreatefromstring($imageData);
+
+        if ($gdImage === false) {
+            copy($sourcePath, $destinationPath);
+
+            return;
+        }
+
+        $width = imagesx($gdImage);
+        $height = imagesy($gdImage);
+
+        if ($width > 1200) {
+            $newWidth = 1200;
+            $newHeight = (int) ($height * 1200 / $width);
+            $resized = imagecreatetruecolor($newWidth, $newHeight);
+            imagecopyresampled($resized, $gdImage, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+            imagedestroy($gdImage);
+            $gdImage = $resized;
+        }
+
+        imagejpeg($gdImage, $destinationPath, 85);
+        imagedestroy($gdImage);
     }
 }

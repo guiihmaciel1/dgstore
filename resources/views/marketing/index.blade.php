@@ -86,6 +86,7 @@
                                         <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 120px;">Preco</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 150px;">Obs</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Ativo</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Fotos</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;"></th>
                                     </tr>
                                 </thead>
@@ -129,6 +130,21 @@
                                                        style="width: 1rem; height: 1rem; cursor: pointer; accent-color: #111827;">
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
+                                                <button type="button" @click="openImageModal(prices.indexOf(row))"
+                                                        style="padding: 0.25rem; background: none; border: none; cursor: pointer; border-radius: 0.25rem; position: relative;"
+                                                        :style="(row.images && row.images.length) ? 'color: #059669;' : 'color: #9ca3af;'"
+                                                        onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'"
+                                                        :title="(row.images && row.images.length) ? row.images.length + ' foto(s)' : 'Adicionar fotos'">
+                                                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    </svg>
+                                                    <span x-show="row.images && row.images.length > 0"
+                                                          style="position: absolute; top: -4px; right: -4px; background: #059669; color: white; font-size: 9px; font-weight: 700; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center;"
+                                                          x-text="row.images.length"></span>
+                                                </button>
+                                            </td>
+                                            <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                                 <button type="button" @click="removePrice(row._origIdx)"
                                                         style="padding: 0.25rem; color: #dc2626; background: none; border: none; cursor: pointer; border-radius: 0.25rem;"
                                                         onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='none'"
@@ -164,6 +180,71 @@
                         </button>
                     </div>
                 </form>
+
+                <!-- Modal de Imagens -->
+                <div x-show="imgModal.open" x-cloak
+                     style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;"
+                     @keydown.escape.window="closeImageModal()">
+                    <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4);" @click="closeImageModal()"></div>
+                    <div style="position: relative; background: white; border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 520px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                            <div>
+                                <h3 style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="imgModalPrice ? 'Fotos: ' + imgModalPrice.name + (imgModalPrice.storage ? ' ' + imgModalPrice.storage : '') : 'Fotos'"></h3>
+                                <p style="font-size: 0.75rem; color: #9ca3af;" x-text="imgModalPrice ? (imgModalPrice.images || []).length + '/5 imagens' : ''"></p>
+                            </div>
+                            <button type="button" @click="closeImageModal()"
+                                    style="padding: 4px; background: none; border: none; cursor: pointer; color: #9ca3af; border-radius: 6px;"
+                                    onmouseover="this.style.background='#f3f4f6'; this.style.color='#111827'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
+                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Galeria -->
+                        <div x-show="imgModalPrice && (imgModalPrice.images || []).length > 0" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem;">
+                            <template x-for="img in (imgModalPrice ? imgModalPrice.images : [])" :key="img.id">
+                                <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #f3f4f6; border: 1px solid #e5e7eb;">
+                                    <img :src="img.url" :alt="img.original_name"
+                                         style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;"
+                                         @click="window.open(img.url, '_blank')">
+                                    <button type="button" @click="deletePriceImage(img.id)"
+                                            style="position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;"
+                                            onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='rgba(0,0,0,0.6)'"
+                                            title="Remover">&times;</button>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Vazio -->
+                        <div x-show="imgModalPrice && (imgModalPrice.images || []).length === 0"
+                             style="padding: 2rem; text-align: center; color: #9ca3af; border: 2px dashed #e5e7eb; border-radius: 8px; margin-bottom: 1rem;">
+                            <svg style="width: 32px; height: 32px; margin: 0 auto 0.5rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            <p style="font-size: 13px;">Nenhuma foto adicionada</p>
+                        </div>
+
+                        <!-- Upload -->
+                        <div x-show="imgModalPrice && imgModalPrice.id && (imgModalPrice.images || []).length < 5">
+                            <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 2px dashed #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #6b7280; transition: all 0.15s;"
+                                   onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.color='#6b7280'">
+                                <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                <span x-text="imgModal.uploading ? 'Enviando...' : 'Adicionar foto'"></span>
+                                <input type="file" accept="image/jpeg,image/png,image/webp" @change="uploadPriceImage($event)" style="display: none;" :disabled="imgModal.uploading">
+                            </label>
+                        </div>
+
+                        <!-- Aviso para itens novos -->
+                        <div x-show="imgModalPrice && !imgModalPrice.id"
+                             style="padding: 12px; background: #fef3c7; border-radius: 8px; font-size: 12px; color: #92400e; text-align: center;">
+                            Salve a tabela primeiro para poder adicionar fotos a este item.
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {{-- ============================================================ --}}
@@ -726,8 +807,10 @@
             creativeDate: @json($creativeDate),
             usedSearch: '',
 
-            prices: initialPrices.map((p, i) => ({ ...p, _key: 'existing_' + i, _origIdx: i })),
+            prices: initialPrices.map((p, i) => ({ ...p, images: p.images || [], _key: 'existing_' + i, _origIdx: i })),
             _priceCounter: initialPrices.length,
+
+            imgModal: { open: false, priceIdx: null, uploading: false },
 
             usedListCopied: false,
             usedAllSaving: false,
@@ -831,6 +914,7 @@
                     price: '',
                     notes: '',
                     active: true,
+                    images: [],
                     _key: 'new_' + (++this._priceCounter),
                     _origIdx: this.prices.length,
                 });
@@ -893,6 +977,83 @@
                     this.priceCopied = true;
                     setTimeout(() => { this.priceCopied = false; }, 2500);
                 });
+            },
+
+            openImageModal(priceIdx) {
+                this.imgModal = { open: true, priceIdx: priceIdx, uploading: false };
+            },
+
+            closeImageModal() {
+                this.imgModal = { open: false, priceIdx: null, uploading: false };
+            },
+
+            get imgModalPrice() {
+                if (this.imgModal.priceIdx === null) return null;
+                return this.prices[this.imgModal.priceIdx] || null;
+            },
+
+            async uploadPriceImage(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const price = this.imgModalPrice;
+                if (!price || !price.id) {
+                    alert('Salve a tabela antes de adicionar imagens a novos itens.');
+                    event.target.value = '';
+                    return;
+                }
+
+                if ((price.images || []).length >= 5) {
+                    alert('Limite de 5 imagens atingido.');
+                    event.target.value = '';
+                    return;
+                }
+
+                this.imgModal.uploading = true;
+                const formData = new FormData();
+                formData.append('marketing_price_id', price.id);
+                formData.append('image', file);
+
+                try {
+                    const res = await fetch('{{ route("marketing.price-images.store") }}', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                        body: formData,
+                    });
+                    const json = await res.json();
+                    if (json.success) {
+                        if (!price.images) price.images = [];
+                        price.images.push(json.image);
+                    } else {
+                        alert(json.message || 'Erro ao enviar imagem.');
+                    }
+                } catch (e) {
+                    alert('Erro de conexão ao enviar imagem.');
+                } finally {
+                    this.imgModal.uploading = false;
+                    event.target.value = '';
+                }
+            },
+
+            async deletePriceImage(imageId) {
+                if (!confirm('Remover esta imagem?')) return;
+
+                const price = this.imgModalPrice;
+                try {
+                    const res = await fetch('/marketing/price-images/' + imageId, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                        },
+                    });
+                    const json = await res.json();
+                    if (json.success && price) {
+                        price.images = (price.images || []).filter(img => img.id !== imageId);
+                    }
+                } catch (e) {
+                    alert('Erro ao remover imagem.');
+                }
             },
 
             loadCreativesByDate() {

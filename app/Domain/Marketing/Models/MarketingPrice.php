@@ -7,6 +7,7 @@ namespace App\Domain\Marketing\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MarketingPrice extends Model
 {
@@ -29,6 +30,11 @@ class MarketingPrice extends Model
             'active' => 'boolean',
             'sort_order' => 'integer',
         ];
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(MarketingPriceImage::class)->orderBy('sort_order');
     }
 
     public function scopeActive(Builder $query): Builder
