@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('method', 30)->default('whatsapp');
             $table->text('notes')->nullable();
             $table->timestamps();
-
-            $table->index('sale_id');
         });
     }
 

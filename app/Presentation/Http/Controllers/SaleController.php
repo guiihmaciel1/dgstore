@@ -212,7 +212,7 @@ class SaleController extends Controller
             return redirect()
                 ->route('sales.show', $sale)
                 ->with('success', 'Venda cancelada com sucesso. O estoque foi devolvido.');
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return redirect()
                 ->back()
                 ->with('error', $e->getMessage());

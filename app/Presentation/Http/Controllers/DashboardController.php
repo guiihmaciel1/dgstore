@@ -16,7 +16,6 @@ use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
-use App\Domain\Sale\Models\SaleFollowup;
 use App\Domain\Sale\Models\SaleItem;
 use App\Domain\Sale\Models\TradeIn;
 use App\Domain\Schedule\Enums\AppointmentStatus;
@@ -260,9 +259,9 @@ class DashboardController extends Controller
         return $notifications;
     }
 
-    private function getFollowupSales(): \Illuminate\Support\Collection
+    private function getFollowupSales(): array
     {
-        return Sale::with(['customer', 'items'])
+        $sales = Sale::with(['customer', 'items'])
             ->whereNotNull('customer_id')
             ->where('payment_status', '!=', PaymentStatus::Cancelled)
             ->whereNotNull('sold_at')
@@ -272,6 +271,37 @@ class DashboardController extends Controller
             ->orderBy('sold_at')
             ->limit(20)
             ->get();
+
+        return $sales->map(function (Sale $sale) {
+            $daysSince = (int) $sale->sold_at->diffInDays(now());
+            $productNames = $sale->items->pluck('product_name')->implode(', ') ?: 'Sem produtos';
+            $customerName = $sale->customer?->name ?? 'Sem cliente';
+            $phone = $sale->customer?->phone ?? '';
+            $cleanPhone = preg_replace('/\D/', '', $phone);
+            $hasPhone = strlen($cleanPhone) >= 8;
+            if ($hasPhone && strlen($cleanPhone) <= 11) {
+                $cleanPhone = '55' . $cleanPhone;
+            }
+
+            $message = "Olá {$customerName}! Aqui é a DG Store.\n"
+                . "Faz {$daysSince} dias que você adquiriu o {$productNames} conosco.\n"
+                . "Está tudo certo com o aparelho? Precisa de algo?\n"
+                . "Agradecemos pela preferência!";
+
+            return [
+                'id' => $sale->id,
+                'customer_name' => $customerName,
+                'customer_phone' => $phone,
+                'has_phone' => $hasPhone,
+                'product_names' => $productNames,
+                'sale_number' => $sale->sale_number,
+                'sold_at_formatted' => $sale->sold_at->format('d/m/Y'),
+                'days_since' => $daysSince,
+                'whatsapp_url' => $hasPhone
+                    ? 'https://wa.me/' . $cleanPhone . '?text=' . urlencode($message)
+                    : null,
+            ];
+        })->values()->toArray();
     }
 
     private function getTodayAppointments(): \Illuminate\Support\Collection

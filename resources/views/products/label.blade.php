@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Etiqueta - {{ $product->full_name }}</title>
+    <title>Etiqueta - {{ $products->count() === 1 ? $products->first()->full_name : 'Lote' }}</title>
     <style>
         @page {
             size: 7cm 5cm;
@@ -106,7 +106,7 @@
             <div class="store-name">DG Store</div>
             <div class="product-name">{{ $product->full_name }}</div>
             @php
-                $isNew = $product->condition->value === 'new';
+                $isNew = $product->condition?->value === 'new';
             @endphp
             <span class="condition-badge {{ $isNew ? 'condition-new' : 'condition-used' }}">
                 {{ $isNew ? 'Novo' : 'Seminovo' }}

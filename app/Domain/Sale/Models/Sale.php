@@ -115,7 +115,7 @@ class Sale extends Model
 
         return $daysSinceSale >= $daysAfter
             && $daysSinceSale <= $maxDays
-            && $this->followups()->count() === 0;
+            && !$this->followups()->exists();
     }
 
     // Scopes
