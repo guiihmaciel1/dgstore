@@ -357,7 +357,7 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px;">
                         @foreach($systemNotifications as $notif)
                             @if(($notif['icon'] ?? '') === 'followup')
-                                <button type="button" @click="$dispatch('open-followup-modal')" class="sn-card sn-card-{{ $notif['type'] }}" style="cursor: pointer; text-align: left;">
+                                <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-followup-modal'))" class="sn-card sn-card-{{ $notif['type'] }}" style="cursor: pointer; text-align: left;">
                                     <span class="sn-card-count">{{ $notif['count'] }}</span>
                                     <span class="sn-card-label">{{ $notif['label'] }}</span>
                                 </button>
