@@ -969,74 +969,118 @@
     {{-- Modal Follow-Up Pós-Venda --}}
     <div x-data="followupModal()" x-on:open-followup-modal.window="open = true" x-on:keydown.escape.window="open = false"
          x-show="open" x-cloak
-         style="position: fixed; inset: 0; z-index: 9998; display: flex; align-items: center; justify-content: center;">
+         style="position: fixed; inset: 0; z-index: 9998;">
 
-        <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.5);" @click="open = false"></div>
+        {{-- Overlay --}}
+        <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); transition: opacity 0.2s;" @click="open = false"></div>
 
-        <div style="position: relative; background: white; border-radius: 1rem; width: 95%; max-width: 640px; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.25); overflow: hidden;"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 transform scale-95"
-             x-transition:enter-end="opacity-100 transform scale-100"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 transform scale-100"
-             x-transition:leave-end="opacity-0 transform scale-95">
+        {{-- Container centralizado --}}
+        <div style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1rem; pointer-events: none;">
+            <div style="position: relative; background: white; border-radius: 1rem; width: 100%; max-width: 580px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.25); pointer-events: auto;"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 transform scale-100"
+                 x-transition:leave-end="opacity-0 transform scale-95">
 
-            <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
-                <div>
-                    <h2 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Follow-Up Pós-Venda</h2>
-                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.125rem;">Clientes que compraram há 7+ dias e aguardam contato</p>
-                </div>
-                <button @click="open = false" style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; background: #f3f4f6; border: none; cursor: pointer; color: #6b7280;">
-                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <div style="flex: 1; overflow-y: auto; padding: 1rem 1.5rem;">
-                <template x-if="sales.length === 0">
-                    <div style="text-align: center; padding: 3rem 1rem; color: #6b7280;">
-                        <svg style="width: 3rem; height: 3rem; margin: 0 auto 1rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        <p style="font-weight: 600;">Todos os follow-ups estão em dia!</p>
+                {{-- Header fixo --}}
+                <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                    <div style="min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.625rem;">
+                            <div style="width: 2.25rem; height: 2.25rem; background: #eff6ff; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg style="width: 1.125rem; height: 1.125rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            </div>
+                            <div>
+                                <h2 style="font-size: 1rem; font-weight: 700; color: #111827; line-height: 1.3; margin: 0;">Follow-Up Pós-Venda</h2>
+                                <p style="font-size: 0.6875rem; color: #6b7280; margin: 0;">
+                                    <span x-text="pendingCount"></span> pendente<span x-show="pendingCount !== 1">s</span>
+                                    · clientes há 7+ dias sem contato
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                </template>
+                    <button @click="open = false" style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; background: #f3f4f6; border: none; cursor: pointer; color: #6b7280; flex-shrink: 0; transition: all 0.15s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
 
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    <template x-for="sale in sales" :key="sale.id">
-                        <div style="border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem; transition: all 0.15s;"
-                             :style="sale.done ? 'opacity: 0.4; background: #f9fafb;' : ''">
-                            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem;">
-                                <div style="flex: 1; min-width: 0;">
-                                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                        <span style="font-weight: 700; font-size: 0.875rem; color: #111827;" x-text="sale.customer_name"></span>
-                                        <span style="font-size: 0.625rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #dbeafe; color: #1e40af;" x-text="'há ' + sale.days_since + ' dias'"></span>
-                                    </div>
-                                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;" x-text="sale.product_names"></p>
-                                    <p style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.125rem;">
-                                        Venda <span x-text="sale.sale_number"></span> · <span x-text="sale.sold_at_formatted"></span>
-                                    </p>
+                {{-- Lista scrollável --}}
+                <div style="flex: 1; overflow-y: auto; min-height: 0;">
+                    <template x-if="sales.length === 0">
+                        <div style="text-align: center; padding: 3rem 1.5rem; color: #6b7280;">
+                            <svg style="width: 3rem; height: 3rem; margin: 0 auto 0.75rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <p style="font-weight: 600; font-size: 0.875rem;">Todos os follow-ups estão em dia!</p>
+                        </div>
+                    </template>
+
+                    <div style="padding: 0.75rem;">
+                        <template x-for="(sale, idx) in sales" :key="sale.id">
+                            <div style="padding: 0.875rem 1rem; border-radius: 0.75rem; transition: all 0.2s; margin-bottom: 0.5rem;"
+                                 :style="sale.done
+                                    ? 'opacity: 0.35; background: #f9fafb;'
+                                    : 'background: white; border: 1px solid #e5e7eb;'">
+
+                                {{-- Info do cliente --}}
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.375rem; flex-wrap: wrap;">
+                                    <span style="font-weight: 700; font-size: 0.8125rem; color: #111827;" x-text="sale.customer_name"></span>
+                                    <span style="font-size: 0.5625rem; font-weight: 700; padding: 0.125rem 0.4375rem; border-radius: 9999px; background: #dbeafe; color: #1e40af; white-space: nowrap;" x-text="'há ' + sale.days_since + ' dias'"></span>
+                                    <template x-if="sale.done">
+                                        <span style="font-size: 0.5625rem; font-weight: 700; padding: 0.125rem 0.4375rem; border-radius: 9999px; background: #dcfce7; color: #166534;">Concluído</span>
+                                    </template>
                                 </div>
-                                <div style="display: flex; gap: 0.375rem; flex-shrink: 0;" x-show="!sale.done">
+
+                                {{-- Produtos --}}
+                                <p style="font-size: 0.75rem; color: #4b5563; margin: 0 0 0.25rem 0; line-height: 1.4;" x-text="sale.product_names"></p>
+
+                                {{-- Venda + data --}}
+                                <p style="font-size: 0.6875rem; color: #9ca3af; margin: 0 0 0.625rem 0;">
+                                    <span x-text="sale.sale_number"></span> · <span x-text="sale.sold_at_formatted"></span>
+                                    <template x-if="sale.customer_phone">
+                                        <span> · <span x-text="sale.customer_phone"></span></span>
+                                    </template>
+                                </p>
+
+                                {{-- Ações --}}
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" x-show="!sale.done">
                                     <a x-show="sale.has_phone" :href="sale.whatsapp_url" target="_blank"
-                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: #16a34a; color: white; font-size: 0.6875rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; transition: background 0.15s;"
+                                       style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.4375rem 0.875rem; background: #16a34a; color: white; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; transition: background 0.15s;"
                                        onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
                                         <svg style="width: 0.875rem; height: 0.875rem;" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                                         WhatsApp
                                     </a>
                                     <button @click="markDone(sale)"
-                                            style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: #f3f4f6; color: #374151; font-size: 0.6875rem; font-weight: 600; border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer; transition: all 0.15s;"
-                                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'"
+                                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.4375rem 0.875rem; background: white; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; border: 1px solid #d1d5db; cursor: pointer; transition: all 0.15s;"
+                                            onmouseover="this.style.background='#f3f4f6';this.style.borderColor='#9ca3af'" onmouseout="this.style.background='white';this.style.borderColor='#d1d5db'"
                                             :disabled="sale.loading">
-                                        <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                        <span x-text="sale.loading ? 'Salvando...' : 'Feito'"></span>
+                                        <template x-if="!sale.loading">
+                                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                        </template>
+                                        <template x-if="sale.loading">
+                                            <svg style="width: 0.875rem; height: 0.875rem; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                        </template>
+                                        <span x-text="sale.loading ? 'Salvando...' : 'Marcar como feito'"></span>
                                     </button>
                                 </div>
-                                <span x-show="sale.done" style="font-size: 0.6875rem; font-weight: 600; color: #16a34a; padding: 0.375rem 0.75rem;">Concluído</span>
                             </div>
-                        </div>
-                    </template>
+                        </template>
+                    </div>
+                </div>
+
+                {{-- Footer --}}
+                <div style="padding: 0.75rem 1.5rem; border-top: 1px solid #f3f4f6; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-size: 0.6875rem; color: #9ca3af;" x-text="doneCount + ' de ' + sales.length + ' concluído' + (doneCount !== 1 ? 's' : '')"></span>
+                    <button @click="open = false" style="padding: 0.375rem 1rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                        Fechar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+
+    <style>
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1120,6 +1164,14 @@
             return {
                 open: false,
                 sales: rawSales.map(s => ({ ...s, done: false, loading: false })),
+
+                get pendingCount() {
+                    return this.sales.filter(s => !s.done).length;
+                },
+
+                get doneCount() {
+                    return this.sales.filter(s => s.done).length;
+                },
 
                 async markDone(sale) {
                     sale.loading = true;
