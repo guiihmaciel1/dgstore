@@ -255,6 +255,12 @@
                              class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
                              x-cloak>
                             <div class="py-1">
+                                <a href="{{ route('tools.negotiation-simulator') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.negotiation-simulator') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                    </svg>
+                                    Simulador
+                                </a>
                                 <a href="https://ifipe.dgstorerp.com.br/evaluator" target="_blank" class="flex items-center px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-gray-700">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -532,6 +538,9 @@
             <!-- Mobile: Ferramentas -->
             <div class="border-t border-gray-700 mt-2 pt-2">
                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ferramentas</div>
+                <a href="{{ route('tools.negotiation-simulator') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.negotiation-simulator') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Simulador
+                </a>
                 <a href="https://ifipe.dgstorerp.com.br/evaluator" target="_blank" class="flex items-center px-6 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
                     Avaliador
                     <svg class="w-3 h-3 ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>

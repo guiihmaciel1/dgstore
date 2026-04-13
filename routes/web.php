@@ -21,6 +21,7 @@ use App\Presentation\Http\Controllers\MarketingController;
 use App\Presentation\Http\Controllers\ScheduleController;
 use App\Presentation\Http\Controllers\CardFeeController;
 use App\Presentation\Http\Controllers\ConsignmentStockController;
+use App\Presentation\Http\Controllers\NegotiationController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BDashboardController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BProductController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BReportController;
@@ -87,6 +88,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('/ficha-tecnica', 'tools.specs')->name('tools.specs');
         Route::view('/treinamento-vendas', 'tools.sales-training')->name('tools.sales-training');
         Route::get('/calculadora-stone', [ToolController::class, 'stoneCalculator'])->name('tools.stone-calculator');
+        Route::get('/simulador-negociacao', [NegotiationController::class, 'index'])->name('tools.negotiation-simulator');
+        Route::post('/api/negotiation/evaluate', [NegotiationController::class, 'evaluate'])->name('negotiation.evaluate');
 
         // Follow-ups (legado - redireciona para CRM)
         Route::get('followups', fn() => redirect()->route('crm.board'))->name('followups.index');
