@@ -10,10 +10,10 @@
                     <p style="font-size: 0.875rem; color: #6b7280;">Monte propostas completas com trade-in e parcelamento</p>
                 </div>
                 <button @click="clearAll()" type="button"
-                        style="padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #6b7280; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;"
-                        onmouseover="this.style.borderColor='#ef4444'; this.style.color='#ef4444';"
-                        onmouseout="this.style.borderColor='#d1d5db'; this.style.color='#6b7280';">
-                    Limpar tudo
+                        style="padding: 0.5rem 1.25rem; font-size: 0.8rem; font-weight: 600; color: white; background: #111827; border: none; border-radius: 0.5rem; cursor: pointer;"
+                        onmouseover="this.style.background='#374151'"
+                        onmouseout="this.style.background='#111827'">
+                    + Nova Simulação
                 </button>
             </div>
 
