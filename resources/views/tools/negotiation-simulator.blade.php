@@ -783,7 +783,7 @@
                         ? this.tradeIn.model + (this.tradeIn.storage ? ' ' + this.tradeIn.storage : '')
                         : 'Seu aparelho';
                     lines.push('');
-                    lines.push(`🔄 *Trade-in:* ${tiDesc}`);
+                    lines.push(`🔄 *Seu seminovo:* ${tiDesc}`);
                     lines.push(`Desconto: *- R$ ${this.fmt(this.tradeInValue)}*`);
                 }
 
@@ -812,10 +812,21 @@
                 }
 
                 lines.push('');
-                lines.push(`🔒 Garantia e procedência verificada`);
-                lines.push(`📍 *DG Store* — _Atendimento especializado_`);
+                const expiry = this.getExpiryDate();
+                lines.push(`⏳ _Simulação válida até ${expiry}_`);
 
                 return lines.join('\n');
+            },
+
+            getExpiryDate() {
+                const d = new Date();
+                let added = 0;
+                while (added < 2) {
+                    d.setDate(d.getDate() + 1);
+                    const dow = d.getDay();
+                    if (dow !== 0 && dow !== 6) added++;
+                }
+                return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
             },
 
             async copyMessage() {
