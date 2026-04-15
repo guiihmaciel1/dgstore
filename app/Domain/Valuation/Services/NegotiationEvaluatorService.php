@@ -62,7 +62,7 @@ class NegotiationEvaluatorService
         $accessoryMod = $this->getAccessoryModifier($accessoryLevel);
 
         $suggestedPrice = $this->calculator->calculateSuggestedPrice(
-            $stats['average'],
+            $stats['median'],
             $margin,
             $batteryMod,
             $deviceStateMod,

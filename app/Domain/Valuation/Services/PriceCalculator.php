@@ -42,10 +42,10 @@ class PriceCalculator
     }
 
     /**
-     * Preco = floor(Mercado * (1 - (margem - modificadores)) / 100) * 100
+     * Preco = floor(Mediana * (1 - (margem - modificadores)) / 100) * 100
      */
     public function calculateSuggestedPrice(
-        float $marketAvg,
+        float $marketMedian,
         float $margin,
         float $batteryMod,
         float $deviceStateMod,
@@ -53,7 +53,7 @@ class PriceCalculator
     ): float {
         $totalModifier = $batteryMod + $deviceStateMod + $accessoryMod;
         $totalDiscount = ($margin / 100) - ($totalModifier / 100);
-        $raw = $marketAvg * (1 - $totalDiscount);
+        $raw = $marketMedian * (1 - $totalDiscount);
 
         return floor($raw / 100) * 100;
     }
