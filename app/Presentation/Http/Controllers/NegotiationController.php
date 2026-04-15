@@ -7,8 +7,10 @@ namespace App\Presentation\Http\Controllers;
 use App\Domain\Marketing\Models\MarketingPrice;
 use App\Domain\Valuation\Services\NegotiationEvaluatorService;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class NegotiationController extends Controller
@@ -54,10 +56,28 @@ class NegotiationController extends Controller
             );
 
             return response()->json(['success' => true, 'data' => $result]);
-        } catch (\Exception $e) {
+        } catch (QueryException $e) {
+            Log::error('Falha na avaliação de seminovo (DB)', [
+                'error' => $e->getMessage(),
+                'model' => $validated['model'],
+                'storage' => $validated['storage'],
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao avaliar seminovo. Verifique a conexão com o banco de dados.',
+            ], 500);
+        } catch (\Exception $e) {
+            Log::error('Falha na avaliação de seminovo', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'model' => $validated['model'],
+                'storage' => $validated['storage'],
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao avaliar seminovo. Tente novamente em alguns instantes.',
             ], 500);
         }
     }
