@@ -6,12 +6,12 @@ namespace App\Domain\Valuation\Services;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
 class NegotiationEvaluatorService
 {
     public function __construct(
         private readonly PriceCalculator $calculator,
+        private readonly DgifipeApiClient $apiClient,
     ) {}
 
     public function evaluate(
@@ -21,21 +21,18 @@ class NegotiationEvaluatorService
         string $deviceState,
         array $accessoryChecks,
     ): array {
-        $cities = config('dgifipe.cities');
-        $lookbackDays = config('dgifipe.listing_lookback_days');
-
         $cacheKey = "negotiation:listings:{$model}:{$storage}";
         $cacheTtl = $this->secondsUntilNextScrape();
 
         $listingData = Cache::remember(
             $cacheKey,
             $cacheTtl,
-            fn () => $this->fetchListingData($model, $storage, $cities, $lookbackDays),
+            fn () => $this->apiClient->getListings($model, $storage),
         );
 
         $listings = $listingData['prices'];
         $lastCollectedAt = $listingData['last_collected_at'];
-        $listingsCount = count($listings);
+        $listingsCount = (int) ($listingData['listings_count'] ?? count($listings));
         $lowDataWarning = $listingsCount < config('dgifipe.min_listings_warning');
 
         if ($listingsCount === 0) {
@@ -105,25 +102,6 @@ class NegotiationEvaluatorService
             $count === 1 => 'partial',
             default => 'none',
         };
-    }
-
-    private function fetchListingData(string $model, string $storage, array $cities, int $lookbackDays): array
-    {
-        $query = DB::connection('dgifipe')
-            ->table('market_listings')
-            ->where('model', $model)
-            ->where('storage', $storage)
-            ->whereIn('city', $cities)
-            ->where('collected_at', '>=', now()->subDays($lookbackDays))
-            ->where('title', 'NOT REGEXP', '(lacrado|lacrada|selado|selada|sealed|novo na caixa|zero na caixa)');
-
-        $lastCollectedAt = (clone $query)->max('collected_at');
-        $prices = $query->pluck('price')->sort()->values()->toArray();
-
-        return [
-            'prices' => array_map('floatval', $prices),
-            'last_collected_at' => $lastCollectedAt,
-        ];
     }
 
     private function secondsUntilNextScrape(): int

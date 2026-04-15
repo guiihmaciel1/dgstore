@@ -6,6 +6,7 @@ use App\Domain\CRM\Models\Deal;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Product\Models\Product;
 use App\Domain\Sale\Models\Sale;
+use App\Domain\Valuation\Services\DgifipeApiClient;
 use App\Policies\CustomerPolicy;
 use App\Policies\ProductPolicy;
 use App\Policies\SalePolicy;
@@ -21,7 +22,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(DgifipeApiClient::class, function () {
+            return new DgifipeApiClient(
+                baseUrl: config('services.dgifipe.base_url'),
+                token: config('services.dgifipe.token'),
+                timeout: config('services.dgifipe.timeout', 10),
+            );
+        });
     }
 
     /**

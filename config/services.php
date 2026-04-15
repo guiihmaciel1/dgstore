@@ -48,4 +48,10 @@ return [
         'app_secret' => env('WHATSAPP_APP_SECRET'),
     ],
 
+    'dgifipe' => [
+        'base_url' => env('DGIFIPE_API_URL', 'https://ifipe.dgstorerp.com.br'),
+        'token' => env('DGIFIPE_API_TOKEN'),
+        'timeout' => 10,
+    ],
+
 ];
