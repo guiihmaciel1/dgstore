@@ -1,39 +1,60 @@
 ---
-description: Regras criticas de seguranca do banco de dados - NUNCA executar comandos destrutivos
+description: REGRA CRITICA - Protecao do banco de dados e integridade do sistema
 alwaysApply: true
 ---
 
 # Protecao do Banco de Dados - REGRA CRITICA
 
-## COMANDOS PROIBIDOS - NUNCA EXECUTE
+## COMANDOS ESTRITAMENTE PROIBIDOS
+
+Estes comandos NUNCA devem ser executados, sob NENHUMA circunstancia:
 
 - `php artisan migrate:fresh`
 - `php artisan migrate:reset`
 - `php artisan migrate:refresh`
 - `php artisan db:wipe`
-- `php artisan test` / `phpunit` / qualquer comando de teste automatizado
+- `php artisan test` / `phpunit` / `pest` / qualquer comando de teste automatizado
+- `php artisan db:seed` (sem --class)
 - `DROP DATABASE` / `DROP TABLE` / `TRUNCATE` (via SQL direto)
-- Qualquer comando que apague dados ou recrie tabelas
-
-## Por que testes sao proibidos
-
-O trait `RefreshDatabase` do Laravel executa `migrate:fresh` internamente. Se o ambiente de teste nao estiver 100% isolado do banco de producao, ele DESTROI todos os dados. Nao rode testes. Ponto final.
+- `DELETE FROM` sem WHERE (via SQL direto)
+- Qualquer comando que apague, recrie ou destrua dados
 
 ## Banco de producao
 
 - Host: 187.77.37.51 / Database: dgstore
 - Este e o banco REAL com dados de clientes, vendas e financeiro
-- Backups sao semanais (Hostinger) - perda de dados entre backups e irrecuperavel
+- O usuario MySQL `dgstore` conecta direto no banco de producao
+- NAO existe banco de desenvolvimento separado - todo cuidado e pouco
 
-## Comandos SEGUROS permitidos
+## Comandos SEGUROS (lista completa do que e permitido)
 
-- `php artisan migrate` (apenas adiciona tabelas/colunas novas)
-- `php artisan migrate:status` (apenas leitura)
-- `php artisan db:seed --class=NomeDoSeeder` (seeder especifico)
-- `php artisan tinker` com SELECT/INSERT/UPDATE pontuais
+- `php artisan migrate` - apenas adiciona tabelas/colunas novas, nunca remove
+- `php artisan migrate:status` - apenas leitura
+- `php artisan db:seed --class=NomeDoSeeder` - apenas seeder especifico
+- `php artisan tinker` - com SELECT, INSERT ou UPDATE pontuais (nunca DELETE em massa)
 - `php artisan serve`
+- `php artisan db:backup` - cria backup do banco
+- `php artisan schedule:run` / `schedule:list`
+- `php artisan route:list` / `route:cache` / `route:clear`
+- `php artisan config:cache` / `config:clear`
+- `php artisan cache:clear` / `view:clear`
+- Qualquer comando de leitura ou cache
 
-## Ao atualizar taxas/configuracoes
+## Regras para seeders
 
-- Use apenas `php artisan db:seed --class=CardMdrRateSeeder` (seeder especifico)
-- NUNCA rode `php artisan db:seed` sem `--class`
+- SEMPRE use `--class=` para especificar qual seeder rodar
+- NUNCA rode `php artisan db:seed` sem filtro - pode sobrescrever dados reais
+- Antes de rodar um seeder, LEIA o codigo para verificar se ele usa `truncate()`
+
+## Regras para alteracoes no banco
+
+- Antes de qualquer INSERT/UPDATE/DELETE via tinker, confirme com o usuario
+- NUNCA faca DELETE sem WHERE
+- NUNCA faca UPDATE sem WHERE
+- Para alteracoes em massa, sempre pergunte antes de executar
+
+## Arquivos que NUNCA devem ser alterados sem permissao
+
+- `.env` - credenciais do banco e chaves do sistema
+- `phpunit.xml` - configuracao de testes (deve manter SQLite in-memory)
+- `.env.testing` - isolamento de testes

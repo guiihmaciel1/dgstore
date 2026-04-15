@@ -1,0 +1,40 @@
+---
+description: Regras de operacoes seguras - prevencao de danos ao sistema
+alwaysApply: true
+---
+
+# Operacoes Seguras
+
+## Antes de executar QUALQUER comando shell
+
+1. Leia o comando inteiro e avalie se ele pode causar perda de dados
+2. Na duvida, NAO execute - pergunte ao usuario primeiro
+3. Nunca execute comandos encadeados com `&&` se o primeiro for destrutivo
+4. Nunca use flags como `--force` ou `--no-interaction` sem permissao explicita
+
+## Arquivos protegidos (nunca altere sem perguntar)
+
+- `.env` / `.env.testing` / `.env.*`
+- `phpunit.xml`
+- `composer.lock` (nao delete manualmente)
+- `database/migrations/*` (nao delete migrations existentes)
+
+## Deploy e servidor
+
+- O servidor de producao e uma VPS Hostinger (srv1360734.hstgr.cloud)
+- O projeto roda em /home/user/htdocs/srv1360734.hstgr.cloud
+- Nunca execute comandos SSH no servidor de producao sem permissao
+- O cron do servidor ja esta configurado para o scheduler do Laravel
+
+## Backups
+
+- Backup automatico diario do MySQL roda as 03:00 via `php artisan db:backup`
+- Mantem apenas os 2 ultimos backups em `storage/backups/`
+- Backup semanal da Hostinger como camada extra
+- Se precisar restaurar, instrua o usuario - nunca restaure automaticamente
+
+## Git
+
+- Nunca faca `git push --force`
+- Nunca faca `git reset --hard` sem permissao
+- Nunca commite arquivos `.env`, `storage/backups/`, ou credenciais
