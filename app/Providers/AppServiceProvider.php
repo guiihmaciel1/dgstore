@@ -9,6 +9,7 @@ use App\Domain\Sale\Models\Sale;
 use App\Policies\CustomerPolicy;
 use App\Policies\ProductPolicy;
 use App\Policies\SalePolicy;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -28,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        DB::prohibitDestructiveCommands();
+
         // Registra as Policies
         Gate::policy(Product::class, ProductPolicy::class);
         Gate::policy(Sale::class, SalePolicy::class);
