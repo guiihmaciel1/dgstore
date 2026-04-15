@@ -19,7 +19,7 @@ class CardFeeCalculatorService
      * Arredondamento: Math.round por parcela para evitar diferenças de centavos
      * 
      * @param float $netDesired Valor líquido que o lojista deseja receber
-     * @param string $type 'debit' ou 'credit'
+     * @param string $type 'credit'
      * @param int $installments Número de parcelas (1-18)
      * @return CardFeeCalculationResult
      * @throws InvalidArgumentException
@@ -30,16 +30,12 @@ class CardFeeCalculatorService
             throw new InvalidArgumentException('O valor líquido deve ser maior que zero');
         }
 
-        if (!in_array($type, ['debit', 'credit'])) {
-            throw new InvalidArgumentException('Tipo de pagamento inválido. Use "debit" ou "credit"');
+        if ($type !== 'credit') {
+            throw new InvalidArgumentException('Tipo de pagamento inválido. Use "credit"');
         }
 
         if ($installments < 1 || $installments > 18) {
             throw new InvalidArgumentException('Número de parcelas deve estar entre 1 e 18');
-        }
-
-        if ($type === 'debit' && $installments > 1) {
-            throw new InvalidArgumentException('Débito só permite 1 parcela');
         }
 
         // Busca a taxa MDR (com fallback se banco não disponível)
@@ -100,14 +96,6 @@ class CardFeeCalculatorService
     {
         $results = [];
 
-        // Débito
-        try {
-            $results[] = $this->calculateGrossAmount($netDesired, 'debit', 1);
-        } catch (InvalidArgumentException $e) {
-            // Ignora se não houver taxa cadastrada
-        }
-
-        // Crédito 1x a 18x
         for ($i = 1; $i <= 18; $i++) {
             try {
                 $results[] = $this->calculateGrossAmount($netDesired, 'credit', $i);
@@ -162,14 +150,14 @@ class CardFeeCalculatorService
      */
     private function getFallbackRate(string $type, int $installments): ?float
     {
-        if ($type === 'debit') {
-            return $installments === 1 ? 1.09 : null;
+        if ($type !== 'credit') {
+            return null;
         }
 
         $creditRates = [
-            1 => 3.19, 2 => 4.49, 3 => 5.49, 4 => 6.39, 5 => 7.19, 6 => 7.59,
-            7 => 8.59, 8 => 8.69, 9 => 8.99, 10 => 8.99, 11 => 9.97, 12 => 9.99,
-            13 => 12.75, 14 => 13.47, 15 => 14.19, 16 => 14.91, 17 => 15.63, 18 => 16.35,
+            1 => 3.69, 2 => 4.99, 3 => 5.99, 4 => 6.89, 5 => 7.69, 6 => 8.09,
+            7 => 9.09, 8 => 9.19, 9 => 9.49, 10 => 9.49, 11 => 10.47, 12 => 10.49,
+            13 => 13.25, 14 => 13.97, 15 => 14.69, 16 => 15.41, 17 => 16.13, 18 => 16.85,
         ];
 
         return $creditRates[$installments] ?? null;

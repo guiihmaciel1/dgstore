@@ -16,18 +16,23 @@ use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Enums\TradeInCondition;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Models\SaleFollowup;
+use App\Domain\Sale\Models\SaleItemImage;
 use App\Domain\Sale\Services\SaleService;
 use App\Http\Controllers\Controller;
+use App\Presentation\Http\Controllers\Concerns\CompressesImages;
 use App\Presentation\Http\Requests\StoreSaleRequest;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class SaleController extends Controller
 {
+    use CompressesImages;
+
     public function __construct(
         private readonly SaleService $saleService,
         private readonly ProductService $productService,
@@ -126,6 +131,7 @@ class SaleController extends Controller
     {
         $sale->load([
             'items.product.tradeIn.sale',
+            'items.images',
             'customer',
             'user',
             'stockMovements',
@@ -268,6 +274,77 @@ class SaleController extends Controller
             'success' => true,
             'followup_id' => $followup->id,
         ]);
+    }
+
+    public function storeSaleItemImage(Request $request): JsonResponse
+    {
+        $request->validate([
+            'sale_item_id' => ['required', 'string', 'exists:sale_items,id'],
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+        ]);
+
+        $saleItemId = $request->input('sale_item_id');
+        $existing = SaleItemImage::where('sale_item_id', $saleItemId)->count();
+
+        if ($existing >= 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Este item já possui uma foto. Remova a atual antes de enviar outra.',
+            ], 422);
+        }
+
+        $file = $request->file('image');
+        $originalName = $file->getClientOriginalName();
+
+        $directory = "sale-item-images/{$saleItemId}";
+        Storage::disk('public')->makeDirectory($directory);
+
+        $filename = uniqid() . '.jpg';
+        $relativePath = "{$directory}/{$filename}";
+        $fullPath = Storage::disk('public')->path($relativePath);
+
+        $this->compressAndSaveImage($file->getRealPath(), $fullPath);
+
+        $image = SaleItemImage::create([
+            'sale_item_id' => $saleItemId,
+            'path' => $relativePath,
+            'original_name' => $originalName,
+            'sort_order' => 0,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'image' => [
+                'id' => $image->id,
+                'url' => $image->url,
+                'original_name' => $image->original_name,
+            ],
+        ]);
+    }
+
+    public function deleteSaleItemImage(SaleItemImage $image): JsonResponse
+    {
+        if ($image->path) {
+            Storage::disk('public')->delete($image->path);
+        }
+
+        $image->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function showSaleItemImage(SaleItemImage $image)
+    {
+        if (! $image->path || ! Storage::disk('public')->exists($image->path)) {
+            abort(404);
+        }
+
+        $file = Storage::disk('public')->get($image->path);
+        $mime = Storage::disk('public')->mimeType($image->path);
+
+        return response($file, 200)
+            ->header('Content-Type', $mime)
+            ->header('Cache-Control', 'public, max-age=86400');
     }
 
     public function destroy(Sale $sale): RedirectResponse

@@ -23,20 +23,11 @@ class CardFeeCalculatorServiceTest extends TestCase
 
     private function seedTestRates(): void
     {
-        // Taxa de débito
-        CardMdrRate::create([
-            'payment_type' => 'debit',
-            'installments' => 1,
-            'mdr_rate' => 1.09,
-            'is_active' => true,
-        ]);
-
-        // Algumas taxas de crédito para teste
         $creditRates = [
-            1 => 3.19,
-            6 => 7.59,
-            12 => 9.99,
-            18 => 16.35,
+            1 => 3.69,
+            6 => 8.09,
+            12 => 10.49,
+            18 => 16.85,
         ];
 
         foreach ($creditRates as $installments => $rate) {
@@ -51,115 +42,46 @@ class CardFeeCalculatorServiceTest extends TestCase
 
     public function test_calculate_12x_with_1000_net_returns_correct_gross(): void
     {
-        // Arrange: R$ 1000 líquido, 12x, taxa 9.99%
-        $netAmount = 1000.00;
-        $installments = 12;
-        $expectedRate = 9.99;
+        $result = $this->service->calculateGrossAmount(1000.00, 'credit', 12);
 
-        // Act
-        $result = $this->service->calculateGrossAmount($netAmount, 'credit', $installments);
-
-        // Assert
         $this->assertEquals('credit', $result->paymentType);
         $this->assertEquals(12, $result->installments);
-        $this->assertEquals($expectedRate, $result->mdrRate);
+        $this->assertEquals(10.49, $result->mdrRate);
         $this->assertEquals(1000.00, $result->netAmount);
-        
-        // Cálculo esperado (gross-up): 1000 / (1 - 0.0999) = 1110.9876
-        // Parcela: 1110.9876 / 12 = 92.5823 → round = 92.58
-        // Total: 92.58 * 12 = 1110.96
-        $this->assertEquals(1110.96, $result->grossAmount);
-        $this->assertEquals(110.96, $result->feeAmount);
-        $this->assertEquals(92.58, $result->installmentValue);
-    }
-
-    public function test_debit_calculation(): void
-    {
-        // Arrange
-        $netAmount = 1000.00;
-
-        // Act
-        $result = $this->service->calculateGrossAmount($netAmount, 'debit', 1);
-
-        // Assert
-        $this->assertEquals('debit', $result->paymentType);
-        $this->assertEquals(1, $result->installments);
-        $this->assertEquals(1.09, $result->mdrRate);
-        
-        // Cálculo (gross-up): 1000 / (1 - 0.0109) = 1011.02
-        $this->assertEquals(1011.02, $result->grossAmount);
-        $this->assertEquals(11.02, $result->feeAmount);
-        $this->assertEquals(1011.02, $result->installmentValue);
+        $this->assertEquals(1117.20, $result->grossAmount);
+        $this->assertEquals(117.20, $result->feeAmount);
+        $this->assertEquals(93.10, $result->installmentValue);
     }
 
     public function test_credit_1x_calculation(): void
     {
-        // Arrange
-        $netAmount = 1000.00;
+        $result = $this->service->calculateGrossAmount(1000.00, 'credit', 1);
 
-        // Act
-        $result = $this->service->calculateGrossAmount($netAmount, 'credit', 1);
-
-        // Assert
         $this->assertEquals('credit', $result->paymentType);
         $this->assertEquals(1, $result->installments);
-        $this->assertEquals(3.19, $result->mdrRate);
-        
-        // Cálculo (gross-up): 1000 / (1 - 0.0319) = 1032.95
-        $this->assertEquals(1032.95, $result->grossAmount);
-        $this->assertEquals(32.95, $result->feeAmount);
+        $this->assertEquals(3.69, $result->mdrRate);
+        $this->assertEquals(1038.31, $result->grossAmount);
+        $this->assertEquals(38.31, $result->feeAmount);
     }
 
     public function test_credit_6x_calculation(): void
     {
-        // Arrange
-        $netAmount = 1000.00;
+        $result = $this->service->calculateGrossAmount(1000.00, 'credit', 6);
 
-        // Act
-        $result = $this->service->calculateGrossAmount($netAmount, 'credit', 6);
-
-        // Assert
         $this->assertEquals(6, $result->installments);
-        $this->assertEquals(7.59, $result->mdrRate);
-        
-        // Cálculo (gross-up): 1000 / (1 - 0.0759) = 1082.14
-        // Parcela: 1082.14 / 6 = 180.356666... → round = 180.36
-        // Total: 180.36 * 6 = 1082.16
-        $this->assertEquals(1082.16, $result->grossAmount);
-        $this->assertEquals(180.36, $result->installmentValue);
+        $this->assertEquals(8.09, $result->mdrRate);
+        $this->assertEquals(1088.04, $result->grossAmount);
+        $this->assertEquals(181.34, $result->installmentValue);
     }
 
     public function test_credit_18x_calculation(): void
     {
-        // Arrange
-        $netAmount = 1000.00;
+        $result = $this->service->calculateGrossAmount(1000.00, 'credit', 18);
 
-        // Act
-        $result = $this->service->calculateGrossAmount($netAmount, 'credit', 18);
-
-        // Assert
         $this->assertEquals(18, $result->installments);
-        $this->assertEquals(16.35, $result->mdrRate);
-        
-        // Cálculo (gross-up): 1000 / (1 - 0.1635) = 1195.46
-        // Parcela: 1195.46 / 18 = 66.414444... → round = 66.41
-        // Total: 66.41 * 18 = 1195.38
-        $this->assertEquals(1195.38, $result->grossAmount);
-        $this->assertEquals(66.41, $result->installmentValue);
-    }
-
-    public function test_bcmath_precision_with_small_values(): void
-    {
-        // Arrange: Testa precisão com valores pequenos
-        $netAmount = 10.50;
-
-        // Act
-        $result = $this->service->calculateGrossAmount($netAmount, 'debit', 1);
-
-        // Assert
-        $this->assertEquals(10.50, $result->netAmount);
-        // 10.50 * 1.0109 = 10.61445 → 10.61
-        $this->assertEquals(10.61, $result->grossAmount);
+        $this->assertEquals(16.85, $result->mdrRate);
+        $this->assertEquals(1202.58, $result->grossAmount);
+        $this->assertEquals(66.81, $result->installmentValue);
     }
 
     public function test_invalid_net_amount_throws_exception(): void
@@ -175,7 +97,7 @@ class CardFeeCalculatorServiceTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Tipo de pagamento inválido');
 
-        $this->service->calculateGrossAmount(1000, 'invalid', 12);
+        $this->service->calculateGrossAmount(1000, 'debit', 1);
     }
 
     public function test_invalid_installments_throws_exception(): void
@@ -186,86 +108,41 @@ class CardFeeCalculatorServiceTest extends TestCase
         $this->service->calculateGrossAmount(1000, 'credit', 20);
     }
 
-    public function test_debit_with_multiple_installments_throws_exception(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Débito só permite 1 parcela');
-
-        $this->service->calculateGrossAmount(1000, 'debit', 2);
-    }
-
     public function test_calculate_all_options_returns_all_rates(): void
     {
-        // Act
         $results = $this->service->calculateAllOptions(1000);
 
-        // Assert: Deve retornar 5 opções (1 débito + 4 crédito que seedamos)
-        $this->assertCount(5, $results);
-        
-        // Verifica que tem débito
-        $debitResults = array_filter($results, fn($r) => $r->paymentType === 'debit');
-        $this->assertCount(1, $debitResults);
-        
-        // Verifica que tem crédito
+        $this->assertCount(18, $results);
+
         $creditResults = array_filter($results, fn($r) => $r->paymentType === 'credit');
-        $this->assertCount(4, $creditResults);
+        $this->assertCount(18, $creditResults);
     }
 
     public function test_calculate_with_down_payment(): void
     {
-        // Arrange: Produto de R$ 1500, entrada de R$ 500
-        $totalAmount = 1500.00;
-        $downPayment = 500.00;
+        $results = $this->service->calculateWithDownPayment(1500.00, 500.00);
 
-        // Act
-        $results = $this->service->calculateWithDownPayment($totalAmount, $downPayment);
-
-        // Assert: Deve calcular sobre R$ 1000 (restante)
         $this->assertNotEmpty($results);
-        
-        $firstResult = $results[0];
-        $this->assertEquals(1000.00, $firstResult->netAmount);
+        $this->assertEquals(1000.00, $results[0]->netAmount);
     }
 
     public function test_calculate_with_trade_in(): void
     {
-        // Arrange: Aparelho de R$ 2000, trade-in de R$ 800
-        $devicePrice = 2000.00;
-        $tradeInValue = 800.00;
+        $results = $this->service->calculateWithTradeIn(2000.00, 800.00);
 
-        // Act
-        $results = $this->service->calculateWithTradeIn($devicePrice, $tradeInValue);
-
-        // Assert: Deve calcular sobre R$ 1200 (restante)
         $this->assertNotEmpty($results);
-        
-        $firstResult = $results[0];
-        $this->assertEquals(1200.00, $firstResult->netAmount);
+        $this->assertEquals(1200.00, $results[0]->netAmount);
     }
 
     public function test_down_payment_equal_to_total_returns_empty(): void
     {
-        // Arrange
-        $totalAmount = 1000.00;
-        $downPayment = 1000.00;
-
-        // Act
-        $results = $this->service->calculateWithDownPayment($totalAmount, $downPayment);
-
-        // Assert
+        $results = $this->service->calculateWithDownPayment(1000.00, 1000.00);
         $this->assertEmpty($results);
     }
 
     public function test_trade_in_equal_to_price_returns_empty(): void
     {
-        // Arrange
-        $devicePrice = 1000.00;
-        $tradeInValue = 1000.00;
-
-        // Act
-        $results = $this->service->calculateWithTradeIn($devicePrice, $tradeInValue);
-
-        // Assert
+        $results = $this->service->calculateWithTradeIn(1000.00, 1000.00);
         $this->assertEmpty($results);
     }
 }

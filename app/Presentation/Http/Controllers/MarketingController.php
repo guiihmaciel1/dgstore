@@ -13,6 +13,7 @@ use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Marketing\Models\MarketingUsedListingImage;
 use App\Domain\Product\Models\Product;
 use App\Http\Controllers\Controller;
+use App\Presentation\Http\Controllers\Concerns\CompressesImages;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,6 +23,7 @@ use Illuminate\View\View;
 
 class MarketingController extends Controller
 {
+    use CompressesImages;
     public function index(Request $request): View
     {
         $prices = MarketingPrice::with('images')->ordered()->get();
@@ -540,35 +542,4 @@ class MarketingController extends Controller
         return response()->json(['success' => true]);
     }
 
-    private function compressAndSaveImage(string $sourcePath, string $destinationPath): void
-    {
-        $dir = dirname($destinationPath);
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
-        $imageData = file_get_contents($sourcePath);
-        $gdImage = @imagecreatefromstring($imageData);
-
-        if ($gdImage === false) {
-            copy($sourcePath, $destinationPath);
-
-            return;
-        }
-
-        $width = imagesx($gdImage);
-        $height = imagesy($gdImage);
-
-        if ($width > 1200) {
-            $newWidth = 1200;
-            $newHeight = (int) ($height * 1200 / $width);
-            $resized = imagecreatetruecolor($newWidth, $newHeight);
-            imagecopyresampled($resized, $gdImage, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-            imagedestroy($gdImage);
-            $gdImage = $resized;
-        }
-
-        imagejpeg($gdImage, $destinationPath, 85);
-        imagedestroy($gdImage);
-    }
 }

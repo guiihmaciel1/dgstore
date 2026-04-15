@@ -732,7 +732,7 @@
                         const prev = this.activePreset || 'even';
                         this.cardResults = json.data.map(r => ({
                             ...r,
-                            label: r.payment_type === 'debit' ? 'Débito' : (r.installments === 1 ? 'Crédito 1x' : `Crédito ${r.installments}x`),
+                            label: r.installments === 1 ? 'Crédito 1x' : `Crédito ${r.installments}x`,
                             selected: true,
                         }));
                         this.setSelection(prev);
@@ -752,8 +752,8 @@
                     if (preset === 'all') r.selected = true;
                     else if (preset === 'even') r.selected = r.installments % 2 === 0;
                     else if (preset === 'up_to_12') r.selected = r.installments >= 2 && r.installments <= 12 && r.installments % 2 === 0;
-                    else if (preset === 'above_6') r.selected = r.payment_type !== 'debit' && r.installments >= 6 && r.installments % 2 === 0;
-                    else if (preset === 'above_10') r.selected = r.payment_type !== 'debit' && r.installments >= 10 && r.installments % 2 === 0;
+                    else if (preset === 'above_6') r.selected = r.installments >= 6 && r.installments % 2 === 0;
+                    else if (preset === 'above_10') r.selected = r.installments >= 10 && r.installments % 2 === 0;
                 });
             },
 
@@ -792,11 +792,7 @@
                         lines.push('');
                         lines.push(`💳 *Parcele em até ${selected[selected.length - 1].installments}x:*`);
                         selected.forEach(r => {
-                            if (r.payment_type === 'debit') {
-                                lines.push(`  Débito › R$ ${this.fmt(r.installment_value)}`);
-                            } else {
-                                lines.push(`  ${r.installments}x › R$ ${this.fmt(r.installment_value)}`);
-                            }
+                            lines.push(`  ${r.installments}x › R$ ${this.fmt(r.installment_value)}`);
                         });
                     }
                 }

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class SaleItem extends Model
@@ -82,6 +83,11 @@ class SaleItem extends Model
     public function warranty(): HasOne
     {
         return $this->hasOne(Warranty::class);
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(SaleItemImage::class)->orderBy('sort_order');
     }
 
     public function isConsignment(): bool

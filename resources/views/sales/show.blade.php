@@ -88,7 +88,9 @@
                 <!-- Coluna Principal -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <!-- Itens da Venda -->
-                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;"
+                         x-data="saleItemImages()"
+                    >
                         <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
                             <h3 style="font-weight: 600; color: #111827;">Itens da Venda</h3>
                         </div>
@@ -107,6 +109,7 @@
                                         @if(auth()->user()->canViewFinancials())
                                         <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Lucro</th>
                                         @endif
+                                        <th style="padding: 0.75rem 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Foto</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -172,6 +175,37 @@
                                                 R$ {{ number_format($itemProfit, 2, ',', '.') }}
                                             </td>
                                             @endif
+                                            <td style="padding: 0.5rem 0.5rem; text-align: center; vertical-align: middle;">
+                                                <div x-data="{ itemId: '{{ $item->id }}' }">
+                                                    @if($item->images->isNotEmpty())
+                                                        @php $img = $item->images->first(); @endphp
+                                                        <div style="position: relative; display: inline-block;">
+                                                            <a href="{{ $img->url }}" target="_blank">
+                                                                <img src="{{ $img->url }}" alt="{{ $img->original_name }}"
+                                                                     style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; border: 2px solid #e5e7eb; cursor: pointer;"
+                                                                     onmouseover="this.style.borderColor='#111827'" onmouseout="this.style.borderColor='#e5e7eb'">
+                                                            </a>
+                                                            <button type="button"
+                                                                    @click="deleteImage('{{ $img->id }}', $el.closest('td'))"
+                                                                    style="position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; border-radius: 50%; background: #dc2626; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; line-height: 1;"
+                                                                    onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'"
+                                                                    title="Remover foto">&times;</button>
+                                                        </div>
+                                                    @else
+                                                        <label style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 2px dashed #d1d5db; border-radius: 6px; cursor: pointer; color: #9ca3af; transition: all 0.15s;"
+                                                               onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='#d1d5db'; this.style.color='#9ca3af'"
+                                                               title="Adicionar foto">
+                                                            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                            </svg>
+                                                            <input type="file" accept="image/jpeg,image/png,image/webp"
+                                                                   @change="uploadImage(itemId, $event, $el.closest('td'))"
+                                                                   style="display: none;">
+                                                        </label>
+                                                    @endif
+                                                </div>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -679,4 +713,59 @@
         </div>
     </div>
 
+    <script>
+    function saleItemImages() {
+        return {
+            async uploadImage(saleItemId, event, tdEl) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append('sale_item_id', saleItemId);
+                formData.append('image', file);
+
+                try {
+                    const res = await fetch('{{ route("sale-item-images.store") }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                        },
+                        body: formData,
+                    });
+                    const json = await res.json();
+                    if (json.success) {
+                        window.location.reload();
+                    } else {
+                        alert(json.message || 'Erro ao enviar imagem.');
+                    }
+                } catch (e) {
+                    alert('Erro de conexão ao enviar imagem.');
+                } finally {
+                    event.target.value = '';
+                }
+            },
+
+            async deleteImage(imageId, tdEl) {
+                if (!confirm('Remover esta foto?')) return;
+
+                try {
+                    const res = await fetch('/sales/item-images/' + imageId, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                        },
+                    });
+                    const json = await res.json();
+                    if (json.success) {
+                        window.location.reload();
+                    }
+                } catch (e) {
+                    alert('Erro ao remover imagem.');
+                }
+            },
+        };
+    }
+    </script>
 </x-app-layout>

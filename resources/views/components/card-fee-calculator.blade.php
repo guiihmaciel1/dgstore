@@ -361,7 +361,7 @@ function cardFeeCalculator() {
                 if (data.success) {
                     this.results = data.data.map(r => ({
                         ...r,
-                        label: r.payment_type === 'debit' ? 'Débito' : (r.installments === 1 ? 'Crédito 1x' : `Crédito ${r.installments}x`),
+                        label: r.installments === 1 ? 'Crédito 1x' : `Crédito ${r.installments}x`,
                         copied: false,
                         selected: true
                     }));
@@ -401,16 +401,10 @@ function cardFeeCalculator() {
                     linhas.push('');
                 }
                 linhas.push('💳 *Restante no cartão:*');
-                const parcLabel = row.payment_type === 'debit' 
-                    ? `Débito R$ ${this.formatNumber(vlr)}`
-                    : `*${row.installments}x de R$ ${this.formatNumber(vlr)}*`;
-                linhas.push(parcLabel);
+                linhas.push(`*${row.installments}x de R$ ${this.formatNumber(vlr)}*`);
             } else {
                 linhas.push('💳 *No cartão:*');
-                const parcLabel = row.payment_type === 'debit'
-                    ? `Débito R$ ${this.formatNumber(vlr)}`
-                    : `*${row.installments}x de R$ ${this.formatNumber(vlr)}*`;
-                linhas.push(parcLabel);
+                linhas.push(`*${row.installments}x de R$ ${this.formatNumber(vlr)}*`);
                 linhas.push('');
                 linhas.push('✅ *À vista (Pix):*');
                 linhas.push(`*R$ ${this.formatNumber(this.finalAmount)}* _(melhor preço)_`);
@@ -451,12 +445,7 @@ function cardFeeCalculator() {
 
             this.results.forEach(r => {
                 if (!r.selected) return;
-                const vlr = r.installment_value;
-                if (r.payment_type === 'debit') {
-                    linhas.push(`Débito R$ ${this.formatNumber(vlr)}`);
-                } else {
-                    linhas.push(`${r.installments}x de R$ ${this.formatNumber(vlr)}`);
-                }
+                linhas.push(`${r.installments}x de R$ ${this.formatNumber(r.installment_value)}`);
             });
             
             linhas.push('');
@@ -471,13 +460,13 @@ function cardFeeCalculator() {
                 if (preset === 'all') {
                     r.selected = true;
                 } else if (preset === 'up_to_12') {
-                    r.selected = r.payment_type === 'debit' || r.installments <= 12;
+                    r.selected = r.installments <= 12;
                 } else if (preset === 'above_6') {
-                    r.selected = r.payment_type === 'debit' || r.installments > 6;
+                    r.selected = r.installments > 6;
                 } else if (preset === 'above_8') {
-                    r.selected = r.payment_type === 'debit' || r.installments > 8;
+                    r.selected = r.installments > 8;
                 } else if (preset === 'above_10') {
-                    r.selected = r.payment_type === 'debit' || r.installments > 10;
+                    r.selected = r.installments > 10;
                 }
             });
         },

@@ -26,7 +26,7 @@ class CardFeeController
     {
         $validator = Validator::make($request->all(), [
             'net_amount' => 'required|numeric|min:0.01',
-            'payment_type' => 'required|in:debit,credit',
+            'payment_type' => 'required|in:credit',
             'installments' => 'required|integer|min:1|max:18',
         ], [
             'net_amount.required' => 'O valor líquido é obrigatório',

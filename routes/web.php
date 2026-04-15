@@ -148,6 +148,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/sales/{sale}/status', [SaleController::class, 'updateStatus'])->name('sales.update-status');
         Route::get('/sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
         Route::post('/sales/{sale}/followup', [SaleController::class, 'followup'])->name('sales.followup');
+        Route::post('/sales/item-images', [SaleController::class, 'storeSaleItemImage'])->name('sale-item-images.store');
+        Route::delete('/sales/item-images/{image}', [SaleController::class, 'deleteSaleItemImage'])->name('sale-item-images.destroy');
+        Route::get('/sales/item-images/{image}/show', [SaleController::class, 'showSaleItemImage'])->name('sale-item-images.show');
 
         // API - Calculadora de Taxas de Cartão
         Route::post('/api/card-fees/calculate', [CardFeeController::class, 'calculate'])->name('card-fees.calculate');

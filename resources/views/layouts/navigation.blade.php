@@ -140,7 +140,6 @@
                     </div>
                     @endif
                     
-                    @if(!$isIntern)
                     <!-- Dropdown: Estoque -->
                     <div class="relative">
                         <button @click="stockOpen = !stockOpen; commercialOpen = false; financeOpen = false; purchasesOpen = false; toolsOpen = false" 
@@ -166,6 +165,7 @@
                                     </svg>
                                     Produtos
                                 </a>
+                                @if(!$isIntern)
                                 <a href="{{ route('stock.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.*') && !request()->routeIs('stock.alerts') && !request()->routeIs('stock.consignment.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
@@ -184,10 +184,12 @@
                                     </svg>
                                     Fornecedor Interno
                                 </a>
+                                @endif
                             </div>
                         </div>
                     </div>
                     
+                    @if(!$isIntern)
                     <!-- Dropdown: Compras -->
                     <div class="relative">
                         <button @click="purchasesOpen = !purchasesOpen; commercialOpen = false; financeOpen = false; stockOpen = false; toolsOpen = false" 
@@ -473,6 +475,7 @@
                     </a>
                 @endif
             </div>
+            @endif
             
             <!-- Mobile: Estoque -->
             <div class="border-t border-gray-700 mt-2 pt-2">
@@ -480,6 +483,7 @@
                 <a href="{{ route('products.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('products.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Produtos
                 </a>
+                @if(!$isIntern)
                 <a href="{{ route('stock.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Movimentações
                 </a>
@@ -489,8 +493,10 @@
                 <a href="{{ route('stock.consignment.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.consignment.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Fornecedor Interno
                 </a>
+                @endif
             </div>
             
+            @if(!$isIntern)
             <!-- Mobile: Compras -->
             <div class="border-t border-gray-700 mt-2 pt-2">
                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Compras</div>

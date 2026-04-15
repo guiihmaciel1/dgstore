@@ -10,45 +10,34 @@ class CardMdrRateSeeder extends Seeder
     /**
      * Popula as taxas MDR da Stone
      * 
-     * Taxas Stone (percentuais):
-     * - Débito: 1.09%
-     * - Crédito: 1x=3.19%, 2x=4.49%, 3x=5.49%, 4x=6.39%, 5x=7.19%, 6x=7.59%,
-     *            7x=8.59%, 8x=8.69%, 9x=8.99%, 10x=8.99%, 11x=9.97%, 12x=9.99%,
-     *            13x=12.75%, 14x=13.47%, 15x=14.19%, 16x=14.91%, 17x=15.63%, 18x=16.35%
+     * Taxas Stone (percentuais) - Atualizado em Abril/2026 (+0.5%):
+     * - Crédito: 1x=3.69%, 2x=4.99%, 3x=5.99%, 4x=6.89%, 5x=7.69%, 6x=8.09%,
+     *            7x=9.09%, 8x=9.19%, 9x=9.49%, 10x=9.49%, 11x=10.47%, 12x=10.49%,
+     *            13x=13.25%, 14x=13.97%, 15x=14.69%, 16x=15.41%, 17x=16.13%, 18x=16.85%
      */
     public function run(): void
     {
-        // Limpa taxas existentes
         CardMdrRate::truncate();
 
-        // Taxa de Débito
-        CardMdrRate::create([
-            'payment_type' => 'debit',
-            'installments' => 1,
-            'mdr_rate' => 1.09,
-            'is_active' => true,
-        ]);
-
-        // Taxas de Crédito (1x a 18x)
         $creditRates = [
-            1 => 3.19,
-            2 => 4.49,
-            3 => 5.49,
-            4 => 6.39,
-            5 => 7.19,
-            6 => 7.59,
-            7 => 8.59,
-            8 => 8.69,
-            9 => 8.99,
-            10 => 8.99,
-            11 => 9.97,
-            12 => 9.99,
-            13 => 12.75,
-            14 => 13.47,
-            15 => 14.19,
-            16 => 14.91,
-            17 => 15.63,
-            18 => 16.35,
+            1 => 3.69,
+            2 => 4.99,
+            3 => 5.99,
+            4 => 6.89,
+            5 => 7.69,
+            6 => 8.09,
+            7 => 9.09,
+            8 => 9.19,
+            9 => 9.49,
+            10 => 9.49,
+            11 => 10.47,
+            12 => 10.49,
+            13 => 13.25,
+            14 => 13.97,
+            15 => 14.69,
+            16 => 15.41,
+            17 => 16.13,
+            18 => 16.85,
         ];
 
         foreach ($creditRates as $installments => $rate) {
@@ -61,7 +50,6 @@ class CardMdrRateSeeder extends Seeder
         }
 
         $this->command->info('✓ Taxas MDR Stone populadas com sucesso!');
-        $this->command->info('  - 1 taxa de débito (1.09%)');
-        $this->command->info('  - 18 taxas de crédito (3.19% a 16.35%)');
+        $this->command->info('  - 18 taxas de crédito (3.69% a 16.85%)');
     }
 }
