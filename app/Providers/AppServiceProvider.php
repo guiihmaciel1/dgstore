@@ -24,9 +24,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(DgifipeApiClient::class, function () {
             return new DgifipeApiClient(
-                baseUrl: config('services.dgifipe.base_url'),
-                token: config('services.dgifipe.token'),
-                timeout: config('services.dgifipe.timeout', 10),
+                baseUrl: config('services.dgifipe.base_url', 'https://ifipe.dgstorerp.com.br'),
+                token: config('services.dgifipe.token', ''),
+                timeout: (int) config('services.dgifipe.timeout', 10),
             );
         });
     }
