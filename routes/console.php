@@ -15,3 +15,4 @@ Schedule::command('sessions:prune')->dailyAt('01:00');
 Schedule::command('crm:check-overdue-deals')->dailyAt('08:00');
 Schedule::command('imports:check-delayed')->dailyAt('08:05');
 Schedule::command('news:fetch-apple')->hourly();
+Schedule::command('db:backup')->dailyAt('03:00');
