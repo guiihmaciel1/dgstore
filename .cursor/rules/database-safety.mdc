@@ -1,0 +1,39 @@
+---
+description: Regras criticas de seguranca do banco de dados - NUNCA executar comandos destrutivos
+alwaysApply: true
+---
+
+# Protecao do Banco de Dados - REGRA CRITICA
+
+## COMANDOS PROIBIDOS - NUNCA EXECUTE
+
+- `php artisan migrate:fresh`
+- `php artisan migrate:reset`
+- `php artisan migrate:refresh`
+- `php artisan db:wipe`
+- `php artisan test` / `phpunit` / qualquer comando de teste automatizado
+- `DROP DATABASE` / `DROP TABLE` / `TRUNCATE` (via SQL direto)
+- Qualquer comando que apague dados ou recrie tabelas
+
+## Por que testes sao proibidos
+
+O trait `RefreshDatabase` do Laravel executa `migrate:fresh` internamente. Se o ambiente de teste nao estiver 100% isolado do banco de producao, ele DESTROI todos os dados. Nao rode testes. Ponto final.
+
+## Banco de producao
+
+- Host: 187.77.37.51 / Database: dgstore
+- Este e o banco REAL com dados de clientes, vendas e financeiro
+- Backups sao semanais (Hostinger) - perda de dados entre backups e irrecuperavel
+
+## Comandos SEGUROS permitidos
+
+- `php artisan migrate` (apenas adiciona tabelas/colunas novas)
+- `php artisan migrate:status` (apenas leitura)
+- `php artisan db:seed --class=NomeDoSeeder` (seeder especifico)
+- `php artisan tinker` com SELECT/INSERT/UPDATE pontuais
+- `php artisan serve`
+
+## Ao atualizar taxas/configuracoes
+
+- Use apenas `php artisan db:seed --class=CardMdrRateSeeder` (seeder especifico)
+- NUNCA rode `php artisan db:seed` sem `--class`
