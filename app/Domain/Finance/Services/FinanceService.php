@@ -240,8 +240,13 @@ class FinanceService
             $query->where('description', 'like', '%' . $filters['search'] . '%');
         }
 
-        return $query->orderByRaw("FIELD(status, 'overdue', 'pending', 'paid', 'cancelled')")
-            ->orderBy('due_date')
+        $query->orderByRaw("FIELD(status, 'overdue', 'pending', 'paid', 'cancelled')");
+
+        if ($type === 'expense') {
+            $query->orderByRaw("CASE WHEN paid_at IS NOT NULL THEN paid_at END DESC");
+        }
+
+        return $query->orderBy('due_date')
             ->paginate($perPage)
             ->withQueryString();
     }
