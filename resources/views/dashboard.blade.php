@@ -830,23 +830,25 @@
              style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1.5rem;">
             <div @click="stockModalOpen = false" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5);"></div>
             <div @click.stop style="position: relative; background: white; border-radius: 1rem; width: 100%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
-                <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; border-radius: 1rem 1rem 0 0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
-                    <div>
-                        <h2 style="font-size: 1.25rem; font-weight: 800; color: #111827; margin: 0;">📱 Nosso Estoque</h2>
-                        <p style="font-size: 0.75rem; color: #6b7280; margin: 0.25rem 0 0 0;">Consulte o que temos disponível para venda</p>
+                <div class="p-4 sm:px-6 sm:py-5 border-b border-gray-200 rounded-t-2xl shrink-0">
+                    <div class="flex items-start justify-between mb-3">
+                        <div>
+                            <h2 class="text-xl font-extrabold text-gray-900 m-0">📱 Nosso Estoque</h2>
+                            <p class="text-xs text-gray-500 mt-1 mb-0">Consulte o que temos disponível para venda</p>
+                        </div>
+                        <button @click="stockModalOpen = false" class="w-8 h-8 rounded-lg bg-gray-100 border-none cursor-pointer flex items-center justify-center text-base text-gray-500 shrink-0 hover:bg-gray-200 transition-colors">✕</button>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="flex flex-col sm:flex-row gap-2">
                         @if(count($stockItems['used']) > 0)
-                        <button @click="copyUsed()" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.4375rem 0.75rem; background: #fff7ed; color: #ea580c; font-size: 0.7rem; font-weight: 700; border-radius: 0.5rem; border: 1px solid #fed7aa; cursor: pointer; transition: all 0.15s; white-space: nowrap;" onmouseover="this.style.background='#ffedd5'" onmouseout="this.style.background='#fff7ed'">
+                        <button @click="copyUsed()" class="inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-orange-50 text-orange-600 text-[0.7rem] font-bold rounded-lg border border-orange-200 cursor-pointer transition-colors whitespace-nowrap hover:bg-orange-100">
                             <span x-text="copiedUsed ? '✓ Copiado!' : '📋 Copiar Seminovos'"></span>
                         </button>
                         @endif
                         @if(count($stockItems['new']) > 0)
-                        <button @click="copyNew()" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.4375rem 0.75rem; background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 700; border-radius: 0.5rem; border: 1px solid #bfdbfe; cursor: pointer; transition: all 0.15s; white-space: nowrap;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                        <button @click="copyNew()" class="inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-blue-50 text-blue-600 text-[0.7rem] font-bold rounded-lg border border-blue-200 cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-100">
                             <span x-text="copiedNew ? '✓ Copiado!' : '📋 Copiar Novos'"></span>
                         </button>
                         @endif
-                        <button @click="stockModalOpen = false" style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #6b7280; flex-shrink: 0;">✕</button>
                     </div>
                 </div>
                 <div style="padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1;">
