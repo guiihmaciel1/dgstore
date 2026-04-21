@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="title">Painel do Estagiário</x-slot>
-    <div class="py-6">
+    <div class="py-6" x-data="{ stockModalOpen: false }">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
@@ -108,21 +108,20 @@
                     <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                     Nova Venda
                 </a>
+                <button @click="stockModalOpen = true" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: linear-gradient(to right, #f59e0b, #ea580c); color: white; font-size: 0.75rem; font-weight: 700; border-radius: 0.5rem; text-decoration: none; border: none; cursor: pointer; box-shadow: 0 2px 6px rgba(245,158,11,0.3);">
+                    📱 Seminovos
+                </button>
                 <a href="{{ route('schedule.index') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: linear-gradient(to right, #6366f1, #4f46e5); color: white; font-size: 0.75rem; font-weight: 700; border-radius: 0.5rem; text-decoration: none; box-shadow: 0 2px 6px rgba(99,102,241,0.3);">
-                    <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    Agenda
+                    📅 Agenda
                 </a>
                 <a href="{{ route('marketing.index') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: white; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; border: 1px solid #e5e7eb;">
-                    <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-                    Marketing
+                    📣 Marketing
                 </a>
                 <a href="{{ route('customers.index') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: white; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; border: 1px solid #e5e7eb;">
-                    <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    Clientes
+                    👥 Clientes
                 </a>
                 <a href="{{ route('tools.stone-calculator') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: white; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; border: 1px solid #e5e7eb;">
-                    <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                    Calculadora Stone
+                    💳 Calculadora Stone
                 </a>
             </div>
 
@@ -133,19 +132,18 @@
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                         <div>
                             <p style="font-size: 0.75rem; color: #6b7280; font-weight: 500;">Minhas Vendas (Mês)</p>
-                            <p style="font-size: 1.5rem; font-weight: 800; color: #111827;">{{ $mySalesCount }}</p>
+                            <p style="font-size: 1.5rem; font-weight: 800; color: #111827;">{{ $mySalesCount }}
+                                <span style="font-size: 0.875rem; font-weight: 500; color: #6b7280;">vendas</span>
+                            </p>
                         </div>
                         <div style="width: 2.5rem; height: 2.5rem; background: #111827; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                         </div>
                     </div>
-                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.5rem;">
-                        Total: <strong style="color: #111827;">R$ {{ number_format($mySalesTotal, 2, ',', '.') }}</strong>
-                    </p>
                 </div>
 
                 {{-- Comissão do Mês --}}
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem;">
+                <div x-data="{ showInfo: false }" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; position: relative;">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                         <div>
                             <p style="font-size: 0.75rem; color: #6b7280; font-weight: 500;">Comissão do Mês</p>
@@ -155,15 +153,33 @@
                             <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                     </div>
-                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.5rem;">
-                        Taxa: <strong style="color: #111827;">
-                            @if(($user->commission_type ?? 'percentage') === 'fixed')
-                                R$ {{ number_format((float)($user->commission_rate ?? 0), 2, ',', '.') }}/venda
-                            @else
-                                {{ $user->commission_rate ?? 0 }}%
-                            @endif
-                        </strong>
-                    </p>
+                    <div style="display: flex; align-items: center; gap: 0.375rem; margin-top: 0.5rem;">
+                        <p style="font-size: 0.7rem; color: #374151; margin: 0;">
+                            <strong style="color: #059669;">½ venda R$25</strong> · <strong style="color: #059669;">Completa R$50</strong>
+                        </p>
+                        <button @click="showInfo = !showInfo" style="width: 1.125rem; height: 1.125rem; border-radius: 9999px; background: #e5e7eb; border: none; cursor: pointer; font-size: 0.6rem; font-weight: 800; color: #6b7280; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">i</button>
+                    </div>
+                    <div x-show="showInfo" x-cloak @click.outside="showInfo = false"
+                         style="position: absolute; bottom: calc(100% + 0.5rem); left: 0.5rem; right: 0.5rem; background: #111827; color: white; border-radius: 0.75rem; padding: 0.875rem; font-size: 0.7rem; z-index: 20; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                        <p style="font-weight: 700; margin: 0 0 0.5rem 0; font-size: 0.75rem;">💰 Como funciona a comissão?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.375rem;">
+                            <div style="display: flex; align-items: flex-start; gap: 0.375rem;">
+                                <span style="font-size: 0.8rem;">🤝</span>
+                                <div>
+                                    <strong style="color: #34d399;">Meia venda (R$25)</strong><br>
+                                    Atender o cliente e fechar a venda
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start; gap: 0.375rem;">
+                                <span style="font-size: 0.8rem;">⭐</span>
+                                <div>
+                                    <strong style="color: #fbbf24;">Venda completa (R$50)</strong><br>
+                                    Atender, fechar, receber, transferir e cadastrar no sistema
+                                </div>
+                            </div>
+                        </div>
+                        <div style="position: absolute; bottom: -0.375rem; left: 1.5rem; width: 0.75rem; height: 0.75rem; background: #111827; transform: rotate(45deg);"></div>
+                    </div>
                 </div>
 
                 {{-- Saldo de Comissão --}}
@@ -218,14 +234,10 @@
                         <span style="font-weight: 600; color: #0d9488; margin-left: 0.25rem;">{{ $user->role->label() }}</span>
                     </div>
                     <div>
-                        <span style="color: #6b7280;">Taxa Comissão:</span>
-                        <span style="font-weight: 600; color: #111827; margin-left: 0.25rem;">
-                            @if(($user->commission_type ?? 'percentage') === 'fixed')
-                                R$ {{ number_format((float)($user->commission_rate ?? 0), 2, ',', '.') }}/venda
-                            @else
-                                {{ $user->commission_rate ?? 0 }}%
-                            @endif
-                        </span>
+                        <span style="color: #6b7280;">Comissão:</span>
+                        <span style="font-weight: 600; color: #059669; margin-left: 0.25rem;">½ venda R$25</span>
+                        <span style="color: #9ca3af; margin: 0 0.125rem;">·</span>
+                        <span style="font-weight: 600; color: #059669;">Completa R$50</span>
                     </div>
                 </div>
             </div>
@@ -258,6 +270,112 @@
             </div>
             @endif
 
+        </div>
+
+        {{-- MODAL CATÁLOGO DE ESTOQUE --}}
+        <div x-show="stockModalOpen" x-cloak
+             style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+            <div @click="stockModalOpen = false" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5);"></div>
+            <div @click.stop style="position: relative; background: white; border-radius: 1rem; width: 100%; max-width: 700px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
+                {{-- Header --}}
+                <div style="position: sticky; top: 0; background: white; padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; border-radius: 1rem 1rem 0 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h2 style="font-size: 1.125rem; font-weight: 800; color: #111827; margin: 0;">📱 Nosso Estoque</h2>
+                        <p style="font-size: 0.75rem; color: #6b7280; margin: 0.25rem 0 0 0;">Consulte o que temos disponível para venda</p>
+                    </div>
+                    <button @click="stockModalOpen = false" style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #6b7280;">✕</button>
+                </div>
+
+                <div style="padding: 1.25rem 1.5rem;">
+                    {{-- SEMINOVOS --}}
+                    @if(count($stockItems['used']) > 0)
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                            <span style="font-size: 1.125rem;">🔄</span>
+                            <h3 style="font-size: 0.9375rem; font-weight: 800; color: #111827; margin: 0;">Seminovos</h3>
+                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fff7ed; color: #ea580c;">{{ $stockItems['usedCount'] }} un.</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.625rem;">
+                            @foreach($stockItems['used'] as $item)
+                            <div style="background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%); border-radius: 0.75rem; border: 1px solid #fed7aa; padding: 0.875rem; position: relative;">
+                                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem;">
+                                    <span style="font-size: 0.55rem; font-weight: 800; padding: 0.1rem 0.375rem; border-radius: 9999px; background: #ea580c; color: white; text-transform: uppercase; letter-spacing: 0.04em;">SEMINOVO</span>
+                                    @if($item['qty'] > 1)
+                                    <span style="font-size: 0.7rem; font-weight: 800; color: #ea580c;">{{ $item['qty'] }}x</span>
+                                    @endif
+                                </div>
+                                <p style="font-size: 0.8rem; font-weight: 700; color: #111827; margin: 0.5rem 0 0.25rem 0; line-height: 1.2;">{{ $item['name'] }}</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.375rem;">
+                                    @if($item['storage'])
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">💾 {{ $item['storage'] }}</span>
+                                    @endif
+                                    @if($item['color'])
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">🎨 {{ $item['color'] }}</span>
+                                    @endif
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.375rem;">
+                                    @if($item['battery'])
+                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; {{ $item['battery'] >= 80 ? 'background: #ecfdf5; color: #059669;' : 'background: #fef2f2; color: #dc2626;' }}">🔋 {{ $item['battery'] }}%</span>
+                                    @endif
+                                    @if($item['has_box'])
+                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f0fdf4; color: #16a34a;">📦 Caixa</span>
+                                    @endif
+                                    @if($item['has_cable'])
+                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f0fdf4; color: #16a34a;">🔌 Cabo</span>
+                                    @endif
+                                </div>
+                                @if($item['price'] > 0)
+                                <p style="font-size: 0.875rem; font-weight: 800; color: #059669; margin: 0;">R$ {{ number_format($item['price'], 2, ',', '.') }}</p>
+                                @endif
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- ESTOQUE NOVO --}}
+                    @if(count($stockItems['new']) > 0)
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                            <span style="font-size: 1.125rem;">✨</span>
+                            <h3 style="font-size: 0.9375rem; font-weight: 800; color: #111827; margin: 0;">Estoque Novo</h3>
+                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #eff6ff; color: #2563eb;">{{ $stockItems['newCount'] }} mod.</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.625rem;">
+                            @foreach($stockItems['new'] as $item)
+                            <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border-radius: 0.75rem; border: 1px solid #bfdbfe; padding: 0.875rem; position: relative;">
+                                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem;">
+                                    <span style="font-size: 0.55rem; font-weight: 800; padding: 0.1rem 0.375rem; border-radius: 9999px; background: #2563eb; color: white; text-transform: uppercase; letter-spacing: 0.04em;">NOVO</span>
+                                    @if($item['qty'] > 1)
+                                    <span style="font-size: 0.7rem; font-weight: 800; color: #2563eb;">{{ $item['qty'] }}x</span>
+                                    @endif
+                                </div>
+                                <p style="font-size: 0.8rem; font-weight: 700; color: #111827; margin: 0.5rem 0 0.25rem 0; line-height: 1.2;">{{ $item['name'] }}</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.375rem;">
+                                    @if($item['storage'])
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">💾 {{ $item['storage'] }}</span>
+                                    @endif
+                                    @if($item['color'])
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">🎨 {{ $item['color'] }}</span>
+                                    @endif
+                                </div>
+                                @if($item['price'] > 0)
+                                <p style="font-size: 0.875rem; font-weight: 800; color: #2563eb; margin: 0;">R$ {{ number_format($item['price'], 2, ',', '.') }}</p>
+                                @endif
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(count($stockItems['used']) === 0 && count($stockItems['new']) === 0)
+                    <div style="text-align: center; padding: 2rem; color: #6b7280;">
+                        <p style="font-size: 2rem; margin-bottom: 0.5rem;">📭</p>
+                        <p style="font-size: 0.875rem;">Nenhum produto no estoque no momento.</p>
+                    </div>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
 </x-app-layout>
