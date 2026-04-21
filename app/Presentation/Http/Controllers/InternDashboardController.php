@@ -8,6 +8,7 @@ use App\Domain\Commission\Models\Commission;
 use App\Domain\Commission\Models\CommissionWithdrawal;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Marketing\Models\MarketingPrice;
+use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Product\Models\Product;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
@@ -112,23 +113,27 @@ class InternDashboardController extends Controller
             ->where('category', 'smartphone')
             ->get();
 
+        $usedListings = MarketingUsedListing::all()
+            ->keyBy(fn ($l) => $l->listable_type.'_'.$l->listable_id);
+
         $grouped = $products->groupBy(fn ($p) => $p->name . '|' . ($p->storage ?? '') . '|' . ($p->color ?? '') . '|' . $p->condition->value);
 
-        $items = $grouped->map(function ($group, $key) {
+        $items = $grouped->map(function ($group) use ($usedListings) {
             $first = $group->first();
-            $qty = $group->sum('stock_quantity');
-            $condition = $first->condition->value;
+            $listingKey = Product::class.'_'.$first->id;
+            $listing = $usedListings->get($listingKey);
 
             return [
                 'name' => $first->name,
                 'storage' => $first->storage,
                 'color' => $first->color,
-                'condition' => $condition,
-                'qty' => $qty,
+                'condition' => $first->condition->value,
+                'qty' => $group->sum('stock_quantity'),
                 'price' => (float) $first->sale_price,
-                'battery' => $first->battery_health,
-                'has_box' => (bool) $first->has_box,
-                'has_cable' => (bool) $first->has_cable,
+                'battery' => $listing?->battery_health ?? $first->battery_health,
+                'has_box' => (bool) ($listing?->has_box ?? $first->has_box),
+                'has_cable' => (bool) ($listing?->has_cable ?? $first->has_cable),
+                'notes' => $listing?->notes ?? '',
                 'sort_gen' => $this->extractIphoneGeneration($first->name),
                 'sort_model' => $this->extractModelTier($first->name),
             ];

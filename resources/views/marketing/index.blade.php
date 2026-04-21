@@ -464,8 +464,9 @@
                         Nenhum item novo disponivel
                     </div>
 
-                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;" x-show="resaleConsignment.length > 0">
-                        <table style="width: 100%; border-collapse: collapse;">
+                    <div class="bg-white border border-gray-200 rounded-xl overflow-hidden" x-show="resaleConsignment.length > 0">
+                        <div class="overflow-x-auto">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 550px;">
                             <thead>
                                 <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                     <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Exibir</th>
@@ -510,6 +511,7 @@
                                 </template>
                             </tbody>
                         </table>
+                        </div>
                     </div>
                 </div>
 

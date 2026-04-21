@@ -860,37 +860,48 @@
                             <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fff7ed; color: #ea580c;">{{ $stockItems['usedCount'] }} un.</span>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.625rem;">
-                            @foreach($stockItems['used'] as $item)
-                            <div style="background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%); border-radius: 0.75rem; border: 1px solid #fed7aa; padding: 0.875rem; position: relative;">
-                                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem;">
-                                    <span style="font-size: 0.55rem; font-weight: 800; padding: 0.1rem 0.375rem; border-radius: 9999px; background: #ea580c; color: white; text-transform: uppercase; letter-spacing: 0.04em;">SEMINOVO</span>
+                            @foreach($stockItems['used'] as $idx => $item)
+                            <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200 p-3.5 relative flex flex-col">
+                                <div class="flex items-start justify-between gap-1">
+                                    <span class="text-[0.55rem] font-extrabold px-1.5 py-0.5 rounded-full bg-orange-600 text-white uppercase tracking-wide">SEMINOVO</span>
                                     @if($item['qty'] > 1)
-                                    <span style="font-size: 0.7rem; font-weight: 800; color: #ea580c;">{{ $item['qty'] }}x</span>
+                                    <span class="text-[0.7rem] font-extrabold text-orange-600">{{ $item['qty'] }}x</span>
                                     @endif
                                 </div>
-                                <p style="font-size: 0.8rem; font-weight: 700; color: #111827; margin: 0.5rem 0 0.25rem 0; line-height: 1.2;">{{ $item['name'] }}</p>
-                                <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.375rem;">
+                                <p class="text-[0.8rem] font-bold text-gray-900 mt-2 mb-1 leading-tight">{{ $item['name'] }}</p>
+                                <div class="flex flex-wrap gap-1 mb-1.5">
                                     @if($item['storage'])
-                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">💾 {{ $item['storage'] }}</span>
+                                    <span class="text-[0.625rem] font-semibold px-1.5 py-px rounded-full bg-white text-gray-700 border border-gray-200">💾 {{ $item['storage'] }}</span>
                                     @endif
                                     @if($item['color'])
-                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">🎨 {{ $item['color'] }}</span>
+                                    <span class="text-[0.625rem] font-semibold px-1.5 py-px rounded-full bg-white text-gray-700 border border-gray-200">🎨 {{ $item['color'] }}</span>
                                     @endif
                                 </div>
-                                <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.375rem;">
+                                <div class="flex flex-wrap gap-1 mb-1.5">
                                     @if($item['battery'])
-                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; {{ $item['battery'] >= 80 ? 'background: #ecfdf5; color: #059669;' : 'background: #fef2f2; color: #dc2626;' }}">🔋 {{ $item['battery'] }}%</span>
+                                    <span class="text-[0.6rem] font-semibold px-1.5 py-px rounded-full {{ $item['battery'] >= 80 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600' }}">🔋 {{ $item['battery'] }}%</span>
                                     @endif
                                     @if($item['has_box'])
-                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f0fdf4; color: #16a34a;">📦 Caixa</span>
+                                    <span class="text-[0.6rem] font-semibold px-1.5 py-px rounded-full bg-green-50 text-green-600">📦 Caixa</span>
                                     @endif
                                     @if($item['has_cable'])
-                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f0fdf4; color: #16a34a;">🔌 Cabo</span>
+                                    <span class="text-[0.6rem] font-semibold px-1.5 py-px rounded-full bg-green-50 text-green-600">🔌 Cabo</span>
                                     @endif
                                 </div>
-                                @if($item['price'] > 0)
-                                <p style="font-size: 0.875rem; font-weight: 800; color: #059669; margin: 0;">R$ {{ number_format($item['price'], 2, ',', '.') }}</p>
+                                @if(!empty($item['notes']))
+                                <p class="text-[0.65rem] text-gray-500 italic mb-1.5 leading-snug">📝 {{ $item['notes'] }}</p>
                                 @endif
+                                @if($item['price'] > 0)
+                                <div class="mt-auto">
+                                    <span class="text-[0.7rem] text-gray-400 line-through">De R$ {{ number_format($item['price'] + 200, 2, ',', '.') }}</span>
+                                    <p class="text-[0.875rem] font-extrabold text-emerald-600 m-0">Por R$ {{ number_format($item['price'], 2, ',', '.') }}</p>
+                                </div>
+                                @endif
+                                <button type="button" @click="copyItem({{ $idx }})"
+                                        class="mt-2 w-full py-1.5 rounded-lg text-[0.7rem] font-bold border-none cursor-pointer flex items-center justify-center gap-1 transition-colors bg-orange-600 text-white hover:bg-orange-700"
+                                        :class="copiedIdx === {{ $idx }} ? '!bg-emerald-600' : ''">
+                                    <span x-text="copiedIdx === {{ $idx }} ? '✓ Copiado!' : '📋 Enviar p/ cliente'"></span>
+                                </button>
                             </div>
                             @endforeach
                         </div>
@@ -945,6 +956,7 @@
                 return {
                     copiedUsed: false,
                     copiedNew: false,
+                    copiedIdx: null,
                     _formatPrice(v) {
                         return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                     },
@@ -974,6 +986,40 @@
                         });
                         msg += '\n_Sujeito à disponibilidade_';
                         return msg;
+                    },
+                    _buildItemMsg(item) {
+                        let lines = [];
+                        let title = '📱 *' + item.name;
+                        if (item.storage) title += ' ' + item.storage;
+                        if (item.color) title += ' ' + item.color;
+                        title += '*';
+                        lines.push(title);
+                        lines.push('');
+                        let details = [];
+                        if (item.battery) details.push('🔋 Bateria: *' + item.battery + '%*');
+                        if (item.has_box) details.push('📦 Com caixa');
+                        if (item.has_cable) details.push('🔌 Com cabo');
+                        if (!item.has_box) details.push('📦 Sem caixa');
+                        if (!item.has_cable) details.push('🔌 Sem cabo');
+                        if (details.length) lines.push(details.join(' | '));
+                        if (item.notes) {
+                            lines.push('📝 _' + item.notes + '_');
+                        }
+                        if (item.price > 0) {
+                            lines.push('');
+                            lines.push('~De ' + this._formatPrice(item.price + 200) + '~');
+                            lines.push('✅ *Por ' + this._formatPrice(item.price) + '*');
+                        }
+                        lines.push('');
+                        lines.push('_DG Store - Sujeito à disponibilidade_');
+                        return lines.join('\n');
+                    },
+                    copyItem(idx) {
+                        const item = usedItems[idx];
+                        if (!item) return;
+                        navigator.clipboard.writeText(this._buildItemMsg(item));
+                        this.copiedIdx = idx;
+                        setTimeout(() => this.copiedIdx = null, 2000);
                     },
                     copyUsed() {
                         navigator.clipboard.writeText(this._buildUsedMsg());
