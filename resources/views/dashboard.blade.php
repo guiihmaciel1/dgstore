@@ -826,17 +826,30 @@
 
         {{-- MODAL CATÁLOGO DE ESTOQUE --}}
         <div x-show="stockModalOpen" x-cloak
-             style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+             x-data="stockCatalogModal()"
+             style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1.5rem;">
             <div @click="stockModalOpen = false" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5);"></div>
-            <div @click.stop style="position: relative; background: white; border-radius: 1rem; width: 100%; max-width: 700px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
-                <div style="position: sticky; top: 0; background: white; padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; border-radius: 1rem 1rem 0 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;">
+            <div @click.stop style="position: relative; background: white; border-radius: 1rem; width: 100%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
+                <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; border-radius: 1rem 1rem 0 0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
                     <div>
-                        <h2 style="font-size: 1.125rem; font-weight: 800; color: #111827; margin: 0;">📱 Nosso Estoque</h2>
+                        <h2 style="font-size: 1.25rem; font-weight: 800; color: #111827; margin: 0;">📱 Nosso Estoque</h2>
                         <p style="font-size: 0.75rem; color: #6b7280; margin: 0.25rem 0 0 0;">Consulte o que temos disponível para venda</p>
                     </div>
-                    <button @click="stockModalOpen = false" style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #6b7280;">✕</button>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        @if(count($stockItems['used']) > 0)
+                        <button @click="copyUsed()" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.4375rem 0.75rem; background: #fff7ed; color: #ea580c; font-size: 0.7rem; font-weight: 700; border-radius: 0.5rem; border: 1px solid #fed7aa; cursor: pointer; transition: all 0.15s; white-space: nowrap;" onmouseover="this.style.background='#ffedd5'" onmouseout="this.style.background='#fff7ed'">
+                            <span x-text="copiedUsed ? '✓ Copiado!' : '📋 Copiar Seminovos'"></span>
+                        </button>
+                        @endif
+                        @if(count($stockItems['new']) > 0)
+                        <button @click="copyNew()" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.4375rem 0.75rem; background: #eff6ff; color: #2563eb; font-size: 0.7rem; font-weight: 700; border-radius: 0.5rem; border: 1px solid #bfdbfe; cursor: pointer; transition: all 0.15s; white-space: nowrap;" onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                            <span x-text="copiedNew ? '✓ Copiado!' : '📋 Copiar Novos'"></span>
+                        </button>
+                        @endif
+                        <button @click="stockModalOpen = false" style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #6b7280; flex-shrink: 0;">✕</button>
+                    </div>
                 </div>
-                <div style="padding: 1.25rem 1.5rem;">
+                <div style="padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1;">
                     @if(count($stockItems['used']) > 0)
                     <div style="margin-bottom: 1.5rem;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
@@ -844,7 +857,7 @@
                             <h3 style="font-size: 0.9375rem; font-weight: 800; color: #111827; margin: 0;">Seminovos</h3>
                             <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fff7ed; color: #ea580c;">{{ $stockItems['usedCount'] }} un.</span>
                         </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.625rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.625rem;">
                             @foreach($stockItems['used'] as $item)
                             <div style="background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%); border-radius: 0.75rem; border: 1px solid #fed7aa; padding: 0.875rem; position: relative;">
                                 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem;">
@@ -888,7 +901,7 @@
                             <h3 style="font-size: 0.9375rem; font-weight: 800; color: #111827; margin: 0;">Estoque Novo</h3>
                             <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #eff6ff; color: #2563eb;">{{ $stockItems['newCount'] }} mod.</span>
                         </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.625rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.625rem;">
                             @foreach($stockItems['new'] as $item)
                             <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border-radius: 0.75rem; border: 1px solid #bfdbfe; padding: 0.875rem; position: relative;">
                                 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem;">
@@ -923,6 +936,56 @@
                 </div>
             </div>
         </div>
+        <script>
+            function stockCatalogModal() {
+                const usedItems = @json($stockItems['used']);
+                const newItems = @json($stockItems['new']);
+                return {
+                    copiedUsed: false,
+                    copiedNew: false,
+                    _formatPrice(v) {
+                        return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    },
+                    _buildUsedMsg() {
+                        let msg = '📱 *SEMINOVOS DISPONÍVEIS - DG Store* 📱\n\n';
+                        usedItems.forEach(i => {
+                            let line = '• ' + i.name;
+                            if (i.storage) line += ' ' + i.storage;
+                            if (i.color) line += ' ' + i.color;
+                            if (i.battery) line += ' 🔋' + i.battery + '%';
+                            if (i.price > 0) line += ' - *' + this._formatPrice(i.price) + '*';
+                            if (i.qty > 1) line += ' (' + i.qty + 'x)';
+                            msg += line + '\n';
+                        });
+                        msg += '\n_Sujeito à disponibilidade_';
+                        return msg;
+                    },
+                    _buildNewMsg() {
+                        let msg = '✨ *ESTOQUE NOVO - DG Store* ✨\n\n';
+                        newItems.forEach(i => {
+                            let line = '• ' + i.name;
+                            if (i.storage) line += ' ' + i.storage;
+                            if (i.color) line += ' ' + i.color;
+                            if (i.price > 0) line += ' - *' + this._formatPrice(i.price) + '*';
+                            if (i.qty > 1) line += ' (' + i.qty + 'x)';
+                            msg += line + '\n';
+                        });
+                        msg += '\n_Sujeito à disponibilidade_';
+                        return msg;
+                    },
+                    copyUsed() {
+                        navigator.clipboard.writeText(this._buildUsedMsg());
+                        this.copiedUsed = true;
+                        setTimeout(() => this.copiedUsed = false, 2000);
+                    },
+                    copyNew() {
+                        navigator.clipboard.writeText(this._buildNewMsg());
+                        this.copiedNew = true;
+                        setTimeout(() => this.copiedNew = false, 2000);
+                    },
+                };
+            }
+        </script>
     </div>
 
     {{-- Modal Resumo do Mês (Fullscreen) --}}
