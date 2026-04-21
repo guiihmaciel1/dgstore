@@ -318,6 +318,19 @@ class MarketingController extends Controller
             ]
         );
 
+        if ($request->listable_type === Product::class) {
+            $product = Product::find($request->listable_id);
+            if ($product) {
+                $product->update(array_filter([
+                    'sale_price' => $request->final_price,
+                    'cost_price' => $request->cost_price,
+                    'battery_health' => $request->battery_health,
+                    'has_box' => $request->boolean('has_box'),
+                    'has_cable' => $request->boolean('has_cable'),
+                ], fn ($v) => $v !== null));
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Dados do seminovo salvos com sucesso!',
@@ -453,6 +466,13 @@ class MarketingController extends Controller
                 'visible' => $request->boolean('visible'),
             ]
         );
+
+        if ($request->resaleable_type === Product::class) {
+            $product = Product::find($request->resaleable_id);
+            if ($product) {
+                $product->update(['resale_price' => $request->resale_price]);
+            }
+        }
 
         return response()->json([
             'success' => true,
