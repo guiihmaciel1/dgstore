@@ -270,6 +270,9 @@
             </div>
             @endif
 
+            {{-- CHECKLIST DIÁRIO --}}
+            @include('intern._daily-checklist')
+
         </div>
 
         {{-- MODAL CATÁLOGO DE ESTOQUE --}}
