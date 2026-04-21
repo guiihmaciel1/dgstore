@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controllers\Admin;
 
 use App\Domain\Commission\Models\Commission;
 use App\Domain\Commission\Models\CommissionWithdrawal;
+use App\Domain\Finance\Services\FinanceService;
 use App\Domain\User\Enums\UserRole;
 use App\Domain\User\Models\User;
 use App\Http\Controllers\Controller;
@@ -15,6 +16,8 @@ use Illuminate\View\View;
 
 class CommissionController extends Controller
 {
+    public function __construct(private FinanceService $financeService) {}
+
     public function index(Request $request): View
     {
         $interns = User::where('role', UserRole::Intern)->where('active', true)->get();
@@ -98,25 +101,62 @@ class CommissionController extends Controller
         return back()->with('success', "Taxa de comissão de {$user->name} atualizada para {$label}.");
     }
 
+    public function storeManual(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'user_id'           => ['required', 'exists:users,id'],
+            'commission_amount' => ['required', 'numeric', 'min:0.01'],
+            'description'       => ['required', 'string', 'max:500'],
+            'date'              => ['required', 'date'],
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+
+        Commission::create([
+            'user_id'           => $user->id,
+            'sale_id'           => null,
+            'sale_number'       => null,
+            'sale_total'        => null,
+            'commission_rate'   => 0,
+            'commission_type'   => 'fixed',
+            'commission_amount' => $validated['commission_amount'],
+            'description'       => $validated['description'],
+            'is_manual'         => true,
+            'status'            => 'approved',
+        ]);
+
+        return back()->with('success', 'Comissão manual lançada com sucesso.');
+    }
+
     public function storeWithdrawal(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'amount' => ['required', 'numeric', 'min:0.01'],
-            'date' => ['required', 'date'],
-            'reason' => ['required', 'string', 'max:500'],
+            'amount'  => ['required', 'numeric', 'min:0.01'],
+            'date'    => ['required', 'date'],
+            'reason'  => ['required', 'string', 'max:500'],
         ]);
 
-        CommissionWithdrawal::create([
-            'user_id' => $validated['user_id'],
-            'amount' => $validated['amount'],
-            'date' => $validated['date'],
-            'reason' => $validated['reason'],
+        $user = User::findOrFail($validated['user_id']);
+
+        $withdrawal = CommissionWithdrawal::create([
+            'user_id'     => $validated['user_id'],
+            'amount'      => $validated['amount'],
+            'date'        => $validated['date'],
+            'reason'      => $validated['reason'],
             'approved_by' => auth()->id(),
-            'status' => 'approved',
+            'status'      => 'approved',
         ]);
 
-        return back()->with('success', 'Saque registrado com sucesso.');
+        $this->financeService->registerCommissionPayment(
+            userId: auth()->id(),
+            amount: (float) $validated['amount'],
+            internName: $user->name,
+            withdrawalId: $withdrawal->id,
+            date: \Carbon\Carbon::parse($validated['date']),
+        );
+
+        return back()->with('success', 'Pagamento de comissão registrado e lançado no financeiro.');
     }
 
     public function approveWithdrawal(CommissionWithdrawal $withdrawal): RedirectResponse

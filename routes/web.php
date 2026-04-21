@@ -286,6 +286,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::prefix('admin/commissions')->group(function () {
                 Route::get('/', [CommissionController::class, 'index'])->name('admin.commissions.index');
                 Route::put('/{user}/rate', [CommissionController::class, 'updateRate'])->name('admin.commissions.update-rate');
+                Route::post('/manual', [CommissionController::class, 'storeManual'])->name('admin.commissions.manual.store');
                 Route::post('/withdrawals', [CommissionController::class, 'storeWithdrawal'])->name('admin.commissions.withdrawals.store');
                 Route::patch('/withdrawals/{withdrawal}/approve', [CommissionController::class, 'approveWithdrawal'])->name('admin.commissions.withdrawals.approve');
                 Route::patch('/withdrawals/{withdrawal}/reject', [CommissionController::class, 'rejectWithdrawal'])->name('admin.commissions.withdrawals.reject');

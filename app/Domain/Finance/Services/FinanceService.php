@@ -849,6 +849,43 @@ class FinanceService
         ]);
     }
 
+    public function registerCommissionPayment(
+        string $userId,
+        float $amount,
+        string $internName,
+        string $withdrawalId,
+        ?\DateTimeInterface $date = null,
+    ): ?FinancialTransaction {
+        $category = $this->getCategoryByName('Comissão', 'expense');
+
+        if (!$category) {
+            $category = FinancialCategory::create([
+                'name' => 'Comissão',
+                'type' => 'expense',
+                'color' => '#7c3aed',
+                'is_active' => true,
+                'is_system' => false,
+            ]);
+        }
+
+        $account = $this->getDefaultAccount();
+        $date = $date ?? now();
+
+        return $this->createTransaction([
+            'account_id' => $account?->id,
+            'category_id' => $category->id,
+            'user_id' => $userId,
+            'type' => 'expense',
+            'status' => 'paid',
+            'amount' => $amount,
+            'description' => "Pagamento de comissão - {$internName}",
+            'due_date' => $date instanceof \DateTimeInterface ? $date->format('Y-m-d') : now()->format('Y-m-d'),
+            'paid_at' => $date,
+            'reference_type' => 'CommissionWithdrawal',
+            'reference_id' => $withdrawalId,
+        ]);
+    }
+
     public function cancelImportTransactions(string $importOrderId): void
     {
         $transactions = FinancialTransaction::where('reference_type', 'ImportOrder')

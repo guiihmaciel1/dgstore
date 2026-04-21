@@ -22,6 +22,8 @@ class Commission extends Model
         'commission_rate',
         'commission_type',
         'commission_amount',
+        'description',
+        'is_manual',
         'status',
     ];
 
@@ -30,6 +32,7 @@ class Commission extends Model
         'commission_rate' => 'decimal:2',
         'commission_amount' => 'decimal:2',
         'commission_type' => 'string',
+        'is_manual' => 'boolean',
     ];
 
     public function user(): BelongsTo
