@@ -103,6 +103,10 @@ function dailyChecklist() {
                     { label: 'Conferir se tem story dos seminovos ativos (Instagram)', done: false },
                     { label: 'Olhar preço do concorrente GV_cell e enviar no grupo', done: false },
                     { label: 'Verificar se storys de clientes foram publicados no feed e adicionados aos destaques', done: false },
+                    { label: 'Verificar se algum cliente ficou sem resposta no WhatsApp', done: false },
+                    { label: 'Ler conversas do dia anterior para saber o que está sendo negociado', done: false },
+                    { label: 'Verificar em Vendas o que foi concluído e excluir anúncios do marketplace se necessário', done: false },
+                    { label: 'Acionar clientes que sumiram sem responder (ver Ferramentas > Mensagem WhatsApp)', done: false },
                 ],
             },
             {
