@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="title">Dashboard</x-slot>
-    <div class="py-6">
+    <div class="py-6" x-data="{ stockModalOpen: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @if(session('success'))
                 <div class="mb-4">
@@ -325,6 +325,9 @@
                     <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                     Nova Venda
                 </a>
+                <button @click="stockModalOpen = true" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: linear-gradient(to right, #f59e0b, #ea580c); color: white; font-size: 0.75rem; font-weight: 700; border-radius: 0.5rem; text-decoration: none; border: none; cursor: pointer; box-shadow: 0 2px 6px rgba(245,158,11,0.3); transition: all 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(245,158,11,0.45)'" onmouseout="this.style.boxShadow='0 2px 6px rgba(245,158,11,0.3)'">
+                    📱 Nosso Estoque
+                </button>
                 <a href="{{ route('schedule.index') }}" style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; background: linear-gradient(to right, #6366f1, #4f46e5); color: white; font-size: 0.75rem; font-weight: 700; border-radius: 0.5rem; text-decoration: none; border: 1px solid #6366f1; box-shadow: 0 2px 6px rgba(99,102,241,0.3); transition: all 0.15s;" onmouseover="this.style.boxShadow='0 4px 12px rgba(99,102,241,0.45)'" onmouseout="this.style.boxShadow='0 2px 6px rgba(99,102,241,0.3)'">
                     <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     Agenda
@@ -818,6 +821,106 @@
             {{-- Notícias Apple --}}
             <div class="mt-4 sm:mt-6">
                 <x-apple-news-widget :news="$appleNews" />
+            </div>
+        </div>
+
+        {{-- MODAL CATÁLOGO DE ESTOQUE --}}
+        <div x-show="stockModalOpen" x-cloak
+             style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem;">
+            <div @click="stockModalOpen = false" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5);"></div>
+            <div @click.stop style="position: relative; background: white; border-radius: 1rem; width: 100%; max-width: 700px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
+                <div style="position: sticky; top: 0; background: white; padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; border-radius: 1rem 1rem 0 0; z-index: 10; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <h2 style="font-size: 1.125rem; font-weight: 800; color: #111827; margin: 0;">📱 Nosso Estoque</h2>
+                        <p style="font-size: 0.75rem; color: #6b7280; margin: 0.25rem 0 0 0;">Consulte o que temos disponível para venda</p>
+                    </div>
+                    <button @click="stockModalOpen = false" style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #6b7280;">✕</button>
+                </div>
+                <div style="padding: 1.25rem 1.5rem;">
+                    @if(count($stockItems['used']) > 0)
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                            <span style="font-size: 1.125rem;">🔄</span>
+                            <h3 style="font-size: 0.9375rem; font-weight: 800; color: #111827; margin: 0;">Seminovos</h3>
+                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fff7ed; color: #ea580c;">{{ $stockItems['usedCount'] }} un.</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.625rem;">
+                            @foreach($stockItems['used'] as $item)
+                            <div style="background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%); border-radius: 0.75rem; border: 1px solid #fed7aa; padding: 0.875rem; position: relative;">
+                                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem;">
+                                    <span style="font-size: 0.55rem; font-weight: 800; padding: 0.1rem 0.375rem; border-radius: 9999px; background: #ea580c; color: white; text-transform: uppercase; letter-spacing: 0.04em;">SEMINOVO</span>
+                                    @if($item['qty'] > 1)
+                                    <span style="font-size: 0.7rem; font-weight: 800; color: #ea580c;">{{ $item['qty'] }}x</span>
+                                    @endif
+                                </div>
+                                <p style="font-size: 0.8rem; font-weight: 700; color: #111827; margin: 0.5rem 0 0.25rem 0; line-height: 1.2;">{{ $item['name'] }}</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.375rem;">
+                                    @if($item['storage'])
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">💾 {{ $item['storage'] }}</span>
+                                    @endif
+                                    @if($item['color'])
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">🎨 {{ $item['color'] }}</span>
+                                    @endif
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.375rem;">
+                                    @if($item['battery'])
+                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; {{ $item['battery'] >= 80 ? 'background: #ecfdf5; color: #059669;' : 'background: #fef2f2; color: #dc2626;' }}">🔋 {{ $item['battery'] }}%</span>
+                                    @endif
+                                    @if($item['has_box'])
+                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f0fdf4; color: #16a34a;">📦 Caixa</span>
+                                    @endif
+                                    @if($item['has_cable'])
+                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #f0fdf4; color: #16a34a;">🔌 Cabo</span>
+                                    @endif
+                                </div>
+                                @if($item['price'] > 0)
+                                <p style="font-size: 0.875rem; font-weight: 800; color: #059669; margin: 0;">R$ {{ number_format($item['price'], 2, ',', '.') }}</p>
+                                @endif
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                    @if(count($stockItems['new']) > 0)
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                            <span style="font-size: 1.125rem;">✨</span>
+                            <h3 style="font-size: 0.9375rem; font-weight: 800; color: #111827; margin: 0;">Estoque Novo</h3>
+                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #eff6ff; color: #2563eb;">{{ $stockItems['newCount'] }} mod.</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.625rem;">
+                            @foreach($stockItems['new'] as $item)
+                            <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border-radius: 0.75rem; border: 1px solid #bfdbfe; padding: 0.875rem; position: relative;">
+                                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem;">
+                                    <span style="font-size: 0.55rem; font-weight: 800; padding: 0.1rem 0.375rem; border-radius: 9999px; background: #2563eb; color: white; text-transform: uppercase; letter-spacing: 0.04em;">NOVO</span>
+                                    @if($item['qty'] > 1)
+                                    <span style="font-size: 0.7rem; font-weight: 800; color: #2563eb;">{{ $item['qty'] }}x</span>
+                                    @endif
+                                </div>
+                                <p style="font-size: 0.8rem; font-weight: 700; color: #111827; margin: 0.5rem 0 0.25rem 0; line-height: 1.2;">{{ $item['name'] }}</p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.375rem;">
+                                    @if($item['storage'])
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">💾 {{ $item['storage'] }}</span>
+                                    @endif
+                                    @if($item['color'])
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">🎨 {{ $item['color'] }}</span>
+                                    @endif
+                                </div>
+                                @if($item['price'] > 0)
+                                <p style="font-size: 0.875rem; font-weight: 800; color: #2563eb; margin: 0;">R$ {{ number_format($item['price'], 2, ',', '.') }}</p>
+                                @endif
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                    @if(count($stockItems['used']) === 0 && count($stockItems['new']) === 0)
+                    <div style="text-align: center; padding: 2rem; color: #6b7280;">
+                        <p style="font-size: 2rem; margin-bottom: 0.5rem;">📭</p>
+                        <p style="font-size: 0.875rem;">Nenhum produto no estoque no momento.</p>
+                    </div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
