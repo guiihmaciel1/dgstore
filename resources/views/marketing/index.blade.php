@@ -452,13 +452,24 @@
 
                 {{-- Novos Lacrados --}}
                 <div style="margin-bottom: 2rem;">
-                    <h3 style="font-size: 0.9375rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: #dbeafe; border-radius: 0.375rem;">
-                            <svg style="width: 0.875rem; height: 0.875rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                        </span>
-                        Novos Lacrados
-                        <span style="font-size: 0.7rem; font-weight: 500; color: #6b7280;" x-text="'(' + resaleConsignment.length + ' itens)'"></span>
-                    </h3>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <h3 style="font-size: 0.9375rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: #dbeafe; border-radius: 0.375rem;">
+                                <svg style="width: 0.875rem; height: 0.875rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                            </span>
+                            Novos Lacrados
+                            <span style="font-size: 0.7rem; font-weight: 500; color: #6b7280;" x-text="'(' + resaleConsignment.length + ' itens)'"></span>
+                        </h3>
+                        <button type="button" @click="saveAllResaleConsignment()" x-show="resaleConsignment.length > 0"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold border-none cursor-pointer transition-colors"
+                                :class="resaleConsignmentAllSaving ? 'bg-emerald-600 text-white' : 'bg-gray-900 text-white hover:bg-gray-800'"
+                                :disabled="resaleConsignmentAllSaving">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            <span x-text="resaleConsignmentAllSaving ? 'Salvo!' : 'Salvar Tudo'"></span>
+                        </button>
+                    </div>
 
                     <div x-show="resaleConsignment.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
                         Nenhum item novo disponivel
@@ -474,7 +485,6 @@
                                     <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 80px;">Storage</th>
                                     <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Cor</th>
                                     <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 130px;">Preco Repasse</th>
-                                    <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 60px;">Salvar</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -497,15 +507,6 @@
                                             <input type="number" step="0.01" x-model="item.resale.resale_price" placeholder="0.00"
                                                    style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
                                                    onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                                        </td>
-                                        <td style="padding: 0.375rem 0.5rem; text-align: center;">
-                                            <button type="button" @click="saveResaleItem(item)"
-                                                    :style="item._saving
-                                                        ? 'padding:0.25rem 0.625rem;background:#059669;color:white;border:none;border-radius:0.375rem;font-size:0.75rem;font-weight:600;cursor:default;'
-                                                        : 'padding:0.25rem 0.625rem;background:#111827;color:white;border:none;border-radius:0.375rem;font-size:0.75rem;font-weight:600;cursor:pointer;'"
-                                                    :disabled="item._saving">
-                                                <span x-text="item._saving ? '✓' : 'Salvar'"></span>
-                                            </button>
                                         </td>
                                     </tr>
                                 </template>
@@ -946,6 +947,7 @@
                 .sort((a, b) => (parseFloat(a.resale.resale_price) || 0) - (parseFloat(b.resale.resale_price) || 0)),
 
             resaleUsedAllSaving: false,
+            resaleConsignmentAllSaving: false,
 
             resaleUsed: [
                 ...usedForResale,
@@ -1657,6 +1659,33 @@
                 } catch (e) {
                     alert('Erro ao salvar: ' + e.message);
                     item._saving = false;
+                }
+            },
+
+            async saveAllResaleConsignment() {
+                this.resaleConsignmentAllSaving = true;
+                try {
+                    const promises = this.resaleConsignment.map(item => {
+                        return fetch('{{ route("marketing.resale-items.store") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                resaleable_type: item.morph_type,
+                                resaleable_id: item.id,
+                                resale_price: item.resale.resale_price || null,
+                                visible: item.resale.visible ? 1 : 0,
+                            }),
+                        });
+                    });
+                    await Promise.all(promises);
+                    setTimeout(() => { this.resaleConsignmentAllSaving = false; }, 1500);
+                } catch (e) {
+                    alert('Erro ao salvar: ' + e.message);
+                    this.resaleConsignmentAllSaving = false;
                 }
             },
 
