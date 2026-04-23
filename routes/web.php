@@ -183,6 +183,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Garantias
         Route::get('/warranties', [WarrantyController::class, 'index'])->name('warranties.index');
         Route::get('/warranties/{warranty}', [WarrantyController::class, 'show'])->name('warranties.show');
+        Route::get('/warranties/{warranty}/print', [WarrantyController::class, 'printGuarantee'])->name('warranties.print');
         Route::post('/warranties/{warranty}/claims', [WarrantyController::class, 'storeClaim'])->name('warranties.claims.store');
         Route::patch('/warranties/claims/{claim}', [WarrantyController::class, 'updateClaim'])->name('warranties.claims.update');
 

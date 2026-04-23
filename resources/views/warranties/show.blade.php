@@ -22,10 +22,18 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
                 </a>
-                <div>
+                <div style="flex: 1;">
                     <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Detalhes da Garantia</h1>
                     <p style="font-size: 0.875rem; color: #6b7280;">{{ $warranty->product_name }}</p>
                 </div>
+                <a href="{{ route('warranties.print', $warranty) }}" target="_blank"
+                   style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; font-size: 0.8rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; white-space: nowrap;"
+                   onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                    </svg>
+                    Imprimir Garantia
+                </a>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">

@@ -11,6 +11,7 @@ use App\Domain\Warranty\Models\WarrantyClaim;
 use App\Domain\Warranty\Services\WarrantyService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -51,6 +52,19 @@ class WarrantyController extends Controller
             'warranty' => $warranty,
             'claimTypes' => WarrantyClaimType::cases(),
         ]);
+    }
+
+    public function printGuarantee(Warranty $warranty)
+    {
+        $warranty->load(['saleItem.sale.customer', 'saleItem.product']);
+
+        $pdf = Pdf::loadView('warranties.guarantee-pdf', [
+            'warranty' => $warranty,
+        ]);
+
+        $productName = str_replace(' ', '-', $warranty->product_name);
+
+        return $pdf->stream("garantia-{$productName}.pdf");
     }
 
     public function storeClaim(Request $request, Warranty $warranty): RedirectResponse
