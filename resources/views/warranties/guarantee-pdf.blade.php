@@ -26,6 +26,7 @@
         : now()->format('d') . ' de ' . $mesesPt[(int)now()->format('m')] . ' de ' . now()->format('Y');
 
     $isUsed = $product && in_array($product->condition?->value, ['used', 'refurbished']);
+    $customer = $sale?->customer;
 @endphp
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -73,6 +74,16 @@
             font-size: 13px;
         }
         .product-info strong {
+            font-weight: 700;
+        }
+        .customer-info {
+            margin: 20px 0 20px 20px;
+        }
+        .customer-info p {
+            margin: 3px 0;
+            font-size: 13px;
+        }
+        .customer-info strong {
             font-weight: 700;
         }
         .body-text {
@@ -140,9 +151,24 @@
         @endif
     </div>
 
-    <p class="body-text">
-        foi vendido em perfeitas condições de uso e funcionamento.
+    <p class="body-text" style="margin-top: 20px;">
+        foi vendido ao cliente abaixo identificado, em perfeitas condições de uso e funcionamento:
     </p>
+
+    @if($customer)
+    <div class="customer-info">
+        <p><strong>Cliente:</strong> {{ $customer->name }}</p>
+        @if($customer->cpf)
+            <p><strong>CPF:</strong> {{ $customer->cpf }}</p>
+        @endif
+        @if($customer->phone)
+            <p><strong>Telefone:</strong> {{ $customer->phone }}</p>
+        @endif
+        @if($customer->address)
+            <p><strong>Endereço:</strong> {{ $customer->address }}</p>
+        @endif
+    </div>
+    @endif
 
     <p class="body-text" style="margin-top: 20px;">
         Concedemos ao cliente uma <span class="warranty-highlight">garantia de {{ $diasExtenso }} dias</span>,
