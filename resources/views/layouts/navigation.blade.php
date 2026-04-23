@@ -270,12 +270,12 @@
                                     Avaliador
                                     <svg class="w-3 h-3 ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                 </a>
-                                <a href="{{ route('tools.stone-calculator') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.stone-calculator') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                {{-- <a href="{{ route('tools.stone-calculator') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.stone-calculator') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                     </svg>
                                     Calculadora Stone
-                                </a>
+                                </a> --}}
                                 <a href="{{ route('imei-lookup') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('imei-lookup') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -551,9 +551,9 @@
                     Avaliador
                     <svg class="w-3 h-3 ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 </a>
-                <a href="{{ route('tools.stone-calculator') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.stone-calculator') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                {{-- <a href="{{ route('tools.stone-calculator') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.stone-calculator') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Calculadora Stone
-                </a>
+                </a> --}}
                 <a href="{{ route('imei-lookup') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('imei-lookup') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Consulta IMEI
                 </a>
