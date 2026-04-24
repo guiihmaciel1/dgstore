@@ -57,6 +57,10 @@ class TradeInProcessingService
 
         $product = $this->productService->create($productData);
 
+        if ($tradeIn->checklist_id) {
+            $product->update(['checklist_id' => $tradeIn->checklist_id]);
+        }
+
         $this->stockService->registerEntry(
             $product,
             1,

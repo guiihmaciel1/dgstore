@@ -20,6 +20,7 @@ readonly class ProductData
         public ?bool $hasBox = null,
         public ?bool $hasCable = null,
         public ?int $batteryHealth = null,
+        public ?array $deviceDetails = null,
         public ?string $imei = null,
         public ?float $costPrice = null,
         public ?float $salePrice = null,
@@ -54,6 +55,9 @@ readonly class ProductData
             hasBox: isset($data['has_box']) ? (bool) $data['has_box'] : null,
             hasCable: isset($data['has_cable']) ? (bool) $data['has_cable'] : null,
             batteryHealth: isset($data['battery_health']) ? (int) $data['battery_health'] : null,
+            deviceDetails: isset($data['device_details'])
+                ? (is_string($data['device_details']) ? json_decode($data['device_details'], true) : $data['device_details'])
+                : null,
             imei: $data['imei'] ?? null,
             costPrice: isset($data['cost_price']) ? (float) $data['cost_price'] : null,
             salePrice: isset($data['sale_price']) ? (float) $data['sale_price'] : null,
@@ -79,6 +83,7 @@ readonly class ProductData
             'has_box' => $this->hasBox,
             'has_cable' => $this->hasCable,
             'battery_health' => $this->batteryHealth,
+            'device_details' => $this->deviceDetails,
             'imei' => $this->imei,
             'cost_price' => $this->costPrice,
             'sale_price' => $this->salePrice,

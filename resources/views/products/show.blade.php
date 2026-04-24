@@ -123,6 +123,60 @@
                                 <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $product->notes }}</dd>
                             </div>
                             @endif
+
+                            @if($product->device_details)
+                            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Detalhes do Dispositivo</dt>
+                                    <button type="button" onclick="document.getElementById('device-details-full').style.display = document.getElementById('device-details-full').style.display === 'none' ? 'block' : 'none'"
+                                            style="font-size: 0.75rem; color: #2563eb; background: none; border: none; cursor: pointer; text-decoration: underline;">
+                                        Ver todos
+                                    </button>
+                                </div>
+                                @php
+                                    $details = $product->device_details;
+                                    $summaryKeys = [
+                                        'SerialNumber' => 'Número de Série',
+                                        'InternationalMobileEquipmentIdentity' => 'IMEI',
+                                        'InternationalMobileEquipmentIdentity2' => 'IMEI 2',
+                                        'ProductType' => 'Tipo do Dispositivo',
+                                        'ModelNumber' => 'Nº Modelo',
+                                        'ProductVersion' => 'Versão iOS',
+                                        'RegionInfo' => 'Região',
+                                        'DeviceName' => 'Nome do Dispositivo',
+                                        'ActivationState' => 'Ativação',
+                                        'BluetoothAddress' => 'Bluetooth MAC',
+                                        'WiFiAddress' => 'WiFi MAC',
+                                        'PhoneNumber' => 'Telefone',
+                                    ];
+                                @endphp
+                                <dd>
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.25rem 1.5rem;">
+                                        @foreach($summaryKeys as $key => $label)
+                                            @if(!empty($details[$key]))
+                                                <div style="display: flex; justify-content: space-between; padding: 0.375rem 0; border-bottom: 1px solid #f3f4f6;">
+                                                    <span style="font-size: 0.75rem; font-weight: 500; color: #6b7280;">{{ $label }}</span>
+                                                    <span style="font-size: 0.75rem; color: #111827; font-family: monospace;">{{ $details[$key] }}</span>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+
+                                    <div id="device-details-full" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; max-height: 20rem; overflow-y: auto;">
+                                        <table style="width: 100%; border-collapse: collapse;">
+                                            @foreach($details as $key => $value)
+                                                <tr style="border-bottom: 1px solid #e5e7eb;">
+                                                    <td style="padding: 0.25rem 0.5rem 0.25rem 0; font-size: 0.6875rem; font-weight: 500; color: #6b7280; white-space: nowrap;">{{ $key }}</td>
+                                                    <td style="padding: 0.25rem 0; font-size: 0.6875rem; color: #111827; font-family: monospace; word-break: break-all;">{{ $value }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </table>
+                                    </div>
+
+                                    <p style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.5rem; font-style: italic;">{{ count($details) }} propriedades importadas</p>
+                                </dd>
+                            </div>
+                            @endif
                         </div>
                     </div>
 

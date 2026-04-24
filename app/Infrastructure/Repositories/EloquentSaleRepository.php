@@ -199,6 +199,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                         'has_box' => $tradeInData->hasBox,
                         'has_cable' => $tradeInData->hasCable,
                         'notes' => $tradeInData->notes,
+                        'checklist_id' => $tradeInData->checklistId,
                         'status' => TradeInStatus::Pending,
                     ]);
 

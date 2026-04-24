@@ -22,6 +22,7 @@ use App\Presentation\Http\Controllers\ScheduleController;
 use App\Presentation\Http\Controllers\CardFeeController;
 use App\Presentation\Http\Controllers\ConsignmentStockController;
 use App\Presentation\Http\Controllers\NegotiationController;
+use App\Presentation\Http\Controllers\DeviceChecklistController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BDashboardController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BProductController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BReportController;
@@ -89,6 +90,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('/treinamento-vendas', 'tools.sales-training')->name('tools.sales-training');
         Route::get('/calculadora-stone', [ToolController::class, 'stoneCalculator'])->name('tools.stone-calculator');
         Route::get('/simulador-negociacao', [NegotiationController::class, 'index'])->name('tools.negotiation-simulator');
+
+        // Checklists
+        Route::get('/checklists', [DeviceChecklistController::class, 'index'])->name('checklists.index');
+        Route::post('/checklists', [DeviceChecklistController::class, 'store'])->name('checklists.store');
+        Route::get('/checklists/{checklist}', [DeviceChecklistController::class, 'show'])->name('checklists.show');
+        Route::delete('/checklists/{checklist}', [DeviceChecklistController::class, 'destroy'])->name('checklists.destroy');
+        Route::get('/api/checklists/search', [DeviceChecklistController::class, 'apiSearch'])->name('checklists.search');
         Route::post('/api/negotiation/evaluate', [NegotiationController::class, 'evaluate'])->name('negotiation.evaluate');
 
         // Follow-ups (legado - redireciona para CRM)

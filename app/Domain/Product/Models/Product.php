@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Product\Models;
 
+use App\Domain\Checklist\Models\DeviceChecklist;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Sale\Models\SaleItem;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,9 +42,11 @@ class Product extends Model
         'has_box',
         'has_cable',
         'battery_health',
+        'device_details',
         'active',
         'reserved',
         'reserved_by',
+        'checklist_id',
     ];
 
     protected function casts(): array
@@ -53,6 +57,7 @@ class Product extends Model
             'has_box' => 'boolean',
             'has_cable' => 'boolean',
             'battery_health' => 'integer',
+            'device_details' => 'array',
             'cost_price' => 'decimal:2',
             'sale_price' => 'decimal:2',
             'resale_price' => 'decimal:2',
@@ -76,6 +81,11 @@ class Product extends Model
     public function stockMovements(): HasMany
     {
         return $this->hasMany(StockMovement::class);
+    }
+
+    public function checklist(): BelongsTo
+    {
+        return $this->belongsTo(DeviceChecklist::class, 'checklist_id');
     }
 
     /**

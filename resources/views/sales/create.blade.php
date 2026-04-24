@@ -511,6 +511,37 @@
                                                     Com cabo
                                                 </label>
                                             </div>
+                                            <!-- Vincular Checklist -->
+                                            <div style="grid-column: span 3;" x-data="{ clSearch: '', clOpen: false, clResults: [], clDebounce: null }">
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Vincular Checklist</label>
+                                                <input type="hidden" :name="'trade_ins['+tiIndex+'][checklist_id]'" :value="ti.checklist_id || ''">
+                                                <div style="position: relative;">
+                                                    <input type="text" x-model="clSearch" @focus="clOpen = true"
+                                                           @input="clearTimeout(clDebounce); clDebounce = setTimeout(() => { fetch('/api/checklists/search?q=' + encodeURIComponent(clSearch)).then(r => r.json()).then(d => { clResults = d; clOpen = true; }); }, 250)"
+                                                           @click.away="clOpen = false"
+                                                           placeholder="Buscar checklist..." autocomplete="off"
+                                                           x-show="!ti.checklist_id"
+                                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                    <div x-show="ti.checklist_id" style="display: flex; align-items: center; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; background: #f0fdf4;">
+                                                        <span style="flex: 1; font-size: 0.875rem; color: #111827;" x-text="ti.checklist_label || ''"></span>
+                                                        <button type="button" @click="ti.checklist_id = ''; ti.checklist_label = ''" style="background: none; border: none; cursor: pointer; color: #9ca3af; padding: 2px;">
+                                                            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                        </button>
+                                                    </div>
+                                                    <div x-show="clOpen && clResults.length > 0" style="position: absolute; z-index: 50; width: 100%; margin-top: 4px; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto;">
+                                                        <template x-for="cl in clResults" :key="cl.id">
+                                                            <button type="button" @click="ti.checklist_id = cl.id; ti.checklist_label = cl.name + ' (' + cl.summary + ')'; clOpen = false; clSearch = ''"
+                                                                    style="width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: none; background: white; cursor: pointer; font-size: 0.8rem;"
+                                                                    onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                                                <div style="font-weight: 500; color: #111827;" x-text="cl.name"></div>
+                                                                <div style="font-size: 0.7rem; color: #6b7280;" x-text="cl.summary + ' — ' + cl.status"></div>
+                                                            </button>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <!-- Observações -->
                                             <div style="grid-column: span 3;">
                                                 <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Observações</label>
@@ -1669,7 +1700,9 @@
                         battery_health: null,
                         has_box: false,
                         has_cable: false,
-                        notes: ''
+                        notes: '',
+                        checklist_id: '',
+                        checklist_label: '',
                     });
                 },
 

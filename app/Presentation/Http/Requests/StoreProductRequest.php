@@ -23,6 +23,7 @@ class StoreProductRequest extends FormRequest
                 'has_box' => null,
                 'has_cable' => null,
                 'battery_health' => null,
+                'device_details' => null,
             ]);
         }
     }
@@ -40,6 +41,7 @@ class StoreProductRequest extends FormRequest
             'has_box' => ['nullable', 'boolean'],
             'has_cable' => ['nullable', 'boolean'],
             'battery_health' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'device_details' => ['nullable', 'json'],
             'imei' => ['nullable', 'string', 'max:20', 'unique:products,imei'],
             'cost_price' => ['nullable', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
@@ -49,6 +51,7 @@ class StoreProductRequest extends FormRequest
             'supplier' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string'],
             'active' => ['boolean'],
+            'checklist_id' => ['nullable', 'string', 'exists:device_checklists,id'],
         ];
     }
 
@@ -65,6 +68,7 @@ class StoreProductRequest extends FormRequest
             'has_box' => 'tem caixa',
             'has_cable' => 'tem cabo',
             'battery_health' => 'saúde da bateria',
+            'device_details' => 'detalhes do dispositivo',
             'imei' => 'IMEI',
             'cost_price' => 'preço de custo',
             'sale_price' => 'preço de venda',

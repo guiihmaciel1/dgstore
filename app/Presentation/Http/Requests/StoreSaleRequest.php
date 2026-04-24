@@ -63,6 +63,7 @@ class StoreSaleRequest extends FormRequest
             'trade_ins.*.has_box' => ['nullable', 'boolean'],
             'trade_ins.*.has_cable' => ['nullable', 'boolean'],
             'trade_ins.*.notes' => ['nullable', 'string'],
+            'trade_ins.*.checklist_id' => ['nullable', 'string', 'exists:device_checklists,id'],
         ];
     }
 

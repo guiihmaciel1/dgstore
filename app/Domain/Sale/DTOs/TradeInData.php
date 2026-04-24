@@ -24,6 +24,7 @@ readonly class TradeInData
         public bool $hasBox = false,
         public bool $hasCable = false,
         public ?string $notes = null,
+        public ?string $checklistId = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -48,6 +49,7 @@ readonly class TradeInData
             hasBox: (bool) ($data['has_box'] ?? false),
             hasCable: (bool) ($data['has_cable'] ?? false),
             notes: $data['notes'] ?? null,
+            checklistId: !empty($data['checklist_id']) ? $data['checklist_id'] : null,
         );
     }
 

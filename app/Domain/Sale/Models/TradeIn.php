@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Sale\Models;
 
+use App\Domain\Checklist\Models\DeviceChecklist;
 use App\Domain\Product\Models\Product;
 use App\Domain\Sale\Enums\TradeInCondition;
 use App\Domain\Sale\Enums\TradeInStatus;
@@ -36,6 +37,7 @@ class TradeIn extends Model
         'notes',
         'status',
         'product_id',
+        'checklist_id',
     ];
 
     protected function casts(): array
@@ -65,6 +67,11 @@ class TradeIn extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function checklist(): BelongsTo
+    {
+        return $this->belongsTo(DeviceChecklist::class, 'checklist_id');
     }
 
     // Scopes

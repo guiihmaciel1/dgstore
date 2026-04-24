@@ -68,6 +68,10 @@ class ProductController extends Controller
         $data = ProductData::fromArray($request->validated());
         $product = $this->productService->create($data);
 
+        if ($checklistId = $request->validated('checklist_id')) {
+            $product->update(['checklist_id' => $checklistId]);
+        }
+
         return redirect()
             ->route('products.show', $product)
             ->with('success', 'Produto cadastrado com sucesso!');
@@ -117,6 +121,10 @@ class ProductController extends Controller
     {
         $data = ProductData::fromArray($request->validated());
         $product = $this->productService->create($data);
+
+        if ($checklistId = $request->validated('checklist_id')) {
+            $product->update(['checklist_id' => $checklistId]);
+        }
 
         return response()->json([
             'id' => $product->id,
