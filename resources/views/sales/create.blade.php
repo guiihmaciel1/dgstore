@@ -517,7 +517,7 @@
                                                 <input type="hidden" :name="'trade_ins['+tiIndex+'][checklist_id]'" :value="ti.checklist_id || ''">
                                                 <div style="position: relative;">
                                                     <input type="text" x-model="clSearch" @focus="clOpen = true"
-                                                           @input="clearTimeout(clDebounce); clDebounce = setTimeout(() => { fetch('/api/checklists/search?q=' + encodeURIComponent(clSearch)).then(r => r.json()).then(d => { clResults = d; clOpen = true; }); }, 250)"
+                                                           @input="clearTimeout(clDebounce); clDebounce = setTimeout(() => { fetch('{{ route("checklists.search") }}?q=' + encodeURIComponent(clSearch)).then(r => r.json()).then(d => { clResults = d; clOpen = true; }); }, 250)"
                                                            @click.away="clOpen = false"
                                                            placeholder="Buscar checklist..." autocomplete="off"
                                                            x-show="!ti.checklist_id"

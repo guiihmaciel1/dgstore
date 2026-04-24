@@ -71,6 +71,7 @@ readonly class TradeInData
             'has_box' => $this->hasBox,
             'has_cable' => $this->hasCable,
             'notes' => $this->notes,
+            'checklist_id' => $this->checklistId,
         ];
     }
 }

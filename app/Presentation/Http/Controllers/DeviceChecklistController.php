@@ -41,10 +41,12 @@ class DeviceChecklistController extends Controller
         $failedItems = 0;
 
         foreach ($sections as $section) {
-            foreach ($section['items'] ?? [] as $item) {
-                $totalItems++;
-                if (($item['status'] ?? '') === 'ok') $passedItems++;
-                if (($item['status'] ?? '') === 'fail') $failedItems++;
+            foreach ($section['subs'] ?? [] as $sub) {
+                foreach ($sub['items'] ?? [] as $item) {
+                    $totalItems++;
+                    if (($item['status'] ?? '') === 'ok') $passedItems++;
+                    if (($item['status'] ?? '') === 'fail') $failedItems++;
+                }
             }
         }
 
@@ -92,10 +94,16 @@ class DeviceChecklistController extends Controller
 
     public function apiSearch(Request $request): JsonResponse
     {
-        $search = $request->get('q', '');
+        $query = DeviceChecklist::query();
 
-        $results = DeviceChecklist::where('name', 'like', "%{$search}%")
-            ->latest()
+        if ($id = $request->get('id')) {
+            $query->where('id', $id);
+        } else {
+            $search = $request->get('q', '');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $results = $query->latest()
             ->limit(15)
             ->get(['id', 'name', 'status', 'passed_items', 'total_items', 'failed_items'])
             ->map(fn (DeviceChecklist $c) => [

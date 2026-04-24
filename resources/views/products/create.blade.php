@@ -437,6 +437,15 @@
                 search: '', open: false, results: [],
                 selectedId: '{{ old("checklist_id", "") }}', selectedLabel: '',
                 _debounce: null,
+                init() {
+                    if (this.selectedId) {
+                        fetch(`{{ route("checklists.search") }}?q=&id=${encodeURIComponent(this.selectedId)}`)
+                            .then(r => r.json()).then(d => {
+                                const found = d.find(c => c.id === this.selectedId);
+                                if (found) this.selectedLabel = found.name + ' (' + found.summary + ')';
+                            }).catch(() => {});
+                    }
+                },
                 fetchResults() {
                     clearTimeout(this._debounce);
                     this._debounce = setTimeout(() => {

@@ -86,7 +86,7 @@
                                 </div>
                                 @if($checklist->product || $checklist->tradeIn)
                                     <div style="margin-top: 0.375rem; font-size: 0.7rem; color: #4f46e5;">
-                                        Vinculado: {{ $checklist->product ? 'Produto #' . Str::limit($checklist->product->name, 30) : 'Trade-in #' . Str::limit($checklist->tradeIn->device_name, 30) }}
+                                        Vinculado: {{ $checklist->product ? 'Produto — ' . Str::limit($checklist->product->name, 30) : 'Trade-in — ' . Str::limit($checklist->tradeIn->device_name, 30) }}
                                     </div>
                                 @endif
                             </div>
