@@ -50,31 +50,59 @@
                     </div>
 
                     @php
-                        $primaryFields = [
-                            'iosVersion' => 'iOS', 'serialNumber' => 'Serial', 'imei' => 'IMEI',
-                            'imei2' => 'IMEI 2', 'region' => 'Regiao', 'activation' => 'Ativacao',
-                            'batteryLife' => 'Bateria', 'snMatch' => 'SN Match', 'fiveCodeMatch' => '5-Code',
+                        $fieldGroups = [
+                            'Identificacao' => [
+                                'iosVersion' => 'iOS', 'serialNumber' => 'Serial', 'imei' => 'IMEI',
+                                'imei2' => 'IMEI 2', 'region' => 'Regiao', 'modelNumber' => 'Modelo',
+                                'regulatoryModel' => 'Homologacao', 'batteryLife' => 'Bateria',
+                            ],
+                            'Status' => [
+                                'activation' => 'Ativacao', 'jailbreak' => 'Jailbreak',
+                                'snMatch' => 'SN Match', 'fiveCodeMatch' => '5-Code',
+                                'simLock' => 'SIM Lock', 'idLock' => 'ID Lock',
+                                'mfgDate' => 'Fabricacao', 'warrantyPeriod' => 'Garantia',
+                            ],
+                            'Rede' => [
+                                'phoneNumber' => 'Telefone', 'simStatus' => 'SIM Status',
+                                'simTrayStatus' => 'Bandeja SIM',
+                                'bluetoothAddress' => 'Bluetooth', 'wifiAddress' => 'Wi-Fi',
+                                'cellularAddress' => 'Cellular',
+                                'iccid' => 'ICCID', 'iccid2' => 'ICCID 2',
+                            ],
+                            'Hardware' => [
+                                'hardwareModel' => 'Hardware', 'cpuArchitecture' => 'CPU',
+                                'basebandVersion' => 'Baseband', 'firmwareVersion' => 'Firmware',
+                                'mlbSerialNumber' => 'MLB Serial', 'wirelessBoardSN' => 'Wireless Board',
+                                'udid' => 'UDID', 'deviceName' => 'Nome Dispositivo', 'timeZone' => 'Fuso Horario',
+                            ],
+                            'Componentes' => [
+                                'batterySN' => 'Bateria SN', 'frontCameraSN' => 'Camera Frontal SN',
+                                'rearCameraSN' => 'Camera Traseira SN', 'lidarSN' => 'LiDAR SN',
+                                'screenSN' => 'Tela SN',
+                            ],
+                            'Sensores' => [
+                                'faceId' => 'Face ID', 'infraredCamera' => 'Infrared Camera',
+                                'dotProjector' => 'Dot Projector', 'distanceSensor' => 'Distance Sensor',
+                            ],
                         ];
-                        $networkFields = [
-                            'phoneNumber' => 'Telefone', 'simStatus' => 'SIM Status',
-                            'simTrayStatus' => 'Bandeja SIM', 'iccid' => 'ICCID', 'iccid2' => 'ICCID 2',
-                        ];
-                        $hardwareFields = [
-                            'modelNumber' => 'Modelo', 'hardwareModel' => 'Hardware',
-                            'cpuArchitecture' => 'CPU', 'basebandVersion' => 'Baseband',
-                            'firmwareVersion' => 'Firmware', 'bluetoothAddress' => 'Bluetooth MAC',
-                            'wifiAddress' => 'Wi-Fi MAC', 'mlbSerialNumber' => 'MLB Serial',
-                            'wirelessBoardSN' => 'Wireless Board', 'udid' => 'UDID',
-                            'deviceName' => 'Nome Dispositivo', 'timeZone' => 'Fuso Horario',
-                        ];
-                        $monoFields = ['serialNumber','imei','imei2','iccid','iccid2','bluetoothAddress','wifiAddress','mlbSerialNumber','wirelessBoardSN','udid'];
+                        $monoFields = ['serialNumber','imei','imei2','iccid','iccid2','bluetoothAddress','wifiAddress','cellularAddress','mlbSerialNumber','wirelessBoardSN','udid','batterySN','frontCameraSN','rearCameraSN','lidarSN','screenSN'];
+                        $statusFields = ['snMatch','fiveCodeMatch','activation','jailbreak','simLock','idLock','faceId','infraredCamera','dotProjector','distanceSensor'];
+                        $statusColorFn = function($key, $val) {
+                            if (in_array($key, ['snMatch','fiveCodeMatch'])) return $val === 'Yes' ? '#059669' : '#dc2626';
+                            if ($key === 'jailbreak') return $val === 'No' ? '#059669' : '#dc2626';
+                            $low = strtolower($val);
+                            if (in_array($low, ['normal','yes','no','off','unlocked','activated'])) return '#059669';
+                            if (in_array($low, ['on','locked','abnormal'])) return '#dc2626';
+                            if (in_array($low, ['unknown','unknow','pending inspection','no testing'])) return '#d97706';
+                            return '#111827';
+                        };
                     @endphp
 
-                    @foreach([$primaryFields, $networkFields, $hardwareFields] as $fieldGroup)
-                        @php $hasAny = collect($fieldGroup)->keys()->contains(fn($k) => !empty($deviceInfo[$k])); @endphp
+                    @foreach($fieldGroups as $groupName => $fields)
+                        @php $hasAny = collect($fields)->keys()->contains(fn($k) => !empty($deviceInfo[$k])); @endphp
                         @if($hasAny)
                             <div style="padding: 0.75rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; {{ !$loop->first ? 'border-top: 1px solid rgba(199,210,254,0.3);' : '' }}">
-                                @foreach($fieldGroup as $key => $label)
+                                @foreach($fields as $key => $label)
                                     @if(!empty($deviceInfo[$key]))
                                         <div>
                                             <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">{{ $label }}</span>
@@ -86,14 +114,14 @@
                                                     $val .= ' (' . $deviceInfo['buildVersion'] . ')';
                                                 }
                                                 if ($key === 'batteryLife') {
-                                                    $val .= !empty($deviceInfo['chargeCycles']) ? ' / ' . $deviceInfo['chargeCycles'] . ' ciclos' : '';
+                                                    $val .= '%' . (!empty($deviceInfo['chargeCycles']) ? ' / ' . $deviceInfo['chargeCycles'] . ' ciclos' : '');
                                                     $textColor = intval($deviceInfo['batteryLife']) >= 80 ? '#059669' : '#dc2626';
                                                 }
-                                                if ($key === 'modelNumber' && !empty($deviceInfo['productType'])) {
-                                                    $val .= ' (' . $deviceInfo['productType'] . ')';
+                                                if ($key === 'modelNumber') {
+                                                    if (!empty($deviceInfo['productType'])) $val .= ' (' . $deviceInfo['productType'] . ')';
                                                 }
-                                                if (in_array($key, ['snMatch', 'fiveCodeMatch'])) {
-                                                    $textColor = $val === 'Yes' ? '#059669' : '#dc2626';
+                                                if (in_array($key, $statusFields)) {
+                                                    $textColor = $statusColorFn($key, $val);
                                                 }
                                             @endphp
                                             <p style="font-size: {{ $isMono ? '0.65rem' : '0.75rem' }}; font-weight: 600; color: {{ $textColor }}; margin: 0; {{ $isMono ? 'font-family: monospace; word-break: break-all;' : '' }}">{{ $val }}</p>

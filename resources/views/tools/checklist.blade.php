@@ -83,74 +83,75 @@
                         </div>
                     </div>
 
+                    <!-- Identificacao principal -->
                     <div style="padding: 0.75rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem;">
-                        <template x-for="field in [
-                            { show: deviceInfo?.iosVersion, label: 'iOS', value: deviceInfo?.iosVersion + (deviceInfo?.buildVersion ? ' (' + deviceInfo.buildVersion + ')' : '') },
-                            { show: deviceInfo?.serialNumber, label: 'Serial', value: deviceInfo?.serialNumber, mono: true },
-                            { show: deviceInfo?.imei, label: 'IMEI', value: deviceInfo?.imei, mono: true },
-                            { show: deviceInfo?.imei2, label: 'IMEI 2', value: deviceInfo?.imei2, mono: true },
-                            { show: deviceInfo?.region, label: 'Regiao', value: deviceInfo?.region },
-                            { show: deviceInfo?.activation, label: 'Ativacao', value: deviceInfo?.activation },
-                        ]">
+                        <template x-for="field in _cardFields('identity')">
                             <div x-show="field.show">
                                 <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
-                                <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family: monospace' : ''" x-text="field.value"></p>
+                                <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="(field.mono ? 'font-family:monospace;' : '') + 'color:' + (field.color || '#111827')" x-text="field.value"></p>
                             </div>
                         </template>
-                        <div x-show="deviceInfo?.batteryLife">
-                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Bateria</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (parseInt(deviceInfo?.batteryLife) >= 80 ? '#059669' : '#dc2626')" x-text="deviceInfo?.batteryLife + (deviceInfo?.chargeCycles ? ' / ' + deviceInfo.chargeCycles + ' ciclos' : '')"></p>
-                        </div>
-                        <div x-show="deviceInfo?.snMatch !== undefined">
-                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">SN Match</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (deviceInfo?.snMatch === 'Yes' ? '#059669' : '#dc2626')" x-text="deviceInfo?.snMatch"></p>
-                        </div>
-                        <div x-show="deviceInfo?.fiveCodeMatch !== undefined">
-                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">5-Code</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (deviceInfo?.fiveCodeMatch === 'Yes' ? '#059669' : '#dc2626')" x-text="deviceInfo?.fiveCodeMatch"></p>
-                        </div>
                     </div>
+
+                    <!-- Status e Verificacoes -->
+                    <template x-if="_cardFields('status').some(f => f.show)">
+                        <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
+                            <template x-for="field in _cardFields('status')">
+                                <div x-show="field.show">
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                    <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (field.color || '#111827')" x-text="field.value"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
 
                     <!-- Rede e SIM -->
-                    <div x-show="deviceInfo?.phoneNumber || deviceInfo?.simStatus || deviceInfo?.iccid"
-                         style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
-                        <template x-for="field in [
-                            { show: deviceInfo?.phoneNumber, label: 'Telefone', value: deviceInfo?.phoneNumber },
-                            { show: deviceInfo?.simStatus, label: 'SIM Status', value: deviceInfo?.simStatus },
-                            { show: deviceInfo?.simTrayStatus, label: 'Bandeja SIM', value: deviceInfo?.simTrayStatus },
-                            { show: deviceInfo?.iccid, label: 'ICCID', value: deviceInfo?.iccid, mono: true },
-                            { show: deviceInfo?.iccid2, label: 'ICCID 2', value: deviceInfo?.iccid2, mono: true },
-                        ]">
-                            <div x-show="field.show">
-                                <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
-                                <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family: monospace; font-size: 0.65rem;' : ''" x-text="field.value"></p>
-                            </div>
-                        </template>
-                    </div>
+                    <template x-if="_cardFields('network').some(f => f.show)">
+                        <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
+                            <template x-for="field in _cardFields('network')">
+                                <div x-show="field.show">
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                    <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family:monospace;font-size:0.65rem;' : ''" x-text="field.value"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
 
-                    <!-- Hardware e Enderecos -->
-                    <div x-show="deviceInfo?.modelNumber || deviceInfo?.bluetoothAddress || deviceInfo?.mlbSerialNumber"
-                         style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
-                        <template x-for="field in [
-                            { show: deviceInfo?.modelNumber, label: 'Modelo', value: deviceInfo?.modelNumber + (deviceInfo?.productType ? ' (' + deviceInfo.productType + ')' : '') },
-                            { show: deviceInfo?.hardwareModel, label: 'Hardware', value: deviceInfo?.hardwareModel },
-                            { show: deviceInfo?.cpuArchitecture, label: 'CPU', value: deviceInfo?.cpuArchitecture },
-                            { show: deviceInfo?.basebandVersion, label: 'Baseband', value: deviceInfo?.basebandVersion },
-                            { show: deviceInfo?.firmwareVersion, label: 'Firmware', value: deviceInfo?.firmwareVersion },
-                            { show: deviceInfo?.bluetoothAddress, label: 'Bluetooth MAC', value: deviceInfo?.bluetoothAddress, mono: true },
-                            { show: deviceInfo?.wifiAddress, label: 'Wi-Fi MAC', value: deviceInfo?.wifiAddress, mono: true },
-                            { show: deviceInfo?.mlbSerialNumber, label: 'MLB Serial', value: deviceInfo?.mlbSerialNumber, mono: true },
-                            { show: deviceInfo?.wirelessBoardSN, label: 'Wireless Board', value: deviceInfo?.wirelessBoardSN, mono: true },
-                            { show: deviceInfo?.udid, label: 'UDID', value: deviceInfo?.udid, mono: true },
-                            { show: deviceInfo?.deviceName, label: 'Nome Dispositivo', value: deviceInfo?.deviceName },
-                            { show: deviceInfo?.timeZone, label: 'Fuso Horario', value: deviceInfo?.timeZone },
-                        ]">
-                            <div x-show="field.show">
-                                <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
-                                <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family: monospace; font-size: 0.65rem; word-break: break-all;' : ''" x-text="field.value"></p>
-                            </div>
-                        </template>
-                    </div>
+                    <!-- Hardware e SNs -->
+                    <template x-if="_cardFields('hardware').some(f => f.show)">
+                        <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
+                            <template x-for="field in _cardFields('hardware')">
+                                <div x-show="field.show">
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                    <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family:monospace;font-size:0.65rem;word-break:break-all;' : ''" x-text="field.value"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Componentes / Seriais de Pecas -->
+                    <template x-if="_cardFields('components').some(f => f.show)">
+                        <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
+                            <template x-for="field in _cardFields('components')">
+                                <div x-show="field.show">
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                    <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0; font-family: monospace; font-size: 0.65rem; word-break: break-all;" x-text="field.value"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <!-- Face ID e Sensores -->
+                    <template x-if="_cardFields('sensors').some(f => f.show)">
+                        <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
+                            <template x-for="field in _cardFields('sensors')">
+                                <div x-show="field.show">
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                    <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (field.color || '#111827')" x-text="field.value"></p>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
                 </div>
             </div>
 
@@ -420,6 +421,80 @@
                 },
             ],
 
+            // --- Card fields ---
+
+            _cardFields(group) {
+                const d = this.deviceInfo;
+                if (!d) return [];
+                const yesNo = (v) => v === 'Yes' ? '#059669' : (v === 'No' ? '#dc2626' : '#111827');
+                const statusColor = (v) => {
+                    if (!v) return '#111827';
+                    const low = v.toLowerCase();
+                    if (['normal','yes','no','off','unlocked','activated'].includes(low)) return '#059669';
+                    if (['on','locked','abnormal'].includes(low)) return '#dc2626';
+                    if (['unknown','unknow','pending inspection','no testing'].includes(low)) return '#d97706';
+                    return '#111827';
+                };
+
+                const groups = {
+                    identity: [
+                        { show: d.iosVersion, label: 'iOS', value: d.iosVersion + (d.buildVersion ? ' (' + d.buildVersion + ')' : '') },
+                        { show: d.serialNumber, label: 'Serial', value: d.serialNumber, mono: true },
+                        { show: d.imei, label: 'IMEI', value: d.imei, mono: true },
+                        { show: d.imei2, label: 'IMEI 2', value: d.imei2, mono: true },
+                        { show: d.region, label: 'Regiao', value: d.region },
+                        { show: d.modelNumber, label: 'Modelo', value: d.modelNumber + (d.productType ? ' (' + d.productType + ')' : '') },
+                        { show: d.regulatoryModel, label: 'Homologacao', value: d.regulatoryModel },
+                        { show: d.batteryLife, label: 'Bateria', value: d.batteryLife + '%' + (d.chargeCycles ? ' / ' + d.chargeCycles + ' ciclos' : ''), color: parseInt(d.batteryLife) >= 80 ? '#059669' : '#dc2626' },
+                    ],
+                    status: [
+                        { show: d.activation, label: 'Ativacao', value: d.activation, color: statusColor(d.activation) },
+                        { show: d.jailbreak, label: 'Jailbreak', value: d.jailbreak, color: d.jailbreak === 'No' ? '#059669' : '#dc2626' },
+                        { show: d.snMatch !== undefined && d.snMatch !== '', label: 'SN Match', value: d.snMatch, color: yesNo(d.snMatch) },
+                        { show: d.fiveCodeMatch !== undefined && d.fiveCodeMatch !== '', label: '5-Code', value: d.fiveCodeMatch, color: yesNo(d.fiveCodeMatch) },
+                        { show: d.simLock, label: 'SIM Lock', value: d.simLock, color: statusColor(d.simLock) },
+                        { show: d.idLock, label: 'ID Lock', value: d.idLock, color: statusColor(d.idLock) },
+                        { show: d.mfgDate, label: 'Fabricacao', value: d.mfgDate },
+                        { show: d.warrantyPeriod, label: 'Garantia', value: d.warrantyPeriod },
+                    ],
+                    network: [
+                        { show: d.phoneNumber, label: 'Telefone', value: d.phoneNumber },
+                        { show: d.simStatus, label: 'SIM Status', value: d.simStatus },
+                        { show: d.simTrayStatus, label: 'Bandeja SIM', value: d.simTrayStatus },
+                        { show: d.bluetoothAddress, label: 'Bluetooth', value: d.bluetoothAddress, mono: true },
+                        { show: d.wifiAddress, label: 'Wi-Fi', value: d.wifiAddress, mono: true },
+                        { show: d.cellularAddress, label: 'Cellular', value: d.cellularAddress, mono: true },
+                        { show: d.iccid, label: 'ICCID', value: d.iccid, mono: true },
+                        { show: d.iccid2, label: 'ICCID 2', value: d.iccid2, mono: true },
+                    ],
+                    hardware: [
+                        { show: d.hardwareModel, label: 'Hardware', value: d.hardwareModel },
+                        { show: d.cpuArchitecture, label: 'CPU', value: d.cpuArchitecture },
+                        { show: d.basebandVersion, label: 'Baseband', value: d.basebandVersion },
+                        { show: d.firmwareVersion, label: 'Firmware', value: d.firmwareVersion },
+                        { show: d.mlbSerialNumber, label: 'MLB Serial', value: d.mlbSerialNumber, mono: true },
+                        { show: d.wirelessBoardSN, label: 'Wireless Board', value: d.wirelessBoardSN, mono: true },
+                        { show: d.udid, label: 'UDID', value: d.udid, mono: true },
+                        { show: d.deviceName, label: 'Nome Dispositivo', value: d.deviceName },
+                        { show: d.timeZone, label: 'Fuso Horario', value: d.timeZone },
+                    ],
+                    components: [
+                        { show: d.batterySN, label: 'Bateria SN', value: d.batterySN },
+                        { show: d.frontCameraSN, label: 'Camera Frontal SN', value: d.frontCameraSN },
+                        { show: d.rearCameraSN, label: 'Camera Traseira SN', value: d.rearCameraSN },
+                        { show: d.lidarSN, label: 'LiDAR SN', value: d.lidarSN },
+                        { show: d.screenSN, label: 'Tela SN', value: d.screenSN },
+                    ],
+                    sensors: [
+                        { show: d.faceId, label: 'Face ID', value: d.faceId, color: statusColor(d.faceId) },
+                        { show: d.infraredCamera, label: 'Infrared Camera', value: d.infraredCamera, color: statusColor(d.infraredCamera) },
+                        { show: d.dotProjector, label: 'Dot Projector', value: d.dotProjector, color: statusColor(d.dotProjector) },
+                        { show: d.distanceSensor, label: 'Distance Sensor', value: d.distanceSensor, color: statusColor(d.distanceSensor) },
+                    ],
+                };
+                return groups[group] || [];
+            },
+
             // --- Computed ---
 
             get totalCount() {
@@ -627,7 +702,7 @@
                     const parts = line.split(/\t+/).map(s => s.trim()).filter(Boolean);
                     if (parts.length === 0) continue;
                     if (parts[0] === 'Device Information') { section = 'device'; continue; }
-                    if (parts[0] === 'Test Items') { section = 'tests'; continue; }
+                    if (parts[0] === 'Test Items' || parts[0] === 'Ex-factory Value') { section = 'tests'; continue; }
 
                     if (section === 'device' && parts.length >= 2) {
                         const key = parts[0].trim();
@@ -638,6 +713,7 @@
                             'SN Match': 'snMatch', '5-Code Match': 'fiveCodeMatch',
                             'SIM Lock': 'simLock', 'ID Lock': 'idLock',
                             'Battery Life': 'batteryLife', 'Charge Cycles': 'chargeCycles',
+                            'Mfg. Date': 'mfgDate', 'Warranty Period': 'warrantyPeriod',
                         };
                         if (keyMap[key]) device[keyMap[key]] = val;
                         continue;
@@ -647,7 +723,8 @@
                         const keyMap = {
                             'Model Name': 'modelName', 'Device Color': 'deviceColor',
                             'Capacity': 'capacity', 'Model Number': 'modelNumber',
-                            'Sales Region': 'salesRegion', 'Serial Number': 'serialNumber',
+                            'Sales Region': 'salesRegion', 'Regulatory Model': 'regulatoryModel',
+                            'Serial Number': 'serialNumber',
                             'Logic Board SN': 'logicBoardSN', 'Battery SN': 'batterySN',
                             'Front Camera': 'frontCamera', 'Rear Camera': 'rearCamera',
                             'Screen SN': 'screenSN', 'LiDAR': 'lidar',
@@ -672,21 +749,50 @@
                 }
                 if (!device.modelIdentifier && !tests.modelName) return null;
 
+                const iosRaw = device.iosVersion || '';
+                const iosBuildMatch = iosRaw.match(/^([\d.]+)\(([^)]+)\)$/);
+                const iosVersion = iosBuildMatch ? iosBuildMatch[1] : iosRaw;
+                const buildVersion = iosBuildMatch ? iosBuildMatch[2] : '';
+
+                const readVal = (t) => t?.read || t?.factory || '';
+                const snVal = (t) => t?.read || t?.factory || '';
+
                 return {
                     deviceInfo: {
-                        modelName: tests.modelName?.read || tests.modelName?.factory || device.modelIdentifier,
-                        capacity: tests.capacity?.read || '',
-                        color: (tests.deviceColor?.read || '').replace(/\u00a3\u00ac/g, ', '),
-                        iosVersion: device.iosVersion || '',
+                        modelName: readVal(tests.modelName) || device.modelIdentifier,
+                        capacity: readVal(tests.capacity),
+                        color: (readVal(tests.deviceColor)).replace(/\u00a3\u00ac/g, ', '),
+                        iosVersion,
+                        buildVersion,
                         batteryLife: (device.batteryLife || '').replace('%', ''),
                         chargeCycles: device.chargeCycles || '',
-                        serialNumber: tests.serialNumber?.read || '',
-                        region: tests.salesRegion?.read || '',
+                        serialNumber: readVal(tests.serialNumber),
+                        region: readVal(tests.salesRegion),
                         imei: '',
                         snMatch: device.snMatch,
                         fiveCodeMatch: device.fiveCodeMatch,
                         activation: device.activation || '',
                         idLock: device.idLock,
+                        simLock: device.simLock || '',
+                        jailbreak: device.jailbreak || '',
+                        productType: device.modelIdentifier || '',
+                        modelNumber: readVal(tests.modelNumber),
+                        regulatoryModel: readVal(tests.regulatoryModel),
+                        mlbSerialNumber: snVal(tests.logicBoardSN),
+                        batterySN: snVal(tests.batterySN),
+                        frontCameraSN: snVal(tests.frontCamera),
+                        rearCameraSN: snVal(tests.rearCamera),
+                        screenSN: snVal(tests.screenSN),
+                        lidarSN: snVal(tests.lidar),
+                        bluetoothAddress: readVal(tests.bluetooth),
+                        wifiAddress: readVal(tests.wifi),
+                        cellularAddress: readVal(tests.cellular),
+                        mfgDate: device.mfgDate || '',
+                        warrantyPeriod: device.warrantyPeriod || '',
+                        faceId: extras.faceId || '',
+                        infraredCamera: extras.infraredCamera || '',
+                        dotProjector: extras.dotProjector || '',
+                        distanceSensor: extras.distanceSensor || '',
                     },
                     autoChecks: { device, tests, extras },
                 };
@@ -828,21 +934,46 @@
                 if (d) {
                     lines.push('📱 *' + d.modelName + '*' + (d.capacity ? ' ' + d.capacity : '') + (d.color ? ' — ' + d.color : ''));
                     if (d.iosVersion) lines.push('⚙️ iOS ' + d.iosVersion + (d.buildVersion ? ' (' + d.buildVersion + ')' : ''));
-                    if (d.batteryLife) lines.push('🔋 Bateria: ' + d.batteryLife + (d.chargeCycles ? ' / ' + d.chargeCycles + ' ciclos' : ''));
+                    if (d.batteryLife) lines.push('🔋 Bateria: ' + d.batteryLife + '%' + (d.chargeCycles ? ' / ' + d.chargeCycles + ' ciclos' : ''));
                     if (d.serialNumber) lines.push('🔢 Serial: ' + d.serialNumber);
                     if (d.imei) lines.push('📟 IMEI: ' + d.imei);
                     if (d.imei2) lines.push('📟 IMEI 2: ' + d.imei2);
                     if (d.region) lines.push('🌎 Regiao: ' + d.region);
-                    if (d.modelNumber) lines.push('🏷️ Modelo: ' + d.modelNumber + (d.productType ? ' (' + d.productType + ')' : ''));
-                    if (d.phoneNumber) lines.push('📞 Tel: ' + d.phoneNumber);
+                    if (d.modelNumber) lines.push('🏷️ Modelo: ' + d.modelNumber + (d.regulatoryModel ? ' / ' + d.regulatoryModel : '') + (d.productType ? ' (' + d.productType + ')' : ''));
                     if (d.activation) lines.push('🔓 Ativacao: ' + d.activation);
-                    if (d.simStatus) lines.push('📶 SIM: ' + d.simStatus);
-                    if (d.bluetoothAddress) lines.push('🔵 BT: ' + d.bluetoothAddress);
-                    if (d.wifiAddress) lines.push('📡 Wi-Fi: ' + d.wifiAddress);
-                    if (d.mlbSerialNumber) lines.push('🔧 MLB: ' + d.mlbSerialNumber);
-                    if (d.udid) lines.push('🆔 UDID: ' + d.udid);
+                    if (d.jailbreak) lines.push((d.jailbreak === 'No' ? '✅' : '❌') + ' Jailbreak: ' + d.jailbreak);
                     if (d.snMatch) lines.push((d.snMatch === 'Yes' ? '✅' : '❌') + ' SN Match: ' + d.snMatch);
+                    if (d.fiveCodeMatch) lines.push((d.fiveCodeMatch === 'Yes' ? '✅' : '❌') + ' 5-Code: ' + d.fiveCodeMatch);
+                    if (d.simLock) lines.push('🔒 SIM Lock: ' + d.simLock);
+                    if (d.idLock) lines.push('🔒 ID Lock: ' + d.idLock);
                     lines.push('');
+                    const hasNet = d.phoneNumber || d.bluetoothAddress || d.wifiAddress || d.cellularAddress;
+                    if (hasNet) {
+                        if (d.phoneNumber) lines.push('📞 Tel: ' + d.phoneNumber);
+                        if (d.bluetoothAddress) lines.push('🔵 BT: ' + d.bluetoothAddress);
+                        if (d.wifiAddress) lines.push('📡 Wi-Fi: ' + d.wifiAddress);
+                        if (d.cellularAddress) lines.push('📶 Cellular: ' + d.cellularAddress);
+                        lines.push('');
+                    }
+                    const hasSN = d.mlbSerialNumber || d.batterySN || d.frontCameraSN || d.rearCameraSN;
+                    if (hasSN) {
+                        if (d.mlbSerialNumber) lines.push('🔧 MLB: ' + d.mlbSerialNumber);
+                        if (d.batterySN) lines.push('🔋 Bateria SN: ' + d.batterySN);
+                        if (d.frontCameraSN) lines.push('📷 Cam Frontal: ' + d.frontCameraSN);
+                        if (d.rearCameraSN) lines.push('📷 Cam Traseira: ' + d.rearCameraSN);
+                        if (d.lidarSN) lines.push('📐 LiDAR: ' + d.lidarSN);
+                        lines.push('');
+                    }
+                    const hasFace = d.faceId || d.infraredCamera || d.dotProjector || d.distanceSensor;
+                    if (hasFace) {
+                        if (d.faceId) lines.push('🔓 Face ID: ' + d.faceId);
+                        if (d.infraredCamera) lines.push('  Infrared Camera: ' + d.infraredCamera);
+                        if (d.dotProjector) lines.push('  Dot Projector: ' + d.dotProjector);
+                        if (d.distanceSensor) lines.push('  Distance Sensor: ' + d.distanceSensor);
+                        lines.push('');
+                    }
+                    if (d.udid) lines.push('🆔 UDID: ' + d.udid);
+                    if (d.udid) lines.push('');
                 }
 
                 this.sections.forEach(s => {
