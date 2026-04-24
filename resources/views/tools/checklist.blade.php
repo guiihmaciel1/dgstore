@@ -30,20 +30,42 @@
                 </div>
             </div>
 
-            <!-- Upload 3uTools Report -->
+            <!-- Importar Device Info -->
             <div style="margin-bottom: 1rem;">
-                <div x-show="!deviceInfo" style="background: white; border: 2px dashed #d1d5db; border-radius: 0.75rem; padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color 0.2s;"
-                     @click="$refs.fileInput.click()"
-                     @dragover.prevent="$el.style.borderColor='#6366f1'"
-                     @dragleave.prevent="$el.style.borderColor='#d1d5db'"
-                     @drop.prevent="$el.style.borderColor='#d1d5db'; handleFileDrop($event)"
-                     onmouseover="this.style.borderColor='#9ca3af'" onmouseout="this.style.borderColor='#d1d5db'">
-                    <input type="file" accept=".txt" x-ref="fileInput" @change="handleFileUpload($event)" style="display: none;">
-                    <svg style="width: 2rem; height: 2rem; color: #9ca3af; margin: 0 auto 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                    </svg>
-                    <p style="font-size: 0.8rem; font-weight: 600; color: #374151; margin: 0;">Importar Report do 3uTools</p>
-                    <p style="font-size: 0.7rem; color: #9ca3af; margin: 0.25rem 0 0;">Arraste o arquivo .txt ou clique para selecionar</p>
+                <div x-show="!deviceInfo">
+                    <div x-show="!showPasteArea" style="background: white; border: 2px dashed #d1d5db; border-radius: 0.75rem; padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color 0.2s;"
+                         @click="showPasteArea = true"
+                         onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#d1d5db'">
+                        <svg style="width: 2rem; height: 2rem; color: #9ca3af; margin: 0 auto 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                        <p style="font-size: 0.8rem; font-weight: 600; color: #374151; margin: 0;">Importar Device Info (3uTools)</p>
+                        <p style="font-size: 0.7rem; color: #9ca3af; margin: 0.25rem 0 0;">Clique para colar o texto do Device Report</p>
+                    </div>
+                    <div x-show="showPasteArea" x-transition style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                        <div style="padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f3f4f6;">
+                            <span style="font-size: 0.8rem; font-weight: 600; color: #374151;">Cole o texto do 3uTools abaixo</span>
+                            <button @click="showPasteArea = false; pasteText = ''" type="button" style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid #e5e7eb; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 0.75rem;">✕</button>
+                        </div>
+                        <div style="padding: 0.75rem 1rem;">
+                            <textarea x-model="pasteText" x-ref="pasteArea"
+                                      placeholder="Cole aqui o conteudo do Device Report ou Device Info do 3uTools..."
+                                      style="width: 100%; height: 120px; padding: 0.625rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.75rem; font-family: monospace; resize: vertical; box-sizing: border-box;"
+                                      onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+                                      onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"></textarea>
+                            <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+                                <button @click="showPasteArea = false; pasteText = ''" type="button"
+                                        style="padding: 0.375rem 0.75rem; font-size: 0.75rem; color: #6b7280; background: white; border: 1px solid #d1d5db; border-radius: 0.375rem; cursor: pointer;">
+                                    Cancelar
+                                </button>
+                                <button @click="processPastedText()" type="button"
+                                        style="padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; color: white; background: #4f46e5; border: none; border-radius: 0.375rem; cursor: pointer;"
+                                        onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4f46e5'">
+                                    Processar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Device Info Card -->
@@ -52,7 +74,7 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span style="font-size: 1rem;">📱</span>
                             <span style="font-size: 0.8rem; font-weight: 700; color: #312e81;" x-text="deviceInfo?.modelName || 'Dispositivo'"></span>
-                            <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #4338ca;" x-text="deviceInfo?.capacity || ''"></span>
+                            <span x-show="deviceInfo?.capacity" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #4338ca;" x-text="deviceInfo?.capacity || ''"></span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span x-show="importMessage" x-transition style="font-size: 0.65rem; font-weight: 600; color: #059669; background: #dcfce7; padding: 0.125rem 0.5rem; border-radius: 9999px;" x-text="importMessage"></span>
@@ -70,11 +92,15 @@
                         </div>
                         <div x-show="deviceInfo?.batteryLife">
                             <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Bateria</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (parseInt(deviceInfo?.batteryLife) >= 80 ? '#059669' : '#dc2626')" x-text="deviceInfo?.batteryLife + ' / ' + deviceInfo?.chargeCycles + ' ciclos'"></p>
+                            <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (parseInt(deviceInfo?.batteryLife) >= 80 ? '#059669' : '#dc2626')" x-text="deviceInfo?.batteryLife + (deviceInfo?.chargeCycles ? ' / ' + deviceInfo.chargeCycles + ' ciclos' : '')"></p>
                         </div>
                         <div x-show="deviceInfo?.serialNumber">
                             <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Serial</span>
                             <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0; font-family: monospace;" x-text="deviceInfo?.serialNumber"></p>
+                        </div>
+                        <div x-show="deviceInfo?.imei">
+                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">IMEI</span>
+                            <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0; font-family: monospace;" x-text="deviceInfo?.imei"></p>
                         </div>
                         <div x-show="deviceInfo?.region">
                             <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Regiao</span>
@@ -232,6 +258,8 @@
             copied: false,
             deviceInfo: null,
             importMessage: '',
+            showPasteArea: false,
+            pasteText: '',
             showSaveModal: false,
             saveName: '',
             saveError: '',
@@ -490,6 +518,8 @@
                 })));
                 this.deviceInfo = null;
                 this.importMessage = '';
+                this.pasteText = '';
+                this.showPasteArea = false;
             },
 
             // --- 3uTools Import ---
@@ -515,37 +545,86 @@
                 }
             },
 
-            handleFileUpload(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-                this._readAndParse(file);
-                event.target.value = '';
-            },
-
-            handleFileDrop(event) {
-                const file = event.dataTransfer.files[0];
-                if (!file) return;
-                this._readAndParse(file);
-            },
-
-            _readAndParse(file) {
-                if (!file.name.endsWith('.txt')) {
-                    alert('Selecione um arquivo .txt do 3uTools');
+            processPastedText() {
+                if (!this.pasteText.trim()) {
+                    alert('Cole o texto do Device Report ou Device Info do 3uTools.');
                     return;
                 }
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const parsed = this.parse3uToolsReport(e.target.result);
-                    if (!parsed) {
-                        alert('Nao foi possivel ler o report. Verifique se e um Verification Report do 3uTools.');
-                        return;
-                    }
-                    this.applyReport(parsed);
-                };
-                reader.readAsText(file);
+                const text = this.pasteText.trim();
+                const isTabularReport = text.includes('Device Information') && text.includes('Test Items');
+                const parsed = isTabularReport ? this._parseTabularReport(text) : this._parseDeviceInfoDump(text);
+                if (!parsed) {
+                    alert('Nao foi possivel interpretar o texto. Verifique se e um Device Report do 3uTools.');
+                    return;
+                }
+                this._applyParsed(parsed);
+                this.showPasteArea = false;
+                this.pasteText = '';
             },
 
-            parse3uToolsReport(text) {
+            _PRODUCT_TYPE_MAP: {
+                'iPhone17,5': 'iPhone 16e',
+                'iPhone17,4': 'iPhone 16 Plus',
+                'iPhone17,3': 'iPhone 16',
+                'iPhone17,2': 'iPhone 16 Pro Max',
+                'iPhone17,1': 'iPhone 16 Pro',
+                'iPhone16,2': 'iPhone 15 Pro Max',
+                'iPhone16,1': 'iPhone 15 Pro',
+                'iPhone15,5': 'iPhone 15 Plus',
+                'iPhone15,4': 'iPhone 15',
+                'iPhone15,3': 'iPhone 14 Pro Max',
+                'iPhone15,2': 'iPhone 14 Pro',
+                'iPhone14,8': 'iPhone 14 Plus',
+                'iPhone14,7': 'iPhone 14',
+                'iPhone14,5': 'iPhone 13',
+                'iPhone14,4': 'iPhone 13 mini',
+                'iPhone14,3': 'iPhone 13 Pro Max',
+                'iPhone14,2': 'iPhone 13 Pro',
+                'iPhone13,4': 'iPhone 12 Pro Max',
+                'iPhone13,3': 'iPhone 12 Pro',
+                'iPhone13,2': 'iPhone 12',
+                'iPhone13,1': 'iPhone 12 mini',
+                'iPhone12,5': 'iPhone 11 Pro Max',
+                'iPhone12,3': 'iPhone 11 Pro',
+                'iPhone12,1': 'iPhone 11',
+            },
+
+            _parseDeviceInfoDump(text) {
+                const lines = text.split(/\r?\n/).filter(l => l.trim());
+                const kv = {};
+                for (const line of lines) {
+                    const match = line.match(/^(\S+)\s{2,}(.+)$/);
+                    if (match) {
+                        kv[match[1].trim()] = match[2].trim();
+                    }
+                }
+                if (!kv.ProductType && !kv.SerialNumber) return null;
+
+                const modelName = this._PRODUCT_TYPE_MAP[kv.ProductType] || kv.ProductType || '';
+
+                return {
+                    deviceInfo: {
+                        modelName,
+                        capacity: '',
+                        color: '',
+                        iosVersion: kv.ProductVersion || kv.HumanReadableProductVersionString || '',
+                        batteryLife: '',
+                        chargeCycles: '',
+                        serialNumber: kv.SerialNumber || '',
+                        region: kv.RegionInfo || '',
+                        imei: kv.InternationalMobileEquipmentIdentity || '',
+                        activation: kv.ActivationState || '',
+                        modelNumber: kv.ModelNumber || '',
+                        productType: kv.ProductType || '',
+                        bluetoothAddress: kv.BluetoothAddress || '',
+                        wifiAddress: kv.WiFiAddress || '',
+                        mlbSerialNumber: kv.MLBSerialNumber || '',
+                    },
+                    autoChecks: {},
+                };
+            },
+
+            _parseTabularReport(text) {
                 const lines = text.split(/\r?\n/).filter(l => l.trim());
                 const device = {};
                 const tests = {};
@@ -555,7 +634,6 @@
                 for (const line of lines) {
                     const parts = line.split(/\t+/).map(s => s.trim()).filter(Boolean);
                     if (parts.length === 0) continue;
-
                     if (parts[0] === 'Device Information') { section = 'device'; continue; }
                     if (parts[0] === 'Test Items') { section = 'tests'; continue; }
 
@@ -563,18 +641,11 @@
                         const key = parts[0].trim();
                         const val = parts.slice(1).join(' ').trim();
                         const keyMap = {
-                            'Model Identifier': 'modelIdentifier',
-                            'iOS Version': 'iosVersion',
-                            'Activation': 'activation',
-                            'Jailbreak': 'jailbreak',
-                            'SN Match': 'snMatch',
-                            '5-Code Match': 'fiveCodeMatch',
-                            'SIM Lock': 'simLock',
-                            'Mfg. Date': 'mfgDate',
-                            'Warranty Period': 'warrantyPeriod',
-                            'ID Lock': 'idLock',
-                            'Battery Life': 'batteryLife',
-                            'Charge Cycles': 'chargeCycles',
+                            'Model Identifier': 'modelIdentifier', 'iOS Version': 'iosVersion',
+                            'Activation': 'activation', 'Jailbreak': 'jailbreak',
+                            'SN Match': 'snMatch', '5-Code Match': 'fiveCodeMatch',
+                            'SIM Lock': 'simLock', 'ID Lock': 'idLock',
+                            'Battery Life': 'batteryLife', 'Charge Cycles': 'chargeCycles',
                         };
                         if (keyMap[key]) device[keyMap[key]] = val;
                         continue;
@@ -582,140 +653,110 @@
 
                     if (section === 'tests') {
                         const keyMap = {
-                            'Model Name': 'modelName',
-                            'Device Color': 'deviceColor',
-                            'Capacity': 'capacity',
-                            'Model Number': 'modelNumber',
-                            'Sales Region': 'salesRegion',
-                            'Regulatory Model': 'regulatoryModel',
-                            'Serial Number': 'serialNumber',
-                            'Logic Board SN': 'logicBoardSN',
-                            'Battery SN': 'batterySN',
-                            'Front Camera': 'frontCamera',
-                            'Rear Camera': 'rearCamera',
-                            'Screen SN': 'screenSN',
-                            'LiDAR': 'lidar',
-                            'Bluetooth': 'bluetooth',
-                            'Cellular Address': 'cellular',
+                            'Model Name': 'modelName', 'Device Color': 'deviceColor',
+                            'Capacity': 'capacity', 'Model Number': 'modelNumber',
+                            'Sales Region': 'salesRegion', 'Serial Number': 'serialNumber',
+                            'Logic Board SN': 'logicBoardSN', 'Battery SN': 'batterySN',
+                            'Front Camera': 'frontCamera', 'Rear Camera': 'rearCamera',
+                            'Screen SN': 'screenSN', 'LiDAR': 'lidar',
+                            'Bluetooth': 'bluetooth', 'Cellular Address': 'cellular',
                             'Wi-Fi Address': 'wifi',
                         };
-
                         const faceIdKeys = ['Face ID', 'Infrared Camera', 'Dot Projector', 'Distance Senror', 'Distance Sensor'];
-
                         for (const fk of faceIdKeys) {
                             const fkIdx = line.indexOf(fk);
                             if (fkIdx > -1) {
                                 const after = line.substring(fkIdx + fk.length).split(/\t+/).map(s => s.trim()).filter(Boolean);
-                                const fKeyMap = {
-                                    'Face ID': 'faceId',
-                                    'Infrared Camera': 'infraredCamera',
-                                    'Dot Projector': 'dotProjector',
-                                    'Distance Senror': 'distanceSensor',
-                                    'Distance Sensor': 'distanceSensor',
-                                };
+                                const fKeyMap = { 'Face ID': 'faceId', 'Infrared Camera': 'infraredCamera', 'Dot Projector': 'dotProjector', 'Distance Senror': 'distanceSensor', 'Distance Sensor': 'distanceSensor' };
                                 extras[fKeyMap[fk]] = after[0] || 'Pending Inspection';
                             }
                         }
-
                         const key = parts[0].trim();
                         if (keyMap[key]) {
-                            if (parts.length >= 4) {
-                                tests[keyMap[key]] = { factory: parts[1], read: parts[2], result: parts[3] };
-                            } else if (parts.length >= 2) {
-                                const lastPart = parts[parts.length - 1];
-                                tests[keyMap[key]] = { factory: parts[1] || '', read: '', result: lastPart };
-                            }
+                            if (parts.length >= 4) tests[keyMap[key]] = { factory: parts[1], read: parts[2], result: parts[3] };
+                            else if (parts.length >= 2) tests[keyMap[key]] = { factory: parts[1] || '', read: '', result: parts[parts.length - 1] };
                         }
                     }
                 }
-
                 if (!device.modelIdentifier && !tests.modelName) return null;
 
-                return { device, tests, extras };
+                return {
+                    deviceInfo: {
+                        modelName: tests.modelName?.read || tests.modelName?.factory || device.modelIdentifier,
+                        capacity: tests.capacity?.read || '',
+                        color: (tests.deviceColor?.read || '').replace(/\u00a3\u00ac/g, ', '),
+                        iosVersion: device.iosVersion || '',
+                        batteryLife: (device.batteryLife || '').replace('%', ''),
+                        chargeCycles: device.chargeCycles || '',
+                        serialNumber: tests.serialNumber?.read || '',
+                        region: tests.salesRegion?.read || '',
+                        imei: '',
+                        snMatch: device.snMatch,
+                        fiveCodeMatch: device.fiveCodeMatch,
+                        activation: device.activation || '',
+                        idLock: device.idLock,
+                    },
+                    autoChecks: { device, tests, extras },
+                };
             },
 
-            applyReport(parsed) {
-                const { device, tests, extras } = parsed;
+            _applyParsed(parsed) {
+                this.deviceInfo = parsed.deviceInfo;
                 let filled = 0;
-
-                this.deviceInfo = {
-                    modelName: tests.modelName?.read || tests.modelName?.factory || device.modelIdentifier,
-                    capacity: tests.capacity?.read || '',
-                    color: (tests.deviceColor?.read || '').replace(/\u00a3\u00ac/g, ', '),
-                    iosVersion: device.iosVersion || '',
-                    batteryLife: (device.batteryLife || '').replace('%', ''),
-                    chargeCycles: device.chargeCycles || '',
-                    serialNumber: tests.serialNumber?.read || '',
-                    region: tests.salesRegion?.read || '',
-                    snMatch: device.snMatch,
-                    fiveCodeMatch: device.fiveCodeMatch,
-                    activation: device.activation || '',
-                    idLock: device.idLock,
-                };
-
                 const ok = (id, hint) => { this._setItem(id, 'ok', hint); filled++; };
                 const fail = (id, hint) => { this._setItem(id, 'fail', hint); filled++; };
+                const ac = parsed.autoChecks;
 
-                // SN Match
-                if (device.snMatch === 'Yes') ok('sn_match', '3uTools: SN Match OK');
-                else if (device.snMatch === 'No') fail('sn_match', '3uTools: SN NAO confere!');
+                if (ac.device) {
+                    const d = ac.device;
+                    if (d.snMatch === 'Yes') ok('sn_match', '3uTools: SN Match OK');
+                    else if (d.snMatch === 'No') fail('sn_match', '3uTools: SN NAO confere!');
 
-                // Jailbreak
-                if (device.jailbreak === 'No') ok('jailbreak', '3uTools: Sem jailbreak');
-                else if (device.jailbreak === 'Yes') fail('jailbreak', '3uTools: JAILBREAK detectado!');
+                    if (d.jailbreak === 'No') ok('jailbreak', '3uTools: Sem jailbreak');
+                    else if (d.jailbreak === 'Yes') fail('jailbreak', '3uTools: JAILBREAK detectado!');
 
-                // ID Lock
-                if (device.idLock === 'Off' || device.idLock === 'OFF') ok('id_lock', '3uTools: ID Lock OFF');
-                else if (device.idLock === 'On' || device.idLock === 'ON') fail('id_lock', '3uTools: ID Lock ATIVO!');
+                    if (d.idLock === 'Off' || d.idLock === 'OFF') ok('id_lock', '3uTools: ID Lock OFF');
+                    else if (d.idLock === 'On' || d.idLock === 'ON') fail('id_lock', '3uTools: ID Lock ATIVO!');
 
-                // SIM Lock
-                if (device.simLock === 'Unlocked' || device.simLock === 'No') ok('sim_lock', '3uTools: Desbloqueado');
-                else if (device.simLock === 'Locked') fail('sim_lock', '3uTools: Bloqueado por operadora!');
+                    if (d.simLock === 'Unlocked' || d.simLock === 'No') ok('sim_lock', '3uTools: Desbloqueado');
+                    else if (d.simLock === 'Locked') fail('sim_lock', '3uTools: Bloqueado por operadora!');
 
-                // Battery
-                const battPct = parseInt(device.batteryLife);
-                if (!isNaN(battPct)) {
-                    ok('battery_health', '3uTools: ' + battPct + '%');
-                    if (battPct >= 80) ok('battery_above_80', '3uTools: ' + battPct + '%');
-                    else fail('battery_above_80', '3uTools: ' + battPct + '% — abaixo de 80%');
-                }
-                if (device.chargeCycles) {
-                    ok('charge_cycles', '3uTools: ' + device.chargeCycles + ' ciclos');
+                    const battPct = parseInt(d.batteryLife);
+                    if (!isNaN(battPct)) {
+                        ok('battery_health', '3uTools: ' + battPct + '%');
+                        if (battPct >= 80) ok('battery_above_80', '3uTools: ' + battPct + '%');
+                        else fail('battery_above_80', '3uTools: ' + battPct + '% — abaixo de 80%');
+                    }
+                    if (d.chargeCycles) ok('charge_cycles', '3uTools: ' + d.chargeCycles + ' ciclos');
                 }
 
-                // Battery SN
-                if (tests.batterySN?.result === 'Normal') ok('battery_sn', '3uTools: SN original');
-                else if (tests.batterySN?.result) fail('battery_sn', '3uTools: ' + tests.batterySN.result);
-
-                // Screen SN
-                if (tests.screenSN?.result === 'Normal') ok('screen_sn', '3uTools: Tela original');
-                else if (tests.screenSN?.result) fail('screen_sn', '3uTools: ' + tests.screenSN.result);
-
-                // Cameras
-                if (tests.frontCamera?.result === 'Normal') ok('front_camera', '3uTools: SN original');
-                if (tests.rearCamera?.result === 'Normal') ok('rear_camera', '3uTools: SN original');
-
-                // Connectivity
-                if (tests.bluetooth?.result === 'Normal') ok('bluetooth', '3uTools: Normal');
-                if (tests.wifi?.result === 'Normal') ok('wifi', '3uTools: Normal');
-                if (tests.cellular?.result === 'Normal') ok('cellular', '3uTools: Normal');
-
-                // LiDAR
-                if (tests.lidar?.result === 'Normal') ok('lidar', '3uTools: Normal');
-
-                // Face ID
-                if (extras.faceId === 'Normal' || extras.faceId === 'Tap to Check') {
-                    // only auto-fill if confirmed normal
-                    if (extras.faceId === 'Normal') ok('face_id', '3uTools: Face ID Normal');
+                if (ac.tests) {
+                    const t = ac.tests;
+                    if (t.batterySN?.result === 'Normal') ok('battery_sn', '3uTools: SN original');
+                    else if (t.batterySN?.result) fail('battery_sn', '3uTools: ' + t.batterySN.result);
+                    if (t.screenSN?.result === 'Normal') ok('screen_sn', '3uTools: Tela original');
+                    else if (t.screenSN?.result) fail('screen_sn', '3uTools: ' + t.screenSN.result);
+                    if (t.frontCamera?.result === 'Normal') ok('front_camera', '3uTools: SN original');
+                    if (t.rearCamera?.result === 'Normal') ok('rear_camera', '3uTools: SN original');
+                    if (t.bluetooth?.result === 'Normal') ok('bluetooth', '3uTools: Normal');
+                    if (t.wifi?.result === 'Normal') ok('wifi', '3uTools: Normal');
+                    if (t.cellular?.result === 'Normal') ok('cellular', '3uTools: Normal');
+                    if (t.lidar?.result === 'Normal') ok('lidar', '3uTools: Normal');
                 }
+
+                if (ac.extras?.faceId === 'Normal') ok('face_id', '3uTools: Face ID Normal');
 
                 const remaining = this.totalCount - this.checkedCount;
-                this.importMessage = filled + ' itens preenchidos, ' + remaining + ' para verificar';
+                this.importMessage = filled > 0
+                    ? filled + ' itens preenchidos, ' + remaining + ' para verificar'
+                    : 'Dispositivo identificado, ' + remaining + ' itens para verificar';
             },
 
             removeReport() {
                 this.deviceInfo = null;
                 this.importMessage = '';
+                this.pasteText = '';
+                this.showPasteArea = false;
                 this.sections.forEach(s => s.subs.forEach(sub => sub.items.forEach(i => {
                     i.status = '';
                     if (i._originalHint !== undefined) { i.hint = i._originalHint; delete i._originalHint; }
@@ -789,10 +830,12 @@
                 let lines = ['*CHECKLIST SEMINOVO - DG Store*', ''];
 
                 if (this.deviceInfo) {
-                    lines.push('📱 *' + this.deviceInfo.modelName + '* ' + this.deviceInfo.capacity);
+                    lines.push('📱 *' + this.deviceInfo.modelName + '*' + (this.deviceInfo.capacity ? ' ' + this.deviceInfo.capacity : ''));
                     if (this.deviceInfo.color) lines.push('🎨 ' + this.deviceInfo.color);
-                    if (this.deviceInfo.batteryLife) lines.push('🔋 Bateria: ' + this.deviceInfo.batteryLife + '% / ' + this.deviceInfo.chargeCycles + ' ciclos');
+                    if (this.deviceInfo.batteryLife) lines.push('🔋 Bateria: ' + this.deviceInfo.batteryLife + (this.deviceInfo.chargeCycles ? ' / ' + this.deviceInfo.chargeCycles + ' ciclos' : ''));
                     if (this.deviceInfo.serialNumber) lines.push('🔢 Serial: ' + this.deviceInfo.serialNumber);
+                    if (this.deviceInfo.imei) lines.push('📟 IMEI: ' + this.deviceInfo.imei);
+                    if (this.deviceInfo.region) lines.push('🌎 Regiao: ' + this.deviceInfo.region);
                     if (this.deviceInfo.snMatch) lines.push((this.deviceInfo.snMatch === 'Yes' ? '✅' : '❌') + ' SN Match: ' + this.deviceInfo.snMatch);
                     lines.push('');
                 }

@@ -46,7 +46,7 @@
                         @endif
                     </div>
                     <div style="padding: 0.75rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem;">
-                        @foreach(['color' => 'Cor', 'iosVersion' => 'iOS', 'batteryLife' => 'Bateria', 'serialNumber' => 'Serial', 'region' => 'Regiao', 'snMatch' => 'SN Match', 'fiveCodeMatch' => '5-Code', 'activation' => 'Ativacao'] as $key => $label)
+                        @foreach(['color' => 'Cor', 'iosVersion' => 'iOS', 'batteryLife' => 'Bateria', 'serialNumber' => 'Serial', 'imei' => 'IMEI', 'region' => 'Regiao', 'snMatch' => 'SN Match', 'fiveCodeMatch' => '5-Code', 'activation' => 'Ativacao'] as $key => $label)
                             @if(!empty($deviceInfo[$key]))
                                 <div>
                                     <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">{{ $label }}</span>
