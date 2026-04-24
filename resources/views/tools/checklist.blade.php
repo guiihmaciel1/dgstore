@@ -272,132 +272,80 @@
                         label: '',
                         items: [
                             { id: 'imei', label: 'IMEI confere (*#06# vs Ajustes)', hint: 'Comparar com caixa e nota fiscal', status: '' },
+                            { id: 'sn_match', label: 'Numero de serie confere', hint: 'Ajustes > Geral > Sobre', status: '' },
                             { id: 'id_lock', label: 'iCloud deslogado (Buscar iPhone OFF)', hint: 'Ajustes > [nome] > Buscar > Buscar iPhone', status: '' },
-                            { label: 'Sem MDM / perfil corporativo', hint: 'Ajustes > Geral > VPN e Gerenciamento', status: '' },
                             { id: 'sim_lock', label: 'Sem bloqueio de operadora', hint: 'Testar chip de operadora diferente', status: '' },
-                            { label: 'Sem relato de roubo/furto', hint: 'Consultar na Anatel (Celular Legal)', status: '' },
-                            { id: 'sn_match', label: 'Numero de serie / modelo confere', hint: 'Ajustes > Geral > Sobre (letra M=novo, F=refurb, N=troca)', status: '' },
+                            { label: 'Sem MDM / perfil corporativo', hint: 'Ajustes > Geral > VPN e Gerenciamento', status: '' },
+                            { label: 'Sem relato de roubo/furto', hint: 'Consultar Anatel (Celular Legal)', status: '' },
                         ]
                     }]
                 },
                 {
-                    icon: '📱', title: 'Tela e Display', open: false,
-                    subs: [
-                        {
-                            label: 'Touch',
-                            items: [
-                                { label: 'Touch funciona em toda a tela', hint: 'Abrir teclado e digitar em todos os cantos', status: '' },
-                                { label: 'Deslizamento suave (sem travamentos)', hint: '', status: '' },
-                                { label: 'Multitouch funcional', hint: 'Testar zoom com dois dedos no Maps/Fotos', status: '' },
-                                { label: 'Force Touch / Haptic Touch OK', hint: 'Pressionar icone na tela inicial', status: '' },
-                            ]
-                        },
-                        {
-                            label: 'Display',
-                            items: [
-                                { label: 'Sem pixels mortos ou manchas', hint: 'Abrir imagem branca pura em tela cheia', status: '' },
-                                { label: 'Brilho maximo e minimo OK', hint: '', status: '' },
-                                { label: 'True Tone funcionando', hint: 'Ajustes > Tela e Brilho > True Tone', status: '' },
-                                { label: 'Sem marcas de burn-in', hint: 'Abrir fundo cinza e verificar sombras (OLED)', status: '' },
-                                { label: 'Sem vazamento de luz nas bordas', hint: 'Verificar em ambiente escuro com fundo preto', status: '' },
-                                { label: 'Sensor de brilho automatico OK', hint: 'Tapar sensor frontal e ver se escurece', status: '' },
-                            ]
-                        }
-                    ]
+                    icon: '📱', title: 'Tela e Touch', open: false,
+                    subs: [{
+                        label: '',
+                        items: [
+                            { label: 'Tela sem trincas ou rachaduras', hint: '', status: '' },
+                            { label: 'Touch funciona em toda a tela', hint: 'Digitar em todos os cantos do teclado', status: '' },
+                            { label: 'Sem pixels mortos ou manchas', hint: 'Abrir imagem branca em tela cheia', status: '' },
+                            { label: 'True Tone funcionando', hint: 'Ajustes > Tela e Brilho > True Tone', status: '' },
+                            { id: 'screen_sn', label: 'Tela original (sem troca)', hint: 'Ajustes > Geral > Sobre: Pecas e Servico', status: '' },
+                        ]
+                    }]
                 },
                 {
-                    icon: '🔐', title: 'Biometria', open: false,
+                    icon: '🔓', title: 'Face ID', open: false,
                     subs: [{
                         label: '',
                         items: [
                             { id: 'face_id', label: 'Face ID funcionando', hint: 'Cadastrar e testar desbloqueio', status: '' },
-                            { label: 'Face ID com angulo lateral', hint: 'Testar em angulos diferentes', status: '' },
                         ]
                     }]
                 },
                 {
                     icon: '📷', title: 'Cameras', open: false,
-                    subs: [
-                        {
-                            label: 'Camera traseira',
-                            items: [
-                                { id: 'rear_camera', label: 'Foto traseira OK', hint: 'Verificar nitidez e foco automatico', status: '' },
-                                { label: 'Video traseiro OK', hint: 'Gravar 10s e reproduzir', status: '' },
-                                { label: 'Flash / Lanterna OK', hint: '', status: '' },
-                                { label: 'Lente 0.5x (Ultra Wide)', hint: '', status: '' },
-                                { label: 'Lente 1x (Principal)', hint: '', status: '' },
-                                { label: 'Lente 2x (Telephoto)', hint: '', status: '' },
-                                { label: 'Lente 3x / 5x (se aplicavel)', hint: 'iPhone Pro / Pro Max', status: '' },
-                                { label: 'Modo retrato funcional', hint: '', status: '' },
-                                { label: 'Modo panoramico funcional', hint: '', status: '' },
-                                { label: 'Estabilizacao de imagem OK', hint: 'Gravar video andando', status: '' },
-                            ]
-                        },
-                        {
-                            label: 'Camera frontal',
-                            items: [
-                                { id: 'front_camera', label: 'Foto frontal OK', hint: '', status: '' },
-                                { label: 'Video frontal OK', hint: '', status: '' },
-                            ]
-                        }
-                    ]
-                },
-                {
-                    icon: '📞', title: 'Chamadas e Audio', open: false,
-                    subs: [
-                        {
-                            label: 'Chamadas',
-                            items: [
-                                { label: 'Chip inserido e reconhecido', hint: '', status: '' },
-                                { label: 'Ligacao realizada com sucesso', hint: '', status: '' },
-                                { label: 'Audio do auricular OK (voce ouve)', hint: '', status: '' },
-                                { label: 'Microfone OK (outra pessoa ouve)', hint: '', status: '' },
-                                { label: 'Viva-voz funcional', hint: '', status: '' },
-                                { label: 'Sem chiados ou falhas', hint: '', status: '' },
-                            ]
-                        },
-                        {
-                            label: 'Alto-falantes',
-                            items: [
-                                { label: 'Alto-falante superior OK', hint: 'Tocar musica e verificar', status: '' },
-                                { label: 'Alto-falante inferior OK', hint: 'Volume maximo sem distorcao', status: '' },
-                                { label: 'Audio estereo balanceado', hint: 'Ouvir musica e perceber se sai dos dois lados', status: '' },
-                            ]
-                        },
-                        {
-                            label: 'Microfone',
-                            items: [
-                                { label: 'Microfone principal (gravador de voz)', hint: 'Gravar e reproduzir — audio limpo', status: '' },
-                                { label: 'Microfone secundario (reducao ruido)', hint: 'Gravar video e verificar audio', status: '' },
-                            ]
-                        }
-                    ]
-                },
-                {
-                    icon: '🔘', title: 'Botoes e Controles', open: false,
                     subs: [{
                         label: '',
                         items: [
-                            { label: 'Botao Volume +', hint: '', status: '' },
-                            { label: 'Botao Volume -', hint: '', status: '' },
-                            { label: 'Botao Lateral (Power)', hint: 'Ligar/desligar tela', status: '' },
-                            { label: 'Botao Acao / Silencioso', hint: 'iPhone 15 Pro+: Action Button / Outros: chave mute', status: '' },
-                            { label: 'Vibrar ao silenciar', hint: 'Motor Taptic Engine', status: '' },
+                            { id: 'rear_camera', label: 'Foto traseira OK (todas as lentes)', hint: 'Testar 0.5x, 1x, 2x/3x/5x', status: '' },
+                            { id: 'front_camera', label: 'Foto frontal OK', hint: '', status: '' },
+                            { label: 'Flash / Lanterna OK', hint: '', status: '' },
+                            { label: 'Video grava e reproduz', hint: 'Gravar 10s e verificar audio', status: '' },
                         ]
                     }]
                 },
                 {
-                    icon: '🔋', title: 'Bateria e Carregamento', open: false,
+                    icon: '🔊', title: 'Audio e Chamada', open: false,
                     subs: [{
                         label: '',
                         items: [
-                            { id: 'battery_health', label: 'Saude da bateria verificada', hint: 'Ajustes > Bateria > Saude e Carregamento', status: '' },
+                            { label: 'Ligacao funcional (ouve e fala)', hint: 'Testar auricular + microfone', status: '' },
+                            { label: 'Alto-falantes OK (som estereo)', hint: 'Tocar musica no volume maximo', status: '' },
+                            { label: 'Microfone OK (gravador de voz)', hint: 'Gravar e reproduzir', status: '' },
+                        ]
+                    }]
+                },
+                {
+                    icon: '🔘', title: 'Botoes', open: false,
+                    subs: [{
+                        label: '',
+                        items: [
+                            { label: 'Volume + / Volume -', hint: '', status: '' },
+                            { label: 'Botao Lateral (Power)', hint: '', status: '' },
+                            { label: 'Botao Acao / Silencioso', hint: 'Action Button ou chave mute', status: '' },
+                            { label: 'Vibracao (Taptic Engine)', hint: 'Ativar modo silencioso', status: '' },
+                        ]
+                    }]
+                },
+                {
+                    icon: '🔋', title: 'Bateria', open: false,
+                    subs: [{
+                        label: '',
+                        items: [
+                            { id: 'battery_health', label: 'Saude da bateria verificada', hint: 'Ajustes > Bateria > Saude', status: '' },
                             { id: 'battery_above_80', label: 'Capacidade acima de 80%', hint: 'Abaixo de 80% = troca recomendada', status: '' },
-                            { id: 'charge_cycles', label: 'Contagem de ciclos aceitavel', hint: 'iOS 17.4+: Ajustes > Geral > Sobre > Bateria', status: '' },
-                            { id: 'battery_sn', label: 'Bateria original (sem aviso de servico)', hint: 'Ajustes > Geral > Sobre: Pecas e Servico', status: '' },
-                            { label: 'Carregamento via cabo USB-C / Lightning', hint: '', status: '' },
-                            { label: 'Carregamento wireless / MagSafe', hint: 'Se aplicavel ao modelo', status: '' },
-                            { label: 'Sem aquecimento excessivo', hint: 'Usar por 5min e verificar temperatura', status: '' },
+                            { id: 'battery_sn', label: 'Bateria original', hint: 'Ajustes > Geral > Sobre: Pecas e Servico', status: '' },
+                            { label: 'Carrega via cabo', hint: '', status: '' },
                         ]
                     }]
                 },
@@ -406,26 +354,10 @@
                     subs: [{
                         label: '',
                         items: [
-                            { id: 'wifi', label: 'Wi-Fi conecta e navega', hint: 'Conectar e abrir site', status: '' },
-                            { id: 'bluetooth', label: 'Bluetooth funcional', hint: 'Parear com fone ou outro dispositivo', status: '' },
+                            { id: 'wifi', label: 'Wi-Fi funcional', hint: 'Conectar e abrir site', status: '' },
+                            { id: 'bluetooth', label: 'Bluetooth funcional', hint: 'Parear com fone', status: '' },
                             { id: 'cellular', label: 'Dados moveis (4G/5G)', hint: 'Desligar Wi-Fi e navegar', status: '' },
-                            { label: 'GPS / Localizacao', hint: 'Abrir Apple Maps e verificar posicao', status: '' },
-                            { label: 'NFC funcional', hint: 'Testar Apple Pay ou aproximar tag NFC', status: '' },
-                            { label: 'AirDrop funcional', hint: '', status: '' },
-                        ]
-                    }]
-                },
-                {
-                    icon: '🧲', title: 'Sensores', open: false,
-                    subs: [{
-                        label: '',
-                        items: [
-                            { label: 'Sensor de proximidade', hint: 'Em ligacao, colocar perto do rosto — tela apaga', status: '' },
-                            { label: 'Acelerometro', hint: 'App Bussola > Nivel — verificar se responde', status: '' },
-                            { label: 'Giroscopio', hint: 'Rotacao automatica da tela', status: '' },
-                            { label: 'Bussola', hint: 'App Bussola — apontar para norte', status: '' },
-                            { label: 'Barometro (altimetro)', hint: 'App Saude > Dados de Mobilidade', status: '' },
-                            { id: 'lidar', label: 'LiDAR (Pro/Pro Max)', hint: 'App Medida — apontar para objeto', status: '' },
+                            { label: 'GPS funcional', hint: 'Abrir Maps e verificar posicao', status: '' },
                         ]
                     }]
                 },
@@ -434,28 +366,23 @@
                     subs: [{
                         label: '',
                         items: [
-                            { label: 'Tela sem trincas ou rachaduras', hint: '', status: '' },
                             { label: 'Traseira sem danos', hint: '', status: '' },
-                            { label: 'Laterais sem amassados ou riscos profundos', hint: 'Verificar cantos e quinas', status: '' },
-                            { label: 'Sem gap entre tela e moldura', hint: 'Sinal de abertura ou bateria inchada', status: '' },
-                            { label: 'Porta USB-C / Lightning limpa', hint: 'Sem sujeira, oxidacao ou pinos tortos', status: '' },
-                            { label: 'Bandeja SIM sem danos', hint: '', status: '' },
-                            { label: 'Indicador de liquido (LCI) branco/prata', hint: 'Dentro da bandeja SIM e porta Lightning — vermelho = dano por liquido', status: '' },
+                            { label: 'Laterais sem amassados', hint: 'Verificar cantos e quinas', status: '' },
+                            { label: 'Sem gap entre tela e moldura', hint: 'Sinal de bateria inchada', status: '' },
+                            { label: 'Porta USB-C limpa', hint: 'Sem oxidacao ou pinos tortos', status: '' },
+                            { label: 'Indicador de liquido OK', hint: 'Dentro da bandeja SIM — vermelho = dano', status: '' },
                             { label: 'Lentes das cameras sem riscos', hint: '', status: '' },
-                            { id: 'screen_sn', label: 'Tela original (sem troca)', hint: 'Ajustes > Geral > Sobre: Pecas e Servico', status: '' },
                         ]
                     }]
                 },
                 {
-                    icon: '⚙️', title: 'Software e Sistema', open: false,
+                    icon: '⚙️', title: 'Software', open: false,
                     subs: [{
                         label: '',
                         items: [
-                            { label: 'iOS atualizado ou atualizavel', hint: 'Ajustes > Geral > Atualizacao de Software', status: '' },
-                            { id: 'jailbreak', label: 'Sem jailbreak', hint: 'Verificar se ha apps como Cydia ou Sileo', status: '' },
-                            { label: 'Historico de pecas e servico limpo', hint: 'Ajustes > Geral > Sobre', status: '' },
-                            { label: 'Aparelho restaurado de fabrica', hint: 'Garantir que o aparelho esta zerado', status: '' },
-                            { label: 'Siri funcional', hint: 'Dizer "E ai, Siri"', status: '' },
+                            { id: 'jailbreak', label: 'Sem jailbreak', hint: 'Sem Cydia ou Sileo', status: '' },
+                            { label: 'Pecas e servico limpo', hint: 'Ajustes > Geral > Sobre', status: '' },
+                            { label: 'Restaurado de fabrica', hint: 'Aparelho zerado', status: '' },
                         ]
                     }]
                 },
@@ -545,6 +472,13 @@
                 }
             },
 
+            _setItemHint(id, hintText) {
+                const item = this.findItem(id);
+                if (!item) return;
+                item._originalHint = item._originalHint ?? item.hint;
+                item.hint = hintText;
+            },
+
             processPastedText() {
                 if (!this.pasteText.trim()) {
                     alert('Cole o texto do Device Report ou Device Info do 3uTools.');
@@ -601,6 +535,8 @@
                 if (!kv.ProductType && !kv.SerialNumber) return null;
 
                 const modelName = this._PRODUCT_TYPE_MAP[kv.ProductType] || kv.ProductType || '';
+                const imei = kv.InternationalMobileEquipmentIdentity || '';
+                const serial = kv.SerialNumber || '';
 
                 return {
                     deviceInfo: {
@@ -610,9 +546,9 @@
                         iosVersion: kv.ProductVersion || kv.HumanReadableProductVersionString || '',
                         batteryLife: '',
                         chargeCycles: '',
-                        serialNumber: kv.SerialNumber || '',
+                        serialNumber: serial,
                         region: kv.RegionInfo || '',
-                        imei: kv.InternationalMobileEquipmentIdentity || '',
+                        imei,
                         activation: kv.ActivationState || '',
                         modelNumber: kv.ModelNumber || '',
                         productType: kv.ProductType || '',
@@ -620,7 +556,7 @@
                         wifiAddress: kv.WiFiAddress || '',
                         mlbSerialNumber: kv.MLBSerialNumber || '',
                     },
-                    autoChecks: {},
+                    autoChecks: { isDump: true, imei, serial },
                 };
             },
 
@@ -707,6 +643,11 @@
                 const fail = (id, hint) => { this._setItem(id, 'fail', hint); filled++; };
                 const ac = parsed.autoChecks;
 
+                if (ac.isDump) {
+                    if (ac.imei) this._setItemHint('imei', 'IMEI: ' + ac.imei + ' — conferir com *#06#');
+                    if (ac.serial) this._setItemHint('sn_match', 'SN: ' + ac.serial + ' — conferir Ajustes > Geral > Sobre');
+                }
+
                 if (ac.device) {
                     const d = ac.device;
                     if (d.snMatch === 'Yes') ok('sn_match', '3uTools: SN Match OK');
@@ -727,7 +668,6 @@
                         if (battPct >= 80) ok('battery_above_80', '3uTools: ' + battPct + '%');
                         else fail('battery_above_80', '3uTools: ' + battPct + '% — abaixo de 80%');
                     }
-                    if (d.chargeCycles) ok('charge_cycles', '3uTools: ' + d.chargeCycles + ' ciclos');
                 }
 
                 if (ac.tests) {
@@ -741,7 +681,6 @@
                     if (t.bluetooth?.result === 'Normal') ok('bluetooth', '3uTools: Normal');
                     if (t.wifi?.result === 'Normal') ok('wifi', '3uTools: Normal');
                     if (t.cellular?.result === 'Normal') ok('cellular', '3uTools: Normal');
-                    if (t.lidar?.result === 'Normal') ok('lidar', '3uTools: Normal');
                 }
 
                 if (ac.extras?.faceId === 'Normal') ok('face_id', '3uTools: Face ID Normal');
