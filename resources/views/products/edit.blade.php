@@ -195,6 +195,31 @@
                                            style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                                 </div>
                             </div>
+
+                            <!-- Device Details -->
+                            <input type="hidden" name="device_details" id="device_details_input" value="{{ old('device_details', $product->device_details ? json_encode($product->device_details) : '') }}">
+
+                            <div style="margin-top: 0.875rem; padding-top: 0.875rem; border-top: 1px dashed #fde68a;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <p style="font-size: 0.8125rem; font-weight: 600; color: #92400e;">Detalhes do Dispositivo</p>
+                                    <button type="button" onclick="document.getElementById('device-details-modal').style.display='flex'"
+                                            style="padding: 0.375rem 0.75rem; background: #92400e; color: white; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.375rem;"
+                                            onmouseover="this.style.background='#78350f'" onmouseout="this.style.background='#92400e'">
+                                        <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        </svg>
+                                        Colar Device Details
+                                    </button>
+                                </div>
+
+                                <div id="device-details-summary">
+                                    @if($product->device_details)
+                                        @include('products._device-details-summary', ['details' => $product->device_details])
+                                    @else
+                                        <p style="font-size: 0.75rem; color: #92400e; font-style: italic;">Nenhum dado de dispositivo importado.</p>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
 
