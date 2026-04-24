@@ -71,40 +71,35 @@
                 <!-- Device Info Card -->
                 <div x-show="deviceInfo" x-transition style="background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 100%); border: 1px solid #c7d2fe; border-radius: 0.75rem; overflow: hidden;">
                     <div style="padding: 0.875rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(199,210,254,0.5);">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                             <span style="font-size: 1rem;">📱</span>
                             <span style="font-size: 0.8rem; font-weight: 700; color: #312e81;" x-text="deviceInfo?.modelName || 'Dispositivo'"></span>
-                            <span x-show="deviceInfo?.capacity" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #4338ca;" x-text="deviceInfo?.capacity || ''"></span>
+                            <span x-show="deviceInfo?.capacity" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #4338ca;" x-text="deviceInfo?.capacity"></span>
+                            <span x-show="deviceInfo?.color" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #e0e7ff; color: #4338ca;" x-text="deviceInfo?.color"></span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span x-show="importMessage" x-transition style="font-size: 0.65rem; font-weight: 600; color: #059669; background: #dcfce7; padding: 0.125rem 0.5rem; border-radius: 9999px;" x-text="importMessage"></span>
                             <button @click="removeReport()" type="button" style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid #e5e7eb; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 0.75rem;" title="Remover report">✕</button>
                         </div>
                     </div>
+
                     <div style="padding: 0.75rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem;">
-                        <div x-show="deviceInfo?.color">
-                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cor</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" x-text="deviceInfo?.color"></p>
-                        </div>
-                        <div x-show="deviceInfo?.iosVersion">
-                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">iOS</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" x-text="deviceInfo?.iosVersion"></p>
-                        </div>
+                        <template x-for="field in [
+                            { show: deviceInfo?.iosVersion, label: 'iOS', value: deviceInfo?.iosVersion + (deviceInfo?.buildVersion ? ' (' + deviceInfo.buildVersion + ')' : '') },
+                            { show: deviceInfo?.serialNumber, label: 'Serial', value: deviceInfo?.serialNumber, mono: true },
+                            { show: deviceInfo?.imei, label: 'IMEI', value: deviceInfo?.imei, mono: true },
+                            { show: deviceInfo?.imei2, label: 'IMEI 2', value: deviceInfo?.imei2, mono: true },
+                            { show: deviceInfo?.region, label: 'Regiao', value: deviceInfo?.region },
+                            { show: deviceInfo?.activation, label: 'Ativacao', value: deviceInfo?.activation },
+                        ]">
+                            <div x-show="field.show">
+                                <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family: monospace' : ''" x-text="field.value"></p>
+                            </div>
+                        </template>
                         <div x-show="deviceInfo?.batteryLife">
                             <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Bateria</span>
                             <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (parseInt(deviceInfo?.batteryLife) >= 80 ? '#059669' : '#dc2626')" x-text="deviceInfo?.batteryLife + (deviceInfo?.chargeCycles ? ' / ' + deviceInfo.chargeCycles + ' ciclos' : '')"></p>
-                        </div>
-                        <div x-show="deviceInfo?.serialNumber">
-                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Serial</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0; font-family: monospace;" x-text="deviceInfo?.serialNumber"></p>
-                        </div>
-                        <div x-show="deviceInfo?.imei">
-                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">IMEI</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0; font-family: monospace;" x-text="deviceInfo?.imei"></p>
-                        </div>
-                        <div x-show="deviceInfo?.region">
-                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Regiao</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" x-text="deviceInfo?.region"></p>
                         </div>
                         <div x-show="deviceInfo?.snMatch !== undefined">
                             <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">SN Match</span>
@@ -114,10 +109,47 @@
                             <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">5-Code</span>
                             <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (deviceInfo?.fiveCodeMatch === 'Yes' ? '#059669' : '#dc2626')" x-text="deviceInfo?.fiveCodeMatch"></p>
                         </div>
-                        <div x-show="deviceInfo?.activation">
-                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ativacao</span>
-                            <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" x-text="deviceInfo?.activation"></p>
-                        </div>
+                    </div>
+
+                    <!-- Rede e SIM -->
+                    <div x-show="deviceInfo?.phoneNumber || deviceInfo?.simStatus || deviceInfo?.iccid"
+                         style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
+                        <template x-for="field in [
+                            { show: deviceInfo?.phoneNumber, label: 'Telefone', value: deviceInfo?.phoneNumber },
+                            { show: deviceInfo?.simStatus, label: 'SIM Status', value: deviceInfo?.simStatus },
+                            { show: deviceInfo?.simTrayStatus, label: 'Bandeja SIM', value: deviceInfo?.simTrayStatus },
+                            { show: deviceInfo?.iccid, label: 'ICCID', value: deviceInfo?.iccid, mono: true },
+                            { show: deviceInfo?.iccid2, label: 'ICCID 2', value: deviceInfo?.iccid2, mono: true },
+                        ]">
+                            <div x-show="field.show">
+                                <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family: monospace; font-size: 0.65rem;' : ''" x-text="field.value"></p>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- Hardware e Enderecos -->
+                    <div x-show="deviceInfo?.modelNumber || deviceInfo?.bluetoothAddress || deviceInfo?.mlbSerialNumber"
+                         style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
+                        <template x-for="field in [
+                            { show: deviceInfo?.modelNumber, label: 'Modelo', value: deviceInfo?.modelNumber + (deviceInfo?.productType ? ' (' + deviceInfo.productType + ')' : '') },
+                            { show: deviceInfo?.hardwareModel, label: 'Hardware', value: deviceInfo?.hardwareModel },
+                            { show: deviceInfo?.cpuArchitecture, label: 'CPU', value: deviceInfo?.cpuArchitecture },
+                            { show: deviceInfo?.basebandVersion, label: 'Baseband', value: deviceInfo?.basebandVersion },
+                            { show: deviceInfo?.firmwareVersion, label: 'Firmware', value: deviceInfo?.firmwareVersion },
+                            { show: deviceInfo?.bluetoothAddress, label: 'Bluetooth MAC', value: deviceInfo?.bluetoothAddress, mono: true },
+                            { show: deviceInfo?.wifiAddress, label: 'Wi-Fi MAC', value: deviceInfo?.wifiAddress, mono: true },
+                            { show: deviceInfo?.mlbSerialNumber, label: 'MLB Serial', value: deviceInfo?.mlbSerialNumber, mono: true },
+                            { show: deviceInfo?.wirelessBoardSN, label: 'Wireless Board', value: deviceInfo?.wirelessBoardSN, mono: true },
+                            { show: deviceInfo?.udid, label: 'UDID', value: deviceInfo?.udid, mono: true },
+                            { show: deviceInfo?.deviceName, label: 'Nome Dispositivo', value: deviceInfo?.deviceName },
+                            { show: deviceInfo?.timeZone, label: 'Fuso Horario', value: deviceInfo?.timeZone },
+                        ]">
+                            <div x-show="field.show">
+                                <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family: monospace; font-size: 0.65rem; word-break: break-all;' : ''" x-text="field.value"></p>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -523,6 +555,13 @@
                 'iPhone12,1': 'iPhone 11',
             },
 
+            _DEVICE_COLOR_MAP: {
+                '1': 'Preto', '2': 'Branco', '3': 'Dourado', '4': 'Azul',
+                '5': 'Titanio Natural', '6': 'Titanio Preto', '7': 'Titanio Branco',
+                '8': 'Titanio Deserto', '9': 'Verde', '10': 'Roxo', '11': 'Vermelho',
+                '12': 'Rosa', '13': 'Amarelo',
+            },
+
             _parseDeviceInfoDump(text) {
                 const lines = text.split(/\r?\n/).filter(l => l.trim());
                 const kv = {};
@@ -537,24 +576,41 @@
                 const modelName = this._PRODUCT_TYPE_MAP[kv.ProductType] || kv.ProductType || '';
                 const imei = kv.InternationalMobileEquipmentIdentity || '';
                 const serial = kv.SerialNumber || '';
+                const colorCode = kv.DeviceEnclosureColor || kv.DeviceColor || '';
+                const colorName = this._DEVICE_COLOR_MAP[colorCode] || '';
 
                 return {
                     deviceInfo: {
                         modelName,
                         capacity: '',
-                        color: '',
+                        color: colorName,
                         iosVersion: kv.ProductVersion || kv.HumanReadableProductVersionString || '',
+                        buildVersion: kv.BuildVersion || '',
                         batteryLife: '',
                         chargeCycles: '',
                         serialNumber: serial,
                         region: kv.RegionInfo || '',
                         imei,
+                        imei2: kv.InternationalMobileEquipmentIdentity2 || '',
                         activation: kv.ActivationState || '',
                         modelNumber: kv.ModelNumber || '',
                         productType: kv.ProductType || '',
                         bluetoothAddress: kv.BluetoothAddress || '',
                         wifiAddress: kv.WiFiAddress || '',
                         mlbSerialNumber: kv.MLBSerialNumber || '',
+                        phoneNumber: kv.PhoneNumber || '',
+                        deviceName: kv.DeviceName || '',
+                        basebandVersion: kv.BasebandVersion || '',
+                        firmwareVersion: kv.FirmwareVersion || '',
+                        cpuArchitecture: kv.CPUArchitecture || '',
+                        simStatus: kv.SIMStatus ? kv.SIMStatus.replace('kCTSIMSupportSIMStatus', '') : '',
+                        simTrayStatus: kv.SIMTrayStatus ? kv.SIMTrayStatus.replace('kCTSIMSupportSIMTray', '') : '',
+                        iccid: kv.IntegratedCircuitCardIdentity || '',
+                        iccid2: kv.IntegratedCircuitCardIdentity2 || '',
+                        udid: kv.UniqueDeviceID || '',
+                        wirelessBoardSN: kv.WirelessBoardSerialNumber || '',
+                        timeZone: kv.TimeZone || '',
+                        hardwareModel: kv.HardwareModel || '',
                     },
                     autoChecks: { isDump: true, imei, serial },
                 };
@@ -767,15 +823,25 @@
 
             copySummary() {
                 let lines = ['*CHECKLIST SEMINOVO - DG Store*', ''];
+                const d = this.deviceInfo;
 
-                if (this.deviceInfo) {
-                    lines.push('📱 *' + this.deviceInfo.modelName + '*' + (this.deviceInfo.capacity ? ' ' + this.deviceInfo.capacity : ''));
-                    if (this.deviceInfo.color) lines.push('🎨 ' + this.deviceInfo.color);
-                    if (this.deviceInfo.batteryLife) lines.push('🔋 Bateria: ' + this.deviceInfo.batteryLife + (this.deviceInfo.chargeCycles ? ' / ' + this.deviceInfo.chargeCycles + ' ciclos' : ''));
-                    if (this.deviceInfo.serialNumber) lines.push('🔢 Serial: ' + this.deviceInfo.serialNumber);
-                    if (this.deviceInfo.imei) lines.push('📟 IMEI: ' + this.deviceInfo.imei);
-                    if (this.deviceInfo.region) lines.push('🌎 Regiao: ' + this.deviceInfo.region);
-                    if (this.deviceInfo.snMatch) lines.push((this.deviceInfo.snMatch === 'Yes' ? '✅' : '❌') + ' SN Match: ' + this.deviceInfo.snMatch);
+                if (d) {
+                    lines.push('📱 *' + d.modelName + '*' + (d.capacity ? ' ' + d.capacity : '') + (d.color ? ' — ' + d.color : ''));
+                    if (d.iosVersion) lines.push('⚙️ iOS ' + d.iosVersion + (d.buildVersion ? ' (' + d.buildVersion + ')' : ''));
+                    if (d.batteryLife) lines.push('🔋 Bateria: ' + d.batteryLife + (d.chargeCycles ? ' / ' + d.chargeCycles + ' ciclos' : ''));
+                    if (d.serialNumber) lines.push('🔢 Serial: ' + d.serialNumber);
+                    if (d.imei) lines.push('📟 IMEI: ' + d.imei);
+                    if (d.imei2) lines.push('📟 IMEI 2: ' + d.imei2);
+                    if (d.region) lines.push('🌎 Regiao: ' + d.region);
+                    if (d.modelNumber) lines.push('🏷️ Modelo: ' + d.modelNumber + (d.productType ? ' (' + d.productType + ')' : ''));
+                    if (d.phoneNumber) lines.push('📞 Tel: ' + d.phoneNumber);
+                    if (d.activation) lines.push('🔓 Ativacao: ' + d.activation);
+                    if (d.simStatus) lines.push('📶 SIM: ' + d.simStatus);
+                    if (d.bluetoothAddress) lines.push('🔵 BT: ' + d.bluetoothAddress);
+                    if (d.wifiAddress) lines.push('📡 Wi-Fi: ' + d.wifiAddress);
+                    if (d.mlbSerialNumber) lines.push('🔧 MLB: ' + d.mlbSerialNumber);
+                    if (d.udid) lines.push('🆔 UDID: ' + d.udid);
+                    if (d.snMatch) lines.push((d.snMatch === 'Yes' ? '✅' : '❌') + ' SN Match: ' + d.snMatch);
                     lines.push('');
                 }
 

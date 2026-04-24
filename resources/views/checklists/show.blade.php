@@ -38,34 +38,71 @@
             @php $deviceInfo = $checklist->device_info; @endphp
             @if($deviceInfo)
                 <div style="background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 100%); border: 1px solid #c7d2fe; border-radius: 0.75rem; overflow: hidden; margin-bottom: 1.25rem;">
-                    <div style="padding: 0.875rem 1.25rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid rgba(199,210,254,0.5);">
+                    <div style="padding: 0.875rem 1.25rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; border-bottom: 1px solid rgba(199,210,254,0.5);">
                         <span style="font-size: 1rem;">📱</span>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #312e81;">{{ $deviceInfo['modelName'] ?? 'Dispositivo' }}</span>
                         @if(!empty($deviceInfo['capacity']))
                             <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #4338ca;">{{ $deviceInfo['capacity'] }}</span>
                         @endif
+                        @if(!empty($deviceInfo['color']))
+                            <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #e0e7ff; color: #4338ca;">{{ $deviceInfo['color'] }}</span>
+                        @endif
                     </div>
-                    <div style="padding: 0.75rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem;">
-                        @foreach(['color' => 'Cor', 'iosVersion' => 'iOS', 'batteryLife' => 'Bateria', 'serialNumber' => 'Serial', 'imei' => 'IMEI', 'region' => 'Regiao', 'snMatch' => 'SN Match', 'fiveCodeMatch' => '5-Code', 'activation' => 'Ativacao'] as $key => $label)
-                            @if(!empty($deviceInfo[$key]))
-                                <div>
-                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">{{ $label }}</span>
-                                    @php
-                                        $val = $deviceInfo[$key];
-                                        $textColor = '#111827';
-                                        if ($key === 'batteryLife') {
-                                            $val .= !empty($deviceInfo['chargeCycles']) ? ' / ' . $deviceInfo['chargeCycles'] . ' ciclos' : '';
-                                            $textColor = intval($deviceInfo['batteryLife']) >= 80 ? '#059669' : '#dc2626';
-                                        }
-                                        if (in_array($key, ['snMatch', 'fiveCodeMatch'])) {
-                                            $textColor = $val === 'Yes' ? '#059669' : '#dc2626';
-                                        }
-                                    @endphp
-                                    <p style="font-size: 0.75rem; font-weight: 600; color: {{ $textColor }}; margin: 0;">{{ $val }}</p>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
+
+                    @php
+                        $primaryFields = [
+                            'iosVersion' => 'iOS', 'serialNumber' => 'Serial', 'imei' => 'IMEI',
+                            'imei2' => 'IMEI 2', 'region' => 'Regiao', 'activation' => 'Ativacao',
+                            'batteryLife' => 'Bateria', 'snMatch' => 'SN Match', 'fiveCodeMatch' => '5-Code',
+                        ];
+                        $networkFields = [
+                            'phoneNumber' => 'Telefone', 'simStatus' => 'SIM Status',
+                            'simTrayStatus' => 'Bandeja SIM', 'iccid' => 'ICCID', 'iccid2' => 'ICCID 2',
+                        ];
+                        $hardwareFields = [
+                            'modelNumber' => 'Modelo', 'hardwareModel' => 'Hardware',
+                            'cpuArchitecture' => 'CPU', 'basebandVersion' => 'Baseband',
+                            'firmwareVersion' => 'Firmware', 'bluetoothAddress' => 'Bluetooth MAC',
+                            'wifiAddress' => 'Wi-Fi MAC', 'mlbSerialNumber' => 'MLB Serial',
+                            'wirelessBoardSN' => 'Wireless Board', 'udid' => 'UDID',
+                            'deviceName' => 'Nome Dispositivo', 'timeZone' => 'Fuso Horario',
+                        ];
+                        $monoFields = ['serialNumber','imei','imei2','iccid','iccid2','bluetoothAddress','wifiAddress','mlbSerialNumber','wirelessBoardSN','udid'];
+                    @endphp
+
+                    @foreach([$primaryFields, $networkFields, $hardwareFields] as $fieldGroup)
+                        @php $hasAny = collect($fieldGroup)->keys()->contains(fn($k) => !empty($deviceInfo[$k])); @endphp
+                        @if($hasAny)
+                            <div style="padding: 0.75rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; {{ !$loop->first ? 'border-top: 1px solid rgba(199,210,254,0.3);' : '' }}">
+                                @foreach($fieldGroup as $key => $label)
+                                    @if(!empty($deviceInfo[$key]))
+                                        <div>
+                                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">{{ $label }}</span>
+                                            @php
+                                                $val = $deviceInfo[$key];
+                                                $textColor = '#111827';
+                                                $isMono = in_array($key, $monoFields);
+                                                if ($key === 'iosVersion' && !empty($deviceInfo['buildVersion'])) {
+                                                    $val .= ' (' . $deviceInfo['buildVersion'] . ')';
+                                                }
+                                                if ($key === 'batteryLife') {
+                                                    $val .= !empty($deviceInfo['chargeCycles']) ? ' / ' . $deviceInfo['chargeCycles'] . ' ciclos' : '';
+                                                    $textColor = intval($deviceInfo['batteryLife']) >= 80 ? '#059669' : '#dc2626';
+                                                }
+                                                if ($key === 'modelNumber' && !empty($deviceInfo['productType'])) {
+                                                    $val .= ' (' . $deviceInfo['productType'] . ')';
+                                                }
+                                                if (in_array($key, ['snMatch', 'fiveCodeMatch'])) {
+                                                    $textColor = $val === 'Yes' ? '#059669' : '#dc2626';
+                                                }
+                                            @endphp
+                                            <p style="font-size: {{ $isMono ? '0.65rem' : '0.75rem' }}; font-weight: 600; color: {{ $textColor }}; margin: 0; {{ $isMono ? 'font-family: monospace; word-break: break-all;' : '' }}">{{ $val }}</p>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
             @endif
 
