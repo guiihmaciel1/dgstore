@@ -1,7 +1,7 @@
 <div class="mt-3 border-t border-gray-100 pt-3">
     <div @click="tradeIn.showEval = !tradeIn.showEval"
          class="flex items-center gap-1.5 cursor-pointer text-xs text-gray-400 select-none hover:text-amber-600 transition-colors">
-        <span x-text="tradeIn.showEval ? '▾ Ocultar avaliador' : '▸ Avaliar seminovo (DGiFipe)'"></span>
+        <span x-text="tradeIn.showEval ? '▾ Ocultar avaliador' : '▸ Avaliar seminovo (Facebook Marketplace)'"></span>
     </div>
 
     <div x-show="tradeIn.showEval" x-collapse>
@@ -144,7 +144,7 @@
                 <div class="bg-white rounded-[10px] p-4 mb-2">
                     <div class="text-[0.65rem] font-semibold text-gray-500 uppercase tracking-wider">Preço Sugerido de Compra</div>
                     <div class="text-[1.75rem] font-extrabold text-emerald-600 tracking-tight" x-text="'R$ ' + fmt(tradeIn.result?.suggested_price)"></div>
-                    <div class="text-xs text-gray-400 mt-0.5">Valor ideal para adquirir este aparelho.</div>
+                    <div class="text-xs text-gray-400 mt-0.5">Baseado em anúncios do Facebook Marketplace.</div>
                 </div>
                 <div class="bg-white rounded-[10px] p-4 mb-2">
                     <div class="text-[0.65rem] font-semibold text-gray-500 uppercase tracking-wider">Preço Sugerido de Revenda</div>
@@ -163,7 +163,7 @@
                 </div>
                 <div class="bg-white rounded-[10px] p-3 mb-2 flex items-center justify-between">
                     <div>
-                        <div class="text-[0.6rem] font-semibold text-gray-500 uppercase tracking-wider">Anúncios</div>
+                        <div class="text-[0.6rem] font-semibold text-gray-500 uppercase tracking-wider">Anúncios (Facebook)</div>
                         <div class="flex items-center gap-2 mt-0.5">
                             <span class="text-[1.1rem] font-semibold text-gray-900" x-text="tradeIn.result?.listings_count"></span>
                             <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full"

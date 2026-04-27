@@ -21,7 +21,7 @@ class NegotiationEvaluatorService
         string $deviceState,
         array $accessoryChecks,
     ): array {
-        $cacheKey = "negotiation:listings:{$model}:{$storage}";
+        $cacheKey = "negotiation:listings:{$model}:{$storage}:fb";
         $cacheTtl = $this->secondsUntilNextScrape();
 
         $listingData = Cache::remember(
