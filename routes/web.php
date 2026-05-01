@@ -277,10 +277,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::middleware('role:admin_geral')->group(function () {
             // Relatórios
             Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/reports/executive', [ReportController::class, 'executive'])->name('reports.executive');
+            Route::get('/reports/executive/export', [ReportController::class, 'executiveExport'])->name('reports.executive.export');
             Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
             Route::get('/reports/sales/pdf', [ReportController::class, 'salesPdf'])->name('reports.sales.pdf');
+            Route::get('/reports/sales/export', [ReportController::class, 'salesExport'])->name('reports.sales.export');
             Route::get('/reports/stock', [ReportController::class, 'stock'])->name('reports.stock');
+            Route::get('/reports/stock/export', [ReportController::class, 'stockExport'])->name('reports.stock.export');
             Route::get('/reports/top-products', [ReportController::class, 'topProducts'])->name('reports.top-products');
+            Route::get('/reports/top-products/export', [ReportController::class, 'topProductsExport'])->name('reports.top-products.export');
+            Route::get('/reports/margins', [ReportController::class, 'margins'])->name('reports.margins');
+            Route::get('/reports/margins/export', [ReportController::class, 'marginsExport'])->name('reports.margins.export');
+            Route::get('/reports/commissions', [ReportController::class, 'commissions'])->name('reports.commissions');
+            Route::get('/reports/commissions/export', [ReportController::class, 'commissionsExport'])->name('reports.commissions.export');
 
             // Gestão de Usuários
             Route::prefix('admin/users')->group(function () {

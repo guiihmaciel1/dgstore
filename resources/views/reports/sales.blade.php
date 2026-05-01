@@ -31,11 +31,37 @@
                                style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
                                x-on:change="$refs.filterForm.submit()">
                     </div>
-                    <a href="{{ route('reports.sales.pdf', ['start_date' => $startDate, 'end_date' => $endDate]) }}" 
-                       style="padding: 0.625rem 1.5rem; background: #374151; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none;">
-                        Exportar PDF
-                    </a>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{{ route('reports.sales.pdf', ['start_date' => $startDate, 'end_date' => $endDate]) }}" 
+                           style="padding: 0.625rem 1.25rem; background: #374151; color: white; font-weight: 500; border-radius: 0.5rem; text-decoration: none; font-size: 0.875rem;">
+                            PDF
+                        </a>
+                        @include('reports.partials.export-button', ['route' => 'reports.sales.export', 'params' => ['start_date' => $startDate, 'end_date' => $endDate]])
+                    </div>
                 </form>
+
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                    <details>
+                        <summary style="cursor: pointer; font-size: 0.875rem; font-weight: 500; color: #6b7280;">Comparar com outro período</summary>
+                        <form method="GET" action="{{ route('reports.sales') }}" style="display: flex; align-items: flex-end; gap: 1rem; margin-top: 0.75rem;">
+                            <input type="hidden" name="start_date" value="{{ $startDate }}">
+                            <input type="hidden" name="end_date" value="{{ $endDate }}">
+                            <div style="flex: 1;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Início Comparação</label>
+                                <input type="date" name="compare_start_date" value="{{ $compareStartDate ?? '' }}"
+                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Fim Comparação</label>
+                                <input type="date" name="compare_end_date" value="{{ $compareEndDate ?? '' }}"
+                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;">
+                            </div>
+                            <button type="submit" style="padding: 0.5rem 1.25rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;">
+                                Comparar
+                            </button>
+                        </form>
+                    </details>
+                </div>
             </div>
 
             <!-- Resumo -->
@@ -105,6 +131,55 @@
                     </div>
                 </div>
             </div>
+
+            @if($comparison)
+            <!-- Comparativo -->
+            <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
+                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f0f9ff;">
+                    <h3 style="font-weight: 600; color: #111827;">Comparativo de Períodos</h3>
+                    <p style="font-size: 0.75rem; color: #6b7280;">{{ $comparison['period1']['period']['start'] }} - {{ $comparison['period1']['period']['end'] }} vs {{ $comparison['period2']['period']['start'] }} - {{ $comparison['period2']['period']['end'] }}</p>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                        @php
+                            $compMetrics = [
+                                ['label' => 'Vendas', 'key' => 'total_sales', 'prefix' => '', 'monetary' => false],
+                                ['label' => 'Faturamento', 'key' => 'total_revenue', 'prefix' => 'R$ ', 'monetary' => true],
+                                ['label' => 'Descontos', 'key' => 'total_discount', 'prefix' => 'R$ ', 'monetary' => true],
+                                ['label' => 'Ticket Médio', 'key' => 'average_ticket', 'prefix' => 'R$ ', 'monetary' => true],
+                            ];
+                        @endphp
+                        @foreach($compMetrics as $m)
+                            @php
+                                $v1 = $comparison['period1']['summary'][$m['key']];
+                                $v2 = $comparison['period2']['summary'][$m['key']];
+                                $delta = $comparison['deltas'][$m['key']];
+                                $isPositive = $delta >= 0;
+                                $deltaColor = $m['key'] === 'total_discount' ? ($isPositive ? '#dc2626' : '#16a34a') : ($isPositive ? '#16a34a' : '#dc2626');
+                            @endphp
+                            <div style="background: #f9fafb; border-radius: 0.75rem; padding: 1rem; border: 1px solid #e5e7eb;">
+                                <div style="font-size: 0.7rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">{{ $m['label'] }}</div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 0.5rem;">
+                                    <div>
+                                        <div style="font-size: 0.65rem; color: #9ca3af;">Período 1</div>
+                                        <div style="font-weight: 700; color: #111827;">{{ $m['prefix'] }}{{ $m['monetary'] ? number_format((float)$v1, 2, ',', '.') : $v1 }}</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 0.65rem; color: #9ca3af;">Período 2</div>
+                                        <div style="font-weight: 600; color: #6b7280;">{{ $m['prefix'] }}{{ $m['monetary'] ? number_format((float)$v2, 2, ',', '.') : $v2 }}</div>
+                                    </div>
+                                </div>
+                                <div style="margin-top: 0.5rem; text-align: center;">
+                                    <span style="display: inline-block; padding: 0.15rem 0.5rem; background: {{ $deltaColor }}15; color: {{ $deltaColor }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
+                                        {{ $isPositive ? '+' : '' }}{{ number_format($delta, 1, ',', '') }}%
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
 
             <!-- Lista de Vendas -->
             <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">

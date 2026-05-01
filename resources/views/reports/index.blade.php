@@ -8,6 +8,28 @@
                 <p style="font-size: 0.875rem; color: #6b7280;">Análises e informações gerenciais do seu negócio</p>
             </div>
 
+            <!-- Card destaque: Dashboard Executivo -->
+            <a href="{{ route('reports.executive') }}" style="text-decoration: none; display: block; margin-bottom: 1.5rem;">
+                <div style="background: linear-gradient(135deg, #111827 0%, #374151 100%); border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 1.5rem; transition: all 0.2s; color: white;"
+                     onmouseover="this.style.boxShadow='0 10px 30px -5px rgba(0,0,0,0.3)'; this.style.transform='translateY(-2px)'"
+                     onmouseout="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)'; this.style.transform='translateY(0)'">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 3.5rem; height: 3.5rem; background: rgba(255,255,255,0.15); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg style="width: 1.75rem; height: 1.75rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                            </svg>
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem;">Dashboard Executivo</h3>
+                            <p style="font-size: 0.875rem; opacity: 0.8; line-height: 1.4;">Visão estratégica com evolução mensal, comparativos e tendências</p>
+                        </div>
+                        <svg style="width: 1.25rem; height: 1.25rem; opacity: 0.6; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </a>
+
             <!-- Cards de Relatórios -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                 
@@ -69,6 +91,50 @@
                             <div style="flex: 1;">
                                 <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin-bottom: 0.25rem;">Produtos Mais Vendidos</h3>
                                 <p style="font-size: 0.875rem; color: #6b7280; line-height: 1.4;">Ranking dos produtos com maior saída</p>
+                            </div>
+                            <svg style="width: 1.25rem; height: 1.25rem; color: #9ca3af; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Margem por Categoria -->
+                <a href="{{ route('reports.margins') }}" style="text-decoration: none;">
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; transition: all 0.2s;"
+                         onmouseover="this.style.boxShadow='0 10px 25px -5px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='#16a34a'"
+                         onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)'; this.style.borderColor='#e5e7eb'">
+                        <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                            <div style="width: 3.5rem; height: 3.5rem; background: #16a34a; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg style="width: 1.75rem; height: 1.75rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin-bottom: 0.25rem;">Margens</h3>
+                                <p style="font-size: 0.875rem; color: #6b7280; line-height: 1.4;">Margem por categoria, fornecedor e condição</p>
+                            </div>
+                            <svg style="width: 1.25rem; height: 1.25rem; color: #9ca3af; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Comissões -->
+                <a href="{{ route('reports.commissions') }}" style="text-decoration: none;">
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; transition: all 0.2s;"
+                         onmouseover="this.style.boxShadow='0 10px 25px -5px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='#7c3aed'"
+                         onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)'; this.style.borderColor='#e5e7eb'">
+                        <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                            <div style="width: 3.5rem; height: 3.5rem; background: #7c3aed; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <svg style="width: 1.75rem; height: 1.75rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin-bottom: 0.25rem;">Comissões</h3>
+                                <p style="font-size: 0.875rem; color: #6b7280; line-height: 1.4;">Detalhamento por vendedor e categoria de produto</p>
                             </div>
                             <svg style="width: 1.25rem; height: 1.25rem; color: #9ca3af; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

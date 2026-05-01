@@ -10,10 +10,11 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
                 </a>
-                <div>
+                <div style="flex: 1;">
                     <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Relatório de Estoque</h1>
                     <p style="font-size: 0.875rem; color: #6b7280;">Visão geral do inventário da loja</p>
                 </div>
+                @include('reports.partials.export-button', ['route' => 'reports.stock.export'])
             </div>
 
             <!-- Resumo -->

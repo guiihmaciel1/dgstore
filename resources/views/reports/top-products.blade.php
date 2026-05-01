@@ -40,6 +40,7 @@
                     <button type="submit" style="padding: 0.625rem 1.5rem; background: #111827; color: white; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer;">
                         Filtrar
                     </button>
+                    @include('reports.partials.export-button', ['route' => 'reports.top-products.export', 'params' => ['start_date' => $startDate, 'end_date' => $endDate, 'limit' => $limit]])
                 </form>
             </div>
 
