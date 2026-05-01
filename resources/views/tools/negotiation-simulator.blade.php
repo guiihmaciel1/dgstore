@@ -337,7 +337,7 @@
                 if (balance > 0) {
                     lines.push('');
                     lines.push(`━━━━━━━━━━━━━━━`);
-                    lines.push(`✅ *Pix/À vista: R$ ${this.fmt(balance)}*`);
+                    lines.push(`✅ *Diferença à vista: R$ ${this.fmt(balance)}*`);
 
                     const selected = this.cardResults.filter(r => r.selected);
                     if (selected.length > 0) {

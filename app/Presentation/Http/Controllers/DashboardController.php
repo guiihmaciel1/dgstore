@@ -432,15 +432,17 @@ class DashboardController extends Controller
         $start = $ref->copy()->startOfMonth();
         $end = $ref->copy()->endOfMonth();
 
-        $sales = Sale::with(['items.product', 'tradeIns'])
+        $sales = Sale::with(['items.product', 'tradeIns', 'customer'])
             ->whereBetween('sold_at', [$start, $end])
             ->where('payment_status', '!=', PaymentStatus::Cancelled)
             ->get();
 
         $allItems = $sales->flatMap->items;
 
+        $customerBySale = $sales->keyBy('id')->map(fn (Sale $s) => $s->customer?->name ?? 'Sem cliente');
+
         $monthSummary = $this->buildMonthSummary($ref, $sales, $allItems, $start, $end);
-        $salesAnalytics = $this->buildSalesAnalytics($sales, $allItems);
+        $salesAnalytics = $this->buildSalesAnalytics($sales, $allItems, $customerBySale);
 
         return [$monthSummary, $salesAnalytics];
     }
@@ -508,7 +510,7 @@ class DashboardController extends Controller
         ];
     }
 
-    private function buildSalesAnalytics($sales, $allItems): array
+    private function buildSalesAnalytics($sales, $allItems, $customerBySale): array
     {
         $paymentMethods = $sales
             ->groupBy(fn (Sale $s) => $s->payment_method->value)
@@ -538,48 +540,67 @@ class DashboardController extends Controller
         $zeroMarginItems = [];
         $highMarginItems = [];
         $marginBuckets = ['negative' => 0, 'zero' => 0, 'low' => 0, 'medium' => 0, 'high' => 0, 'premium' => 0];
+        $bucketSamples = ['negative' => [], 'zero' => [], 'low' => [], 'medium' => [], 'high' => [], 'premium' => []];
 
         foreach ($allItems as $item) {
             $profit = $item->item_profit;
             $snapshot = $item->product_snapshot ?? [];
             $name = $item->product?->name ?? $snapshot['name'] ?? 'Produto removido';
+            $customer = $customerBySale->get($item->sale_id, 'Sem cliente');
+
+            $itemData = [
+                'name' => $name,
+                'customer' => $customer,
+                'profit' => $profit,
+                'unit_price' => (float) $item->unit_price,
+                'cost' => $item->total_cost_value,
+                'quantity' => $item->quantity,
+            ];
 
             if ($profit <= 0) {
-                $zeroMarginItems[] = [
-                    'name' => $name,
-                    'profit' => $profit,
-                    'unit_price' => (float) $item->unit_price,
-                    'cost' => $item->total_cost_value,
-                    'quantity' => $item->quantity,
-                ];
+                $zeroMarginItems[] = $itemData;
             }
 
             if ($profit >= 500) {
-                $highMarginItems[] = [
-                    'name' => $name,
-                    'profit' => $profit,
-                    'unit_price' => (float) $item->unit_price,
-                    'cost' => $item->total_cost_value,
-                    'quantity' => $item->quantity,
-                ];
+                $highMarginItems[] = $itemData;
             }
 
             if ($profit < 0) {
                 $marginBuckets['negative']++;
+                if (count($bucketSamples['negative']) < 3) {
+                    $bucketSamples['negative'][] = $itemData;
+                }
             } elseif ($profit == 0) {
                 $marginBuckets['zero']++;
+                if (count($bucketSamples['zero']) < 3) {
+                    $bucketSamples['zero'][] = $itemData;
+                }
             } elseif ($profit < 100) {
                 $marginBuckets['low']++;
+                if (count($bucketSamples['low']) < 3) {
+                    $bucketSamples['low'][] = $itemData;
+                }
             } elseif ($profit < 500) {
                 $marginBuckets['medium']++;
+                if (count($bucketSamples['medium']) < 3) {
+                    $bucketSamples['medium'][] = $itemData;
+                }
             } elseif ($profit < 1000) {
                 $marginBuckets['high']++;
+                if (count($bucketSamples['high']) < 3) {
+                    $bucketSamples['high'][] = $itemData;
+                }
             } else {
                 $marginBuckets['premium']++;
+                if (count($bucketSamples['premium']) < 3) {
+                    $bucketSamples['premium'][] = $itemData;
+                }
             }
         }
 
         usort($highMarginItems, fn ($a, $b) => $b['profit'] <=> $a['profit']);
+
+        $topModelColors = $this->buildTopModelColorRanking($allItems);
 
         return [
             'payment_methods' => $paymentMethods,
@@ -596,6 +617,125 @@ class DashboardController extends Controller
                 'high_margin_items' => array_slice($highMarginItems, 0, 5),
             ],
             'margin_buckets' => $marginBuckets,
+            'bucket_samples' => $bucketSamples,
+            'top_model_colors' => $topModelColors,
         ];
+    }
+
+    /**
+     * Retorna ranking de cores por modelo de iPhone vendido no mes.
+     * Agrupa modelos (Pro Max, Pro, base) e unifica cores sinonimas.
+     * @return array<int, array{model: string, total: int, colors: array}>
+     */
+    private function buildTopModelColorRanking($allItems): array
+    {
+        $smartphoneItems = $allItems->filter(function ($item) {
+            $rawCat = $item->product?->category ?? ($item->product_snapshot['category'] ?? null);
+            $cat = $rawCat instanceof \App\Domain\Product\Enums\ProductCategory ? $rawCat->value : $rawCat;
+            return $cat === 'smartphone';
+        });
+
+        if ($smartphoneItems->isEmpty()) {
+            return [];
+        }
+
+        $byModel = $smartphoneItems->groupBy(function ($item) {
+            $name = $item->product?->name ?? $item->product_snapshot['name'] ?? '';
+            return $this->normalizeModelName($name);
+        });
+
+        $models = $byModel
+            ->map(function ($items, $model) {
+                $colors = $items
+                    ->groupBy(function ($item) {
+                        $color = $item->product?->color ?? $item->product_snapshot['color'] ?? null;
+                        return $this->normalizeColorName($color);
+                    })
+                    ->map(fn ($colorItems, $color) => [
+                        'color' => $color,
+                        'quantity' => $colorItems->sum('quantity'),
+                    ])
+                    ->sortByDesc('quantity')
+                    ->values()
+                    ->toArray();
+
+                return [
+                    'model' => $model,
+                    'total' => $items->sum('quantity'),
+                    'colors' => $colors,
+                ];
+            })
+            ->filter(fn ($m) => $m['total'] > 0)
+            ->sortByDesc('total')
+            ->values()
+            ->toArray();
+
+        return array_slice($models, 0, 5);
+    }
+
+    private function normalizeModelName(string $name): string
+    {
+        $name = trim($name);
+        $name = preg_replace('/\s+\d+\s*GB/i', '', $name);
+        $name = preg_replace('/\s+(Preto|Branco|Azul|Dourado|Prata|Cinza|Verde|Roxo|Rosa|Vermelho|Black|White|Blue|Gold|Silver|Gray|Green|Purple|Pink|Red|Natural|Desert|Teal|Titânio|Titanium|Orange|Laranja|Deep Blue|Ultramarine)\b.*/i', '', $name);
+        return trim($name);
+    }
+
+    private function normalizeColorName(?string $color): string
+    {
+        if (! $color || trim($color) === '') {
+            return 'Não informada';
+        }
+
+        $color = trim($color);
+        $lower = mb_strtolower($color);
+
+        $map = [
+            'silver' => 'Prata',
+            'prata' => 'Prata',
+            'white' => 'Branco',
+            'branco' => 'Branco',
+            'black' => 'Preto',
+            'preto' => 'Preto',
+            'preto espacial' => 'Preto',
+            'space black' => 'Preto',
+            'meia-noite' => 'Preto',
+            'midnight' => 'Preto',
+            'blue' => 'Azul',
+            'azul' => 'Azul',
+            'deep blue' => 'Azul',
+            'azul ultramarino' => 'Azul',
+            'ultramarine' => 'Azul',
+            'ocean blue' => 'Azul',
+            'orange' => 'Laranja',
+            'laranja' => 'Laranja',
+            'gold' => 'Dourado',
+            'dourado' => 'Dourado',
+            'green' => 'Verde',
+            'verde' => 'Verde',
+            'teal' => 'Verde',
+            'red' => 'Vermelho',
+            'vermelho' => 'Vermelho',
+            'purple' => 'Roxo',
+            'roxo' => 'Roxo',
+            'pink' => 'Rosa',
+            'rosa' => 'Rosa',
+            'natural' => 'Natural',
+            'titânio natural' => 'Natural',
+            'natural titanium' => 'Natural',
+            'titânio preto' => 'Preto',
+            'black titanium' => 'Preto',
+            'titânio branco' => 'Branco',
+            'white titanium' => 'Branco',
+            'titânio deserto' => 'Deserto',
+            'desert' => 'Deserto',
+            'desert titanium' => 'Deserto',
+            'gray' => 'Cinza',
+            'cinza' => 'Cinza',
+            'estelar' => 'Branco',
+            'starlight' => 'Branco',
+        ];
+
+        return $map[$lower] ?? ucfirst($color);
     }
 }

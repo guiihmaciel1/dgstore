@@ -605,18 +605,54 @@
                                     <span x-show="showValues">R$ {{ number_format($profit['real_profit'], 2, ',', '.') }}</span>
                                     <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;</span>
                                 </p>
-                                <div class="flex items-center gap-2 mt-1.5 text-xs">
-                                    <span class="text-gray-400">Lucro</span>
-                                    <span class="font-semibold {{ $profit['month_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
-                                        <span x-show="showValues">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
-                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
-                                    </span>
-                                    <span class="text-gray-300">−</span>
-                                    <span class="text-gray-400">Contas</span>
-                                    <span class="font-semibold text-red-500">
-                                        <span x-show="showValues">R$ {{ number_format($profit['month_expenses_paid'], 2, ',', '.') }}</span>
-                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
-                                    </span>
+                                <div class="mt-1.5 space-y-0.5 text-xs">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-gray-400 w-14">Lucro</span>
+                                        <span class="font-semibold {{ $profit['month_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                            <span x-show="showValues">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
+                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                        </span>
+                                    </div>
+                                    @if($profit['salaries_paid'] > 0)
+                                    <div class="group relative flex items-center gap-1.5 cursor-default">
+                                        <span class="text-gray-400 w-14">Salários</span>
+                                        <span class="font-semibold text-red-500">
+                                            <span x-show="showValues">− R$ {{ number_format($profit['salaries_paid'], 2, ',', '.') }}</span>
+                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                        </span>
+                                        <div class="dg-tooltip absolute bottom-full left-0 mb-2 hidden group-hover:block z-50">
+                                            <div class="bg-gray-900 text-white text-[0.65rem] rounded-lg px-3 py-2 shadow-lg" style="min-width: 220px;">
+                                                <p class="font-bold text-gray-300 mb-1.5 text-[0.55rem] uppercase tracking-wide">Salários do mês</p>
+                                                @foreach($profit['salary_details'] as $sd)
+                                                <div class="flex items-center justify-between py-0.5 {{ !$loop->last ? 'border-b border-gray-700' : '' }}">
+                                                    <span class="text-gray-300 truncate mr-2">{{ $sd['description'] }}</span>
+                                                    <span class="text-white font-semibold whitespace-nowrap">R$ {{ number_format($sd['amount'], 2, ',', '.') }}</span>
+                                                </div>
+                                                @endforeach
+                                                <div class="flex items-center justify-between pt-1.5 mt-1 border-t border-gray-600 font-bold">
+                                                    <span class="text-gray-300">Total</span>
+                                                    <span class="text-white">R$ {{ number_format($profit['salaries_paid'], 2, ',', '.') }}</span>
+                                                </div>
+                                                <div class="absolute top-full left-8 w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-gray-400 w-14">Contas</span>
+                                        <span class="font-semibold text-red-400">
+                                            <span x-show="showValues">− R$ {{ number_format($profit['expenses_without_salaries'], 2, ',', '.') }}</span>
+                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                        </span>
+                                    </div>
+                                    @else
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-gray-400 w-14">Contas</span>
+                                        <span class="font-semibold text-red-500">
+                                            <span x-show="showValues">− R$ {{ number_format($profit['month_expenses_paid'], 2, ',', '.') }}</span>
+                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                        </span>
+                                    </div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="w-10 h-10 sm:w-12 sm:h-12 {{ $profit['real_profit'] >= 0 ? 'bg-emerald-500' : 'bg-red-500' }} rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
@@ -894,12 +930,23 @@
                                 @if(count($salesAnalytics['margin_alerts']['zero_margin_items']) > 0)
                                     <div class="space-y-1.5">
                                         @foreach($salesAnalytics['margin_alerts']['zero_margin_items'] as $zi)
-                                        <div class="flex items-center justify-between text-xs py-1">
+                                        <div class="group relative flex items-center justify-between text-xs py-1.5 px-2 rounded-md hover:bg-red-50/50 cursor-default transition-colors">
                                             <span class="text-gray-600 truncate flex-1 mr-2">{{ $zi['name'] }}</span>
                                             <span class="font-bold text-red-600 whitespace-nowrap">
                                                 <span x-show="showValues">R$ {{ number_format($zi['profit'], 2, ',', '.') }}</span>
                                                 <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;</span>
                                             </span>
+                                            <div class="dg-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-900 text-white text-[0.65rem] rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                                                    <div class="font-semibold mb-1">{{ $zi['customer'] ?? 'Sem cliente' }}</div>
+                                                    <div class="text-gray-300">{{ $zi['name'] }}</div>
+                                                    <div class="flex gap-3 mt-1 text-gray-400">
+                                                        <span>Venda: <span class="text-white font-medium">R$ {{ number_format($zi['unit_price'], 2, ',', '.') }}</span></span>
+                                                        <span>Custo: <span class="text-red-300 font-medium">R$ {{ number_format($zi['cost'], 2, ',', '.') }}</span></span>
+                                                    </div>
+                                                    <div class="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                         @endforeach
                                     </div>
@@ -913,12 +960,23 @@
                                 @if(count($salesAnalytics['margin_alerts']['high_margin_items']) > 0)
                                     <div class="space-y-1.5">
                                         @foreach($salesAnalytics['margin_alerts']['high_margin_items'] as $hi)
-                                        <div class="flex items-center justify-between text-xs py-1">
+                                        <div class="group relative flex items-center justify-between text-xs py-1.5 px-2 rounded-md hover:bg-emerald-50/50 cursor-default transition-colors">
                                             <span class="text-gray-600 truncate flex-1 mr-2">{{ $hi['name'] }}</span>
                                             <span class="font-bold text-emerald-600 whitespace-nowrap">
                                                 <span x-show="showValues">R$ {{ number_format($hi['profit'], 2, ',', '.') }}</span>
                                                 <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;</span>
                                             </span>
+                                            <div class="dg-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-900 text-white text-[0.65rem] rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                                                    <div class="font-semibold mb-1">{{ $hi['customer'] ?? 'Sem cliente' }}</div>
+                                                    <div class="text-gray-300">{{ $hi['name'] }}</div>
+                                                    <div class="flex gap-3 mt-1 text-gray-400">
+                                                        <span>Venda: <span class="text-white font-medium">R$ {{ number_format($hi['unit_price'], 2, ',', '.') }}</span></span>
+                                                        <span>Custo: <span class="text-emerald-300 font-medium">R$ {{ number_format($hi['cost'], 2, ',', '.') }}</span></span>
+                                                    </div>
+                                                    <div class="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                                                </div>
+                                            </div>
                                         </div>
                                         @endforeach
                                     </div>
@@ -1029,11 +1087,101 @@
                                 @endphp
                                 @foreach($salesAnalytics['margin_buckets'] as $bucket => $count)
                                 @if($count > 0)
-                                <div class="text-center p-1.5 rounded-lg {{ $bucketConfig[$bucket]['bg'] }}">
+                                <div class="group relative text-center p-1.5 rounded-lg {{ $bucketConfig[$bucket]['bg'] }} cursor-default">
                                     <p class="text-lg font-extrabold {{ $bucketConfig[$bucket]['color'] }}">{{ $count }}</p>
                                     <p class="text-[0.6rem] text-gray-500 font-medium">{{ $bucketConfig[$bucket]['label'] }}</p>
+                                    @if(count($salesAnalytics['bucket_samples'][$bucket] ?? []) > 0)
+                                    <div class="dg-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                        <div class="bg-gray-900 text-white text-[0.6rem] rounded-lg px-3 py-2 shadow-lg" style="min-width: 200px;">
+                                            <p class="font-bold text-gray-300 mb-1.5 text-[0.55rem] uppercase tracking-wide">Exemplos ({{ $bucketConfig[$bucket]['label'] }})</p>
+                                            @foreach($salesAnalytics['bucket_samples'][$bucket] as $sample)
+                                            <div class="py-1 {{ !$loop->last ? 'border-b border-gray-700' : '' }}">
+                                                <div class="font-semibold text-white truncate">{{ $sample['customer'] }}</div>
+                                                <div class="text-gray-400 truncate">{{ $sample['name'] }}</div>
+                                                <div class="flex gap-2 mt-0.5">
+                                                    <span class="text-gray-400">Venda: <span class="text-white">R$ {{ number_format($sample['unit_price'], 0, ',', '.') }}</span></span>
+                                                    <span class="text-gray-400">Custo: <span class="text-gray-300">R$ {{ number_format($sample['cost'], 0, ',', '.') }}</span></span>
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                            <div class="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                                        </div>
+                                    </div>
+                                    @endif
                                 </div>
                                 @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Cores por Modelo de iPhone --}}
+                    @if(count($salesAnalytics['top_model_colors']) > 0)
+                    @php
+                        $colorPalette = [
+                            'Preto' => '#111827',
+                            'Branco' => '#e5e7eb',
+                            'Azul' => '#3b82f6',
+                            'Dourado' => '#d97706',
+                            'Prata' => '#9ca3af',
+                            'Verde' => '#16a34a',
+                            'Roxo' => '#7c3aed',
+                            'Rosa' => '#ec4899',
+                            'Vermelho' => '#dc2626',
+                            'Natural' => '#a3a3a3',
+                            'Deserto' => '#c2956a',
+                            'Laranja' => '#f97316',
+                            'Cinza' => '#6b7280',
+                            'Não informada' => '#d1d5db',
+                        ];
+                        $lightColors = ['Branco', 'Prata', 'Natural', 'Não informada', 'Deserto'];
+                    @endphp
+                    <div class="mt-4">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm sm:text-base font-semibold text-gray-900">Cores por Modelo</h3>
+                                <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
+                            </div>
+                            <div class="space-y-4">
+                                @foreach($salesAnalytics['top_model_colors'] as $modelIdx => $tmc)
+                                @php $maxColorQty = collect($tmc['colors'])->max('quantity'); @endphp
+                                <div class="{{ $modelIdx > 0 ? 'pt-4 border-t border-gray-100' : '' }}">
+                                    <div class="flex items-center justify-between mb-2.5">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-5 h-5 bg-gray-900 text-white rounded-full flex items-center justify-center text-[0.6rem] font-bold">{{ $modelIdx + 1 }}</span>
+                                            <span class="text-sm font-semibold text-gray-800">{{ $tmc['model'] }}</span>
+                                        </div>
+                                        <span class="text-xs font-bold text-gray-500">{{ $tmc['total'] }} un.</span>
+                                    </div>
+                                    <div class="flex flex-wrap items-end gap-3 pl-7">
+                                        @foreach($tmc['colors'] as $cidx => $colorItem)
+                                        @php
+                                            $hex = $colorPalette[$colorItem['color']] ?? '#6b7280';
+                                            $isLight = in_array($colorItem['color'], $lightColors);
+                                            $pct = $maxColorQty > 0 ? round(($colorItem['quantity'] / $maxColorQty) * 100) : 0;
+                                        @endphp
+                                        <div class="flex flex-col items-center gap-1 min-w-[3.5rem]">
+                                            <div class="relative">
+                                                <div class="w-8 h-8 rounded-full shadow-sm {{ $isLight ? 'border border-gray-200' : '' }}"
+                                                     style="background: {{ $hex }};"></div>
+                                                @if($cidx === 0)
+                                                <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full flex items-center justify-center">
+                                                    <svg class="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </span>
+                                                @endif
+                                            </div>
+                                            <span class="text-[0.6rem] font-medium text-gray-500">{{ $colorItem['color'] }}</span>
+                                            <span class="text-sm font-extrabold text-gray-900">{{ $colorItem['quantity'] }}</span>
+                                            <div class="w-6 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                                <div class="h-full rounded-full" style="width: {{ $pct }}%; background: {{ $hex }};"></div>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                                 @endforeach
                             </div>
                         </div>

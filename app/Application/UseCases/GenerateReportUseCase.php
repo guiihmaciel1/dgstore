@@ -264,13 +264,32 @@ class GenerateReportUseCase
             ->sortByDesc('profit')
             ->values();
 
-        $monthExpensesPaid = (float) FinancialTransaction::expense()
+        $salaryCategory = \App\Domain\Finance\Models\FinancialCategory::where('name', 'like', '%Salário%')
+            ->orWhere('name', 'like', '%Salario%')
+            ->orWhere('name', 'like', '%salário%')
+            ->orWhere('name', 'like', '%salarios%')
+            ->pluck('id');
+
+        $expensesQuery = FinancialTransaction::expense()
             ->paid()
             ->whereNotNull('paid_at')
             ->whereNotNull('account_id')
-            ->whereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()])
-            ->sum('amount');
+            ->whereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()]);
 
+        $monthExpensesPaid = (float) (clone $expensesQuery)->sum('amount');
+
+        $salaryTransactions = $salaryCategory->isNotEmpty()
+            ? (clone $expensesQuery)->whereIn('category_id', $salaryCategory)->orderBy('amount', 'desc')->get()
+            : collect();
+
+        $salariesPaid = (float) $salaryTransactions->sum('amount');
+        $salaryDetails = $salaryTransactions->map(fn ($t) => [
+            'description' => $t->description,
+            'amount' => (float) $t->amount,
+            'paid_at' => $t->paid_at?->format('d/m'),
+        ])->values()->toArray();
+
+        $expensesWithoutSalaries = $monthExpensesPaid - $salariesPaid;
         $realProfit = $monthProfit - $monthExpensesPaid;
 
         return [
@@ -281,6 +300,9 @@ class GenerateReportUseCase
             'month_revenue' => $monthRevenue,
             'month_margin' => $monthMargin,
             'month_expenses_paid' => $monthExpensesPaid,
+            'salaries_paid' => $salariesPaid,
+            'salary_details' => $salaryDetails,
+            'expenses_without_salaries' => $expensesWithoutSalaries,
             'real_profit' => $realProfit,
             'top_products' => $topProfitProducts,
             'category_ranking' => $categoryRanking,
