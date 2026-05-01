@@ -1187,6 +1187,89 @@
                         </div>
                     </div>
                     @endif
+
+                    {{-- Top 5: Novos vs Seminovos --}}
+                    @if(count($salesAnalytics['top_new_models']) > 0 || count($salesAnalytics['top_used_models']) > 0)
+                    <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        {{-- Top 5 Novos Lacrados --}}
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-5 bg-emerald-500 rounded-full"></span>
+                                    <h3 class="text-sm sm:text-base font-semibold text-gray-900">Top 5 Novos Lacrados</h3>
+                                </div>
+                                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{{ collect($salesAnalytics['top_new_models'])->sum('quantity') }} un.</span>
+                            </div>
+                            @if(count($salesAnalytics['top_new_models']) > 0)
+                            <div class="space-y-2">
+                                @foreach($salesAnalytics['top_new_models'] as $idx => $model)
+                                @php $maxNewQty = collect($salesAnalytics['top_new_models'])->max('quantity'); @endphp
+                                <div class="flex items-center gap-3 p-2 rounded-lg {{ $idx === 0 ? 'bg-emerald-50/70' : 'hover:bg-gray-50' }}">
+                                    <span class="w-5 h-5 {{ $idx === 0 ? 'bg-emerald-600' : 'bg-gray-400' }} text-white rounded-full flex items-center justify-center text-[0.6rem] font-bold flex-shrink-0">{{ $idx + 1 }}</span>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">{{ $model['name'] }}</p>
+                                        @if($model['storage'] || $model['color'])
+                                        <p class="text-[0.65rem] text-gray-400">
+                                            @if($model['storage']){{ $model['storage'] }}@endif
+                                            @if($model['storage'] && $model['color']) · @endif
+                                            @if($model['color']){{ $model['color'] }}@endif
+                                        </p>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <div class="w-12 h-1.5 bg-gray-100 rounded-full overflow-hidden hidden sm:block">
+                                            <div class="h-full bg-emerald-400 rounded-full" style="width: {{ $maxNewQty > 0 ? max(10, ($model['quantity'] / $maxNewQty) * 100) : 0 }}%"></div>
+                                        </div>
+                                        <span class="text-sm font-extrabold text-gray-900">{{ $model['quantity'] }}</span>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <p class="text-xs text-gray-400 text-center py-4">Nenhum iPhone novo vendido</p>
+                            @endif
+                        </div>
+
+                        {{-- Top 5 Seminovos --}}
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-5 bg-amber-500 rounded-full"></span>
+                                    <h3 class="text-sm sm:text-base font-semibold text-gray-900">Top 5 Seminovos</h3>
+                                </div>
+                                <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{{ collect($salesAnalytics['top_used_models'])->sum('quantity') }} un.</span>
+                            </div>
+                            @if(count($salesAnalytics['top_used_models']) > 0)
+                            <div class="space-y-2">
+                                @foreach($salesAnalytics['top_used_models'] as $idx => $model)
+                                @php $maxUsedQty = collect($salesAnalytics['top_used_models'])->max('quantity'); @endphp
+                                <div class="flex items-center gap-3 p-2 rounded-lg {{ $idx === 0 ? 'bg-amber-50/70' : 'hover:bg-gray-50' }}">
+                                    <span class="w-5 h-5 {{ $idx === 0 ? 'bg-amber-600' : 'bg-gray-400' }} text-white rounded-full flex items-center justify-center text-[0.6rem] font-bold flex-shrink-0">{{ $idx + 1 }}</span>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">{{ $model['name'] }}</p>
+                                        @if($model['storage'] || $model['color'])
+                                        <p class="text-[0.65rem] text-gray-400">
+                                            @if($model['storage']){{ $model['storage'] }}@endif
+                                            @if($model['storage'] && $model['color']) · @endif
+                                            @if($model['color']){{ $model['color'] }}@endif
+                                        </p>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <div class="w-12 h-1.5 bg-gray-100 rounded-full overflow-hidden hidden sm:block">
+                                            <div class="h-full bg-amber-400 rounded-full" style="width: {{ $maxUsedQty > 0 ? max(10, ($model['quantity'] / $maxUsedQty) * 100) : 0 }}%"></div>
+                                        </div>
+                                        <span class="text-sm font-extrabold text-gray-900">{{ $model['quantity'] }}</span>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <p class="text-xs text-gray-400 text-center py-4">Nenhum seminovo vendido</p>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 @endif
             </div>

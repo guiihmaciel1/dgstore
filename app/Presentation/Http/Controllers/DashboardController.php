@@ -601,6 +601,7 @@ class DashboardController extends Controller
         usort($highMarginItems, fn ($a, $b) => $b['profit'] <=> $a['profit']);
 
         $topModelColors = $this->buildTopModelColorRanking($allItems);
+        [$topNewModels, $topUsedModels] = $this->buildConditionRankings($allItems);
 
         return [
             'payment_methods' => $paymentMethods,
@@ -619,7 +620,62 @@ class DashboardController extends Controller
             'margin_buckets' => $marginBuckets,
             'bucket_samples' => $bucketSamples,
             'top_model_colors' => $topModelColors,
+            'top_new_models' => $topNewModels,
+            'top_used_models' => $topUsedModels,
         ];
+    }
+
+    /**
+     * Top 5 smartphones novos e top 5 seminovos vendidos no mes.
+     * @return array{0: array, 1: array}
+     */
+    private function buildConditionRankings($allItems): array
+    {
+        $smartphoneItems = $allItems->filter(function ($item) {
+            $rawCat = $item->product?->category ?? ($item->product_snapshot['category'] ?? null);
+            $cat = $rawCat instanceof \App\Domain\Product\Enums\ProductCategory ? $rawCat->value : $rawCat;
+            return $cat === 'smartphone';
+        });
+
+        $buildRanking = function ($items) {
+            return $items
+                ->groupBy(function ($item) {
+                    $name = $item->product?->name ?? $item->product_snapshot['name'] ?? 'Produto removido';
+                    return $name;
+                })
+                ->map(function ($group, $name) {
+                    $color = null;
+                    $storage = null;
+                    $first = $group->first();
+                    $color = $first->product?->color ?? $first->product_snapshot['color'] ?? null;
+                    $storage = $first->product?->storage ?? $first->product_snapshot['storage'] ?? null;
+
+                    return [
+                        'name' => $name,
+                        'color' => $color,
+                        'storage' => $storage,
+                        'quantity' => $group->sum('quantity'),
+                    ];
+                })
+                ->sortByDesc('quantity')
+                ->take(5)
+                ->values()
+                ->toArray();
+        };
+
+        $newItems = $smartphoneItems->filter(function ($item) {
+            $rawCondition = $item->product?->condition ?? ($item->product_snapshot['condition'] ?? null);
+            $condition = $rawCondition instanceof ProductCondition ? $rawCondition->value : $rawCondition;
+            return $condition === 'new';
+        });
+
+        $usedItems = $smartphoneItems->filter(function ($item) {
+            $rawCondition = $item->product?->condition ?? ($item->product_snapshot['condition'] ?? null);
+            $condition = $rawCondition instanceof ProductCondition ? $rawCondition->value : $rawCondition;
+            return in_array($condition, ['used', 'refurbished']);
+        });
+
+        return [$buildRanking($newItems), $buildRanking($usedItems)];
     }
 
     /**
