@@ -676,25 +676,27 @@
                                 <col style="width: 40px;">
                             </colgroup>
                             <thead>
-                                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                    <th style="padding: 0.5rem 0.5rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Lista</th>
-                                    <th style="padding: 0.5rem 0.5rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
-                                    <th style="padding: 0.5rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Storage</th>
-                                    <th style="padding: 0.5rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cor</th>
-                                    <th style="padding: 0.5rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo</th>
-                                    <th style="padding: 0.5rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Final</th>
-                                    <th style="padding: 0.5rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Bat. %</th>
-                                    <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cx</th>
-                                    <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cabo</th>
-                                    <th style="padding: 0.5rem 0.375rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Obs</th>
-                                    <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;"></th>
-                                    <th style="padding: 0.5rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Fotos</th>
+                                <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
+                                    <th style="padding: 0.625rem 0.5rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Lista</th>
+                                    <th style="padding: 0.625rem 0.5rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Produto</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Storage</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Cor</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Custo</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Final</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Bat. %</th>
+                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Cx</th>
+                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Cabo</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Obs</th>
+                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;"></th>
+                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Fotos</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <template x-for="item in filteredUsed" :key="item.morph_type + '_' + item.id">
-                                    <tr style="border-bottom: 1px solid #f3f4f6; transition: background 0.1s;"
-                                        onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                <template x-for="(item, idx) in filteredUsed" :key="item.morph_type + '_' + item.id">
+                                    <tr :style="'border-bottom: 1px solid #e5e7eb; transition: background 0.15s;'
+                                            + (idx % 2 === 1 ? ' background: #f8f9fb;' : ' background: white;')"
+                                        :data-bg="idx % 2 === 1 ? '#f8f9fb' : 'white'"
+                                        onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background=this.dataset.bg">
                                         <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                             <input type="checkbox" x-model="item.listing.visible"
                                                    @change="saveUsedVisibility(item)"
