@@ -41,8 +41,9 @@
         </div>
         
         <!-- Botões Flutuantes + Modais -->
-        <x-currency-calculator />
+        {{-- <x-currency-calculator /> --}}
         {{-- <x-card-fee-calculator /> --}}
+        <x-stone-fab-calculator />
 
         @stack('scripts')
 

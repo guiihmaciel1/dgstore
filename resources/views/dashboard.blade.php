@@ -649,7 +649,7 @@
                                                     {{ $index + 1 }}
                                                 </span>
                                                 <div class="min-w-0">
-                                                    <p class="font-medium text-gray-900 text-sm truncate">{{ $item['product']?->name ?? 'Produto removido' }}</p>
+                                                    <p class="font-medium text-gray-900 text-sm truncate">{{ $item['name'] ?? $item['product']?->name ?? 'Produto removido' }}</p>
                                                     <p class="text-xs text-gray-400">{{ $item['quantity'] }} un. vendidas</p>
                                                 </div>
                                             </div>
@@ -739,6 +739,308 @@
                     </div>
                 </div>
                 @endif
+
+                {{-- Inteligência de Vendas --}}
+                @if(auth()->user()->canViewFinancials())
+                <div class="mt-4 sm:mt-6">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-3">Inteligência de Vendas</h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                        {{-- Card: iPhones do Mês --}}
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5" x-data="{ expanded: false }">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">iPhones</span>
+                                </div>
+                                <button @click="expanded = !expanded" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                    <svg class="w-4 h-4 transition-transform" :class="expanded && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-3xl font-extrabold text-gray-900 leading-none" x-data="countUp({{ $monthSummary['iphone_total'] }})" x-text="display"></p>
+                            <p class="text-xs text-gray-400 mt-1">vendidos no mês</p>
+
+                            @if($monthSummary['iphone_total'] > 0)
+                            @php $newPct = $monthSummary['iphone_total'] > 0 ? ($monthSummary['iphone_new'] / $monthSummary['iphone_total']) * 100 : 0; @endphp
+                            <div class="mt-3 h-2.5 bg-gray-100 rounded-full overflow-hidden flex">
+                                <div class="h-full bg-emerald-400 rounded-l-full transition-all duration-700" style="width: {{ $newPct }}%"></div>
+                                <div class="h-full bg-amber-400 rounded-r-full transition-all duration-700" style="width: {{ 100 - $newPct }}%"></div>
+                            </div>
+                            <div class="flex items-center justify-between mt-2 text-xs">
+                                <span class="flex items-center gap-1">
+                                    <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                                    <span class="text-gray-500">Novos</span>
+                                    <span class="font-bold text-emerald-600">{{ $monthSummary['iphone_new'] }}</span>
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <span class="w-2 h-2 bg-amber-400 rounded-full"></span>
+                                    <span class="text-gray-500">Seminovos</span>
+                                    <span class="font-bold text-amber-600">{{ $monthSummary['iphone_used'] }}</span>
+                                </span>
+                            </div>
+                            @endif
+
+                            <div x-show="expanded" x-transition x-cloak class="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                                @if($monthSummary['accessories'] > 0)
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-500">Acessórios</span>
+                                    <span class="font-bold text-gray-700">{{ $monthSummary['accessories'] }} un.</span>
+                                </div>
+                                @endif
+                                @if($monthSummary['other_apple'] > 0)
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-500">Outros Apple</span>
+                                    <span class="font-bold text-gray-700">{{ $monthSummary['other_apple'] }} un.</span>
+                                </div>
+                                @endif
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-500">Total de itens</span>
+                                    <span class="font-bold text-gray-900">{{ $monthSummary['total_items'] }} un.</span>
+                                </div>
+                                @if($monthSummary['trade_ins_received'] > 0)
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-purple-500">Trade-ins recebidos</span>
+                                    <span class="font-bold text-purple-600">{{ $monthSummary['trade_ins_received'] }}</span>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Card: PIX vs Parcelado --}}
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">PIX vs Parcelado</span>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-2.5 bg-teal-50 rounded-lg border border-teal-100">
+                                    <div>
+                                        <p class="text-xs font-semibold text-teal-700">PIX</p>
+                                        <p class="text-lg font-extrabold text-teal-700">{{ $salesAnalytics['pix']['count'] }}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs text-teal-500">Total</p>
+                                        <p class="text-sm font-bold text-teal-600">
+                                            <span x-show="showValues">R$ {{ number_format($salesAnalytics['pix']['total'], 0, ',', '.') }}</span>
+                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-2.5 bg-blue-50 rounded-lg border border-blue-100">
+                                    <div>
+                                        <p class="text-xs font-semibold text-blue-700">Cartão / Parcelado</p>
+                                        <p class="text-lg font-extrabold text-blue-700">{{ $salesAnalytics['installment']['count'] }}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs text-blue-500">Média {{ $salesAnalytics['installment']['avg_installments'] }}x</p>
+                                        <p class="text-sm font-bold text-blue-600">
+                                            <span x-show="showValues">R$ {{ number_format($salesAnalytics['installment']['total'], 0, ',', '.') }}</span>
+                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Card: Alertas de Margem --}}
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5" x-data="{ showZero: false, showHigh: false }">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Margem</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button @click="showZero = !showZero; showHigh = false"
+                                        class="text-left p-2.5 rounded-lg border transition-all"
+                                        :class="showZero ? 'bg-red-50 border-red-200' : 'bg-red-50/50 border-red-100 hover:border-red-200'">
+                                    <div class="flex items-center gap-1 mb-1">
+                                        <svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                                        </svg>
+                                        <span class="text-[0.625rem] font-semibold text-red-500 uppercase">Zerada</span>
+                                    </div>
+                                    <p class="text-2xl font-extrabold text-red-600">{{ $salesAnalytics['margin_alerts']['zero_margin_count'] }}</p>
+                                    <p class="text-[0.625rem] text-red-400">itens s/ margem</p>
+                                </button>
+                                <button @click="showHigh = !showHigh; showZero = false"
+                                        class="text-left p-2.5 rounded-lg border transition-all"
+                                        :class="showHigh ? 'bg-emerald-50 border-emerald-200' : 'bg-emerald-50/50 border-emerald-100 hover:border-emerald-200'">
+                                    <div class="flex items-center gap-1 mb-1">
+                                        <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        <span class="text-[0.625rem] font-semibold text-emerald-500 uppercase">> R$ 500</span>
+                                    </div>
+                                    <p class="text-2xl font-extrabold text-emerald-600">{{ $salesAnalytics['margin_alerts']['high_margin_count'] }}</p>
+                                    <p class="text-[0.625rem] text-emerald-400">itens lucrativos</p>
+                                </button>
+                            </div>
+
+                            {{-- Detalhes margem zerada --}}
+                            <div x-show="showZero" x-transition x-cloak class="mt-3 pt-3 border-t border-gray-100">
+                                @if(count($salesAnalytics['margin_alerts']['zero_margin_items']) > 0)
+                                    <div class="space-y-1.5">
+                                        @foreach($salesAnalytics['margin_alerts']['zero_margin_items'] as $zi)
+                                        <div class="flex items-center justify-between text-xs py-1">
+                                            <span class="text-gray-600 truncate flex-1 mr-2">{{ $zi['name'] }}</span>
+                                            <span class="font-bold text-red-600 whitespace-nowrap">
+                                                <span x-show="showValues">R$ {{ number_format($zi['profit'], 2, ',', '.') }}</span>
+                                                <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;</span>
+                                            </span>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-xs text-gray-400 text-center py-2">Nenhum item sem margem</p>
+                                @endif
+                            </div>
+
+                            {{-- Detalhes margem alta --}}
+                            <div x-show="showHigh" x-transition x-cloak class="mt-3 pt-3 border-t border-gray-100">
+                                @if(count($salesAnalytics['margin_alerts']['high_margin_items']) > 0)
+                                    <div class="space-y-1.5">
+                                        @foreach($salesAnalytics['margin_alerts']['high_margin_items'] as $hi)
+                                        <div class="flex items-center justify-between text-xs py-1">
+                                            <span class="text-gray-600 truncate flex-1 mr-2">{{ $hi['name'] }}</span>
+                                            <span class="font-bold text-emerald-600 whitespace-nowrap">
+                                                <span x-show="showValues">R$ {{ number_format($hi['profit'], 2, ',', '.') }}</span>
+                                                <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;</span>
+                                            </span>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-xs text-gray-400 text-center py-2">Nenhum item com margem > R$ 500</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Card: Mix de Vendas --}}
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Mix de Vendas</span>
+                            </div>
+                            <div class="flex items-center justify-center" style="height: 130px;">
+                                <canvas id="mixChart"></canvas>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-2">
+                                @if($monthSummary['iphone_total'] > 0)
+                                <span class="flex items-center gap-1 text-[0.625rem]">
+                                    <span class="w-2 h-2 rounded-full" style="background: #111827"></span>
+                                    <span class="text-gray-500">iPhones {{ $monthSummary['iphone_total'] }}</span>
+                                </span>
+                                @endif
+                                @if($monthSummary['accessories'] > 0)
+                                <span class="flex items-center gap-1 text-[0.625rem]">
+                                    <span class="w-2 h-2 rounded-full" style="background: #6366f1"></span>
+                                    <span class="text-gray-500">Acessórios {{ $monthSummary['accessories'] }}</span>
+                                </span>
+                                @endif
+                                @if($monthSummary['other_apple'] > 0)
+                                <span class="flex items-center gap-1 text-[0.625rem]">
+                                    <span class="w-2 h-2 rounded-full" style="background: #06b6d4"></span>
+                                    <span class="text-gray-500">Outros {{ $monthSummary['other_apple'] }}</span>
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Distribuição por Forma de Pagamento --}}
+                    @if(count($salesAnalytics['payment_methods']) > 0)
+                    <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm sm:text-base font-semibold text-gray-900">Formas de Pagamento</h3>
+                                <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
+                            </div>
+                            @php $maxPayment = collect($salesAnalytics['payment_methods'])->max('total'); @endphp
+                            <div class="space-y-2.5">
+                                @foreach($salesAnalytics['payment_methods'] as $pm)
+                                @php
+                                    $pmColors = [
+                                        'pix' => ['bg' => 'bg-teal-500', 'light' => 'bg-teal-50', 'text' => 'text-teal-700'],
+                                        'credit_card' => ['bg' => 'bg-blue-500', 'light' => 'bg-blue-50', 'text' => 'text-blue-700'],
+                                        'debit_card' => ['bg' => 'bg-cyan-500', 'light' => 'bg-cyan-50', 'text' => 'text-cyan-700'],
+                                        'cash' => ['bg' => 'bg-emerald-500', 'light' => 'bg-emerald-50', 'text' => 'text-emerald-700'],
+                                        'installment' => ['bg' => 'bg-violet-500', 'light' => 'bg-violet-50', 'text' => 'text-violet-700'],
+                                        'bank_transfer' => ['bg' => 'bg-gray-500', 'light' => 'bg-gray-50', 'text' => 'text-gray-700'],
+                                    ];
+                                    $c = $pmColors[$pm['method']] ?? ['bg' => 'bg-gray-400', 'light' => 'bg-gray-50', 'text' => 'text-gray-600'];
+                                @endphp
+                                <div class="group">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2.5 h-2.5 rounded-full {{ $c['bg'] }}"></span>
+                                            <span class="text-sm font-medium text-gray-700">{{ $pm['label'] }}</span>
+                                            <span class="text-xs text-gray-400">{{ $pm['count'] }} {{ $pm['count'] === 1 ? 'venda' : 'vendas' }}</span>
+                                        </div>
+                                        <span class="text-sm font-bold {{ $c['text'] }}">
+                                            <span x-show="showValues">R$ {{ number_format($pm['total'], 0, ',', '.') }}</span>
+                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                        </span>
+                                    </div>
+                                    <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="h-full rounded-full {{ $c['bg'] }} transition-all duration-700" style="width: {{ $maxPayment > 0 ? max(3, ($pm['total'] / $maxPayment) * 100) : 0 }}%"></div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        {{-- Distribuição de Margem --}}
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm sm:text-base font-semibold text-gray-900">Distribuição de Margem</h3>
+                                <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
+                            </div>
+                            <div class="flex items-center justify-center" style="height: 180px;">
+                                <canvas id="marginChart"></canvas>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 mt-3">
+                                @php
+                                    $bucketConfig = [
+                                        'negative' => ['label' => 'Negativa', 'color' => 'text-red-600', 'bg' => 'bg-red-50'],
+                                        'zero' => ['label' => 'Zerada', 'color' => 'text-orange-600', 'bg' => 'bg-orange-50'],
+                                        'low' => ['label' => '< R$ 100', 'color' => 'text-amber-600', 'bg' => 'bg-amber-50'],
+                                        'medium' => ['label' => 'R$ 100-500', 'color' => 'text-blue-600', 'bg' => 'bg-blue-50'],
+                                        'high' => ['label' => 'R$ 500-1k', 'color' => 'text-emerald-600', 'bg' => 'bg-emerald-50'],
+                                        'premium' => ['label' => '> R$ 1k', 'color' => 'text-green-700', 'bg' => 'bg-green-50'],
+                                    ];
+                                @endphp
+                                @foreach($salesAnalytics['margin_buckets'] as $bucket => $count)
+                                @if($count > 0)
+                                <div class="text-center p-1.5 rounded-lg {{ $bucketConfig[$bucket]['bg'] }}">
+                                    <p class="text-lg font-extrabold {{ $bucketConfig[$bucket]['color'] }}">{{ $count }}</p>
+                                    <p class="text-[0.6rem] text-gray-500 font-medium">{{ $bucketConfig[$bucket]['label'] }}</p>
+                                </div>
+                                @endif
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                @endif
             </div>
 
             <!-- Agenda do Dia -->
@@ -804,8 +1106,8 @@
                                             {{ $index + 1 }}
                                         </span>
                                         <div>
-                                            <p class="font-medium text-gray-900">{{ $item['product']->name ?? 'Produto removido' }}</p>
-                                            <p class="text-xs text-gray-500">{{ $item['product']->sku ?? '-' }}</p>
+                                            <p class="font-medium text-gray-900">{{ $item['name'] ?? $item['product']?->name ?? 'Produto removido' }}</p>
+                                            <p class="text-xs text-gray-500">{{ $item['sku'] ?? $item['product']?->sku ?? '-' }}</p>
                                         </div>
                                     </div>
                                     <span class="px-3 py-1 bg-gray-900 text-white text-sm rounded-full">{{ $item['total_sold'] }} un</span>
@@ -1369,6 +1671,103 @@
                 salesChart.update();
             }
         };
+
+        // Mix de Vendas - Doughnut Chart
+        (function() {
+            const mixEl = document.getElementById('mixChart');
+            if (!mixEl) return;
+            const mixData = [
+                {{ $monthSummary['iphone_total'] }},
+                {{ $monthSummary['accessories'] }},
+                {{ $monthSummary['other_apple'] }}
+            ];
+            if (mixData.every(v => v === 0)) {
+                mixEl.parentElement.innerHTML = '<p style="color:#9ca3af;font-size:0.75rem;text-align:center">Sem dados</p>';
+                return;
+            }
+            new Chart(mixEl.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['iPhones', 'Acessórios', 'Outros Apple'],
+                    datasets: [{
+                        data: mixData,
+                        backgroundColor: ['#111827', '#6366f1', '#06b6d4'],
+                        borderWidth: 2,
+                        borderColor: '#fff',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+                                    return ctx.label + ': ' + ctx.parsed + ' un. (' + pct + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        })();
+
+        // Distribuição de Margem - Bar Chart
+        (function() {
+            const marginEl = document.getElementById('marginChart');
+            if (!marginEl) return;
+            const buckets = @json($salesAnalytics['margin_buckets'] ?? []);
+            const labels = ['Negativa', 'Zerada', '< R$100', 'R$100-500', 'R$500-1k', '> R$1k'];
+            const data = [buckets.negative || 0, buckets.zero || 0, buckets.low || 0, buckets.medium || 0, buckets.high || 0, buckets.premium || 0];
+            const colors = ['#ef4444', '#f97316', '#f59e0b', '#3b82f6', '#10b981', '#047857'];
+            new Chart(marginEl.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+                        y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { stepSize: 1, font: { size: 10 } } }
+                    }
+                }
+            });
+        })();
+
+        // Alpine countUp component
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('countUp', (target) => ({
+                display: 0,
+                init() {
+                    const duration = 800;
+                    const steps = 30;
+                    const increment = target / steps;
+                    let current = 0;
+                    const interval = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            this.display = target;
+                            clearInterval(interval);
+                        } else {
+                            this.display = Math.floor(current);
+                        }
+                    }, duration / steps);
+                }
+            }));
+        });
 
         function followupModal() {
             const rawSales = @json($followupSales);

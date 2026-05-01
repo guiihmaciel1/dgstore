@@ -20,6 +20,6 @@
             </a>
         </div>
     </div>
-    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-[13px] text-gray-700 whitespace-pre-wrap font-mono leading-relaxed min-h-[100px] max-h-[280px] overflow-y-auto"
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-[13px] text-gray-700 whitespace-pre-wrap font-mono leading-relaxed min-h-[100px] max-h-[520px] overflow-y-auto"
          x-text="productPrice > 0 ? buildMessage() : 'Preencha o valor do produto para visualizar a mensagem...'"></div>
 </div>

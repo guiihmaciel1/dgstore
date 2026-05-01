@@ -3,32 +3,16 @@
     <div class="inline-block w-10 h-10 border-4 border-gray-100 border-t-gray-900 rounded-full animate-spin"></div>
 </div>
 
-{{-- Estado vazio --}}
-<div x-show="!cardLoading && cardResults.length === 0 && productPrice <= 0" class="bg-white rounded-xl border border-gray-200 p-12 text-center">
-    <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-    </svg>
-    <p class="text-sm text-gray-400">Preencha o valor do produto para montar a proposta</p>
-</div>
-
 {{-- Resultados --}}
 <div x-show="!cardLoading && cardResults.length > 0" x-transition>
     {{-- Pix --}}
     <div x-show="cardBalance > 0" class="bg-green-50 border border-green-200 rounded-xl px-4 py-3 sm:px-5 sm:py-4 flex items-center justify-between mb-3">
         <div>
-            <div class="text-[15px] font-bold text-emerald-600">
-                Pix / Dinheiro
-                <span x-show="pixDiscount > 0"
-                      class="ml-1.5 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white"
-                      x-text="'-' + pixDiscount + '% off'"></span>
-            </div>
+            <div class="text-[15px] font-bold text-emerald-600">Pix / Dinheiro</div>
             <div class="text-xs text-gray-500">Melhor preço - sem taxa</div>
         </div>
         <div class="text-right">
-            <div x-show="pixDiscount > 0"
-                 class="text-[13px] font-medium text-gray-400 line-through"
-                 x-text="'R$ ' + fmt(cardBalance)"></div>
-            <div class="text-[22px] font-extrabold text-emerald-600" x-text="'R$ ' + fmt(pixPrice)"></div>
+            <div class="text-[22px] font-extrabold text-emerald-600" x-text="'R$ ' + fmt(cardBalance)"></div>
         </div>
     </div>
 
@@ -96,12 +80,6 @@
             <span class="text-sm font-bold text-gray-900">Saldo no cartão</span>
             <span class="text-lg font-extrabold text-gray-900" x-text="'R$ ' + fmt(cardBalance)"></span>
         </div>
-        <template x-if="pixDiscount > 0 && cardBalance > 0">
-            <div class="flex justify-between py-1 text-[13px]">
-                <span class="text-emerald-600" x-text="'Desconto Pix (' + pixDiscount + '%)'"></span>
-                <span class="font-bold text-emerald-600" x-text="'R$ ' + fmt(pixPrice)"></span>
-            </div>
-        </template>
     </div>
 
     {{-- Ações finais --}}

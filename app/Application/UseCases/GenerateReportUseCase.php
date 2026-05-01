@@ -209,15 +209,28 @@ class GenerateReportUseCase
         $allItems = $monthSales->flatMap->items;
 
         $topProfitProducts = $allItems
-            ->groupBy('product_id')
+            ->groupBy(function ($item) {
+                if ($item->product_id) {
+                    return 'pid_' . $item->product_id;
+                }
+                $snapshot = $item->product_snapshot ?? [];
+                return 'snap_' . ($snapshot['name'] ?? 'unknown');
+            })
             ->map(function ($items) {
-                $product = $items->first()->product;
+                $first = $items->first();
+                $product = $first->product;
+                $snapshot = $first->product_snapshot ?? [];
+                $name = $product?->name ?? $snapshot['name'] ?? 'Produto removido';
+                $sku = $product?->sku ?? $snapshot['sku'] ?? null;
+
                 $totalProfit = $items->sum(fn ($i) => $i->item_profit);
                 $totalRevenue = (float) $items->sum('subtotal');
                 $totalQty = $items->sum('quantity');
 
                 return [
                     'product' => $product,
+                    'name' => $name,
+                    'sku' => $sku,
                     'profit' => $totalProfit,
                     'revenue' => $totalRevenue,
                     'margin' => $totalRevenue > 0 ? ($totalProfit / $totalRevenue) * 100 : 0,

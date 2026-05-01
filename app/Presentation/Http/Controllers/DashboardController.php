@@ -17,6 +17,7 @@ use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
 use App\Domain\Reservation\Services\ReservationService;
+use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Models\SaleItem;
@@ -56,7 +57,7 @@ class DashboardController extends Controller
         $nextAppointment = $this->getNextAppointment();
         $todayPayables = $this->getTodayPayables();
 
-        $monthSummary = $this->getMonthSummary($referenceDate);
+        [$monthSummary, $salesAnalytics] = $this->getMonthSummaryAndAnalytics($referenceDate);
         $followupSales = $this->getFollowupSales();
         $appleNews = $this->appleNewsService->getCached();
         $stockItems = $this->getStockCatalog();
@@ -76,6 +77,7 @@ class DashboardController extends Controller
             'nextAppointment' => $nextAppointment,
             'todayPayables' => $todayPayables,
             'monthSummary' => $monthSummary,
+            'salesAnalytics' => $salesAnalytics,
             'followupSales' => $followupSales,
             'appleNews' => $appleNews,
             'stockItems' => $stockItems,
@@ -420,7 +422,11 @@ class DashboardController extends Controller
         return 1;
     }
 
-    private function getMonthSummary(?Carbon $referenceDate = null): array
+    /**
+     * Retorna [monthSummary, salesAnalytics] numa unica query para evitar duplicacao.
+     * @return array{0: array, 1: array}
+     */
+    private function getMonthSummaryAndAnalytics(?Carbon $referenceDate = null): array
     {
         $ref = $referenceDate ?? now();
         $start = $ref->copy()->startOfMonth();
@@ -431,11 +437,19 @@ class DashboardController extends Controller
             ->where('payment_status', '!=', PaymentStatus::Cancelled)
             ->get();
 
+        $allItems = $sales->flatMap->items;
+
+        $monthSummary = $this->buildMonthSummary($ref, $sales, $allItems, $start, $end);
+        $salesAnalytics = $this->buildSalesAnalytics($sales, $allItems);
+
+        return [$monthSummary, $salesAnalytics];
+    }
+
+    private function buildMonthSummary(Carbon $ref, $sales, $allItems, Carbon $start, Carbon $end): array
+    {
         $totalSales = $sales->count();
         $totalRevenue = (float) $sales->sum('total');
         $averageTicket = $totalSales > 0 ? $totalRevenue / $totalSales : 0;
-
-        $allItems = $sales->flatMap->items;
         $totalItems = (int) $allItems->sum('quantity');
 
         $accessoryCategories = ['charger', 'cable', 'case', 'accessory'];
@@ -491,6 +505,97 @@ class DashboardController extends Controller
             'accessories' => $accessories,
             'other_apple' => $otherApple,
             'trade_ins_received' => $tradeInsReceived,
+        ];
+    }
+
+    private function buildSalesAnalytics($sales, $allItems): array
+    {
+        $paymentMethods = $sales
+            ->groupBy(fn (Sale $s) => $s->payment_method->value)
+            ->map(function ($group, $methodValue) {
+                $method = PaymentMethod::tryFrom($methodValue);
+                return [
+                    'method' => $methodValue,
+                    'label' => $method?->label() ?? ucfirst($methodValue),
+                    'count' => $group->count(),
+                    'total' => (float) $group->sum('total'),
+                ];
+            })
+            ->sortByDesc('total')
+            ->values()
+            ->toArray();
+
+        $pixCount = $sales->filter(fn (Sale $s) => $s->payment_method === PaymentMethod::Pix)->count();
+        $pixTotal = (float) $sales->filter(fn (Sale $s) => $s->payment_method === PaymentMethod::Pix)->sum('total');
+
+        $installmentSales = $sales->filter(fn (Sale $s) => $s->payment_method === PaymentMethod::Installment || $s->payment_method === PaymentMethod::CreditCard);
+        $installmentCount = $installmentSales->count();
+        $installmentTotal = (float) $installmentSales->sum('total');
+        $avgInstallments = $installmentCount > 0
+            ? round($installmentSales->avg('installments'), 1)
+            : 0;
+
+        $zeroMarginItems = [];
+        $highMarginItems = [];
+        $marginBuckets = ['negative' => 0, 'zero' => 0, 'low' => 0, 'medium' => 0, 'high' => 0, 'premium' => 0];
+
+        foreach ($allItems as $item) {
+            $profit = $item->item_profit;
+            $snapshot = $item->product_snapshot ?? [];
+            $name = $item->product?->name ?? $snapshot['name'] ?? 'Produto removido';
+
+            if ($profit <= 0) {
+                $zeroMarginItems[] = [
+                    'name' => $name,
+                    'profit' => $profit,
+                    'unit_price' => (float) $item->unit_price,
+                    'cost' => $item->total_cost_value,
+                    'quantity' => $item->quantity,
+                ];
+            }
+
+            if ($profit >= 500) {
+                $highMarginItems[] = [
+                    'name' => $name,
+                    'profit' => $profit,
+                    'unit_price' => (float) $item->unit_price,
+                    'cost' => $item->total_cost_value,
+                    'quantity' => $item->quantity,
+                ];
+            }
+
+            if ($profit < 0) {
+                $marginBuckets['negative']++;
+            } elseif ($profit == 0) {
+                $marginBuckets['zero']++;
+            } elseif ($profit < 100) {
+                $marginBuckets['low']++;
+            } elseif ($profit < 500) {
+                $marginBuckets['medium']++;
+            } elseif ($profit < 1000) {
+                $marginBuckets['high']++;
+            } else {
+                $marginBuckets['premium']++;
+            }
+        }
+
+        usort($highMarginItems, fn ($a, $b) => $b['profit'] <=> $a['profit']);
+
+        return [
+            'payment_methods' => $paymentMethods,
+            'pix' => ['count' => $pixCount, 'total' => $pixTotal],
+            'installment' => [
+                'count' => $installmentCount,
+                'total' => $installmentTotal,
+                'avg_installments' => $avgInstallments,
+            ],
+            'margin_alerts' => [
+                'zero_margin_count' => count($zeroMarginItems),
+                'zero_margin_items' => array_slice($zeroMarginItems, 0, 5),
+                'high_margin_count' => count($highMarginItems),
+                'high_margin_items' => array_slice($highMarginItems, 0, 5),
+            ],
+            'margin_buckets' => $marginBuckets,
         ];
     }
 }

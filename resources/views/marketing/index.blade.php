@@ -439,15 +439,26 @@
                         <h2 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Lista de Repasse</h2>
                         <p style="font-size: 0.8rem; color: #6b7280;">Selecione os itens e copie a lista formatada para WhatsApp</p>
                     </div>
-                    <button type="button" @click="copyResaleToWhatsApp()"
-                            :style="resaleCopied
-                                ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#059669;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:default;white-space:nowrap;'
-                                : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#16a34a;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;'">
-                        <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                        </svg>
-                        <span x-text="resaleCopied ? 'Copiado!' : 'Copiar p/ WhatsApp'"></span>
-                    </button>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button type="button" @click="copyResaleLacrados()"
+                                :style="resaleLacradosCopied
+                                    ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#059669;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:default;white-space:nowrap;'
+                                    : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#2563eb;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;'">
+                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            <span x-text="resaleLacradosCopied ? 'Copiado!' : 'Copiar Lacrados'"></span>
+                        </button>
+                        <button type="button" @click="copyResaleSeminovos()"
+                                :style="resaleSeminovosCopied
+                                    ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#059669;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:default;white-space:nowrap;'
+                                    : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#d97706;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;'">
+                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            <span x-text="resaleSeminovosCopied ? 'Copiado!' : 'Copiar Seminovos'"></span>
+                        </button>
+                    </div>
                 </div>
 
                 {{-- Novos Lacrados --}}
@@ -523,7 +534,7 @@
                             <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: #fef3c7; border-radius: 0.375rem;">
                                 <svg style="width: 0.875rem; height: 0.875rem; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                             </span>
-                            Semi Novos
+                            Seminovos
                             <span style="font-size: 0.7rem; font-weight: 500; color: #6b7280;" x-text="'(' + resaleUsed.length + ' itens)'"></span>
                         </h3>
                         <button type="button" @click="saveAllResaleUsed()" x-show="resaleUsed.length > 0"
@@ -889,7 +900,8 @@
             tab: urlParams.get('tab') || 'prices',
             priceSearch: '',
             priceCopied: false,
-            resaleCopied: false,
+            resaleLacradosCopied: false,
+            resaleSeminovosCopied: false,
             showCreativeForm: false,
             creativeDate: @json($creativeDate),
             usedSearch: '',
@@ -1750,100 +1762,10 @@
                 }
             },
 
-            copyResaleToWhatsApp() {
-                const visibleConsignment = this.resaleConsignment.filter(c => c.resale.visible && c.resale.resale_price);
-                const visibleUsed = this.resaleUsed.filter(u => u.resale.visible && u.resale.resale_price);
-
-                if (visibleConsignment.length === 0 && visibleUsed.length === 0) {
-                    alert('Nenhum item marcado como visivel com preco.');
-                    return;
-                }
-
-                let lines = [];
-                lines.push('LISTA DE REPASSE DG STORE');
-                lines.push('');
-
-                if (visibleConsignment.length > 0) {
-                    lines.push('*NOVOS LACRADOS*');
-                    lines.push('');
-
-                    const grouped = {};
-                    visibleConsignment.forEach(c => {
-                        const key = (c.name || '').trim() + (c.storage ? ' ' + c.storage : '');
-                        if (!grouped[key]) grouped[key] = [];
-                        grouped[key].push(c);
-                    });
-
-                    Object.keys(grouped).forEach(modelKey => {
-                        const items = grouped[modelKey];
-                        if (items.length === 1) {
-                            const c = items[0];
-                            const colorEmoji = c.color ? getColorEmoji(c.color) : '';
-                            const price = parseFloat(c.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
-                            lines.push(`${modelKey}`);
-                            lines.push(`${colorEmoji} R$ ${price} 🔥🔥`);
-                        } else {
-                            lines.push(`${modelKey}`);
-                            items.forEach(c => {
-                                const colorEmoji = c.color ? getColorEmoji(c.color) : '🔘';
-                                const price = parseFloat(c.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
-                                lines.push(`${colorEmoji} R$ ${price} 🔥🔥`);
-                            });
-                        }
-                        lines.push('');
-                    });
-                }
-
-                if (visibleUsed.length > 0) {
-                    lines.push('*SEMI NOVOS*');
-                    lines.push('');
-
-                    visibleUsed.forEach(u => {
-                        const ul = u._usedListing || {};
-                        const namePart = (u.name || '') + (u.storage ? ' ' + u.storage : '');
-                        const color = u.color || '';
-                        const bat = u.resale.battery_health || ul.battery_health;
-                        const battery = bat ? `🔋${bat}%` : '';
-                        const hasBox = u.resale.has_box || ul.has_box;
-                        const hasCable = u.resale.has_cable || ul.has_cable;
-
-                        let accessories = '';
-                        if (hasBox && hasCable) {
-                            accessories = '📦 Caixa e cabo';
-                        } else if (hasBox) {
-                            accessories = '📦 Caixa';
-                        } else if (hasCable) {
-                            accessories = '✅Cabo';
-                        } else {
-                            accessories = '❌Caixa ❌Cabo';
-                        }
-
-                        let warranty = '';
-                        if (u.resale.warranty_until) {
-                            const d = new Date(u.resale.warranty_until);
-                            const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-                            warranty = `🛡️ Garantia até ${months[d.getMonth()]}/${d.getFullYear()}`;
-                        }
-
-                        const price = parseFloat(u.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
-                        const notes = u.resale.notes || ul.notes || '';
-
-                        let parts = [`${namePart} ${color}`.trim()];
-                        if (battery) parts.push(battery);
-                        if (accessories) parts.push(accessories);
-                        if (warranty) parts.push(warranty);
-                        if (notes) parts.push(notes);
-                        parts.push(`💰R$ ${price}`);
-
-                        lines.push(parts.join(' - '));
-                    });
-                }
-
-                const text = lines.join('\n');
-
+            _copyToClipboard(text, flagName) {
                 navigator.clipboard.writeText(text).then(() => {
-                    this.resaleCopied = true;
-                    setTimeout(() => { this.resaleCopied = false; }, 2500);
+                    this[flagName] = true;
+                    setTimeout(() => { this[flagName] = false; }, 2500);
                 }).catch(() => {
                     const ta = document.createElement('textarea');
                     ta.value = text;
@@ -1853,9 +1775,109 @@
                     ta.select();
                     document.execCommand('copy');
                     document.body.removeChild(ta);
-                    this.resaleCopied = true;
-                    setTimeout(() => { this.resaleCopied = false; }, 2500);
+                    this[flagName] = true;
+                    setTimeout(() => { this[flagName] = false; }, 2500);
                 });
+            },
+
+            copyResaleLacrados() {
+                const visibleConsignment = this.resaleConsignment.filter(c => c.resale.visible && c.resale.resale_price);
+
+                if (visibleConsignment.length === 0) {
+                    alert('Nenhum lacrado marcado como visível com preço.');
+                    return;
+                }
+
+                let lines = [];
+                lines.push('LISTA DE REPASSE DG STORE');
+                lines.push('');
+                lines.push('*NOVOS LACRADOS*');
+                lines.push('');
+
+                const grouped = {};
+                visibleConsignment.forEach(c => {
+                    const key = (c.name || '').trim() + (c.storage ? ' ' + c.storage : '');
+                    if (!grouped[key]) grouped[key] = [];
+                    grouped[key].push(c);
+                });
+
+                Object.keys(grouped).forEach(modelKey => {
+                    const items = grouped[modelKey];
+                    if (items.length === 1) {
+                        const c = items[0];
+                        const colorEmoji = c.color ? getColorEmoji(c.color) : '';
+                        const price = parseFloat(c.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                        lines.push(`${modelKey}`);
+                        lines.push(`${colorEmoji} R$ ${price} 🔥🔥`);
+                    } else {
+                        lines.push(`${modelKey}`);
+                        items.forEach(c => {
+                            const colorEmoji = c.color ? getColorEmoji(c.color) : '🔘';
+                            const price = parseFloat(c.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                            lines.push(`${colorEmoji} R$ ${price} 🔥🔥`);
+                        });
+                    }
+                    lines.push('');
+                });
+
+                this._copyToClipboard(lines.join('\n'), 'resaleLacradosCopied');
+            },
+
+            copyResaleSeminovos() {
+                const visibleUsed = this.resaleUsed.filter(u => u.resale.visible && u.resale.resale_price);
+
+                if (visibleUsed.length === 0) {
+                    alert('Nenhum seminovo marcado como visível com preço.');
+                    return;
+                }
+
+                let lines = [];
+                lines.push('LISTA DE REPASSE DG STORE');
+                lines.push('');
+                lines.push('*SEMINOVOS*');
+                lines.push('');
+
+                visibleUsed.forEach(u => {
+                    const ul = u._usedListing || {};
+                    const namePart = (u.name || '') + (u.storage ? ' ' + u.storage : '');
+                    const color = u.color || '';
+                    const bat = u.resale.battery_health || ul.battery_health;
+                    const battery = bat ? `🔋${bat}%` : '';
+                    const hasBox = u.resale.has_box || ul.has_box;
+                    const hasCable = u.resale.has_cable || ul.has_cable;
+
+                    let accessories = '';
+                    if (hasBox && hasCable) {
+                        accessories = '📦 Caixa e cabo';
+                    } else if (hasBox) {
+                        accessories = '📦 Caixa';
+                    } else if (hasCable) {
+                        accessories = '✅Cabo';
+                    } else {
+                        accessories = '❌Caixa ❌Cabo';
+                    }
+
+                    let warranty = '';
+                    if (u.resale.warranty_until) {
+                        const d = new Date(u.resale.warranty_until);
+                        const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+                        warranty = `🛡️ Garantia até ${months[d.getMonth()]}/${d.getFullYear()}`;
+                    }
+
+                    const price = parseFloat(u.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                    const notes = u.resale.notes || ul.notes || '';
+
+                    let parts = [`${namePart} ${color}`.trim()];
+                    if (battery) parts.push(battery);
+                    if (accessories) parts.push(accessories);
+                    if (warranty) parts.push(warranty);
+                    if (notes) parts.push(notes);
+                    parts.push(`💰R$ ${price}`);
+
+                    lines.push(parts.join(' - '));
+                });
+
+                this._copyToClipboard(lines.join('\n'), 'resaleSeminovosCopied');
             },
         };
     }

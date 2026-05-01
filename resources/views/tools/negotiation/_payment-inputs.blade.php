@@ -20,18 +20,13 @@
         </div>
     </div>
 
-    {{-- Desconto Pix --}}
-    <div class="mt-3 flex items-center gap-2.5">
-        <label class="apple-section-title whitespace-nowrap">Desconto Pix</label>
-        <div class="relative w-[90px] shrink-0">
-            <input type="text" x-model="pixDiscountPercent"
-                   placeholder="0"
-                   class="w-full py-2 pl-3 pr-7 bg-gray-50 border border-gray-200 rounded-lg text-sm font-semibold text-gray-900 outline-none text-right focus:border-gray-900 focus:bg-white transition-colors">
-            <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[13px] font-semibold pointer-events-none">%</span>
-        </div>
-        <span x-show="pixDiscount > 0 && cardBalance > 0"
-              class="text-[13px] font-semibold text-emerald-600"
-              x-text="'- R$ ' + fmt(cardBalance - pixPrice)"></span>
+    {{-- Mostrar apenas diferença --}}
+    <div class="mt-3 flex items-center gap-2">
+        <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" x-model="showOnlyDifference"
+                   class="w-4 h-4 accent-gray-900 cursor-pointer rounded">
+            <span class="text-[13px] font-semibold text-gray-700">Mostrar apenas diferença</span>
+        </label>
     </div>
 
     {{-- Avaliador DGiFipe --}}

@@ -320,17 +320,57 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             $query->whereBetween('sales.sold_at', [$startDate, $endDate]);
         }
 
-        return $query->groupBy('product_id')
+        $grouped = $query->groupBy('product_id')
             ->orderBy('total_sold', 'desc')
-            ->limit($limit)
+            ->limit($limit + 5)
             ->with('product')
-            ->get()
+            ->get();
+
+        $snapshotLookup = [];
+        if ($grouped->contains(fn ($item) => $item->product_id === null)) {
+            $nullItems = SaleItem::whereNull('product_id')
+                ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
+                ->where('sales.payment_status', '!=', PaymentStatus::Cancelled)
+                ->when($startDate && $endDate, fn ($q) => $q->whereBetween('sales.sold_at', [$startDate, $endDate]))
+                ->select('sale_items.*')
+                ->get();
+
+            foreach ($nullItems as $ni) {
+                $snapshot = $ni->product_snapshot ?? [];
+                $key = $snapshot['name'] ?? 'unknown';
+                if (! isset($snapshotLookup[$key])) {
+                    $snapshotLookup[$key] = ['snapshot' => $snapshot, 'total_sold' => 0];
+                }
+                $snapshotLookup[$key]['total_sold'] += $ni->quantity;
+            }
+        }
+
+        $results = $grouped
+            ->filter(fn ($item) => $item->product_id !== null)
             ->map(function ($item) {
+                $snapshot = [];
+                if (! $item->product) {
+                    $first = SaleItem::where('product_id', $item->product_id)->first();
+                    $snapshot = $first?->product_snapshot ?? [];
+                }
                 return [
                     'product' => $item->product,
-                    'total_sold' => $item->total_sold,
+                    'name' => $item->product?->name ?? $snapshot['name'] ?? 'Produto removido',
+                    'sku' => $item->product?->sku ?? $snapshot['sku'] ?? null,
+                    'total_sold' => (int) $item->total_sold,
                 ];
             });
+
+        foreach ($snapshotLookup as $key => $data) {
+            $results->push([
+                'product' => null,
+                'name' => $data['snapshot']['name'] ?? 'Produto removido',
+                'sku' => $data['snapshot']['sku'] ?? null,
+                'total_sold' => $data['total_sold'],
+            ]);
+        }
+
+        return $results->sortByDesc('total_sold')->take($limit)->values();
     }
 
     public function getTotals(array $filters = []): array

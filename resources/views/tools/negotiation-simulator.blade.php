@@ -15,24 +15,33 @@
                 </button>
             </div>
 
-            {{-- Layout: mobile = coluna única reordenada / desktop = 2 colunas --}}
+            {{-- Layout: mobile = coluna única / desktop = 2 colunas --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
 
-                {{-- Inputs (sempre primeiro) --}}
+                {{-- Inputs --}}
                 <div class="order-1">
                     @include('tools.negotiation._quick-values')
                     @include('tools.negotiation._product-form')
                     @include('tools.negotiation._payment-inputs')
+
+                    {{-- Estado vazio --}}
+                    <div x-show="!cardLoading && cardResults.length === 0 && productPrice <= 0"
+                         class="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                        </svg>
+                        <p class="text-sm text-gray-400">Preencha o valor do produto para montar a proposta</p>
+                    </div>
                 </div>
 
-                {{-- Resultados (sobe para 2o no mobile, fica na coluna direita no desktop) --}}
-                <div class="order-2 lg:order-none">
-                    @include('tools.negotiation._results')
-                </div>
-
-                {{-- Preview da mensagem (desce para 3o no mobile, fica abaixo dos inputs no desktop) --}}
-                <div class="order-3 lg:order-none">
+                {{-- Preview da mensagem (direita no desktop, sticky) --}}
+                <div class="order-2 lg:sticky lg:top-6">
                     @include('tools.negotiation._message-preview')
+                </div>
+
+                {{-- Resultados (abaixo dos inputs na coluna esquerda) --}}
+                <div class="order-3">
+                    @include('tools.negotiation._results')
                 </div>
             </div>
         </div>
@@ -74,7 +83,7 @@
                 result: null, error: null, loading: false, offeredInput: '',
             },
             downPaymentInput: '',
-            pixDiscountPercent: '',
+            showOnlyDifference: false,
             cardResults: [],
 
             presets: [
@@ -103,14 +112,6 @@
             get downPayment() { return this.parseNum(this.downPaymentInput); },
             get cardBalance() {
                 return Math.max(0, this.productPrice - this.tradeInValue - this.downPayment);
-            },
-            get pixDiscount() {
-                return parseFloat(this.pixDiscountPercent) || 0;
-            },
-            get pixPrice() {
-                const disc = this.pixDiscount;
-                if (disc <= 0 || disc > 100) return this.cardBalance;
-                return this.cardBalance * (1 - disc / 100);
             },
             get tradeInStorages() {
                 return this.tradeInModels[this.tradeIn.model] || [];
@@ -293,8 +294,30 @@
 
             buildMessage() {
                 const lines = [];
-                const desc = this.product.description || 'Produto';
+                const balance = this.cardBalance;
 
+                if (this.showOnlyDifference) {
+                    if (balance > 0) {
+                        lines.push(`*Diferença à vista: R$ ${this.fmt(balance)}*`);
+
+                        const selected = this.cardResults.filter(r => r.selected);
+                        if (selected.length > 0) {
+                            lines.push('');
+                            lines.push(`💳 *Parcele em até ${selected[selected.length - 1].installments}x:*`);
+                            selected.forEach(r => {
+                                lines.push(`  ${r.installments}x › R$ ${this.fmt(r.installment_value)}`);
+                            });
+                        }
+                    }
+
+                    lines.push('');
+                    const expiry = this.getExpiryDate();
+                    lines.push(`⏳ _Simulação válida até ${expiry}_`);
+
+                    return lines.join('\n');
+                }
+
+                const desc = this.product.description || 'Produto';
                 lines.push(`📱 *${desc}*`);
                 lines.push(`💰 *R$ ${this.fmt(this.productPrice)}*`);
 
@@ -311,15 +334,10 @@
                     lines.push(`💵 Entrada: *R$ ${this.fmt(this.downPayment)}*`);
                 }
 
-                const balance = this.cardBalance;
                 if (balance > 0) {
                     lines.push('');
                     lines.push(`━━━━━━━━━━━━━━━`);
-                    if (this.pixDiscount > 0) {
-                        lines.push(`✅ *Pix/À vista: R$ ${this.fmt(this.pixPrice)}* _(${this.pixDiscount}% off)_`);
-                    } else {
-                        lines.push(`✅ *Pix/À vista: R$ ${this.fmt(balance)}*`);
-                    }
+                    lines.push(`✅ *Pix/À vista: R$ ${this.fmt(balance)}*`);
 
                     const selected = this.cardResults.filter(r => r.selected);
                     if (selected.length > 0) {
@@ -366,7 +384,7 @@
                     result: null, error: null, loading: false, offeredInput: '',
                 };
                 this.downPaymentInput = '';
-                this.pixDiscountPercent = '';
+                this.showOnlyDifference = false;
                 this.cardResults = [];
                 this.activePreset = 'even';
                 this.evalSearch = '';
