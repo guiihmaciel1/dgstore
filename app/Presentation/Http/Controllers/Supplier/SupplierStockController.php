@@ -102,8 +102,6 @@ class SupplierStockController extends Controller
 
     public function show(ConsignmentStockItem $item): View
     {
-        $this->authorize('view', $item);
-        
         if ($item->supplier_id !== auth('supplier')->user()->supplier_id) {
             abort(403, 'Acesso negado.');
         }

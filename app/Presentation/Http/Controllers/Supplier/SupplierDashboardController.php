@@ -27,11 +27,12 @@ class SupplierDashboardController extends Controller
             'available_value' => $availableItems->sum(fn($item) => $item->quantity * $item->supplier_cost),
             'sold_count' => $soldItems->sum('quantity'),
             'sold_value' => ConsignmentStockMovement::where('type', 'out')
-                ->whereHas('item', fn($q) => $q->where('supplier_id', $supplierId))
+                ->whereHas('consignmentItem', fn($q) => $q->where('supplier_id', $supplierId))
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
+                ->with('consignmentItem')
                 ->get()
-                ->sum(fn($mov) => $mov->quantity * $mov->item->supplier_cost),
+                ->sum(fn($mov) => $mov->quantity * $mov->consignmentItem->supplier_cost),
         ];
         
         $recentItems = ConsignmentStockItem::bySupplier($supplierId)
