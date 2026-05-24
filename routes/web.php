@@ -180,13 +180,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Estoque Consignado (Fornecedor Interno)
         Route::get('/stock/consignment', [ConsignmentStockController::class, 'index'])->name('stock.consignment.index');
         Route::get('/stock/consignment/create', [ConsignmentStockController::class, 'create'])->name('stock.consignment.create');
+        Route::get('/stock/consignment/batch-create', [ConsignmentStockController::class, 'batchCreate'])->name('stock.consignment.batch-create');
+        Route::post('/stock/consignment/batch', [ConsignmentStockController::class, 'batchStore'])->name('stock.consignment.batch-store');
         Route::post('/stock/consignment', [ConsignmentStockController::class, 'store'])->name('stock.consignment.store');
         Route::post('/stock/consignment/store-confirmed', [ConsignmentStockController::class, 'storeConfirmed'])->name('stock.consignment.store-confirmed');
+        Route::get('/stock/consignment/report', [ConsignmentStockController::class, 'report'])->name('stock.consignment.report');
         Route::get('/stock/consignment/{item}/edit', [ConsignmentStockController::class, 'edit'])->name('stock.consignment.edit');
+        Route::get('/stock/consignment/{item}/exchange', [ConsignmentStockController::class, 'exchangeForm'])->name('stock.consignment.exchange-form');
+        Route::post('/stock/consignment/{item}/exchange', [ConsignmentStockController::class, 'exchangeStore'])->name('stock.consignment.exchange-store');
+        Route::get('/stock/consignment/{item}/history', [ConsignmentStockController::class, 'history'])->name('stock.consignment.history');
         Route::put('/stock/consignment/{item}', [ConsignmentStockController::class, 'update'])->name('stock.consignment.update');
         Route::post('/stock/consignment/{item}/return', [ConsignmentStockController::class, 'returnItem'])->name('stock.consignment.return');
-        Route::get('/stock/consignment/report', [ConsignmentStockController::class, 'report'])->name('stock.consignment.report');
         Route::get('/api/consignment/search', [ConsignmentStockController::class, 'search'])->name('stock.consignment.search');
+        Route::get('/api/consignment/product-catalog', [ConsignmentStockController::class, 'productCatalog'])->name('stock.consignment.catalog');
+        Route::get('/api/consignment/validate-imei', [ConsignmentStockController::class, 'validateImei'])->name('stock.consignment.validate-imei');
 
         // Garantias
         Route::get('/warranties', [WarrantyController::class, 'index'])->name('warranties.index');

@@ -32,6 +32,7 @@ class ConsignmentStockItem extends Model
         'has_box',
         'has_cable',
         'imei',
+        'serial_number',
         'supplier_cost',
         'suggested_price',
         'quantity',
@@ -83,6 +84,12 @@ class ConsignmentStockItem extends Model
     public function movements(): HasMany
     {
         return $this->hasMany(ConsignmentStockMovement::class, 'consignment_item_id');
+    }
+
+    public function exchanges(): HasMany
+    {
+        return $this->hasMany(ConsignmentItemExchange::class, 'consignment_item_id')
+            ->orderBy('exchanged_at');
     }
 
     public function scopeAvailable(Builder $query): Builder
@@ -181,5 +188,71 @@ class ConsignmentStockItem extends Model
             'sold_at' => null,
             'sale_id' => null,
         ]);
+    }
+
+    /**
+     * Lista de IMEIs antigos (em ordem cronologica) deste item, derivada das trocas.
+     *
+     * @return array<int, string>
+     */
+    public function getImeiHistoryAttribute(): array
+    {
+        return $this->exchanges
+            ->pluck('old_imei')
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Lista de Seriais antigos (em ordem cronologica) deste item, derivada das trocas.
+     *
+     * @return array<int, string>
+     */
+    public function getSerialHistoryAttribute(): array
+    {
+        return $this->exchanges
+            ->pluck('old_serial_number')
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    public function hasBeenExchanged(): bool
+    {
+        return $this->exchanges()->exists();
+    }
+
+    /**
+     * Snapshot enriquecido do item para ser persistido em SaleItem.product_snapshot.
+     *
+     * Inclui o IMEI/Serial atual e o historico de trocas para que, mesmo que o
+     * ConsignmentStockItem seja alterado depois, a venda preserve a trilha.
+     */
+    public function toSaleSnapshot(): array
+    {
+        $exchanges = $this->exchanges->map(fn (ConsignmentItemExchange $e) => [
+            'partner_name' => $e->partner_name,
+            'old_imei' => $e->old_imei,
+            'old_serial_number' => $e->old_serial_number,
+            'old_name' => $e->old_name,
+            'old_color' => $e->old_color,
+            'old_storage' => $e->old_storage,
+            'new_imei' => $e->new_imei,
+            'new_serial_number' => $e->new_serial_number,
+            'cost_adjustment' => (float) $e->cost_adjustment,
+            'exchanged_at' => $e->exchanged_at?->toDateString(),
+            'reason' => $e->reason,
+        ])->values()->all();
+
+        return [
+            'consignment_item_id' => $this->id,
+            'imei' => $this->imei,
+            'serial_number' => $this->serial_number,
+            'imei_history' => $this->imei_history,
+            'serial_history' => $this->serial_history,
+            'exchanges' => $exchanges,
+            'has_been_exchanged' => !empty($exchanges),
+        ];
     }
 }

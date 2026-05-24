@@ -46,6 +46,7 @@ class ConsignmentStockService
                 'has_box' => $data['has_box'] ?? false,
                 'has_cable' => $data['has_cable'] ?? false,
                 'imei' => $data['imei'] ?? null,
+                'serial_number' => $data['serial_number'] ?? null,
                 'supplier_cost' => $data['supplier_cost'],
                 'suggested_price' => $data['suggested_price'] ?? null,
                 'quantity' => $quantity,
@@ -65,6 +66,100 @@ class ConsignmentStockService
 
             return $item;
         });
+    }
+
+    /**
+     * Registra uma entrada em lote com multiplas unidades, cada uma com seu IMEI/Serial proprio.
+     *
+     * Cada unidade vira um ConsignmentStockItem com quantity=1 (rastreabilidade individual).
+     * O batch e compartilhado entre todas as unidades do lote.
+     *
+     * @param  array  $batchData  dados comuns do lote (supplier_id, name, model, storage, condition, supplier_cost, suggested_price, received_at, notes)
+     * @param  array  $units      lista de unidades, cada uma com (color, imei, serial_number, battery_health, has_box, has_cable, notes)
+     * @return ConsignmentBatch   batch criado com items carregados
+     */
+    public function registerBatchEntry(array $batchData, array $units, string $userId): ConsignmentBatch
+    {
+        if (empty($units)) {
+            throw new \InvalidArgumentException('E necessario informar ao menos 1 unidade no lote.');
+        }
+
+        return DB::transaction(function () use ($batchData, $units, $userId) {
+            $batch = ConsignmentBatch::create([
+                'supplier_id' => $batchData['supplier_id'],
+                'name' => $batchData['name'],
+                'model' => $batchData['model'] ?? null,
+                'storage' => $batchData['storage'] ?? null,
+                'color' => null, // batch nao tem cor unica - cada unit tem a sua
+                'condition' => $batchData['condition'] ?? 'new',
+                'supplier_cost' => $batchData['supplier_cost'],
+                'suggested_price' => $batchData['suggested_price'] ?? null,
+                'total_quantity' => count($units),
+                'notes' => $batchData['notes'] ?? null,
+                'received_at' => $batchData['received_at'] ?? now(),
+            ]);
+
+            foreach ($units as $unit) {
+                $item = ConsignmentStockItem::create([
+                    'supplier_id' => $batchData['supplier_id'],
+                    'batch_id' => $batch->id,
+                    'name' => $batchData['name'],
+                    'model' => $batchData['model'] ?? null,
+                    'storage' => $batchData['storage'] ?? null,
+                    'color' => $unit['color'] ?? null,
+                    'condition' => $batchData['condition'] ?? 'new',
+                    'battery_health' => $unit['battery_health'] ?? null,
+                    'has_box' => $unit['has_box'] ?? false,
+                    'has_cable' => $unit['has_cable'] ?? false,
+                    'imei' => $unit['imei'] ?? null,
+                    'serial_number' => $unit['serial_number'] ?? null,
+                    'supplier_cost' => $batchData['supplier_cost'],
+                    'suggested_price' => $batchData['suggested_price'] ?? null,
+                    'quantity' => 1,
+                    'available_quantity' => 1,
+                    'status' => ConsignmentStatus::Available,
+                    'notes' => $unit['notes'] ?? null,
+                    'received_at' => $batchData['received_at'] ?? now(),
+                ]);
+
+                ConsignmentStockMovement::create([
+                    'consignment_item_id' => $item->id,
+                    'user_id' => $userId,
+                    'type' => ConsignmentMovementType::In,
+                    'quantity' => 1,
+                    'reason' => 'Entrada de estoque consignado - Lote ' . $batch->batch_code,
+                ]);
+            }
+
+            return $batch->load('items');
+        });
+    }
+
+    /**
+     * Verifica se um IMEI/Serial ja existe no estoque consignado.
+     */
+    public function imeiOrSerialExists(?string $imei, ?string $serialNumber, ?string $excludeItemId = null): bool
+    {
+        if (!$imei && !$serialNumber) {
+            return false;
+        }
+
+        $query = ConsignmentStockItem::query();
+
+        $query->where(function ($q) use ($imei, $serialNumber) {
+            if ($imei) {
+                $q->orWhere('imei', $imei);
+            }
+            if ($serialNumber) {
+                $q->orWhere('serial_number', $serialNumber);
+            }
+        });
+
+        if ($excludeItemId) {
+            $query->where('id', '!=', $excludeItemId);
+        }
+
+        return $query->exists();
     }
 
     /**

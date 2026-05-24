@@ -121,14 +121,25 @@
                                         @endphp
                                         <tr style="border-bottom: 1px solid #f3f4f6;">
                                             <td style="padding: 1rem 1.5rem;">
-                                                @php $itemTradeIn = $item->product?->tradeIn; @endphp
-                                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                @php
+                                                    $itemTradeIn = $item->product?->tradeIn;
+                                                    $snapshot = $item->product_snapshot ?? [];
+                                                    $itemImei = $snapshot['imei'] ?? null;
+                                                    $itemSerial = $snapshot['serial_number'] ?? null;
+                                                    $imeiHistory = $snapshot['imei_history'] ?? [];
+                                                    $serialHistory = $snapshot['serial_history'] ?? [];
+                                                    $exchanges = $snapshot['exchanges'] ?? [];
+                                                @endphp
+                                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                                                     <span style="font-weight: 500; color: #111827;">{{ $item->product_name }}</span>
                                                     @if($itemTradeIn)
                                                         <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trade-in</span>
                                                     @endif
                                                     @if($item->isConsignment())
                                                         <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Consignado</span>
+                                                    @endif
+                                                    @if(!empty($exchanges))
+                                                        <span title="Item ja foi trocado com outro lojista" style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #fce7f3; color: #9d174d; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trocado</span>
                                                     @endif
                                                 </div>
                                                 <div style="font-size: 0.75rem; color: #9ca3af;">
@@ -145,6 +156,36 @@
                                                         </span>
                                                     @endif
                                                 </div>
+                                                @if($itemImei || $itemSerial)
+                                                    <div style="margin-top: 0.5rem; display: flex; gap: 0.75rem; flex-wrap: wrap; font-size: 0.75rem;">
+                                                        @if($itemImei)
+                                                            <span><strong style="color: #374151;">IMEI:</strong> <span style="font-family: monospace; color: #111827;">{{ $itemImei }}</span></span>
+                                                        @endif
+                                                        @if($itemSerial)
+                                                            <span><strong style="color: #374151;">Serial:</strong> <span style="font-family: monospace; color: #111827;">{{ $itemSerial }}</span></span>
+                                                        @endif
+                                                    </div>
+                                                @endif
+                                                @if(!empty($exchanges))
+                                                    <div style="margin-top: 0.5rem; padding: 0.5rem 0.625rem; background: #fdf2f8; border: 1px solid #fce7f3; border-radius: 0.375rem;">
+                                                        <div style="font-size: 0.6875rem; font-weight: 700; color: #9d174d; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                                                            Historico de Trocas
+                                                        </div>
+                                                        @foreach($exchanges as $exch)
+                                                            <div style="font-size: 0.75rem; color: #4b5563; margin-top: 0.125rem;">
+                                                                @if(!empty($exch['exchanged_at']))
+                                                                    <span style="color: #9d174d; font-weight: 500;">{{ \Carbon\Carbon::parse($exch['exchanged_at'])->format('d/m/Y') }}</span>
+                                                                @endif
+                                                                · {{ $exch['partner_name'] ?? 'Lojista' }}
+                                                                @if(!empty($exch['old_imei']))
+                                                                    · IMEI antigo: <span style="font-family: monospace;">{{ $exch['old_imei'] }}</span>
+                                                                @elseif(!empty($exch['old_serial_number']))
+                                                                    · Serial antigo: <span style="font-family: monospace;">{{ $exch['old_serial_number'] }}</span>
+                                                                @endif
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @endif
                                             </td>
                                             <td style="padding: 0.75rem 1rem; text-align: center; color: #6b7280;">
                                                 {{ $item->quantity }}

@@ -93,20 +93,25 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 $totalCost = $itemData->calculateTotalCost();
 
                 if ($itemData->isConsignment()) {
-                    $consignmentItem = ConsignmentStockItem::findOrFail($itemData->consignmentItemId);
+                    $consignmentItem = ConsignmentStockItem::with('exchanges')
+                        ->findOrFail($itemData->consignmentItemId);
 
-                    $snapshot = [
-                        'id' => $consignmentItem->id,
-                        'name' => $consignmentItem->name,
-                        'sku' => $consignmentItem->imei ?? '-',
-                        'category' => 'smartphone',
-                        'model' => $consignmentItem->model,
-                        'storage' => $consignmentItem->storage,
-                        'color' => $consignmentItem->color,
-                        'condition' => 'new',
-                        'imei' => $consignmentItem->imei,
-                        'cost_price' => $consignmentItem->supplier_cost,
-                    ];
+                    // Snapshot enriquecido: dados basicos + historico de IMEIs/trocas
+                    // (preserva trilha mesmo se o item original for alterado depois)
+                    $snapshot = array_merge(
+                        [
+                            'id' => $consignmentItem->id,
+                            'name' => $consignmentItem->name,
+                            'sku' => $consignmentItem->imei ?? $consignmentItem->serial_number ?? '-',
+                            'category' => 'smartphone',
+                            'model' => $consignmentItem->model,
+                            'storage' => $consignmentItem->storage,
+                            'color' => $consignmentItem->color,
+                            'condition' => $consignmentItem->condition?->value ?? 'new',
+                            'cost_price' => $consignmentItem->supplier_cost,
+                        ],
+                        $consignmentItem->toSaleSnapshot(),
+                    );
 
                     SaleItem::create([
                         'sale_id' => $sale->id,

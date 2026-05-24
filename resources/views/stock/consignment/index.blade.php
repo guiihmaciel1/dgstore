@@ -27,7 +27,7 @@
                         </svg>
                         Relatório WhatsApp
                     </a>
-                    <a href="{{ route('stock.consignment.create') }}"
+                    <a href="{{ route('stock.consignment.batch-create') }}"
                        class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
@@ -112,13 +112,16 @@
                                 <tr style="border-bottom: 1px solid #f3f4f6;">
                                     <td style="padding: 0.75rem;">
                                         <div style="font-weight: 600; color: #111827; font-size: 0.875rem;">{{ $item->name }}</div>
-                                        <div style="font-size: 0.75rem; color: #6b7280; display: flex; align-items: center; gap: 0.375rem; margin-top: 1px;">
+                                        <div style="font-size: 0.75rem; color: #6b7280; display: flex; align-items: center; gap: 0.375rem; margin-top: 1px; flex-wrap: wrap;">
                                             @if($item->storage) {{ $item->storage }} @endif
                                             @if($item->color) · {{ $item->color }} @endif
                                             @if(($item->condition?->value ?? 'new') === 'used')
                                                 <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#fef3c7;color:#92400e;">Seminovo</span>
                                             @else
                                                 <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#dbeafe;color:#1e40af;">Novo</span>
+                                            @endif
+                                            @if($item->hasBeenExchanged())
+                                                <span title="Item ja foi trocado com outro lojista" style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#fce7f3;color:#9d174d;">TROCADO</span>
                                             @endif
                                         </div>
                                     </td>
@@ -182,6 +185,22 @@
                                                onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='transparent'">
                                                 <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </a>
+                                            @if($item->isAvailable())
+                                                <a href="{{ route('stock.consignment.exchange-form', $item) }}" title="Trocar com outro lojista"
+                                                   style="padding: 0.375rem; color: #db2777; background: none; border: none; cursor: pointer; border-radius: 0.25rem; display: inline-flex;"
+                                                   onmouseover="this.style.background='#fce7f3'" onmouseout="this.style.background='transparent'">
+                                                    <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                                    </svg>
+                                                </a>
+                                            @endif
+                                            <a href="{{ route('stock.consignment.history', $item) }}" title="Historico do item"
+                                               style="padding: 0.375rem; color: #6b7280; background: none; border: none; cursor: pointer; border-radius: 0.25rem; display: inline-flex;"
+                                               onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
+                                                <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                 </svg>
                                             </a>
                                             @if($item->isAvailable())

@@ -175,10 +175,29 @@
             </thead>
             <tbody>
                 @foreach($sale->items as $item)
+                @php
+                    $snapshot = $item->product_snapshot ?? [];
+                    $itemImei = $snapshot['imei'] ?? null;
+                    $itemSerial = $snapshot['serial_number'] ?? null;
+                    $imeiHistory = $snapshot['imei_history'] ?? [];
+                    $serialHistory = $snapshot['serial_history'] ?? [];
+                @endphp
                 <tr>
                     <td>
                         {{ $item->product_name }}<br>
                         <small>SKU: {{ $item->product_sku }}</small>
+                        @if($itemImei)
+                            <br><small><strong>IMEI:</strong> {{ $itemImei }}</small>
+                        @endif
+                        @if($itemSerial)
+                            <br><small><strong>Serial:</strong> {{ $itemSerial }}</small>
+                        @endif
+                        @if(!empty($imeiHistory))
+                            <br><small style="color:#9d174d;"><strong>IMEI(s) anterior(es):</strong> {{ implode(', ', $imeiHistory) }}</small>
+                        @endif
+                        @if(!empty($serialHistory))
+                            <br><small style="color:#9d174d;"><strong>Serial(is) anterior(es):</strong> {{ implode(', ', $serialHistory) }}</small>
+                        @endif
                     </td>
                     <td class="text-center">{{ $item->quantity }}</td>
                     <td class="text-right">{{ $item->formatted_unit_price }}</td>
