@@ -44,6 +44,10 @@ return [
             'driver' => 'session',
             'provider' => 'b2b_retailers',
         ],
+        'supplier' => [
+            'driver' => 'session',
+            'provider' => 'supplier_users',
+        ],
     ],
 
     /*
@@ -73,6 +77,11 @@ return [
             'driver' => 'eloquent',
             'model' => App\Domain\B2B\Models\B2BRetailer::class,
         ],
+
+        'supplier_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Domain\Supplier\Models\SupplierUser::class,
+        ],
     ],
 
     /*
@@ -98,6 +107,13 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'supplier_users' => [
+            'provider' => 'supplier_users',
+            'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

@@ -51,6 +51,21 @@ class Supplier extends Model
         return $this->hasMany(\App\Domain\Import\Models\ImportOrder::class);
     }
 
+    public function supplierUsers(): HasMany
+    {
+        return $this->hasMany(SupplierUser::class);
+    }
+
+    public function consignmentBatches(): HasMany
+    {
+        return $this->hasMany(\App\Domain\ConsignmentStock\Models\ConsignmentBatch::class);
+    }
+
+    public function consignmentStockItems(): HasMany
+    {
+        return $this->hasMany(\App\Domain\ConsignmentStock\Models\ConsignmentStockItem::class);
+    }
+
     // Scopes
 
     public function scopeActive(Builder $query): Builder

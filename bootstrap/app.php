@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::middleware('web')
                 ->prefix('perfumes')
                 ->group(base_path('routes/perfumes.php'));
+
+            Route::middleware('web')
+                ->group(base_path('routes/supplier.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -26,6 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\CheckRole::class,
             'b2b.auth' => \App\Http\Middleware\B2BAuthenticate::class,
             'b2b.approved' => \App\Http\Middleware\B2BApproved::class,
+            'supplier.auth' => \App\Http\Middleware\SupplierAuthenticate::class,
+            'supplier.active' => \App\Http\Middleware\SupplierActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
