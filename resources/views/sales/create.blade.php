@@ -1484,8 +1484,8 @@
                 hasTradeIn: false,
                 tradeIns: [],
                 
-                // Tipo de venda
-                saleType: null,
+                // Tipo de venda (padrão: Cliente Final)
+                saleType: 'cliente_final',
 
                 // Modal de Cliente
                 showCustomerModal: false,
