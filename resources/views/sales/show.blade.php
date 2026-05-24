@@ -691,6 +691,18 @@
                                     <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827;">{{ $sale->user?->name }}</dd>
                                 </div>
                                 <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Tipo</dt>
+                                    <dd style="margin-top: 0.25rem;">
+                                        @if($sale->sale_type)
+                                            <span style="display: inline-block; padding: 0.25rem 0.625rem; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 600; {{ $sale->sale_type->value === 'repasse' ? 'background: #f5f3ff; color: #7c3aed;' : 'background: #eff6ff; color: #3b82f6;' }}">
+                                                {{ $sale->sale_type->label() }}
+                                            </span>
+                                        @else
+                                            <span style="font-size: 0.875rem; color: #9ca3af;">Não informado</span>
+                                        @endif
+                                    </dd>
+                                </div>
+                                <div>
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Forma de Pagamento</dt>
                                     <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827;">
                                         {{ $sale->payment_method->label() }}

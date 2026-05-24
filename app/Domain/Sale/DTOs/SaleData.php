@@ -6,6 +6,7 @@ namespace App\Domain\Sale\DTOs;
 
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
+use App\Domain\Sale\Enums\SaleType;
 use Carbon\Carbon;
 
 readonly class SaleData
@@ -19,6 +20,7 @@ readonly class SaleData
         public PaymentMethod $paymentMethod,
         public array $items,
         public ?string $customerId = null,
+        public ?SaleType $saleType = null,
         public float $discount = 0,
         public float $tradeInValue = 0,
         public float $cashPayment = 0,
@@ -56,6 +58,11 @@ readonly class SaleData
                 : PaymentMethod::from($data['payment_method']),
             items: $items,
             customerId: !empty($data['customer_id']) ? $data['customer_id'] : null,
+            saleType: isset($data['sale_type'])
+                ? ($data['sale_type'] instanceof SaleType
+                    ? $data['sale_type']
+                    : SaleType::from($data['sale_type']))
+                : null,
             discount: (float) ($data['discount'] ?? 0),
             tradeInValue: (float) ($data['trade_in_value'] ?? 0),
             cashPayment: (float) ($data['cash_payment'] ?? 0),

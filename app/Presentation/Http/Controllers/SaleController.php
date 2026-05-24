@@ -167,6 +167,22 @@ class SaleController extends Controller
 
         $validated = $request->validate([
             'customer_id' => ['nullable', 'exists:customers,id'],
+            'sale_type' => [
+                'nullable',
+                function ($attribute, $value, $fail) use ($sale) {
+                    if (!$value) {
+                        return;
+                    }
+                    
+                    if ($sale->sale_type && $sale->sale_type->value !== $value) {
+                        if ($sale->warranties()->exists() || 
+                            $sale->tradeIns()->exists() || 
+                            $sale->commissions()->exists()) {
+                            $fail('Não é possível alterar o tipo de venda pois existem garantias, comissões ou trade-ins registrados.');
+                        }
+                    }
+                }
+            ],
             'payment_method' => ['required', 'in:cash,credit_card,debit_card,pix,bank_transfer,installment'],
             'payment_status' => ['required', 'in:pending,paid,partial'],
             'installments' => ['nullable', 'integer', 'min:1', 'max:24'],
@@ -184,6 +200,7 @@ class SaleController extends Controller
 
             $sale->update([
                 'customer_id' => !empty($validated['customer_id']) ? $validated['customer_id'] : null,
+                'sale_type' => !empty($validated['sale_type']) ? $validated['sale_type'] : $sale->sale_type,
                 'payment_method' => $validated['payment_method'],
                 'payment_status' => $validated['payment_status'],
                 'installments' => (int) ($validated['installments'] ?? 1),

@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Requests;
 
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
+use App\Domain\Sale\Enums\SaleType;
 use App\Domain\Sale\Enums\TradeInCondition;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -21,6 +22,7 @@ class StoreSaleRequest extends FormRequest
     {
         return [
             'customer_id' => ['required', 'exists:customers,id'],
+            'sale_type' => ['required', Rule::enum(SaleType::class)],
             'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
             'payment_status' => ['required', Rule::enum(PaymentStatus::class)],
             'discount' => ['nullable', 'numeric', 'min:0'],
@@ -71,6 +73,7 @@ class StoreSaleRequest extends FormRequest
     {
         return [
             'customer_id' => 'cliente',
+            'sale_type' => 'tipo de venda',
             'payment_method' => 'forma de pagamento',
             'payment_status' => 'status do pagamento',
             'discount' => 'desconto',
@@ -108,6 +111,7 @@ class StoreSaleRequest extends FormRequest
         return [
             'customer_id.required' => 'Selecione um cliente para a venda.',
             'customer_id.exists' => 'Cliente selecionado não encontrado.',
+            'sale_type.required' => 'Selecione o tipo de venda (Repasse ou Cliente Final).',
             'items.required' => 'Adicione pelo menos um item à venda.',
             'items.min' => 'Adicione pelo menos um item à venda.',
             'items.*.product_id.required' => 'Selecione o produto para cada item.',

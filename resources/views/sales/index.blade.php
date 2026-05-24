@@ -66,6 +66,15 @@
                             </select>
                         </div>
                         <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Tipo</label>
+                            <select name="sale_type" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
+                                    x-on:change="$refs.filterForm.submit()">
+                                <option value="">Todos os tipos</option>
+                                <option value="cliente_final" {{ ($filters['sale_type'] ?? '') === 'cliente_final' ? 'selected' : '' }}>Cliente Final</option>
+                                <option value="repasse" {{ ($filters['sale_type'] ?? '') === 'repasse' ? 'selected' : '' }}>Repasse</option>
+                            </select>
+                        </div>
+                        <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">Data Início</label>
                             <input type="date" name="date_from" value="{{ $filters['date_from'] }}" 
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
@@ -92,6 +101,7 @@
                             <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
                                 <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Venda</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</th>
+                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Tipo</th>
                                 <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Total</th>
                                 @if(auth()->user()->canViewFinancials())
                                 <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Lucro</th>
@@ -111,6 +121,15 @@
                                     </td>
                                     <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #374151;">
                                         {{ $sale->customer?->name ?? 'Cliente não informado' }}
+                                    </td>
+                                    <td style="padding: 0.75rem 1rem;">
+                                        @if($sale->sale_type)
+                                            <span style="display: inline-block; padding: 0.25rem 0.625rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; {{ $sale->sale_type->value === 'repasse' ? 'background: #f5f3ff; color: #7c3aed;' : 'background: #eff6ff; color: #3b82f6;' }}">
+                                                {{ $sale->sale_type->label() }}
+                                            </span>
+                                        @else
+                                            <span style="font-size: 0.75rem; color: #d1d5db;">N/A</span>
+                                        @endif
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; font-size: 1rem; color: #111827;">
                                         {{ $sale->formatted_total }}
@@ -153,7 +172,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" style="padding: 3rem; text-align: center; color: #6b7280;">
+                                    <td colspan="9" style="padding: 3rem; text-align: center; color: #6b7280;">
                                         Nenhuma venda encontrada.
                                     </td>
                                 </tr>

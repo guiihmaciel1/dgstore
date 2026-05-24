@@ -453,6 +453,10 @@ class DashboardController extends Controller
         $totalRevenue = (float) $sales->sum('total');
         $averageTicket = $totalSales > 0 ? $totalRevenue / $totalSales : 0;
         $totalItems = (int) $allItems->sum('quantity');
+        
+        // Totais por tipo de venda
+        $repasseTotal = (float) $sales->where('sale_type', \App\Domain\Sale\Enums\SaleType::Repasse)->sum('total');
+        $clienteFinalTotal = (float) $sales->where('sale_type', \App\Domain\Sale\Enums\SaleType::ClienteFinal)->sum('total');
 
         $accessoryCategories = ['charger', 'cable', 'case', 'accessory'];
         $otherAppleCategories = ['tablet', 'notebook', 'smartwatch', 'headphone', 'speaker'];
@@ -507,6 +511,8 @@ class DashboardController extends Controller
             'accessories' => $accessories,
             'other_apple' => $otherApple,
             'trade_ins_received' => $tradeInsReceived,
+            'repasse_total' => $repasseTotal,
+            'cliente_final_total' => $clienteFinalTotal,
         ];
     }
 

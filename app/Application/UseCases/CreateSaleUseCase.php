@@ -9,6 +9,7 @@ use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Finance\Services\FinanceService;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Sale\DTOs\SaleData;
+use App\Domain\Sale\Enums\SaleType;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use App\Domain\Stock\Services\StockService;
@@ -48,9 +49,14 @@ class CreateSaleUseCase
     /**
      * Registra garantia de 3 meses (cliente) para itens seminovos (condition=used).
      * Não lança exceção para não bloquear a venda.
+     * Não gera garantia para vendas tipo Repasse.
      */
     private function registerWarranties(Sale $sale): void
     {
+        if ($sale->sale_type === SaleType::Repasse) {
+            return;
+        }
+
         try {
             foreach ($sale->items as $item) {
                 $condition = $item->product_snapshot['condition'] ?? null;
@@ -158,6 +164,10 @@ class CreateSaleUseCase
 
     private function registerCommission(Sale $sale): void
     {
+        if ($sale->sale_type === SaleType::Repasse) {
+            return;
+        }
+
         try {
             $user = $sale->user;
 

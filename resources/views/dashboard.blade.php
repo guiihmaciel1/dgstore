@@ -1647,6 +1647,36 @@
                             <p style="font-size: 0.55rem; font-weight: 600; color: rgba(255,255,255,0.35); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.12em;">Itens vendidos</p>
                         </div>
                     </div>
+                    
+                    {{-- Tipo de Venda --}}
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.875rem; overflow: hidden;">
+                        <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between;">
+                            <span style="font-size: 0.55rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.25);">Tipo de Venda</span>
+                            <span style="font-size: 0.55rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.25);">Total</span>
+                        </div>
+
+                        <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 0.375rem; height: 0.375rem; border-radius: 50%; background: #3b82f6;"></div>
+                                <span style="font-size: 0.8rem; font-weight: 700; color: white;">Cliente Final</span>
+                            </div>
+                            <span x-show="!hideValues" style="font-size: 1rem; font-weight: 800; color: #60a5fa;">
+                                R$ {{ number_format($monthSummary['cliente_final_total'], 2, ',', '.') }}
+                            </span>
+                            <span x-show="hideValues" x-cloak style="font-size: 1rem; font-weight: 800; color: rgba(255,255,255,0.2); letter-spacing: 0.1em;">&bull;&bull;&bull;&bull;&bull;</span>
+                        </div>
+
+                        <div style="padding: 0.625rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="width: 0.375rem; height: 0.375rem; border-radius: 50%; background: #8b5cf6;"></div>
+                                <span style="font-size: 0.8rem; font-weight: 700; color: white;">Repasse</span>
+                            </div>
+                            <span x-show="!hideValues" style="font-size: 1rem; font-weight: 800; color: #a78bfa;">
+                                R$ {{ number_format($monthSummary['repasse_total'], 2, ',', '.') }}
+                            </span>
+                            <span x-show="hideValues" x-cloak style="font-size: 1rem; font-weight: 800; color: rgba(255,255,255,0.2); letter-spacing: 0.1em;">&bull;&bull;&bull;&bull;&bull;</span>
+                        </div>
+                    </div>
 
                     {{-- Categorias --}}
                     <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 0.875rem; overflow: hidden;">

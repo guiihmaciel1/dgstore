@@ -332,8 +332,31 @@
                             </div>
                         </div>
                         
+                        <!-- TIPO DE VENDA (Obrigatório) -->
+                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #374151; margin-bottom: 0.75rem;">
+                                Tipo de Venda <span style="color: #dc2626;">*</span>
+                            </label>
+                            <div style="display: flex; gap: 1.5rem;">
+                                <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s;"
+                                       :style="{ borderColor: saleType === 'cliente_final' ? '#3b82f6' : '#e5e7eb', background: saleType === 'cliente_final' ? '#eff6ff' : 'white' }">
+                                    <input type="radio" name="sale_type" value="cliente_final" 
+                                           x-model="saleType" required
+                                           style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #3b82f6;">
+                                    <span style="font-size: 0.9375rem; font-weight: 500;">Cliente Final</span>
+                                </label>
+                                <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s;"
+                                       :style="{ borderColor: saleType === 'repasse' ? '#8b5cf6' : '#e5e7eb', background: saleType === 'repasse' ? '#f5f3ff' : 'white' }">
+                                    <input type="radio" name="sale_type" value="repasse" 
+                                           x-model="saleType" required
+                                           style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #8b5cf6;">
+                                    <span style="font-size: 0.9375rem; font-weight: 500;">Repasse</span>
+                                </label>
+                            </div>
+                        </div>
+                        
                         <!-- TRADE-IN (Aparelhos como entrada) -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div x-show="saleType === 'cliente_final' || saleType === null" style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                             <div style="background: #7c3aed; color: white; padding: 0.75rem 1.5rem;">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center;">
@@ -578,6 +601,19 @@
                             </div>
                         </div>
                         
+                        <!-- Aviso: Trade-in não disponível para Repasse -->
+                        <div x-show="saleType === 'repasse'" style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: start; gap: 0.75rem;">
+                                <svg style="width: 1.5rem; height: 1.5rem; color: #d97706; flex-shrink: 0; margin-top: 0.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <p style="font-weight: 600; color: #92400e; margin-bottom: 0.25rem;">Trade-in não disponível</p>
+                                    <p style="font-size: 0.875rem; color: #78350f;">Vendas do tipo <strong>Repasse</strong> não permitem aparelhos como entrada (trade-in).</p>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- Observações -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem;">
                             <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Observações (opcional)</label>
@@ -711,7 +747,7 @@
                                 </div>
                                 
                                 <!-- Parcelamentos em Cartões (Múltiplos) -->
-                                <div style="margin-bottom: 1rem; padding: 1rem; background: #eff6ff; border-radius: 0.75rem; border: 1px solid #bfdbfe;">
+                                <div x-show="saleType === 'cliente_final' || saleType === null" style="margin-bottom: 1rem; padding: 1rem; background: #eff6ff; border-radius: 0.75rem; border: 1px solid #bfdbfe;">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
                                         <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #1e40af;">
                                             <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -771,6 +807,18 @@
                                     
                                     <div x-show="cardPayments.length === 0" style="text-align: center; padding: 1rem; color: #6b7280; font-size: 0.75rem;">
                                         Clique em "Adicionar Cartão" para parcelar
+                                    </div>
+                                </div>
+                                
+                                <!-- Aviso: Cartão não disponível para Repasse -->
+                                <div x-show="saleType === 'repasse'" style="margin-bottom: 1rem; padding: 1rem; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 0.75rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <svg style="width: 1.25rem; height: 1.25rem; color: #d97706; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <p style="font-size: 0.875rem; color: #78350f; font-weight: 500;">
+                                            <strong>Pagamento com cartão não disponível</strong> para Repasse. Use dinheiro ou PIX.
+                                        </p>
                                     </div>
                                 </div>
                                 
@@ -1435,6 +1483,9 @@
                 // Trade-ins (múltiplos aparelhos)
                 hasTradeIn: false,
                 tradeIns: [],
+                
+                // Tipo de venda
+                saleType: null,
 
                 // Modal de Cliente
                 showCustomerModal: false,
@@ -1493,6 +1544,11 @@
                     }
 
                     this.generateProductSku();
+                    
+                    // Watcher para o tipo de venda
+                    this.$watch('saleType', (newType, oldType) => {
+                        this.onSaleTypeChange(newType, oldType);
+                    });
                 },
                 
                 // Computed: total de pagamentos em cartão
@@ -1524,6 +1580,7 @@
                 
                 // Computed: pode submeter o formulário
                 get canSubmit() {
+                    if (!this.saleType) return false;
                     if (this.items.length === 0) return false;
                     if (!this.selectedCustomer.id) return false;
                     if (this.hasTradeIn && !this.tradeInsValid) return false;
@@ -1565,6 +1622,9 @@
                 },
                 
                 getSubmitButtonText() {
+                    if (!this.saleType) {
+                        return 'Selecione o tipo de venda';
+                    }
                     if (this.items.length === 0) {
                         return 'Adicione produtos para continuar';
                     }
@@ -1596,6 +1656,8 @@
                 },
                 
                 addItem(product) {
+                    const isRepasse = this.saleType === 'repasse';
+                    
                     if (product.is_consignment) {
                         const existingConsignment = this.items.find(i => i.consignment_item_id === product.consignment_item_id);
                         if (existingConsignment) {
@@ -1603,11 +1665,15 @@
                                 existingConsignment.quantity++;
                             }
                         } else {
+                            const costPrice = parseFloat(product.cost_price) || 0;
+                            const price = isRepasse ? costPrice + 100 : (parseFloat(product.suggested_price) || 0);
+                            
                             this.items.push({
                                 id: product.id,
                                 name: product.name,
-                                price: product.suggested_price || 0,
-                                cost_price: product.cost_price || 0,
+                                price: price,
+                                original_sale_price: parseFloat(product.suggested_price) || 0,
+                                cost_price: costPrice,
                                 supplier_origin: '',
                                 freight_type: '',
                                 freight_value: 0,
@@ -1626,11 +1692,15 @@
                                 existing.quantity++;
                             }
                         } else {
+                            const costPrice = parseFloat(product.cost_price) || 0;
+                            const price = isRepasse ? costPrice + 100 : (parseFloat(product.sale_price) || 0);
+                            
                             this.items.push({
                                 id: product.id,
                                 name: product.name,
-                                price: product.sale_price || 0,
-                                cost_price: product.cost_price || 0,
+                                price: price,
+                                original_sale_price: parseFloat(product.sale_price) || 0,
+                                cost_price: costPrice,
                                 supplier_origin: '',
                                 freight_type: '',
                                 freight_value: 0,
@@ -1682,6 +1752,36 @@
                     if (!this.hasTradeIn) {
                         this.tradeIns = [];
                     }
+                    this.updateTotals();
+                },
+                
+                onSaleTypeChange(newType, oldType) {
+                    if (!newType || !oldType || newType === oldType) {
+                        return;
+                    }
+                    
+                    if (newType === 'repasse') {
+                        // Limpar trade-ins
+                        this.hasTradeIn = false;
+                        this.tradeIns = [];
+                        
+                        // Limpar pagamentos de cartão
+                        this.cardPayments = [];
+                        
+                        // Recalcular preços de todos os itens (custo + 100)
+                        this.items.forEach(item => {
+                            const costPrice = parseFloat(item.cost_price) || 0;
+                            item.price = costPrice + 100;
+                        });
+                    } else if (newType === 'cliente_final') {
+                        // Restaurar preços originais (sale_price do produto)
+                        this.items.forEach(item => {
+                            if (item.original_sale_price) {
+                                item.price = parseFloat(item.original_sale_price) || 0;
+                            }
+                        });
+                    }
+                    
                     this.updateTotals();
                 },
 

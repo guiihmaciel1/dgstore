@@ -161,6 +161,14 @@
         @endif
     </div>
     @endif
+    
+    <div class="info-section">
+        <h3>Detalhes da Venda</h3>
+        <div class="info-row">
+            <span class="info-label">Tipo de Venda:</span>
+            <span>{{ $sale->sale_type?->label() ?? 'Não informado' }}</span>
+        </div>
+    </div>
 
     <div class="info-section">
         <h3>Itens</h3>

@@ -7,6 +7,7 @@ namespace App\Domain\Sale\Models;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
+use App\Domain\Sale\Enums\SaleType;
 use App\Domain\Stock\Models\StockMovement;
 use App\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -26,6 +27,7 @@ class Sale extends Model
     protected $fillable = [
         'sale_number',
         'customer_id',
+        'sale_type',
         'user_id',
         'subtotal',
         'discount',
@@ -52,6 +54,7 @@ class Sale extends Model
             'pix_payment' => 'decimal:2',
             'card_payment' => 'decimal:2',
             'total' => 'decimal:2',
+            'sale_type' => SaleType::class,
             'payment_method' => PaymentMethod::class,
             'payment_status' => PaymentStatus::class,
             'installments' => 'integer',
@@ -105,6 +108,19 @@ class Sale extends Model
         return $this->hasMany(SaleFollowup::class);
     }
 
+    public function warranties(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Warranty\Models\Warranty::class, 'sale_item_id')
+            ->whereHas('saleItem', function($q) {
+                $q->where('sale_id', $this->id);
+            });
+    }
+
+    public function commissions(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Commission\Models\Commission::class);
+    }
+
     public function needsFollowup(int $daysAfter = 7, int $maxDays = 30): bool
     {
         if (!$this->customer_id || $this->isCancelled() || !$this->sold_at) {
@@ -149,6 +165,16 @@ class Sale extends Model
     public function scopeBetweenDates(Builder $query, $startDate, $endDate): Builder
     {
         return $query->whereBetween('sold_at', [$startDate, $endDate]);
+    }
+
+    public function scopeRepasse(Builder $query): Builder
+    {
+        return $query->where('sale_type', SaleType::Repasse);
+    }
+
+    public function scopeClienteFinal(Builder $query): Builder
+    {
+        return $query->where('sale_type', SaleType::ClienteFinal);
     }
 
     // Métodos auxiliares
@@ -222,6 +248,16 @@ class Sale extends Model
     public function isCancelled(): bool
     {
         return $this->payment_status === PaymentStatus::Cancelled;
+    }
+
+    public function isRepasse(): bool
+    {
+        return $this->sale_type === SaleType::Repasse;
+    }
+
+    public function isClienteFinal(): bool
+    {
+        return $this->sale_type === SaleType::ClienteFinal;
     }
 
     public function canBeCancelled(): bool

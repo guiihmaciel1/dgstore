@@ -71,6 +71,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             // Cria a venda
             $sale = Sale::create([
                 'customer_id' => $data->customerId,
+                'sale_type' => $data->saleType,
                 'user_id' => $data->userId,
                 'subtotal' => $subtotal,
                 'discount' => $data->discount,
@@ -431,6 +432,10 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
         if (!empty($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);
+        }
+
+        if (!empty($filters['sale_type'])) {
+            $query->where('sale_type', $filters['sale_type']);
         }
 
         if (!empty($filters['date_from'])) {

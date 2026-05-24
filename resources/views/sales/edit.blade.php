@@ -113,6 +113,47 @@
                             </div>
                         </div>
 
+                        {{-- Tipo de Venda --}}
+                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.25rem;">
+                            <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.75rem;">Tipo de Venda</label>
+                            
+                            @php
+                                $hasBlockers = $sale->warranties()->exists() || $sale->commissions()->exists() || $sale->tradeIns()->exists();
+                            @endphp
+                            
+                            @if($hasBlockers)
+                                {{-- Somente leitura (bloqueado) --}}
+                                <div style="padding: 0.75rem; background: #f3f4f6; border-radius: 0.5rem; border: 1px solid #d1d5db;">
+                                    <span style="font-weight: 500; color: #111827; font-size: 0.875rem;">
+                                        @if($sale->sale_type)
+                                            {{ $sale->sale_type->label() }}
+                                        @else
+                                            Não informado
+                                        @endif
+                                    </span>
+                                </div>
+                                <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #6b7280;">
+                                    Não é possível alterar o tipo pois a venda possui garantias, comissões ou trade-ins registrados.
+                                </p>
+                            @else
+                                {{-- Editável (radio buttons) --}}
+                                <div style="display: flex; gap: 1rem;">
+                                    <label style="display: flex; align-items: center; cursor: pointer; padding: 0.625rem 0.875rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s; {{ old('sale_type', $sale->sale_type?->value) === 'cliente_final' ? 'border-color: #3b82f6; background: #eff6ff;' : '' }}">
+                                        <input type="radio" name="sale_type" value="cliente_final" 
+                                               {{ old('sale_type', $sale->sale_type?->value) === 'cliente_final' ? 'checked' : '' }}
+                                               style="width: 1rem; height: 1rem; margin-right: 0.5rem; accent-color: #3b82f6;">
+                                        <span style="font-size: 0.875rem; font-weight: 500;">Cliente Final</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; cursor: pointer; padding: 0.625rem 0.875rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s; {{ old('sale_type', $sale->sale_type?->value) === 'repasse' ? 'border-color: #8b5cf6; background: #f5f3ff;' : '' }}">
+                                        <input type="radio" name="sale_type" value="repasse" 
+                                               {{ old('sale_type', $sale->sale_type?->value) === 'repasse' ? 'checked' : '' }}
+                                               style="width: 1rem; height: 1rem; margin-right: 0.5rem; accent-color: #8b5cf6;">
+                                        <span style="font-size: 0.875rem; font-weight: 500;">Repasse</span>
+                                    </label>
+                                </div>
+                            @endif
+                        </div>
+
                         {{-- Observações --}}
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.25rem;">
                             <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Observações</label>
