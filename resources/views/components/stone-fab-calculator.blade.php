@@ -24,7 +24,7 @@
          x-transition:leave-end="opacity-0 translate-y-4"
          @keydown.escape.window="open = false"
          x-cloak
-         :style="'position: fixed; z-index: 50; background: white; overflow: hidden; ' + panelPosition">
+         :style="'position: fixed; z-index: 50; background: white; display: flex; flex-direction: column; overflow: hidden; ' + panelPosition">
 
         <!-- Header -->
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: #111827; color: white;">
@@ -42,7 +42,7 @@
         </div>
 
         <!-- Body -->
-        <div style="padding: 14px 16px; overflow-y: auto; max-height: calc(100dvh - 100px);">
+        <div style="padding: 14px 16px; overflow-y: auto; flex: 1; min-height: 0;">
 
             <!-- Inputs -->
             <div style="margin-bottom: 12px;">
@@ -195,8 +195,8 @@ function stoneFabCalc() {
                 return 'bottom: 0; left: 0; right: 0; border-radius: 16px 16px 0 0; max-height: 85dvh; box-shadow: 0 -10px 40px rgba(0,0,0,0.2);';
             }
             return this.side === 'right'
-                ? 'bottom: 90px; right: 24px; width: 360px; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); max-height: 80vh;'
-                : 'bottom: 90px; left: 24px; width: 360px; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); max-height: 80vh;';
+                ? 'bottom: 90px; right: 24px; width: 360px; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); max-height: calc(100vh - 110px);'
+                : 'bottom: 90px; left: 24px; width: 360px; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.2); max-height: calc(100vh - 110px);';
         },
 
         get filteredResults() {
