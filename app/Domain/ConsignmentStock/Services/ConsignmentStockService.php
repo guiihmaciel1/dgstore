@@ -76,9 +76,10 @@ class ConsignmentStockService
      *
      * @param  array  $batchData  dados comuns do lote (supplier_id, name, model, storage, condition, supplier_cost, suggested_price, received_at, notes)
      * @param  array  $units      lista de unidades, cada uma com (color, imei, serial_number, battery_health, has_box, has_cable, notes)
+     * @param  string|null  $userId  ID do usuario interno (users). Null quando acao vem do portal do fornecedor.
      * @return ConsignmentBatch   batch criado com items carregados
      */
-    public function registerBatchEntry(array $batchData, array $units, string $userId): ConsignmentBatch
+    public function registerBatchEntry(array $batchData, array $units, ?string $userId = null): ConsignmentBatch
     {
         if (empty($units)) {
             throw new \InvalidArgumentException('E necessario informar ao menos 1 unidade no lote.');
@@ -104,6 +105,11 @@ class ConsignmentStockService
                 'notes' => $batchData['notes'] ?? null,
                 'received_at' => $batchData['received_at'] ?? now(),
             ]);
+
+            $movementReason = 'Entrada de estoque consignado - Lote ' . $batch->batch_code;
+            if ($userId === null && !empty($batchData['registered_by'])) {
+                $movementReason .= ' (Portal: ' . $batchData['registered_by'] . ')';
+            }
 
             foreach ($units as $unit) {
                 $item = ConsignmentStockItem::create([
@@ -133,7 +139,7 @@ class ConsignmentStockService
                     'user_id' => $userId,
                     'type' => ConsignmentMovementType::In,
                     'quantity' => 1,
-                    'reason' => 'Entrada de estoque consignado - Lote ' . $batch->batch_code,
+                    'reason' => $movementReason,
                 ]);
             }
 

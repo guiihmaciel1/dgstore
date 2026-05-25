@@ -88,14 +88,16 @@ class SupplierStockController extends Controller
                 'condition' => $firstUnit['condition'] ?? 'new',
                 'received_at' => $request->input('received_at'),
                 'notes' => $notes,
+                'registered_by' => auth('supplier')->user()->supplier->name,
             ];
 
             DB::beginTransaction();
-            
+
+            // Portal do fornecedor usa supplier_users, nao users — user_id fica null na movimentacao
             $batch = $this->consignmentService->registerBatchEntry(
                 $batchData,
                 $units,
-                auth('supplier')->id()
+                null
             );
 
             DB::commit();
