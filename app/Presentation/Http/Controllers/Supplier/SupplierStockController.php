@@ -21,23 +21,17 @@ class SupplierStockController extends Controller
     {
         $supplierId = auth('supplier')->user()->supplier_id;
         $search = $request->input('search');
-        $status = $request->input('status', 'available');
 
-        $query = ConsignmentStockItem::bySupplier($supplierId);
+        // Portal do fornecedor: apenas estoque físico disponível (baixas são manuais pela DG Store)
+        $query = ConsignmentStockItem::bySupplier($supplierId)->available();
 
         if ($search) {
             $query->search($search);
         }
 
-        match ($status) {
-            'sold' => $query->sold(),
-            'returned' => $query->returned(),
-            default => $query->available(),
-        };
-
         $items = $query->with('batch')->latest()->paginate(20);
 
-        return view('supplier.stock.index', compact('items', 'search', 'status'));
+        return view('supplier.stock.index', compact('items', 'search'));
     }
 
     public function batchCreate(): View
@@ -120,37 +114,23 @@ class SupplierStockController extends Controller
             abort(403, 'Acesso negado.');
         }
 
-        $item->load(['batch', 'movements.user', 'sale']);
+        if ($item->status->value !== 'available') {
+            abort(404);
+        }
+
+        $item->load(['batch', 'movements' => fn ($q) => $q->where('type', 'in')->orderByDesc('created_at')]);
 
         return view('supplier.stock.show', compact('item'));
     }
 
     public function edit(ConsignmentStockItem $item): View
     {
-        if ($item->supplier_id !== auth('supplier')->user()->supplier_id) {
-            abort(403, 'Acesso negado.');
-        }
-
-        return view('supplier.stock.edit', compact('item'));
+        abort(404);
     }
 
     public function update(Request $request, ConsignmentStockItem $item): RedirectResponse
     {
-        if ($item->supplier_id !== auth('supplier')->user()->supplier_id) {
-            abort(403, 'Acesso negado.');
-        }
-
-        $request->validate([
-            'supplier_cost' => 'required|numeric|min:0',
-            'suggested_price' => 'nullable|numeric|min:0',
-            'notes' => 'nullable|string|max:1000',
-        ]);
-
-        $item->update($request->only('supplier_cost', 'suggested_price', 'notes'));
-
-        return redirect()
-            ->route('supplier.stock.show', $item)
-            ->with('success', 'Item atualizado com sucesso!');
+        abort(404);
     }
 
     private function normalizeUnits(array $units): array
