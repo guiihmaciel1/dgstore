@@ -72,12 +72,22 @@ class SupplierStockController extends Controller
         $this->ensureUniqueImeis($units);
         $this->validateStandardColors($units);
 
+        $firstUnit = $units[0] ?? [];
+
         try {
+            $notes = $request->input('notes');
+            if ($request->filled('invoice_number')) {
+                $notes = trim(($notes ? $notes . ' | ' : '') . 'NF: ' . $request->input('invoice_number'));
+            }
+
             $batchData = [
                 'supplier_id' => $supplierId,
+                'name' => $firstUnit['name'],
+                'model' => $firstUnit['model'] ?? null,
+                'storage' => $firstUnit['storage'] ?? null,
+                'condition' => $firstUnit['condition'] ?? 'new',
                 'received_at' => $request->input('received_at'),
-                'invoice_number' => $request->input('invoice_number'),
-                'notes' => $request->input('notes'),
+                'notes' => $notes,
             ];
 
             DB::beginTransaction();
@@ -92,7 +102,7 @@ class SupplierStockController extends Controller
 
             return redirect()
                 ->route('supplier.stock.index')
-                ->with('success', "Lote {$batch->batch_code} cadastrado com sucesso! {$batch->items_count} item(ns) adicionado(s).");
+                ->with('success', "Lote {$batch->batch_code} cadastrado com sucesso! {$batch->items->count()} item(ns) adicionado(s).");
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -151,8 +161,8 @@ class SupplierStockController extends Controller
             $unit['has_box'] = isset($unit['has_box']) ? (bool) $unit['has_box'] : false;
             $unit['has_cable'] = isset($unit['has_cable']) ? (bool) $unit['has_cable'] : false;
             $unit['suggested_price'] = !empty($unit['suggested_price']) ? $unit['suggested_price'] : null;
-            
-            $unit['name'] = $unit['product_name'];
+
+            $unit['name'] = trim((string) ($unit['product_name'] ?? $unit['name'] ?? ''));
             unset($unit['product_name']);
             
             return $unit;
