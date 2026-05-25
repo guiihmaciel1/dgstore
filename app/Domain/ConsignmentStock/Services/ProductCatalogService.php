@@ -66,10 +66,11 @@ class ProductCatalogService
     private function mergeFromIphoneModels(array &$byKey): void
     {
         IphoneModel::active()->get()->each(function (IphoneModel $model) use (&$byKey) {
-            $key = $this->key($model->name);
+            $name = $this->normalizeProductName($model->name);
+            $key = $this->key($name);
 
             $byKey[$key] = [
-                'name' => $model->name,
+                'name' => $name,
                 'storages' => array_values((array) $model->storages),
                 'colors' => array_values((array) $model->colors),
                 'category' => 'smartphone',
@@ -89,7 +90,7 @@ class ProductCatalogService
             ->where('supplier', 'Apple')
             ->get()
             ->each(function (Product $product) use (&$byKey) {
-                $baseName = $this->stripStorageFromName($product->name);
+                $baseName = $this->normalizeProductName($this->stripStorageFromName($product->name));
                 $key = $this->key($baseName);
 
                 if (!isset($byKey[$key])) {
@@ -119,11 +120,12 @@ class ProductCatalogService
             ->groupBy('name', 'model', 'storage', 'color')
             ->get()
             ->each(function ($row) use (&$byKey) {
-                $key = $this->key($row->name);
+                $canonicalName = $this->normalizeProductName($row->name);
+                $key = $this->key($canonicalName);
 
                 if (!isset($byKey[$key])) {
                     $byKey[$key] = [
-                        'name' => $row->name,
+                        'name' => $canonicalName,
                         'storages' => [],
                         'colors' => [],
                         'category' => 'smartphone',
@@ -171,8 +173,27 @@ class ProductCatalogService
         return trim((string) preg_replace('/\s+\d+(GB|TB)$/i', '', $name));
     }
 
+    /**
+     * Normaliza nomes abreviados para o formato canonico (ex: "17 Pro Max" -> "iPhone 17 Pro Max").
+     */
+    private function normalizeProductName(string $name): string
+    {
+        $name = trim($name);
+
+        if (preg_match('/^iPhone\s+/i', $name)) {
+            return $name;
+        }
+
+        // Atalhos comuns sem prefixo "iPhone" (ex: "17 Pro Max", "17 Pro", "17")
+        if (preg_match('/^(\d+(?:\s+(?:Pro\s+Max|Pro|Plus|mini|Air|e))?)$/i', $name)) {
+            return 'iPhone ' . $name;
+        }
+
+        return $name;
+    }
+
     private function key(string $name): string
     {
-        return mb_strtolower(trim($name));
+        return mb_strtolower($this->normalizeProductName($name));
     }
 }
