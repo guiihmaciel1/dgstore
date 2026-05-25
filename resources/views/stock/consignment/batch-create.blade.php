@@ -139,22 +139,6 @@
                     {{-- Hidden product name --}}
                     <input type="hidden" name="name" x-model="form.name">
 
-                    {{-- Custo / Preco Sugerido --}}
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.375rem;">
-                                Custo do Fornecedor (R$) <span style="color: #dc2626;">*</span>
-                            </label>
-                            <input type="number" name="supplier_cost" x-model="form.supplier_cost" required step="0.01" min="0" placeholder="0,00"
-                                   style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Preco Sugerido (R$)</label>
-                            <input type="number" name="suggested_price" x-model="form.suggested_price" step="0.01" min="0" placeholder="0,00"
-                                   style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;">
-                        </div>
-                    </div>
-
                     {{-- Observacoes --}}
                     <div>
                         <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Observacoes do lote</label>
@@ -231,6 +215,22 @@
 
                                 <div x-show="unit.imei_error || unit.serial_error" x-cloak style="font-size: 0.75rem; color: #dc2626; margin-bottom: 0.5rem;" x-text="unit.imei_error || unit.serial_error"></div>
 
+                                {{-- Custo e Preco Sugerido --}}
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #e5e7eb;">
+                                    <div>
+                                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Custo (R$) <span style="color: #dc2626;">*</span></label>
+                                        <input type="number" :name="'units[' + idx + '][supplier_cost]'" x-model="unit.supplier_cost"
+                                               required step="0.01" min="0" placeholder="0,00"
+                                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem;">
+                                    </div>
+                                    <div>
+                                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Preço Sugerido (R$)</label>
+                                        <input type="number" :name="'units[' + idx + '][suggested_price]'" x-model="unit.suggested_price"
+                                               step="0.01" min="0" placeholder="0,00"
+                                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem;">
+                                    </div>
+                                </div>
+
                                 {{-- Campos de Seminovo --}}
                                 <div x-show="form.condition === 'used'" x-cloak
                                      style="display: grid; grid-template-columns: 1fr 1fr 1fr 2fr; gap: 0.75rem; padding-top: 0.5rem; border-top: 1px dashed #e5e7eb;">
@@ -283,8 +283,6 @@
                     storage: '',
                     model: '',
                     condition: 'new',
-                    supplier_cost: '',
-                    suggested_price: '',
                     received_at: '{{ now()->toDateString() }}',
                     notes: '',
                 },
@@ -329,6 +327,8 @@
                         color: '',
                         imei: '',
                         serial_number: '',
+                        supplier_cost: '',
+                        suggested_price: '',
                         battery_health: '',
                         has_box: false,
                         has_cable: false,

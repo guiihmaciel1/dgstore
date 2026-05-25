@@ -85,6 +85,12 @@ class ConsignmentStockService
         }
 
         return DB::transaction(function () use ($batchData, $units, $userId) {
+            // Calcula o custo médio do lote baseado nas unidades
+            $avgCost = !empty($units) ? array_sum(array_column($units, 'supplier_cost')) / count($units) : 0;
+            $avgPrice = !empty($units) && array_filter(array_column($units, 'suggested_price')) 
+                ? array_sum(array_filter(array_column($units, 'suggested_price'))) / count(array_filter(array_column($units, 'suggested_price'))) 
+                : null;
+
             $batch = ConsignmentBatch::create([
                 'supplier_id' => $batchData['supplier_id'],
                 'name' => $batchData['name'],
@@ -92,8 +98,8 @@ class ConsignmentStockService
                 'storage' => $batchData['storage'] ?? null,
                 'color' => null, // batch nao tem cor unica - cada unit tem a sua
                 'condition' => $batchData['condition'] ?? 'new',
-                'supplier_cost' => $batchData['supplier_cost'],
-                'suggested_price' => $batchData['suggested_price'] ?? null,
+                'supplier_cost' => $avgCost, // custo médio do lote
+                'suggested_price' => $avgPrice, // preço médio do lote
                 'total_quantity' => count($units),
                 'notes' => $batchData['notes'] ?? null,
                 'received_at' => $batchData['received_at'] ?? now(),
@@ -113,8 +119,8 @@ class ConsignmentStockService
                     'has_cable' => $unit['has_cable'] ?? false,
                     'imei' => $unit['imei'] ?? null,
                     'serial_number' => $unit['serial_number'] ?? null,
-                    'supplier_cost' => $batchData['supplier_cost'],
-                    'suggested_price' => $batchData['suggested_price'] ?? null,
+                    'supplier_cost' => $unit['supplier_cost'] ?? 0, // custo individual da unidade
+                    'suggested_price' => $unit['suggested_price'] ?? null, // preço individual da unidade
                     'quantity' => 1,
                     'available_quantity' => 1,
                     'status' => ConsignmentStatus::Available,

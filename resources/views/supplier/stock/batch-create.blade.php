@@ -68,25 +68,13 @@
                 </div>
             </div>
             
-            <div class="grid grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Condição <span class="text-red-600">*</span></label>
-                    <select x-model="form.condition" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        <option value="new">Novo</option>
-                        <option value="used">Seminovo</option>
-                        <option value="refurbished">Refurbished</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Custo <span class="text-red-600">*</span></label>
-                    <input type="number" x-model="form.supplier_cost" step="0.01" min="0"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Preço Sugerido</label>
-                    <input type="number" x-model="form.suggested_price" step="0.01" min="0"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Condição <span class="text-red-600">*</span></label>
+                <select x-model="form.condition" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <option value="new">Novo</option>
+                    <option value="used">Seminovo</option>
+                    <option value="refurbished">Refurbished</option>
+                </select>
             </div>
         </div>
         
@@ -126,8 +114,6 @@
                                 <input type="hidden" :name="'units[' + idx + '][product_name]'" :value="form.name">
                                 <input type="hidden" :name="'units[' + idx + '][storage]'" :value="form.storage">
                                 <input type="hidden" :name="'units[' + idx + '][condition]'" :value="form.condition">
-                                <input type="hidden" :name="'units[' + idx + '][supplier_cost]'" :value="form.supplier_cost">
-                                <input type="hidden" :name="'units[' + idx + '][suggested_price]'" :value="form.suggested_price">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 mb-1">Serial</label>
@@ -135,6 +121,21 @@
                                        @blur="validateImeiSerial(idx)"
                                        class="w-full px-3 py-2 border rounded text-sm font-mono"
                                        :class="unit.serial_error ? 'border-red-500' : 'border-gray-300'">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-200">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Custo (R$) <span class="text-red-600">*</span></label>
+                                <input type="number" :name="'units[' + idx + '][supplier_cost]'" x-model="unit.supplier_cost" 
+                                       required step="0.01" min="0" placeholder="0,00"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Preço Sugerido (R$)</label>
+                                <input type="number" :name="'units[' + idx + '][suggested_price]'" x-model="unit.suggested_price" 
+                                       step="0.01" min="0" placeholder="0,00"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
                             </div>
                         </div>
                         
@@ -175,7 +176,7 @@
 <script>
 function batchEntry() {
     return {
-        form: { name: '', storage: '', condition: 'new', supplier_cost: '', suggested_price: '', received_at: '{{ now()->toDateString() }}' },
+        form: { name: '', storage: '', condition: 'new', received_at: '{{ now()->toDateString() }}' },
         units: [],
         searchTerm: '',
         searchOpen: false,
@@ -184,7 +185,17 @@ function batchEntry() {
         _nextKey: 0,
         
         addUnit() {
-            this.units.push({ _key: this._nextKey++, color: '', imei: '', serial_number: '', battery_health: '', has_box: false, has_cable: false });
+            this.units.push({ 
+                _key: this._nextKey++, 
+                color: '', 
+                imei: '', 
+                serial_number: '', 
+                supplier_cost: '',
+                suggested_price: '',
+                battery_health: '', 
+                has_box: false, 
+                has_cable: false 
+            });
         },
         
         removeUnit(idx) {
