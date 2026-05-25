@@ -85,7 +85,7 @@
 </head>
 <body class="antialiased">
     <div class="w-full max-w-sm text-center mb-8">
-        <h1 class="text-3xl sm:text-4xl font-bold" style="color: var(--apple-text); letter-spacing: -0.04em;">DG Store</h1>
+        <h1 class="text-3xl sm:text-4xl font-bold" style="color: var(--apple-text); letter-spacing: -0.04em;">AS</h1>
         <p class="mt-1.5 text-base" style="color: var(--apple-text-secondary);">Portal do Fornecedor</p>
     </div>
 

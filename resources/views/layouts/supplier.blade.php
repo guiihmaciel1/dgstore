@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-    <title>@yield('title', 'Portal Fornecedor') — DG Store</title>
+    <title>@yield('title', 'Portal Fornecedor') — AS</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -395,7 +395,7 @@
     <header class="supplier-topbar">
         <div class="h-full px-4 sm:px-6 flex items-center justify-between">
             <div class="min-w-0">
-                <p class="text-base sm:text-lg font-semibold truncate" style="letter-spacing: -0.02em;">DG Store</p>
+                <p class="text-base sm:text-lg font-semibold truncate" style="letter-spacing: -0.02em;">AS</p>
                 <p class="text-xs truncate hidden sm:block" style="color: var(--apple-text-secondary);">Portal Fornecedor</p>
             </div>
             <div class="flex items-center gap-3 shrink-0">
