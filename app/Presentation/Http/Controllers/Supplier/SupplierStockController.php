@@ -2,6 +2,7 @@
 
 namespace App\Presentation\Http\Controllers\Supplier;
 
+use App\Domain\ConsignmentStock\Config\StandardColors;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\ConsignmentStock\Services\ConsignmentStockService;
 use App\Http\Controllers\Controller;
@@ -69,6 +70,7 @@ class SupplierStockController extends Controller
 
         $units = $this->normalizeUnits($request->input('units'));
         $this->ensureUniqueImeis($units);
+        $this->validateStandardColors($units);
 
         try {
             $batchData = [
@@ -174,6 +176,40 @@ class SupplierStockController extends Controller
             if ($this->consignmentService->imeiOrSerialExists($unit['imei'], $unit['serial_number'])) {
                 $identifier = $unit['imei'] ?? $unit['serial_number'];
                 throw new \Exception("IMEI/Serial {$identifier} já existe no sistema.");
+            }
+        }
+    }
+
+    /**
+     * Valida se as cores dos produtos estão dentro das cores padronizadas.
+     * 
+     * @param array $units
+     * @throws \Exception
+     */
+    private function validateStandardColors(array $units): void
+    {
+        foreach ($units as $unit) {
+            $productName = $unit['name'];
+            $color = $unit['color'] ?? '';
+
+            // Verifica se o modelo tem cores padronizadas
+            $standardColors = StandardColors::getColorsForModel($productName);
+            
+            if ($standardColors !== null && !empty($color)) {
+                // Normaliza a cor fornecida e as cores padrão para comparação case-insensitive
+                $normalizedColor = mb_strtolower(trim($color));
+                $normalizedStandardColors = array_map(
+                    fn($c) => mb_strtolower(trim($c)),
+                    $standardColors
+                );
+
+                if (!in_array($normalizedColor, $normalizedStandardColors, true)) {
+                    $allowedColors = implode(', ', $standardColors);
+                    throw new \Exception(
+                        "Cor '{$color}' não é válida para {$productName}. " .
+                        "Cores permitidas: {$allowedColors}"
+                    );
+                }
             }
         }
     }

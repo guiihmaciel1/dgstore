@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers;
 
+use App\Domain\ConsignmentStock\Config\StandardColors;
 use App\Domain\ConsignmentStock\Enums\ConsignmentMovementType;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockMovement;
@@ -330,6 +331,7 @@ class ConsignmentStockController extends Controller
 
         $units = $this->normalizeUnits($validated['units'], $validated['condition']);
         $this->ensureUniqueImeis($units);
+        $this->validateStandardColors($units, $validated['name']);
 
         $batchData = collect($validated)->except('units')->toArray();
         $batch = $this->service->registerBatchEntry($batchData, $units, auth()->id());
@@ -507,5 +509,43 @@ class ConsignmentStockController extends Controller
         return view('stock.consignment.history', [
             'item' => $item,
         ]);
+    }
+
+    /**
+     * Valida se as cores dos produtos estão dentro das cores padronizadas.
+     * 
+     * @param array $units
+     * @param string $productName
+     * @throws ValidationException
+     */
+    private function validateStandardColors(array $units, string $productName): void
+    {
+        $standardColors = StandardColors::getColorsForModel($productName);
+        
+        if ($standardColors === null) {
+            return; // Não há cores padronizadas para este modelo
+        }
+
+        foreach ($units as $idx => $unit) {
+            $color = $unit['color'] ?? '';
+            
+            if (empty($color)) {
+                continue; // Cor não fornecida, será validado pelas regras principais
+            }
+
+            // Normaliza a cor fornecida e as cores padrão para comparação case-insensitive
+            $normalizedColor = mb_strtolower(trim($color));
+            $normalizedStandardColors = array_map(
+                fn($c) => mb_strtolower(trim($c)),
+                $standardColors
+            );
+
+            if (!in_array($normalizedColor, $normalizedStandardColors, true)) {
+                $allowedColors = implode(', ', $standardColors);
+                throw ValidationException::withMessages([
+                    "units.{$idx}.color" => "Cor '{$color}' não é válida para {$productName}. Cores permitidas: {$allowedColors}"
+                ]);
+            }
+        }
     }
 }

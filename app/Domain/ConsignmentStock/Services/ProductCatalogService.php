@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\ConsignmentStock\Services;
 
+use App\Domain\ConsignmentStock\Config\StandardColors;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Product\Models\Product;
 use App\Domain\Valuation\Models\IphoneModel;
@@ -50,6 +51,9 @@ class ProductCatalogService
         $this->mergeFromIphoneModels($byKey);
         $this->mergeFromProducts($byKey);
         $this->mergeFromConsignmentHistory($byKey);
+
+        // Aplica cores padronizadas para modelos específicos
+        $this->applyStandardColors($byKey);
 
         return collect($byKey)
             ->sortByDesc(fn (array $item) => $item['release_year'] ?? 0)
@@ -138,6 +142,25 @@ class ProductCatalogService
 
                 $byKey[$key]['in_stock_count'] += (int) $row->available_total;
             });
+    }
+
+    /**
+     * Aplica cores padronizadas para modelos específicos.
+     * 
+     * Sobrescreve o array de cores com as cores oficiais definidas em StandardColors
+     * para garantir consistência nos registros de estoque.
+     * 
+     * @param array<string, array> $byKey
+     */
+    private function applyStandardColors(array &$byKey): void
+    {
+        foreach ($byKey as $key => &$item) {
+            $standardColors = StandardColors::getColorsForModel($item['name']);
+            
+            if ($standardColors !== null) {
+                $item['colors'] = $standardColors;
+            }
+        }
     }
 
     /**
