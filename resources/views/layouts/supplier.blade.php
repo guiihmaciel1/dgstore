@@ -174,6 +174,60 @@
             overflow: hidden;
         }
 
+        .s-card--visible { overflow: visible; }
+
+        /* Search input with icon */
+        .s-search-wrap { position: relative; }
+
+        .s-search {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0 0.875rem;
+            background: var(--apple-bg);
+            border: 0.5px solid var(--apple-separator);
+            border-radius: 0.75rem;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .s-search:focus-within {
+            border-color: var(--apple-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
+        }
+
+        .s-search-icon {
+            flex-shrink: 0;
+            width: 1rem;
+            height: 1rem;
+            color: var(--apple-text-tertiary);
+            pointer-events: none;
+        }
+
+        .s-search-input {
+            flex: 1;
+            min-width: 0;
+            padding: 0.75rem 0;
+            font-size: 1rem;
+            background: transparent;
+            border: none;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .s-search-dropdown {
+            position: absolute;
+            top: calc(100% + 0.375rem);
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: var(--apple-surface);
+            border: 0.5px solid var(--apple-separator);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06);
+            max-height: 15rem;
+            overflow-y: auto;
+        }
+
         .s-card-pad { padding: 1rem; }
         @media (min-width: 640px) { .s-card-pad { padding: 1.25rem; } }
 

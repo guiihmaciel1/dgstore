@@ -18,7 +18,7 @@
         @csrf
 
         {{-- Lote --}}
-        <div class="s-card s-card-pad mb-4">
+        <div class="s-card s-card--visible s-card-pad mb-4">
             <h2 class="text-base font-semibold mb-4" style="letter-spacing: -0.01em;">Dados do Lote</h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -32,39 +32,43 @@
                 </div>
             </div>
 
-            <div class="mb-4" @click.outside="searchOpen = false">
+            <div class="mb-4 s-search-wrap" @click.outside="searchOpen = false">
                 <label class="s-label">Produto <span style="color: var(--apple-red);">*</span></label>
-                <div class="relative">
+                <div class="s-search">
+                    <svg class="s-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
                     <input type="text" placeholder="Ex: iPhone 17 Pro Max"
                            x-model="searchTerm"
                            @focus="searchOpen = true; searchProducts()"
                            @input.debounce.250ms="searchProducts()"
-                           class="s-input pl-10">
-                    <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style="color: var(--apple-text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-
-                    <div x-show="searchOpen && searchResults.length > 0" x-cloak
-                         class="absolute z-30 w-full mt-1 s-card shadow-lg max-h-60 overflow-y-auto">
-                        <template x-for="(item, idx) in searchResults" :key="idx">
-                            <button type="button" @click="selectProduct(item)"
-                                    class="w-full p-3.5 text-left border-b last:border-0 active:bg-gray-50"
-                                    style="border-color: var(--apple-separator);">
-                                <div class="flex justify-between items-center gap-2">
-                                    <span class="font-semibold text-sm" x-text="item.name"></span>
-                                    <span x-show="item.in_stock_count > 0"
-                                          class="s-badge s-badge-green shrink-0"
-                                          x-text="item.in_stock_count + ' em estoque'"></span>
-                                </div>
-                                <div class="flex gap-1.5 mt-1.5 flex-wrap">
-                                    <template x-for="storage in item.storages" :key="storage">
-                                        <span class="text-xs px-2 py-0.5 rounded-md" style="background: var(--apple-bg); color: var(--apple-text-secondary);" x-text="storage"></span>
-                                    </template>
-                                </div>
-                            </button>
-                        </template>
-                    </div>
+                           class="s-search-input">
                 </div>
+
+                <div x-show="searchOpen && searchResults.length > 0" x-cloak
+                     x-transition:enter="transition ease-out duration-150"
+                     x-transition:enter-start="opacity-0 -translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     class="s-search-dropdown">
+                    <template x-for="(item, idx) in searchResults" :key="idx">
+                        <button type="button" @click="selectProduct(item)"
+                                class="w-full p-3.5 text-left border-b last:border-0 active:bg-gray-50"
+                                style="border-color: var(--apple-separator);">
+                            <div class="flex justify-between items-center gap-2">
+                                <span class="font-semibold text-sm" x-text="item.name"></span>
+                                <span x-show="item.in_stock_count > 0"
+                                      class="s-badge s-badge-green shrink-0"
+                                      x-text="item.in_stock_count + ' em estoque'"></span>
+                            </div>
+                            <div class="flex gap-1.5 mt-1.5 flex-wrap">
+                                <template x-for="storage in item.storages" :key="storage">
+                                    <span class="text-xs px-2 py-0.5 rounded-md" style="background: var(--apple-bg); color: var(--apple-text-secondary);" x-text="storage"></span>
+                                </template>
+                            </div>
+                        </button>
+                    </template>
+                </div>
+
                 <p x-show="form.name" x-cloak class="text-xs mt-1.5 font-medium" style="color: var(--apple-green);">
                     ✓ <span x-text="form.name"></span>
                 </p>
