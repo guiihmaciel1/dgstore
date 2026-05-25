@@ -123,11 +123,13 @@
             align-items: center;
             justify-content: center;
             gap: 0.125rem;
-            font-size: 0.625rem;
+            font-size: 0.5625rem;
             font-weight: 500;
             color: var(--apple-text-secondary);
             transition: color 0.15s ease;
             -webkit-tap-highlight-color: transparent;
+            min-width: 0;
+            padding: 0 0.125rem;
         }
 
         .tab-link svg { width: 1.375rem; height: 1.375rem; }
@@ -428,6 +430,11 @@
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                 Nova Entrada
             </a>
+            <a href="{{ route('supplier.exits.index') }}"
+               class="sidebar-link {{ request()->routeIs('supplier.exits.*') ? 'active' : '' }}">
+                <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Saídas
+            </a>
             <a href="{{ route('supplier.reports') }}"
                class="sidebar-link {{ request()->routeIs('supplier.reports') ? 'active' : '' }}">
                 <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -452,6 +459,11 @@
            class="tab-link {{ request()->routeIs('supplier.stock.batch-create') ? 'active' : '' }}">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ request()->routeIs('supplier.stock.batch-create') ? '2' : '1.75' }}" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
             Entrada
+        </a>
+        <a href="{{ route('supplier.exits.index') }}"
+           class="tab-link {{ request()->routeIs('supplier.exits.*') ? 'active' : '' }}">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="{{ request()->routeIs('supplier.exits.*') ? '2' : '1.75' }}" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Saídas
         </a>
         <a href="{{ route('supplier.reports') }}"
            class="tab-link {{ request()->routeIs('supplier.reports') ? 'active' : '' }}">

@@ -3,6 +3,7 @@
 use App\Presentation\Http\Controllers\Supplier\SupplierApiController;
 use App\Presentation\Http\Controllers\Supplier\SupplierAuthController;
 use App\Presentation\Http\Controllers\Supplier\SupplierDashboardController;
+use App\Presentation\Http\Controllers\Supplier\SupplierExitController;
 use App\Presentation\Http\Controllers\Supplier\SupplierReportController;
 use App\Presentation\Http\Controllers\Supplier\SupplierStockController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,12 @@ Route::prefix('fornecedor')->name('supplier.')->group(function () {
         Route::post('logout', [SupplierAuthController::class, 'logout'])->name('logout');
         
         Route::get('dashboard', [SupplierDashboardController::class, 'index'])->name('dashboard');
+
+        Route::prefix('saidas')->name('exits.')->group(function () {
+            Route::get('/', [SupplierExitController::class, 'index'])->name('index');
+            Route::get('nova', [SupplierExitController::class, 'create'])->name('create');
+            Route::post('/', [SupplierExitController::class, 'store'])->name('store');
+        });
         
         Route::prefix('estoque')->name('stock.')->group(function () {
             Route::get('/', [SupplierStockController::class, 'index'])->name('index');

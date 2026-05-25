@@ -318,6 +318,43 @@ class ConsignmentStockService
         });
     }
 
+    /**
+     * Registra saída manual feita pelo fornecedor via portal (sem venda DG vinculada).
+     */
+    public function registerSupplierPortalExit(
+        ConsignmentStockItem $item,
+        ?string $notes = null,
+        ?string $registeredBy = null
+    ): void {
+        if (!$item->isAvailable()) {
+            throw new \InvalidArgumentException('Este aparelho não está disponível para saída.');
+        }
+
+        DB::transaction(function () use ($item, $notes, $registeredBy) {
+            $item->update([
+                'status' => ConsignmentStatus::Sold,
+                'available_quantity' => 0,
+                'sold_at' => now(),
+            ]);
+
+            $reason = 'Saída registrada via portal';
+            if ($registeredBy) {
+                $reason .= ' (' . $registeredBy . ')';
+            }
+            if ($notes) {
+                $reason .= ' — ' . $notes;
+            }
+
+            ConsignmentStockMovement::create([
+                'consignment_item_id' => $item->id,
+                'user_id' => null,
+                'type' => ConsignmentMovementType::Out,
+                'quantity' => 1,
+                'reason' => $reason,
+            ]);
+        });
+    }
+
     public function getAvailableBySupplier(string $supplierId): Collection
     {
         return ConsignmentStockItem::with('supplier', 'batch')
