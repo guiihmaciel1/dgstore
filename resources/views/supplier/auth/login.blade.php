@@ -2,132 +2,131 @@
 <html lang="pt-BR" class="h-full">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
-    <title>Login - Portal Fornecedor DG Store</title>
-    
+    <meta name="theme-color" content="#F5F5F7">
+
+    <title>Entrar — Portal Fornecedor</title>
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+
     <style>
+        :root {
+            --apple-bg: #F5F5F7;
+            --apple-text: #1D1D1F;
+            --apple-text-secondary: #86868B;
+            --apple-blue: #007AFF;
+            --apple-separator: #E5E5EA;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
         * {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
-        
+
         body {
-            background: linear-gradient(180deg, #F5F5F7 0%, #E8E8ED 100%);
+            background: var(--apple-bg);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: calc(1.5rem + var(--safe-top)) 1.25rem calc(1.5rem + var(--safe-bottom));
         }
-        
-        .apple-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+
+        .login-card {
+            width: 100%;
+            max-width: 22rem;
+            background: #fff;
+            border-radius: 1.25rem;
+            border: 0.5px solid var(--apple-separator);
+            padding: 1.75rem 1.5rem;
         }
-        
-        .apple-button {
-            background: #007AFF;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+        @media (min-width: 640px) {
+            .login-card { padding: 2rem; border-radius: 1.5rem; }
         }
-        
-        .apple-button:hover {
-            background: #0051D5;
-            transform: translateY(-1px);
+
+        .login-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            background: var(--apple-bg);
+            border: 0.5px solid var(--apple-separator);
+            border-radius: 0.75rem;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            -webkit-appearance: none;
         }
-        
-        .apple-button:active {
-            transform: translateY(0);
+        .login-input:focus {
+            border-color: var(--apple-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
         }
-        
-        .apple-input {
-            transition: all 0.2s ease;
+
+        .login-btn {
+            width: 100%;
+            padding: 0.875rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            background: var(--apple-blue);
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: background 0.15s;
+            -webkit-tap-highlight-color: transparent;
         }
-        
-        .apple-input:focus {
-            border-color: #007AFF;
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
-        }
+        .login-btn:hover { background: #0051D5; }
+        .login-btn:active { transform: scale(0.98); }
     </style>
 </head>
-<body class="h-full flex items-center justify-center p-4 antialiased">
-    <div class="w-full max-w-md">
-        <div class="text-center mb-10">
-            <h1 class="text-5xl font-semibold mb-3" style="color: #1D1D1F; letter-spacing: -0.5px;">DG Store</h1>
-            <p class="text-lg" style="color: #86868B;">Portal do Fornecedor</p>
-        </div>
-        
-        <div class="apple-card rounded-3xl shadow-xl p-10">
-            <h2 class="text-3xl font-semibold mb-8 text-center" style="color: #1D1D1F; letter-spacing: -0.5px;">Bem-vindo</h2>
-            
-            @if ($errors->any())
-                <div class="mb-6 p-4 rounded-xl" style="background: #FFEBEE; border: 1px solid #FFCDD2;">
-                    <p class="text-sm" style="color: #C62828;">{{ $errors->first() }}</p>
-                </div>
-            @endif
-            
-            <form method="POST" action="{{ route('supplier.login') }}" class="space-y-6">
-                @csrf
-                
-                <div>
-                    <label for="email" class="block text-sm font-medium mb-2" style="color: #1D1D1F;">
-                        Email
-                    </label>
-                    <input 
-                        id="email" 
-                        name="email" 
-                        type="email" 
-                        value="{{ old('email') }}"
-                        required 
-                        autofocus
-                        class="apple-input w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none text-base"
-                        style="background: #F5F5F7; border-color: #D1D1D6;"
-                        placeholder="seu@email.com"
-                    >
-                </div>
-                
-                <div>
-                    <label for="password" class="block text-sm font-medium mb-2" style="color: #1D1D1F;">
-                        Senha
-                    </label>
-                    <input 
-                        id="password" 
-                        name="password" 
-                        type="password" 
-                        required
-                        class="apple-input w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none text-base"
-                        style="background: #F5F5F7; border-color: #D1D1D6;"
-                        placeholder="••••••••"
-                    >
-                </div>
-                
-                <div class="flex items-center">
-                    <input 
-                        id="remember" 
-                        name="remember" 
-                        type="checkbox"
-                        class="h-4 w-4 rounded"
-                        style="color: #007AFF; border-color: #D1D1D6;"
-                    >
-                    <label for="remember" class="ml-3 block text-sm" style="color: #1D1D1F;">
-                        Lembrar-me
-                    </label>
-                </div>
-                
-                <button 
-                    type="submit"
-                    class="apple-button w-full text-white font-semibold py-3.5 px-4 rounded-xl text-base shadow-sm"
-                >
-                    Entrar
-                </button>
-            </form>
-            
-            <div class="mt-8 text-center">
-                <p class="text-sm" style="color: #86868B;">
-                    Problemas para acessar? Entre em contato com a DG Store
-                </p>
-            </div>
-        </div>
+<body class="antialiased">
+    <div class="w-full max-w-sm text-center mb-8">
+        <h1 class="text-3xl sm:text-4xl font-bold" style="color: var(--apple-text); letter-spacing: -0.04em;">DG Store</h1>
+        <p class="mt-1.5 text-base" style="color: var(--apple-text-secondary);">Portal do Fornecedor</p>
     </div>
+
+    <div class="login-card">
+        <h2 class="text-xl font-semibold text-center mb-6" style="color: var(--apple-text); letter-spacing: -0.02em;">Entrar</h2>
+
+        @if ($errors->any())
+            <div class="mb-5 p-3 rounded-xl text-sm font-medium" style="background: rgba(255,59,48,0.1); color: #D70015;">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('supplier.login') }}" class="space-y-4">
+            @csrf
+
+            <div>
+                <label for="email" class="block text-sm font-semibold mb-1.5" style="color: var(--apple-text);">Email</label>
+                <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus
+                       autocomplete="email" inputmode="email"
+                       class="login-input" placeholder="seu@email.com">
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-semibold mb-1.5" style="color: var(--apple-text);">Senha</label>
+                <input id="password" name="password" type="password" required
+                       autocomplete="current-password"
+                       class="login-input" placeholder="••••••••">
+            </div>
+
+            <label class="flex items-center gap-2.5 py-1 cursor-pointer">
+                <input id="remember" name="remember" type="checkbox"
+                       class="w-4 h-4 rounded" style="accent-color: var(--apple-blue);">
+                <span class="text-sm" style="color: var(--apple-text);">Lembrar-me</span>
+            </label>
+
+            <button type="submit" class="login-btn mt-2">Entrar</button>
+        </form>
+    </div>
+
+    <p class="mt-8 text-xs text-center max-w-xs" style="color: var(--apple-text-secondary);">
+        Problemas para acessar? Entre em contato com a DG Store.
+    </p>
 </body>
 </html>

@@ -3,185 +3,174 @@
 @section('title', 'Relatórios')
 
 @section('content')
-<div class="max-w-7xl mx-auto">
-    <div class="mb-6">
-        <h1 class="text-3xl font-semibold text-gray-900">Relatórios</h1>
-        <p class="mt-1 text-sm text-gray-500">Acompanhe seu estoque e vendas</p>
-    </div>
-    
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Filtros</h2>
-        
-        <form method="GET" class="flex items-end space-x-4">
-            <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Data Inicial</label>
-                <input type="date" name="from" value="{{ $from }}" 
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div class="flex-1">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Data Final</label>
-                <input type="date" name="to" value="{{ $to }}" 
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-            </div>
-            <button type="submit" 
-                    class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-                Filtrar
-            </button>
-        </form>
-    </div>
-    
-    <div class="grid grid-cols-2 gap-6 mb-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-semibold text-gray-900">Estoque Disponível</h3>
-                <span class="text-2xl font-bold text-green-600">{{ $available->count() }}</span>
-            </div>
-            <p class="text-sm text-gray-500">Valor Total:</p>
-            <p class="text-2xl font-semibold text-gray-900">R$ {{ number_format($availableTotal, 2, ',', '.') }}</p>
+<div class="mb-5">
+    <h1 class="s-title">Relatórios</h1>
+    <p class="s-subtitle">Acompanhe estoque e vendas</p>
+</div>
+
+{{-- Filters --}}
+<div class="s-card s-card-pad mb-4">
+    <form method="GET" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+            <label class="s-label">Data Inicial</label>
+            <input type="date" name="from" value="{{ $from }}" class="s-input py-2.5">
         </div>
-        
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div class="flex items-center justify-between mb-2">
-                <h3 class="text-lg font-semibold text-gray-900">Vendidos no Período</h3>
-                <span class="text-2xl font-bold text-blue-600">{{ $sold->count() }}</span>
-            </div>
-            <p class="text-sm text-gray-500">Repasse Total:</p>
-            <p class="text-2xl font-semibold text-gray-900">R$ {{ number_format($soldTotal, 2, ',', '.') }}</p>
+        <div>
+            <label class="s-label">Data Final</label>
+            <input type="date" name="to" value="{{ $to }}" class="s-input py-2.5">
         </div>
+        <div class="flex items-end">
+            <button type="submit" class="s-btn s-btn-primary w-full">Filtrar</button>
+        </div>
+    </form>
+</div>
+
+{{-- Summary stats --}}
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+    <div class="s-stat">
+        <div class="flex items-center justify-between">
+            <p class="s-stat-label">Estoque Disponível</p>
+            <span class="text-lg font-bold" style="color: var(--apple-green);">{{ $available->count() }}</span>
+        </div>
+        <p class="s-stat-value text-xl sm:text-2xl mt-2">R$ {{ number_format($availableTotal, 0, ',', '.') }}</p>
+        <p class="s-stat-meta">valor total</p>
     </div>
-    
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-gray-900">Estoque Disponível</h2>
+    <div class="s-stat">
+        <div class="flex items-center justify-between">
+            <p class="s-stat-label">Vendidos no Período</p>
+            <span class="text-lg font-bold" style="color: var(--apple-blue);">{{ $sold->count() }}</span>
         </div>
-        
-        @if($available->isEmpty())
-            <div class="p-8 text-center text-gray-500">
-                Nenhum item disponível
-            </div>
-        @else
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produto</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">IMEI/Serial</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Condição</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Custo</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($available as $item)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-gray-900">{{ $item->name }}</div>
-                                <div class="text-xs text-gray-500">
-                                    @if($item->storage) {{ $item->storage }} @endif
-                                    @if($item->color) - {{ $item->color }} @endif
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 font-mono">
-                                {{ $item->imei ?? $item->serial_number ?? 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
-                                    {{ $item->condition->value === 'new' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                    {{ $item->condition->label() }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right text-sm font-semibold text-gray-900">
-                                R$ {{ number_format($item->supplier_cost, 2, ',', '.') }}
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
+        <p class="s-stat-value text-xl sm:text-2xl mt-2">R$ {{ number_format($soldTotal, 0, ',', '.') }}</p>
+        <p class="s-stat-meta">repasse total</p>
     </div>
-    
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <h2 class="text-lg font-semibold text-gray-900">Vendidos no Período</h2>
-        </div>
-        
-        @if($sold->isEmpty())
-            <div class="p-8 text-center text-gray-500">
-                Nenhuma venda no período selecionado
-            </div>
-        @else
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Produto</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">IMEI/Serial</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data Venda</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Repasse</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($sold as $item)
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4">
-                                <div class="text-sm font-medium text-gray-900">{{ $item->name }}</div>
-                                <div class="text-xs text-gray-500">
-                                    @if($item->storage) {{ $item->storage }} @endif
-                                    @if($item->color) - {{ $item->color }} @endif
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600 font-mono">
-                                {{ $item->imei ?? $item->serial_number ?? 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600">
-                                {{ $item->sold_at->format('d/m/Y') }}
-                            </td>
-                            <td class="px-6 py-4 text-right text-sm font-semibold text-green-700">
-                                R$ {{ number_format($item->supplier_cost, 2, ',', '.') }}
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
+</div>
+
+{{-- Available stock --}}
+<div class="s-card mb-4">
+    <div class="s-card-pad border-b" style="border-color: var(--apple-separator);">
+        <h2 class="text-base font-semibold" style="letter-spacing: -0.01em;">Estoque Disponível</h2>
     </div>
-    
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Relatório para WhatsApp</h2>
-        <p class="text-sm text-gray-600 mb-4">Copie o relatório abaixo para enviar via WhatsApp:</p>
-        
-        <div class="relative">
-            <textarea 
-                id="whatsappReport"
-                readonly 
-                rows="15"
-                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm font-mono whitespace-pre-wrap"
-            >{{ $whatsappReport }}</textarea>
-            
-            <button 
-                onclick="copyReport()"
-                class="absolute top-2 right-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors">
-                Copiar
-            </button>
+
+    @if($available->isEmpty())
+        <div class="s-card-pad text-center py-8" style="color: var(--apple-text-secondary);">Nenhum item disponível</div>
+    @else
+        <div class="lg:hidden">
+            @foreach($available as $item)
+            <div class="s-item-card">
+                <div class="flex justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold truncate">{{ $item->name }}</p>
+                        <p class="text-xs mt-0.5" style="color: var(--apple-text-secondary);">{{ collect([$item->storage, $item->color])->filter()->join(' · ') }}</p>
+                        <p class="text-xs font-mono mt-1" style="color: var(--apple-text-tertiary);">{{ $item->imei ?? $item->serial_number ?? '—' }}</p>
+                    </div>
+                    <p class="text-sm font-bold shrink-0">R$ {{ number_format($item->supplier_cost, 0, ',', '.') }}</p>
+                </div>
+            </div>
+            @endforeach
         </div>
-        
-        <div id="copyFeedback" class="hidden mt-2 text-sm text-green-600">
-            ✓ Relatório copiado para a área de transferência!
+
+        <div class="hidden lg:block overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr style="border-bottom: 0.5px solid var(--apple-separator);">
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase" style="color: var(--apple-text-secondary);">Produto</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase" style="color: var(--apple-text-secondary);">IMEI/Serial</th>
+                        <th class="px-5 py-3 text-right text-xs font-semibold uppercase" style="color: var(--apple-text-secondary);">Custo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($available as $item)
+                    <tr style="border-bottom: 0.5px solid var(--apple-separator);">
+                        <td class="px-5 py-3">
+                            <p class="text-sm font-medium">{{ $item->name }}</p>
+                            <p class="text-xs" style="color: var(--apple-text-secondary);">{{ collect([$item->storage, $item->color])->filter()->join(' · ') }}</p>
+                        </td>
+                        <td class="px-5 py-3 text-sm font-mono" style="color: var(--apple-text-secondary);">{{ $item->imei ?? $item->serial_number ?? '—' }}</td>
+                        <td class="px-5 py-3 text-right text-sm font-semibold">R$ {{ number_format($item->supplier_cost, 2, ',', '.') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
+    @endif
+</div>
+
+{{-- Sold --}}
+<div class="s-card mb-4">
+    <div class="s-card-pad border-b" style="border-color: var(--apple-separator);">
+        <h2 class="text-base font-semibold" style="letter-spacing: -0.01em;">Vendidos no Período</h2>
     </div>
+
+    @if($sold->isEmpty())
+        <div class="s-card-pad text-center py-8" style="color: var(--apple-text-secondary);">Nenhuma venda no período</div>
+    @else
+        <div class="lg:hidden">
+            @foreach($sold as $item)
+            <div class="s-item-card">
+                <div class="flex justify-between gap-3">
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold truncate">{{ $item->name }}</p>
+                        <p class="text-xs mt-0.5" style="color: var(--apple-text-secondary);">{{ collect([$item->storage, $item->color])->filter()->join(' · ') }}</p>
+                        <p class="text-xs mt-1" style="color: var(--apple-text-tertiary);">{{ $item->sold_at->format('d/m/Y') }}</p>
+                    </div>
+                    <p class="text-sm font-bold shrink-0" style="color: var(--apple-green);">R$ {{ number_format($item->supplier_cost, 0, ',', '.') }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        <div class="hidden lg:block overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr style="border-bottom: 0.5px solid var(--apple-separator);">
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase" style="color: var(--apple-text-secondary);">Produto</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase" style="color: var(--apple-text-secondary);">IMEI/Serial</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold uppercase" style="color: var(--apple-text-secondary);">Data</th>
+                        <th class="px-5 py-3 text-right text-xs font-semibold uppercase" style="color: var(--apple-text-secondary);">Repasse</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($sold as $item)
+                    <tr style="border-bottom: 0.5px solid var(--apple-separator);">
+                        <td class="px-5 py-3">
+                            <p class="text-sm font-medium">{{ $item->name }}</p>
+                            <p class="text-xs" style="color: var(--apple-text-secondary);">{{ collect([$item->storage, $item->color])->filter()->join(' · ') }}</p>
+                        </td>
+                        <td class="px-5 py-3 text-sm font-mono" style="color: var(--apple-text-secondary);">{{ $item->imei ?? $item->serial_number ?? '—' }}</td>
+                        <td class="px-5 py-3 text-sm" style="color: var(--apple-text-secondary);">{{ $item->sold_at->format('d/m/Y') }}</td>
+                        <td class="px-5 py-3 text-right text-sm font-semibold" style="color: var(--apple-green);">R$ {{ number_format($item->supplier_cost, 2, ',', '.') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @endif
+</div>
+
+{{-- WhatsApp --}}
+<div class="s-card s-card-pad">
+    <h2 class="text-base font-semibold mb-1" style="letter-spacing: -0.01em;">Relatório WhatsApp</h2>
+    <p class="text-xs mb-4" style="color: var(--apple-text-secondary);">Copie e envie para a DG Store</p>
+
+    <div class="relative">
+        <textarea id="whatsappReport" readonly rows="10"
+                  class="w-full s-input text-xs font-mono resize-none pr-24">{{ $whatsappReport }}</textarea>
+        <button onclick="copyReport()"
+                class="absolute top-2 right-2 s-btn s-btn-primary text-xs py-2 px-3">
+            Copiar
+        </button>
+    </div>
+    <p id="copyFeedback" class="hidden text-xs font-medium mt-2" style="color: var(--apple-green);">✓ Copiado!</p>
 </div>
 
 <script>
 function copyReport() {
     const textarea = document.getElementById('whatsappReport');
     const feedback = document.getElementById('copyFeedback');
-    
-    textarea.select();
-    document.execCommand('copy');
-    
-    feedback.classList.remove('hidden');
-    setTimeout(() => feedback.classList.add('hidden'), 3000);
+    navigator.clipboard.writeText(textarea.value).then(() => {
+        feedback.classList.remove('hidden');
+        setTimeout(() => feedback.classList.add('hidden'), 2500);
+    });
 }
 </script>
 @endsection
