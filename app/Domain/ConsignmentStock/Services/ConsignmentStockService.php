@@ -508,7 +508,7 @@ class ConsignmentStockService
      */
     public function getRecentConsignmentProducts(int $limit = 20): \Illuminate\Support\Collection
     {
-        return ConsignmentStockItem::select('name', 'model', 'storage', 'color')
+        return ConsignmentStockItem::select('name', 'model', 'storage', 'color', 'created_at')
             ->distinct()
             ->orderByDesc('created_at')
             ->limit($limit)
