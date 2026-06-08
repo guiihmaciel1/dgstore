@@ -27,6 +27,13 @@
                         </svg>
                         Relatório WhatsApp
                     </a>
+                    <a href="{{ route('stock.consignment.quick-create') }}"
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: linear-gradient(to right, #10b981, #059669); color: white; font-weight: 600; border-radius: 0.5rem; text-decoration: none; font-size: 0.875rem; white-space: nowrap;">
+                        <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        <span>Entrada Rápida</span>
+                    </a>
                     <a href="{{ route('stock.consignment.batch-create') }}"
                        class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,7 +118,14 @@
                             @forelse($items as $item)
                                 <tr style="border-bottom: 1px solid #f3f4f6;">
                                     <td style="padding: 0.75rem;">
-                                        <div style="font-weight: 600; color: #111827; font-size: 0.875rem;">{{ $item->name }}</div>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            @if($item->quantity > 1 && !$item->imei)
+                                                <span style="background: #dbeafe; color: #1e40af; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                                                    {{ $item->quantity }}x
+                                                </span>
+                                            @endif
+                                            <span style="font-weight: 600; color: #111827; font-size: 0.875rem;">{{ $item->name }}</span>
+                                        </div>
                                         <div style="font-size: 0.75rem; color: #6b7280; display: flex; align-items: center; gap: 0.375rem; margin-top: 1px; flex-wrap: wrap;">
                                             @if($item->storage) {{ $item->storage }} @endif
                                             @if($item->color) · {{ $item->color }} @endif
@@ -135,7 +149,19 @@
                                         @endif
                                     </td>
                                     <td style="padding: 0.75rem; font-size: 0.8125rem; color: #374151;">{{ $item->supplier->name }}</td>
-                                    <td style="padding: 0.75rem; font-size: 0.8125rem; color: #6b7280; font-family: monospace;">{{ $item->imei ?? '-' }}</td>
+                                    <td style="padding: 0.75rem;">
+                                        @if($item->imei)
+                                            <span style="font-size: 0.8125rem; color: #6b7280; font-family: monospace;">{{ $item->imei }}</span>
+                                            <div style="margin-top: 2px;">
+                                                <span style="font-size: 0.6rem; font-weight: 600; padding: 1px 5px; border-radius: 3px; background: #f3f4f6; color: #374151;">RASTREADO</span>
+                                            </div>
+                                        @else
+                                            <span style="font-size: 0.75rem; color: #9ca3af;">—</span>
+                                            <div style="margin-top: 2px;">
+                                                <span style="font-size: 0.6rem; font-weight: 600; padding: 1px 5px; border-radius: 3px; background: #d1fae5; color: #065f46;">CONSOLIDADO</span>
+                                            </div>
+                                        @endif
+                                    </td>
                                     <td style="padding: 0.75rem; text-align: right; font-size: 0.875rem; font-weight: 600; color: #111827;">
                                         R$ {{ number_format($item->supplier_cost, 2, ',', '.') }}
                                     </td>

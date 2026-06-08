@@ -182,6 +182,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/stock/consignment/create', [ConsignmentStockController::class, 'create'])->name('stock.consignment.create');
         Route::get('/stock/consignment/batch-create', [ConsignmentStockController::class, 'batchCreate'])->name('stock.consignment.batch-create');
         Route::post('/stock/consignment/batch', [ConsignmentStockController::class, 'batchStore'])->name('stock.consignment.batch-store');
+        Route::get('/stock/consignment/quick-create', [ConsignmentStockController::class, 'quickCreate'])->name('stock.consignment.quick-create');
+        Route::post('/stock/consignment/quick-store', [ConsignmentStockController::class, 'quickStore'])->name('stock.consignment.quick-store');
         Route::post('/stock/consignment', [ConsignmentStockController::class, 'store'])->name('stock.consignment.store');
         Route::post('/stock/consignment/store-confirmed', [ConsignmentStockController::class, 'storeConfirmed'])->name('stock.consignment.store-confirmed');
         Route::get('/stock/consignment/report', [ConsignmentStockController::class, 'report'])->name('stock.consignment.report');

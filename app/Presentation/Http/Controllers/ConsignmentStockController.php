@@ -550,4 +550,45 @@ class ConsignmentStockController extends Controller
             }
         }
     }
+
+    /**
+     * Exibe o formulário de entrada rápida (apenas modelo + quantidade).
+     */
+    public function quickCreate(): View
+    {
+        $suppliers = Supplier::active()->orderBy('name')->get();
+        $recentProducts = $this->service->getRecentConsignmentProducts(limit: 20);
+
+        return view('stock.consignment.quick-create', [
+            'suppliers' => $suppliers,
+            'recentProducts' => $recentProducts,
+        ]);
+    }
+
+    /**
+     * Processa a entrada rápida e consolida produtos iguais.
+     */
+    public function quickStore(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'supplier_id' => ['required', 'exists:suppliers,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'model' => ['nullable', 'string', 'max:255'],
+            'storage' => ['nullable', 'string', 'max:50'],
+            'color' => ['required', 'string', 'max:100'],
+            'condition' => ['required', 'in:new,used'],
+            'quantity' => ['required', 'integer', 'min:1', 'max:999'],
+            'supplier_cost' => ['required', 'numeric', 'min:0'],
+            'suggested_price' => ['nullable', 'numeric', 'min:0'],
+            'imei' => ['nullable', 'string', 'max:50'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        // Busca item existente com mesma configuração ou cria novo
+        $item = $this->service->findOrCreateConsolidated($validated, auth()->id());
+
+        return redirect()
+            ->route('stock.consignment.index')
+            ->with('success', "Entrada registrada! {$validated['quantity']} unidade(s) adicionada(s) ao item '{$item->full_name}'.");
+    }
 }

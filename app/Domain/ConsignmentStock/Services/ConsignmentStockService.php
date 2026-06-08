@@ -392,4 +392,132 @@ class ConsignmentStockService
             ->limit(20)
             ->get();
     }
+
+    /**
+     * Encontra item consolidado existente ou cria novo.
+     * Agrupa produtos por: supplier_id + name + model + storage + color + condition
+     * 
+     * @param  array  $data  Dados da entrada (supplier_id, name, model, storage, color, condition, quantity, supplier_cost, suggested_price, notes)
+     * @param  string  $userId  ID do usuário que está registrando
+     * @return ConsignmentStockItem
+     */
+    public function findOrCreateConsolidated(array $data, string $userId): ConsignmentStockItem
+    {
+        return DB::transaction(function () use ($data, $userId) {
+            $quantity = $data['quantity'];
+
+            // Busca item existente com mesma configuração
+            $item = ConsignmentStockItem::where([
+                'supplier_id' => $data['supplier_id'],
+                'name' => $data['name'],
+                'model' => $data['model'] ?? null,
+                'storage' => $data['storage'] ?? null,
+                'color' => $data['color'],
+                'condition' => $data['condition'],
+                'status' => ConsignmentStatus::Available,
+            ])
+            ->whereNull('imei') // Apenas itens SEM IMEI (consolidados)
+            ->first();
+
+            if ($item) {
+                // INCREMENTA quantidade do item existente
+                $item->increment('quantity', $quantity);
+                $item->increment('available_quantity', $quantity);
+
+                // Atualiza preços se necessário (média ponderada)
+                $this->updateConsolidatedPrices($item, $data, $quantity);
+            } else {
+                // CRIA novo item consolidado
+                $item = ConsignmentStockItem::create([
+                    'supplier_id' => $data['supplier_id'],
+                    'batch_id' => null, // Entrada rápida não usa batch
+                    'name' => $data['name'],
+                    'model' => $data['model'] ?? null,
+                    'storage' => $data['storage'] ?? null,
+                    'color' => $data['color'],
+                    'condition' => $data['condition'],
+                    'imei' => null, // SEM IMEI para consolidado
+                    'serial_number' => null,
+                    'battery_health' => null,
+                    'has_box' => false,
+                    'has_cable' => false,
+                    'supplier_cost' => $data['supplier_cost'],
+                    'suggested_price' => $data['suggested_price'] ?? null,
+                    'quantity' => $quantity,
+                    'available_quantity' => $quantity,
+                    'status' => ConsignmentStatus::Available,
+                    'notes' => $data['notes'] ?? null,
+                    'received_at' => now(),
+                ]);
+            }
+
+            // Registra movimento de entrada
+            ConsignmentStockMovement::create([
+                'consignment_item_id' => $item->id,
+                'user_id' => $userId,
+                'type' => ConsignmentMovementType::In,
+                'quantity' => $quantity,
+                'reason' => 'Entrada rápida - ' . $quantity . ' unidade(s)',
+            ]);
+
+            return $item;
+        });
+    }
+
+    /**
+     * Atualiza preços usando média ponderada quando adiciona unidades.
+     * 
+     * @param  ConsignmentStockItem  $item
+     * @param  array  $newData
+     * @param  int  $newQuantity
+     * @return void
+     */
+    private function updateConsolidatedPrices(
+        ConsignmentStockItem $item,
+        array $newData,
+        int $newQuantity
+    ): void {
+        $oldQty = $item->quantity;
+        $newQty = $newQuantity;
+        $totalQty = $oldQty + $newQty;
+
+        // Média ponderada do custo
+        $avgCost = (
+            ($item->supplier_cost * $oldQty) +
+            ($newData['supplier_cost'] * $newQty)
+        ) / $totalQty;
+
+        $item->update(['supplier_cost' => $avgCost]);
+
+        // Atualiza preço sugerido se fornecido
+        if (!empty($newData['suggested_price'])) {
+            $avgPrice = (
+                (($item->suggested_price ?? 0) * $oldQty) +
+                ($newData['suggested_price'] * $newQty)
+            ) / $totalQty;
+
+            $item->update(['suggested_price' => $avgPrice]);
+        }
+    }
+
+    /**
+     * Retorna lista de produtos recentes do estoque consignado para autocomplete.
+     * 
+     * @param  int  $limit
+     * @return \Illuminate\Support\Collection
+     */
+    public function getRecentConsignmentProducts(int $limit = 20): \Illuminate\Support\Collection
+    {
+        return ConsignmentStockItem::select('name', 'model', 'storage', 'color')
+            ->distinct()
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get()
+            ->map(fn ($item) => [
+                'name' => $item->name,
+                'model' => $item->model,
+                'storage' => $item->storage,
+                'color' => $item->color,
+            ]);
+    }
 }

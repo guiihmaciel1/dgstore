@@ -224,6 +224,44 @@ class ConsignmentStockItem extends Model
     }
 
     /**
+     * Verifica se o item é consolidado (sem IMEI e com múltiplas unidades).
+     */
+    public function isConsolidated(): bool
+    {
+        return $this->imei === null && $this->quantity >= 1;
+    }
+
+    /**
+     * Verifica se o item pode ser vendido parcialmente.
+     */
+    public function canSellPartial(): bool
+    {
+        return $this->isConsolidated() && $this->available_quantity > 0;
+    }
+
+    /**
+     * Vende N unidades de um item consolidado.
+     * 
+     * @throws \InvalidArgumentException
+     */
+    public function sellUnits(int $quantity, string $saleId): void
+    {
+        if ($quantity > $this->available_quantity) {
+            throw new \InvalidArgumentException('Quantidade insuficiente disponível');
+        }
+
+        $this->decrement('available_quantity', $quantity);
+
+        if ($this->available_quantity === 0) {
+            $this->update([
+                'status' => ConsignmentStatus::Sold,
+                'sold_at' => now(),
+                'sale_id' => $saleId,
+            ]);
+        }
+    }
+
+    /**
      * Snapshot enriquecido do item para ser persistido em SaleItem.product_snapshot.
      *
      * Inclui o IMEI/Serial atual e o historico de trocas para que, mesmo que o
