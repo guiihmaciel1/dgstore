@@ -674,6 +674,15 @@
                     </div>
                 </div>
 
+                <div x-show="filteredUsed.filter(i => (i.images || []).length === 0).length > 0"
+                     style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                    <svg style="width: 1.125rem; height: 1.125rem; color: #dc2626; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <span style="font-size: 0.8125rem; color: #991b1b; font-weight: 600;"
+                          x-text="filteredUsed.filter(i => (i.images || []).length === 0).length + ' seminovo(s) sem fotos — adicione fotos a todos antes de divulgar'"></span>
+                </div>
+
                 <div x-show="filteredUsed.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 3rem; text-align: center;">
                     <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
@@ -812,6 +821,16 @@
                                 </template>
                             </tbody>
                         </table>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0.75rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.375rem;">
+                            <span style="display: inline-block; width: 12px; height: 12px; background: #fef2f2; border: 1px solid #fca5a5; border-left: 3px solid #dc2626; border-radius: 2px;"></span>
+                            <span style="font-size: 0.6875rem; color: #6b7280;">Sem fotos</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.375rem;">
+                            <span style="display: inline-block; width: 12px; height: 12px; background: white; border: 1px solid #e5e7eb; border-radius: 2px;"></span>
+                            <span style="font-size: 0.6875rem; color: #6b7280;">Com fotos</span>
+                        </div>
                     </div>
                 </div>
             </div>
