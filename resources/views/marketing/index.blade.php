@@ -717,8 +717,10 @@
                             <tbody>
                                 <template x-for="(item, idx) in filteredUsed" :key="item.morph_type + '_' + item.id">
                                     <tr :style="'border-bottom: 1px solid #e5e7eb; transition: background 0.15s;'
-                                            + (idx % 2 === 1 ? ' background: #f8f9fb;' : ' background: white;')"
-                                        :data-bg="idx % 2 === 1 ? '#f8f9fb' : 'white'"
+                                            + ((item.images || []).length === 0
+                                                ? ' background: #fef2f2; border-left: 3px solid #dc2626;'
+                                                : (idx % 2 === 1 ? ' background: #f8f9fb;' : ' background: white;'))"
+                                        :data-bg="(item.images || []).length === 0 ? '#fef2f2' : (idx % 2 === 1 ? '#f8f9fb' : 'white')"
                                         onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background=this.dataset.bg">
                                         <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                             <input type="checkbox" x-model="item.listing.visible"
@@ -793,10 +795,10 @@
                                             <button type="button" @click="openUsedImageModal(item)"
                                                     :style="(item.images || []).length > 0
                                                         ? 'position:relative;padding:0.25rem;background:none;border:none;cursor:pointer;color:#059669;'
-                                                        : 'position:relative;padding:0.25rem;background:none;border:none;cursor:pointer;color:#9ca3af;'"
-                                                    onmouseover="this.style.color='#111827'" onmouseout="this.style.color=this.dataset.hasimg==='1'?'#059669':'#9ca3af'"
+                                                        : 'position:relative;padding:0.25rem;background:none;border:none;cursor:pointer;color:#dc2626;'"
+                                                    onmouseover="this.style.color='#111827'" onmouseout="this.style.color=this.dataset.hasimg==='1'?'#059669':'#dc2626'"
                                                     :data-hasimg="(item.images || []).length > 0 ? '1' : '0'"
-                                                    title="Gerenciar fotos">
+                                                    :title="(item.images || []).length > 0 ? 'Gerenciar fotos' : 'Sem fotos — clique para adicionar'">
                                                 <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
