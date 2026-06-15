@@ -329,13 +329,25 @@ class GenerateReportUseCase
         $monthProfit = $monthSales->sum(fn (Sale $s) => $s->profit);
         $monthRevenue = (float) $monthSales->sum('total');
 
-        $expensesPaid = (float) FinancialTransaction::expense()
+        $expensesQuery = FinancialTransaction::expense()
             ->paid()
             ->whereNotNull('paid_at')
             ->whereNotNull('account_id')
-            ->whereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()])
-            ->sum('amount');
+            ->whereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()]);
 
+        $expensesPaid = (float) (clone $expensesQuery)->sum('amount');
+
+        $salaryCategory = \App\Domain\Finance\Models\FinancialCategory::where('name', 'like', '%Salário%')
+            ->orWhere('name', 'like', '%Salario%')
+            ->orWhere('name', 'like', '%salário%')
+            ->orWhere('name', 'like', '%salarios%')
+            ->pluck('id');
+
+        $salariesPaid = $salaryCategory->isNotEmpty()
+            ? (float) (clone $expensesQuery)->whereIn('category_id', $salaryCategory)->sum('amount')
+            : 0.0;
+
+        $expensesWithoutSalaries = $expensesPaid - $salariesPaid;
         $realProfit = $monthProfit - $expensesPaid;
 
         return [
@@ -343,6 +355,8 @@ class GenerateReportUseCase
             'month_profit' => $monthProfit,
             'month_revenue' => $monthRevenue,
             'month_expenses' => $expensesPaid,
+            'salaries_paid' => $salariesPaid,
+            'expenses_without_salaries' => $expensesWithoutSalaries,
             'real_profit' => $realProfit,
         ];
     }
