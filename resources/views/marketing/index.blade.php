@@ -79,6 +79,7 @@
                             <table style="width: 100%; border-collapse: collapse;">
                                 <thead>
                                     <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                                        <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; width: 24px;" x-show="!priceSearch"></th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 30px;">#</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Modelo</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Storage</th>
@@ -92,7 +93,18 @@
                                 </thead>
                                 <tbody>
                                     <template x-for="(row, idx) in filteredPrices" :key="row._key">
-                                        <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <tr style="border-bottom: 1px solid #f3f4f6;"
+                                            :style="dragOverIdx === idx ? 'border-top: 2px solid #6d28d9;' : ''"
+                                            draggable="true"
+                                            x-show-drag="!priceSearch"
+                                            @dragstart="if(priceSearch) return; dragIdx = idx; $event.dataTransfer.effectAllowed = 'move'; $el.style.opacity = '0.4';"
+                                            @dragend="$el.style.opacity = '1'; dragIdx = null; dragOverIdx = null;"
+                                            @dragover.prevent="if(priceSearch) return; dragOverIdx = idx; $event.dataTransfer.dropEffect = 'move';"
+                                            @dragleave="if(dragOverIdx === idx) dragOverIdx = null;"
+                                            @drop.prevent="if(priceSearch || dragIdx === null || dragIdx === idx) { dragOverIdx = null; return; } movePrice(dragIdx, idx); dragIdx = null; dragOverIdx = null;">
+                                            <td x-show="!priceSearch" style="padding: 0.375rem 0.25rem; text-align: center; cursor: grab; color: #9ca3af; user-select: none;" title="Arrastar para reordenar">
+                                                <svg style="width: 1rem; height: 1rem; display: inline;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
+                                            </td>
                                             <td style="padding: 0.375rem 0.75rem; font-size: 0.75rem; color: #9ca3af;" x-text="idx + 1"></td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="hidden" :name="'prices[' + row._origIdx + '][id]'" :value="row.id || ''">
@@ -899,6 +911,8 @@
         return {
             tab: urlParams.get('tab') || 'prices',
             priceSearch: '',
+            dragIdx: null,
+            dragOverIdx: null,
             priceCopied: false,
             resaleLacradosCopied: false,
             resaleSeminovosCopied: false,
@@ -1030,6 +1044,12 @@
 
             removePrice(origIdx) {
                 this.prices = this.prices.filter(p => p._origIdx !== origIdx);
+                this.prices.forEach((p, i) => p._origIdx = i);
+            },
+
+            movePrice(fromIdx, toIdx) {
+                const item = this.prices.splice(fromIdx, 1)[0];
+                this.prices.splice(toIdx, 0, item);
                 this.prices.forEach((p, i) => p._origIdx = i);
             },
 

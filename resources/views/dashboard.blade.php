@@ -526,105 +526,158 @@
                     </a>
                 </div>
 
-                {{-- Cards de Lucro --}}
+                {{-- Cards de Lucro - Visão Financeira --}}
                 @if(auth()->user()->canViewFinancials())
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-3 sm:mt-4">
-                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
-                        <div class="flex items-center justify-between">
-                            <div class="min-w-0 flex-1">
-                                <p class="text-xs sm:text-sm text-gray-500">Lucro Hoje</p>
-                                <p class="text-xl sm:text-2xl font-bold truncate {{ $profit['today_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
-                                    <span x-show="showValues">R$ {{ number_format($profit['today_profit'], 2, ',', '.') }}</span>
-                                    <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
-                                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mt-3 sm:mt-4">
+                    {{-- Lucro Bruto do Mês --}}
+                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-xl"></div>
+                        <div class="pl-2">
+                            <div class="flex items-center justify-between mb-1">
+                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Lucro Bruto</p>
+                                <span class="text-[0.65rem] px-1.5 py-0.5 rounded-full font-medium {{ $profit['month_margin'] >= 20 ? 'bg-emerald-50 text-emerald-700' : ($profit['month_margin'] >= 10 ? 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-700') }}">
+                                    <span x-show="showValues">{{ number_format($profit['month_margin'], 1, ',', '.') }}% margem</span>
+                                    <span x-show="!showValues" x-cloak>&bull;&bull;&bull;</span>
+                                </span>
                             </div>
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
-                                <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                                </svg>
+                            <p class="text-2xl sm:text-3xl font-bold {{ $profit['month_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                <span x-show="showValues">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
+                                <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
+                            </p>
+                            <div class="mt-2.5 pt-2.5 border-t border-gray-100">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-400">Faturamento</span>
+                                    <span class="font-semibold text-gray-700">
+                                        <span x-show="showValues">R$ {{ number_format($profit['month_revenue'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs mt-1">
+                                    <span class="text-gray-400">Hoje</span>
+                                    <span class="font-semibold {{ $profit['today_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                        <span x-show="showValues">R$ {{ number_format($profit['today_profit'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
-                        <div class="flex items-center justify-between">
-                            <div class="min-w-0 flex-1">
-                                <p class="text-xs sm:text-sm text-gray-500">Lucro do Mês</p>
-                                <p class="text-xl sm:text-2xl font-bold truncate {{ $profit['month_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
-                                    <span x-show="showValues">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
-                                    <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
-                                </p>
+                    {{-- Lucro Líquido do Mês --}}
+                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full {{ $profit['real_profit'] >= 0 ? 'bg-blue-500' : 'bg-red-500' }} rounded-l-xl"></div>
+                        <div class="pl-2">
+                            <div class="flex items-center justify-between mb-1">
+                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Lucro Líquido</p>
+                                @php
+                                    $liquidMargin = $profit['month_revenue'] > 0 ? ($profit['real_profit'] / $profit['month_revenue']) * 100 : 0;
+                                @endphp
+                                <span class="text-[0.65rem] px-1.5 py-0.5 rounded-full font-medium {{ $liquidMargin >= 10 ? 'bg-blue-50 text-blue-700' : ($liquidMargin >= 5 ? 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-700') }}">
+                                    <span x-show="showValues">{{ number_format($liquidMargin, 1, ',', '.') }}% líquido</span>
+                                    <span x-show="!showValues" x-cloak>&bull;&bull;&bull;</span>
+                                </span>
                             </div>
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-700 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
-                                <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
-                        <div class="flex items-center justify-between">
-                            <div class="min-w-0 flex-1">
-                                <p class="text-xs sm:text-sm text-gray-500">Lucro Real do Mês</p>
-                                <p class="text-xl sm:text-2xl font-bold truncate {{ $profit['real_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
-                                    <span x-show="showValues">R$ {{ number_format($profit['real_profit'], 2, ',', '.') }}</span>
-                                    <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;</span>
-                                </p>
-                                <div class="mt-1.5 space-y-0.5 text-xs">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-gray-400 w-14">Lucro</span>
-                                        <span class="font-semibold {{ $profit['month_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
-                                            <span x-show="showValues">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
-                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
-                                        </span>
-                                    </div>
-                                    @if($profit['salaries_paid'] > 0)
-                                    <div class="group relative flex items-center gap-1.5 cursor-default">
-                                        <span class="text-gray-400 w-14">Salários</span>
-                                        <span class="font-semibold text-red-500">
-                                            <span x-show="showValues">− R$ {{ number_format($profit['salaries_paid'], 2, ',', '.') }}</span>
-                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
-                                        </span>
-                                        <div class="dg-tooltip absolute bottom-full left-0 mb-2 hidden group-hover:block z-50">
-                                            <div class="bg-gray-900 text-white text-[0.65rem] rounded-lg px-3 py-2 shadow-lg" style="min-width: 220px;">
-                                                <p class="font-bold text-gray-300 mb-1.5 text-[0.55rem] uppercase tracking-wide">Salários do mês</p>
-                                                @foreach($profit['salary_details'] as $sd)
-                                                <div class="flex items-center justify-between py-0.5 {{ !$loop->last ? 'border-b border-gray-700' : '' }}">
-                                                    <span class="text-gray-300 truncate mr-2">{{ $sd['description'] }}</span>
-                                                    <span class="text-white font-semibold whitespace-nowrap">R$ {{ number_format($sd['amount'], 2, ',', '.') }}</span>
-                                                </div>
-                                                @endforeach
-                                                <div class="flex items-center justify-between pt-1.5 mt-1 border-t border-gray-600 font-bold">
-                                                    <span class="text-gray-300">Total</span>
-                                                    <span class="text-white">R$ {{ number_format($profit['salaries_paid'], 2, ',', '.') }}</span>
-                                                </div>
-                                                <div class="absolute top-full left-8 w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                            <p class="text-2xl sm:text-3xl font-bold {{ $profit['real_profit'] >= 0 ? 'text-gray-900' : 'text-red-600' }}">
+                                <span x-show="showValues">R$ {{ number_format($profit['real_profit'], 2, ',', '.') }}</span>
+                                <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
+                            </p>
+                            <div class="mt-2.5 pt-2.5 border-t border-gray-100 space-y-1">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-400">Lucro bruto</span>
+                                    <span class="font-semibold text-emerald-600">
+                                        <span x-show="showValues">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
+                                @if($profit['salaries_paid'] > 0)
+                                <div class="group relative flex items-center justify-between text-xs cursor-default">
+                                    <span class="text-gray-400">Salários</span>
+                                    <span class="font-semibold text-red-500">
+                                        <span x-show="showValues">− R$ {{ number_format($profit['salaries_paid'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                    <div class="dg-tooltip absolute bottom-full right-0 mb-2 hidden group-hover:block z-50">
+                                        <div class="bg-gray-900 text-white text-[0.65rem] rounded-lg px-3 py-2 shadow-lg" style="min-width: 220px;">
+                                            <p class="font-bold text-gray-300 mb-1.5 text-[0.55rem] uppercase tracking-wide">Salários do mês</p>
+                                            @foreach($profit['salary_details'] as $sd)
+                                            <div class="flex items-center justify-between py-0.5 {{ !$loop->last ? 'border-b border-gray-700' : '' }}">
+                                                <span class="text-gray-300 truncate mr-2">{{ $sd['description'] }}</span>
+                                                <span class="text-white font-semibold whitespace-nowrap">R$ {{ number_format($sd['amount'], 2, ',', '.') }}</span>
+                                            </div>
+                                            @endforeach
+                                            <div class="flex items-center justify-between pt-1.5 mt-1 border-t border-gray-600 font-bold">
+                                                <span class="text-gray-300">Total</span>
+                                                <span class="text-white">R$ {{ number_format($profit['salaries_paid'], 2, ',', '.') }}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-gray-400 w-14">Contas</span>
-                                        <span class="font-semibold text-red-400">
-                                            <span x-show="showValues">− R$ {{ number_format($profit['expenses_without_salaries'], 2, ',', '.') }}</span>
-                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
-                                        </span>
-                                    </div>
-                                    @else
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-gray-400 w-14">Contas</span>
-                                        <span class="font-semibold text-red-500">
-                                            <span x-show="showValues">− R$ {{ number_format($profit['month_expenses_paid'], 2, ',', '.') }}</span>
-                                            <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
-                                        </span>
-                                    </div>
-                                    @endif
                                 </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-400">Despesas</span>
+                                    <span class="font-semibold text-red-400">
+                                        <span x-show="showValues">− R$ {{ number_format($profit['expenses_without_salaries'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
+                                @else
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-400">Despesas</span>
+                                    <span class="font-semibold text-red-500">
+                                        <span x-show="showValues">− R$ {{ number_format($profit['month_expenses_paid'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
+                                @endif
                             </div>
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 {{ $profit['real_profit'] >= 0 ? 'bg-emerald-500' : 'bg-red-500' }} rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
-                                <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                </svg>
+                        </div>
+                    </div>
+
+                    {{-- Mês Anterior (Comparativo) --}}
+                    <div class="bg-gray-50 rounded-xl p-4 sm:p-5 shadow-sm border border-gray-200 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-gray-400 rounded-l-xl"></div>
+                        <div class="pl-2">
+                            <div class="flex items-center justify-between mb-1">
+                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Mês Anterior</p>
+                                <span class="text-[0.65rem] px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-600 font-medium" style="text-transform: capitalize;">
+                                    {{ $prevMonthProfit['month_label'] }}
+                                </span>
+                            </div>
+                            <p class="text-2xl sm:text-3xl font-bold {{ $prevMonthProfit['real_profit'] >= 0 ? 'text-gray-700' : 'text-red-600' }}">
+                                <span x-show="showValues">R$ {{ number_format($prevMonthProfit['real_profit'], 2, ',', '.') }}</span>
+                                <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
+                            </p>
+                            <p class="text-[0.65rem] text-gray-400 -mt-0.5 mb-1">lucro líquido acumulado</p>
+                            <div class="mt-2 pt-2.5 border-t border-gray-200 space-y-1">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-400">Lucro bruto</span>
+                                    <span class="font-semibold {{ $prevMonthProfit['month_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                        <span x-show="showValues">R$ {{ number_format($prevMonthProfit['month_profit'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-400">Despesas</span>
+                                    <span class="font-semibold text-red-500">
+                                        <span x-show="showValues">− R$ {{ number_format($prevMonthProfit['month_expenses'], 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
+                                @if($profit['real_profit'] != 0 && $prevMonthProfit['real_profit'] != 0)
+                                <div class="flex items-center justify-between text-xs pt-1 border-t border-gray-200">
+                                    <span class="text-gray-400">Variação</span>
+                                    @php
+                                        $variation = $prevMonthProfit['real_profit'] != 0
+                                            ? (($profit['real_profit'] - $prevMonthProfit['real_profit']) / abs($prevMonthProfit['real_profit'])) * 100
+                                            : 0;
+                                    @endphp
+                                    <span class="font-semibold {{ $variation >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
+                                        <span x-show="showValues">
+                                            {{ $variation >= 0 ? '↑' : '↓' }} {{ number_format(abs($variation), 0, ',', '.') }}%
+                                        </span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>

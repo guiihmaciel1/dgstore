@@ -169,6 +169,9 @@ class GenerateReportUseCase
             }
         }
 
+        $prevMonthStart = $monthStart->copy()->subMonth()->startOfMonth();
+        $prevMonthEnd = $monthStart->copy()->subMonth()->endOfMonth();
+
         return [
             'today' => [
                 'total' => $todayTotal,
@@ -188,6 +191,7 @@ class GenerateReportUseCase
                 'data' => $chartData,
             ],
             'profit' => $this->profitData($monthStart, $monthEnd),
+            'prev_month_profit' => $this->prevMonthProfitSummary($prevMonthStart, $prevMonthEnd),
         ];
     }
 
@@ -312,6 +316,34 @@ class GenerateReportUseCase
             'real_profit' => $realProfit,
             'top_products' => $topProfitProducts,
             'category_ranking' => $categoryRanking,
+        ];
+    }
+
+    private function prevMonthProfitSummary(Carbon $monthStart, Carbon $monthEnd): array
+    {
+        $monthSales = Sale::with(['items.product'])
+            ->whereBetween('sold_at', [$monthStart, $monthEnd])
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->get();
+
+        $monthProfit = $monthSales->sum(fn (Sale $s) => $s->profit);
+        $monthRevenue = (float) $monthSales->sum('total');
+
+        $expensesPaid = (float) FinancialTransaction::expense()
+            ->paid()
+            ->whereNotNull('paid_at')
+            ->whereNotNull('account_id')
+            ->whereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()])
+            ->sum('amount');
+
+        $realProfit = $monthProfit - $expensesPaid;
+
+        return [
+            'month_label' => $monthStart->translatedFormat('M/Y'),
+            'month_profit' => $monthProfit,
+            'month_revenue' => $monthRevenue,
+            'month_expenses' => $expensesPaid,
+            'real_profit' => $realProfit,
         ];
     }
 
