@@ -85,6 +85,7 @@ class NegotiationEvaluatorService
             'std_dev' => round($stats['std_dev'], 2),
             'last_collected_at' => $lastCollectedAt,
             'margin' => $margin,
+            'resale_margin' => $resaleMargin,
             'battery_modifier' => $batteryMod,
             'device_state_modifier' => $deviceStateMod,
             'accessory_level' => $accessoryLevel,

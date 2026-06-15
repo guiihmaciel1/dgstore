@@ -327,6 +327,7 @@
                 }
 
                 if (balance > 0) {
+                    if (this.tradeInValue > 0 || this.downPayment > 0) lines.push('');
                     lines.push(`━━━━━━━━━━━━━━━`);
                     const hasTradeInOrDown = this.tradeInValue > 0 || this.downPayment > 0;
                     const label = hasTradeInOrDown
