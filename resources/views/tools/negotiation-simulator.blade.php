@@ -83,7 +83,6 @@
                 result: null, error: null, loading: false, offeredInput: '',
             },
             downPaymentInput: '',
-            showOnlyDifference: false,
             numberGame: { enabled: false, boost: 0 },
             cardResults: [],
 
@@ -310,31 +309,6 @@
                 const lines = [];
                 const balance = this.cardBalance;
 
-                if (this.showOnlyDifference) {
-                    if (balance > 0) {
-                        const hasTradeInOrDownCompact = this.tradeInValue > 0 || this.downPayment > 0;
-                        const labelCompact = hasTradeInOrDownCompact
-                            ? `Diferença à vista com desconto: R$ ${this.fmt(balance)}`
-                            : `Valor à vista com desconto R$ ${this.fmt(balance)}`;
-                        lines.push(`*${labelCompact}*`);
-
-                        const selected = this.cardResults.filter(r => r.selected);
-                        if (selected.length > 0) {
-                            lines.push('');
-                            lines.push(`💳 *Parcele em até ${selected[selected.length - 1].installments}x:*`);
-                            selected.forEach(r => {
-                                lines.push(`  ${r.installments}x › R$ ${this.fmt(r.installment_value)}`);
-                            });
-                        }
-                    }
-
-                    lines.push('');
-                    const expiry = this.getExpiryDate();
-                    lines.push(`⏳ _Simulação válida somente hoje (${expiry})_`);
-
-                    return lines.join('\n');
-                }
-
                 const desc = this.product.description || 'Produto';
                 lines.push(`📱 *${desc}*`);
 
@@ -398,7 +372,6 @@
                     result: null, error: null, loading: false, offeredInput: '',
                 };
                 this.downPaymentInput = '';
-                this.showOnlyDifference = false;
                 this.numberGame = { enabled: false, boost: 0 };
                 this.cardResults = [];
                 this.activePreset = 'even';

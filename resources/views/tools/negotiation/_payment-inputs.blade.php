@@ -20,15 +20,6 @@
         </div>
     </div>
 
-    {{-- Mostrar apenas diferença --}}
-    <div class="mt-3 flex items-center gap-2">
-        <label class="flex items-center gap-2 cursor-pointer select-none">
-            <input type="checkbox" x-model="showOnlyDifference"
-                   class="w-4 h-4 accent-gray-900 cursor-pointer rounded">
-            <span class="text-[13px] font-semibold text-gray-700">Mostrar apenas diferença</span>
-        </label>
-    </div>
-
     {{-- Jogo de números --}}
     <div x-show="tradeInValue > 0" x-cloak class="mt-3">
         <div class="flex items-center justify-between">
