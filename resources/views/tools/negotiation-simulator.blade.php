@@ -84,6 +84,7 @@
             },
             downPaymentInput: '',
             showOnlyDifference: false,
+            numberGame: { enabled: false, boost: 0 },
             cardResults: [],
 
             presets: [
@@ -112,6 +113,18 @@
             get downPayment() { return this.parseNum(this.downPaymentInput); },
             get cardBalance() {
                 return Math.max(0, this.productPrice - this.tradeInValue - this.downPayment);
+            },
+            get activeBoost() {
+                return this.numberGame.enabled ? this.numberGame.boost : 0;
+            },
+            get displayTradeInValue() {
+                return this.tradeInValue + this.activeBoost;
+            },
+            get displayBalance() {
+                return Math.max(0, (this.productPrice + this.activeBoost) - this.displayTradeInValue - this.downPayment);
+            },
+            get boostMax() {
+                return Math.max(0, Math.floor(this.tradeInValue / 50) * 50) || 500;
             },
             get tradeInStorages() {
                 return this.tradeInModels[this.tradeIn.model] || [];
@@ -177,6 +190,7 @@
                 this.debouncedEvaluate();
             },
             clearTradeIn() {
+                this.numberGame = { enabled: false, boost: 0 };
                 this.tradeIn.model = '';
                 this.tradeIn.storage = '';
                 this.tradeIn.battery = 100;
@@ -328,7 +342,10 @@
                     const tiDesc = this.tradeIn.model
                         ? this.tradeIn.model + (this.tradeIn.storage ? ' ' + this.tradeIn.storage : '')
                         : 'Seu aparelho';
-                    lines.push(`🔄 *Seu seminovo:* ${tiDesc}`);
+                    const tiDisplay = this.activeBoost > 0
+                        ? `${tiDesc} *(R$ ${this.fmt(this.displayTradeInValue)})*`
+                        : tiDesc;
+                    lines.push(`🔄 *Seu seminovo:* ${tiDisplay}`);
                 }
 
                 if (this.downPayment > 0) {
@@ -382,6 +399,7 @@
                 };
                 this.downPaymentInput = '';
                 this.showOnlyDifference = false;
+                this.numberGame = { enabled: false, boost: 0 };
                 this.cardResults = [];
                 this.activePreset = 'even';
                 this.evalSearch = '';
