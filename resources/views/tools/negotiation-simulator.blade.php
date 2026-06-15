@@ -298,7 +298,11 @@
 
                 if (this.showOnlyDifference) {
                     if (balance > 0) {
-                        lines.push(`*Diferença à vista: R$ ${this.fmt(balance)}*`);
+                        const hasTradeInOrDownCompact = this.tradeInValue > 0 || this.downPayment > 0;
+                        const labelCompact = hasTradeInOrDownCompact
+                            ? `Diferença à vista com desconto: R$ ${this.fmt(balance)}`
+                            : `Valor à vista com desconto R$ ${this.fmt(balance)}`;
+                        lines.push(`*${labelCompact}*`);
 
                         const selected = this.cardResults.filter(r => r.selected);
                         if (selected.length > 0) {
@@ -312,22 +316,19 @@
 
                     lines.push('');
                     const expiry = this.getExpiryDate();
-                    lines.push(`⏳ _Simulação válida até ${expiry}_`);
+                    lines.push(`⏳ _Simulação válida somente hoje (${expiry})_`);
 
                     return lines.join('\n');
                 }
 
                 const desc = this.product.description || 'Produto';
                 lines.push(`📱 *${desc}*`);
-                lines.push(`💰 *R$ ${this.fmt(this.productPrice)}*`);
 
                 if (this.tradeInValue > 0) {
                     const tiDesc = this.tradeIn.model
                         ? this.tradeIn.model + (this.tradeIn.storage ? ' ' + this.tradeIn.storage : '')
                         : 'Seu aparelho';
-                    lines.push('');
                     lines.push(`🔄 *Seu seminovo:* ${tiDesc}`);
-                    lines.push(`Desconto: *- R$ ${this.fmt(this.tradeInValue)}*`);
                 }
 
                 if (this.downPayment > 0) {
@@ -335,9 +336,12 @@
                 }
 
                 if (balance > 0) {
-                    lines.push('');
                     lines.push(`━━━━━━━━━━━━━━━`);
-                    lines.push(`✅ *Diferença à vista: R$ ${this.fmt(balance)}*`);
+                    const hasTradeInOrDown = this.tradeInValue > 0 || this.downPayment > 0;
+                    const label = hasTradeInOrDown
+                        ? `Diferença à vista com desconto: R$ ${this.fmt(balance)}`
+                        : `Valor à vista com desconto R$ ${this.fmt(balance)}`;
+                    lines.push(`✅ *${label}*`);
 
                     const selected = this.cardResults.filter(r => r.selected);
                     if (selected.length > 0) {
@@ -351,20 +355,13 @@
 
                 lines.push('');
                 const expiry = this.getExpiryDate();
-                lines.push(`⏳ _Simulação válida até ${expiry}_`);
+                lines.push(`⏳ _Simulação válida somente hoje (${expiry})_`);
 
                 return lines.join('\n');
             },
 
             getExpiryDate() {
-                const d = new Date();
-                let added = 0;
-                while (added < 2) {
-                    d.setDate(d.getDate() + 1);
-                    const dow = d.getDay();
-                    if (dow !== 0 && dow !== 6) added++;
-                }
-                return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                return new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
             },
 
             async copyMessage() {
