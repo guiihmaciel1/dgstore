@@ -103,10 +103,58 @@
                                     <span style="margin-top: 2px;">{{ $deal->created_at->format('d/m/Y') }}</span>
                                 </div>
                                 <div>
-                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Última atividade</span>
-                                    <span style="margin-top: 2px;">{{ $deal->days_since_last_activity === 0 ? 'Hoje' : $deal->days_since_last_activity . ' dia(s) atrás' }}</span>
+                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Última interação</span>
+                                    @php
+                                        $waitColor = ['green' => '#059669', 'yellow' => '#ca8a04', 'orange' => '#ea580c', 'red' => '#dc2626'][$deal->waiting_urgency] ?? '#6b7280';
+                                    @endphp
+                                    <span style="margin-top: 2px; color: {{ $waitColor }}; font-weight: 600;">
+                                        {{ $deal->waiting_time_label === 'agora' ? 'Agora' : 'Há ' . $deal->waiting_time_label }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Origem</span>
+                                    @if($deal->lead_source)
+                                        <span style="display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 2px; font-size: 0.8rem; color: {{ $deal->lead_source->color() }}; font-weight: 600;">
+                                            <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="{{ $deal->lead_source->icon() }}"/>
+                                            </svg>
+                                            {{ $deal->lead_source->label() }}
+                                        </span>
+                                    @else
+                                        <span style="margin-top: 2px; color: #9ca3af;">Não informada</span>
+                                    @endif
+                                </div>
+                                <div>
+                                    @php
+                                        $tempColors = ['hot' => '#ef4444', 'warm' => '#f59e0b', 'cold' => '#3b82f6'];
+                                        $tempLabels = ['hot' => 'Quente', 'warm' => 'Morno', 'cold' => 'Frio'];
+                                    @endphp
+                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Temperatura</span>
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 2px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $tempColors[$deal->temperature] ?? '#f59e0b' }};"></span>
+                                        {{ $tempLabels[$deal->temperature] ?? 'Morno' }}
+                                    </span>
                                 </div>
                             </div>
+
+                            {{-- Próxima Ação --}}
+                            @if($deal->next_action || $deal->next_action_at)
+                                <div style="margin-top: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; {{ $deal->is_followup_overdue ? 'background: #fef2f2; border: 1px solid #fecaca;' : 'background: #f0f9ff; border: 1px solid #bae6fd;' }}">
+                                    <span style="font-size: 0.7rem; font-weight: 600; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#0369a1' }}; display: block; margin-bottom: 0.25rem;">
+                                        {{ $deal->is_followup_overdue ? 'Follow-up atrasado!' : 'Próximo Passo' }}
+                                    </span>
+                                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                                        @if($deal->next_action)
+                                            <span style="font-size: 0.8rem; color: #111827; font-weight: 500;">{{ $deal->next_action }}</span>
+                                        @endif
+                                        @if($deal->next_action_at)
+                                            <span style="font-size: 0.75rem; font-weight: 600; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#6b7280' }};">
+                                                {{ $deal->next_action_at->format('d/m/Y H:i') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
 
                             @if($deal->description)
                                 <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6;">
@@ -237,6 +285,37 @@
                                         <div>
                                             <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Previsão</label>
                                             <input type="date" name="expected_close_date" value="{{ $deal->expected_close_date?->format('Y-m-d') }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                        <div>
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Origem do Lead</label>
+                                            <select name="lead_source" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                                <option value="">Não informada</option>
+                                                @foreach(\App\Domain\CRM\Enums\LeadSource::cases() as $src)
+                                                    <option value="{{ $src->value }}" {{ $deal->lead_source === $src ? 'selected' : '' }}>{{ $src->label() }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Temperatura</label>
+                                            <select name="temperature" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                                <option value="hot" {{ $deal->temperature === 'hot' ? 'selected' : '' }}>Quente</option>
+                                                <option value="warm" {{ $deal->temperature === 'warm' ? 'selected' : '' }}>Morno</option>
+                                                <option value="cold" {{ $deal->temperature === 'cold' ? 'selected' : '' }}>Frio</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                        <div>
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Próximo Passo</label>
+                                            <input type="text" name="next_action" value="{{ $deal->next_action }}" placeholder="Ex: Enviar orçamento"
+                                                   style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Data Próximo Contato</label>
+                                            <input type="datetime-local" name="next_action_at" value="{{ $deal->next_action_at?->format('Y-m-d\TH:i') }}"
+                                                   style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
                                         </div>
                                     </div>
                                     <div>

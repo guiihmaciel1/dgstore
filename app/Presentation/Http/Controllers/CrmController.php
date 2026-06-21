@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers;
 
 use App\Domain\CRM\Enums\DealActivityType;
+use App\Domain\CRM\Enums\LeadSource;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\DealActivity;
 use App\Domain\CRM\Models\PipelineStage;
@@ -44,7 +45,14 @@ class CrmController extends Controller
         $deals = $dealsQuery->orderBy('position')->get();
 
         $dealsByStage = $activeStages->mapWithKeys(function ($stage) use ($deals) {
-            return [$stage->id => $deals->where('pipeline_stage_id', $stage->id)->values()];
+            $stageDeals = $deals->where('pipeline_stage_id', $stage->id)
+                ->sortBy(function ($deal) {
+                    $ref = $deal->last_interaction_at ?? $deal->created_at;
+                    return $ref->timestamp;
+                })
+                ->values();
+
+            return [$stage->id => $stageDeals];
         });
 
         $metricsQuery = Deal::query();
@@ -67,6 +75,9 @@ class CrmController extends Controller
                 ->whereMonth('lost_at', now()->month)
                 ->whereYear('lost_at', now()->year)
                 ->count(),
+            'stale_4h' => (clone $metricsQuery)->stale(4)->count(),
+            'stale_24h' => (clone $metricsQuery)->stale(24)->count(),
+            'overdue_followups' => (clone $metricsQuery)->needsFollowup()->count(),
         ];
 
         $sellers = \App\Domain\User\Models\User::where('active', true)->orderBy('name')->get(['id', 'name', 'role']);
@@ -81,6 +92,7 @@ class CrmController extends Controller
             'isAdmin' => $isAdmin,
             'attendants' => Appointment::ATTENDANTS,
             'durationOptions' => Appointment::DURATION_OPTIONS,
+            'leadSources' => LeadSource::cases(),
         ]);
     }
 
@@ -88,6 +100,8 @@ class CrmController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $leadSourceValues = implode(',', array_column(LeadSource::cases(), 'value'));
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'product_interest' => 'nullable|string|max:255',
@@ -102,6 +116,10 @@ class CrmController extends Controller
             'interest_color' => 'nullable|string|max:50',
             'interest_condition' => 'nullable|string|in:novo,seminovo',
             'interest_max_budget' => 'nullable|numeric|min:0',
+            'lead_source' => "nullable|string|in:{$leadSourceValues}",
+            'temperature' => 'nullable|string|in:hot,warm,cold',
+            'next_action' => 'nullable|string|max:255',
+            'next_action_at' => 'nullable|date',
         ]);
 
         $stageId = ! empty($validated['pipeline_stage_id'])
@@ -140,6 +158,8 @@ class CrmController extends Controller
             'user_id' => auth()->id(),
             'pipeline_stage_id' => $stageId,
             'position' => $maxPosition + 1,
+            'temperature' => $validated['temperature'] ?? 'warm',
+            'last_interaction_at' => now(),
         ]);
 
         if (! empty($interestData['interest_model'])) {
@@ -183,6 +203,7 @@ class CrmController extends Controller
 
     public function update(Request $request, Deal $deal): RedirectResponse
     {
+        $leadSourceValues = implode(',', array_column(LeadSource::cases(), 'value'));
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -192,6 +213,10 @@ class CrmController extends Controller
             'description' => 'nullable|string|max:2000',
             'expected_close_date' => 'nullable|date',
             'customer_id' => 'nullable|exists:customers,id',
+            'lead_source' => "nullable|string|in:{$leadSourceValues}",
+            'temperature' => 'nullable|string|in:hot,warm,cold',
+            'next_action' => 'nullable|string|max:255',
+            'next_action_at' => 'nullable|date',
         ]);
 
         $deal->update($validated);
@@ -269,7 +294,6 @@ class CrmController extends Controller
 
     public function storeActivity(Request $request, Deal $deal): RedirectResponse
     {
-
         $validated = $request->validate([
             'type' => 'required|string|in:note,whatsapp,call',
             'description' => 'required|string|max:2000',
@@ -279,6 +303,8 @@ class CrmController extends Controller
             DealActivityType::from($validated['type']),
             $validated['description']
         );
+
+        $deal->updateLastInteraction();
 
         return redirect()->route('crm.show', $deal)
             ->with('success', 'Atividade registrada!');

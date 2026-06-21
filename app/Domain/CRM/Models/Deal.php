@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\CRM\Models;
 
 use App\Domain\CRM\Enums\DealActivityType;
+use App\Domain\CRM\Enums\LeadSource;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\User\Models\User;
 use App\Domain\WhatsApp\Models\WhatsAppMessage;
@@ -34,6 +35,11 @@ class Deal extends Model
         'lost_reason',
         'source',
         'source_metadata',
+        'lead_source',
+        'temperature',
+        'next_action',
+        'next_action_at',
+        'last_interaction_at',
     ];
 
     protected function casts(): array
@@ -47,6 +53,9 @@ class Deal extends Model
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'source_metadata' => 'array',
+            'lead_source' => LeadSource::class,
+            'next_action_at' => 'datetime',
+            'last_interaction_at' => 'datetime',
         ];
     }
 
@@ -107,6 +116,21 @@ class Deal extends Model
     public function scopeFromWhatsApp(Builder $query): Builder
     {
         return $query->where('source', 'whatsapp');
+    }
+
+    public function scopeStale(Builder $query, int $hours = 24): Builder
+    {
+        return $query->open()->where(function (Builder $q) use ($hours) {
+            $q->where('last_interaction_at', '<', now()->subHours($hours))
+                ->orWhereNull('last_interaction_at');
+        });
+    }
+
+    public function scopeNeedsFollowup(Builder $query): Builder
+    {
+        return $query->open()
+            ->whereNotNull('next_action_at')
+            ->where('next_action_at', '<=', now());
     }
 
     // Helpers
@@ -211,6 +235,10 @@ class Deal extends Model
 
     public function getDaysSinceLastActivityAttribute(): int
     {
+        if ($this->last_interaction_at) {
+            return (int) $this->last_interaction_at->diffInDays(now());
+        }
+
         $lastActivity = $this->activities()->latest()->first();
 
         if (! $lastActivity) {
@@ -218,5 +246,67 @@ class Deal extends Model
         }
 
         return (int) $lastActivity->created_at->diffInDays(now());
+    }
+
+    public function updateLastInteraction(): void
+    {
+        $this->update(['last_interaction_at' => now()]);
+    }
+
+    public function getIsStaleAttribute(): bool
+    {
+        $ref = $this->last_interaction_at ?? $this->created_at;
+
+        return $this->isOpen() && $ref->diffInHours(now()) >= 24;
+    }
+
+    public function getWaitingHoursAttribute(): float
+    {
+        $ref = $this->last_interaction_at ?? $this->created_at;
+
+        return round($ref->diffInHours(now(), true), 1);
+    }
+
+    public function getWaitingTimeLabelAttribute(): string
+    {
+        $hours = $this->waiting_hours;
+
+        if ($hours < 1) {
+            $minutes = (int) round($hours * 60);
+
+            return $minutes <= 1 ? 'agora' : "{$minutes}min";
+        }
+
+        if ($hours < 24) {
+            return (int) $hours . 'h';
+        }
+
+        $days = (int) floor($hours / 24);
+
+        return $days . 'd';
+    }
+
+    public function getWaitingUrgencyAttribute(): string
+    {
+        $hours = $this->waiting_hours;
+
+        if ($hours < 1) {
+            return 'green';
+        }
+        if ($hours < 4) {
+            return 'yellow';
+        }
+        if ($hours < 24) {
+            return 'orange';
+        }
+
+        return 'red';
+    }
+
+    public function getIsFollowupOverdueAttribute(): bool
+    {
+        return $this->isOpen()
+            && $this->next_action_at
+            && $this->next_action_at->lt(now());
     }
 }

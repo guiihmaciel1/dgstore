@@ -20,6 +20,9 @@
                             <select name="interest_model" style="width: 100%; padding: 0.4rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
                                 <option value="">Selecione...</option>
                                 <optgroup label="iPhone">
+                                    <option {{ old('interest_model') === 'iPhone 17 Pro Max' ? 'selected' : '' }}>iPhone 17 Pro Max</option>
+                                    <option {{ old('interest_model') === 'iPhone 17 Pro' ? 'selected' : '' }}>iPhone 17 Pro</option>
+                                    <option {{ old('interest_model') === 'iPhone 17' ? 'selected' : '' }}>iPhone 17</option>
                                     <option {{ old('interest_model') === 'iPhone 16 Pro Max' ? 'selected' : '' }}>iPhone 16 Pro Max</option>
                                     <option {{ old('interest_model') === 'iPhone 16 Pro' ? 'selected' : '' }}>iPhone 16 Pro</option>
                                     <option {{ old('interest_model') === 'iPhone 16 Plus' ? 'selected' : '' }}>iPhone 16 Plus</option>
@@ -103,6 +106,41 @@
                                 <option value="{{ $stage->id }}" {{ $stage->is_default ? 'selected' : '' }}>{{ $stage->name }}</option>
                             @endforeach
                         </select>
+                    </div>
+                </div>
+
+                {{-- Origem e Temperatura --}}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Origem do Lead</label>
+                        <select name="lead_source" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                            <option value="">Não informada</option>
+                            @foreach(\App\Domain\CRM\Enums\LeadSource::cases() as $src)
+                                <option value="{{ $src->value }}" {{ old('lead_source') === $src->value ? 'selected' : '' }}>{{ $src->label() }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Temperatura</label>
+                        <select name="temperature" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                            <option value="hot" {{ old('temperature') === 'hot' ? 'selected' : '' }}>Quente</option>
+                            <option value="warm" {{ old('temperature', 'warm') === 'warm' ? 'selected' : '' }}>Morno</option>
+                            <option value="cold" {{ old('temperature') === 'cold' ? 'selected' : '' }}>Frio</option>
+                        </select>
+                    </div>
+                </div>
+
+                {{-- Próximo Passo --}}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Próximo Passo</label>
+                        <input type="text" name="next_action" value="{{ old('next_action') }}" placeholder="Ex: Enviar orçamento"
+                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Data do Próximo Contato</label>
+                        <input type="datetime-local" name="next_action_at" value="{{ old('next_action_at') }}"
+                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
                     </div>
                 </div>
 

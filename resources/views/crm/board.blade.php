@@ -67,6 +67,36 @@
                 </div>
             </div>
 
+            {{-- Alertas de atenção --}}
+            @if($metrics['stale_4h'] > 0 || $metrics['overdue_followups'] > 0)
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                    @if($metrics['stale_24h'] > 0)
+                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #dc2626;">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            </svg>
+                            {{ $metrics['stale_24h'] }} lead(s) sem resposta +24h
+                        </div>
+                    @endif
+                    @if($metrics['stale_4h'] > $metrics['stale_24h'])
+                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #ea580c;">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            {{ $metrics['stale_4h'] - $metrics['stale_24h'] }} lead(s) sem resposta +4h
+                        </div>
+                    @endif
+                    @if($metrics['overdue_followups'] > 0)
+                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #dc2626;">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            {{ $metrics['overdue_followups'] }} follow-up(s) atrasado(s)
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             @include('crm.partials.modal-new-deal')
             @include('crm.partials.modal-new-customer')
             @include('crm.partials.modal-new-schedule')
@@ -98,20 +128,48 @@
                         <div class="deal-column" data-stage-id="{{ $stage->id }}"
                              style="flex: 1; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; min-height: 100px;">
                             @foreach(($dealsByStage[$stage->id] ?? collect()) as $deal)
-                                @php $interest = $deal->productInterests->first(); @endphp
+                                @php
+                                    $interest = $deal->productInterests->first();
+                                    $urgency = $deal->waiting_urgency;
+                                    $urgencyColors = [
+                                        'green' => '#22c55e',
+                                        'yellow' => '#eab308',
+                                        'orange' => '#f97316',
+                                        'red' => '#ef4444',
+                                    ];
+                                    $borderColor = $urgencyColors[$urgency] ?? '#e5e7eb';
+                                    $tempColors = ['hot' => '#ef4444', 'warm' => '#f59e0b', 'cold' => '#3b82f6'];
+                                    $tempLabels = ['hot' => 'Quente', 'warm' => 'Morno', 'cold' => 'Frio'];
+                                    $waitingColors = [
+                                        'green' => '#059669',
+                                        'yellow' => '#ca8a04',
+                                        'orange' => '#ea580c',
+                                        'red' => '#dc2626',
+                                    ];
+                                @endphp
                                 <a href="{{ route('crm.show', $deal) }}" class="deal-card" data-deal-id="{{ $deal->id }}"
-                                   style="display: block; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.75rem; cursor: grab; text-decoration: none; transition: box-shadow 0.15s; {{ $deal->isOverdue() ? 'border-left: 3px solid #dc2626;' : '' }}"
+                                   style="display: block; background: white; border: 1px solid #e5e7eb; border-left: 3px solid {{ $borderColor }}; border-radius: 0.5rem; padding: 0.75rem; cursor: grab; text-decoration: none; transition: box-shadow 0.15s;"
                                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
 
-                                    {{-- Badges: produto + condição --}}
-                                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 0.375rem;">
+                                    {{-- Badges: origem + temperatura + condição --}}
+                                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 0.375rem; align-items: center;">
+                                        @if($deal->lead_source)
+                                            <span style="font-size: 0.6rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; display: inline-flex; align-items: center; gap: 2px; color: white; background: {{ $deal->lead_source->color() }};">
+                                                <svg style="width: 10px; height: 10px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $deal->lead_source->icon() }}"/>
+                                                </svg>
+                                                {{ $deal->lead_source->label() }}
+                                            </span>
+                                        @endif
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $tempColors[$deal->temperature] ?? '#f59e0b' }}; flex-shrink: 0;"
+                                              title="{{ $tempLabels[$deal->temperature] ?? 'Morno' }}"></span>
                                         @if($deal->product_interest)
-                                            <span style="font-size: 0.65rem; font-weight: 600; color: #374151; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">
+                                            <span style="font-size: 0.6rem; font-weight: 600; color: #374151; background: #f3f4f6; padding: 1px 5px; border-radius: 4px;">
                                                 {{ $deal->product_interest }}
                                             </span>
                                         @endif
                                         @if($interest && $interest->condition)
-                                            <span style="font-size: 0.6rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: #dbeafe; color: #1e40af;' : 'background: #fef3c7; color: #92400e;' }}">
+                                            <span style="font-size: 0.55rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: #dbeafe; color: #1e40af;' : 'background: #fef3c7; color: #92400e;' }}">
                                                 {{ $interest->condition === 'novo' ? 'Novo' : 'Seminovo' }}
                                             </span>
                                         @endif
@@ -155,16 +213,34 @@
                                                     </svg>
                                                 </span>
                                             @endif
-
-                                            @if($deal->days_since_last_activity >= 3)
-                                                <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;" title="{{ $deal->days_since_last_activity }} dias sem interação"></span>
-                                            @endif
                                         </div>
                                     </div>
 
-                                    @if($deal->user)
-                                        <div style="font-size: 0.6rem; color: #9ca3af; margin-top: 0.375rem;">
-                                            {{ $deal->user->name }}
+                                    {{-- Tempo de espera + próxima ação --}}
+                                    <div style="margin-top: 0.375rem; display: flex; align-items: center; justify-content: space-between;">
+                                        <span style="font-size: 0.6rem; font-weight: 600; color: {{ $waitingColors[$urgency] ?? '#6b7280' }};"
+                                              title="Tempo desde última interação">
+                                            <svg style="width: 10px; height: 10px; display: inline; vertical-align: -1px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            {{ $deal->waiting_time_label }}
+                                        </span>
+                                        @if($deal->user)
+                                            <span style="font-size: 0.6rem; color: #9ca3af;">
+                                                {{ $deal->user->name }}
+                                            </span>
+                                        @endif
+                                    </div>
+
+                                    @if($deal->next_action)
+                                        <div style="margin-top: 0.25rem; font-size: 0.6rem; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#6b7280' }}; display: flex; align-items: center; gap: 0.25rem;">
+                                            <svg style="width: 10px; height: 10px; flex-shrink: 0;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                            </svg>
+                                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $deal->next_action }}</span>
+                                            @if($deal->next_action_at)
+                                                <span style="flex-shrink: 0; font-weight: 600;">{{ $deal->next_action_at->format('d/m H:i') }}</span>
+                                            @endif
                                         </div>
                                     @endif
                                 </a>
