@@ -46,4 +46,23 @@
             </div>
         </template>
     </div>
+
+    {{-- Seminovos em Estoque --}}
+    <template x-if="quickValuesUsed.length > 0">
+        <div class="mt-3 pt-3 border-t border-gray-100">
+            <label class="text-[10px] font-semibold uppercase tracking-wider text-amber-600 mb-1.5 block">Seminovos</label>
+            <div class="flex flex-wrap gap-1.5">
+                <template x-for="(uv, uidx) in quickValuesUsed" :key="'used-' + uidx">
+                    <button @click="selectQuickValue(uv.name, uv.value)" type="button"
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-2 whitespace-nowrap transition-colors"
+                            :class="isQuickValueActive(uv.name, uv.value)
+                                ? 'border-amber-600 bg-amber-600 text-white'
+                                : 'border-amber-200 bg-amber-50 text-amber-800 hover:border-amber-300'">
+                        <span x-text="chipLabel(uv.name)"></span>
+                        <span class="opacity-60 ml-1" x-text="'R$ ' + fmt(uv.value)"></span>
+                    </button>
+                </template>
+            </div>
+        </div>
+    </template>
 </div>

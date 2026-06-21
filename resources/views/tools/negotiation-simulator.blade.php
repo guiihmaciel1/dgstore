@@ -68,6 +68,7 @@
     function negotiationSimulator() {
         return {
             quickValues: @json($quickValuesFromMarketing ?? []),
+            quickValuesUsed: @json($quickValuesUsed ?? []),
             tradeInModels: @json($tradeInModels ?? []),
             toast: '',
             copied: false,

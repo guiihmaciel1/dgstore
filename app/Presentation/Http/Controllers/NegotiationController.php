@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers;
 
 use App\Domain\Marketing\Models\MarketingPrice;
+use App\Domain\Product\Enums\ProductCondition;
+use App\Domain\Product\Models\Product;
 use App\Domain\Valuation\Services\NegotiationEvaluatorService;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\QueryException;
@@ -22,10 +24,12 @@ class NegotiationController extends Controller
     public function index(): View
     {
         $quickValues = $this->buildQuickValues();
+        $usedQuickValues = $this->buildUsedQuickValues();
         $tradeInModels = config('dgifipe.models');
 
         return view('tools.negotiation-simulator', [
             'quickValuesFromMarketing' => $quickValues,
+            'quickValuesUsed' => $usedQuickValues,
             'tradeInModels' => $tradeInModels,
         ]);
     }
@@ -129,6 +133,31 @@ class NegotiationController extends Controller
             })->values()->toArray();
 
             return ['name' => $key, 'value' => 0, 'variants' => $variants];
+        })->values()->toArray();
+    }
+
+    private function buildUsedQuickValues(): array
+    {
+        $products = Product::where('active', true)
+            ->where('stock_quantity', '>', 0)
+            ->whereIn('condition', [ProductCondition::Used, ProductCondition::Refurbished])
+            ->whereNotNull('sale_price')
+            ->where('sale_price', '>', 0)
+            ->orderBy('name')
+            ->get();
+
+        return $products->map(function (Product $product) {
+            $parts = array_filter([$product->name, $product->storage]);
+            $label = implode(' ', $parts);
+
+            if ($product->color) {
+                $label .= ' ' . $product->color;
+            }
+
+            return [
+                'name' => $label,
+                'value' => (float) $product->sale_price,
+            ];
         })->values()->toArray();
     }
 }

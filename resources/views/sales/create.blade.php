@@ -66,12 +66,85 @@
                     <!-- COLUNA PRINCIPAL - PRODUTOS -->
                     <div class="sale-main">
                         
-                        <!-- PASSO 1: BUSCAR PRODUTO -->
+                        <!-- PASSO 1: TIPO DE VENDA + CONFIGURAÇÕES -->
+                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem;">
+                                <!-- Tipo de Venda -->
+                                <div style="flex: 1; min-width: 200px;">
+                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #374151; margin-bottom: 0.75rem;">
+                                        Tipo de Venda <span style="color: #dc2626;">*</span>
+                                    </label>
+                                    <div style="display: flex; gap: 1rem;">
+                                        <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s;"
+                                               :style="{ borderColor: saleType === 'cliente_final' ? '#3b82f6' : '#e5e7eb', background: saleType === 'cliente_final' ? '#eff6ff' : 'white' }">
+                                            <input type="radio" name="sale_type" value="cliente_final" 
+                                                   x-model="saleType" required
+                                                   style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #3b82f6;">
+                                            <span style="font-size: 0.9375rem; font-weight: 500;">Cliente Final</span>
+                                        </label>
+                                        <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s;"
+                                               :style="{ borderColor: saleType === 'repasse' ? '#8b5cf6' : '#e5e7eb', background: saleType === 'repasse' ? '#f5f3ff' : 'white' }">
+                                            <input type="radio" name="sale_type" value="repasse" 
+                                                   x-model="saleType" required
+                                                   style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #8b5cf6;">
+                                            <span style="font-size: 0.9375rem; font-weight: 500;">Repasse</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Vendedor Responsável -->
+                                <div style="flex: 1; min-width: 200px;">
+                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #374151; margin-bottom: 0.75rem;">
+                                        Vendedor Responsável <span style="color: #dc2626;">*</span>
+                                    </label>
+                                    <select name="seller_name" x-model="sellerName" required
+                                            style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.9375rem; background: white; outline: none;"
+                                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        <option value="">Selecione...</option>
+                                        <option value="Guilherme">Guilherme</option>
+                                        <option value="Danilo">Danilo</option>
+                                        <option value="Sophia">Sophia</option>
+                                        <option value="Maria">Maria</option>
+                                    </select>
+                                </div>
+
+                                <!-- Tipo de Entrega -->
+                                <div style="flex: 1; min-width: 200px;">
+                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #374151; margin-bottom: 0.75rem;">
+                                        Entrega <span style="color: #dc2626;">*</span>
+                                    </label>
+                                    <select name="delivery_type" x-model="deliveryType" required
+                                            style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.9375rem; background: white; outline: none;"
+                                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                        <option value="">Selecione...</option>
+                                        <option value="retirada">Retirada</option>
+                                        <option value="entrega">Entrega</option>
+                                        <option value="transferencia">Transferência</option>
+                                    </select>
+                                    <!-- Sub-opção de entrega -->
+                                    <div x-show="deliveryType === 'entrega'" x-collapse style="margin-top: 0.75rem;">
+                                        <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">
+                                            Método de Entrega
+                                        </label>
+                                        <select name="delivery_method" x-model="deliveryMethod"
+                                                style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white; outline: none;"
+                                                onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                            <option value="">Selecione...</option>
+                                            <option value="motoboy_nosso">Motoboy Nosso</option>
+                                            <option value="motoboy_cliente">Motoboy Cliente</option>
+                                            <option value="entrega_dg">Entrega DG</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PASSO 2: BUSCAR PRODUTO -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: visible;">
                             <div style="background: #111827; color: white; padding: 1rem 1.5rem; border-radius: 1rem 1rem 0 0;">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center;">
-                                        <span style="width: 2rem; height: 2rem; background: white; color: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">1</span>
+                                        <span style="width: 2rem; height: 2rem; background: white; color: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">2</span>
                                         <span style="font-size: 1.125rem; font-weight: 600;">Adicionar Produtos</span>
                                     </div>
                                     <button type="button" @click="showProductModal = true; productForm = resetProductForm()"
@@ -332,28 +405,6 @@
                             </div>
                         </div>
                         
-                        <!-- TIPO DE VENDA (Obrigatório) -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
-                            <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #374151; margin-bottom: 0.75rem;">
-                                Tipo de Venda <span style="color: #dc2626;">*</span>
-                            </label>
-                            <div style="display: flex; gap: 1.5rem;">
-                                <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s;"
-                                       :style="{ borderColor: saleType === 'cliente_final' ? '#3b82f6' : '#e5e7eb', background: saleType === 'cliente_final' ? '#eff6ff' : 'white' }">
-                                    <input type="radio" name="sale_type" value="cliente_final" 
-                                           x-model="saleType" required
-                                           style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #3b82f6;">
-                                    <span style="font-size: 0.9375rem; font-weight: 500;">Cliente Final</span>
-                                </label>
-                                <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s;"
-                                       :style="{ borderColor: saleType === 'repasse' ? '#8b5cf6' : '#e5e7eb', background: saleType === 'repasse' ? '#f5f3ff' : 'white' }">
-                                    <input type="radio" name="sale_type" value="repasse" 
-                                           x-model="saleType" required
-                                           style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #8b5cf6;">
-                                    <span style="font-size: 0.9375rem; font-weight: 500;">Repasse</span>
-                                </label>
-                            </div>
-                        </div>
                         
                         <!-- TRADE-IN (Aparelhos como entrada) -->
                         <div x-show="saleType === 'cliente_final' || saleType === null" style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
@@ -593,11 +644,6 @@
                                     <span style="font-size: 1rem; font-weight: 700; color: #5b21b6;" x-text="'Total: ' + formatMoney(totalTradeInValue)"></span>
                                 </div>
 
-                                <div style="margin-top: 0.75rem; padding: 0.75rem; background: #f5f3ff; border-radius: 0.5rem; border: 1px solid #ddd6fe;">
-                                    <p style="font-size: 0.75rem; color: #5b21b6;">
-                                        <strong>Nota:</strong> Os aparelhos ficarão pendentes para cadastro no estoque após a venda ser finalizada.
-                                    </p>
-                                </div>
                             </div>
                         </div>
                         
@@ -746,7 +792,7 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Parcelamentos em Cartões (Múltiplos) -->
+                                <!-- Parcelamentos em Cartões (Múltiplos) com Taxa Stone -->
                                 <div x-show="saleType === 'cliente_final' || saleType === null" style="margin-bottom: 1rem; padding: 1rem; background: #eff6ff; border-radius: 0.75rem; border: 1px solid #bfdbfe;">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
                                         <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #1e40af;">
@@ -754,6 +800,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                             </svg>
                                             Parcelamento em Cartão
+                                            <span style="font-size: 0.6875rem; font-weight: 400; color: #6b7280; margin-left: 0.5rem;">(Taxa Stone aplicada)</span>
                                         </label>
                                         <button type="button" @click="addCardPayment()" 
                                                 style="display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: #3b82f6; color: white; border-radius: 0.375rem; font-size: 0.75rem; border: none; cursor: pointer;">
@@ -778,11 +825,11 @@
                                             </div>
                                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                                                 <div>
-                                                    <label style="display: block; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.125rem;">Valor</label>
+                                                    <label style="display: block; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.125rem;">Valor Líquido (recebido)</label>
                                                     <div style="position: relative;">
                                                         <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.7rem;">R$</span>
                                                         <input type="number" :name="'card_payments['+cardIndex+'][amount]'" 
-                                                               x-model.number="card.amount" @input="updateTotals"
+                                                               x-model.number="card.amount" @input="calculateCardFee(cardIndex)"
                                                                step="0.01" min="0" placeholder="0,00"
                                                                style="width: 100%; padding: 0.375rem 0.375rem 0.375rem 1.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
                                                     </div>
@@ -791,16 +838,28 @@
                                                     <label style="display: block; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.125rem;">Parcelas</label>
                                                     <select :name="'card_payments['+cardIndex+'][installments]'" 
                                                             x-model.number="card.installments"
+                                                            @change="calculateCardFee(cardIndex)"
                                                             style="width: 100%; padding: 0.375rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
-                                                        @for($i = 1; $i <= 12; $i++)
+                                                        @for($i = 1; $i <= 18; $i++)
                                                             <option value="{{ $i }}">{{ $i }}x</option>
                                                         @endfor
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div x-show="card.amount > 0 && card.installments > 1" 
-                                                 style="margin-top: 0.375rem; font-size: 0.7rem; color: #6b7280; text-align: right;">
-                                                <span x-text="card.installments + 'x de ' + formatMoney(card.amount / card.installments)"></span>
+                                            <!-- Info da taxa Stone -->
+                                            <div x-show="card.amount > 0 && card.installments >= 1" 
+                                                 style="margin-top: 0.5rem; padding: 0.5rem; background: #f8fafc; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #64748b;">
+                                                    <span>Taxa Stone: <strong x-text="(card.mdr_rate || 0).toFixed(2) + '%'"></strong></span>
+                                                    <span>Taxa: <strong style="color: #dc2626;" x-text="formatMoney(card.fee_amount || 0)"></strong></span>
+                                                </div>
+                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #1e293b; margin-top: 0.25rem; font-weight: 600;">
+                                                    <span>Cliente paga:</span>
+                                                    <span x-text="formatMoney(card.gross_amount || card.amount || 0)"></span>
+                                                </div>
+                                                <div x-show="card.installments > 1" style="font-size: 0.7rem; color: #64748b; text-align: right; margin-top: 0.125rem;">
+                                                    <span x-text="card.installments + 'x de ' + formatMoney((card.gross_amount || card.amount || 0) / card.installments)"></span>
+                                                </div>
                                             </div>
                                         </div>
                                     </template>
@@ -1486,6 +1545,11 @@
                 
                 // Tipo de venda (padrão: Cliente Final)
                 saleType: 'cliente_final',
+                
+                // Vendedor e entrega
+                sellerName: '',
+                deliveryType: '',
+                deliveryMethod: '',
 
                 // Modal de Cliente
                 showCustomerModal: false,
@@ -1606,11 +1670,54 @@
                 },
                 
                 addCardPayment() {
-                    this.cardPayments.push({ amount: 0, installments: 1 });
+                    this.cardPayments.push({ amount: 0, installments: 1, gross_amount: 0, mdr_rate: 0, fee_amount: 0 });
                 },
                 
                 removeCardPayment(index) {
                     this.cardPayments.splice(index, 1);
+                    this.updateTotals();
+                },
+
+                async calculateCardFee(cardIndex) {
+                    const card = this.cardPayments[cardIndex];
+                    if (!card || !card.amount || card.amount <= 0) {
+                        card.gross_amount = 0;
+                        card.mdr_rate = 0;
+                        card.fee_amount = 0;
+                        this.updateTotals();
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('{{ route("card-fees.calculate") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                net_amount: parseFloat(card.amount),
+                                payment_type: 'credit',
+                                installments: parseInt(card.installments) || 1,
+                            })
+                        });
+
+                        const data = await response.json();
+                        if (data.success && data.data) {
+                            card.gross_amount = data.data.gross_amount;
+                            card.mdr_rate = data.data.mdr_rate;
+                            card.fee_amount = data.data.fee_amount;
+                        } else {
+                            card.gross_amount = card.amount;
+                            card.mdr_rate = 0;
+                            card.fee_amount = 0;
+                        }
+                    } catch (e) {
+                        card.gross_amount = card.amount;
+                        card.mdr_rate = 0;
+                        card.fee_amount = 0;
+                    }
                     this.updateTotals();
                 },
                 
