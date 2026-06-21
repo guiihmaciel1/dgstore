@@ -21,6 +21,7 @@ readonly class SaleData
         public array $items,
         public ?string $customerId = null,
         public ?SaleType $saleType = null,
+        public ?string $sellerName = null,
         public float $discount = 0,
         public float $tradeInValue = 0,
         public float $cashPayment = 0,
@@ -31,6 +32,8 @@ readonly class SaleData
         public PaymentStatus $paymentStatus = PaymentStatus::Pending,
         public int $installments = 1,
         public ?string $notes = null,
+        public ?string $deliveryType = null,
+        public ?string $deliveryMethod = null,
         public ?Carbon $soldAt = null,
     ) {}
 
@@ -63,6 +66,7 @@ readonly class SaleData
                     ? $data['sale_type']
                     : SaleType::from($data['sale_type']))
                 : null,
+            sellerName: !empty($data['seller_name']) ? $data['seller_name'] : null,
             discount: (float) ($data['discount'] ?? 0),
             tradeInValue: (float) ($data['trade_in_value'] ?? 0),
             cashPayment: (float) ($data['cash_payment'] ?? 0),
@@ -77,6 +81,8 @@ readonly class SaleData
                 : PaymentStatus::Pending,
             installments: (int) ($data['installments'] ?? 1),
             notes: !empty($data['notes']) ? $data['notes'] : null,
+            deliveryType: !empty($data['delivery_type']) ? $data['delivery_type'] : null,
+            deliveryMethod: !empty($data['delivery_method']) ? $data['delivery_method'] : null,
             soldAt: isset($data['sold_at']) 
                 ? Carbon::parse($data['sold_at']) 
                 : Carbon::now(),

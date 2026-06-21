@@ -67,7 +67,14 @@
                     <div class="sale-main">
                         
                         <!-- PASSO 1: TIPO DE VENDA + CONFIGURAÇÕES -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: visible;">
+                            <div style="background: #111827; color: white; padding: 1rem 1.5rem; border-radius: 1rem 1rem 0 0;">
+                                <div style="display: flex; align-items: center;">
+                                    <span style="width: 2rem; height: 2rem; background: white; color: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">1</span>
+                                    <span style="font-size: 1.125rem; font-weight: 600;">Primeiro Passo</span>
+                                </div>
+                            </div>
+                            <div style="padding: 1.5rem;">
                             <div style="display: flex; flex-wrap: wrap; gap: 1.5rem;">
                                 <!-- Tipo de Venda -->
                                 <div style="flex: 1; min-width: 200px;">
@@ -80,7 +87,7 @@
                                             <input type="radio" name="sale_type" value="cliente_final" 
                                                    x-model="saleType" required
                                                    style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #3b82f6;">
-                                            <span style="font-size: 0.9375rem; font-weight: 500;">Cliente Final</span>
+                                            <span style="font-size: 0.9375rem; font-weight: 500;">Cliente</span>
                                         </label>
                                         <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s;"
                                                :style="{ borderColor: saleType === 'repasse' ? '#8b5cf6' : '#e5e7eb', background: saleType === 'repasse' ? '#f5f3ff' : 'white' }">
@@ -136,6 +143,7 @@
                                         </select>
                                     </div>
                                 </div>
+                            </div>
                             </div>
                         </div>
 
@@ -673,12 +681,12 @@
                     <!-- COLUNA LATERAL - RESUMO -->
                     <div class="sale-sidebar">
                         
-                        <!-- PASSO 2: CLIENTE -->
+                        <!-- PASSO 3: CLIENTE -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; position: relative; z-index: 30;">
                             <div style="background: #374151; color: white; padding: 0.75rem 1.5rem; border-radius: 1rem 1rem 0 0;">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center;">
-                                        <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">2</span>
+                                        <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">3</span>
                                         <span style="font-weight: 600;">Cliente <span style="color: #fca5a5;">*</span></span>
                                     </div>
                                     <button type="button" @click="showCustomerModal = true; customerForm = resetCustomerForm()"
@@ -749,11 +757,11 @@
                             </div>
                         </div>
                         
-                        <!-- PASSO 3: PAGAMENTO MISTO -->
+                        <!-- PASSO 4: PAGAMENTO MISTO -->
                         <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                             <div style="background: #374151; color: white; padding: 0.75rem 1.5rem;">
                                 <div style="display: flex; align-items: center;">
-                                    <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">3</span>
+                                    <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">4</span>
                                     <span style="font-weight: 600;">Pagamento</span>
                                 </div>
                             </div>
@@ -849,13 +857,14 @@
                                             <!-- Info da taxa Stone -->
                                             <div x-show="card.amount > 0 && card.installments >= 1" 
                                                  style="margin-top: 0.5rem; padding: 0.5rem; background: #f8fafc; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
-                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #64748b;">
-                                                    <span>Taxa Stone: <strong x-text="(card.mdr_rate || 0).toFixed(2) + '%'"></strong></span>
-                                                    <span>Taxa: <strong style="color: #dc2626;" x-text="formatMoney(card.fee_amount || 0)"></strong></span>
+                                                <div style="font-size: 0.75rem; color: #1e293b; font-weight: 500;">
+                                                    <span x-text="card.installments + 'x'"></span> - 
+                                                    Taxa: <strong x-text="(card.mdr_rate || 0).toFixed(2) + '%'"></strong> - 
+                                                    Você recebe: <strong style="color: #16a34a;" x-text="formatMoney(card.amount)"></strong>
                                                 </div>
-                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: #1e293b; margin-top: 0.25rem; font-weight: 600;">
-                                                    <span>Cliente paga:</span>
-                                                    <span x-text="formatMoney(card.gross_amount || card.amount || 0)"></span>
+                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #64748b; margin-top: 0.375rem;">
+                                                    <span>Cliente paga: <strong x-text="formatMoney(card.gross_amount || card.amount || 0)"></strong></span>
+                                                    <span style="color: #dc2626;">Taxa: <strong x-text="formatMoney(card.fee_amount || 0)"></strong></span>
                                                 </div>
                                                 <div x-show="card.installments > 1" style="font-size: 0.7rem; color: #64748b; text-align: right; margin-top: 0.125rem;">
                                                     <span x-text="card.installments + 'x de ' + formatMoney((card.gross_amount || card.amount || 0) / card.installments)"></span>
@@ -1547,7 +1556,12 @@
                 saleType: 'cliente_final',
                 
                 // Vendedor e entrega
-                sellerName: '',
+                sellerName: (() => {
+                    const userName = '{{ auth()->user()->name ?? '' }}';
+                    const sellers = ['Guilherme', 'Danilo', 'Sophia', 'Maria'];
+                    const match = sellers.find(s => userName.toLowerCase().includes(s.toLowerCase()));
+                    return match || '';
+                })(),
                 deliveryType: '',
                 deliveryMethod: '',
 
@@ -1645,6 +1659,9 @@
                 // Computed: pode submeter o formulário
                 get canSubmit() {
                     if (!this.saleType) return false;
+                    if (!this.sellerName) return false;
+                    if (!this.deliveryType) return false;
+                    if (this.deliveryType === 'entrega' && !this.deliveryMethod) return false;
                     if (this.items.length === 0) return false;
                     if (!this.selectedCustomer.id) return false;
                     if (this.hasTradeIn && !this.tradeInsValid) return false;
@@ -1731,6 +1748,15 @@
                 getSubmitButtonText() {
                     if (!this.saleType) {
                         return 'Selecione o tipo de venda';
+                    }
+                    if (!this.sellerName) {
+                        return 'Selecione o vendedor';
+                    }
+                    if (!this.deliveryType) {
+                        return 'Selecione o tipo de entrega';
+                    }
+                    if (this.deliveryType === 'entrega' && !this.deliveryMethod) {
+                        return 'Selecione o método de entrega';
                     }
                     if (this.items.length === 0) {
                         return 'Adicione produtos para continuar';

@@ -29,6 +29,7 @@ class Sale extends Model
         'customer_id',
         'sale_type',
         'user_id',
+        'seller_name',
         'subtotal',
         'discount',
         'trade_in_value',
@@ -41,6 +42,8 @@ class Sale extends Model
         'payment_status',
         'installments',
         'notes',
+        'delivery_type',
+        'delivery_method',
         'sold_at',
     ];
 

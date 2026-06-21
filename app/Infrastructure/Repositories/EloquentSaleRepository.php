@@ -73,6 +73,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 'customer_id' => $data->customerId,
                 'sale_type' => $data->saleType,
                 'user_id' => $data->userId,
+                'seller_name' => $data->sellerName,
                 'subtotal' => $subtotal,
                 'discount' => $data->discount,
                 'trade_in_value' => $data->tradeInValue,
@@ -85,6 +86,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 'payment_status' => $data->paymentStatus,
                 'installments' => $data->installments,
                 'notes' => $data->notes,
+                'delivery_type' => $data->deliveryType,
+                'delivery_method' => $data->deliveryMethod,
                 'sold_at' => $data->soldAt ?? now(),
             ]);
 
