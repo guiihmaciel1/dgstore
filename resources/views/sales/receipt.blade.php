@@ -338,7 +338,7 @@
     <div class="header">
         <h1>DG STORE</h1>
         <div class="subtitle">Loja de iPhones e Acessórios</div>
-        <div class="store-info">Catanduva - SP</div>
+        <div class="store-info">São José do Rio Preto - SP</div>
     </div>
 
     {{-- Título do Documento --}}
@@ -566,10 +566,31 @@
     {{-- Assinatura --}}
     <div class="signature-section">
         <div class="signature-line">
-            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjcwIiB2aWV3Qm94PSIwIDAgMjQwIDcwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0yMCw0NSBDMjUsNTAgMzUsNTIgNDAsNDUgQzQ1LDM4IDM1LDI1IDMwLDIwIEMyNSwxNSAyMCwyMCAxOCwyOCBDMTYsMzYgMjAsNDggMzAsNTAgQzQwLDUyIDUwLDQ1IDU1LDM4IEM2MCwzMSA1OCwyNSA1NSwyOCBDNTIsMzEgNTAsNDAgNTUsNDUgQzYwLDUwIDcwLDQ1IDc1LDQwIiBmaWxsPSJub25lIiBzdHJva2U9IiMxYTIzN2UiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNODAsMjAgQzg1LDE4IDk1LDIwIDk4LDI4IEMxMDEsMzYgOTUsNDggODgsNTAgQzgxLDUyIDc4LDQ1IDgwLDM4IEM4MiwzMSA5MCwyOCA5NSwzMCBDMTAwLDMyIDEwMiw0MCAxMDAsNDUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFhMjM3ZSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMTUsMzUgQzExOCwyMCAxMjIsMTUgMTI4LDIwIEMxMzQsMjUgMTMwLDQwIDEyNSw0NSBDMTIwLDUwIDExNSw0NSAxMTgsMzggQzEyMSwzMSAxMzAsMjggMTM1LDMyIiBmaWxsPSJub25lIiBzdHJva2U9IiMxYTIzN2UiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTM4LDI4IEMxNDIsMjUgMTQ4LDIyIDE1MiwyNSBDMTU2LDI4IDE1NCwzNSAxNTAsMzggQzE0Niw0MSAxNDIsNDAgMTQyLDM4IiBmaWxsPSJub25lIiBzdHJva2U9IiMxYTIzN2UiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTU1LDI1IEMxNTgsMjIgMTYyLDIwIDE2NSwyMiBDMTY4LDI0IDE2OCwzMCAxNjUsMzUgQzE2Miw0MCAxNTgsMzggMTYwLDMzIEMxNjIsMjggMTY4LDI1IDE3MiwzMCBDMTc2LDM1IDE3NCw0MiAxNzgsNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFhMjM3ZSIgc3Ryb2tlLXdpZHRoPSIyLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xODAsMjggQzE4MywyMiAxODgsMjAgMTkyLDI1IEMxOTYsMzAgMTk0LDM4IDE5MCw0MCBDMTg2LDQyIDE4NCwzOCAxODYsMzMgQzE4OCwyOCAxOTQsMjUgMTk4LDMwIEMyMDIsMzUgMjAwLDQyIDIwNSw0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWEyMzdlIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTIwNSwzMCBDMjEwLDI1IDIxNSwyOCAyMTgsMzUgQzIyMSw0MiAyMTgsNDggMjE1LDQ1IEMyMTIsNDIgMjE1LDM1IDIyMCwzMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWEyMzdlIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTUsMjAgQzEwLDE4IDE1LDIyIDE4LDMwIEMyMSwzOCAxNSw1MiAzMCw1NSBDNDUsNTggNzAsNTIgMTEwLDUwIEMxNTAsNDggMTkwLDUyIDIyMCw0OCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMWEyMzdlIiBzdHJva2Utd2lkdGg9IjEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWRhc2hhcnJheT0iMiw0IiBvcGFjaXR5PSIwLjQiLz48L3N2Zz4=" alt="Assinatura DG Store" style="width: 200px; height: 55px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60">
+                <!-- Letra D cursiva -->
+                <path d="M15,48 C13,42 12,35 14,28 C16,20 20,14 24,12 C30,9 38,12 42,18 C46,24 47,34 44,40 C41,46 36,50 30,50 C24,50 18,48 15,48 M15,48 C18,48 22,47 28,46" fill="none" stroke="#1a237e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Letra G cursiva -->
+                <path d="M52,22 C56,18 62,16 66,18 C70,20 72,26 70,32 C68,38 62,42 56,42 C50,42 48,38 50,34 C52,30 58,28 64,30 C68,31 70,34 70,38 C70,44 66,50 60,52 C54,54 50,50 52,46" fill="none" stroke="#1a237e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Flourish entre D e G para Store -->
+                <path d="M72,36 C78,32 84,30 90,32 C94,33 92,38 88,38" fill="none" stroke="#1a237e" stroke-width="1.8" stroke-linecap="round"/>
+                <!-- Letra S cursiva -->
+                <path d="M95,24 C100,20 106,20 108,24 C110,28 104,32 100,34 C96,36 94,38 96,42 C98,46 104,46 108,44" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Letra t cursiva -->
+                <path d="M112,16 C112,22 112,28 112,36 C112,40 114,42 117,41 M108,28 L118,28" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Letra o cursiva -->
+                <path d="M120,30 C120,26 124,24 128,26 C132,28 132,34 128,38 C124,40 120,38 120,34 C120,30 122,30 126,32" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Letra r cursiva -->
+                <path d="M132,38 C132,32 134,26 136,24 C138,26 140,30 142,32 C144,34 146,34 148,32" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Letra e cursiva -->
+                <path d="M148,30 C152,28 156,28 158,30 C160,32 158,36 154,38 C150,40 146,38 148,36" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Flourish final -->
+                <path d="M158,34 C164,30 172,28 180,30 C188,32 194,36 200,34" fill="none" stroke="#1a237e" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+                <!-- Underline decorativo -->
+                <path d="M12,54 C40,52 80,50 120,51 C160,52 190,50 210,48" fill="none" stroke="#1a237e" stroke-width="0.8" stroke-linecap="round" opacity="0.3"/>
+            </svg>
         </div>
         <div class="signature-name">DG Store</div>
-        <div class="signature-location">Catanduva - SP</div>
+        <div class="signature-location">São José do Rio Preto - SP</div>
     </div>
 
     {{-- Rodapé --}}
