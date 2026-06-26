@@ -919,22 +919,61 @@
                             <p class="text-xs text-gray-400 mt-1">vendidos no mês</p>
 
                             @if($monthSummary['iphone_total'] > 0)
-                            @php $newPct = $monthSummary['iphone_total'] > 0 ? ($monthSummary['iphone_new'] / $monthSummary['iphone_total']) * 100 : 0; @endphp
+                            {{-- Barra de proporção Cliente Final vs Repasse --}}
+                            @php $cfPct = $monthSummary['iphone_total'] > 0 ? ($monthSummary['iphone_cf_total'] / $monthSummary['iphone_total']) * 100 : 0; @endphp
                             <div class="mt-3 h-2.5 bg-gray-100 rounded-full overflow-hidden flex">
-                                <div class="h-full bg-emerald-400 rounded-l-full transition-all duration-700" style="width: {{ $newPct }}%"></div>
-                                <div class="h-full bg-amber-400 rounded-r-full transition-all duration-700" style="width: {{ 100 - $newPct }}%"></div>
+                                <div class="h-full bg-blue-400 rounded-l-full transition-all duration-700" style="width: {{ $cfPct }}%"></div>
+                                <div class="h-full bg-purple-400 rounded-r-full transition-all duration-700" style="width: {{ 100 - $cfPct }}%"></div>
                             </div>
-                            <div class="flex items-center justify-between mt-2 text-xs">
-                                <span class="flex items-center gap-1">
-                                    <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
-                                    <span class="text-gray-500">Novos</span>
-                                    <span class="font-bold text-emerald-600">{{ $monthSummary['iphone_new'] }}</span>
-                                </span>
-                                <span class="flex items-center gap-1">
-                                    <span class="w-2 h-2 bg-amber-400 rounded-full"></span>
-                                    <span class="text-gray-500">Seminovos</span>
-                                    <span class="font-bold text-amber-600">{{ $monthSummary['iphone_used'] }}</span>
-                                </span>
+
+                            {{-- Cliente Final --}}
+                            <div class="mt-3 space-y-1">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-2.5 h-2.5 bg-blue-400 rounded-full"></span>
+                                        <span class="text-gray-600 font-semibold">Cliente Final</span>
+                                    </span>
+                                    <span class="font-bold text-blue-600">{{ $monthSummary['iphone_cf_total'] }}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs pl-4">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
+                                        <span class="text-gray-400">Novos</span>
+                                    </span>
+                                    <span class="font-bold text-emerald-600">{{ $monthSummary['iphone_cf_new'] }}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs pl-4">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                                        <span class="text-gray-400">Seminovos</span>
+                                    </span>
+                                    <span class="font-bold text-amber-600">{{ $monthSummary['iphone_cf_used'] }}</span>
+                                </div>
+                            </div>
+
+                            {{-- Repasse --}}
+                            <div class="mt-2 space-y-1">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-2.5 h-2.5 bg-purple-400 rounded-full"></span>
+                                        <span class="text-gray-600 font-semibold">Repasse</span>
+                                    </span>
+                                    <span class="font-bold text-purple-600">{{ $monthSummary['iphone_repasse_total'] }}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs pl-4">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
+                                        <span class="text-gray-400">Novos</span>
+                                    </span>
+                                    <span class="font-bold text-emerald-600">{{ $monthSummary['iphone_repasse_new'] }}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs pl-4">
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
+                                        <span class="text-gray-400">Seminovos</span>
+                                    </span>
+                                    <span class="font-bold text-amber-600">{{ $monthSummary['iphone_repasse_used'] }}</span>
+                                </div>
                             </div>
                             @endif
 
@@ -1801,25 +1840,60 @@
                             <span style="font-size: 0.55rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.25);">Qtd</span>
                         </div>
 
+                        {{-- Total iPhones --}}
                         <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
                             <span style="font-size: 0.8rem; font-weight: 700; color: white;">iPhones vendidos</span>
                             <span style="font-size: 1rem; font-weight: 800; color: white;">{{ $monthSummary['iphone_total'] }}</span>
                         </div>
 
-                        <div style="padding: 0.4375rem 1rem 0.4375rem 1.875rem; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center;">
+                        {{-- Cliente Final --}}
+                        <div style="padding: 0.5rem 1rem 0.375rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center;">
                             <div style="display: flex; align-items: center; gap: 0.4rem;">
-                                <div style="width: 0.3125rem; height: 0.3125rem; border-radius: 50%; background: #34d399;"></div>
-                                <span style="font-size: 0.725rem; color: rgba(255,255,255,0.55);">Novos</span>
+                                <div style="width: 0.375rem; height: 0.375rem; border-radius: 50%; background: #60a5fa;"></div>
+                                <span style="font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.7);">Cliente Final</span>
                             </div>
-                            <span style="font-size: 0.85rem; font-weight: 700; color: #34d399;">{{ $monthSummary['iphone_new'] }}</span>
+                            <span style="font-size: 0.9rem; font-weight: 700; color: #60a5fa;">{{ $monthSummary['iphone_cf_total'] }}</span>
                         </div>
 
-                        <div style="padding: 0.4375rem 1rem 0.4375rem 1.875rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
-                            <div style="display: flex; align-items: center; gap: 0.4rem;">
-                                <div style="width: 0.3125rem; height: 0.3125rem; border-radius: 50%; background: #fbbf24;"></div>
-                                <span style="font-size: 0.725rem; color: rgba(255,255,255,0.55);">Seminovos (used)</span>
+                        <div style="padding: 0.3125rem 1rem 0.3125rem 2.25rem; border-bottom: 1px solid rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.35rem;">
+                                <div style="width: 0.25rem; height: 0.25rem; border-radius: 50%; background: #34d399;"></div>
+                                <span style="font-size: 0.675rem; color: rgba(255,255,255,0.45);">Novos</span>
                             </div>
-                            <span style="font-size: 0.85rem; font-weight: 700; color: #fbbf24;">{{ $monthSummary['iphone_used'] }}</span>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #34d399;">{{ $monthSummary['iphone_cf_new'] }}</span>
+                        </div>
+
+                        <div style="padding: 0.3125rem 1rem 0.3125rem 2.25rem; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.35rem;">
+                                <div style="width: 0.25rem; height: 0.25rem; border-radius: 50%; background: #fbbf24;"></div>
+                                <span style="font-size: 0.675rem; color: rgba(255,255,255,0.45);">Seminovos</span>
+                            </div>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #fbbf24;">{{ $monthSummary['iphone_cf_used'] }}</span>
+                        </div>
+
+                        {{-- Repasse --}}
+                        <div style="padding: 0.5rem 1rem 0.375rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                <div style="width: 0.375rem; height: 0.375rem; border-radius: 50%; background: #c084fc;"></div>
+                                <span style="font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.7);">Repasse</span>
+                            </div>
+                            <span style="font-size: 0.9rem; font-weight: 700; color: #c084fc;">{{ $monthSummary['iphone_repasse_total'] }}</span>
+                        </div>
+
+                        <div style="padding: 0.3125rem 1rem 0.3125rem 2.25rem; border-bottom: 1px solid rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.35rem;">
+                                <div style="width: 0.25rem; height: 0.25rem; border-radius: 50%; background: #34d399;"></div>
+                                <span style="font-size: 0.675rem; color: rgba(255,255,255,0.45);">Novos</span>
+                            </div>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #34d399;">{{ $monthSummary['iphone_repasse_new'] }}</span>
+                        </div>
+
+                        <div style="padding: 0.3125rem 1rem 0.3125rem 2.25rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.35rem;">
+                                <div style="width: 0.25rem; height: 0.25rem; border-radius: 50%; background: #fbbf24;"></div>
+                                <span style="font-size: 0.675rem; color: rgba(255,255,255,0.45);">Seminovos</span>
+                            </div>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #fbbf24;">{{ $monthSummary['iphone_repasse_used'] }}</span>
                         </div>
 
                         @if($monthSummary['accessories'] > 0)

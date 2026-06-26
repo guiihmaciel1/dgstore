@@ -27,7 +27,6 @@
 
     $isUsed = $product && in_array($product->condition?->value, ['used', 'refurbished']);
     $customer = $sale?->customer;
-    $snapshot = $warranty->saleItem?->product_snapshot ?? [];
 @endphp
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -36,7 +35,7 @@
     <title>Declaração de Garantia - {{ $warranty->product_name }}</title>
     <style>
         @page {
-            margin: 40px 50px;
+            margin: 30px 35px;
         }
 
         * {
@@ -47,54 +46,54 @@
 
         body {
             font-family: 'DejaVu Sans', Arial, sans-serif;
-            font-size: 11px;
-            line-height: 1.6;
+            font-size: 9.5px;
+            line-height: 1.4;
             color: #1a1a1a;
             padding: 0;
         }
 
         .header {
             text-align: center;
-            padding-bottom: 18px;
-            border-bottom: 3px solid #1a1a1a;
-            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2.5px solid #1a1a1a;
+            margin-bottom: 12px;
         }
 
         .header h1 {
-            font-size: 32px;
+            font-size: 26px;
             font-weight: bold;
             letter-spacing: 2px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .header .subtitle {
-            font-size: 12px;
+            font-size: 10px;
             color: #4a4a4a;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .header .store-info {
-            font-size: 10px;
+            font-size: 8.5px;
             color: #666;
-            margin-top: 6px;
+            margin-top: 3px;
         }
 
         .document-title {
             text-align: center;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #1a1a1a;
-            margin-bottom: 22px;
-            padding: 8px 0;
+            margin-bottom: 12px;
+            padding: 5px 0;
             background-color: #f0f0f0;
         }
 
         .two-columns {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .two-columns td {
@@ -104,26 +103,26 @@
         }
 
         .two-columns td:first-child {
-            padding-right: 15px;
+            padding-right: 12px;
         }
 
         .two-columns td:last-child {
-            padding-left: 15px;
+            padding-left: 12px;
         }
 
         .section {
-            margin-bottom: 18px;
+            margin-bottom: 8px;
         }
 
         .section-title {
-            font-size: 11px;
+            font-size: 9.5px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #1a1a1a;
-            border-bottom: 2px solid #1a1a1a;
-            padding-bottom: 4px;
-            margin-bottom: 10px;
+            border-bottom: 1.5px solid #1a1a1a;
+            padding-bottom: 2px;
+            margin-bottom: 5px;
         }
 
         .info-table {
@@ -132,75 +131,72 @@
         }
 
         .info-table td {
-            padding: 3px 0;
+            padding: 1.5px 0;
             vertical-align: top;
         }
 
         .info-table .label {
             font-weight: bold;
             color: #4a4a4a;
-            width: 110px;
-            font-size: 10px;
+            width: 90px;
+            font-size: 8.5px;
             text-transform: uppercase;
         }
 
         .info-table .value {
             color: #1a1a1a;
+            font-size: 9.5px;
         }
 
         .body-text {
-            font-size: 12px;
+            font-size: 9.5px;
             text-align: justify;
-            line-height: 1.8;
-            margin-bottom: 15px;
+            line-height: 1.5;
+            margin-bottom: 8px;
         }
 
         .warranty-box {
-            border: 2px solid #1a1a1a;
-            padding: 15px 20px;
-            margin: 20px 0;
+            border: 1.5px solid #1a1a1a;
+            padding: 8px 15px;
+            margin: 10px 0;
             background-color: #fafafa;
+            text-align: center;
         }
 
         .warranty-box-title {
-            font-size: 12px;
+            font-size: 9px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            text-align: center;
-            margin-bottom: 10px;
-            color: #1a1a1a;
-        }
-
-        .warranty-box-content {
-            text-align: center;
+            margin-bottom: 4px;
+            color: #4a4a4a;
         }
 
         .warranty-days {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #1a1a1a;
         }
 
         .warranty-period {
-            font-size: 10px;
+            font-size: 8.5px;
             color: #4a4a4a;
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .exclusions {
-            margin: 18px 0;
-            padding: 12px 15px;
+            margin: 10px 0;
+            padding: 8px 10px;
             background-color: #f8f8f8;
-            border-left: 3px solid #c62828;
+            border-left: 2.5px solid #c62828;
         }
 
         .exclusions-title {
-            font-size: 10px;
+            font-size: 8.5px;
             font-weight: bold;
             text-transform: uppercase;
             color: #c62828;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .exclusions-list {
@@ -209,74 +205,74 @@
         }
 
         .exclusions-list td {
-            padding: 3px 0;
-            font-size: 11px;
+            padding: 1.5px 0;
+            font-size: 9px;
             color: #333;
         }
 
         .exclusions-list .bullet {
-            width: 15px;
+            width: 12px;
             vertical-align: top;
             color: #c62828;
             font-weight: bold;
         }
 
         .location-date {
-            margin-top: 25px;
-            font-size: 11px;
+            margin-top: 12px;
+            font-size: 9.5px;
             color: #4a4a4a;
         }
 
         .signature-section {
-            margin-top: 50px;
+            margin-top: 25px;
             text-align: center;
         }
 
         .signature-line {
-            width: 280px;
+            width: 220px;
             border-bottom: 1px solid #1a1a1a;
             margin: 0 auto;
-            padding-bottom: 8px;
+            padding-bottom: 5px;
         }
 
         .signature-name {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
-            margin-top: 8px;
+            margin-top: 5px;
             color: #1a1a1a;
         }
 
         .signature-role {
-            font-size: 10px;
+            font-size: 9px;
             color: #4a4a4a;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .signature-location {
-            font-size: 9px;
+            font-size: 8px;
             color: #666;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .footer {
-            margin-top: 30px;
+            margin-top: 15px;
             text-align: center;
-            padding-top: 12px;
-            border-top: 1px solid #ccc;
+            padding-top: 8px;
+            border-top: 1px solid #ddd;
         }
 
         .footer .emission {
-            font-size: 9px;
+            font-size: 8px;
             color: #999;
         }
 
         .product-badge {
             display: inline-block;
-            padding: 1px 6px;
-            font-size: 9px;
+            padding: 0px 4px;
+            font-size: 8px;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             border: 1px solid;
         }
     </style>
@@ -353,13 +349,13 @@
                         @endif
                         @if($product?->has_box !== null)
                         <tr>
-                            <td class="label">Caixa Original:</td>
+                            <td class="label">Caixa:</td>
                             <td class="value">{{ $product->has_box ? 'Sim' : 'Não' }}</td>
                         </tr>
                         @endif
                         @if($product?->has_cable !== null)
                         <tr>
-                            <td class="label">Cabo Original:</td>
+                            <td class="label">Cabo:</td>
                             <td class="value">{{ $product->has_cable ? 'Sim' : 'Não' }}</td>
                         </tr>
                         @endif
@@ -430,14 +426,12 @@
 
         <div class="warranty-box">
             <div class="warranty-box-title">Período de Garantia</div>
-            <div class="warranty-box-content">
-                <div class="warranty-days">{{ $diasExtenso }} dias</div>
-                <div class="warranty-period">
-                    A partir de {{ $soldAt ? $soldAt->format('d/m/Y') : now()->format('d/m/Y') }}
-                    @if($warranty->customer_warranty_until)
-                        até {{ $warranty->customer_warranty_until->format('d/m/Y') }}
-                    @endif
-                </div>
+            <div class="warranty-days">{{ $diasExtenso }} dias</div>
+            <div class="warranty-period">
+                A partir de {{ $soldAt ? $soldAt->format('d/m/Y') : now()->format('d/m/Y') }}
+                @if($warranty->customer_warranty_until)
+                    até {{ $warranty->customer_warranty_until->format('d/m/Y') }}
+                @endif
             </div>
         </div>
 
@@ -481,7 +475,7 @@
     {{-- Assinatura --}}
     <div class="signature-section">
         <div class="signature-line">
-            <svg xmlns="http://www.w3.org/2000/svg" width="220" height="60" viewBox="0 0 220 60">
+            <svg xmlns="http://www.w3.org/2000/svg" width="180" height="45" viewBox="0 0 220 60">
                 <path d="M15,48 C13,42 12,35 14,28 C16,20 20,14 24,12 C30,9 38,12 42,18 C46,24 47,34 44,40 C41,46 36,50 30,50 C24,50 18,48 15,48 M15,48 C18,48 22,47 28,46" fill="none" stroke="#1a237e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M52,22 C56,18 62,16 66,18 C70,20 72,26 70,32 C68,38 62,42 56,42 C50,42 48,38 50,34 C52,30 58,28 64,30 C68,31 70,34 70,38 C70,44 66,50 60,52 C54,54 50,50 52,46" fill="none" stroke="#1a237e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M72,36 C78,32 84,30 90,32 C94,33 92,38 88,38" fill="none" stroke="#1a237e" stroke-width="1.8" stroke-linecap="round"/>

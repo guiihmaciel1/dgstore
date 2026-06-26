@@ -464,8 +464,14 @@ class DashboardController extends Controller
 
         $iphoneNew = 0;
         $iphoneUsed = 0;
+        $iphoneCfNew = 0;
+        $iphoneCfUsed = 0;
+        $iphoneRepasseNew = 0;
+        $iphoneRepasseUsed = 0;
         $accessories = 0;
         $otherApple = 0;
+
+        $salesById = $sales->keyBy('id');
 
         foreach ($allItems as $item) {
             $rawCategory = $item->product?->category ?? ($item->product_snapshot['category'] ?? null);
@@ -479,12 +485,29 @@ class DashboardController extends Controller
                 : (is_string($rawCondition) ? $rawCondition : null);
 
             $qty = $item->quantity;
+            $saleType = $salesById[$item->sale_id]?->sale_type ?? null;
 
             if ($category === 'smartphone') {
-                if (in_array($condition, ['used', 'refurbished'])) {
+                $isUsed = in_array($condition, ['used', 'refurbished']);
+
+                if ($isUsed) {
                     $iphoneUsed += $qty;
                 } else {
                     $iphoneNew += $qty;
+                }
+
+                if ($saleType === \App\Domain\Sale\Enums\SaleType::ClienteFinal) {
+                    if ($isUsed) {
+                        $iphoneCfUsed += $qty;
+                    } else {
+                        $iphoneCfNew += $qty;
+                    }
+                } else {
+                    if ($isUsed) {
+                        $iphoneRepasseUsed += $qty;
+                    } else {
+                        $iphoneRepasseNew += $qty;
+                    }
                 }
             } elseif (in_array($category, $accessoryCategories)) {
                 $accessories += $qty;
@@ -509,6 +532,12 @@ class DashboardController extends Controller
             'iphone_total' => $iphoneNew + $iphoneUsed,
             'iphone_new' => $iphoneNew,
             'iphone_used' => $iphoneUsed,
+            'iphone_cf_total' => $iphoneCfNew + $iphoneCfUsed,
+            'iphone_cf_new' => $iphoneCfNew,
+            'iphone_cf_used' => $iphoneCfUsed,
+            'iphone_repasse_total' => $iphoneRepasseNew + $iphoneRepasseUsed,
+            'iphone_repasse_new' => $iphoneRepasseNew,
+            'iphone_repasse_used' => $iphoneRepasseUsed,
             'accessories' => $accessories,
             'other_apple' => $otherApple,
             'trade_ins_received' => $tradeInsReceived,
