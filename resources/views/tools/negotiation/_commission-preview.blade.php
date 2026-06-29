@@ -94,26 +94,12 @@
                 </div>
             </div>
 
-            {{-- Dicas rápidas --}}
-            <div class="border-t border-dashed pt-2" :class="commissionEstimate.total > 0 ? 'border-emerald-200' : 'border-amber-200'">
-                <div class="space-y-1.5">
-                    <div class="flex items-center gap-2 text-[11px]" x-show="commissionEstimate.profit > 0">
-                        <span class="text-emerald-600">▲</span>
-                        <span class="text-gray-600">Vendeu acima do custo? <strong class="text-emerald-700">+comissão</strong></span>
-                    </div>
-                    <div class="flex items-center gap-2 text-[11px]" x-show="tradeIn.result && commissionEstimate.tradein > 0">
-                        <span class="text-blue-600">▲</span>
-                        <span class="text-gray-600">Negociou bem o seminovo? <strong class="text-blue-700">+bônus</strong></span>
-                    </div>
-                    <div class="flex items-center gap-2 text-[11px]" x-show="productCost > 0 && productPrice <= productCost">
-                        <span class="text-red-500">▼</span>
-                        <span class="text-gray-600">Sem lucro = <strong class="text-red-600">sem comissão</strong></span>
-                    </div>
-                    <div class="flex items-center gap-2 text-[11px]" x-show="tradeIn.result && tradeInValue >= (tradeIn.result?.resale_price || 0)">
-                        <span class="text-amber-500">▼</span>
-                        <span class="text-gray-600">Pagou muito no seminovo = <strong class="text-amber-600">sem bônus</strong></span>
-                    </div>
-                </div>
+            {{-- Potencial com acessórios --}}
+            <div class="bg-purple-50 border border-purple-100 rounded-lg p-3 mt-1" x-show="commissionEstimate.total > 0">
+                <p class="text-[11px] text-purple-800 leading-relaxed">
+                    Se você vender <strong>capinha + carregador</strong> pode ganhar até
+                    <strong class="text-purple-700 text-sm" x-text="'R$ ' + fmt(commissionEstimate.total + 10 + 10)"></strong> nessa venda!
+                </p>
             </div>
 
 
