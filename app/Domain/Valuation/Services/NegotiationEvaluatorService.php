@@ -69,7 +69,7 @@ class NegotiationEvaluatorService
             $accessoryMod,
         );
 
-        $resalePrice = floor($stats['median'] / 100) * 100;
+        $resalePrice = $this->calculator->calculateResalePrice($suggestedPrice, $resaleMargin);
         $confidence = $this->calculateConfidence($listingsCount, $stats['std_dev'], $stats['average']);
 
         return [
