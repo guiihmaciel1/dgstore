@@ -13,7 +13,7 @@
         <template x-for="(qv, idx) in quickValues" :key="idx">
             <div class="inline-flex">
                 <template x-if="!qv.variants || qv.variants.length === 0">
-                    <button @click="selectQuickValue(qv.name, qv.value)" type="button"
+                    <button @click="selectQuickValue(qv.name, qv.value, qv.cost_price || 0)" type="button"
                             class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-2 whitespace-nowrap transition-colors"
                             :class="isQuickValueActive(qv.name, qv.value)
                                 ? 'border-gray-900 bg-gray-900 text-white'
@@ -27,7 +27,7 @@
                          :class="isQuickValueActiveByName(qv.name) ? 'border-gray-900' : 'border-gray-200'">
                         <span class="py-1.5 pl-3 pr-2 text-xs font-semibold text-gray-700 whitespace-nowrap" x-text="chipLabel(qv.name)"></span>
                         <template x-for="(v, vi) in qv.variants" :key="vi">
-                            <button @click="selectQuickValue(qv.name + ' ' + v.label, v.value)" type="button"
+                            <button @click="selectQuickValue(qv.name + ' ' + v.label, v.value, v.cost_price || 0)" type="button"
                                     class="px-2 py-1 cursor-pointer border-none flex items-center gap-1 transition-colors"
                                     :class="isQuickValueActive(qv.name + ' ' + v.label, v.value)
                                         ? 'bg-gray-900'

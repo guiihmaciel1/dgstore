@@ -84,7 +84,8 @@
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Modelo</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Storage</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Cor</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 120px;">Preco</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Custo</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Venda</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 150px;">Obs</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Ativo</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Fotos</th>
@@ -124,6 +125,12 @@
                                                        style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
                                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
                                                        placeholder="Preto">
+                                            </td>
+                                            <td style="padding: 0.375rem 0.5rem;">
+                                                <input type="number" step="0.01" :name="'prices[' + row._origIdx + '][cost_price]'" x-model="row.cost_price"
+                                                       style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
+                                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                                       placeholder="0.00">
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="number" step="0.01" :name="'prices[' + row._origIdx + '][price]'" x-model="row.price" required
@@ -1054,6 +1061,7 @@
                     name: '',
                     storage: '',
                     color: '',
+                    cost_price: '',
                     price: '',
                     notes: '',
                     active: true,

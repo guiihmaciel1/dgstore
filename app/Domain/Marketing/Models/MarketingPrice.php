@@ -18,6 +18,7 @@ class MarketingPrice extends Model
         'storage',
         'color',
         'price',
+        'cost_price',
         'notes',
         'active',
         'sort_order',
@@ -27,6 +28,7 @@ class MarketingPrice extends Model
     {
         return [
             'price' => 'decimal:2',
+            'cost_price' => 'decimal:2',
             'active' => 'boolean',
             'sort_order' => 'integer',
         ];

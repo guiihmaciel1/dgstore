@@ -115,6 +115,7 @@ class NegotiationController extends Controller
                 return [
                     'name' => $key,
                     'value' => (float) $items->first()->price,
+                    'cost_price' => (float) ($items->first()->cost_price ?? 0),
                 ];
             }
 
@@ -129,7 +130,12 @@ class NegotiationController extends Controller
                     }
                 }
 
-                return ['label' => $label, 'color' => $hex, 'value' => (float) $item->price];
+                return [
+                    'label' => $label,
+                    'color' => $hex,
+                    'value' => (float) $item->price,
+                    'cost_price' => (float) ($item->cost_price ?? 0),
+                ];
             })->values()->toArray();
 
             return ['name' => $key, 'value' => 0, 'variants' => $variants];

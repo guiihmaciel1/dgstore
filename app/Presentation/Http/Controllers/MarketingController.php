@@ -72,6 +72,7 @@ class MarketingController extends Controller
                 'storage' => $p->storage,
                 'color' => $p->color,
                 'price' => $p->price,
+                'cost_price' => $p->cost_price,
                 'notes' => $p->notes,
                 'active' => $p->active,
                 'images' => $p->images->map(fn ($img) => [
@@ -176,6 +177,7 @@ class MarketingController extends Controller
             'prices.*.storage' => ['nullable', 'string', 'max:50'],
             'prices.*.color' => ['nullable', 'string', 'max:50'],
             'prices.*.price' => ['required', 'numeric', 'min:0'],
+            'prices.*.cost_price' => ['nullable', 'numeric', 'min:0'],
             'prices.*.notes' => ['nullable', 'string', 'max:500'],
             'prices.*.active' => ['nullable'],
         ]);
@@ -190,6 +192,7 @@ class MarketingController extends Controller
                     'storage' => $row['storage'] ?? null,
                     'color' => $row['color'] ?? null,
                     'price' => $row['price'],
+                    'cost_price' => !empty($row['cost_price']) ? $row['cost_price'] : null,
                     'notes' => $row['notes'] ?? null,
                     'active' => isset($row['active']),
                     'sort_order' => $index,
