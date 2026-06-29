@@ -15,7 +15,6 @@
                        class="w-full py-4 pl-11 pr-4 bg-gray-50 border-2 border-gray-200 rounded-[10px] text-2xl font-bold text-gray-900 outline-none text-right focus:border-gray-900 focus:bg-white transition-colors">
             </div>
         </div>
-        @if(in_array(auth()->user()->role->value, ['seller', 'intern']))
         <div>
             <label class="block text-xs font-semibold text-gray-900 uppercase tracking-wider mb-1.5">Custo (p/ comissão)</label>
             <div class="relative">
@@ -28,6 +27,5 @@
             </div>
             <p class="text-[10px] text-gray-400 mt-1">Preenchido ao selecionar seminovo</p>
         </div>
-        @endif
     </div>
 </div>

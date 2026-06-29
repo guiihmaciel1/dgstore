@@ -1,4 +1,4 @@
-@if(in_array(auth()->user()->role->value, ['seller', 'intern']))
+@if(true)
 <div x-show="productPrice > 0 && productCost > 0" x-transition x-cloak>
     <div class="rounded-xl border overflow-hidden"
          :class="commissionEstimate.total > 0 ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-teal-50' : 'border-amber-200 bg-gradient-to-br from-amber-50 via-white to-orange-50'">
