@@ -22,7 +22,6 @@
                 <div class="order-1">
                     @include('tools.negotiation._quick-values')
                     @include('tools.negotiation._product-form')
-                    @include('tools.negotiation._commission-preview')
                     @include('tools.negotiation._payment-inputs')
 
                     {{-- Estado vazio --}}
@@ -36,8 +35,9 @@
                 </div>
 
                 {{-- Preview da mensagem (direita no desktop, sticky) --}}
-                <div class="order-2 lg:sticky lg:top-6">
+                <div class="order-2 lg:sticky lg:top-6 space-y-3">
                     @include('tools.negotiation._message-preview')
+                    @include('tools.negotiation._commission-preview')
                 </div>
 
                 {{-- Resultados (abaixo dos inputs na coluna esquerda) --}}
