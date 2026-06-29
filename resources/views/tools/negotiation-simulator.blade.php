@@ -149,6 +149,7 @@
 
             get commissionEstimate() {
                 const RATE = 0.10;
+                const TRADEIN_RATE = 0.05;
                 const FLOOR = 0.0;
                 const TRADEIN_CAP = 0.20;
                 let profit = 0;
@@ -168,7 +169,7 @@
                         let economy = systemValue - this.tradeInValue;
                         const maxDiscount = systemValue * TRADEIN_CAP;
                         economy = Math.min(economy, maxDiscount);
-                        tradein = economy * RATE;
+                        tradein = economy * TRADEIN_RATE;
                     }
                 }
 

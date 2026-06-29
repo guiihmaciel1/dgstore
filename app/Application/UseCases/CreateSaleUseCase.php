@@ -279,7 +279,7 @@ class CreateSaleUseCase
             $maxDiscount = $systemValue * self::TRADEIN_MAX_DISCOUNT;
             $economy = min($economy, $maxDiscount);
 
-            $commission += $economy * self::COMMISSION_RATE;
+            $commission += $economy * self::TRADEIN_COMMISSION_RATE;
         }
 
         return round($commission, 2);

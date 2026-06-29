@@ -117,7 +117,7 @@
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563eb; flex-shrink: 0;"></span>
-                                    <span><strong>10%</strong> da economia na avaliação trade-in <span style="color: #6b7280;">(máx. 20% desconto)</span></span>
+                                    <span><strong>5%</strong> da economia na avaliação trade-in <span style="color: #6b7280;">(máx. 20% desconto)</span></span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <span style="width: 6px; height: 6px; border-radius: 50%; background: #7c3aed; flex-shrink: 0;"></span>
