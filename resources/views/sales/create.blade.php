@@ -106,13 +106,18 @@
                                     </label>
                                     <select name="seller_name" x-model="sellerName" required
                                             style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.9375rem; background: white; outline: none;"
-                                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                            @change="sellerId = $event.target.selectedOptions[0]?.dataset?.userId || ''">
                                         <option value="">Selecione...</option>
                                         <option value="Guilherme">Guilherme</option>
                                         <option value="Danilo">Danilo</option>
-                                        <option value="Sophia">Sophia</option>
-                                        <option value="Maria">Maria</option>
+                                        @foreach($sellers as $seller)
+                                            @unless(in_array($seller->name, ['Guilherme', 'Danilo']))
+                                                <option value="{{ $seller->name }}" data-user-id="{{ $seller->id }}">{{ $seller->name }}</option>
+                                            @endunless
+                                        @endforeach
                                     </select>
+                                    <input type="hidden" name="seller_id" :value="sellerId">
                                 </div>
 
                                 <!-- Tipo de Entrega -->
@@ -1562,6 +1567,7 @@
                     const match = sellers.find(s => userName.toLowerCase().includes(s.toLowerCase()));
                     return match || '';
                 })(),
+                sellerId: '{{ auth()->user()->role->value === 'seller' || auth()->user()->role->value === 'intern' ? auth()->id() : '' }}',
                 deliveryType: '',
                 deliveryMethod: '',
 

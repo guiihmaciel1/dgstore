@@ -22,6 +22,7 @@ readonly class SaleData
         public ?string $customerId = null,
         public ?SaleType $saleType = null,
         public ?string $sellerName = null,
+        public ?string $sellerId = null,
         public float $discount = 0,
         public float $tradeInValue = 0,
         public float $cashPayment = 0,
@@ -67,6 +68,7 @@ readonly class SaleData
                     : SaleType::from($data['sale_type']))
                 : null,
             sellerName: !empty($data['seller_name']) ? $data['seller_name'] : null,
+            sellerId: !empty($data['seller_id']) ? $data['seller_id'] : null,
             discount: (float) ($data['discount'] ?? 0),
             tradeInValue: (float) ($data['trade_in_value'] ?? 0),
             cashPayment: (float) ($data['cash_payment'] ?? 0),

@@ -30,6 +30,7 @@ class Sale extends Model
         'sale_type',
         'user_id',
         'seller_name',
+        'seller_id',
         'subtotal',
         'discount',
         'trade_in_value',
@@ -89,6 +90,11 @@ class Sale extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function seller(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'seller_id');
     }
 
     public function items(): HasMany

@@ -18,6 +18,8 @@ use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Models\SaleFollowup;
 use App\Domain\Sale\Models\SaleItemImage;
 use App\Domain\Sale\Services\SaleService;
+use App\Domain\User\Enums\UserRole;
+use App\Domain\User\Models\User;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Controllers\Concerns\CompressesImages;
 use App\Presentation\Http\Requests\StoreSaleRequest;
@@ -77,8 +79,13 @@ class SaleController extends Controller
                 ->find($request->get('from_reservation'));
         }
 
+        $sellers = User::whereIn('role', [UserRole::Seller->value, UserRole::Intern->value])
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         return view('sales.create', [
             'products' => $products,
+            'sellers' => $sellers,
             'paymentMethods' => PaymentMethod::cases(),
             'paymentStatuses' => PaymentStatus::cases(),
             'tradeInConditions' => TradeInCondition::cases(),

@@ -12,14 +12,14 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Comissões</h1>
-                    <p class="text-sm text-gray-500">Gerenciar comissões e saques de estagiários</p>
+                    <p class="text-sm text-gray-500">Gerenciar comissões e saques dos vendedores</p>
                 </div>
             </div>
 
             {{-- Seletor de Estagiário --}}
             <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
                 <form method="GET" action="{{ route('admin.commissions.index') }}" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
-                    <label style="font-size: 0.875rem; font-weight: 600; color: #374151;">Estagiário:</label>
+                    <label style="font-size: 0.875rem; font-weight: 600; color: #374151;">Vendedor:</label>
                     <select name="user_id" onchange="this.form.submit()" style="padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; min-width: 200px;">
                         @foreach($interns as $intern)
                             <option value="{{ $intern->id }}" {{ $selectedUser?->id === $intern->id ? 'selected' : '' }}>
@@ -102,46 +102,30 @@
                     </div>
                 </div>
 
-                {{-- Configuração de Taxa + Botão de Saque --}}
+                {{-- Metodologia + Saque --}}
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                    {{-- Configurar Taxa --}}
-                    <div x-data="{ type: '{{ $selectedUser->commission_type ?? 'percentage' }}' }" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
+                    {{-- Nova Metodologia Info --}}
+                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
                         <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #111827;">Taxa de Comissão</h3>
+                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #111827;">Metodologia de Comissão</h3>
                         </div>
-                        <form method="POST" action="{{ route('admin.commissions.update-rate', $selectedUser) }}" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                            @csrf
-                            @method('PUT')
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button type="button" @click="type = 'percentage'"
-                                        :style="type === 'percentage'
-                                            ? 'padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 600; border-radius: 0.375rem; cursor: pointer; border: 1px solid #111827; background: #111827; color: white;'
-                                            : 'padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 500; border-radius: 0.375rem; cursor: pointer; border: 1px solid #d1d5db; background: white; color: #374151;'">
-                                    % Percentual
-                                </button>
-                                <button type="button" @click="type = 'fixed'"
-                                        :style="type === 'fixed'
-                                            ? 'padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 600; border-radius: 0.375rem; cursor: pointer; border: 1px solid #111827; background: #111827; color: white;'
-                                            : 'padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 500; border-radius: 0.375rem; cursor: pointer; border: 1px solid #d1d5db; background: white; color: #374151;'">
-                                    R$ Valor fixo
-                                </button>
-                            </div>
-                            <input type="hidden" name="commission_type" :value="type">
-                            <div style="display: flex; align-items: flex-end; gap: 0.75rem;">
-                                <div style="flex: 1;">
-                                    <label style="font-size: 0.75rem; color: #6b7280; display: block; margin-bottom: 0.25rem;">
-                                        <span x-show="type === 'percentage'">Percentual (%)</span>
-                                        <span x-show="type === 'fixed'" x-cloak>Valor por venda (R$)</span>
-                                    </label>
-                                    <input type="number" name="commission_rate" value="{{ $selectedUser->commission_rate ?? 0 }}" step="0.01" min="0"
-                                           :max="type === 'percentage' ? 100 : 99999"
-                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                        <div style="padding: 1.25rem; font-size: 0.8rem; color: #374151;">
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #059669; flex-shrink: 0;"></span>
+                                    <span><strong>10%</strong> sobre o lucro do aparelho <span style="color: #6b7280;">(mín. 30% margem)</span></span>
                                 </div>
-                                <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer;">
-                                    Salvar
-                                </button>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563eb; flex-shrink: 0;"></span>
+                                    <span><strong>10%</strong> da economia na avaliação trade-in <span style="color: #6b7280;">(máx. 20% desconto)</span></span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: #7c3aed; flex-shrink: 0;"></span>
+                                    <span><strong>10%</strong> do excedente de acessórios <span style="color: #6b7280;">(acima do preço mín.)</span></span>
+                                </div>
                             </div>
-                        </form>
+                            <p style="margin-top: 0.75rem; font-size: 0.7rem; color: #9ca3af;">Apenas vendas Cliente Final. Cálculo automático ao registrar a venda.</p>
+                        </div>
                     </div>
 
                     {{-- Registrar Saque --}}
@@ -205,26 +189,25 @@
                 </div>
 
                 {{-- Tabela de Comissões do Mês --}}
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                    <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: visible; margin-bottom: 1.5rem;">
+                    <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; border-radius: 0.75rem 0.75rem 0 0;">
                         <h3 style="font-size: 0.875rem; font-weight: 600; color: #111827;">Comissões do Mês</h3>
                     </div>
                     @if($commissions->count() > 0)
-                        <div style="overflow-x: auto;">
+                        <div style="overflow-x: auto; overflow-y: visible;">
                             <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
-                                    <thead>
+                                <thead>
                                     <tr style="border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
                                         <th style="padding: 0.625rem 1rem; text-align: left; font-weight: 600; color: #6b7280;">Data</th>
                                         <th style="padding: 0.625rem 1rem; text-align: left; font-weight: 600; color: #6b7280;">Origem / Descrição</th>
                                         <th style="padding: 0.625rem 1rem; text-align: right; font-weight: 600; color: #6b7280;">Total Venda</th>
-                                        <th style="padding: 0.625rem 1rem; text-align: right; font-weight: 600; color: #6b7280;">Taxa</th>
                                         <th style="padding: 0.625rem 1rem; text-align: right; font-weight: 600; color: #6b7280;">Comissão</th>
                                         <th style="padding: 0.625rem 1rem; text-align: center; font-weight: 600; color: #6b7280;">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($commissions as $commission)
-                                        <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <tr style="border-bottom: 1px solid #f3f4f6; position: relative;" class="commission-row group" x-data="{ showTip: false }" @mouseenter="showTip = true" @mouseleave="showTip = false">
                                             <td style="padding: 0.625rem 1rem; color: #374151;">{{ $commission->created_at->format('d/m/Y H:i') }}</td>
                                             <td style="padding: 0.625rem 1rem;">
                                                 @if($commission->is_manual)
@@ -245,16 +228,50 @@
                                                     <span style="color: #9ca3af;">—</span>
                                                 @endif
                                             </td>
-                                            <td style="padding: 0.625rem 1rem; text-align: right; color: #374151;">
-                                                @if($commission->is_manual)
-                                                    <span style="color: #9ca3af;">—</span>
-                                                @elseif($commission->commission_type === 'fixed')
-                                                    R$ {{ number_format($commission->commission_rate, 2, ',', '.') }}/venda
-                                                @else
-                                                    {{ number_format($commission->commission_rate, 2, ',', '.') }}%
+                                            <td style="padding: 0.625rem 1rem; text-align: right; font-weight: 700; color: #059669; position: relative;">
+                                                R$ {{ number_format($commission->commission_amount, 2, ',', '.') }}
+                                                {{-- Tooltip com breakdown --}}
+                                                @if(!$commission->is_manual && ($commission->customer_name || $commission->product_summary))
+                                                <div x-show="showTip" x-cloak x-transition
+                                                     style="position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 50; background: #1f2937; color: white; border-radius: 0.5rem; padding: 0.75rem 1rem; font-size: 0.75rem; min-width: 220px; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); pointer-events: none; white-space: nowrap;">
+                                                    @if($commission->customer_name)
+                                                        <div style="margin-bottom: 0.375rem;">
+                                                            <span style="color: #9ca3af;">Cliente:</span>
+                                                            <span style="font-weight: 600;">{{ $commission->customer_name }}</span>
+                                                        </div>
+                                                    @endif
+                                                    @if($commission->product_summary)
+                                                        <div style="margin-bottom: 0.375rem; white-space: normal;">
+                                                            <span style="color: #9ca3af;">Produto:</span>
+                                                            <span style="font-weight: 600;">{{ $commission->product_summary }}</span>
+                                                        </div>
+                                                    @endif
+                                                    @if($commission->profit_commission > 0 || $commission->tradein_commission > 0 || $commission->accessory_commission > 0)
+                                                        <div style="border-top: 1px solid #374151; margin-top: 0.375rem; padding-top: 0.375rem;">
+                                                            @if($commission->profit_commission > 0)
+                                                                <div style="display: flex; justify-content: space-between; gap: 1rem;">
+                                                                    <span style="color: #9ca3af;">Aparelho:</span>
+                                                                    <span style="color: #34d399;">R$ {{ number_format($commission->profit_commission, 2, ',', '.') }}</span>
+                                                                </div>
+                                                            @endif
+                                                            @if($commission->tradein_commission > 0)
+                                                                <div style="display: flex; justify-content: space-between; gap: 1rem;">
+                                                                    <span style="color: #9ca3af;">Trade-in:</span>
+                                                                    <span style="color: #34d399;">R$ {{ number_format($commission->tradein_commission, 2, ',', '.') }}</span>
+                                                                </div>
+                                                            @endif
+                                                            @if($commission->accessory_commission > 0)
+                                                                <div style="display: flex; justify-content: space-between; gap: 1rem;">
+                                                                    <span style="color: #9ca3af;">Acessórios:</span>
+                                                                    <span style="color: #34d399;">R$ {{ number_format($commission->accessory_commission, 2, ',', '.') }}</span>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                    <div style="position: absolute; bottom: -4px; right: 1rem; width: 8px; height: 8px; background: #1f2937; transform: rotate(45deg);"></div>
+                                                </div>
                                                 @endif
                                             </td>
-                                            <td style="padding: 0.625rem 1rem; text-align: right; font-weight: 700; color: #059669;">R$ {{ number_format($commission->commission_amount, 2, ',', '.') }}</td>
                                             <td style="padding: 0.625rem 1rem; text-align: center;">
                                                 <span style="font-size: 0.7rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px;
                                                     {{ $commission->status === 'approved' ? 'background: #ecfdf5; color: #065f46;' : ($commission->status === 'paid' ? 'background: #eff6ff; color: #1e40af;' : 'background: #fffbeb; color: #92400e;') }}">
@@ -335,7 +352,7 @@
                 </div>
             @else
                 <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 3rem; text-align: center; color: #6b7280;">
-                    Nenhum estagiário cadastrado no sistema.
+                    Nenhum vendedor cadastrado no sistema.
                 </div>
             @endif
         </div>

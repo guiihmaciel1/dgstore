@@ -162,6 +162,15 @@ class CreateSaleUseCase
         }
     }
 
+    private const COMMISSION_RATE = 0.10;
+    private const PROFIT_FLOOR_PERCENT = 0.30;
+    private const TRADEIN_MAX_DISCOUNT = 0.20;
+    private const ACCESSORY_MIN_PRICES = [
+        'case' => 30.00,
+        'charger' => 100.00,
+        'cable' => 100.00,
+    ];
+
     private function registerCommission(Sale $sale): void
     {
         if ($sale->sale_type === SaleType::Repasse) {
@@ -169,39 +178,136 @@ class CreateSaleUseCase
         }
 
         try {
-            $user = $sale->user;
+            $seller = $sale->seller;
 
-            if (!$user || $user->role !== UserRole::Intern) {
+            if (!$seller) {
                 return;
             }
 
-            $rate = (float) $user->commission_rate;
-            if ($rate <= 0) {
+            if (!in_array($seller->role, [UserRole::Seller, UserRole::Intern])) {
                 return;
             }
 
-            $type = $user->commission_type ?? 'percentage';
-            $amount = $type === 'fixed'
-                ? $rate
-                : round((float) $sale->total * $rate / 100, 2);
+            $sale->load(['items', 'tradeIns', 'customer']);
 
-            if ($amount <= 0) {
+            $profitCommission = $this->calculateProfitCommission($sale);
+            $tradeinCommission = $this->calculateTradeinCommission($sale);
+            $accessoryCommission = $this->calculateAccessoryCommission($sale);
+
+            $totalCommission = round($profitCommission + $tradeinCommission + $accessoryCommission, 2);
+
+            if ($totalCommission <= 0) {
                 return;
+            }
+
+            $saleProfit = $sale->items->sum(function ($item) {
+                $totalCost = (float) ($item->total_cost ?: $item->cost_price);
+                return (float) $item->unit_price * $item->quantity - $totalCost * $item->quantity;
+            });
+
+            $customerName = $sale->customer?->name;
+            $productSummary = $sale->items
+                ->take(3)
+                ->map(fn ($item) => $item->product_snapshot['name'] ?? 'Item')
+                ->implode(', ');
+
+            if ($sale->items->count() > 3) {
+                $productSummary .= ' +' . ($sale->items->count() - 3);
             }
 
             Commission::create([
-                'user_id' => $user->id,
+                'user_id' => $seller->id,
                 'sale_id' => $sale->id,
                 'sale_number' => $sale->sale_number,
                 'sale_total' => $sale->total,
-                'commission_rate' => $rate,
-                'commission_type' => $type,
-                'commission_amount' => $amount,
+                'commission_rate' => self::COMMISSION_RATE * 100,
+                'commission_type' => 'dynamic',
+                'commission_amount' => $totalCommission,
+                'profit_commission' => $profitCommission,
+                'tradein_commission' => $tradeinCommission,
+                'accessory_commission' => $accessoryCommission,
+                'sale_profit' => round($saleProfit, 2),
+                'customer_name' => $customerName,
+                'product_summary' => $productSummary,
                 'status' => 'approved',
             ]);
         } catch (\Throwable $e) {
             Log::warning("Não foi possível registrar comissão da venda #{$sale->sale_number}: {$e->getMessage()}");
         }
+    }
+
+    private function calculateProfitCommission(Sale $sale): float
+    {
+        $commission = 0.0;
+
+        foreach ($sale->items as $item) {
+            $snapshot = $item->product_snapshot ?? [];
+            $category = $snapshot['category'] ?? null;
+
+            if (!in_array($category, ['smartphone', 'tablet', 'notebook', 'smartwatch'])) {
+                continue;
+            }
+
+            $totalCost = (float) ($item->total_cost ?: $item->cost_price);
+            $profit = ((float) $item->unit_price - $totalCost) * $item->quantity;
+
+            $minProfit = $totalCost * self::PROFIT_FLOOR_PERCENT * $item->quantity;
+            if ($profit < $minProfit) {
+                continue;
+            }
+
+            $commission += $profit * self::COMMISSION_RATE;
+        }
+
+        return round($commission, 2);
+    }
+
+    private function calculateTradeinCommission(Sale $sale): float
+    {
+        $commission = 0.0;
+
+        foreach ($sale->tradeIns as $tradeIn) {
+            $systemValue = (float) $tradeIn->resale_price;
+            $offeredValue = (float) $tradeIn->estimated_value;
+
+            if ($systemValue <= 0 || $offeredValue >= $systemValue) {
+                continue;
+            }
+
+            $economy = $systemValue - $offeredValue;
+            $maxDiscount = $systemValue * self::TRADEIN_MAX_DISCOUNT;
+            $economy = min($economy, $maxDiscount);
+
+            $commission += $economy * self::COMMISSION_RATE;
+        }
+
+        return round($commission, 2);
+    }
+
+    private function calculateAccessoryCommission(Sale $sale): float
+    {
+        $commission = 0.0;
+
+        foreach ($sale->items as $item) {
+            $snapshot = $item->product_snapshot ?? [];
+            $category = $snapshot['category'] ?? null;
+
+            if (!isset(self::ACCESSORY_MIN_PRICES[$category])) {
+                continue;
+            }
+
+            $minPrice = self::ACCESSORY_MIN_PRICES[$category];
+            $unitPrice = (float) $item->unit_price;
+
+            $surplus = ($unitPrice - $minPrice) * $item->quantity;
+            if ($surplus <= 0) {
+                continue;
+            }
+
+            $commission += $surplus * self::COMMISSION_RATE;
+        }
+
+        return round($commission, 2);
     }
 
     /**

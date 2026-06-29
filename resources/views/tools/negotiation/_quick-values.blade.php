@@ -53,7 +53,7 @@
             <label class="text-[10px] font-semibold uppercase tracking-wider text-amber-600 mb-1.5 block">Seminovos</label>
             <div class="flex flex-wrap gap-1.5">
                 <template x-for="(uv, uidx) in quickValuesUsed" :key="'used-' + uidx">
-                    <button @click="selectQuickValue(uv.name, uv.value)" type="button"
+                    <button @click="selectQuickValue(uv.name, uv.value, uv.cost_price || 0)" type="button"
                             class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-2 whitespace-nowrap transition-colors"
                             :class="isQuickValueActive(uv.name, uv.value)
                                 ? 'border-amber-600 bg-amber-600 text-white'

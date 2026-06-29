@@ -23,7 +23,8 @@ class StoreSaleRequest extends FormRequest
         return [
             'customer_id' => ['required', 'exists:customers,id'],
             'sale_type' => ['required', Rule::enum(SaleType::class)],
-            'seller_name' => ['required', 'string', 'in:Guilherme,Danilo,Sophia,Maria'],
+            'seller_name' => ['required', 'string', 'max:100'],
+            'seller_id' => ['nullable', 'exists:users,id'],
             'delivery_type' => ['required', 'string', 'in:retirada,entrega,transferencia'],
             'delivery_method' => ['nullable', 'required_if:delivery_type,entrega', 'string', 'in:motoboy_nosso,motoboy_cliente,entrega_dg'],
             'payment_method' => ['required', Rule::enum(PaymentMethod::class)],
@@ -119,7 +120,6 @@ class StoreSaleRequest extends FormRequest
             'customer_id.exists' => 'Cliente selecionado não encontrado.',
             'sale_type.required' => 'Selecione o tipo de venda (Repasse ou Cliente Final).',
             'seller_name.required' => 'Selecione o vendedor responsável.',
-            'seller_name.in' => 'Vendedor inválido.',
             'delivery_type.required' => 'Selecione o tipo de entrega.',
             'delivery_type.in' => 'Tipo de entrega inválido.',
             'delivery_method.required_if' => 'Selecione o método de entrega.',

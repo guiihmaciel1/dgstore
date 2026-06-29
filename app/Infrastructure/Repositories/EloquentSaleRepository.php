@@ -74,6 +74,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 'sale_type' => $data->saleType,
                 'user_id' => $data->userId,
                 'seller_name' => $data->sellerName,
+                'seller_id' => $data->sellerId,
                 'subtotal' => $subtotal,
                 'discount' => $data->discount,
                 'trade_in_value' => $data->tradeInValue,

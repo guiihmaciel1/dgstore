@@ -20,7 +20,10 @@ class CommissionController extends Controller
 
     public function index(Request $request): View
     {
-        $interns = User::where('role', UserRole::Intern)->where('active', true)->get();
+        $interns = User::whereIn('role', [UserRole::Intern, UserRole::Seller])
+            ->where('active', true)
+            ->orderBy('name')
+            ->get();
 
         $selectedUserId = $request->input('user_id', $interns->first()?->id);
         $selectedUser = $selectedUserId ? User::find($selectedUserId) : null;

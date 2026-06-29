@@ -157,6 +157,7 @@ class NegotiationController extends Controller
             return [
                 'name' => $label,
                 'value' => (float) $product->sale_price,
+                'cost_price' => (float) ($product->cost_price ?? 0),
             ];
         })->values()->toArray();
     }
