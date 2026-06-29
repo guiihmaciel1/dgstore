@@ -113,7 +113,7 @@
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <span style="width: 6px; height: 6px; border-radius: 50%; background: #059669; flex-shrink: 0;"></span>
-                                    <span><strong>10%</strong> sobre o lucro do aparelho <span style="color: #6b7280;">(mín. 10% margem)</span></span>
+                                    <span><strong>10%</strong> sobre o lucro do aparelho</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563eb; flex-shrink: 0;"></span>
