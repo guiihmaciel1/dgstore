@@ -94,27 +94,6 @@
                 </div>
             </div>
 
-            {{-- Simulador rápido: "Se eu vender por X..." --}}
-            <div x-show="productCost > 0" class="bg-white/60 rounded-lg border border-gray-100 p-2.5">
-                <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Quanto posso ganhar?</p>
-                <div class="grid grid-cols-3 gap-1.5 text-center">
-                    <div class="rounded-md py-1.5 px-1" :class="commissionEstimate.profit > 0 && ((productPrice - productCost) / productCost) < 0.20 ? 'bg-emerald-100 ring-1 ring-emerald-300' : 'bg-gray-50'">
-                        <p class="text-[10px] text-gray-500">Mínimo</p>
-                        <p class="text-xs font-bold text-gray-700" x-text="'R$ ' + fmt(productCost * 0.10 * 0.10)"></p>
-                        <p class="text-[9px] text-gray-400" x-text="'Venda ' + fmt(productCost * 1.10)"></p>
-                    </div>
-                    <div class="rounded-md py-1.5 px-1" :class="commissionEstimate.profit > 0 && ((productPrice - productCost) / productCost) >= 0.20 && ((productPrice - productCost) / productCost) < 0.35 ? 'bg-emerald-100 ring-1 ring-emerald-300' : 'bg-gray-50'">
-                        <p class="text-[10px] text-gray-500">Bom</p>
-                        <p class="text-xs font-bold text-emerald-700" x-text="'R$ ' + fmt(productCost * 0.25 * 0.10)"></p>
-                        <p class="text-[9px] text-gray-400" x-text="'Venda ' + fmt(productCost * 1.25)"></p>
-                    </div>
-                    <div class="rounded-md py-1.5 px-1" :class="commissionEstimate.profit > 0 && ((productPrice - productCost) / productCost) >= 0.35 ? 'bg-emerald-100 ring-1 ring-emerald-300' : 'bg-gray-50'">
-                        <p class="text-[10px] text-gray-500">Ótimo</p>
-                        <p class="text-xs font-bold text-emerald-700" x-text="'R$ ' + fmt(productCost * 0.40 * 0.10)"></p>
-                        <p class="text-[9px] text-gray-400" x-text="'Venda ' + fmt(productCost * 1.40)"></p>
-                    </div>
-                </div>
-            </div>
 
         </div>
     </div>

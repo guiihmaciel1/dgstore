@@ -163,6 +163,7 @@ class CreateSaleUseCase
     }
 
     private const COMMISSION_RATE = 0.10;
+    private const TRADEIN_COMMISSION_RATE = 0.05;
     private const PROFIT_FLOOR_PERCENT = 0.0;
     private const TRADEIN_MAX_DISCOUNT = 0.20;
     private const ACCESSORY_MIN_PRICES = [
