@@ -14,18 +14,18 @@ return [
 
     'trim_percentage' => 20,
 
-    'default_margin' => 15,
+    'default_margin' => 10,
 
     'default_resale_margin' => 20,
 
     'default_battery_rules' => [
         ['min' => 95, 'max' => 100, 'modifier' => 0],
-        ['min' => 90, 'max' => 94,  'modifier' => -3],
-        ['min' => 85, 'max' => 89,  'modifier' => -6],
-        ['min' => 80, 'max' => 84,  'modifier' => -10],
-        ['min' => 75, 'max' => 79,  'modifier' => -15],
-        ['min' => 70, 'max' => 74,  'modifier' => -20],
-        ['min' => 0,  'max' => 69,  'modifier' => -30],
+        ['min' => 90, 'max' => 94,  'modifier' => -2],
+        ['min' => 85, 'max' => 89,  'modifier' => -3],
+        ['min' => 80, 'max' => 84,  'modifier' => -5],
+        ['min' => 75, 'max' => 79,  'modifier' => -8],
+        ['min' => 70, 'max' => 74,  'modifier' => -12],
+        ['min' => 0,  'max' => 69,  'modifier' => -20],
     ],
 
     'default_device_state_options' => [
