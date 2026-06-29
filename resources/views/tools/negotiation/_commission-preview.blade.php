@@ -45,7 +45,7 @@
                 <div class="flex items-center justify-between mb-1">
                     <span class="text-xs font-semibold text-gray-700 flex items-center gap-1">
                         <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
-                        Economia no trade-in <span class="text-gray-400 text-[10px] font-normal">(5%)</span>
+                        Economia no trade-in <span class="text-gray-400 text-[10px] font-normal">(2%)</span>
                     </span>
                     <span class="text-xs font-bold" :class="commissionEstimate.tradein > 0 ? 'text-blue-700' : 'text-gray-400'"
                           x-text="commissionEstimate.tradein > 0 ? 'R$ ' + fmt(commissionEstimate.tradein) : 'R$ 0'"></span>

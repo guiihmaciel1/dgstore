@@ -149,7 +149,7 @@
 
             get commissionEstimate() {
                 const RATE = 0.10;
-                const TRADEIN_RATE = 0.05;
+                const TRADEIN_RATE = 0.02;
                 const FLOOR = 0.0;
                 const TRADEIN_CAP = 0.20;
                 let profit = 0;
