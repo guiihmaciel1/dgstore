@@ -54,8 +54,8 @@ class NegotiationEvaluatorService
         $trimmed = $this->calculator->trimOutliers($listings, config('dgifipe.trim_percentage'));
         $stats = $this->calculator->calculateStats($trimmed);
 
-        $margin = (float) config('dgifipe.default_margin');
-        $resaleMargin = (float) config('dgifipe.default_resale_margin');
+        $margin = $this->getMarginForModel($model);
+        $resaleMargin = $this->getResaleMarginForModel($model);
         $batteryMod = $this->getBatteryModifier($batteryHealth);
         $deviceStateMod = $this->getDeviceStateModifier($deviceState);
         $accessoryLevel = self::resolveAccessoryLevel($accessoryChecks);
@@ -160,5 +160,36 @@ class NegotiationEvaluatorService
         $options = config('dgifipe.default_accessory_options');
 
         return (float) ($options[$level] ?? 0);
+    }
+
+    private function getMarginForModel(string $model): float
+    {
+        $generation = $this->extractIphoneGeneration($model);
+
+        if ($generation !== null && $generation < 15) {
+            return 25.0;
+        }
+
+        return (float) config('dgifipe.default_margin');
+    }
+
+    private function getResaleMarginForModel(string $model): float
+    {
+        $generation = $this->extractIphoneGeneration($model);
+
+        if ($generation !== null && $generation < 15) {
+            return 40.0;
+        }
+
+        return (float) config('dgifipe.default_resale_margin');
+    }
+
+    private function extractIphoneGeneration(string $model): ?int
+    {
+        if (preg_match('/iPhone\s+(\d+)/i', $model, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return null;
     }
 }
