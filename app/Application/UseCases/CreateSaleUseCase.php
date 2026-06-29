@@ -171,6 +171,11 @@ class CreateSaleUseCase
         'charger' => 100.00,
         'cable' => 100.00,
     ];
+    private const ACCESSORY_COMMISSION_RATES = [
+        'case' => 0.50,
+        'charger' => 0.20,
+        'cable' => 0.20,
+    ];
 
     private function registerCommission(Sale $sale): void
     {
@@ -298,6 +303,7 @@ class CreateSaleUseCase
             }
 
             $minPrice = self::ACCESSORY_MIN_PRICES[$category];
+            $rate = self::ACCESSORY_COMMISSION_RATES[$category];
             $unitPrice = (float) $item->unit_price;
 
             $surplus = ($unitPrice - $minPrice) * $item->quantity;
@@ -305,7 +311,7 @@ class CreateSaleUseCase
                 continue;
             }
 
-            $commission += $surplus * self::COMMISSION_RATE;
+            $commission += $surplus * $rate;
         }
 
         return round($commission, 2);

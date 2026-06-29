@@ -121,7 +121,7 @@
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <span style="width: 6px; height: 6px; border-radius: 50%; background: #7c3aed; flex-shrink: 0;"></span>
-                                    <span><strong>10%</strong> do excedente de acessórios <span style="color: #6b7280;">(acima do preço mín.)</span></span>
+                                    <span>Acessórios: <strong>50%</strong> capinha / <strong>20%</strong> carregador <span style="color: #6b7280;">(acima do preço base)</span></span>
                                 </div>
                             </div>
                             <p style="margin-top: 0.75rem; font-size: 0.7rem; color: #9ca3af;">Apenas vendas Cliente Final. Cálculo automático ao registrar a venda.</p>

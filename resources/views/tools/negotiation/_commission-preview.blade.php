@@ -71,13 +71,35 @@
                 </div>
             </div>
 
-            {{-- Separador visual --}}
+            {{-- Seção: Acessórios --}}
+            <div class="border-t border-dashed pt-3" :class="commissionEstimate.total > 0 ? 'border-emerald-200' : 'border-amber-200'">
+                <div class="flex items-center gap-1.5 mb-2">
+                    <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
+                    <span class="text-xs font-semibold text-gray-700">Acessórios</span>
+                    <span class="text-[10px] text-gray-400 font-normal">— comissão extra por venda</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-purple-50 border border-purple-100 rounded-lg p-2.5 text-center">
+                        <p class="text-[10px] text-purple-600 font-semibold uppercase tracking-wider mb-0.5">Capinha</p>
+                        <p class="text-[10px] text-gray-500">Base: R$ 30</p>
+                        <p class="text-xs font-bold text-purple-700 mt-1">50% do lucro</p>
+                        <p class="text-[9px] text-gray-400 mt-0.5">Ex: vendeu R$ 50 → <strong class="text-purple-600">+R$ 10</strong></p>
+                    </div>
+                    <div class="bg-purple-50 border border-purple-100 rounded-lg p-2.5 text-center">
+                        <p class="text-[10px] text-purple-600 font-semibold uppercase tracking-wider mb-0.5">Carregador</p>
+                        <p class="text-[10px] text-gray-500">Base: R$ 100</p>
+                        <p class="text-xs font-bold text-purple-700 mt-1">20% do lucro</p>
+                        <p class="text-[9px] text-gray-400 mt-0.5">Ex: vendeu R$ 150 → <strong class="text-purple-600">+R$ 10</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Dicas rápidas --}}
             <div class="border-t border-dashed pt-2" :class="commissionEstimate.total > 0 ? 'border-emerald-200' : 'border-amber-200'">
-                {{-- Dicas rápidas --}}
                 <div class="space-y-1.5">
                     <div class="flex items-center gap-2 text-[11px]" x-show="commissionEstimate.profit > 0">
                         <span class="text-emerald-600">▲</span>
-                        <span class="text-gray-600">Vendeu acima do mínimo? <strong class="text-emerald-700">+comissão</strong></span>
+                        <span class="text-gray-600">Vendeu acima do custo? <strong class="text-emerald-700">+comissão</strong></span>
                     </div>
                     <div class="flex items-center gap-2 text-[11px]" x-show="tradeIn.result && commissionEstimate.tradein > 0">
                         <span class="text-blue-600">▲</span>
