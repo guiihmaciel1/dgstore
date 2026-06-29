@@ -35,18 +35,18 @@
                 <div class="flex items-center justify-between mt-1">
                     <span class="text-[10px] text-gray-400" x-text="'Lucro: R$ ' + fmt(Math.max(0, productPrice - productCost))"></span>
                     <span class="text-[10px]"
-                          :class="((productPrice - productCost) / productCost) >= 0.30 ? 'text-emerald-600' : 'text-red-500'"
+                          :class="((productPrice - productCost) / productCost) >= 0.10 ? 'text-emerald-600' : 'text-red-500'"
                           x-text="productCost > 0 ? (((productPrice - productCost) / productCost * 100).toFixed(0) + '% margem') : ''"></span>
                 </div>
                 {{-- Alerta de margem insuficiente --}}
-                <div x-show="productCost > 0 && ((productPrice - productCost) / productCost) < 0.30"
+                <div x-show="productCost > 0 && ((productPrice - productCost) / productCost) < 0.10"
                      class="mt-1 flex items-start gap-1.5 bg-red-50 border border-red-100 rounded-lg px-2.5 py-1.5">
                     <svg class="w-3.5 h-3.5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.999L13.732 4.001c-.77-1.333-2.694-1.333-3.464 0L3.34 16.001c-.77 1.332.192 2.999 1.732 2.999z"/>
                     </svg>
                     <span class="text-[11px] text-red-700 leading-tight">
-                        Margem abaixo de 30% — <strong>sem comissão no aparelho</strong>.
-                        <span class="text-red-500">Aumente o preço em R$ <span x-text="fmt(Math.max(0, (productCost * 1.30) - productPrice))"></span></span>
+                        Margem abaixo de 10% — <strong>sem comissão no aparelho</strong>.
+                        <span class="text-red-500">Aumente o preço em R$ <span x-text="fmt(Math.max(0, (productCost * 1.10) - productPrice))"></span></span>
                     </span>
                 </div>
             </div>
@@ -109,20 +109,20 @@
             <div x-show="productCost > 0" class="bg-white/60 rounded-lg border border-gray-100 p-2.5">
                 <p class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Quanto posso ganhar?</p>
                 <div class="grid grid-cols-3 gap-1.5 text-center">
-                    <div class="rounded-md py-1.5 px-1" :class="commissionEstimate.profit > 0 && ((productPrice - productCost) / productCost) < 0.35 ? 'bg-emerald-100 ring-1 ring-emerald-300' : 'bg-gray-50'">
+                    <div class="rounded-md py-1.5 px-1" :class="commissionEstimate.profit > 0 && ((productPrice - productCost) / productCost) < 0.20 ? 'bg-emerald-100 ring-1 ring-emerald-300' : 'bg-gray-50'">
                         <p class="text-[10px] text-gray-500">Mínimo</p>
-                        <p class="text-xs font-bold text-gray-700" x-text="'R$ ' + fmt(productCost * 0.30 * 0.10)"></p>
-                        <p class="text-[9px] text-gray-400" x-text="'Venda ' + fmt(productCost * 1.30)"></p>
+                        <p class="text-xs font-bold text-gray-700" x-text="'R$ ' + fmt(productCost * 0.10 * 0.10)"></p>
+                        <p class="text-[9px] text-gray-400" x-text="'Venda ' + fmt(productCost * 1.10)"></p>
                     </div>
-                    <div class="rounded-md py-1.5 px-1" :class="commissionEstimate.profit > 0 && ((productPrice - productCost) / productCost) >= 0.35 && ((productPrice - productCost) / productCost) < 0.50 ? 'bg-emerald-100 ring-1 ring-emerald-300' : 'bg-gray-50'">
+                    <div class="rounded-md py-1.5 px-1" :class="commissionEstimate.profit > 0 && ((productPrice - productCost) / productCost) >= 0.20 && ((productPrice - productCost) / productCost) < 0.35 ? 'bg-emerald-100 ring-1 ring-emerald-300' : 'bg-gray-50'">
                         <p class="text-[10px] text-gray-500">Bom</p>
+                        <p class="text-xs font-bold text-emerald-700" x-text="'R$ ' + fmt(productCost * 0.25 * 0.10)"></p>
+                        <p class="text-[9px] text-gray-400" x-text="'Venda ' + fmt(productCost * 1.25)"></p>
+                    </div>
+                    <div class="rounded-md py-1.5 px-1" :class="commissionEstimate.profit > 0 && ((productPrice - productCost) / productCost) >= 0.35 ? 'bg-emerald-100 ring-1 ring-emerald-300' : 'bg-gray-50'">
+                        <p class="text-[10px] text-gray-500">Ótimo</p>
                         <p class="text-xs font-bold text-emerald-700" x-text="'R$ ' + fmt(productCost * 0.40 * 0.10)"></p>
                         <p class="text-[9px] text-gray-400" x-text="'Venda ' + fmt(productCost * 1.40)"></p>
-                    </div>
-                    <div class="rounded-md py-1.5 px-1" :class="commissionEstimate.profit > 0 && ((productPrice - productCost) / productCost) >= 0.50 ? 'bg-emerald-100 ring-1 ring-emerald-300' : 'bg-gray-50'">
-                        <p class="text-[10px] text-gray-500">Ótimo</p>
-                        <p class="text-xs font-bold text-emerald-700" x-text="'R$ ' + fmt(productCost * 0.60 * 0.10)"></p>
-                        <p class="text-[9px] text-gray-400" x-text="'Venda ' + fmt(productCost * 1.60)"></p>
                     </div>
                 </div>
             </div>
