@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Customer\Models;
 
+use App\Domain\Negotiation\Models\NegotiationSnapshot;
 use App\Domain\Sale\Models\Sale;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,6 +41,11 @@ class Customer extends Model
     public function sales(): HasMany
     {
         return $this->hasMany(Sale::class);
+    }
+
+    public function negotiationSnapshots(): HasMany
+    {
+        return $this->hasMany(NegotiationSnapshot::class);
     }
 
     // Métodos auxiliares

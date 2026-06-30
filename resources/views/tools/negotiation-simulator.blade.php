@@ -89,6 +89,15 @@
             numberGame: { enabled: false, boost: 0 },
             cardResults: [],
 
+            saveModal: {
+                open: false,
+                search: '',
+                results: [],
+                selectedCustomer: null,
+                notes: '',
+                saving: false,
+            },
+
             presets: [
                 { key: 'all', label: 'Todas' },
                 { key: 'even', label: 'Pares' },
@@ -400,6 +409,72 @@
                     this.showToast('Proposta copiada!');
                     setTimeout(() => { this.copied = false; }, 2000);
                 } catch (e) {}
+            },
+
+            openSaveModal() {
+                this.saveModal.open = true;
+                this.saveModal.search = '';
+                this.saveModal.results = [];
+                this.saveModal.selectedCustomer = null;
+                this.saveModal.notes = '';
+                this.saveModal.saving = false;
+            },
+
+            async searchSaveCustomers() {
+                if (this.saveModal.search.length < 2) {
+                    this.saveModal.results = [];
+                    return;
+                }
+                const res = await fetch(`{{ route('customers.search') }}?q=${encodeURIComponent(this.saveModal.search)}`);
+                this.saveModal.results = await res.json();
+            },
+
+            selectSaveCustomer(customer) {
+                this.saveModal.selectedCustomer = customer;
+                this.saveModal.results = [];
+                this.saveModal.search = '';
+            },
+
+            async saveSnapshot() {
+                if (!this.saveModal.selectedCustomer || this.saveModal.saving) return;
+                this.saveModal.saving = true;
+
+                const payload = {
+                    customer_id: this.saveModal.selectedCustomer.id,
+                    product_description: this.product.description,
+                    product_price: this.productPrice,
+                    product_cost: this.productCost || null,
+                    trade_in_model: this.tradeIn.model || null,
+                    trade_in_value: this.tradeInValue || null,
+                    trade_in_system_value: this.tradeIn.result?.resale_price || null,
+                    down_payment: this.downPayment || 0,
+                    card_balance: this.cardBalance || 0,
+                    commission_estimate: this.commissionEstimate.total || 0,
+                    message_text: this.buildMessage(),
+                    notes: this.saveModal.notes || null,
+                };
+
+                try {
+                    const res = await fetch('{{ route("negotiation.save-snapshot") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify(payload),
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        this.saveModal.open = false;
+                        this.showToast('Simulação salva para ' + this.saveModal.selectedCustomer.name);
+                    } else {
+                        this.showToast('Erro ao salvar simulação');
+                    }
+                } catch (e) {
+                    this.showToast('Erro ao salvar simulação');
+                } finally {
+                    this.saveModal.saving = false;
+                }
             },
 
             clearAll() {

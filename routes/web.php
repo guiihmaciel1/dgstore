@@ -22,6 +22,7 @@ use App\Presentation\Http\Controllers\ScheduleController;
 use App\Presentation\Http\Controllers\CardFeeController;
 use App\Presentation\Http\Controllers\ConsignmentStockController;
 use App\Presentation\Http\Controllers\NegotiationController;
+use App\Presentation\Http\Controllers\NegotiationSnapshotController;
 use App\Presentation\Http\Controllers\DeviceChecklistController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BDashboardController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BProductController;
@@ -98,6 +99,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/checklists/{checklist}', [DeviceChecklistController::class, 'destroy'])->name('checklists.destroy');
         Route::get('/api/checklists/search', [DeviceChecklistController::class, 'apiSearch'])->name('checklists.search');
         Route::post('/api/negotiation/evaluate', [NegotiationController::class, 'evaluate'])->name('negotiation.evaluate');
+        Route::post('/api/negotiation/save-snapshot', [NegotiationSnapshotController::class, 'store'])->name('negotiation.save-snapshot');
+        Route::get('/api/simulations/customer/{customer}', [NegotiationSnapshotController::class, 'forCustomer'])->name('simulations.for-customer');
+        Route::get('/api/simulations/search', [NegotiationSnapshotController::class, 'search'])->name('simulations.search');
 
         // Follow-ups (legado - redireciona para CRM)
         Route::get('followups', fn() => redirect()->route('crm.board'))->name('followups.index');

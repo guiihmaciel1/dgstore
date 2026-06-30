@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controllers;
 use App\Application\UseCases\CancelSaleUseCase;
 use App\Application\UseCases\CreateSaleUseCase;
 use App\Domain\Customer\Services\CustomerService;
+use App\Domain\Negotiation\Models\NegotiationSnapshot;
 use App\Domain\Product\Services\ProductService;
 use App\Domain\Reservation\Models\Reservation;
 use App\Domain\Reservation\Services\ReservationService;
@@ -79,6 +80,13 @@ class SaleController extends Controller
                 ->find($request->get('from_reservation'));
         }
 
+        // Carregar snapshot se vier de simulação
+        $snapshot = null;
+        if ($request->get('snapshot_id')) {
+            $snapshot = NegotiationSnapshot::with('customer')
+                ->find($request->get('snapshot_id'));
+        }
+
         $sellers = User::whereIn('role', [UserRole::Seller->value, UserRole::Intern->value])
             ->orderBy('name')
             ->get(['id', 'name']);
@@ -90,6 +98,7 @@ class SaleController extends Controller
             'paymentStatuses' => PaymentStatus::cases(),
             'tradeInConditions' => TradeInCondition::cases(),
             'reservation' => $reservation,
+            'snapshot' => $snapshot,
         ]);
     }
 
