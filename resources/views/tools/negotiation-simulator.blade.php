@@ -126,6 +126,11 @@
                     if (params.get('snap_tradein_model')) {
                         this.tradeIn.model = params.get('snap_tradein_model');
                         this.tradeIn.offeredInput = this.fmt(parseFloat(params.get('snap_tradein_value')) || 0);
+                        this.tradeIn.showEval = true;
+                        const sysValue = parseFloat(params.get('snap_tradein_system_value')) || 0;
+                        if (sysValue > 0) {
+                            this.tradeIn.result = { resale_price: sysValue };
+                        }
                     }
                     this.$nextTick(() => this.recalculate());
                 }
