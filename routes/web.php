@@ -75,6 +75,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // ----------------------------------------------------------------
+    // Simulações — acessível por todos os perfis autenticados
+    // ----------------------------------------------------------------
+    Route::get('/simulador-negociacao', [NegotiationController::class, 'index'])->name('tools.negotiation-simulator');
+    Route::post('/api/negotiation/evaluate', [NegotiationController::class, 'evaluate'])->name('negotiation.evaluate');
+    Route::post('/api/negotiation/save-snapshot', [NegotiationSnapshotController::class, 'store'])->name('negotiation.save-snapshot');
+    Route::get('/api/simulations/customer/{customer}', [NegotiationSnapshotController::class, 'forCustomer'])->name('simulations.for-customer');
+    Route::get('/api/simulations/search', [NegotiationSnapshotController::class, 'search'])->name('simulations.search');
+    Route::delete('/api/simulations/{snapshot}', [NegotiationSnapshotController::class, 'destroy'])->name('simulations.destroy');
+    Route::get('/api/customers/search', [CustomerController::class, 'search'])->name('customers.search');
+
+    // ----------------------------------------------------------------
     // DG Store — admin_geral, seller e intern
     // ----------------------------------------------------------------
     Route::middleware('role:admin_geral,seller,intern')->group(function () {
@@ -90,7 +101,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('/ficha-tecnica', 'tools.specs')->name('tools.specs');
         Route::view('/treinamento-vendas', 'tools.sales-training')->name('tools.sales-training');
         Route::get('/calculadora-stone', [ToolController::class, 'stoneCalculator'])->name('tools.stone-calculator');
-        Route::get('/simulador-negociacao', [NegotiationController::class, 'index'])->name('tools.negotiation-simulator');
 
         // Checklists
         Route::get('/checklists', [DeviceChecklistController::class, 'index'])->name('checklists.index');
@@ -98,11 +108,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/checklists/{checklist}', [DeviceChecklistController::class, 'show'])->name('checklists.show');
         Route::delete('/checklists/{checklist}', [DeviceChecklistController::class, 'destroy'])->name('checklists.destroy');
         Route::get('/api/checklists/search', [DeviceChecklistController::class, 'apiSearch'])->name('checklists.search');
-        Route::post('/api/negotiation/evaluate', [NegotiationController::class, 'evaluate'])->name('negotiation.evaluate');
-        Route::post('/api/negotiation/save-snapshot', [NegotiationSnapshotController::class, 'store'])->name('negotiation.save-snapshot');
-        Route::get('/api/simulations/customer/{customer}', [NegotiationSnapshotController::class, 'forCustomer'])->name('simulations.for-customer');
-        Route::get('/api/simulations/search', [NegotiationSnapshotController::class, 'search'])->name('simulations.search');
-        Route::delete('/api/simulations/{snapshot}', [NegotiationSnapshotController::class, 'destroy'])->name('simulations.destroy');
 
         // Follow-ups (legado - redireciona para CRM)
         Route::get('followups', fn() => redirect()->route('crm.board'))->name('followups.index');
@@ -132,7 +137,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Clientes
         Route::resource('customers', CustomerController::class);
-        Route::get('/api/customers/search', [CustomerController::class, 'search'])->name('customers.search');
         Route::post('/api/customers/store-quick', [CustomerController::class, 'storeQuick'])->name('customers.store-quick');
 
         // Fornecedores
