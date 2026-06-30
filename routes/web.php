@@ -102,6 +102,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/api/negotiation/save-snapshot', [NegotiationSnapshotController::class, 'store'])->name('negotiation.save-snapshot');
         Route::get('/api/simulations/customer/{customer}', [NegotiationSnapshotController::class, 'forCustomer'])->name('simulations.for-customer');
         Route::get('/api/simulations/search', [NegotiationSnapshotController::class, 'search'])->name('simulations.search');
+        Route::delete('/api/simulations/{snapshot}', [NegotiationSnapshotController::class, 'destroy'])->name('simulations.destroy');
 
         // Follow-ups (legado - redireciona para CRM)
         Route::get('followups', fn() => redirect()->route('crm.board'))->name('followups.index');

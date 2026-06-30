@@ -81,4 +81,11 @@ class NegotiationSnapshotController extends Controller
 
         return response()->json($snapshots);
     }
+
+    public function destroy(NegotiationSnapshot $snapshot): JsonResponse
+    {
+        $snapshot->delete();
+
+        return response()->json(['success' => true]);
+    }
 }

@@ -180,7 +180,46 @@
                 </div>
 
                 <!-- Coluna Lateral -->
-                <div>
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    {{-- Simulações Salvas --}}
+                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;"
+                         x-data="{ snapshots: {{ Js::from($snapshots) }}, deleting: null }">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; display: flex; align-items: center; justify-content: space-between;">
+                            <h3 style="font-weight: 600; color: #111827;">Simulações Salvas</h3>
+                            <span style="font-size: 0.75rem; color: #6b7280; background: #f3f4f6; padding: 0.125rem 0.5rem; border-radius: 9999px;" x-text="snapshots.length"></span>
+                        </div>
+                        <div style="padding: 1rem 1.5rem;">
+                            <template x-if="snapshots.length === 0">
+                                <p style="text-align: center; color: #9ca3af; font-size: 0.8125rem; padding: 1rem 0;">Nenhuma simulação ativa.</p>
+                            </template>
+                            <template x-for="(snap, idx) in snapshots" :key="snap.id">
+                                <div style="padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;" :style="idx === snapshots.length - 1 ? 'border-bottom: none' : ''">
+                                    <div style="min-width: 0; flex: 1;">
+                                        <span style="font-weight: 600; font-size: 0.8125rem; color: #111827; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="snap.product_description"></span>
+                                        <span style="font-size: 0.75rem; color: #6b7280;" x-text="'R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) + (snap.trade_in_model ? ' · Troca: ' + snap.trade_in_model : '')"></span>
+                                        <span style="font-size: 0.6875rem; color: #9ca3af; display: block;" x-text="new Date(snap.created_at).toLocaleDateString('pt-BR')"></span>
+                                    </div>
+                                    <div style="display: flex; gap: 0.375rem; flex-shrink: 0;">
+                                        <a :href="'{{ route('tools.negotiation-simulator') }}?snap_product=' + encodeURIComponent(snap.product_description) + '&snap_price=' + snap.product_price + (snap.product_cost ? '&snap_cost=' + snap.product_cost : '') + (snap.trade_in_model ? '&snap_tradein_model=' + encodeURIComponent(snap.trade_in_model) + '&snap_tradein_value=' + (snap.trade_in_value || '') + '&snap_tradein_system_value=' + (snap.trade_in_system_value || '') + '&snap_tradein_storage=' + encodeURIComponent(snap.trade_in_storage || '') + '&snap_tradein_battery=' + (snap.trade_in_battery || '') : '')"
+                                           style="padding: 0.25rem 0.5rem; background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; text-decoration: none;"
+                                           onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'">
+                                            Abrir
+                                        </a>
+                                        <button type="button"
+                                                @click="if(confirm('Excluir esta simulação?')) { deleting = snap.id; fetch('/api/simulations/' + snap.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content } }).then(() => { snapshots = snapshots.filter(s => s.id !== snap.id); deleting = null; }); }"
+                                                :disabled="deleting === snap.id"
+                                                style="padding: 0.25rem 0.5rem; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; cursor: pointer;"
+                                                onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+                                            <span x-show="deleting !== snap.id">Excluir</span>
+                                            <span x-show="deleting === snap.id">...</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    {{-- Resumo de Compras --}}
                     <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
                         <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
                             <h3 style="font-weight: 600; color: #111827;">Resumo de Compras</h3>

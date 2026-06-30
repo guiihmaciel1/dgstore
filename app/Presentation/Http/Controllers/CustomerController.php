@@ -51,9 +51,14 @@ class CustomerController extends Controller
     public function show(Customer $customer): View
     {
         $customer = $this->customerService->getWithPurchaseHistory($customer->id);
+        $snapshots = $customer->negotiationSnapshots()
+            ->where('status', 'active')
+            ->orderByDesc('created_at')
+            ->get();
 
         return view('customers.show', [
             'customer' => $customer,
+            'snapshots' => $snapshots,
         ]);
     }
 
