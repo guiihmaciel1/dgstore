@@ -1678,11 +1678,22 @@
                         if (snapshotData.trade_in_model && snapshotData.trade_in_value > 0) {
                             this.hasTradeIn = true;
                             this.tradeIns.push({
+                                device_name: snapshotData.trade_in_model,
                                 device_model: snapshotData.trade_in_model,
+                                category: 'smartphone',
+                                storage: '',
+                                color: '',
+                                imei: '',
                                 estimated_value: snapshotData.trade_in_value,
-                                system_value: snapshotData.trade_in_system_value || 0,
+                                sale_price: null,
+                                resale_price: snapshotData.trade_in_system_value || null,
                                 condition: 'good',
+                                battery_health: null,
+                                has_box: false,
+                                has_cable: false,
                                 notes: '',
+                                checklist_id: '',
+                                checklist_label: '',
                             });
                         }
 
@@ -1983,12 +1994,28 @@
                         this.hasTradeIn = true;
                         if (this.tradeIns.length === 0) {
                             this.tradeIns.push({
+                                device_name: snap.trade_in_model,
                                 device_model: snap.trade_in_model,
-                                offered_value: parseFloat(snap.trade_in_value),
-                                system_value: parseFloat(snap.trade_in_system_value) || 0,
+                                category: 'smartphone',
+                                storage: '',
+                                color: '',
+                                imei: '',
+                                estimated_value: parseFloat(snap.trade_in_value),
+                                sale_price: null,
+                                resale_price: parseFloat(snap.trade_in_system_value) || null,
                                 condition: 'good',
+                                battery_health: null,
+                                has_box: false,
+                                has_cable: false,
                                 notes: '',
+                                checklist_id: '',
+                                checklist_label: '',
                             });
+                        } else {
+                            this.tradeIns[0].device_name = snap.trade_in_model;
+                            this.tradeIns[0].device_model = snap.trade_in_model;
+                            this.tradeIns[0].estimated_value = parseFloat(snap.trade_in_value);
+                            this.tradeIns[0].resale_price = parseFloat(snap.trade_in_system_value) || null;
                         }
                     }
 
