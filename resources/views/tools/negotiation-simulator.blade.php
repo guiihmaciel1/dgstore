@@ -117,6 +117,18 @@
                 this.$watch('product.priceInput', debouncedRecalc);
                 this.$watch('downPaymentInput', debouncedRecalc);
                 this.$watch('tradeIn.offeredInput', debouncedRecalc);
+
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('snap_product')) {
+                    this.product.description = params.get('snap_product');
+                    this.product.priceInput = params.get('snap_price') || '';
+                    this.productCost = parseFloat(params.get('snap_cost')) || 0;
+                    if (params.get('snap_tradein_model')) {
+                        this.tradeIn.model = params.get('snap_tradein_model');
+                        this.tradeIn.offeredInput = params.get('snap_tradein_value') || '';
+                    }
+                    this.$nextTick(() => this.recalculate());
+                }
             },
 
             get productPrice() { return this.parseNum(this.product.priceInput); },

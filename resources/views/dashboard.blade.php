@@ -62,7 +62,7 @@
                                    onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
                                     Abrir Venda
                                 </a>
-                                <a :href="'{{ route('tools.negotiation-simulator') }}?snap_product=' + encodeURIComponent(snap.product_description) + '&snap_price=' + snap.product_price + (snap.product_cost ? '&snap_cost=' + snap.product_cost : '')"
+                                <a :href="'{{ route('tools.negotiation-simulator') }}?snap_product=' + encodeURIComponent(snap.product_description) + '&snap_price=' + snap.product_price + (snap.product_cost ? '&snap_cost=' + snap.product_cost : '') + (snap.trade_in_model ? '&snap_tradein_model=' + encodeURIComponent(snap.trade_in_model) + '&snap_tradein_value=' + (snap.trade_in_value || '') : '')"
                                    style="padding: 0.375rem 0.625rem; background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; text-decoration: none; white-space: nowrap;"
                                    onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'">
                                     Reabrir Simulador

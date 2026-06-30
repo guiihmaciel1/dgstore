@@ -1677,23 +1677,26 @@
 
                         if (snapshotData.trade_in_model && snapshotData.trade_in_value > 0) {
                             this.hasTradeIn = true;
-                            this.tradeIns.push({
-                                device_name: snapshotData.trade_in_model,
-                                device_model: snapshotData.trade_in_model,
-                                category: 'smartphone',
-                                storage: '',
-                                color: '',
-                                imei: '',
-                                estimated_value: snapshotData.trade_in_value,
-                                sale_price: null,
-                                resale_price: snapshotData.trade_in_system_value || null,
-                                condition: 'good',
-                                battery_health: null,
-                                has_box: false,
-                                has_cable: false,
-                                notes: '',
-                                checklist_id: '',
-                                checklist_label: '',
+                            this.$nextTick(() => {
+                                this.tradeIns.push({
+                                    device_name: snapshotData.trade_in_model,
+                                    device_model: snapshotData.trade_in_model,
+                                    category: 'smartphone',
+                                    storage: '',
+                                    color: '',
+                                    imei: '',
+                                    estimated_value: snapshotData.trade_in_value,
+                                    sale_price: null,
+                                    resale_price: snapshotData.trade_in_system_value || null,
+                                    condition: 'good',
+                                    battery_health: null,
+                                    has_box: false,
+                                    has_cable: false,
+                                    notes: '',
+                                    checklist_id: '',
+                                    checklist_label: '',
+                                });
+                                this.updateTotals();
                             });
                         }
 
