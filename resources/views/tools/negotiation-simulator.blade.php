@@ -121,11 +121,11 @@
                 const params = new URLSearchParams(window.location.search);
                 if (params.get('snap_product')) {
                     this.product.description = params.get('snap_product');
-                    this.product.priceInput = params.get('snap_price') || '';
+                    this.product.priceInput = this.fmt(parseFloat(params.get('snap_price')) || 0);
                     this.productCost = parseFloat(params.get('snap_cost')) || 0;
                     if (params.get('snap_tradein_model')) {
                         this.tradeIn.model = params.get('snap_tradein_model');
-                        this.tradeIn.offeredInput = params.get('snap_tradein_value') || '';
+                        this.tradeIn.offeredInput = this.fmt(parseFloat(params.get('snap_tradein_value')) || 0);
                     }
                     this.$nextTick(() => this.recalculate());
                 }
