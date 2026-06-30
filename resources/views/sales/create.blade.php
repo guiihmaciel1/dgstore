@@ -760,33 +760,31 @@
                                     </button>
                                 </div>
 
-                                {{-- Badge de simulações ativas --}}
-                                <div x-show="customerSnapshots.length > 0" x-cloak style="margin-top: 0.5rem;">
+                                {{-- Badge discreto de simulações ativas --}}
+                                <div x-show="customerSnapshots.length > 0" x-cloak style="margin-top: 0.375rem; position: relative;">
                                     <button type="button" @click="showSnapshotsPanel = !showSnapshotsPanel"
-                                            style="width: 100%; padding: 0.5rem 0.75rem; background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 0.5rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.15s;"
-                                            onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'">
-                                        <span style="font-size: 0.8125rem; color: #4338ca; font-weight: 600; display: flex; align-items: center; gap: 0.375rem;">
-                                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                            </svg>
-                                            <span x-text="customerSnapshots.length + ' simulação(ões) ativa(s)'"></span>
-                                        </span>
-                                        <svg style="width: 1rem; height: 1rem; color: #6366f1; transition: transform 0.2s;" :style="showSnapshotsPanel ? 'transform: rotate(180deg)' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            style="padding: 0.25rem 0.5rem; background: none; border: none; cursor: pointer; font-size: 0.6875rem; color: #6366f1; font-weight: 500; display: inline-flex; align-items: center; gap: 0.25rem;"
+                                            onmouseover="this.style.color='#4338ca'" onmouseout="this.style.color='#6366f1'">
+                                        <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                        <span x-text="customerSnapshots.length + ' simulação(ões) salva(s)'"></span>
+                                        <svg style="width: 0.625rem; height: 0.625rem; transition: transform 0.2s;" :style="showSnapshotsPanel ? 'transform: rotate(180deg)' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                         </svg>
                                     </button>
 
                                     <div x-show="showSnapshotsPanel" x-transition x-cloak
-                                         style="margin-top: 0.5rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                                         style="margin-top: 0.25rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                                         <template x-for="snap in customerSnapshots" :key="snap.id">
-                                            <div style="padding: 0.75rem; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between;">
-                                                <div style="min-width: 0;">
-                                                    <span style="font-weight: 600; font-size: 0.8125rem; color: #111827; display: block;" x-text="snap.product_description"></span>
-                                                    <span style="font-size: 0.75rem; color: #6b7280;" x-text="'R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) + (snap.trade_in_model ? ' | Troca: ' + snap.trade_in_model : '') + ' | ' + new Date(snap.created_at).toLocaleDateString('pt-BR')"></span>
+                                            <div style="padding: 0.5rem 0.625rem; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+                                                <div style="min-width: 0; overflow: hidden;">
+                                                    <span style="font-weight: 500; font-size: 0.75rem; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;" x-text="snap.product_description"></span>
+                                                    <span style="font-size: 0.6875rem; color: #9ca3af;" x-text="'R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' · ' + new Date(snap.created_at).toLocaleDateString('pt-BR')"></span>
                                                 </div>
                                                 <button type="button" @click="useSnapshot(snap)"
-                                                        style="padding: 0.375rem 0.625rem; background: #4f46e5; color: white; border: none; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; cursor: pointer; white-space: nowrap;"
-                                                        onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4f46e5'">
+                                                        style="padding: 0.25rem 0.5rem; background: #111827; color: white; border: none; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; cursor: pointer; white-space: nowrap;"
+                                                        onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
                                                     Usar
                                                 </button>
                                             </div>
