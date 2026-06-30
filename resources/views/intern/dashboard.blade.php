@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="title">Painel do Estagiário</x-slot>
-    <div class="py-6">
+    <div class="py-6" x-data="{ simSearch: '', simResults: [], simSearching: false, async searchSimulations() { if (this.simSearch.length < 2) { this.simResults = []; return; } this.simSearching = true; try { const res = await fetch(`{{ route('simulations.search') }}?q=${encodeURIComponent(this.simSearch)}`); this.simResults = await res.json(); } catch(e) { this.simResults = []; } this.simSearching = false; } }">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
@@ -14,6 +14,71 @@
                     {{ session('error') }}
                 </div>
             @endif
+
+            {{-- BUSCA RÁPIDA DE SIMULAÇÕES --}}
+            <div style="margin-bottom: 1rem; position: relative;" @click.outside="simResults = []">
+                <div style="position: relative;">
+                    <div style="position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); pointer-events: none;">
+                        <svg style="width: 1.125rem; height: 1.125rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <input type="text"
+                           x-model="simSearch"
+                           @input.debounce.300ms="searchSimulations()"
+                           @focus="if(simSearch.length >= 2) searchSimulations()"
+                           placeholder="Buscar simulação salva (nome ou telefone do cliente)..."
+                           style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.75rem; border: 2px solid #e5e7eb; border-radius: 0.75rem; font-size: 0.875rem; outline: none; background: white; transition: border-color 0.15s;"
+                           onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'">
+                    <div x-show="simSearching" style="position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%);">
+                        <svg style="width: 1.125rem; height: 1.125rem; color: #6366f1; animation: spin 1s linear infinite;" fill="none" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" style="opacity: 0.25;"></circle>
+                            <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" style="opacity: 0.75;"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                {{-- Resultados da busca --}}
+                <div x-show="simResults.length > 0" x-cloak x-transition
+                     style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); max-height: 20rem; overflow-y: auto;">
+                    <template x-for="snap in simResults" :key="snap.id">
+                        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
+                            <div style="min-width: 0; flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.125rem;">
+                                    <span style="font-weight: 600; font-size: 0.8125rem; color: #111827;" x-text="snap.customer?.name || 'Cliente'"></span>
+                                    <span style="font-size: 0.6875rem; color: #6b7280; background: #f3f4f6; padding: 0.125rem 0.375rem; border-radius: 0.25rem;" x-text="snap.customer?.phone || ''"></span>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #4b5563;">
+                                    <span x-text="snap.product_description"></span>
+                                    <span style="color: #9ca3af;"> · </span>
+                                    <span style="font-weight: 600;" x-text="'R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2})"></span>
+                                    <span x-show="snap.trade_in_model" style="color: #9ca3af;"> · </span>
+                                    <span x-show="snap.trade_in_model" style="color: #7c3aed;" x-text="'Troca: ' + (snap.trade_in_model || '')"></span>
+                                </div>
+                                <div style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.125rem;" x-text="new Date(snap.created_at).toLocaleDateString('pt-BR') + ' · Válida por 7 dias'"></div>
+                            </div>
+                            <div style="display: flex; gap: 0.375rem; flex-shrink: 0;">
+                                <a :href="'{{ route('sales.create') }}?snapshot_id=' + snap.id"
+                                   style="padding: 0.375rem 0.625rem; background: #111827; color: white; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; text-decoration: none; white-space: nowrap;"
+                                   onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
+                                    Abrir Venda
+                                </a>
+                                <a :href="'{{ route('tools.negotiation-simulator') }}?snap_product=' + encodeURIComponent(snap.product_description) + '&snap_price=' + snap.product_price + (snap.product_cost ? '&snap_cost=' + snap.product_cost : '') + (snap.trade_in_model ? '&snap_tradein_model=' + encodeURIComponent(snap.trade_in_model) + '&snap_tradein_value=' + (snap.trade_in_value || '') + '&snap_tradein_system_value=' + (snap.trade_in_system_value || '') + '&snap_tradein_storage=' + encodeURIComponent(snap.trade_in_storage || '') + '&snap_tradein_battery=' + (snap.trade_in_battery || '') : '')"
+                                   style="padding: 0.375rem 0.625rem; background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; text-decoration: none; white-space: nowrap;"
+                                   onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'">
+                                    Reabrir Simulador
+                                </a>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- Nenhum resultado --}}
+                <div x-show="simSearch.length >= 2 && simResults.length === 0 && !simSearching" x-cloak
+                     style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 1.5rem; text-align: center;">
+                    <p style="font-size: 0.8125rem; color: #6b7280;">Nenhuma simulação ativa encontrada.</p>
+                </div>
+            </div>
 
             {{-- BARRA DE PONTO (Destaque) --}}
             @if($nextPunchType)
