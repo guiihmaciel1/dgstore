@@ -24,6 +24,8 @@ class NegotiationSnapshot extends Model
         'product_price',
         'product_cost',
         'trade_in_model',
+        'trade_in_storage',
+        'trade_in_battery',
         'trade_in_value',
         'trade_in_system_value',
         'down_payment',

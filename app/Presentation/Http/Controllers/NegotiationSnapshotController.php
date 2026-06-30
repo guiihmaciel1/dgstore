@@ -21,6 +21,8 @@ class NegotiationSnapshotController extends Controller
             'product_price' => ['required', 'numeric', 'min:0'],
             'product_cost' => ['nullable', 'numeric', 'min:0'],
             'trade_in_model' => ['nullable', 'string', 'max:255'],
+            'trade_in_storage' => ['nullable', 'string', 'max:50'],
+            'trade_in_battery' => ['nullable', 'integer', 'min:0', 'max:100'],
             'trade_in_value' => ['nullable', 'numeric', 'min:0'],
             'trade_in_system_value' => ['nullable', 'numeric', 'min:0'],
             'down_payment' => ['nullable', 'numeric', 'min:0'],

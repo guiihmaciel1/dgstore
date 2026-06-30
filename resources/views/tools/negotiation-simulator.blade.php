@@ -125,6 +125,8 @@
                     this.productCost = parseFloat(params.get('snap_cost')) || 0;
                     if (params.get('snap_tradein_model')) {
                         this.tradeIn.model = params.get('snap_tradein_model');
+                        this.tradeIn.storage = params.get('snap_tradein_storage') || '';
+                        this.tradeIn.battery = parseInt(params.get('snap_tradein_battery')) || 100;
                         this.tradeIn.offeredInput = this.fmt(parseFloat(params.get('snap_tradein_value')) || 0);
                         this.tradeIn.showEval = true;
                         const sysValue = parseFloat(params.get('snap_tradein_system_value')) || 0;
@@ -462,6 +464,8 @@
                     product_price: this.productPrice,
                     product_cost: this.productCost || null,
                     trade_in_model: this.tradeIn.model || null,
+                    trade_in_storage: this.tradeIn.storage || null,
+                    trade_in_battery: this.tradeIn.battery || null,
                     trade_in_value: this.tradeInValue || null,
                     trade_in_system_value: this.tradeIn.result?.resale_price || null,
                     down_payment: this.downPayment || 0,
