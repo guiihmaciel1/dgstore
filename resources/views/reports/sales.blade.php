@@ -210,7 +210,7 @@
                                         {{ $sale->customer?->name ?? '-' }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280;">
-                                        {{ $sale->user?->name }}
+                                        {{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #111827;">
                                         {{ $sale->formatted_total }}

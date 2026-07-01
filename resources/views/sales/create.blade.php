@@ -109,12 +109,8 @@
                                             onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
                                             @change="sellerId = $event.target.selectedOptions[0]?.dataset?.userId || ''">
                                         <option value="">Selecione...</option>
-                                        <option value="Guilherme">Guilherme</option>
-                                        <option value="Danilo">Danilo</option>
                                         @foreach($sellers as $seller)
-                                            @unless(in_array($seller->name, ['Guilherme', 'Danilo']))
-                                                <option value="{{ $seller->name }}" data-user-id="{{ $seller->id }}">{{ $seller->name }}</option>
-                                            @endunless
+                                            <option value="{{ $seller->name }}" data-user-id="{{ $seller->id }}">{{ $seller->name }}</option>
                                         @endforeach
                                     </select>
                                     <input type="hidden" name="seller_id" :value="sellerId">
@@ -1593,11 +1589,16 @@
                 // Vendedor e entrega
                 sellerName: (() => {
                     const userName = '{{ auth()->user()->name ?? '' }}';
-                    const sellers = ['Guilherme', 'Danilo', 'Sophia', 'Maria'];
-                    const match = sellers.find(s => userName.toLowerCase().includes(s.toLowerCase()));
+                    const allSellers = @json($sellers->pluck('name')->toArray());
+                    const match = allSellers.find(s => userName.toLowerCase().includes(s.toLowerCase()));
                     return match || '';
                 })(),
-                sellerId: '{{ auth()->user()->role->value === 'seller' || auth()->user()->role->value === 'intern' ? auth()->id() : '' }}',
+                sellerId: (() => {
+                    const userName = '{{ auth()->user()->name ?? '' }}';
+                    const sellerMap = @json($sellers->mapWithKeys(fn($s) => [$s->name => $s->id])->toArray());
+                    const matchName = Object.keys(sellerMap).find(s => userName.toLowerCase().includes(s.toLowerCase()));
+                    return matchName ? sellerMap[matchName] : '';
+                })(),
                 deliveryType: '',
                 deliveryMethod: '',
 

@@ -361,7 +361,7 @@
                         </tr>
                         <tr>
                             <td class="label">Vendedor:</td>
-                            <td class="value">{{ $sale->user?->name ?? 'Não informado' }}</td>
+                            <td class="value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? 'Não informado' }}</td>
                         </tr>
                         <tr>
                             <td class="label">Tipo:</td>

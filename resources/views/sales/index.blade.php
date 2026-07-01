@@ -117,7 +117,7 @@
                                 <tr style="border-bottom: 1px solid #f3f4f6;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
                                     <td style="padding: 1rem 1.5rem;">
                                         <div style="font-weight: 600; color: #111827;">{{ $sale->sale_number }}</div>
-                                        <div style="font-size: 0.75rem; color: #9ca3af;">{{ $sale->user?->name }}</div>
+                                        <div style="font-size: 0.75rem; color: #9ca3af;">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name }}</div>
                                     </td>
                                     <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #374151;">
                                         {{ $sale->customer?->name ?? 'Cliente não informado' }}

@@ -87,9 +87,13 @@ class SaleController extends Controller
                 ->find($request->get('snapshot_id'));
         }
 
-        $sellers = User::whereIn('role', [UserRole::Seller->value, UserRole::Intern->value])
+        $sellers = User::whereIn('role', [
+                UserRole::AdminGeral->value,
+                UserRole::Seller->value,
+                UserRole::Intern->value,
+            ])
             ->orderBy('name')
-            ->get(['id', 'name']);
+            ->get(['id', 'name', 'role']);
 
         return view('sales.create', [
             'products' => $products,
@@ -150,6 +154,7 @@ class SaleController extends Controller
             'items.images',
             'customer',
             'user',
+            'seller',
             'stockMovements',
             'tradeIns.product.saleItems.sale.customer',
         ]);
@@ -165,7 +170,7 @@ class SaleController extends Controller
             abort(403, 'Vendas canceladas não podem ser editadas.');
         }
 
-        $sale->load(['items.product', 'customer', 'user', 'tradeIns']);
+        $sale->load(['items.product', 'customer', 'user', 'seller', 'tradeIns']);
 
         return view('sales.edit', [
             'sale' => $sale,
@@ -279,7 +284,7 @@ class SaleController extends Controller
 
     public function receipt(Sale $sale)
     {
-        $sale->load(['items.product', 'customer', 'user']);
+        $sale->load(['items.product', 'customer', 'user', 'seller']);
 
         $pdf = Pdf::loadView('sales.receipt', [
             'sale' => $sale,

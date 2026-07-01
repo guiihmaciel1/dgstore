@@ -104,7 +104,7 @@
                     <td>{{ $sale->sale_number }}</td>
                     <td>{{ $sale->sold_at->format('d/m/Y H:i') }}</td>
                     <td>{{ $sale->customer?->name ?? '-' }}</td>
-                    <td>{{ $sale->user?->name }}</td>
+                    <td>{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name }}</td>
                     <td>{{ $sale->payment_status->label() }}</td>
                     <td class="text-right">R$ {{ number_format($sale->total, 2, ',', '.') }}</td>
                 </tr>

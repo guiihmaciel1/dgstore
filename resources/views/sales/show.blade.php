@@ -688,7 +688,7 @@
                                 </div>
                                 <div>
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Vendedor</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827;">{{ $sale->user?->name }}</dd>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; font-weight: 500; color: #111827;">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name }}</dd>
                                 </div>
                                 <div>
                                     <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Tipo</dt>

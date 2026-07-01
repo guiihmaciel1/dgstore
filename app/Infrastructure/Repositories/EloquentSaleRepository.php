@@ -31,26 +31,26 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
     public function find(string $id): ?Sale
     {
-        return Sale::with(['items.product', 'customer', 'user'])->find($id);
+        return Sale::with(['items.product', 'customer', 'user', 'seller'])->find($id);
     }
 
     public function findBySaleNumber(string $saleNumber): ?Sale
     {
-        return Sale::with(['items.product', 'customer', 'user'])
+        return Sale::with(['items.product', 'customer', 'user', 'seller'])
             ->where('sale_number', $saleNumber)
             ->first();
     }
 
     public function all(): Collection
     {
-        return Sale::with(['customer', 'user'])
+        return Sale::with(['customer', 'user', 'seller'])
             ->orderBy('sold_at', 'desc')
             ->get();
     }
 
     public function paginate(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        $query = Sale::with(['customer', 'user', 'items']);
+        $query = Sale::with(['customer', 'user', 'seller', 'items']);
 
         $this->applyFilters($query, $filters);
 
@@ -217,7 +217,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 }
             }
 
-            return $sale->load(['items.product', 'customer', 'user', 'tradeIns']);
+            return $sale->load(['items.product', 'customer', 'user', 'seller', 'tradeIns']);
         });
     }
 
@@ -267,7 +267,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
     public function getByCustomer(string $customerId): Collection
     {
-        return Sale::with(['items.product', 'user'])
+        return Sale::with(['items.product', 'user', 'seller'])
             ->where('customer_id', $customerId)
             ->orderBy('sold_at', 'desc')
             ->get();
@@ -283,7 +283,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
     public function getByDateRange(Carbon $startDate, Carbon $endDate): Collection
     {
-        return Sale::with(['customer', 'user'])
+        return Sale::with(['customer', 'user', 'seller'])
             ->whereBetween('sold_at', [$startDate, $endDate])
             ->where('payment_status', '!=', PaymentStatus::Cancelled)
             ->orderBy('sold_at', 'desc')
