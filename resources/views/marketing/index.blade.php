@@ -89,7 +89,9 @@
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 150px;">Obs</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Ativo</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Fotos</th>
+                                        @if(auth()->user()->role->isAdminGeral())
                                         <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;"></th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -163,6 +165,7 @@
                                                           x-text="row.images.length"></span>
                                                 </button>
                                             </td>
+                                            @if(auth()->user()->role->isAdminGeral())
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                                 <button type="button" @click="removePrice(row._origIdx)"
                                                         style="padding: 0.25rem; color: #dc2626; background: none; border: none; cursor: pointer; border-radius: 0.25rem;"
@@ -173,6 +176,7 @@
                                                     </svg>
                                                 </button>
                                             </td>
+                                            @endif
                                         </tr>
                                     </template>
                                 </tbody>
