@@ -79,6 +79,8 @@
             evalDropdownOpen: false,
 
             productCost: 0,
+            accessoryCasePrice: 0,
+            accessoryChargerPrice: 0,
             product: { description: '', priceInput: '' },
             tradeIn: {
                 showEval: false, model: '', storage: '', battery: 100,
@@ -177,7 +179,12 @@
 
             get commissionEstimate() {
                 const RATE = 0.10;
+                const CASE_BASE = 10;
+                const CHARGER_BASE = 50;
+                const ACC_RATE = 0.50;
                 let profit = 0;
+                let caseComm = 0;
+                let chargerComm = 0;
 
                 if (this.productCost > 0 && this.productPrice > 0) {
                     const lucro = this.productPrice - this.productCost;
@@ -186,9 +193,20 @@
                     }
                 }
 
+                if (this.accessoryCasePrice > CASE_BASE) {
+                    caseComm = (this.accessoryCasePrice - CASE_BASE) * ACC_RATE;
+                }
+                if (this.accessoryChargerPrice > CHARGER_BASE) {
+                    chargerComm = (this.accessoryChargerPrice - CHARGER_BASE) * ACC_RATE;
+                }
+
+                const total = profit + caseComm + chargerComm;
                 return {
                     profit: Math.round(profit * 100) / 100,
-                    total: Math.round(profit * 100) / 100,
+                    caseComm: Math.round(caseComm * 100) / 100,
+                    chargerComm: Math.round(chargerComm * 100) / 100,
+                    accessoryTotal: Math.round((caseComm + chargerComm) * 100) / 100,
+                    total: Math.round(total * 100) / 100,
                 };
             },
 

@@ -45,30 +45,50 @@
                 <div class="flex items-center gap-1.5 mb-2">
                     <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
                     <span class="text-xs font-semibold text-gray-700">Acessórios</span>
-                    <span class="text-[10px] text-gray-400 font-normal">— comissão extra por venda</span>
+                    <span class="text-[10px] text-gray-400 font-normal">— preencha o valor de venda</span>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-purple-50 border border-purple-100 rounded-lg p-2.5 text-center">
-                        <p class="text-[10px] text-purple-600 font-semibold uppercase tracking-wider mb-0.5">Capinha</p>
-                        <p class="text-[10px] text-gray-500">Base: R$ 10</p>
-                        <p class="text-xs font-bold text-purple-700 mt-1">50% do lucro</p>
-                        <p class="text-[9px] text-gray-400 mt-0.5">Ex: vendeu R$ 50 → <strong class="text-purple-600">+R$ 20</strong></p>
+                    {{-- Capinha --}}
+                    <div class="rounded-lg p-2.5 border transition-all duration-200"
+                         :class="accessoryCasePrice > 10 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider mb-1.5"
+                           :class="accessoryCasePrice > 10 ? 'text-purple-600' : 'text-gray-500'">Capinha</p>
+                        <div class="relative">
+                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
+                            <input type="number" x-model.number="accessoryCasePrice" min="0" step="5" placeholder="0"
+                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
+                                   :class="accessoryCasePrice > 10 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+                        </div>
+                        <div class="mt-1.5 text-center" x-show="accessoryCasePrice > 10">
+                            <span class="text-[10px] text-gray-400">Lucro: R$ <span x-text="fmt(accessoryCasePrice - 10)"></span></span>
+                            <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.caseComm)"></span></p>
+                        </div>
+                        <p class="text-[9px] text-gray-400 mt-1 text-center" x-show="accessoryCasePrice <= 10">Base R$ 10 · 50% do lucro</p>
                     </div>
-                    <div class="bg-purple-50 border border-purple-100 rounded-lg p-2.5 text-center">
-                        <p class="text-[10px] text-purple-600 font-semibold uppercase tracking-wider mb-0.5">Carregador</p>
-                        <p class="text-[10px] text-gray-500">Base: R$ 50</p>
-                        <p class="text-xs font-bold text-purple-700 mt-1">50% do lucro</p>
-                        <p class="text-[9px] text-gray-400 mt-0.5">Ex: vendeu R$ 100 → <strong class="text-purple-600">+R$ 25</strong></p>
+                    {{-- Carregador --}}
+                    <div class="rounded-lg p-2.5 border transition-all duration-200"
+                         :class="accessoryChargerPrice > 50 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
+                        <p class="text-[10px] font-semibold uppercase tracking-wider mb-1.5"
+                           :class="accessoryChargerPrice > 50 ? 'text-purple-600' : 'text-gray-500'">Carregador</p>
+                        <div class="relative">
+                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
+                            <input type="number" x-model.number="accessoryChargerPrice" min="0" step="10" placeholder="0"
+                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
+                                   :class="accessoryChargerPrice > 50 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+                        </div>
+                        <div class="mt-1.5 text-center" x-show="accessoryChargerPrice > 50">
+                            <span class="text-[10px] text-gray-400">Lucro: R$ <span x-text="fmt(accessoryChargerPrice - 50)"></span></span>
+                            <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.chargerComm)"></span></p>
+                        </div>
+                        <p class="text-[9px] text-gray-400 mt-1 text-center" x-show="accessoryChargerPrice <= 50">Base R$ 50 · 50% do lucro</p>
                     </div>
                 </div>
-            </div>
-
-            {{-- Potencial com acessórios --}}
-            <div class="bg-purple-50 border border-purple-100 rounded-lg p-3 mt-1" x-show="commissionEstimate.total > 0">
-                <p class="text-[11px] text-purple-800 leading-relaxed">
-                    Se você vender <strong>capinha + carregador</strong> pode ganhar até
-                    <strong class="text-purple-700 text-sm" x-text="'R$ ' + fmt(commissionEstimate.total + 20 + 25)"></strong> nessa venda!
-                </p>
+                {{-- Total de acessórios --}}
+                <div x-show="commissionEstimate.accessoryTotal > 0" x-transition
+                     class="mt-2 bg-purple-100 border border-purple-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-purple-700">Comissão acessórios</span>
+                    <span class="text-sm font-black text-purple-800" x-text="'+R$ ' + fmt(commissionEstimate.accessoryTotal)"></span>
+                </div>
             </div>
 
 
