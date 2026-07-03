@@ -177,34 +177,18 @@
 
             get commissionEstimate() {
                 const RATE = 0.10;
-                const TRADEIN_RATE = 0.02;
-                const FLOOR = 0.0;
-                const TRADEIN_CAP = 0.20;
                 let profit = 0;
-                let tradein = 0;
 
                 if (this.productCost > 0 && this.productPrice > 0) {
                     const lucro = this.productPrice - this.productCost;
-                    const minProfit = this.productCost * FLOOR;
-                    if (lucro >= minProfit) {
+                    if (lucro > 0) {
                         profit = lucro * RATE;
-                    }
-                }
-
-                if (this.tradeIn.result && this.tradeInValue > 0) {
-                    const systemValue = this.tradeIn.result.resale_price || 0;
-                    if (systemValue > 0 && this.tradeInValue < systemValue) {
-                        let economy = systemValue - this.tradeInValue;
-                        const maxDiscount = systemValue * TRADEIN_CAP;
-                        economy = Math.min(economy, maxDiscount);
-                        tradein = economy * TRADEIN_RATE;
                     }
                 }
 
                 return {
                     profit: Math.round(profit * 100) / 100,
-                    tradein: Math.round(tradein * 100) / 100,
-                    total: Math.round((profit + tradein) * 100) / 100,
+                    total: Math.round(profit * 100) / 100,
                 };
             },
 

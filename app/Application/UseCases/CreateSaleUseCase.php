@@ -163,17 +163,15 @@ class CreateSaleUseCase
     }
 
     private const COMMISSION_RATE = 0.10;
-    private const TRADEIN_COMMISSION_RATE = 0.02;
     private const PROFIT_FLOOR_PERCENT = 0.0;
-    private const TRADEIN_MAX_DISCOUNT = 0.20;
     private const ACCESSORY_MIN_PRICES = [
-        'case' => 30.00,
-        'charger' => 100.00,
+        'case' => 10.00,
+        'charger' => 50.00,
         'cable' => 100.00,
     ];
     private const ACCESSORY_COMMISSION_RATES = [
         'case' => 0.50,
-        'charger' => 0.20,
+        'charger' => 0.50,
         'cable' => 0.20,
     ];
 
@@ -197,10 +195,9 @@ class CreateSaleUseCase
             $sale->load(['items', 'tradeIns', 'customer']);
 
             $profitCommission = $this->calculateProfitCommission($sale);
-            $tradeinCommission = $this->calculateTradeinCommission($sale);
             $accessoryCommission = $this->calculateAccessoryCommission($sale);
 
-            $totalCommission = round($profitCommission + $tradeinCommission + $accessoryCommission, 2);
+            $totalCommission = round($profitCommission + $accessoryCommission, 2);
 
             if ($totalCommission <= 0) {
                 return;
@@ -230,7 +227,7 @@ class CreateSaleUseCase
                 'commission_type' => 'dynamic',
                 'commission_amount' => $totalCommission,
                 'profit_commission' => $profitCommission,
-                'tradein_commission' => $tradeinCommission,
+                'tradein_commission' => 0,
                 'accessory_commission' => $accessoryCommission,
                 'sale_profit' => round($saleProfit, 2),
                 'customer_name' => $customerName,
@@ -263,28 +260,6 @@ class CreateSaleUseCase
             }
 
             $commission += $profit * self::COMMISSION_RATE;
-        }
-
-        return round($commission, 2);
-    }
-
-    private function calculateTradeinCommission(Sale $sale): float
-    {
-        $commission = 0.0;
-
-        foreach ($sale->tradeIns as $tradeIn) {
-            $systemValue = (float) $tradeIn->resale_price;
-            $offeredValue = (float) $tradeIn->estimated_value;
-
-            if ($systemValue <= 0 || $offeredValue >= $systemValue) {
-                continue;
-            }
-
-            $economy = $systemValue - $offeredValue;
-            $maxDiscount = $systemValue * self::TRADEIN_MAX_DISCOUNT;
-            $economy = min($economy, $maxDiscount);
-
-            $commission += $economy * self::TRADEIN_COMMISSION_RATE;
         }
 
         return round($commission, 2);
