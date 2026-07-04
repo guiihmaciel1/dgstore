@@ -104,9 +104,10 @@
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Tipo</th>
                                 <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Total</th>
                                 @if(auth()->user()->canViewFinancials())
-                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Lucro</th>
+                                <th style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Lucro Bruto</th>
+                                <th style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Comissão</th>
+                                <th style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Lucro Líq.</th>
                                 @endif
-                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Pagamento</th>
                                 <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Status</th>
                                 <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
                                 <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Ações</th>
@@ -135,16 +136,20 @@
                                         {{ $sale->formatted_total }}
                                     </td>
                                     @if(auth()->user()->canViewFinancials())
-                                    <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; font-size: 0.875rem; color: {{ $sale->profit >= 0 ? '#16a34a' : '#dc2626' }};">
-                                        {{ $sale->formatted_profit }}
+                                    @php
+                                        $commissionTotal = $sale->commissions->sum('commission_amount');
+                                        $netProfit = $sale->profit - $commissionTotal;
+                                    @endphp
+                                    <td style="padding: 0.75rem 0.75rem; text-align: right; font-weight: 600; font-size: 0.8125rem; color: {{ $sale->profit >= 0 ? '#16a34a' : '#dc2626' }};">
+                                        R$ {{ number_format($sale->profit, 2, ',', '.') }}
+                                    </td>
+                                    <td style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.8125rem; font-weight: 600; color: {{ $commissionTotal > 0 ? '#7c3aed' : '#d1d5db' }};">
+                                        {{ $commissionTotal > 0 ? 'R$ ' . number_format($commissionTotal, 2, ',', '.') : '-' }}
+                                    </td>
+                                    <td style="padding: 0.75rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ $netProfit >= 0 ? '#059669' : '#dc2626' }};">
+                                        R$ {{ number_format($netProfit, 2, ',', '.') }}
                                     </td>
                                     @endif
-                                    <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280;">
-                                        {{ $sale->payment_method->label() }}
-                                        @if($sale->installments > 1)
-                                            <span style="font-size: 0.75rem; color: #9ca3af;">({{ $sale->installments }}x)</span>
-                                        @endif
-                                    </td>
                                     <td style="padding: 0.75rem 1rem; text-align: center;">
                                         @php
                                             $statusColors = [
