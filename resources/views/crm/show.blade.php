@@ -246,10 +246,14 @@
                         <div x-show="showLostForm" x-transition style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1rem;">
                             <form method="POST" action="{{ route('crm.deals.lose', $deal) }}">
                                 @csrf
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #991b1b; display: block; margin-bottom: 0.375rem;">Motivo da perda</label>
-                                <input type="text" name="lost_reason" placeholder="Ex: Preço alto, comprou na concorrência, desistiu..."
-                                       style="width: 100%; padding: 0.5rem; border: 1px solid #fecaca; border-radius: 0.375rem; font-size: 0.8rem; margin-bottom: 0.5rem;">
-                                <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                                <label style="font-size: 0.75rem; font-weight: 600; color: #991b1b; display: block; margin-bottom: 0.375rem;">Motivo da perda *</label>
+                                <input type="text" name="lost_reason" required minlength="3" placeholder="Ex: Preço alto, comprou na concorrência, desistiu..."
+                                       value="{{ old('lost_reason') }}"
+                                       style="width: 100%; padding: 0.5rem; border: 1px solid {{ $errors->has('lost_reason') ? '#dc2626' : '#fecaca' }}; border-radius: 0.375rem; font-size: 0.8rem; margin-bottom: 0.25rem;">
+                                @error('lost_reason')
+                                    <p style="font-size: 0.7rem; color: #dc2626; margin: 0 0 0.375rem 0;">{{ $message }}</p>
+                                @enderror
+                                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.375rem;">
                                     <button @click.prevent="showLostForm = false" type="button" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white; cursor: pointer;">Cancelar</button>
                                     <button type="submit" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; background: #dc2626; color: white; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600;">Marcar como Perdido</button>
                                 </div>
@@ -441,7 +445,7 @@
     <script>
     function dealPage() {
         return {
-            showLostForm: false,
+            showLostForm: {{ $errors->has('lost_reason') ? 'true' : 'false' }},
             showEditForm: false,
             aiLoading: false,
             aiResult: '',

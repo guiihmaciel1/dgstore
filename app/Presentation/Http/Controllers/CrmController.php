@@ -271,9 +271,14 @@ class CrmController extends Controller
 
     public function lose(Request $request, Deal $deal): RedirectResponse
     {
+        $request->validate([
+            'lost_reason' => ['required', 'string', 'min:3', 'max:500'],
+        ], [
+            'lost_reason.required' => 'Informe o motivo da perda.',
+            'lost_reason.min' => 'O motivo deve ter pelo menos 3 caracteres.',
+        ]);
 
-        $reason = $request->input('lost_reason', '');
-        $deal->markAsLost($reason);
+        $deal->markAsLost($request->input('lost_reason'));
 
         return redirect()->back()->with('success', 'Negócio marcado como perdido.');
     }
