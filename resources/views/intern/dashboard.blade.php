@@ -124,6 +124,9 @@
                 </div>
             @endif
 
+            {{-- MODO OCIOSO — SUGESTÕES INTELIGENTES --}}
+            @include('intern._idle-mode')
+
             {{-- CHECKLIST DIÁRIO --}}
             @include('intern._daily-checklist')
 

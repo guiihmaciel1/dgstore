@@ -33,6 +33,7 @@ use App\Presentation\Http\Controllers\Admin\AdminB2BSettingController;
 use App\Presentation\Http\Controllers\Admin\AdminUserController;
 use App\Presentation\Http\Controllers\Admin\CommissionController;
 use App\Presentation\Http\Controllers\Admin\TimeClockAdminController;
+use App\Presentation\Http\Controllers\IdleModeController;
 use App\Presentation\Http\Controllers\InternDashboardController;
 use App\Presentation\Http\Controllers\TimeClockController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeDashboardController;
@@ -73,6 +74,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/intern/dashboard', [InternDashboardController::class, 'index'])->name('intern.dashboard');
         Route::post('/intern/time-clock/punch', [TimeClockController::class, 'punch'])->name('intern.time-clock.punch');
     });
+
+    // ----------------------------------------------------------------
+    // Modo Ocioso — sugestões inteligentes
+    // ----------------------------------------------------------------
+    Route::get('/api/idle-mode/suggestions', [IdleModeController::class, 'suggestions'])->name('idle-mode.suggestions');
 
     // ----------------------------------------------------------------
     // Simulações — acessível por todos os perfis autenticados
