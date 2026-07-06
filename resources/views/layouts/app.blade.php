@@ -23,6 +23,9 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-50">
+            @auth
+                <x-dollar-rate-banner />
+            @endauth
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -41,8 +44,9 @@
         </div>
         
         <!-- Botões Flutuantes + Modais -->
-        {{-- <x-currency-calculator /> --}}
-        {{-- <x-card-fee-calculator /> --}}
+        @auth
+            <x-import-calculator />
+        @endauth
         <x-stone-fab-calculator />
 
         @stack('scripts')

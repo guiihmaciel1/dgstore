@@ -32,6 +32,7 @@ use App\Presentation\Http\Controllers\Admin\AdminB2BRetailerController;
 use App\Presentation\Http\Controllers\Admin\AdminB2BSettingController;
 use App\Presentation\Http\Controllers\Admin\AdminUserController;
 use App\Presentation\Http\Controllers\Admin\CommissionController;
+use App\Presentation\Http\Controllers\Admin\DollarRateController;
 use App\Presentation\Http\Controllers\Admin\TimeClockAdminController;
 use App\Presentation\Http\Controllers\IdleModeController;
 use App\Presentation\Http\Controllers\InternDashboardController;
@@ -336,6 +337,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             // Registro de Ponto (Admin)
             Route::get('/admin/time-clock', [TimeClockAdminController::class, 'index'])->name('admin.time-clock.index');
+
+            // Cotação do Dólar
+            Route::post('/admin/dollar-rate', [DollarRateController::class, 'store'])->name('admin.dollar-rate.store');
         });
     });
 

@@ -87,9 +87,14 @@
                                style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Telefone / WhatsApp</label>
-                        <input type="text" name="phone" value="{{ old('phone') }}" placeholder="5517996498338"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Telefone / WhatsApp <span style="color: #dc2626;">*</span></label>
+                        <input type="text" name="phone" required value="{{ old('phone') }}" placeholder="(00) 00000-0000"
+                               maxlength="15"
+                               @input="$el.value = $el.value.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2').substring(0,15)"
+                               style="width: 100%; padding: 0.5rem; border: 1px solid {{ $errors->has('phone') ? '#fca5a5' : '#e5e7eb' }}; border-radius: 0.375rem; font-size: 0.875rem;">
+                        @error('phone')
+                            <p style="font-size: 0.7rem; color: #dc2626; margin: 0.25rem 0 0 0;">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 

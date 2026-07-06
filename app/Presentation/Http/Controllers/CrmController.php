@@ -102,11 +102,15 @@ class CrmController extends Controller
     {
         $leadSourceValues = implode(',', array_column(LeadSource::cases(), 'value'));
 
+        if ($request->filled('phone')) {
+            $request->merge(['phone' => preg_replace('/\D/', '', $request->input('phone'))]);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'product_interest' => 'nullable|string|max:255',
             'value' => 'nullable|numeric|min:0',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'required|string|min:10|max:20',
             'description' => 'nullable|string|max:2000',
             'expected_close_date' => 'nullable|date',
             'customer_id' => 'nullable|exists:customers,id',
@@ -120,6 +124,9 @@ class CrmController extends Controller
             'temperature' => 'nullable|string|in:hot,warm,cold',
             'next_action' => 'nullable|string|max:255',
             'next_action_at' => 'nullable|date',
+        ], [
+            'phone.required' => 'Informe o telefone/WhatsApp do cliente.',
+            'phone.min' => 'O telefone deve ter pelo menos 10 dígitos.',
         ]);
 
         $stageId = ! empty($validated['pipeline_stage_id'])
