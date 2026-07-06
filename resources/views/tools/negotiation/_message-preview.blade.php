@@ -18,14 +18,6 @@
                 </svg>
                 WhatsApp
             </a>
-            <button @click="openSaveModal()" type="button"
-                    x-show="productPrice > 0"
-                    class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-none bg-indigo-600 text-white flex items-center gap-1 hover:bg-indigo-700 transition-colors">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
-                Salvar p/ Cliente
-            </button>
         </div>
     </div>
     <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-[13px] text-gray-700 whitespace-pre-wrap font-mono leading-relaxed min-h-[100px] max-h-[520px] overflow-y-auto"
