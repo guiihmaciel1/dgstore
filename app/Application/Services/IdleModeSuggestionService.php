@@ -7,13 +7,10 @@ namespace App\Application\Services;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\Customer\Models\Customer;
-use App\Domain\Followup\Models\Followup;
 use App\Domain\Marketing\Models\MarketingPrice;
 use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Negotiation\Models\NegotiationSnapshot;
 use App\Domain\Product\Models\Product;
-use App\Domain\Sale\Enums\PaymentStatus;
-use App\Domain\Sale\Models\Sale;
 use App\Domain\Schedule\Models\Appointment;
 use Illuminate\Support\Collection;
 
@@ -24,11 +21,7 @@ class IdleModeSuggestionService
     public function getSuggestions(): array
     {
         $suggestions = collect()
-            ->merge($this->crmOverdueFollowups())
-            ->merge($this->genericOverdueFollowups())
             ->merge($this->birthdaysToday())
-            ->merge($this->crmStaleDeals())
-            ->merge($this->salesWithoutFollowup())
             ->merge($this->simulationsExpiring())
             ->merge($this->birthdaysTomorrow())
             ->merge($this->newLeadsWaiting())
@@ -42,50 +35,6 @@ class IdleModeSuggestionService
     public function getCount(): int
     {
         return count($this->getSuggestions());
-    }
-
-    private function crmOverdueFollowups(): Collection
-    {
-        return Deal::needsFollowup()
-            ->with('customer')
-            ->limit(self::MAX_PER_SOURCE)
-            ->get()
-            ->map(fn (Deal $deal) => [
-                'category' => 'crm',
-                'priority' => 'high',
-                'icon' => 'phone-missed',
-                'title' => 'Follow-up CRM vencido',
-                'message' => sprintf(
-                    '%s aguarda retorno desde %s',
-                    $deal->customer?->name ?? $deal->phone ?? 'Cliente',
-                    $deal->next_action_at?->format('d/m H:i') ?? '—'
-                ),
-                'action_label' => 'Abrir negociação',
-                'action_url' => route('crm.show', $deal),
-                'whatsapp_url' => $this->whatsappUrl($deal->customer?->phone ?? $deal->phone),
-            ]);
-    }
-
-    private function crmStaleDeals(): Collection
-    {
-        return Deal::stale(4)
-            ->with('customer')
-            ->limit(self::MAX_PER_SOURCE)
-            ->get()
-            ->map(fn (Deal $deal) => [
-                'category' => 'crm',
-                'priority' => 'medium',
-                'icon' => 'clock-alert',
-                'title' => 'Negociação parada',
-                'message' => sprintf(
-                    '%s sem interação há %s horas',
-                    $deal->customer?->name ?? $deal->phone ?? 'Cliente',
-                    $deal->last_interaction_at ? (int) $deal->last_interaction_at->diffInHours(now()) : '24+'
-                ),
-                'action_label' => 'Retomar contato',
-                'action_url' => route('crm.show', $deal),
-                'whatsapp_url' => $this->whatsappUrl($deal->customer?->phone ?? $deal->phone),
-            ]);
     }
 
     private function newLeadsWaiting(): Collection
@@ -105,7 +54,7 @@ class IdleModeSuggestionService
             ->get()
             ->map(fn (Deal $deal) => [
                 'category' => 'crm',
-                'priority' => 'low',
+                'priority' => 'medium',
                 'icon' => 'user-plus',
                 'title' => 'Lead novo sem interação',
                 'message' => sprintf(
@@ -116,63 +65,6 @@ class IdleModeSuggestionService
                 'action_label' => 'Iniciar atendimento',
                 'action_url' => route('crm.show', $deal),
                 'whatsapp_url' => $this->whatsappUrl($deal->customer?->phone ?? $deal->phone),
-            ]);
-    }
-
-    private function salesWithoutFollowup(): Collection
-    {
-        return Sale::with(['customer', 'items'])
-            ->whereNotNull('customer_id')
-            ->where('payment_status', '!=', PaymentStatus::Cancelled)
-            ->whereNotNull('sold_at')
-            ->where('sold_at', '<=', now()->subDays(7))
-            ->where('sold_at', '>=', now()->subDays(30))
-            ->whereDoesntHave('followups')
-            ->orderBy('sold_at')
-            ->limit(self::MAX_PER_SOURCE)
-            ->get()
-            ->map(function (Sale $sale) {
-                $daysSince = (int) $sale->sold_at->diffInDays(now());
-                $product = $sale->items->pluck('product_name')->implode(', ') ?: 'Produto';
-
-                return [
-                    'category' => 'sales',
-                    'priority' => 'medium',
-                    'icon' => 'message-circle',
-                    'title' => 'Pós-venda pendente',
-                    'message' => sprintf(
-                        '%s comprou %s há %d dias — sem follow-up',
-                        $sale->customer?->name ?? 'Cliente',
-                        $product,
-                        $daysSince
-                    ),
-                    'action_label' => 'Ver venda',
-                    'action_url' => route('sales.show', $sale),
-                    'whatsapp_url' => $this->whatsappUrl($sale->customer?->phone),
-                ];
-            });
-    }
-
-    private function genericOverdueFollowups(): Collection
-    {
-        return Followup::overdue()
-            ->with('customer')
-            ->orderBy('due_date')
-            ->limit(self::MAX_PER_SOURCE)
-            ->get()
-            ->map(fn (Followup $f) => [
-                'category' => 'followup',
-                'priority' => 'high',
-                'icon' => 'alert-circle',
-                'title' => 'Follow-up atrasado',
-                'message' => sprintf(
-                    '%s — venceu em %s',
-                    $f->title ?: ($f->customer?->name ?? 'Tarefa'),
-                    $f->due_date->format('d/m')
-                ),
-                'action_label' => 'Resolver',
-                'action_url' => route('crm.board'),
-                'whatsapp_url' => $this->whatsappUrl($f->phone ?? $f->customer?->phone),
             ]);
     }
 
