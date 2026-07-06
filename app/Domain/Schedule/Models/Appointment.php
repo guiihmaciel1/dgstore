@@ -20,6 +20,19 @@ class Appointment extends Model
     public const ATTENDANTS = [
         'danilo'    => 'Danilo',
         'guilherme' => 'Guilherme',
+        'sophia'    => 'Sophia',
+    ];
+
+    public const ATTENDANT_COLORS = [
+        'danilo'    => '#2563eb',
+        'guilherme' => '#7c3aed',
+        'sophia'    => '#db2777',
+    ];
+
+    public const ATTENDANT_BG_COLORS = [
+        'danilo'    => '#eff6ff',
+        'guilherme' => '#f5f3ff',
+        'sophia'    => '#fdf2f8',
     ];
 
     public const MIN_HOUR = 8;

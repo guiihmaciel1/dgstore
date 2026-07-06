@@ -124,6 +124,9 @@
                 </div>
             @endif
 
+            {{-- CHECKLIST DIÁRIO --}}
+            @include('intern._daily-checklist')
+
             {{-- ANIVERSARIANTES DO MÊS --}}
             @if($birthdayCustomers->count() > 0)
             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
@@ -311,9 +314,6 @@
                 </div>
             </div>
             @endif
-
-            {{-- CHECKLIST DIÁRIO --}}
-            @include('intern._daily-checklist')
 
         </div>
 

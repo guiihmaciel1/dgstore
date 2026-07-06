@@ -1,13 +1,17 @@
-<div x-data="dailyChecklist()" x-init="init()" class="mb-6">
-    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-        {{-- Header com progresso --}}
-        <div class="px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
+<div x-data="dailyChecklist()" x-init="init()" class="mb-4">
+    <div class="bg-white rounded-xl border overflow-hidden shadow-sm"
+         :class="progressPercent === 100 ? 'border-emerald-200' : 'border-amber-300'">
+
+        {{-- Header com progresso e alerta --}}
+        <div class="px-4 py-3 border-b"
+             :class="progressPercent === 100 ? 'border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50' : 'border-amber-100 bg-gradient-to-r from-amber-50 to-orange-50'">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-lg">📋</span>
                     <h3 class="text-sm font-extrabold text-gray-900 m-0">Checklist do Dia</h3>
                 </div>
-                <span class="text-xs font-bold" :class="progressPercent === 100 ? 'text-emerald-600' : 'text-gray-500'"
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full"
+                      :class="progressPercent === 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
                       x-text="totalDone + '/' + totalItems + ' (' + Math.round(progressPercent) + '%)'"></span>
             </div>
             <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -22,6 +26,13 @@
             </div>
             <template x-if="progressPercent === 100">
                 <p class="text-[0.7rem] font-bold text-emerald-600 mt-1.5 mb-0 text-center">Tudo feito! Excelente trabalho hoje!</p>
+            </template>
+            <template x-if="progressPercent < 100 && totalDone > 0">
+                <p class="text-[0.7rem] font-bold text-amber-600 mt-1.5 mb-0 text-center"
+                   x-text="(totalItems - totalDone) + ' tarefa' + ((totalItems - totalDone) > 1 ? 's' : '') + ' pendente' + ((totalItems - totalDone) > 1 ? 's' : '') + ' — conclua antes de sair!'"></p>
+            </template>
+            <template x-if="totalDone === 0">
+                <p class="text-[0.7rem] font-bold text-red-500 mt-1.5 mb-0 text-center">Nenhuma tarefa concluída ainda — comece agora!</p>
             </template>
         </div>
 
@@ -41,7 +52,7 @@
                             <span class="text-xs font-bold text-gray-700" x-text="cat.name"></span>
                         </div>
                         <span class="text-[0.65rem] font-bold px-2 py-0.5 rounded-full"
-                              :class="catDone(catIdx) === cat.items.length ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'"
+                              :class="catDone(catIdx) === cat.items.length ? 'bg-emerald-100 text-emerald-700' : (catDone(catIdx) > 0 ? 'bg-amber-100 text-amber-600' : 'bg-red-50 text-red-500')"
                               x-text="catDone(catIdx) + '/' + cat.items.length"></span>
                     </button>
                     <div x-show="cat.open" x-collapse>
@@ -68,57 +79,56 @@
 <script>
 function dailyChecklist() {
     const today = new Date().toISOString().slice(0, 10);
-    const STORAGE_KEY = 'sophia-checklist-' + today;
+    const STORAGE_KEY = 'intern-checklist-' + today;
 
     return {
         categories: [
             {
-                name: 'Abertura da Loja',
-                icon: '🏪',
-                open: true,
+                name: 'Limpeza e Organização',
+                icon: '🧹',
+                open: false,
                 items: [
-                    { label: 'Ligar ar-condicionado e iluminação/vitrine', done: false },
-                    { label: 'Bater tapete / varrer entrada da loja', done: false },
-                    { label: 'Limpar balcão e vitrines (pano úmido)', done: false },
-                    { label: 'Verificar se aparelhos de mostruário estão ligados e funcionando', done: false },
-                    { label: 'Conferir Wi-Fi da loja funcionando', done: false },
+                    { label: 'Trocar/colocar saco de lixo (sala e banheiro)', done: false },
+                    { label: 'Verificar geladeira — descartar itens vencidos/abertos, repor o que necessário', done: false },
+                    { label: 'Regar plantas (segunda, quarta e sexta — pouca água)', done: false },
+                    { label: 'Lavar suporte Dolce Gusto onde pinga café, ver se ficou cápsula dentro, encher água', done: false },
+                    { label: 'Organizar mesas de atendimento', done: false },
                 ],
             },
             {
                 name: 'Estoque e Produtos',
                 icon: '📦',
-                open: true,
+                open: false,
                 items: [
-                    { label: 'Colocar todos os seminovos para carregar', done: false },
-                    { label: 'Conferir se seminovos estão na tela de reset', done: false },
-                    { label: 'Organizar caixinhas nas prateleiras', done: false },
-                    { label: 'Conferir se valores das etiquetas batem com o sistema', done: false },
+                    { label: 'Verificar se seminovos têm carga', done: false },
+                    { label: 'Seminovos sempre configurados no padrão sem iCloud', done: false },
+                    { label: 'Organizar prateleiras', done: false },
+                    { label: 'Conferir se tem etiquetas e se bate com valor atual do sistema', done: false },
                 ],
             },
             {
                 name: 'Marketing e Digital',
                 icon: '📣',
-                open: true,
+                open: false,
                 items: [
                     { label: 'Conferir se tem story dos seminovos ativos (Instagram)', done: false },
-                    { label: 'Olhar preço do concorrente GV_cell e enviar no grupo', done: false },
+                    { label: 'Olhar preço do concorrente e enviar no grupo', done: false },
                     { label: 'Verificar se storys de clientes foram publicados no feed e adicionados aos destaques', done: false },
-                    { label: 'Verificar se algum cliente ficou sem resposta no WhatsApp', done: false },
-                    { label: 'Ler conversas do dia anterior para saber o que está sendo negociado', done: false },
+                    { label: 'Verificar se algum cliente ficou sem resposta no WhatsApp no dia anterior', done: false },
+                    { label: 'Ler conversas do dia anterior para saber o que está sendo negociado pelos outros vendedores', done: false },
                     { label: 'Verificar em Vendas o que foi concluído e excluir anúncios do marketplace se necessário', done: false },
                     { label: 'Acionar clientes que sumiram sem responder (ver Ferramentas > Mensagem WhatsApp)', done: false },
                 ],
             },
             {
-                name: 'Limpeza e Organização',
-                icon: '🧹',
-                open: true,
+                name: 'Atendimento e Proatividade',
+                icon: '🎯',
+                open: false,
                 items: [
-                    { label: 'Trocar/colocar saco de lixo (sala e banheiro)', done: false },
-                    { label: 'Verificar geladeira — descartar itens vencidos/abertos, repor o que necessário', done: false },
-                    { label: 'Regar plantas / jogar água aberta nas plantas', done: false },
-                    { label: 'Lavar suporte Dolce Gusto onde pinga café, ver se ficou cápsula dentro, encher água', done: false },
-                    { label: 'Organizar mesas de atendimento', done: false },
+                    { label: 'Revisar CRM: algum deal precisa de follow-up hoje?', done: false },
+                    { label: 'Verificar aniversariantes do mês e enviar mensagem de parabéns', done: false },
+                    { label: 'Conferir agenda: algum agendamento para hoje sem preparação?', done: false },
+                    { label: 'Estudar ficha técnica de um modelo que ainda não domina (Ferramentas > Ficha Técnica)', done: false },
                 ],
             },
         ],
@@ -172,7 +182,7 @@ function dailyChecklist() {
         _cleanOldKeys() {
             for (let i = localStorage.length - 1; i >= 0; i--) {
                 const key = localStorage.key(i);
-                if (key && key.startsWith('sophia-checklist-') && key !== STORAGE_KEY) {
+                if (key && (key.startsWith('intern-checklist-') || key.startsWith('sophia-checklist-')) && key !== STORAGE_KEY) {
                     localStorage.removeItem(key);
                 }
             }

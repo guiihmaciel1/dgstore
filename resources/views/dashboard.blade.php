@@ -362,7 +362,7 @@
                         <div style="font-size: 0.775rem; color: #374151; margin-top: 0.125rem;">
                             <span style="font-weight: 600;">{{ $nextAppointment->customer_name }}</span>
                             <span style="color: #6b7280;">com</span>
-                            <span style="font-weight: 600; color: {{ $nextAppointment->attendant === 'danilo' ? '#2563eb' : '#7c3aed' }};">{{ $nextAppointment->attendant_name }}</span>
+                            <span style="font-weight: 600; color: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$nextAppointment->attendant] ?? '#6b7280' }};">{{ $nextAppointment->attendant_name }}</span>
                             @if($nextAppointment->service_description)
                                 <span style="color: #9ca3af;">·</span>
                                 <span style="color: #6b7280;">{{ $nextAppointment->service_description }}</span>
@@ -1527,7 +1527,7 @@
                                 @endif
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.375rem; flex-shrink: 0;">
-                                <span style="font-size: 0.7rem; font-weight: 600; color: {{ $appt->attendant === 'danilo' ? '#2563eb' : '#7c3aed' }}; background: {{ $appt->attendant === 'danilo' ? '#eff6ff' : '#f5f3ff' }}; padding: 0.125rem 0.5rem; border-radius: 9999px;">{{ $appt->attendant_name }}</span>
+                                <span style="font-size: 0.7rem; font-weight: 600; color: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$appt->attendant] ?? '#6b7280' }}; background: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_BG_COLORS[$appt->attendant] ?? '#f3f4f6' }}; padding: 0.125rem 0.5rem; border-radius: 9999px;">{{ $appt->attendant_name }}</span>
                                 <span style="font-size: 0.65rem; font-weight: 500; padding: 0.125rem 0.375rem; border-radius: 9999px; background: {{ $sc['bg'] }}; color: {{ $sc['dot'] }}; border: 1px solid {{ $sc['border'] }};">{{ $appt->status->label() }}</span>
                             </div>
                         </div>

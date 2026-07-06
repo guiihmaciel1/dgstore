@@ -68,7 +68,7 @@
                         @foreach($attendants as $key => $name)
                             @php $count = $appointments->where('attendant', $key)->whereNotIn('status', [\App\Domain\Schedule\Enums\AppointmentStatus::Cancelled])->count(); @endphp
                             <span style="display: inline-flex; align-items: center; gap: 0.375rem;">
-                                <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ $key === 'danilo' ? '#2563eb' : '#7c3aed' }};"></span>
+                                <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$key] ?? '#6b7280' }};"></span>
                                 <span style="font-weight: 600; color: #374151;">{{ $name }}:</span>
                                 <span style="color: #6b7280;">{{ $count }}</span>
                             </span>
@@ -80,13 +80,14 @@
             {{-- Grade de horários --}}
             <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
                 {{-- Header da grade --}}
-                <div style="display: grid; grid-template-columns: 70px {{ $attendantFilter ? '1fr' : '1fr 1fr' }}; border-bottom: 1px solid #e5e7eb;">
+                @php $colCount = $attendantFilter ? 1 : count($attendants); @endphp
+                <div style="display: grid; grid-template-columns: 70px repeat({{ $colCount }}, 1fr); border-bottom: 1px solid #e5e7eb;">
                     <div style="padding: 0.75rem; background: #f9fafb; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Hora</div>
                     @foreach($attendants as $key => $name)
                         @if(!$attendantFilter || $attendantFilter === $key)
                             <div style="padding: 0.75rem; background: #f9fafb; text-align: center; font-size: 0.8rem; font-weight: 600; color: #374151; border-left: 1px solid #e5e7eb;">
                                 <span style="display: inline-flex; align-items: center; gap: 0.375rem;">
-                                    <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ $key === 'danilo' ? '#2563eb' : '#7c3aed' }};"></span>
+                                    <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$key] ?? '#6b7280' }};"></span>
                                     {{ $name }}
                                 </span>
                             </div>
@@ -96,7 +97,7 @@
 
                 {{-- Linhas de horários --}}
                 @foreach($timeSlots as $slot)
-                    <div style="display: grid; grid-template-columns: 70px {{ $attendantFilter ? '1fr' : '1fr 1fr' }}; border-bottom: 1px solid #f3f4f6; min-height: 48px;" class="schedule-row">
+                    <div style="display: grid; grid-template-columns: 70px repeat({{ $colCount }}, 1fr); border-bottom: 1px solid #f3f4f6; min-height: 48px;" class="schedule-row">
                         <div style="padding: 0.5rem; font-size: 0.75rem; font-family: monospace; color: #9ca3af; text-align: center; display: flex; align-items: center; justify-content: center; background: #fafafa;">
                             {{ $slot }}
                         </div>
