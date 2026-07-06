@@ -93,11 +93,15 @@
 
             saveModal: {
                 open: false,
+                tab: 'search',
                 search: '',
                 results: [],
                 selectedCustomer: null,
                 notes: '',
                 saving: false,
+                newCustomer: { name: '', phone: '', instagram: '' },
+                creating: false,
+                createError: '',
             },
 
             presets: [
@@ -434,11 +438,17 @@
 
             openSaveModal() {
                 this.saveModal.open = true;
+                this.saveModal.tab = 'search';
                 this.saveModal.search = '';
                 this.saveModal.results = [];
-                this.saveModal.selectedCustomer = null;
                 this.saveModal.notes = '';
                 this.saveModal.saving = false;
+                this.saveModal.newCustomer = { name: '', phone: '', instagram: '' };
+                this.saveModal.creating = false;
+                this.saveModal.createError = '';
+                if (this.saveModal.selectedCustomer) {
+                    this.saveModal.tab = 'search';
+                }
             },
 
             async searchSaveCustomers() {
@@ -454,6 +464,44 @@
                 this.saveModal.selectedCustomer = customer;
                 this.saveModal.results = [];
                 this.saveModal.search = '';
+            },
+
+            async createAndSelectCustomer() {
+                if (this.saveModal.creating) return;
+                this.saveModal.creating = true;
+                this.saveModal.createError = '';
+
+                try {
+                    const res = await fetch('{{ route("customers.store-quick") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: this.saveModal.newCustomer.name,
+                            phone: this.saveModal.newCustomer.phone.replace(/\D/g, ''),
+                            instagram: this.saveModal.newCustomer.instagram || null,
+                        }),
+                    });
+
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        const errors = data.errors ? Object.values(data.errors).flat().join('. ') : (data.message || 'Erro ao cadastrar.');
+                        this.saveModal.createError = errors;
+                        return;
+                    }
+
+                    this.saveModal.selectedCustomer = data;
+                    this.saveModal.newCustomer = { name: '', phone: '', instagram: '' };
+                    this.showToast('Cliente ' + data.name + ' cadastrado!');
+                } catch (e) {
+                    this.saveModal.createError = 'Erro de conexão. Tente novamente.';
+                } finally {
+                    this.saveModal.creating = false;
+                }
             },
 
             async saveSnapshot() {

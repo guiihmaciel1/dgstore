@@ -32,12 +32,48 @@
          x-text="productPrice > 0 ? buildMessage() : 'Preencha o valor do produto para visualizar a mensagem...'"></div>
 </div>
 
+{{-- Warning: Cadastre o cliente --}}
+<div x-show="productPrice > 0 && !saveModal.selectedCustomer" x-cloak x-transition
+     class="bg-amber-50 border border-amber-300 rounded-xl p-3 flex items-start gap-2.5 mt-3">
+    <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+    </svg>
+    <div class="flex-1 min-w-0">
+        <p class="text-[0.8rem] font-bold text-amber-800 leading-tight">Fechou a venda?</p>
+        <p class="text-[0.725rem] text-amber-700 mt-0.5">Cadastre o cliente e vincule esta proposta para manter o historico.</p>
+        <button @click="openSaveModal()" type="button"
+                class="mt-1.5 px-3 py-1 rounded-md text-[0.7rem] font-bold bg-amber-600 text-white border-none cursor-pointer hover:bg-amber-700 transition-colors inline-flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+            </svg>
+            Cadastrar / Vincular cliente
+        </button>
+    </div>
+</div>
+
+{{-- Confirmação de vínculo --}}
+<div x-show="productPrice > 0 && saveModal.selectedCustomer" x-cloak x-transition
+     class="bg-emerald-50 border border-emerald-300 rounded-xl p-3 flex items-center gap-2.5 mt-3">
+    <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+    </svg>
+    <div class="flex-1 min-w-0">
+        <p class="text-[0.8rem] font-bold text-emerald-800 leading-tight">
+            Proposta vinculada a <span x-text="saveModal.selectedCustomer?.name"></span>
+        </p>
+    </div>
+    <button @click="saveModal.selectedCustomer = null" type="button"
+            class="text-[0.7rem] font-semibold text-emerald-600 hover:text-emerald-800 bg-transparent border-none cursor-pointer">
+        Trocar
+    </button>
+</div>
+
 {{-- Modal: Salvar Simulação p/ Cliente --}}
 <div x-show="saveModal.open" x-cloak
      class="fixed inset-0 z-50 flex items-center justify-center p-4"
      @keydown.escape.window="saveModal.open = false">
     <div class="fixed inset-0 bg-black/50" @click="saveModal.open = false"></div>
-    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" @click.stop>
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto" @click.stop>
         <button @click="saveModal.open = false" type="button"
                 class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,26 +82,80 @@
         </button>
 
         <h3 class="text-lg font-bold text-gray-900 mb-1">Salvar Simulação</h3>
-        <p class="text-sm text-gray-500 mb-4">Vincule esta proposta a um cliente para consultar depois.</p>
+        <p class="text-sm text-gray-500 mb-4">Vincule esta proposta a um cliente existente ou cadastre um novo.</p>
 
-        {{-- Busca de cliente --}}
-        <div x-show="!saveModal.selectedCustomer" class="relative mb-4">
-            <label class="text-xs font-semibold text-gray-600 mb-1 block">Buscar cliente</label>
-            <input type="text"
-                   x-model="saveModal.search"
-                   @input.debounce.300ms="searchSaveCustomers()"
-                   placeholder="Nome ou telefone..."
-                   class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:border-indigo-500 focus:outline-none transition-colors">
-            
-            <div x-show="saveModal.results.length > 0" x-cloak
-                 class="absolute z-50 mt-1 w-full bg-white shadow-xl rounded-lg border border-gray-200 max-h-48 overflow-y-auto">
-                <template x-for="c in saveModal.results" :key="c.id">
-                    <button type="button" @click="selectSaveCustomer(c)"
-                            class="w-full px-3 py-2.5 text-left border-b border-gray-100 cursor-pointer bg-white hover:bg-gray-50 transition-colors">
-                        <span class="font-medium text-gray-900 text-sm" x-text="c.name"></span>
-                        <span class="text-xs text-gray-500 block" x-text="c.phone"></span>
-                    </button>
-                </template>
+        {{-- Tabs: Buscar / Cadastrar --}}
+        <div x-show="!saveModal.selectedCustomer" class="mb-4">
+            <div class="flex border-b border-gray-200 mb-4">
+                <button type="button" @click="saveModal.tab = 'search'"
+                        class="flex-1 pb-2 text-sm font-semibold border-b-2 transition-colors bg-transparent cursor-pointer"
+                        :class="saveModal.tab === 'search' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600'">
+                    Buscar existente
+                </button>
+                <button type="button" @click="saveModal.tab = 'create'"
+                        class="flex-1 pb-2 text-sm font-semibold border-b-2 transition-colors bg-transparent cursor-pointer"
+                        :class="saveModal.tab === 'create' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-gray-400 hover:text-gray-600'">
+                    + Novo cliente
+                </button>
+            </div>
+
+            {{-- Tab: Buscar --}}
+            <div x-show="saveModal.tab === 'search'" class="relative">
+                <label class="text-xs font-semibold text-gray-600 mb-1 block">Buscar cliente</label>
+                <input type="text"
+                       x-model="saveModal.search"
+                       @input.debounce.300ms="searchSaveCustomers()"
+                       placeholder="Nome ou telefone..."
+                       class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:border-indigo-500 focus:outline-none transition-colors">
+
+                <div x-show="saveModal.results.length > 0" x-cloak
+                     class="absolute z-50 mt-1 w-full bg-white shadow-xl rounded-lg border border-gray-200 max-h-48 overflow-y-auto">
+                    <template x-for="c in saveModal.results" :key="c.id">
+                        <button type="button" @click="selectSaveCustomer(c)"
+                                class="w-full px-3 py-2.5 text-left border-b border-gray-100 cursor-pointer bg-white hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-gray-900 text-sm" x-text="c.name"></span>
+                            <span class="text-xs text-gray-500 block" x-text="c.phone"></span>
+                        </button>
+                    </template>
+                </div>
+
+                <p x-show="saveModal.search.length >= 2 && saveModal.results.length === 0" class="text-xs text-gray-400 mt-2">
+                    Nenhum cliente encontrado.
+                    <button type="button" @click="saveModal.tab = 'create'" class="text-indigo-600 font-semibold bg-transparent border-none cursor-pointer underline">Cadastrar novo</button>
+                </p>
+            </div>
+
+            {{-- Tab: Cadastrar novo --}}
+            <div x-show="saveModal.tab === 'create'">
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Nome *</label>
+                        <input type="text" x-model="saveModal.newCustomer.name" placeholder="Nome completo"
+                               class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:border-emerald-500 focus:outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Telefone *</label>
+                        <input type="text" x-model="saveModal.newCustomer.phone" placeholder="(00) 00000-0000"
+                               maxlength="15"
+                               @input="saveModal.newCustomer.phone = $el.value.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2').substring(0,15)"
+                               class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:border-emerald-500 focus:outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Instagram</label>
+                        <input type="text" x-model="saveModal.newCustomer.instagram" placeholder="@usuario"
+                               class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-emerald-500 focus:outline-none transition-colors">
+                    </div>
+                </div>
+
+                <div x-show="saveModal.createError" x-cloak class="mt-3 p-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 font-medium" x-text="saveModal.createError"></div>
+
+                <button @click="createAndSelectCustomer()" type="button"
+                        :disabled="saveModal.creating || !saveModal.newCustomer.name || !saveModal.newCustomer.phone"
+                        class="w-full mt-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-white border-none cursor-pointer transition-colors"
+                        :class="saveModal.newCustomer.name && saveModal.newCustomer.phone && !saveModal.creating ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-300 cursor-not-allowed'">
+                    <span x-show="!saveModal.creating">Cadastrar e selecionar</span>
+                    <span x-show="saveModal.creating">Cadastrando...</span>
+                </button>
             </div>
         </div>
 
@@ -75,7 +165,7 @@
                 <span class="font-semibold text-gray-900 text-sm" x-text="saveModal.selectedCustomer?.name"></span>
                 <span class="text-xs text-gray-600 block" x-text="saveModal.selectedCustomer?.phone"></span>
             </div>
-            <button type="button" @click="saveModal.selectedCustomer = null; saveModal.search = ''"
+            <button type="button" @click="saveModal.selectedCustomer = null; saveModal.search = ''; saveModal.tab = 'search'"
                     class="text-indigo-600 hover:text-indigo-800 bg-transparent border-none cursor-pointer text-xs font-semibold">
                 Trocar
             </button>
