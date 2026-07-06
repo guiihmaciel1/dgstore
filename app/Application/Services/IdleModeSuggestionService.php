@@ -9,7 +9,6 @@ use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Marketing\Models\MarketingPrice;
 use App\Domain\Marketing\Models\MarketingUsedListing;
-use App\Domain\Negotiation\Models\NegotiationSnapshot;
 use App\Domain\Product\Models\Product;
 use App\Domain\Schedule\Models\Appointment;
 use Illuminate\Support\Collection;
@@ -22,7 +21,6 @@ class IdleModeSuggestionService
     {
         $suggestions = collect()
             ->merge($this->birthdaysToday())
-            ->merge($this->simulationsExpiring())
             ->merge($this->birthdaysTomorrow())
             ->merge($this->newLeadsWaiting())
             ->merge($this->staleStock())
@@ -107,35 +105,6 @@ class IdleModeSuggestionService
                 'action_label' => 'Ver perfil',
                 'action_url' => route('customers.show', $c),
                 'whatsapp_url' => null,
-            ]);
-    }
-
-    private function simulationsExpiring(): Collection
-    {
-        return NegotiationSnapshot::active()
-            ->where('expires_at', '>=', today())
-            ->where('expires_at', '<=', today()->addDays(2))
-            ->with('customer')
-            ->orderBy('expires_at')
-            ->limit(self::MAX_PER_SOURCE)
-            ->get()
-            ->map(fn (NegotiationSnapshot $snap) => [
-                'category' => 'sales',
-                'priority' => 'medium',
-                'icon' => 'hourglass',
-                'title' => 'Simulação expirando',
-                'message' => sprintf(
-                    '%s — %s expira %s',
-                    $snap->customer?->name ?? 'Cliente',
-                    $snap->product_description,
-                    $snap->expires_at->isToday() ? 'HOJE' : 'amanhã'
-                ),
-                'action_label' => 'Reabrir simulador',
-                'action_url' => route('tools.negotiation-simulator', [
-                    'snap_product' => $snap->product_description,
-                    'snap_price' => $snap->product_price,
-                ]),
-                'whatsapp_url' => $this->whatsappUrl($snap->customer?->phone),
             ]);
     }
 

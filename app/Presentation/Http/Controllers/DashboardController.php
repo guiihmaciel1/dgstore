@@ -17,6 +17,7 @@ use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
 use App\Domain\Reservation\Services\ReservationService;
+use App\Domain\Commission\Models\Commission;
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
@@ -24,6 +25,8 @@ use App\Domain\Sale\Models\SaleItem;
 use App\Domain\Sale\Models\TradeIn;
 use App\Domain\Schedule\Enums\AppointmentStatus;
 use App\Domain\Schedule\Models\Appointment;
+use App\Domain\User\Enums\UserRole;
+use App\Domain\User\Models\User;
 use App\Domain\Warranty\Services\WarrantyService;
 use App\Domain\News\Services\AppleNewsService;
 use App\Http\Controllers\Controller;
@@ -58,6 +61,7 @@ class DashboardController extends Controller
         $todayPayables = $this->getTodayPayables();
 
         [$monthSummary, $salesAnalytics] = $this->getMonthSummaryAndAnalytics($referenceDate);
+        $internStats = $this->buildInternStats($referenceDate);
         $followupSales = $this->getFollowupSales();
         $appleNews = $this->appleNewsService->getCached();
         $stockItems = $this->getStockCatalog();
@@ -79,6 +83,7 @@ class DashboardController extends Controller
             'todayPayables' => $todayPayables,
             'monthSummary' => $monthSummary,
             'salesAnalytics' => $salesAnalytics,
+            'internStats' => $internStats,
             'followupSales' => $followupSales,
             'appleNews' => $appleNews,
             'stockItems' => $stockItems,
@@ -421,6 +426,162 @@ class DashboardController extends Controller
         if (str_contains($lower, 'pro')) return 3;
         if (str_contains($lower, 'plus')) return 2;
         return 1;
+    }
+
+    /**
+     * Retorna metas configuradas para as estagiárias.
+     */
+    private function getInternGoals(): array
+    {
+        return [
+            'monthly' => [
+                ['target' => 30, 'reward' => 'Colônia Victoria Secrets para cada'],
+                ['target' => 40, 'reward' => 'Kit Colônia + Creme Victoria Secrets para cada'],
+                ['target' => 50, 'reward' => 'Perfume Árabe para cada'],
+            ],
+            'weekly' => [
+                'target' => 10,
+                'deadline_day' => Carbon::THURSDAY,
+                'reward' => 'Almoço por conta da empresa na Sexta-feira',
+            ],
+        ];
+    }
+
+    /**
+     * Computa estatísticas das estagiárias para o dashboard.
+     */
+    private function buildInternStats(Carbon $referenceDate): array
+    {
+        $start = $referenceDate->copy()->startOfMonth();
+        $end = $referenceDate->copy()->endOfMonth();
+
+        $interns = User::where('role', UserRole::Intern)
+            ->where('active', true)
+            ->get();
+
+        if ($interns->isEmpty()) {
+            return ['interns' => [], 'combined' => [], 'goals' => [], 'daily_chart' => []];
+        }
+
+        $internIds = $interns->pluck('id');
+
+        $internSales = Sale::with(['items', 'customer'])
+            ->whereBetween('sold_at', [$start, $end])
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->whereIn('seller_id', $internIds)
+            ->get();
+
+        $salesByIntern = $internSales->groupBy('seller_id');
+
+        $weekStart = now()->startOfWeek(Carbon::MONDAY);
+        $weekEnd = now()->endOfWeek(Carbon::SUNDAY);
+        $isCurrentMonth = $referenceDate->isSameMonth(now());
+
+        $weekSales = $isCurrentMonth
+            ? $internSales->filter(fn (Sale $s) => $s->sold_at->between($weekStart, $weekEnd))
+            : collect();
+
+        $weekSalesByIntern = $weekSales->groupBy('seller_id');
+
+        $internCommissions = Commission::whereBetween('created_at', [$start, $end])
+            ->whereIn('user_id', $internIds)
+            ->get()
+            ->groupBy('user_id');
+
+        $internsData = $interns->map(function (User $intern) use ($salesByIntern, $weekSalesByIntern, $internCommissions) {
+            $sales = $salesByIntern->get($intern->id, collect());
+            $weekSalesForIntern = $weekSalesByIntern->get($intern->id, collect());
+            $commissions = $internCommissions->get($intern->id, collect());
+
+            $totalRevenue = (float) $sales->sum('total');
+            $totalProfit = (float) $sales->flatMap->items->sum(fn ($item) => $item->item_profit);
+            $salesCount = $sales->count();
+
+            return [
+                'id' => $intern->id,
+                'name' => $intern->name,
+                'sales_count' => $salesCount,
+                'total_revenue' => $totalRevenue,
+                'total_profit' => $totalProfit,
+                'commission_earned' => (float) $commissions->sum('commission_amount'),
+                'sales_this_week' => $weekSalesForIntern->count(),
+                'avg_ticket' => $salesCount > 0 ? $totalRevenue / $salesCount : 0,
+            ];
+        })->sortByDesc('sales_count')->values()->toArray();
+
+        $combinedSales = array_sum(array_column($internsData, 'sales_count'));
+        $combinedRevenue = array_sum(array_column($internsData, 'total_revenue'));
+        $combinedProfit = array_sum(array_column($internsData, 'total_profit'));
+        $combinedCommission = array_sum(array_column($internsData, 'commission_earned'));
+        $combinedWeekSales = array_sum(array_column($internsData, 'sales_this_week'));
+
+        $goals = $this->getInternGoals();
+        $monthlyGoals = collect($goals['monthly'])->map(fn ($goal) => [
+            ...$goal,
+            'reached' => $combinedSales >= $goal['target'],
+            'progress' => min(100, round(($combinedSales / $goal['target']) * 100)),
+        ])->toArray();
+
+        $weeklyGoal = $goals['weekly'];
+        $today = now();
+        $deadlineDay = $weeklyGoal['deadline_day'];
+        $deadlineDate = $weekStart->copy()->addDays($deadlineDay - 1)->endOfDay();
+        $pastDeadline = $isCurrentMonth && $today->greaterThan($deadlineDate);
+
+        $weeklyGoalData = [
+            'target' => $weeklyGoal['target'],
+            'current' => $combinedWeekSales,
+            'reward' => $weeklyGoal['reward'],
+            'reached' => $combinedWeekSales >= $weeklyGoal['target'],
+            'past_deadline' => $pastDeadline,
+            'deadline_label' => 'Quinta-feira',
+            'progress' => min(100, round(($combinedWeekSales / $weeklyGoal['target']) * 100)),
+            'remaining' => max(0, $weeklyGoal['target'] - $combinedWeekSales),
+        ];
+
+        $dailyChart = $this->buildInternDailyChart($internSales, $start, $end, $referenceDate);
+
+        return [
+            'interns' => $internsData,
+            'combined' => [
+                'total_sales' => $combinedSales,
+                'total_revenue' => $combinedRevenue,
+                'total_profit' => $combinedProfit,
+                'total_commission' => $combinedCommission,
+                'sales_this_week' => $combinedWeekSales,
+            ],
+            'goals' => [
+                'monthly' => $monthlyGoals,
+                'weekly' => $weeklyGoalData,
+            ],
+            'daily_chart' => $dailyChart,
+        ];
+    }
+
+    /**
+     * Monta dados diários para o chart de evolução das estagiárias.
+     */
+    private function buildInternDailyChart($internSales, Carbon $start, Carbon $end, Carbon $referenceDate): array
+    {
+        $isCurrentMonth = $referenceDate->isSameMonth(now());
+        $lastDay = $isCurrentMonth ? now()->day : $end->day;
+
+        $dailyData = [];
+        for ($day = 1; $day <= $lastDay; $day++) {
+            $dailyData[$day] = 0;
+        }
+
+        foreach ($internSales as $sale) {
+            $day = $sale->sold_at->day;
+            if (isset($dailyData[$day])) {
+                $dailyData[$day]++;
+            }
+        }
+
+        return [
+            'labels' => array_map(fn ($d) => str_pad((string) $d, 2, '0', STR_PAD_LEFT), array_keys($dailyData)),
+            'data' => array_values($dailyData),
+        ];
     }
 
     /**
