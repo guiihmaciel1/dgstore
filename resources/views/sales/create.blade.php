@@ -309,10 +309,12 @@
                                                     </div>
                                                 </div>
 
-                                                {{-- Linha 2: Custo, Origem, Frete --}}
+                                                {{-- Linha 2: Custo Financeiro, Custo Comissão, Origem, Frete --}}
                                                 <input type="hidden" :name="'items['+index+'][cost_price]'" :value="item.cost_price">
+                                                <input type="hidden" :name="'items['+index+'][financial_cost]'" :value="item.financial_cost">
+                                                <input type="hidden" :name="'items['+index+'][commission_cost]'" :value="item.commission_cost">
                                                 @if(auth()->user()->canViewFinancials())
-                                                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
+                                                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
                                                     <div>
                                                         <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
                                                             Custo (R$) <span style="color: #dc2626;">*</span>
@@ -320,11 +322,37 @@
                                                         <input type="text"
                                                                inputmode="numeric"
                                                                :value="toMoneyMask(item.cost_price)"
-                                                               @input="applyMoneyMask($event); item.cost_price = parseMoney($event.target.value); updateTotals()"
+                                                               @input="applyMoneyMask($event); item.cost_price = parseMoney($event.target.value); syncCosts(item); updateTotals()"
                                                                placeholder="0,00"
                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
                                                                onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                                     </div>
+                                                    <div>
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                                            Custo Financeiro (R$)
+                                                        </label>
+                                                        <input type="text"
+                                                               inputmode="numeric"
+                                                               :value="toMoneyMask(item.financial_cost)"
+                                                               @input="applyMoneyMask($event); item.financial_cost = parseMoney($event.target.value); updateTotals()"
+                                                               placeholder="0,00"
+                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #d1fae5; border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: #f0fdf4;"
+                                                               onfocus="this.style.borderColor='#16a34a'" onblur="this.style.borderColor='#d1fae5'">
+                                                    </div>
+                                                    <div>
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                                            Custo Comissão (R$)
+                                                        </label>
+                                                        <input type="text"
+                                                               inputmode="numeric"
+                                                               :value="toMoneyMask(item.commission_cost)"
+                                                               @input="applyMoneyMask($event); item.commission_cost = parseMoney($event.target.value); updateTotals()"
+                                                               placeholder="0,00"
+                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #fef3c7; border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: #fffbeb;"
+                                                               onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#fef3c7'">
+                                                    </div>
+                                                </div>
+                                                <div style="margin-top: 0.5rem; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
                                                     <div>
                                                         <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Origem</label>
                                                         <select :name="'items['+index+'][supplier_origin]'"
@@ -1894,6 +1922,8 @@
                                 price: price,
                                 original_sale_price: parseFloat(product.suggested_price) || 0,
                                 cost_price: costPrice,
+                                financial_cost: costPrice,
+                                commission_cost: costPrice,
                                 supplier_origin: '',
                                 freight_type: '',
                                 freight_value: 0,
@@ -1921,6 +1951,8 @@
                                 price: price,
                                 original_sale_price: parseFloat(product.sale_price) || 0,
                                 cost_price: costPrice,
+                                financial_cost: costPrice,
+                                commission_cost: costPrice,
                                 supplier_origin: '',
                                 freight_type: '',
                                 freight_value: 0,
@@ -2105,10 +2137,16 @@
                     this.total = Math.max(0, this.subtotal - this.discount);
                 },
 
+                syncCosts(item) {
+                    item.financial_cost = item.cost_price;
+                    item.commission_cost = item.cost_price;
+                },
+
                 getItemFreightAmount(item) {
                     if (!item.supplier_origin || !item.freight_type) return 0;
+                    const baseCost = parseFloat(item.financial_cost) || 0;
                     if (item.freight_type === 'percentage') {
-                        return (parseFloat(item.cost_price) || 0) * ((parseFloat(item.freight_value) || 0) / 100);
+                        return baseCost * ((parseFloat(item.freight_value) || 0) / 100);
                     }
                     if (item.freight_type === 'fixed') {
                         return parseFloat(item.freight_value) || 0;
@@ -2117,7 +2155,7 @@
                 },
 
                 getItemTotalCost(item) {
-                    return (parseFloat(item.cost_price) || 0) + this.getItemFreightAmount(item);
+                    return (parseFloat(item.financial_cost) || 0) + this.getItemFreightAmount(item);
                 },
 
                 getItemProfit(item) {

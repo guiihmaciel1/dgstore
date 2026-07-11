@@ -102,6 +102,8 @@
                                         <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Qtd</th>
                                         @if(auth()->user()->canViewFinancials())
                                         <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">C. Financeiro</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">C. Comissão</th>
                                         <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Frete</th>
                                         @endif
                                         <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Venda</th>
@@ -193,6 +195,12 @@
                                             @if(auth()->user()->canViewFinancials())
                                             <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280; font-size: 0.875rem;">
                                                 {{ $item->formatted_cost_price }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280; font-size: 0.875rem;">
+                                                {{ $item->formatted_financial_cost }}
+                                            </td>
+                                            <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280; font-size: 0.875rem;">
+                                                {{ $item->formatted_commission_cost }}
                                             </td>
                                             <td style="padding: 0.75rem 1rem; text-align: right; color: #6b7280; font-size: 0.875rem;">
                                                 @if($freightAmt > 0)

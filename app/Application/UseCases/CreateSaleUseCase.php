@@ -204,8 +204,7 @@ class CreateSaleUseCase
             }
 
             $saleProfit = $sale->items->sum(function ($item) {
-                $totalCost = (float) ($item->total_cost ?: $item->cost_price);
-                return (float) $item->unit_price * $item->quantity - $totalCost * $item->quantity;
+                return $item->item_profit;
             });
 
             $customerName = $sale->customer?->name;
@@ -251,10 +250,10 @@ class CreateSaleUseCase
                 continue;
             }
 
-            $totalCost = (float) ($item->total_cost ?: $item->cost_price);
-            $profit = ((float) $item->unit_price - $totalCost) * $item->quantity;
+            $commissionCost = $item->commission_cost_value;
+            $profit = ((float) $item->unit_price - $commissionCost) * $item->quantity;
 
-            $minProfit = $totalCost * self::PROFIT_FLOOR_PERCENT * $item->quantity;
+            $minProfit = $commissionCost * self::PROFIT_FLOOR_PERCENT * $item->quantity;
             if ($profit < $minProfit) {
                 continue;
             }
