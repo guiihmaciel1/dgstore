@@ -34,62 +34,72 @@
                 
                 <!-- Filtros -->
                 <div class="p-4 border-b border-gray-200 bg-gray-50">
-                    <form method="GET" action="{{ route('sales.index') }}" x-data x-ref="filterForm" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
-                            <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nº da venda, cliente..." 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
-                                   x-on:input.debounce.400ms="$refs.filterForm.submit()">
+                    <form method="GET" action="{{ route('sales.index') }}">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Buscar</label>
+                                <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nº da venda, cliente..." 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                                <select name="payment_status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
+                                    <option value="">Todos</option>
+                                    @foreach($paymentStatuses as $status)
+                                        <option value="{{ $status->value }}" {{ ($filters['payment_status'] ?? '') === $status->value ? 'selected' : '' }}>
+                                            {{ $status->label() }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Pagamento</label>
+                                <select name="payment_method" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
+                                    <option value="">Todos</option>
+                                    @foreach($paymentMethods as $method)
+                                        <option value="{{ $method->value }}" {{ ($filters['payment_method'] ?? '') === $method->value ? 'selected' : '' }}>
+                                            {{ $method->label() }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Tipo</label>
+                                <select name="sale_type" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none">
+                                    <option value="">Todos os tipos</option>
+                                    <option value="cliente_final" {{ ($filters['sale_type'] ?? '') === 'cliente_final' ? 'selected' : '' }}>Cliente Final</option>
+                                    <option value="repasse" {{ ($filters['sale_type'] ?? '') === 'repasse' ? 'selected' : '' }}>Repasse</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Data Início</label>
+                                <input type="date" name="date_from" value="{{ $filters['date_from'] }}" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Data Fim</label>
+                                <input type="date" name="date_to" value="{{ $filters['date_to'] }}" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none">
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Status</label>
-                            <select name="payment_status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
-                                    x-on:change="$refs.filterForm.submit()">
-                                <option value="">Todos</option>
-                                @foreach($paymentStatuses as $status)
-                                    <option value="{{ $status->value }}" {{ ($filters['payment_status'] ?? '') === $status->value ? 'selected' : '' }}>
-                                        {{ $status->label() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Pagamento</label>
-                            <select name="payment_method" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
-                                    x-on:change="$refs.filterForm.submit()">
-                                <option value="">Todos</option>
-                                @foreach($paymentMethods as $method)
-                                    <option value="{{ $method->value }}" {{ ($filters['payment_method'] ?? '') === $method->value ? 'selected' : '' }}>
-                                        {{ $method->label() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Tipo</label>
-                            <select name="sale_type" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:border-gray-900 focus:outline-none"
-                                    x-on:change="$refs.filterForm.submit()">
-                                <option value="">Todos os tipos</option>
-                                <option value="cliente_final" {{ ($filters['sale_type'] ?? '') === 'cliente_final' ? 'selected' : '' }}>Cliente Final</option>
-                                <option value="repasse" {{ ($filters['sale_type'] ?? '') === 'repasse' ? 'selected' : '' }}>Repasse</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Data Início</label>
-                            <input type="date" name="date_from" value="{{ $filters['date_from'] }}" 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
-                                   x-on:change="$refs.filterForm.submit()">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">Data Fim</label>
-                            <input type="date" name="date_to" value="{{ $filters['date_to'] }}" 
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-gray-900 focus:outline-none"
-                                   x-on:change="$refs.filterForm.submit()">
-                        </div>
-                        <div>
-                            <a href="{{ route('sales.index') }}" class="w-full inline-flex justify-center px-4 py-2 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center gap-3 mt-4">
+                            <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 bg-gray-900 text-white font-semibold rounded-lg text-sm hover:bg-gray-700 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                Filtrar
+                            </button>
+                            <a href="{{ route('sales.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-gray-600 font-medium rounded-lg border border-gray-300 text-sm hover:bg-gray-50 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
                                 Limpar
                             </a>
+                            @if(collect($filters)->filter()->isNotEmpty())
+                                <span class="text-xs text-gray-400">
+                                    {{ collect($filters)->filter()->count() }} {{ collect($filters)->filter()->count() === 1 ? 'filtro ativo' : 'filtros ativos' }}
+                                </span>
+                            @endif
                         </div>
                     </form>
                 </div>
