@@ -1,5 +1,5 @@
 @php $isIntern = auth()->user()->isIntern(); @endphp
-<nav x-data="{ open: false, commercialOpen: false, financeOpen: false, stockOpen: false, purchasesOpen: false, toolsOpen: false }" class="bg-gray-900 shadow-lg" @click.away="commercialOpen = false; financeOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false">
+<nav x-data="{ open: false, commercialOpen: false, financeOpen: false, stockOpen: false, toolsOpen: false }" class="bg-gray-900 shadow-lg" @click.away="commercialOpen = false; financeOpen = false; stockOpen = false; toolsOpen = false">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -19,7 +19,7 @@
                     
                     <!-- Dropdown: Comercial -->
                     <div class="relative">
-                        <button @click="commercialOpen = !commercialOpen; financeOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
+                        <button @click="commercialOpen = !commercialOpen; financeOpen = false; stockOpen = false; toolsOpen = false" 
                                 class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('customers.*') || request()->routeIs('sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') || request()->routeIs('schedule.*') || request()->routeIs('suppliers.*') || request()->routeIs('quotations.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Comercial</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': commercialOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,7 +88,7 @@
                     @if(!$isIntern)
                     <!-- Dropdown: Financeiro -->
                     <div class="relative">
-                        <button @click="financeOpen = !financeOpen; commercialOpen = false; stockOpen = false; purchasesOpen = false; toolsOpen = false" 
+                        <button @click="financeOpen = !financeOpen; commercialOpen = false; stockOpen = false; toolsOpen = false" 
                                 class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('finance.*') || request()->routeIs('admin.commissions.*') || request()->routeIs('admin.time-clock.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Financeiro</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': financeOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,7 +157,7 @@
                     
                     <!-- Dropdown: Estoque -->
                     <div class="relative">
-                        <button @click="stockOpen = !stockOpen; commercialOpen = false; financeOpen = false; purchasesOpen = false; toolsOpen = false" 
+                        <button @click="stockOpen = !stockOpen; commercialOpen = false; financeOpen = false; toolsOpen = false" 
                                 class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('products.*') || request()->routeIs('stock.*') || request()->routeIs('stock.consignment.*') || request()->routeIs('imports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Estoque</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': stockOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -222,8 +222,8 @@
 
                     <!-- Dropdown: Ferramentas -->
                     <div class="relative">
-                        <button @click="toolsOpen = !toolsOpen; commercialOpen = false; financeOpen = false; stockOpen = false; purchasesOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || request()->routeIs('tools.*') || request()->routeIs('crm.*') || request()->routeIs('reports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                        <button @click="toolsOpen = !toolsOpen; commercialOpen = false; financeOpen = false; stockOpen = false" 
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || (request()->routeIs('tools.*') && !request()->routeIs('tools.negotiation-simulator')) || request()->routeIs('crm.*') || request()->routeIs('reports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -431,6 +431,14 @@
                 <a href="{{ route('warranties.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                     Garantias
                 </a>
+                @if(!$isIntern)
+                <a href="{{ route('suppliers.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Fornecedores
+                </a>
+                <a href="{{ route('quotations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Cotações
+                </a>
+                @endif
             </div>
             
             @if(!$isIntern)
@@ -482,19 +490,6 @@
                 @endif
             </div>
             
-            @if(!$isIntern)
-            <!-- Mobile: Compras -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Compras</div>
-                <a href="{{ route('suppliers.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                    Fornecedores
-                </a>
-                <a href="{{ route('quotations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                    Cotações
-                </a>
-            </div>
-            @endif
-            
             <!-- Mobile: Marketing -->
             <div class="border-t border-gray-700 mt-2 pt-2">
                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Marketing</div>
@@ -527,12 +522,16 @@
             </div>
             @endif
 
+            <!-- Mobile: Simulador -->
+            <div class="border-t border-gray-700 mt-2 pt-2">
+                <a href="{{ route('tools.negotiation-simulator') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('tools.negotiation-simulator') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    Simulador
+                </a>
+            </div>
+
             <!-- Mobile: Ferramentas -->
             <div class="border-t border-gray-700 mt-2 pt-2">
                 <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ferramentas</div>
-                <a href="{{ route('tools.negotiation-simulator') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.negotiation-simulator') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                    Simulador
-                </a>
                 <a href="https://ifipe.dgstorerp.com.br/evaluator" target="_blank" class="flex items-center px-6 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
                     Avaliador
                     <svg class="w-3 h-3 ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>

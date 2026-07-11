@@ -37,7 +37,7 @@
                 <div class="flex items-center justify-between mt-1">
                     <span class="text-[10px] text-gray-400" x-text="'Lucro: R$ ' + fmt(Math.max(0, productPrice - productCost))"></span>
                     <span class="text-[10px]"
-                          :class="((productPrice - productCost) / productCost) >= 0.10 ? 'text-emerald-600' : 'text-red-500'"
+                          :class="((productPrice - productCost) / productCost) >= 0.17 ? 'text-emerald-600' : 'text-red-500'"
                           x-text="productCost > 0 ? (((productPrice - productCost) / productCost * 100).toFixed(0) + '% margem') : ''"></span>
                 </div>
             </div>
