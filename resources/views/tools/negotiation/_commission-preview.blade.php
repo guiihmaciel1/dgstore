@@ -49,42 +49,89 @@
                     <span class="text-xs font-semibold text-gray-700">Acessórios</span>
                     <span class="text-[10px] text-gray-400 font-normal">— preencha o valor de venda</span>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    {{-- Capinha --}}
-                    <div class="rounded-lg p-2.5 border transition-all duration-200"
-                         :class="accessoryCasePrice > 10 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
-                        <p class="text-[10px] font-semibold uppercase tracking-wider mb-1.5"
-                           :class="accessoryCasePrice > 10 ? 'text-purple-600' : 'text-gray-500'">Capinha</p>
-                        <div class="relative">
-                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
-                            <input type="number" x-model.number="accessoryCasePrice" min="0" step="5" placeholder="0"
-                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
-                                   :class="accessoryCasePrice > 10 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+
+                {{-- Capinha: quantidade + preço unitário --}}
+                <div class="rounded-lg p-3 border transition-all duration-200 mb-2"
+                     :class="caseQty > 0 && caseUnitPrice > 10 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
+                    <p class="text-[10px] font-semibold uppercase tracking-wider mb-2"
+                       :class="caseQty > 0 && caseUnitPrice > 10 ? 'text-purple-600' : 'text-gray-500'">Capinha</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[9px] text-gray-400 font-medium block mb-0.5">Quantidade</label>
+                            <div class="flex items-center gap-1">
+                                <button type="button" @click="caseQty = Math.max(0, caseQty - 1)"
+                                        class="w-6 h-6 flex items-center justify-center rounded border text-xs font-bold transition-colors"
+                                        :class="caseQty > 0 ? 'border-purple-300 text-purple-600 hover:bg-purple-100' : 'border-gray-200 text-gray-300 cursor-not-allowed'">−</button>
+                                <input type="number" x-model.number="caseQty" min="0" max="10"
+                                       class="flex-1 py-1 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 w-10"
+                                       :class="caseQty > 0 ? 'border-purple-300 focus:ring-purple-400 text-purple-800' : 'border-gray-200 focus:ring-gray-300 text-gray-700'">
+                                <button type="button" @click="caseQty = Math.min(10, caseQty + 1)"
+                                        class="w-6 h-6 flex items-center justify-center rounded border border-purple-300 text-purple-600 text-xs font-bold hover:bg-purple-100 transition-colors">+</button>
+                            </div>
                         </div>
-                        <div class="mt-1.5 text-center" x-show="accessoryCasePrice > 10">
-                            <span class="text-[10px] text-gray-400">Lucro: R$ <span x-text="fmt(accessoryCasePrice - 10)"></span></span>
-                            <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.caseComm)"></span></p>
+                        <div>
+                            <label class="text-[9px] text-gray-400 font-medium block mb-0.5">Preço unitário</label>
+                            <div class="relative">
+                                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
+                                <input type="number" x-model.number="caseUnitPrice" min="0" step="5" placeholder="0"
+                                       class="w-full pl-7 pr-2 py-1 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
+                                       :class="caseUnitPrice > 10 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+                            </div>
                         </div>
-                        <p class="text-[9px] text-gray-400 mt-1 text-center" x-show="accessoryCasePrice <= 10">Base R$ 10 · 50% do lucro</p>
                     </div>
-                    {{-- Carregador --}}
-                    <div class="rounded-lg p-2.5 border transition-all duration-200"
-                         :class="accessoryChargerPrice > 50 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
-                        <p class="text-[10px] font-semibold uppercase tracking-wider mb-1.5"
-                           :class="accessoryChargerPrice > 50 ? 'text-purple-600' : 'text-gray-500'">Carregador</p>
-                        <div class="relative">
-                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
-                            <input type="number" x-model.number="accessoryChargerPrice" min="0" step="10" placeholder="0"
-                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
-                                   :class="accessoryChargerPrice > 50 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+
+                    {{-- Resultado da capinha --}}
+                    <div x-show="caseQty > 0 && caseUnitPrice > 10" x-transition class="mt-2 text-center">
+                        <span class="text-[10px] text-gray-400">
+                            <span x-text="caseQty"></span>x R$ <span x-text="fmt(caseUnitPrice)"></span> = R$ <span x-text="fmt(caseQty * caseUnitPrice)"></span>
+                        </span>
+                        <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.caseComm)"></span></p>
+                    </div>
+                    <p class="text-[9px] text-gray-400 mt-1.5 text-center" x-show="caseQty <= 0 || caseUnitPrice <= 10">Base R$ 10 · 50% do lucro</p>
+
+                    {{-- Sugestão de combos --}}
+                    <div x-show="caseUnitPrice > 10" x-transition class="mt-2 pt-2 border-t border-purple-100">
+                        <p class="text-[9px] font-semibold text-purple-500 uppercase tracking-wider mb-1.5">Sugestão de combos</p>
+                        <div class="space-y-1">
+                            <template x-for="qty in [1, 2, 3]" :key="qty">
+                                <button type="button" @click="caseQty = qty"
+                                        class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[11px] transition-all border"
+                                        :class="caseQty === qty
+                                            ? 'bg-purple-100 border-purple-300 text-purple-800 font-bold'
+                                            : 'bg-white border-gray-100 text-gray-600 hover:bg-purple-50 hover:border-purple-200'">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold"
+                                              :class="caseQty === qty ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-500'"
+                                              x-text="qty"></span>
+                                        <span x-text="qty === 1 ? '1 capinha' : qty + ' capinhas'"></span>
+                                        <span class="text-gray-400" x-text="'R$ ' + fmt(caseUnitPrice * qty)"></span>
+                                    </span>
+                                    <span class="font-bold" :class="caseQty === qty ? 'text-purple-700' : 'text-emerald-600'"
+                                          x-text="'+R$ ' + fmt((caseUnitPrice - 10) * 0.5 * qty)"></span>
+                                </button>
+                            </template>
                         </div>
-                        <div class="mt-1.5 text-center" x-show="accessoryChargerPrice > 50">
-                            <span class="text-[10px] text-gray-400">Lucro: R$ <span x-text="fmt(accessoryChargerPrice - 50)"></span></span>
-                            <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.chargerComm)"></span></p>
-                        </div>
-                        <p class="text-[9px] text-gray-400 mt-1 text-center" x-show="accessoryChargerPrice <= 50">Base R$ 50 · 50% do lucro</p>
                     </div>
                 </div>
+
+                {{-- Carregador --}}
+                <div class="rounded-lg p-2.5 border transition-all duration-200"
+                     :class="accessoryChargerPrice > 50 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
+                    <p class="text-[10px] font-semibold uppercase tracking-wider mb-1.5"
+                       :class="accessoryChargerPrice > 50 ? 'text-purple-600' : 'text-gray-500'">Carregador</p>
+                    <div class="relative">
+                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
+                        <input type="number" x-model.number="accessoryChargerPrice" min="0" step="10" placeholder="0"
+                               class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
+                               :class="accessoryChargerPrice > 50 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+                    </div>
+                    <div class="mt-1.5 text-center" x-show="accessoryChargerPrice > 50">
+                        <span class="text-[10px] text-gray-400">Lucro: R$ <span x-text="fmt(accessoryChargerPrice - 50)"></span></span>
+                        <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.chargerComm)"></span></p>
+                    </div>
+                    <p class="text-[9px] text-gray-400 mt-1 text-center" x-show="accessoryChargerPrice <= 50">Base R$ 50 · 50% do lucro</p>
+                </div>
+
                 {{-- Total de acessórios --}}
                 <div x-show="commissionEstimate.accessoryTotal > 0" x-transition
                      class="mt-2 bg-purple-100 border border-purple-200 rounded-lg px-3 py-2 flex items-center justify-between">

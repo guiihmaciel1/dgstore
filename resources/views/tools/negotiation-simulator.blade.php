@@ -79,6 +79,8 @@
             evalDropdownOpen: false,
 
             productCost: 0,
+            caseQty: 0,
+            caseUnitPrice: 0,
             accessoryCasePrice: 0,
             accessoryChargerPrice: 0,
             product: { description: '', priceInput: '' },
@@ -197,8 +199,11 @@
                     }
                 }
 
-                if (this.accessoryCasePrice > CASE_BASE) {
-                    caseComm = (this.accessoryCasePrice - CASE_BASE) * ACC_RATE;
+                const qty = parseInt(this.caseQty) || 0;
+                const unitP = parseFloat(this.caseUnitPrice) || 0;
+                this.accessoryCasePrice = unitP * qty;
+                if (qty > 0 && unitP > CASE_BASE) {
+                    caseComm = (unitP - CASE_BASE) * ACC_RATE * qty;
                 }
                 if (this.accessoryChargerPrice > CHARGER_BASE) {
                     chargerComm = (this.accessoryChargerPrice - CHARGER_BASE) * ACC_RATE;
