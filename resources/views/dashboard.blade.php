@@ -380,7 +380,7 @@
             <!-- BANNER DG STORE -->
             <div class="mb-4 sm:mb-6">
                 <div id="banner-container" style="width: 100%; aspect-ratio: 1200/280; background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%); border-radius: 0.75rem; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <img src="{{ asset('images/bannerdg.png') }}" alt="DG Store" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="{{ asset('images/bannernews.png') }}" alt="DG Store" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
             </div>
 
