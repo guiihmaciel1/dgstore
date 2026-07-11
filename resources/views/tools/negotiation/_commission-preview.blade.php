@@ -50,64 +50,72 @@
                     <span class="text-[10px] text-gray-400 font-normal">— preencha o valor de venda</span>
                 </div>
 
-                {{-- Capinha: quantidade + preço unitário --}}
+                {{-- Capinha: preço unitário + combos --}}
                 <div class="rounded-lg p-3 border transition-all duration-200 mb-2"
                      :class="caseQty > 0 && caseUnitPrice > 10 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
                     <p class="text-[10px] font-semibold uppercase tracking-wider mb-2"
                        :class="caseQty > 0 && caseUnitPrice > 10 ? 'text-purple-600' : 'text-gray-500'">Capinha</p>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="text-[9px] text-gray-400 font-medium block mb-0.5">Quantidade</label>
-                            <div class="flex items-center gap-1">
-                                <button type="button" @click="caseQty = Math.max(0, caseQty - 1)"
-                                        class="w-6 h-6 flex items-center justify-center rounded border text-xs font-bold transition-colors"
-                                        :class="caseQty > 0 ? 'border-purple-300 text-purple-600 hover:bg-purple-100' : 'border-gray-200 text-gray-300 cursor-not-allowed'">−</button>
-                                <input type="number" x-model.number="caseQty" min="0" max="10"
-                                       class="flex-1 py-1 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 w-10"
-                                       :class="caseQty > 0 ? 'border-purple-300 focus:ring-purple-400 text-purple-800' : 'border-gray-200 focus:ring-gray-300 text-gray-700'">
-                                <button type="button" @click="caseQty = Math.min(10, caseQty + 1)"
-                                        class="w-6 h-6 flex items-center justify-center rounded border border-purple-300 text-purple-600 text-xs font-bold hover:bg-purple-100 transition-colors">+</button>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-[9px] text-gray-400 font-medium block mb-0.5">Preço unitário</label>
-                            <div class="relative">
-                                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
-                                <input type="number" x-model.number="caseUnitPrice" min="0" step="5" placeholder="0"
-                                       class="w-full pl-7 pr-2 py-1 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
-                                       :class="caseUnitPrice > 10 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
-                            </div>
+
+                    <div>
+                        <label class="text-[9px] text-gray-400 font-medium block mb-0.5">Preço unitário (1 capinha)</label>
+                        <div class="relative">
+                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
+                            <input type="number" x-model.number="caseUnitPrice" min="0" step="5" placeholder="0"
+                                   @input="caseQty = caseQty || 1; caseTotalOverride = null"
+                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
+                                   :class="caseUnitPrice > 10 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
                         </div>
                     </div>
 
-                    {{-- Resultado da capinha --}}
+                    {{-- Resultado atual --}}
                     <div x-show="caseQty > 0 && caseUnitPrice > 10" x-transition class="mt-2 text-center">
                         <span class="text-[10px] text-gray-400">
-                            <span x-text="caseQty"></span>x R$ <span x-text="fmt(caseUnitPrice)"></span> = R$ <span x-text="fmt(caseQty * caseUnitPrice)"></span>
+                            <span x-text="caseQty"></span> capinha<span x-show="caseQty > 1">s</span> por
+                            <strong x-text="'R$ ' + fmt(caseTotalOverride !== null ? caseTotalOverride : caseUnitPrice * caseQty)"></strong>
+                            <span x-show="caseTotalOverride !== null && caseQty > 1" class="line-through text-gray-300 ml-1"
+                                  x-text="'R$ ' + fmt(caseUnitPrice * caseQty)"></span>
                         </span>
                         <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.caseComm)"></span></p>
                     </div>
-                    <p class="text-[9px] text-gray-400 mt-1.5 text-center" x-show="caseQty <= 0 || caseUnitPrice <= 10">Base R$ 10 · 50% do lucro</p>
+                    <p class="text-[9px] text-gray-400 mt-1.5 text-center" x-show="caseQty <= 0 || caseUnitPrice <= 10">Base R$ 10 · 50% do lucro por unidade</p>
 
-                    {{-- Sugestão de combos --}}
-                    <div x-show="caseUnitPrice > 10" x-transition class="mt-2 pt-2 border-t border-purple-100">
-                        <p class="text-[9px] font-semibold text-purple-500 uppercase tracking-wider mb-1.5">Sugestão de combos</p>
-                        <div class="space-y-1">
-                            <template x-for="qty in [1, 2, 3]" :key="qty">
-                                <button type="button" @click="caseQty = qty"
-                                        class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[11px] transition-all border"
-                                        :class="caseQty === qty
-                                            ? 'bg-purple-100 border-purple-300 text-purple-800 font-bold'
+                    {{-- Sugestão de combos com desconto progressivo --}}
+                    <div x-show="caseUnitPrice > 10" x-transition class="mt-2.5 pt-2.5 border-t border-purple-100">
+                        <p class="text-[9px] font-semibold text-purple-500 uppercase tracking-wider mb-1.5">Ofereça combos ao cliente</p>
+                        <div class="space-y-1"
+                             x-data="{
+                                 combos() {
+                                     const p = caseUnitPrice;
+                                     const p2 = Math.round(p * 2 * 0.80 / 5) * 5;
+                                     const p3 = Math.round(p * 3 * 0.67 / 5) * 5;
+                                     return [
+                                         { qty: 1, total: p, discount: 0 },
+                                         { qty: 2, total: p2, discount: Math.round((1 - p2 / (p * 2)) * 100) },
+                                         { qty: 3, total: p3, discount: Math.round((1 - p3 / (p * 3)) * 100) },
+                                     ];
+                                 }
+                             }">
+                            <template x-for="combo in combos()" :key="combo.qty">
+                                <button type="button"
+                                        @click="caseQty = combo.qty; caseTotalOverride = combo.qty === 1 ? null : combo.total"
+                                        class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-[11px] transition-all border"
+                                        :class="caseQty === combo.qty
+                                            ? 'bg-purple-100 border-purple-300 text-purple-800 font-bold shadow-sm'
                                             : 'bg-white border-gray-100 text-gray-600 hover:bg-purple-50 hover:border-purple-200'">
                                     <span class="flex items-center gap-1.5">
-                                        <span class="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold"
-                                              :class="caseQty === qty ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-500'"
-                                              x-text="qty"></span>
-                                        <span x-text="qty === 1 ? '1 capinha' : qty + ' capinhas'"></span>
-                                        <span class="text-gray-400" x-text="'R$ ' + fmt(caseUnitPrice * qty)"></span>
+                                        <span class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold"
+                                              :class="caseQty === combo.qty ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-500'"
+                                              x-text="combo.qty"></span>
+                                        <span>
+                                            <span x-text="combo.qty === 1 ? '1 capinha' : combo.qty + ' capinhas'"></span>
+                                            <span class="font-bold ml-0.5" x-text="'R$ ' + fmt(combo.total)"></span>
+                                        </span>
+                                        <span x-show="combo.discount > 0"
+                                              class="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold"
+                                              x-text="'-' + combo.discount + '%'"></span>
                                     </span>
-                                    <span class="font-bold" :class="caseQty === qty ? 'text-purple-700' : 'text-emerald-600'"
-                                          x-text="'+R$ ' + fmt((caseUnitPrice - 10) * 0.5 * qty)"></span>
+                                    <span class="font-bold text-emerald-600"
+                                          x-text="'+R$ ' + fmt(Math.max(0, combo.total - 10 * combo.qty) * 0.5)"></span>
                                 </button>
                             </template>
                         </div>

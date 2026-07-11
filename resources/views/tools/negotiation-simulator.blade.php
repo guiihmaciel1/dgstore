@@ -81,6 +81,7 @@
             productCost: 0,
             caseQty: 0,
             caseUnitPrice: 0,
+            caseTotalOverride: null,
             accessoryCasePrice: 0,
             accessoryChargerPrice: 0,
             product: { description: '', priceInput: '' },
@@ -201,9 +202,10 @@
 
                 const qty = parseInt(this.caseQty) || 0;
                 const unitP = parseFloat(this.caseUnitPrice) || 0;
-                this.accessoryCasePrice = unitP * qty;
-                if (qty > 0 && unitP > CASE_BASE) {
-                    caseComm = (unitP - CASE_BASE) * ACC_RATE * qty;
+                const caseTotal = this.caseTotalOverride !== null ? this.caseTotalOverride : unitP * qty;
+                this.accessoryCasePrice = caseTotal;
+                if (qty > 0 && caseTotal > CASE_BASE * qty) {
+                    caseComm = (caseTotal - CASE_BASE * qty) * ACC_RATE;
                 }
                 if (this.accessoryChargerPrice > CHARGER_BASE) {
                     chargerComm = (this.accessoryChargerPrice - CHARGER_BASE) * ACC_RATE;
