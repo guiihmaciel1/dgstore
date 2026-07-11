@@ -11,6 +11,8 @@ readonly class SaleItemData
         public int $quantity,
         public float $unitPrice,
         public float $costPrice = 0,
+        public float $financialCost = 0,
+        public float $commissionCost = 0,
         public ?string $supplierOrigin = null,
         public ?string $freightType = null,
         public float $freightValue = 0,
@@ -20,11 +22,15 @@ readonly class SaleItemData
 
     public static function fromArray(array $data): self
     {
+        $costPrice = (float) ($data['cost_price'] ?? 0);
+
         return new self(
             productId: $data['product_id'] ?? null,
             quantity: (int) $data['quantity'],
             unitPrice: (float) $data['unit_price'],
-            costPrice: (float) ($data['cost_price'] ?? 0),
+            costPrice: $costPrice,
+            financialCost: (float) ($data['financial_cost'] ?? $costPrice),
+            commissionCost: (float) ($data['commission_cost'] ?? $costPrice),
             supplierOrigin: $data['supplier_origin'] ?? null,
             freightType: $data['freight_type'] ?? null,
             freightValue: (float) ($data['freight_value'] ?? 0),
@@ -58,7 +64,7 @@ readonly class SaleItemData
 
     public function calculateTotalCost(): float
     {
-        return $this->costPrice + $this->calculateFreightAmount();
+        return $this->financialCost + $this->calculateFreightAmount();
     }
 
     public function toArray(): array
@@ -68,6 +74,8 @@ readonly class SaleItemData
             'quantity' => $this->quantity,
             'unit_price' => $this->unitPrice,
             'cost_price' => $this->costPrice,
+            'financial_cost' => $this->financialCost,
+            'commission_cost' => $this->commissionCost,
             'supplier_origin' => $this->supplierOrigin,
             'freight_type' => $this->freightType,
             'freight_value' => $this->freightValue,

@@ -62,17 +62,25 @@ class MarketingController extends Controller
             ->orderBy('name')
             ->get();
 
+        $isAdmin = auth()->user()->role->isAdminGeral();
+
         $usedListings = MarketingUsedListing::with('images')->get()
             ->keyBy(fn ($l) => $l->listable_type . '_' . $l->listable_id);
 
-        $pricesJson = $prices->map(function ($p) {
-            return [
+        if (! $isAdmin) {
+            $usedListings = $usedListings->map(function ($listing) {
+                $listing->makeHidden('cost_price');
+                return $listing;
+            });
+        }
+
+        $pricesJson = $prices->map(function ($p) use ($isAdmin) {
+            $data = [
                 'id' => $p->id,
                 'name' => $p->name,
                 'storage' => $p->storage,
                 'color' => $p->color,
                 'price' => $p->price,
-                'cost_price' => $p->cost_price,
                 'notes' => $p->notes,
                 'active' => $p->active,
                 'images' => $p->images->map(fn ($img) => [
@@ -81,6 +89,12 @@ class MarketingController extends Controller
                     'original_name' => $img->original_name,
                 ])->values(),
             ];
+
+            if ($isAdmin) {
+                $data['cost_price'] = $p->cost_price;
+            }
+
+            return $data;
         })->values();
 
         $usedProductsJson = $usedProducts->map(function ($p) {
@@ -96,21 +110,28 @@ class MarketingController extends Controller
             ];
         })->values();
 
-        $mapConsignment = fn ($c) => [
-            'id' => $c->id,
-            'morph_type' => ConsignmentStockItem::class,
-            'name' => $c->name,
-            'model' => $c->model,
-            'storage' => $c->storage,
-            'color' => $c->color,
-            'condition' => $c->condition?->value ?? 'new',
-            'stock' => $c->available_quantity,
-            'supplier_cost' => (float) $c->supplier_cost,
-            'suggested_price' => (float) $c->suggested_price,
-            'battery_health' => $c->battery_health,
-            'has_box' => (bool) $c->has_box,
-            'has_cable' => (bool) $c->has_cable,
-        ];
+        $mapConsignment = function ($c) use ($isAdmin) {
+            $data = [
+                'id' => $c->id,
+                'morph_type' => ConsignmentStockItem::class,
+                'name' => $c->name,
+                'model' => $c->model,
+                'storage' => $c->storage,
+                'color' => $c->color,
+                'condition' => $c->condition?->value ?? 'new',
+                'stock' => $c->available_quantity,
+                'suggested_price' => (float) $c->suggested_price,
+                'battery_health' => $c->battery_health,
+                'has_box' => (bool) $c->has_box,
+                'has_cable' => (bool) $c->has_cable,
+            ];
+
+            if ($isAdmin) {
+                $data['supplier_cost'] = (float) $c->supplier_cost;
+            }
+
+            return $data;
+        };
 
         $consignmentUsedJson = $allConsignmentItems
             ->filter(fn ($c) => ($c->condition?->value ?? 'new') === 'used')
@@ -182,7 +203,9 @@ class MarketingController extends Controller
             'prices.*.active' => ['nullable'],
         ]);
 
-        DB::transaction(function () use ($request) {
+        $isAdmin = auth()->user()->role->isAdminGeral();
+
+        DB::transaction(function () use ($request, $isAdmin) {
             $existingIds = MarketingPrice::pluck('id')->toArray();
             $sentIds = [];
 
@@ -192,11 +215,14 @@ class MarketingController extends Controller
                     'storage' => $row['storage'] ?? null,
                     'color' => $row['color'] ?? null,
                     'price' => $row['price'],
-                    'cost_price' => !empty($row['cost_price']) ? $row['cost_price'] : null,
                     'notes' => $row['notes'] ?? null,
                     'active' => isset($row['active']),
                     'sort_order' => $index,
                 ];
+
+                if ($isAdmin) {
+                    $data['cost_price'] = !empty($row['cost_price']) ? $row['cost_price'] : null;
+                }
 
                 if (!empty($row['id'])) {
                     $price = MarketingPrice::find($row['id']);
@@ -305,32 +331,39 @@ class MarketingController extends Controller
             'visible' => ['nullable'],
         ]);
 
+        $listingData = [
+            'final_price' => $request->final_price,
+            'battery_health' => $request->battery_health,
+            'has_box' => $request->boolean('has_box'),
+            'has_cable' => $request->boolean('has_cable'),
+            'notes' => $request->notes,
+            'visible' => $request->boolean('visible'),
+        ];
+
+        $productData = [
+            'sale_price' => $request->final_price,
+            'battery_health' => $request->battery_health,
+            'has_box' => $request->boolean('has_box'),
+            'has_cable' => $request->boolean('has_cable'),
+        ];
+
+        if (auth()->user()->role->isAdminGeral()) {
+            $listingData['cost_price'] = $request->cost_price;
+            $productData['cost_price'] = $request->cost_price;
+        }
+
         $listing = MarketingUsedListing::updateOrCreate(
             [
                 'listable_type' => $request->listable_type,
                 'listable_id' => $request->listable_id,
             ],
-            [
-                'cost_price' => $request->cost_price,
-                'final_price' => $request->final_price,
-                'battery_health' => $request->battery_health,
-                'has_box' => $request->boolean('has_box'),
-                'has_cable' => $request->boolean('has_cable'),
-                'notes' => $request->notes,
-                'visible' => $request->boolean('visible'),
-            ]
+            $listingData
         );
 
         if ($request->listable_type === Product::class) {
             $product = Product::find($request->listable_id);
             if ($product) {
-                $product->update(array_filter([
-                    'sale_price' => $request->final_price,
-                    'cost_price' => $request->cost_price,
-                    'battery_health' => $request->battery_health,
-                    'has_box' => $request->boolean('has_box'),
-                    'has_cable' => $request->boolean('has_cable'),
-                ], fn ($v) => $v !== null));
+                $product->update(array_filter($productData, fn ($v) => $v !== null));
             }
         }
 

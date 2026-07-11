@@ -719,7 +719,9 @@
                                 <col style="width: auto;">
                                 <col style="width: 72px;">
                                 <col style="width: 80px;">
+                                @if(auth()->user()->role->isAdminGeral())
                                 <col style="width: 100px;">
+                                @endif
                                 <col style="width: 100px;">
                                 <col style="width: 62px;">
                                 <col style="width: 40px;">

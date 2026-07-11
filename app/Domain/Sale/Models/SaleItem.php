@@ -25,6 +25,8 @@ class SaleItem extends Model
         'quantity',
         'unit_price',
         'cost_price',
+        'financial_cost',
+        'commission_cost',
         'supplier_origin',
         'freight_type',
         'freight_value',
@@ -41,6 +43,8 @@ class SaleItem extends Model
             'quantity' => 'integer',
             'unit_price' => 'decimal:2',
             'cost_price' => 'decimal:2',
+            'financial_cost' => 'decimal:2',
+            'commission_cost' => 'decimal:2',
             'freight_value' => 'decimal:2',
             'freight_amount' => 'decimal:2',
             'total_cost' => 'decimal:2',
@@ -137,6 +141,42 @@ class SaleItem extends Model
     }
 
     /**
+     * Custo financeiro: usado para cálculo de CMV e lucro.
+     * Fallback para cost_price quando null (vendas antigas).
+     */
+    public function getFinancialCostValueAttribute(): float
+    {
+        if (isset($this->attributes['financial_cost']) && $this->attributes['financial_cost'] !== null) {
+            return (float) $this->attributes['financial_cost'];
+        }
+
+        return $this->cost_price_value;
+    }
+
+    /**
+     * Custo comissão: usado para cálculo de comissão do vendedor.
+     * Fallback para cost_price quando null (vendas antigas).
+     */
+    public function getCommissionCostValueAttribute(): float
+    {
+        if (isset($this->attributes['commission_cost']) && $this->attributes['commission_cost'] !== null) {
+            return (float) $this->attributes['commission_cost'];
+        }
+
+        return $this->cost_price_value;
+    }
+
+    public function getFormattedFinancialCostAttribute(): string
+    {
+        return 'R$ ' . number_format($this->financial_cost_value, 2, ',', '.');
+    }
+
+    public function getFormattedCommissionCostAttribute(): string
+    {
+        return 'R$ ' . number_format($this->commission_cost_value, 2, ',', '.');
+    }
+
+    /**
      * Retorna o label da origem do fornecedor
      */
     public function getSupplierOriginLabelAttribute(): string
@@ -164,7 +204,8 @@ class SaleItem extends Model
     }
 
     /**
-     * Custo total real: custo + frete
+     * Custo total real: financial_cost + frete.
+     * Usa financial_cost (que faz fallback p/ cost_price em vendas antigas).
      */
     public function getTotalCostValueAttribute(): float
     {
@@ -172,11 +213,11 @@ class SaleItem extends Model
             return (float) $this->attributes['total_cost'];
         }
 
-        return $this->cost_price_value + $this->freight_amount_calculated;
+        return $this->financial_cost_value + $this->freight_amount_calculated;
     }
 
     /**
-     * Lucro do item: (preço venda - custo total) * quantidade
+     * Lucro do item: (preço venda - custo total financeiro) * quantidade
      */
     public function getItemProfitAttribute(): float
     {
