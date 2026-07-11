@@ -204,7 +204,7 @@ class CreateSaleUseCase
             }
 
             $saleProfit = $sale->items->sum(function ($item) {
-                return $item->item_profit;
+                return ((float) $item->unit_price - $item->commission_cost_value) * $item->quantity;
             });
 
             $customerName = $sale->customer?->name;
