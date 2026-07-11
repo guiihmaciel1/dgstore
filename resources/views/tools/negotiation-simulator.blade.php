@@ -18,11 +18,12 @@
             {{-- Layout: mobile = coluna única / desktop = 2 colunas --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
 
-                {{-- Inputs --}}
+                {{-- Inputs + Results --}}
                 <div class="order-1">
                     @include('tools.negotiation._quick-values')
                     @include('tools.negotiation._product-form')
                     @include('tools.negotiation._payment-inputs')
+                    @include('tools.negotiation._results')
 
                     {{-- Estado vazio --}}
                     <div x-show="!cardLoading && cardResults.length === 0 && productPrice <= 0"
@@ -40,10 +41,6 @@
                     @include('tools.negotiation._commission-preview')
                 </div>
 
-                {{-- Resultados (abaixo dos inputs na coluna esquerda) --}}
-                <div class="order-3">
-                    @include('tools.negotiation._results')
-                </div>
             </div>
         </div>
 
