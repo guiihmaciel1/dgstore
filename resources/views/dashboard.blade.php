@@ -384,6 +384,53 @@
                 </div>
             </div>
 
+            <!-- ATALHOS RÁPIDOS -->
+            <div class="dashboard-shortcuts">
+                <a href="{{ route('sales.create') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #111827; color: white; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" onmouseout="this.style.transform=''; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'">
+                    <div style="width: 2.5rem; height: 2.5rem; background: #22c55e; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Venda</span>
+                        <span style="font-size: 0.6875rem; color: #9ca3af;">Nova venda</span>
+                    </div>
+                </a>
+                <a href="{{ route('tools.negotiation-simulator') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: white; border: 2px solid #e5e7eb; color: #111827; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#6366f1'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='#e5e7eb'; this.style.boxShadow=''">
+                    <div style="width: 2.5rem; height: 2.5rem; background: #eef2ff; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #6366f1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Simular</span>
+                        <span style="font-size: 0.6875rem; color: #9ca3af;">Negociação</span>
+                    </div>
+                </a>
+                <a href="{{ route('crm.board') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: white; border: 2px solid #e5e7eb; color: #111827; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#f59e0b'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='#e5e7eb'; this.style.boxShadow=''">
+                    <div style="width: 2.5rem; height: 2.5rem; background: #fffbeb; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Pipeline</span>
+                        <span style="font-size: 0.6875rem; color: #9ca3af;">CRM / Leads</span>
+                    </div>
+                </a>
+                <a href="{{ route('marketing.index') }}?tab=used" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: white; border: 2px solid #e5e7eb; color: #111827; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#ec4899'; this.style.boxShadow='0 4px 12px rgba(236,72,153,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='#e5e7eb'; this.style.boxShadow=''">
+                    <div style="width: 2.5rem; height: 2.5rem; background: #fdf2f8; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #ec4899;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Seminovos</span>
+                        <span style="font-size: 0.6875rem; color: #9ca3af;">Marketing</span>
+                    </div>
+                </a>
+            </div>
 
             <!-- Mensagens do Sistema -->
             <div class="mb-6 sm:mb-8">
@@ -414,6 +461,17 @@
             </div>
 
             <style>
+                .dashboard-shortcuts {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 0.75rem;
+                    margin-bottom: 1rem;
+                }
+                @media (min-width: 640px) {
+                    .dashboard-shortcuts {
+                        grid-template-columns: repeat(4, 1fr);
+                    }
+                }
                 .dg-hidden-value {
                     letter-spacing: 0.1em;
                     color: #d1d5db;
