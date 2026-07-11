@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers;
 
+use App\Domain\AI\Services\GeminiService;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
+use App\Domain\Marketing\Models\MarketingContent;
 use App\Domain\Marketing\Models\MarketingCreative;
 use App\Domain\Marketing\Models\MarketingPrice;
 use App\Domain\Marketing\Models\MarketingPriceImage;
@@ -175,6 +177,28 @@ class MarketingController extends Controller
             'stock' => $p->stock_quantity,
         ])->values();
 
+        $contentsJson = MarketingContent::with('user')
+            ->latest()
+            ->get()
+            ->map(fn ($c) => [
+                'id' => $c->id,
+                'title' => $c->title,
+                'description' => $c->description,
+                'type' => $c->type,
+                'type_label' => $c->getTypeLabel(),
+                'platform' => $c->platform,
+                'platform_label' => $c->getPlatformLabel(),
+                'status' => $c->status,
+                'status_label' => $c->getStatusLabel(),
+                'scheduled_at' => $c->scheduled_at?->format('Y-m-d'),
+                'scheduled_at_formatted' => $c->scheduled_at?->format('d/m/Y'),
+                'image_url' => $c->image_url,
+                'ai_generated' => $c->ai_generated,
+                'user_name' => $c->user?->name ?? 'Sistema',
+                'created_at' => $c->created_at->format('d/m/Y H:i'),
+            ])
+            ->values();
+
         return view('marketing.index', [
             'prices' => $prices,
             'pricesJson' => $pricesJson,
@@ -187,6 +211,7 @@ class MarketingController extends Controller
             'usedResaleJson' => $usedResaleJson,
             'newProductsResaleJson' => $newProductsResaleJson,
             'resaleItems' => $resaleItems,
+            'contentsJson' => $contentsJson,
         ]);
     }
 
@@ -598,4 +623,184 @@ class MarketingController extends Controller
         return response()->json(['success' => true]);
     }
 
+    // ─── Conteúdos ───────────────────────────────────────────
+
+    public function storeContent(Request $request): JsonResponse
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:5000'],
+            'type' => ['required', 'string', 'in:reels,stories,post,carousel'],
+            'platform' => ['required', 'string', 'in:instagram,tiktok,whatsapp,all'],
+            'status' => ['required', 'string', 'in:idea,production,published'],
+            'scheduled_at' => ['nullable', 'date'],
+            'image' => ['nullable', 'image', 'max:5120'],
+            'ai_generated' => ['nullable'],
+        ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('marketing-contents', 'public');
+        }
+
+        $content = MarketingContent::create([
+            'user_id' => auth()->id(),
+            'title' => $request->title,
+            'description' => $request->description,
+            'type' => $request->type,
+            'platform' => $request->platform,
+            'status' => $request->status,
+            'scheduled_at' => $request->scheduled_at,
+            'image_path' => $imagePath,
+            'ai_generated' => $request->boolean('ai_generated'),
+        ]);
+
+        $content->load('user');
+
+        return response()->json([
+            'success' => true,
+            'content' => [
+                'id' => $content->id,
+                'title' => $content->title,
+                'description' => $content->description,
+                'type' => $content->type,
+                'type_label' => $content->getTypeLabel(),
+                'platform' => $content->platform,
+                'platform_label' => $content->getPlatformLabel(),
+                'status' => $content->status,
+                'status_label' => $content->getStatusLabel(),
+                'scheduled_at' => $content->scheduled_at?->format('Y-m-d'),
+                'scheduled_at_formatted' => $content->scheduled_at?->format('d/m/Y'),
+                'image_url' => $content->image_url,
+                'ai_generated' => $content->ai_generated,
+                'user_name' => $content->user?->name ?? 'Sistema',
+                'created_at' => $content->created_at->format('d/m/Y H:i'),
+            ],
+        ]);
+    }
+
+    public function updateContent(Request $request, MarketingContent $content): JsonResponse
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:5000'],
+            'type' => ['required', 'string', 'in:reels,stories,post,carousel'],
+            'platform' => ['required', 'string', 'in:instagram,tiktok,whatsapp,all'],
+            'status' => ['required', 'string', 'in:idea,production,published'],
+            'scheduled_at' => ['nullable', 'date'],
+        ]);
+
+        $content->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'type' => $request->type,
+            'platform' => $request->platform,
+            'status' => $request->status,
+            'scheduled_at' => $request->scheduled_at,
+        ]);
+
+        $content->load('user');
+
+        return response()->json([
+            'success' => true,
+            'content' => [
+                'id' => $content->id,
+                'title' => $content->title,
+                'description' => $content->description,
+                'type' => $content->type,
+                'type_label' => $content->getTypeLabel(),
+                'platform' => $content->platform,
+                'platform_label' => $content->getPlatformLabel(),
+                'status' => $content->status,
+                'status_label' => $content->getStatusLabel(),
+                'scheduled_at' => $content->scheduled_at?->format('Y-m-d'),
+                'scheduled_at_formatted' => $content->scheduled_at?->format('d/m/Y'),
+                'image_url' => $content->image_url,
+                'ai_generated' => $content->ai_generated,
+                'user_name' => $content->user?->name ?? 'Sistema',
+                'created_at' => $content->created_at->format('d/m/Y H:i'),
+            ],
+        ]);
+    }
+
+    public function deleteContent(MarketingContent $content): JsonResponse
+    {
+        if ($content->image_path) {
+            Storage::disk('public')->delete($content->image_path);
+        }
+
+        $content->delete();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function generateContentIdeas(Request $request): JsonResponse
+    {
+        $request->validate([
+            'topic' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $gemini = app(GeminiService::class);
+
+        if (! $gemini->isAvailable()) {
+            return response()->json(['error' => 'Serviço de IA não disponível.'], 503);
+        }
+
+        $topicContext = $request->topic
+            ? "O usuário pediu ideias sobre: \"{$request->topic}\"\n\n"
+            : '';
+
+        $prompt = <<<PROMPT
+{$topicContext}Gere exatamente 5 ideias criativas de conteúdo para redes sociais de uma loja Apple Premium (iPhones, MacBooks, iPads, Apple Watch, AirPods).
+
+Cada ideia deve ser sobre UM destes temas (varie entre eles):
+- Tendências atuais do universo Apple
+- Curiosidades e fatos interessantes sobre iPhone
+- Novidades e lançamentos recentes da Apple
+- Dicas práticas de uso do iPhone/Apple
+- Comparativos entre modelos Apple
+
+FORMATO DE SAÍDA (array JSON, sem markdown):
+[{
+  "title": "Título chamativo e curto (máx 60 chars)",
+  "description": "Roteiro/descrição do conteúdo em 2-3 frases. Inclua o que mostrar, o que falar, e um gancho de engajamento.",
+  "type": "reels|stories|post|carousel",
+  "platform": "instagram|tiktok|whatsapp|all"
+}]
+
+REGRAS:
+1. Títulos devem ser chamativos e gerar curiosidade
+2. Descrições devem ser práticas e acionáveis para o social media
+3. Varie os tipos (reels, stories, post, carousel)
+4. Varie as plataformas
+5. Conteúdo em português brasileiro, tom jovem e profissional
+6. Foque em conteúdos que uma LOJA DE CELULARES publicaria
+7. NÃO invente especificações técnicas incorretas
+PROMPT;
+
+        $systemInstruction = 'Você é um social media especializado em marketing para lojas Apple/iPhone no Brasil. '
+            . 'Conhece as últimas tendências, lançamentos e curiosidades do ecossistema Apple. '
+            . 'Gere ideias criativas e engajantes. Retorne APENAS o array JSON, sem explicações.';
+
+        $ideas = $gemini->generateJson($prompt, $systemInstruction);
+
+        if ($ideas === null) {
+            return response()->json(['error' => 'Não foi possível gerar ideias. Tente novamente.'], 500);
+        }
+
+        $validated = collect($ideas)
+            ->filter(fn ($item) => is_array($item) && ! empty($item['title']))
+            ->map(fn ($item) => [
+                'title' => mb_substr(trim($item['title'] ?? ''), 0, 255),
+                'description' => trim($item['description'] ?? ''),
+                'type' => in_array($item['type'] ?? '', ['reels', 'stories', 'post', 'carousel'])
+                    ? $item['type'] : 'post',
+                'platform' => in_array($item['platform'] ?? '', ['instagram', 'tiktok', 'whatsapp', 'all'])
+                    ? $item['platform'] : 'instagram',
+            ])
+            ->values()
+            ->all();
+
+        return response()->json(['ideas' => $validated]);
+    }
 }

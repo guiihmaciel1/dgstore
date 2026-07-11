@@ -48,6 +48,12 @@
                             : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Repasses
                 </button>
+                <button @click="tab = 'contents'" type="button"
+                        :style="tab === 'contents'
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #111827; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
+                    Conteúdos
+                </button>
             </div>
 
             {{-- ============================================================ --}}
@@ -862,6 +868,13 @@
                 </div>
             </div>
 
+            {{-- ============================================================ --}}
+            {{-- ABA 5: CONTEÚDOS --}}
+            {{-- ============================================================ --}}
+            <div x-show="tab === 'contents'" x-cloak>
+                @include('marketing.partials.contents-tab')
+            </div>
+
         </div>
     </div>
 
@@ -956,6 +969,8 @@
 
         const urlParams = new URLSearchParams(window.location.search);
 
+        const initialContents = @json($contentsJson);
+
         return {
             tab: urlParams.get('tab') || 'prices',
             priceSearch: '',
@@ -967,6 +982,153 @@
             showCreativeForm: false,
             creativeDate: @json($creativeDate),
             usedSearch: '',
+
+            contents: initialContents,
+            contentFilterStatus: 'all',
+            contentFilterType: 'all',
+            contentModal: { open: false, editing: null, saving: false },
+            contentForm: { title: '', description: '', type: 'post', platform: 'instagram', status: 'idea', scheduled_at: '' },
+            aiModal: { open: false },
+            aiTopic: '',
+            aiLoading: false,
+            aiSuggestions: [],
+            contentDeleting: null,
+
+            get filteredContents() {
+                return this.contents.filter(c => {
+                    if (this.contentFilterStatus !== 'all' && c.status !== this.contentFilterStatus) return false;
+                    if (this.contentFilterType !== 'all' && c.type !== this.contentFilterType) return false;
+                    return true;
+                });
+            },
+
+            openNewContent() {
+                this.contentForm = { title: '', description: '', type: 'post', platform: 'instagram', status: 'idea', scheduled_at: '' };
+                this.contentModal = { open: true, editing: null, saving: false };
+            },
+
+            openEditContent(c) {
+                this.contentForm = {
+                    title: c.title,
+                    description: c.description || '',
+                    type: c.type,
+                    platform: c.platform,
+                    status: c.status,
+                    scheduled_at: c.scheduled_at || '',
+                };
+                this.contentModal = { open: true, editing: c.id, saving: false };
+            },
+
+            async saveContent() {
+                this.contentModal.saving = true;
+                try {
+                    const isEdit = this.contentModal.editing;
+                    const url = isEdit
+                        ? '{{ url("marketing/contents") }}/' + isEdit
+                        : '{{ route("marketing.contents.store") }}';
+
+                    const formData = new FormData();
+                    formData.append('title', this.contentForm.title);
+                    formData.append('description', this.contentForm.description);
+                    formData.append('type', this.contentForm.type);
+                    formData.append('platform', this.contentForm.platform);
+                    formData.append('status', this.contentForm.status);
+                    if (this.contentForm.scheduled_at) formData.append('scheduled_at', this.contentForm.scheduled_at);
+
+                    const imgInput = document.getElementById('content-image-input');
+                    if (imgInput && imgInput.files[0]) formData.append('image', imgInput.files[0]);
+
+                    if (isEdit) formData.append('_method', 'PUT');
+
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                        body: formData,
+                    });
+
+                    if (!res.ok) throw new Error('Erro ao salvar');
+                    const data = await res.json();
+
+                    if (isEdit) {
+                        const idx = this.contents.findIndex(c => c.id === isEdit);
+                        if (idx !== -1) this.contents[idx] = data.content;
+                    } else {
+                        this.contents.unshift(data.content);
+                    }
+
+                    this.contentModal = { open: false, editing: null, saving: false };
+                    if (imgInput) imgInput.value = '';
+                } catch (e) {
+                    alert('Erro ao salvar conteúdo: ' + e.message);
+                    this.contentModal.saving = false;
+                }
+            },
+
+            async deleteContent(id) {
+                if (!confirm('Excluir esta ideia de conteúdo?')) return;
+                this.contentDeleting = id;
+                try {
+                    const res = await fetch('{{ url("marketing/contents") }}/' + id, {
+                        method: 'DELETE',
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                    });
+                    if (!res.ok) throw new Error('Erro ao excluir');
+                    this.contents = this.contents.filter(c => c.id !== id);
+                } catch (e) {
+                    alert('Erro ao excluir: ' + e.message);
+                } finally {
+                    this.contentDeleting = null;
+                }
+            },
+
+            async generateIdeas() {
+                this.aiLoading = true;
+                this.aiSuggestions = [];
+                try {
+                    const res = await fetch('{{ route("marketing.contents.generate-ideas") }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                        body: JSON.stringify({ topic: this.aiTopic }),
+                    });
+                    if (!res.ok) {
+                        const err = await res.json();
+                        throw new Error(err.error || 'Erro ao gerar ideias');
+                    }
+                    const data = await res.json();
+                    this.aiSuggestions = (data.ideas || []).map(i => ({ ...i, saving: false, saved: false }));
+                } catch (e) {
+                    alert(e.message);
+                } finally {
+                    this.aiLoading = false;
+                }
+            },
+
+            async saveIdeaFromAi(idea, idx) {
+                this.aiSuggestions[idx].saving = true;
+                try {
+                    const formData = new FormData();
+                    formData.append('title', idea.title);
+                    formData.append('description', idea.description);
+                    formData.append('type', idea.type);
+                    formData.append('platform', idea.platform);
+                    formData.append('status', 'idea');
+                    formData.append('ai_generated', '1');
+
+                    const res = await fetch('{{ route("marketing.contents.store") }}', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                        body: formData,
+                    });
+                    if (!res.ok) throw new Error('Erro ao salvar');
+                    const data = await res.json();
+                    this.contents.unshift(data.content);
+                    this.aiSuggestions[idx].saved = true;
+                } catch (e) {
+                    alert('Erro ao salvar: ' + e.message);
+                } finally {
+                    this.aiSuggestions[idx].saving = false;
+                }
+            },
 
             prices: initialPrices.map((p, i) => ({ ...p, images: p.images || [], _key: 'existing_' + i, _origIdx: i })),
             _priceCounter: initialPrices.length,
