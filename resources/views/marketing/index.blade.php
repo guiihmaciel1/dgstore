@@ -593,7 +593,9 @@
                                         <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;">Cx</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 45px;">Cabo</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 120px;">Obs</th>
+                                        @if(auth()->user()->role->isAdminGeral())
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Custo</th>
+                                        @endif
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Final</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #d97706; text-transform: uppercase; width: 110px;">Repasse</th>
                                     </tr>
@@ -633,9 +635,11 @@
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <span style="font-size: 0.75rem; color: #6b7280;" x-text="item._usedListing.notes || '—'"></span>
                                             </td>
+                                            @if(auth()->user()->role->isAdminGeral())
                                             <td style="padding: 0.375rem 0.75rem; text-align: right; font-size: 0.75rem; color: #6b7280;">
                                                 <span x-text="item._usedListing.cost_price ? parseFloat(item._usedListing.cost_price).toLocaleString('pt-BR', {minimumFractionDigits:0}) : '-'"></span>
                                             </td>
+                                            @endif
                                             <td style="padding: 0.375rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #374151;">
                                                 <span x-text="item._usedListing.final_price ? parseFloat(item._usedListing.final_price).toLocaleString('pt-BR', {minimumFractionDigits:0}) : '-'"></span>
                                             </td>
@@ -730,7 +734,9 @@
                                     <th style="padding: 0.625rem 0.5rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Produto</th>
                                     <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Storage</th>
                                     <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Cor</th>
+                                    @if(auth()->user()->role->isAdminGeral())
                                     <th style="padding: 0.625rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Custo</th>
+                                    @endif
                                     <th style="padding: 0.625rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Final</th>
                                     <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Bat. %</th>
                                     <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Cx</th>
@@ -773,11 +779,13 @@
                                         <td style="padding: 0.375rem 0.375rem; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                             <span style="font-size: 0.75rem; color: #374151;" x-text="item.color || '—'"></span>
                                         </td>
+                                        @if(auth()->user()->role->isAdminGeral())
                                         <td style="padding: 0.375rem 0.375rem;">
                                             <input type="number" step="0.01" x-model="item.listing.cost_price" placeholder="0,00"
                                                    style="width: 100%; padding: 0.25rem 0.3rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; box-sizing: border-box;"
                                                    onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
                                         </td>
+                                        @endif
                                         <td style="padding: 0.375rem 0.375rem;">
                                             <input type="number" step="0.01" x-model="item.listing.final_price" placeholder="0,00"
                                                    style="width: 100%; padding: 0.25rem 0.3rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600; box-sizing: border-box;"

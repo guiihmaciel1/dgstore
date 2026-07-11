@@ -400,13 +400,21 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             ->selectRaw('COALESCE(SUM(total_cost * quantity), 0) as cost')
             ->value('cost');
 
+        $totalCommissions = (float) DB::table('commissions')
+            ->whereIn('sale_id', $saleIds)
+            ->selectRaw('COALESCE(SUM(commission_amount), 0) as total')
+            ->value('total');
+
         $totalRevenue = (float) $aggregates->total_revenue;
+        $totalProfit = $totalRevenue - $totalCost;
 
         return [
             'count' => (int) $aggregates->count,
             'total_revenue' => $totalRevenue,
             'total_cost' => $totalCost,
-            'total_profit' => $totalRevenue - $totalCost,
+            'total_profit' => $totalProfit,
+            'total_commissions' => $totalCommissions,
+            'total_net_profit' => $totalProfit - $totalCommissions,
         ];
     }
 

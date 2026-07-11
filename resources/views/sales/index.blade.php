@@ -196,26 +196,31 @@
                         @if($sales->count() > 0)
                         <tfoot>
                             <tr style="background: #f9fafb; border-top: 2px solid #e5e7eb;">
-                                <td colspan="2" style="padding: 0.875rem 1.5rem; font-size: 0.8rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.05em;">
+                                <td colspan="3" style="padding: 0.875rem 1.5rem; font-size: 0.8rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.05em;">
                                     Total ({{ $totals['count'] }} {{ $totals['count'] === 1 ? 'venda' : 'vendas' }})
                                 </td>
-                                <td style="padding: 0.875rem 1rem; text-align: right; font-weight: 700; font-size: 1rem; color: #111827;">
+                                <td style="padding: 0.875rem 1rem; text-align: right; font-weight: 700; font-size: 0.9375rem; color: #111827;">
                                     R$ {{ number_format($totals['total_revenue'], 2, ',', '.') }}
                                 </td>
                                 @if(auth()->user()->canViewFinancials())
-                                <td style="padding: 0.875rem 1rem; text-align: right; font-weight: 700; font-size: 0.95rem; color: {{ $totals['total_profit'] >= 0 ? '#16a34a' : '#dc2626' }};">
+                                <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ $totals['total_profit'] >= 0 ? '#16a34a' : '#dc2626' }};">
                                     R$ {{ number_format($totals['total_profit'], 2, ',', '.') }}
                                 </td>
-                                <td colspan="4" style="padding: 0.875rem 1rem;">
+                                <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ ($totals['total_commissions'] ?? 0) > 0 ? '#7c3aed' : '#d1d5db' }};">
+                                    {{ ($totals['total_commissions'] ?? 0) > 0 ? 'R$ ' . number_format($totals['total_commissions'], 2, ',', '.') : '-' }}
+                                </td>
+                                <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 800; font-size: 0.8125rem; color: {{ ($totals['total_net_profit'] ?? 0) >= 0 ? '#059669' : '#dc2626' }};">
+                                    R$ {{ number_format($totals['total_net_profit'] ?? 0, 2, ',', '.') }}
+                                </td>
+                                @endif
+                                <td style="padding: 0.875rem 1rem; text-align: center;">
                                     @if($totals['total_revenue'] > 0)
-                                        <span style="display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: {{ $totals['total_profit'] >= 0 ? '#f0fdf4' : '#fef2f2' }}; color: {{ $totals['total_profit'] >= 0 ? '#16a34a' : '#dc2626' }};">
-                                            {{ number_format(($totals['total_profit'] / $totals['total_revenue']) * 100, 1, ',', '.') }}% margem
+                                        <span style="display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; background: {{ ($totals['total_net_profit'] ?? $totals['total_profit']) >= 0 ? '#f0fdf4' : '#fef2f2' }}; color: {{ ($totals['total_net_profit'] ?? $totals['total_profit']) >= 0 ? '#16a34a' : '#dc2626' }};">
+                                            {{ number_format((($totals['total_net_profit'] ?? $totals['total_profit']) / $totals['total_revenue']) * 100, 1, ',', '.') }}%
                                         </span>
                                     @endif
                                 </td>
-                                @else
-                                <td colspan="4" style="padding: 0.875rem 1rem;"></td>
-                                @endif
+                                <td colspan="2" style="padding: 0.875rem 1rem;"></td>
                             </tr>
                         </tfoot>
                         @endif
