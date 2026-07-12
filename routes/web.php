@@ -37,6 +37,7 @@ use App\Presentation\Http\Controllers\Admin\TimeClockAdminController;
 use App\Presentation\Http\Controllers\IdleModeController;
 use App\Presentation\Http\Controllers\InternDashboardController;
 use App\Presentation\Http\Controllers\TimeClockController;
+use App\Presentation\Http\Controllers\ExecutiveSummaryController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeDashboardController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeProductController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeRetailerController;
@@ -344,6 +345,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             // Cotação do Dólar
             Route::post('/admin/dollar-rate', [DollarRateController::class, 'store'])->name('admin.dollar-rate.store');
+
+            // Resumo Executivo
+            Route::get('/resumo-executivo', [ExecutiveSummaryController::class, 'index'])->name('executive-summary.index');
+            Route::get('/resumo-executivo/data', [ExecutiveSummaryController::class, 'data'])->name('executive-summary.data');
         });
     });
 
