@@ -2,7 +2,7 @@
 <div x-data="{
         open: false,
         hideValues: false,
-        tab: 'overview',
+        tab: '{{ auth()->user()->isAdminGeral() ? 'gerencial' : 'overview' }}',
         selectedIntern: null,
         internStats: @js($internStats),
         execData: @js($executiveSummary ?? []),
@@ -71,7 +71,7 @@
             return { value: items.reduce((s,i)=>s+(i.value||0),0), cost: items.reduce((s,i)=>s+(i.cost||0),0), profit: items.reduce((s,i)=>s+(i.profit||0),0) };
         }
      }"
-     x-on:open-month-summary.window="open = true; $nextTick(() => { if(typeof internChartInstance !== 'undefined') internChartInstance.destroy(); initInternChart(); if(tab === 'gerencial') renderExecCharts(); })"
+     x-on:open-month-summary.window="open = true; $nextTick(() => { if(typeof internChartInstance !== 'undefined' && internChartInstance) { internChartInstance.destroy(); internChartInstance = null; } if(tab === 'overview') initInternChart(); if(tab === 'gerencial') renderExecCharts(); })"
      x-on:keydown.escape.window="open = false"
      x-show="open" x-cloak
      style="position: fixed; inset: 0; z-index: 9999;"
@@ -99,31 +99,35 @@
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
                     {{-- Tabs --}}
-                    <div style="display: flex; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 3px;">
-                        <button @click="tab = 'overview'"
-                                :style="tab === 'overview' ? 'background: rgba(99,102,241,0.2); color: #a5b4fc;' : 'color: #64748b;'"
-                                style="padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s;">
-                            Visão Geral
-                        </button>
-                        <button @click="tab = 'individual'"
-                                :style="tab === 'individual' ? 'background: rgba(99,102,241,0.2); color: #a5b4fc;' : 'color: #64748b;'"
-                                style="padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s;">
-                            Individual
-                        </button>
+                    <div style="display: flex; gap: 2px; background: rgba(255,255,255,0.04); border-radius: 10px; padding: 3px; border: 1px solid rgba(255,255,255,0.06);">
                         @if(auth()->user()->isAdminGeral())
                         <button @click="tab = 'gerencial'; $nextTick(() => renderExecCharts())"
-                                :style="tab === 'gerencial' ? 'background: rgba(16,185,129,0.2); color: #6ee7b7;' : 'color: #64748b;'"
-                                style="padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s;">
+                                :style="tab === 'gerencial' ? 'background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1)); color: #6ee7b7; box-shadow: 0 0 12px rgba(16,185,129,0.1);' : 'color: #64748b;'"
+                                style="padding: 0.4rem 0.875rem; border-radius: 7px; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
+                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                             Gerencial
                         </button>
                         <button @click="tab = 'detalhado'"
-                                :style="tab === 'detalhado' ? 'background: rgba(245,158,11,0.2); color: #fcd34d;' : 'color: #64748b;'"
-                                style="padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s;">
+                                :style="tab === 'detalhado' ? 'background: linear-gradient(135deg, rgba(245,158,11,0.2), rgba(245,158,11,0.1)); color: #fcd34d; box-shadow: 0 0 12px rgba(245,158,11,0.1);' : 'color: #64748b;'"
+                                style="padding: 0.4rem 0.875rem; border-radius: 7px; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
+                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             Detalhado
                         </button>
                         @endif
+                        <button @click="tab = 'overview'"
+                                :style="tab === 'overview' ? 'background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(99,102,241,0.1)); color: #a5b4fc; box-shadow: 0 0 12px rgba(99,102,241,0.1);' : 'color: #64748b;'"
+                                style="padding: 0.4rem 0.875rem; border-radius: 7px; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
+                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            Estagiárias
+                        </button>
+                        <button @click="tab = 'individual'"
+                                :style="tab === 'individual' ? 'background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.1)); color: #c4b5fd; box-shadow: 0 0 12px rgba(139,92,246,0.1);' : 'color: #64748b;'"
+                                style="padding: 0.4rem 0.875rem; border-radius: 7px; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
+                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            Individual
+                        </button>
                     </div>
 
                     {{-- Hide values --}}
