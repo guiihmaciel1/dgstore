@@ -559,11 +559,11 @@
                 <div class="flex items-center justify-end gap-2 mb-2">
                     <button type="button" @click="$dispatch('open-month-summary')"
                             class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                            title="Resumo do Mês">
+                            title="Resumo Executivo">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
-                        <span class="hidden sm:inline">Resumo do Mês</span>
+                        <span class="hidden sm:inline">Resumo Executivo</span>
                     </button>
                     <button type="button" @click="showValues = !showValues"
                             class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors"
@@ -1847,7 +1847,7 @@
         </script>
     </div>
 
-    {{-- Dashboard Inteligente de Estagiárias (substitui o antigo Resumo do Mês) --}}
+    {{-- Resumo Executivo (Estagiárias + Gerencial + Detalhado) --}}
     @include('partials._intern-dashboard-modal')
 
     {{-- Modal Follow-Up Pós-Venda --}}

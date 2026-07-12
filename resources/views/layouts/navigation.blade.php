@@ -89,7 +89,7 @@
                     <!-- Dropdown: Financeiro -->
                     <div class="relative">
                         <button @click="financeOpen = !financeOpen; commercialOpen = false; stockOpen = false; toolsOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('finance.*') || request()->routeIs('admin.commissions.*') || request()->routeIs('admin.time-clock.*') || request()->routeIs('executive-summary.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('finance.*') || request()->routeIs('admin.commissions.*') || request()->routeIs('admin.time-clock.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
                             <span>Financeiro</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': financeOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -148,12 +148,6 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                         Registro de Ponto
-                                    </a>
-                                    <a href="{{ route('executive-summary.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('executive-summary.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                                        <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                                        </svg>
-                                        Resumo Executivo
                                     </a>
                                 @endif
                             </div>
@@ -472,9 +466,6 @@
                     </a>
                     <a href="{{ route('admin.time-clock.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('admin.time-clock.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
                         Registro de Ponto
-                    </a>
-                    <a href="{{ route('executive-summary.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('executive-summary.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
-                        Resumo Executivo
                     </a>
                 @endif
             </div>

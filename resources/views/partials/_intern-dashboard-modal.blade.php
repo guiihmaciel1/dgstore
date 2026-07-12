@@ -1,10 +1,17 @@
-{{-- Dashboard Inteligente de Estagiárias --}}
+{{-- Dashboard Inteligente de Estagiárias + Resumo Executivo --}}
 <div x-data="{
         open: false,
         hideValues: false,
         tab: 'overview',
         selectedIntern: null,
         internStats: @js($internStats),
+        execData: @js($executiveSummary ?? []),
+        execLoading: false,
+        execPeriod: 'month',
+        execSearch: '',
+        execMixChart: null,
+        execTypeChart: null,
+        execPayChart: null,
         get selectedInternData() {
             if (!this.selectedIntern) return null;
             return this.internStats.interns.find(i => i.id === this.selectedIntern) || null;
@@ -12,9 +19,59 @@
         get combinedSales() { return this.internStats.combined?.total_sales || 0; },
         formatCurrency(val) {
             return 'R$ ' + Number(val).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        },
+        async switchExecPeriod(period) {
+            if (this.execPeriod === period || this.execLoading) return;
+            this.execPeriod = period;
+            this.execLoading = true;
+            try {
+                const res = await fetch(`{{ route('executive-summary.data') }}?period=${period}`);
+                if (res.ok) this.execData = await res.json();
+            } catch(e) { console.error(e); }
+            this.execLoading = false;
+            this.$nextTick(() => this.renderExecCharts());
+        },
+        renderExecCharts() {
+            this.renderExecMixChart();
+            this.renderExecTypeChart();
+            this.renderExecPayChart();
+        },
+        renderExecMixChart() {
+            const ctx = document.getElementById('execMixCanvas');
+            if (!ctx) return;
+            if (this.execMixChart) this.execMixChart.destroy();
+            const g = this.execData?.gerencial;
+            if (!g) return;
+            this.execMixChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Novos', 'Seminovos'], datasets: [{ data: [g.iphone_new?.qty||0, g.iphone_used?.qty||0], backgroundColor: ['#6366f1','#f59e0b'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } } } } });
+        },
+        renderExecTypeChart() {
+            const ctx = document.getElementById('execTypeCanvas');
+            if (!ctx) return;
+            if (this.execTypeChart) this.execTypeChart.destroy();
+            const g = this.execData?.gerencial;
+            if (!g) return;
+            this.execTypeChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Cliente Final', 'Repasse'], datasets: [{ data: [g.cliente_final?.count||0, g.repasse?.count||0], backgroundColor: ['#10b981','#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } } } } });
+        },
+        renderExecPayChart() {
+            const ctx = document.getElementById('execPayCanvas');
+            if (!ctx) return;
+            if (this.execPayChart) this.execPayChart.destroy();
+            const methods = this.execData?.gerencial?.payment_methods || [];
+            if (!methods.length) return;
+            this.execPayChart = new Chart(ctx, { type: 'bar', data: { labels: methods.map(m=>m.label), datasets: [{ label: 'Total (R$)', data: methods.map(m=>m.total), backgroundColor: ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'], borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { color: '#64748b', callback: v => 'R$ '+Number(v).toLocaleString('pt-BR') }, grid: { color: 'rgba(255,255,255,0.03)' } }, y: { ticks: { color: '#94a3b8' }, grid: { display: false } } } } });
+        },
+        get filteredExecSales() {
+            const sales = this.execData?.detalhado || [];
+            if (!this.execSearch) return sales;
+            const q = this.execSearch.toLowerCase();
+            return sales.filter(s => s.seller?.toLowerCase().includes(q) || s.customer?.toLowerCase().includes(q) || s.product?.toLowerCase().includes(q) || s.type?.toLowerCase().includes(q));
+        },
+        get execTotals() {
+            const items = this.filteredExecSales;
+            return { value: items.reduce((s,i)=>s+(i.value||0),0), cost: items.reduce((s,i)=>s+(i.cost||0),0), profit: items.reduce((s,i)=>s+(i.profit||0),0) };
         }
      }"
-     x-on:open-month-summary.window="open = true; $nextTick(() => { if(typeof internChartInstance !== 'undefined') internChartInstance.destroy(); initInternChart(); })"
+     x-on:open-month-summary.window="open = true; $nextTick(() => { if(typeof internChartInstance !== 'undefined') internChartInstance.destroy(); initInternChart(); if(tab === 'gerencial') renderExecCharts(); })"
      x-on:keydown.escape.window="open = false"
      x-show="open" x-cloak
      style="position: fixed; inset: 0; z-index: 9999;"
@@ -37,7 +94,7 @@
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <img src="{{ asset('images/logodg.png') }}" alt="DG Store" style="height: 32px; opacity: 0.9;">
                     <div>
-                        <h1 style="font-size: 1.125rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.025em;">Dashboard Estagiárias</h1>
+                        <h1 style="font-size: 1.125rem; font-weight: 700; color: #f1f5f9; letter-spacing: -0.025em;">Resumo Executivo</h1>
                         <p style="font-size: 0.75rem; color: #64748b;">{{ ucfirst($monthSummary['month_label']) }}</p>
                     </div>
                 </div>
@@ -55,6 +112,18 @@
                                 style="padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s;">
                             Individual
                         </button>
+                        @if(auth()->user()->isAdminGeral())
+                        <button @click="tab = 'gerencial'; $nextTick(() => renderExecCharts())"
+                                :style="tab === 'gerencial' ? 'background: rgba(16,185,129,0.2); color: #6ee7b7;' : 'color: #64748b;'"
+                                style="padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s;">
+                            Gerencial
+                        </button>
+                        <button @click="tab = 'detalhado'"
+                                :style="tab === 'detalhado' ? 'background: rgba(245,158,11,0.2); color: #fcd34d;' : 'color: #64748b;'"
+                                style="padding: 0.375rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; transition: all 0.2s;">
+                            Detalhado
+                        </button>
+                        @endif
                     </div>
 
                     {{-- Hide values --}}
@@ -283,11 +352,23 @@
                     </div>
                 @endif
             </div>
+
+            @if(auth()->user()->isAdminGeral())
+            {{-- ======================== GERENCIAL TAB ======================== --}}
+            <div x-show="tab === 'gerencial'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0">
+                @include('partials._exec-tab-gerencial')
+            </div>
+
+            {{-- ======================== DETALHADO TAB ======================== --}}
+            <div x-show="tab === 'detalhado'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0">
+                @include('partials._exec-tab-detalhado')
+            </div>
+            @endif
         </div>
 
         {{-- Footer --}}
         <div style="text-align: center; padding: 1rem; border-top: 1px solid rgba(255,255,255,0.03);">
-            <p style="font-size: 0.6875rem; color: #334155;">DG Store · Dashboard de Estagiárias · {{ ucfirst($monthSummary['month_label']) }}</p>
+            <p style="font-size: 0.6875rem; color: #334155;">DG Store · Resumo Executivo · {{ ucfirst($monthSummary['month_label']) }}</p>
         </div>
     </div>
 </div>

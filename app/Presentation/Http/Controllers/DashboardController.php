@@ -66,6 +66,11 @@ class DashboardController extends Controller
         $appleNews = $this->appleNewsService->getCached();
         $stockItems = $this->getStockCatalog();
 
+        $executiveSummary = null;
+        if (auth()->user()->isAdminGeral()) {
+            $executiveSummary = app(ExecutiveSummaryController::class)->buildExecutiveData('month');
+        }
+
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
             'todayCount' => $data['today']['count'],
@@ -89,6 +94,7 @@ class DashboardController extends Controller
             'stockItems' => $stockItems,
             'referenceDate' => $referenceDate,
             'isCurrentMonth' => $isCurrentMonth,
+            'executiveSummary' => $executiveSummary,
         ]);
     }
 

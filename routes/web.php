@@ -346,8 +346,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // Cotação do Dólar
             Route::post('/admin/dollar-rate', [DollarRateController::class, 'store'])->name('admin.dollar-rate.store');
 
-            // Resumo Executivo
-            Route::get('/resumo-executivo', [ExecutiveSummaryController::class, 'index'])->name('executive-summary.index');
+            // Resumo Executivo (endpoint AJAX para troca de período)
             Route::get('/resumo-executivo/data', [ExecutiveSummaryController::class, 'data'])->name('executive-summary.data');
         });
     });

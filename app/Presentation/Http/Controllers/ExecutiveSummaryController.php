@@ -17,17 +17,9 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\View\View;
 
 class ExecutiveSummaryController extends Controller
 {
-    public function index(Request $request): View
-    {
-        $data = $this->buildAllMetrics('month');
-
-        return view('executive-summary.index', ['initialData' => $data]);
-    }
-
     public function data(Request $request): JsonResponse
     {
         $request->validate([
@@ -35,6 +27,11 @@ class ExecutiveSummaryController extends Controller
         ]);
 
         return response()->json($this->buildAllMetrics($request->period));
+    }
+
+    public function buildExecutiveData(string $period): array
+    {
+        return $this->buildAllMetrics($period);
     }
 
     private function buildAllMetrics(string $period): array
