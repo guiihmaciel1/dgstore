@@ -189,12 +189,12 @@
                 </div>
 
                 {{-- Tabela de Comissões do Mês --}}
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: visible; margin-bottom: 1.5rem;">
+                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 1.5rem;">
                     <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; border-radius: 0.75rem 0.75rem 0 0;">
                         <h3 style="font-size: 0.875rem; font-weight: 600; color: #111827;">Comissões do Mês</h3>
                     </div>
                     @if($commissions->count() > 0)
-                        <div style="overflow-x: auto; overflow-y: visible;">
+                        <div style="overflow: visible; position: relative;">
                             <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
                                 <thead>
                                     <tr style="border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
@@ -233,7 +233,7 @@
                                                 {{-- Tooltip com breakdown --}}
                                                 @if(!$commission->is_manual && ($commission->customer_name || $commission->product_summary))
                                                 <div x-show="showTip" x-cloak x-transition
-                                                     style="position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 50; background: #1f2937; color: white; border-radius: 0.5rem; padding: 0.75rem 1rem; font-size: 0.75rem; min-width: 220px; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); pointer-events: none; white-space: nowrap;">
+                                                     style="position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 9999; background: #1f2937; color: white; border-radius: 0.5rem; padding: 0.75rem 1rem; font-size: 0.75rem; min-width: 220px; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); pointer-events: none; white-space: nowrap;">
                                                     @if($commission->customer_name)
                                                         <div style="margin-bottom: 0.375rem;">
                                                             <span style="color: #9ca3af;">Cliente:</span>
