@@ -76,10 +76,12 @@
             evalDropdownOpen: false,
 
             productCost: 0,
+            caseEnabled: false,
             caseQty: 0,
             caseUnitPrice: 30,
             caseTotalOverride: null,
             accessoryCasePrice: 0,
+            chargerEnabled: false,
             accessoryChargerPrice: 0,
             product: { description: '', priceInput: '' },
             tradeIn: {
@@ -197,14 +199,18 @@
                     }
                 }
 
-                const qty = parseInt(this.caseQty) || 0;
-                const unitP = parseFloat(this.caseUnitPrice) || 0;
-                const caseTotal = this.caseTotalOverride !== null ? this.caseTotalOverride : unitP * qty;
-                this.accessoryCasePrice = caseTotal;
-                if (qty > 0 && caseTotal > CASE_BASE * qty) {
-                    caseComm = (caseTotal - CASE_BASE * qty) * ACC_RATE;
+                if (this.caseEnabled) {
+                    const qty = parseInt(this.caseQty) || 0;
+                    const unitP = parseFloat(this.caseUnitPrice) || 0;
+                    const caseTotal = this.caseTotalOverride !== null ? this.caseTotalOverride : unitP * qty;
+                    this.accessoryCasePrice = caseTotal;
+                    if (qty > 0 && caseTotal > CASE_BASE * qty) {
+                        caseComm = (caseTotal - CASE_BASE * qty) * ACC_RATE;
+                    }
+                } else {
+                    this.accessoryCasePrice = 0;
                 }
-                if (this.accessoryChargerPrice > CHARGER_BASE) {
+                if (this.chargerEnabled && this.accessoryChargerPrice > CHARGER_BASE) {
                     chargerComm = (this.accessoryChargerPrice - CHARGER_BASE) * ACC_RATE;
                 }
 

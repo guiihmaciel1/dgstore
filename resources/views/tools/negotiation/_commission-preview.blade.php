@@ -50,35 +50,44 @@
                     <span class="text-[10px] text-gray-400 font-normal">— preencha o valor de venda</span>
                 </div>
 
-                {{-- Capinha: preço unitário + combos --}}
+                {{-- Capinha: toggle + combos --}}
                 <div class="rounded-lg p-3 border transition-all duration-200 mb-2"
-                     :class="caseQty > 0 && caseUnitPrice > 10 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
-                    <p class="text-[10px] font-semibold uppercase tracking-wider mb-2"
-                       :class="caseQty > 0 && caseUnitPrice > 10 ? 'text-purple-600' : 'text-gray-500'">Capinha</p>
-
-                    <div x-init="caseUnitPrice = 30; caseQty = caseQty || 1">
-                        <label class="text-[9px] text-gray-400 font-medium block mb-0.5">Preço unitário (1 capinha)</label>
-                        <div class="relative">
-                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
-                            <input type="number" :value="caseUnitPrice" readonly
-                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center bg-gray-100 border-purple-300 text-purple-800 cursor-not-allowed">
+                     :class="caseEnabled ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
+                    <label class="flex items-center justify-between cursor-pointer mb-0"
+                           :class="caseEnabled ? 'mb-2' : ''">
+                        <span class="text-[10px] font-semibold uppercase tracking-wider"
+                              :class="caseEnabled ? 'text-purple-600' : 'text-gray-500'">Capinha</span>
+                        <div class="relative" @click.prevent="caseEnabled = !caseEnabled; if(caseEnabled) { caseQty = caseQty || 1; } else { caseQty = 0; caseTotalOverride = null; }">
+                            <div class="w-8 h-[18px] rounded-full transition-colors duration-200"
+                                 :class="caseEnabled ? 'bg-purple-500' : 'bg-gray-300'"></div>
+                            <div class="absolute top-[2px] left-[2px] w-[14px] h-[14px] bg-white rounded-full shadow transition-transform duration-200"
+                                 :class="caseEnabled ? 'translate-x-[14px]' : ''"></div>
                         </div>
-                    </div>
+                    </label>
 
-                    {{-- Resultado atual --}}
-                    <div x-show="caseQty > 0 && caseUnitPrice > 10" x-transition class="mt-2 text-center">
-                        <span class="text-[10px] text-gray-400">
-                            <span x-text="caseQty"></span> capinha<span x-show="caseQty > 1">s</span> por
-                            <strong x-text="'R$ ' + fmt(caseTotalOverride !== null ? caseTotalOverride : caseUnitPrice * caseQty)"></strong>
-                            <span x-show="caseTotalOverride !== null && caseQty > 1" class="line-through text-gray-300 ml-1"
-                                  x-text="'R$ ' + fmt(caseUnitPrice * caseQty)"></span>
-                        </span>
-                        <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.caseComm)"></span></p>
-                    </div>
-                    <p class="text-[9px] text-gray-400 mt-1.5 text-center" x-show="caseQty <= 0 || caseUnitPrice <= 10">Base R$ 10 · 50% do lucro por unidade</p>
+                    <div x-show="caseEnabled" x-transition x-collapse>
+                        <div>
+                            <label class="text-[9px] text-gray-400 font-medium block mb-0.5">Preço unitário (1 capinha)</label>
+                            <div class="relative">
+                                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
+                                <input type="number" :value="caseUnitPrice" readonly
+                                       class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center bg-gray-100 border-purple-300 text-purple-800 cursor-not-allowed">
+                            </div>
+                        </div>
 
-                    {{-- Sugestão de combos com desconto progressivo --}}
-                    <div x-show="caseUnitPrice > 10" x-transition class="mt-2.5 pt-2.5 border-t border-purple-100">
+                        {{-- Resultado atual --}}
+                        <div x-show="caseQty > 0 && caseUnitPrice > 10" x-transition class="mt-2 text-center">
+                            <span class="text-[10px] text-gray-400">
+                                <span x-text="caseQty"></span> capinha<span x-show="caseQty > 1">s</span> por
+                                <strong x-text="'R$ ' + fmt(caseTotalOverride !== null ? caseTotalOverride : caseUnitPrice * caseQty)"></strong>
+                                <span x-show="caseTotalOverride !== null && caseQty > 1" class="line-through text-gray-300 ml-1"
+                                      x-text="'R$ ' + fmt(caseUnitPrice * caseQty)"></span>
+                            </span>
+                            <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.caseComm)"></span></p>
+                        </div>
+
+                        {{-- Sugestão de combos com desconto progressivo --}}
+                        <div x-show="caseUnitPrice > 10" x-transition class="mt-2.5 pt-2.5 border-t border-purple-100">
                         <p class="text-[9px] font-semibold text-purple-500 uppercase tracking-wider mb-1.5">Ofereça combos ao cliente</p>
                         <div class="space-y-1"
                              x-data="{
@@ -119,24 +128,36 @@
                             </template>
                         </div>
                     </div>
+                    </div>
                 </div>
 
                 {{-- Carregador --}}
                 <div class="rounded-lg p-2.5 border transition-all duration-200"
-                     :class="accessoryChargerPrice > 50 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
-                    <p class="text-[10px] font-semibold uppercase tracking-wider mb-1.5"
-                       :class="accessoryChargerPrice > 50 ? 'text-purple-600' : 'text-gray-500'">Carregador</p>
-                    <div class="relative">
-                        <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
-                        <input type="number" x-model.number="accessoryChargerPrice" min="0" step="10" placeholder="0"
-                               class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
-                               :class="accessoryChargerPrice > 50 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+                     :class="chargerEnabled && accessoryChargerPrice > 50 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
+                    <label class="flex items-center justify-between cursor-pointer"
+                           :class="chargerEnabled ? 'mb-1.5' : ''">
+                        <span class="text-[10px] font-semibold uppercase tracking-wider"
+                              :class="chargerEnabled && accessoryChargerPrice > 50 ? 'text-purple-600' : 'text-gray-500'">Carregador</span>
+                        <div class="relative" @click.prevent="chargerEnabled = !chargerEnabled; if(!chargerEnabled) { accessoryChargerPrice = 0; }">
+                            <div class="w-8 h-[18px] rounded-full transition-colors duration-200"
+                                 :class="chargerEnabled ? 'bg-purple-500' : 'bg-gray-300'"></div>
+                            <div class="absolute top-[2px] left-[2px] w-[14px] h-[14px] bg-white rounded-full shadow transition-transform duration-200"
+                                 :class="chargerEnabled ? 'translate-x-[14px]' : ''"></div>
+                        </div>
+                    </label>
+                    <div x-show="chargerEnabled" x-transition x-collapse>
+                        <div class="relative">
+                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
+                            <input type="number" x-model.number="accessoryChargerPrice" min="0" step="10" placeholder="0"
+                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
+                                   :class="accessoryChargerPrice > 50 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+                        </div>
+                        <div class="mt-1.5 text-center" x-show="accessoryChargerPrice > 50">
+                            <span class="text-[10px] text-gray-400">Lucro: R$ <span x-text="fmt(accessoryChargerPrice - 50)"></span></span>
+                            <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.chargerComm)"></span></p>
+                        </div>
+                        <p class="text-[9px] text-gray-400 mt-1 text-center" x-show="accessoryChargerPrice <= 50">Base R$ 50 · 50% do lucro</p>
                     </div>
-                    <div class="mt-1.5 text-center" x-show="accessoryChargerPrice > 50">
-                        <span class="text-[10px] text-gray-400">Lucro: R$ <span x-text="fmt(accessoryChargerPrice - 50)"></span></span>
-                        <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.chargerComm)"></span></p>
-                    </div>
-                    <p class="text-[9px] text-gray-400 mt-1 text-center" x-show="accessoryChargerPrice <= 50">Base R$ 50 · 50% do lucro</p>
                 </div>
 
                 {{-- Total de acessórios --}}
