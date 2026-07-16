@@ -1,6 +1,10 @@
 @php
     $dollarRate = \App\Domain\System\Models\SystemSetting::get('dollar_rate');
     $isAdmin = auth()->user()->isAdminGeral();
+
+    $cpRates = \App\Domain\System\Models\DollarCpRate::lastTen();
+    $cpLatest = $cpRates->first();
+    $cpPrevious = $cpRates->skip(1)->first();
 @endphp
 
 @if($isAdmin)
@@ -9,34 +13,63 @@
     {{-- Banner de alerta: cotação não preenchida --}}
     <div class="bg-amber-500" style="padding: 0;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 0; flex-wrap: wrap;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <svg style="width: 20px; height: 20px; color: #92400e; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                    </svg>
-                    <span style="font-size: 14px; font-weight: 600; color: #92400e;">Cotação do dólar não informada hoje!</span>
-                </div>
-                <form @submit.prevent="saveDollarRate()" style="display: flex; align-items: center; gap: 8px;">
-                    <div style="position: relative;">
-                        <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: #92400e;">R$</span>
-                        <input type="text"
-                               x-model="rateInput"
-                               x-ref="rateField"
-                               placeholder="5,45"
-                               required
-                               style="width: 100px; padding: 6px 10px 6px 32px; border: 2px solid #b45309; border-radius: 8px; font-size: 14px; font-weight: 600; color: #92400e; background: rgba(255,255,255,0.8); outline: none; text-align: right;"
-                               onfocus="this.style.borderColor='#92400e'; this.style.background='white'"
-                               onblur="this.style.borderColor='#b45309'; this.style.background='rgba(255,255,255,0.8)'">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; flex-wrap: wrap; gap: 8px;">
+                {{-- Lado esquerdo: alerta DG --}}
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg style="width: 20px; height: 20px; color: #92400e; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                        <span style="font-size: 14px; font-weight: 600; color: #92400e;">Cotação do dólar não informada hoje!</span>
                     </div>
-                    <button type="submit"
-                            :disabled="saving"
-                            style="padding: 6px 16px; background: #92400e; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s;"
-                            onmouseover="this.style.background='#78350f'"
-                            onmouseout="this.style.background='#92400e'">
-                        <span x-show="!saving">Salvar</span>
-                        <span x-show="saving">Salvando...</span>
-                    </button>
-                </form>
+                    <form @submit.prevent="saveDollarRate()" style="display: flex; align-items: center; gap: 8px;">
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: #92400e;">R$</span>
+                            <input type="text"
+                                   x-model="rateInput"
+                                   x-ref="rateField"
+                                   placeholder="5,45"
+                                   required
+                                   style="width: 100px; padding: 6px 10px 6px 32px; border: 2px solid #b45309; border-radius: 8px; font-size: 14px; font-weight: 600; color: #92400e; background: rgba(255,255,255,0.8); outline: none; text-align: right;"
+                                   onfocus="this.style.borderColor='#92400e'; this.style.background='white'"
+                                   onblur="this.style.borderColor='#b45309'; this.style.background='rgba(255,255,255,0.8)'">
+                        </div>
+                        <button type="submit"
+                                :disabled="saving"
+                                style="padding: 6px 16px; background: #92400e; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s;"
+                                onmouseover="this.style.background='#78350f'"
+                                onmouseout="this.style.background='#92400e'">
+                            <span x-show="!saving">Salvar</span>
+                            <span x-show="saving">Salvando...</span>
+                        </button>
+                    </form>
+                </div>
+
+                {{-- Lado direito: Compras Paraguai --}}
+                @if($cpLatest)
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-size: 11px; font-weight: 600; color: #92400e; letter-spacing: 0.5px; text-transform: uppercase;">Compras Paraguai</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #78350f;">R$ {{ number_format((float) $cpLatest->rate, 2, ',', '.') }}</span>
+                    @if($cpPrevious)
+                        @php
+                            $cpDiff = (float) $cpLatest->rate - (float) $cpPrevious->rate;
+                            $cpPct = (float) $cpPrevious->rate > 0 ? ($cpDiff / (float) $cpPrevious->rate) * 100 : 0;
+                        @endphp
+                        <span style="font-size: 11px; font-weight: 600; color: {{ $cpDiff > 0 ? '#991b1b' : ($cpDiff < 0 ? '#166534' : '#92400e') }};">
+                            @if($cpDiff > 0)
+                                <svg style="width: 12px; height: 12px; display: inline; vertical-align: middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
+                            @elseif($cpDiff < 0)
+                                <svg style="width: 12px; height: 12px; display: inline; vertical-align: middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                            @endif
+                            {{ ($cpDiff > 0 ? '+' : '') . number_format($cpPct, 2, ',', '.') }}%
+                        </span>
+                    @endif
+                    @if($cpRates->count() >= 2)
+                        <canvas id="cpDollarSparkline" width="100" height="24" style="display: inline-block; vertical-align: middle;"></canvas>
+                    @endif
+                    <span style="font-size: 10px; color: #b45309;">{{ $cpLatest->fetched_at->format('d/m H:i') }}</span>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -44,44 +77,74 @@
     {{-- Indicador discreto: cotação preenchida --}}
     <div style="background: #065f46; padding: 0;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 6px 0; flex-wrap: wrap;">
-                <svg style="width: 16px; height: 16px; color: #6ee7b7; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span style="font-size: 13px; font-weight: 500; color: #a7f3d0;">Dólar hoje:</span>
-                <span style="font-size: 14px; font-weight: 700; color: #ecfdf5;">R$ {{ number_format((float) $dollarRate, 2, ',', '.') }}</span>
-                <button @click="showEdit = !showEdit"
-                        type="button"
-                        style="background: none; border: none; cursor: pointer; padding: 2px; color: #6ee7b7; display: flex; align-items: center;"
-                        title="Alterar cotação">
-                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0; flex-wrap: wrap; gap: 8px;">
+                {{-- Lado esquerdo: Dólar DG --}}
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <svg style="width: 16px; height: 16px; color: #6ee7b7; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                </button>
-
-                {{-- Formulário inline de edição --}}
-                <form x-show="showEdit" x-transition @submit.prevent="saveDollarRate()" style="display: flex; align-items: center; gap: 6px; margin-left: 4px;">
-                    <div style="position: relative;">
-                        <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; color: #6ee7b7;">R$</span>
-                        <input type="text"
-                               x-model="rateInput"
-                               placeholder="{{ number_format((float) $dollarRate, 2, ',', '.') }}"
-                               style="width: 90px; padding: 4px 8px 4px 28px; border: 1px solid #34d399; border-radius: 6px; font-size: 13px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); outline: none; text-align: right;"
-                               onfocus="this.style.borderColor='#6ee7b7'; this.style.background='rgba(255,255,255,0.25)'"
-                               onblur="this.style.borderColor='#34d399'; this.style.background='rgba(255,255,255,0.15)'">
-                    </div>
-                    <button type="submit"
-                            :disabled="saving"
-                            style="padding: 4px 12px; background: #34d399; color: #064e3b; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">
-                        <span x-show="!saving">OK</span>
-                        <span x-show="saving">...</span>
-                    </button>
-                    <button @click="showEdit = false" type="button" style="background: none; border: none; cursor: pointer; color: #6ee7b7; padding: 2px;">
+                    <span style="font-size: 13px; font-weight: 500; color: #a7f3d0;">Dólar hoje:</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #ecfdf5;">R$ {{ number_format((float) $dollarRate, 2, ',', '.') }}</span>
+                    <button @click="showEdit = !showEdit"
+                            type="button"
+                            style="background: none; border: none; cursor: pointer; padding: 2px; color: #6ee7b7; display: flex; align-items: center;"
+                            title="Alterar cotação">
                         <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                         </svg>
                     </button>
-                </form>
+
+                    {{-- Formulário inline de edição --}}
+                    <form x-show="showEdit" x-transition @submit.prevent="saveDollarRate()" style="display: flex; align-items: center; gap: 6px; margin-left: 4px;">
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; color: #6ee7b7;">R$</span>
+                            <input type="text"
+                                   x-model="rateInput"
+                                   placeholder="{{ number_format((float) $dollarRate, 2, ',', '.') }}"
+                                   style="width: 90px; padding: 4px 8px 4px 28px; border: 1px solid #34d399; border-radius: 6px; font-size: 13px; font-weight: 600; color: white; background: rgba(255,255,255,0.15); outline: none; text-align: right;"
+                                   onfocus="this.style.borderColor='#6ee7b7'; this.style.background='rgba(255,255,255,0.25)'"
+                                   onblur="this.style.borderColor='#34d399'; this.style.background='rgba(255,255,255,0.15)'">
+                        </div>
+                        <button type="submit"
+                                :disabled="saving"
+                                style="padding: 4px 12px; background: #34d399; color: #064e3b; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">
+                            <span x-show="!saving">OK</span>
+                            <span x-show="saving">...</span>
+                        </button>
+                        <button @click="showEdit = false" type="button" style="background: none; border: none; cursor: pointer; color: #6ee7b7; padding: 2px;">
+                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+
+                {{-- Lado direito: Compras Paraguai --}}
+                @if($cpLatest)
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-size: 11px; font-weight: 500; color: #a7f3d0; letter-spacing: 0.5px; text-transform: uppercase;">Compras Paraguai</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #ecfdf5;">R$ {{ number_format((float) $cpLatest->rate, 2, ',', '.') }}</span>
+                    @if($cpPrevious)
+                        @php
+                            $cpDiff = (float) $cpLatest->rate - (float) $cpPrevious->rate;
+                            $cpPct = (float) $cpPrevious->rate > 0 ? ($cpDiff / (float) $cpPrevious->rate) * 100 : 0;
+                        @endphp
+                        <span style="display: inline-flex; align-items: center; gap: 2px; font-size: 11px; font-weight: 600;
+                            color: {{ $cpDiff > 0 ? '#f87171' : ($cpDiff < 0 ? '#4ade80' : '#94a3b8') }};">
+                            @if($cpDiff > 0)
+                                <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
+                            @elseif($cpDiff < 0)
+                                <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                            @endif
+                            {{ ($cpDiff > 0 ? '+' : '') . number_format($cpPct, 2, ',', '.') }}%
+                        </span>
+                    @endif
+                    @if($cpRates->count() >= 2)
+                        <canvas id="cpDollarSparkline" width="100" height="24" style="display: inline-block; vertical-align: middle;"></canvas>
+                    @endif
+                    <span style="font-size: 10px; color: {{ $dollarRate ? '#6ee7b7' : '#b45309' }};">{{ $cpLatest->fetched_at->format('d/m H:i') }}</span>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -132,4 +195,69 @@ function dollarRateBanner() {
     }
 }
 </script>
+
+@if($cpLatest && $cpRates->count() >= 2)
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('cpDollarSparkline');
+    if (!ctx) return;
+
+    const ratesData = @json($cpRates->reverse()->pluck('rate')->map(fn($r) => (float) $r)->values());
+    const labels = @json($cpRates->reverse()->pluck('fetched_at')->map(fn($d) => $d->format('d/m H:i'))->values());
+
+    const minVal = Math.min(...ratesData);
+    const maxVal = Math.max(...ratesData);
+    const padding = (maxVal - minVal) * 0.15 || 0.01;
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: ratesData,
+                borderColor: ratesData[ratesData.length - 1] >= ratesData[0] ? '#f87171' : '#4ade80',
+                borderWidth: 1.5,
+                fill: false,
+                pointRadius: 0,
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: '#fff',
+                tension: 0.3,
+            }]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: '#1e293b',
+                    titleFont: { size: 10 },
+                    bodyFont: { size: 11 },
+                    padding: 6,
+                    displayColors: false,
+                    callbacks: {
+                        title: (items) => items[0].label,
+                        label: (item) => 'R$ ' + parseFloat(item.raw).toFixed(2).replace('.', ',')
+                    }
+                }
+            },
+            scales: {
+                x: { display: false },
+                y: {
+                    display: false,
+                    min: minVal - padding,
+                    max: maxVal + padding,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
+});
+</script>
+@endif
 @endif

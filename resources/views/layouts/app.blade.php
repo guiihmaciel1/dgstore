@@ -25,7 +25,6 @@
         <div class="min-h-screen bg-gray-50">
             @auth
                 <x-dollar-rate-banner />
-                <x-dollar-cp-banner />
             @endauth
             @include('layouts.navigation')
 
