@@ -431,6 +431,89 @@
                 return new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
             },
 
+            buildSaleSummary() {
+                const lines = [];
+                lines.push('RESUMO DA VENDA');
+                lines.push('━━━━━━━━━━━━━━━');
+                lines.push('');
+
+                const clientName = this.saveModal.selectedCustomer?.name || '—';
+                lines.push(`Cliente: ${clientName}`);
+                lines.push(`Produto: ${this.product.description || '—'}`);
+                lines.push(`Preço de venda: R$ ${this.fmt(this.productPrice)}`);
+
+                if (this.tradeInValue > 0) {
+                    const tiModel = this.tradeIn.model
+                        ? this.tradeIn.model + (this.tradeIn.storage ? ' ' + this.tradeIn.storage : '')
+                        : 'Seminovo do cliente';
+                    lines.push('');
+                    lines.push(`Seminovo (trade-in): ${tiModel}`);
+                    lines.push(`Valor do seminovo: R$ ${this.fmt(this.tradeInValue)}`);
+                }
+
+                if (this.downPayment > 0) {
+                    lines.push('');
+                    lines.push(`Entrada (Pix): R$ ${this.fmt(this.downPayment)}`);
+                }
+
+                if (this.cardBalance > 0) {
+                    lines.push('');
+                    lines.push(`Saldo no cartão: R$ ${this.fmt(this.cardBalance)}`);
+
+                    const selected = this.cardResults.filter(r => r.selected);
+                    if (selected.length > 0) {
+                        lines.push('');
+                        lines.push('Parcelamento:');
+                        selected.forEach(r => {
+                            lines.push(`  ${r.installments}x › R$ ${this.fmt(r.installment_value)}`);
+                        });
+                    }
+                }
+
+                const qty = parseInt(this.caseQty) || 0;
+                const caseTotal = this.caseTotalOverride !== null ? this.caseTotalOverride : (this.caseUnitPrice * qty);
+                const hasCase = qty > 0 && caseTotal > 0;
+                const hasCharger = this.accessoryChargerPrice > 0;
+
+                if (hasCase || hasCharger) {
+                    lines.push('');
+                    lines.push('Acessórios:');
+                    if (hasCase) {
+                        lines.push(`  Capinha: ${qty}x — R$ ${this.fmt(caseTotal)}`);
+                    }
+                    if (hasCharger) {
+                        lines.push(`  Carregador: R$ ${this.fmt(this.accessoryChargerPrice)}`);
+                    }
+                }
+
+                const ce = this.commissionEstimate;
+                if (ce.total > 0) {
+                    lines.push('');
+                    lines.push(`COMISSÃO APROXIMADA: R$ ${this.fmt(ce.total)}`);
+                    if (ce.profit > 0) {
+                        lines.push(`  • Aparelho: R$ ${this.fmt(ce.profit)}`);
+                    }
+                    if (ce.accessoryTotal > 0) {
+                        lines.push(`  • Acessórios: R$ ${this.fmt(ce.accessoryTotal)}`);
+                    }
+                    lines.push('');
+                    lines.push('* A comissão pode variar caso o preço de custo altere até a efetivação da compra.');
+                }
+
+                return lines.join('\n');
+            },
+
+            copiedSummary: false,
+
+            async copySaleSummary() {
+                try {
+                    await navigator.clipboard.writeText(this.buildSaleSummary());
+                    this.copiedSummary = true;
+                    this.showToast('Resumo da venda copiado!');
+                    setTimeout(() => { this.copiedSummary = false; }, 2000);
+                } catch (e) {}
+            },
+
             async copyMessage() {
                 try {
                     await navigator.clipboard.writeText(this.buildMessage());

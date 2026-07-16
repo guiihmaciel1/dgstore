@@ -311,7 +311,7 @@
 
                                                 {{-- Combos de capinha --}}
                                                 <template x-if="item.category === 'case'">
-                                                    <div style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 0.5rem;"
+                                                    <div style="margin-top: 0.75rem;"
                                                          x-data="{
                                                              basePrice() { return item.original_sale_price || item.price; },
                                                              combos() {
@@ -319,9 +319,9 @@
                                                                  const t2 = Math.round(p * 2 * 0.85 / 5) * 5;
                                                                  const t3 = Math.round(p * 3 * 0.75 / 5) * 5;
                                                                  return [
-                                                                     { qty: 1, total: p, unitPrice: p, discount: 0 },
-                                                                     { qty: 2, total: t2, unitPrice: Math.round(t2 / 2 * 100) / 100, discount: Math.round((1 - t2 / (p * 2)) * 100) },
-                                                                     { qty: 3, total: t3, unitPrice: Math.round(t3 / 3 * 100) / 100, discount: Math.round((1 - t3 / (p * 3)) * 100) },
+                                                                     { qty: 1, label: '1 capinha', total: p, unitPrice: p, discount: 0 },
+                                                                     { qty: 2, label: '2 capinhas', total: t2, unitPrice: Math.round(t2 / 2 * 100) / 100, discount: Math.round((1 - t2 / (p * 2)) * 100) },
+                                                                     { qty: 3, label: '3 capinhas', total: t3, unitPrice: Math.round(t3 / 3 * 100) / 100, discount: Math.round((1 - t3 / (p * 3)) * 100) },
                                                                  ];
                                                              },
                                                              selectCombo(combo) {
@@ -330,18 +330,28 @@
                                                                  updateTotals();
                                                              }
                                                          }">
-                                                        <p style="font-size: 0.5625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7c3aed; margin-bottom: 0.375rem;">Combo capinhas</p>
-                                                        <div style="display: flex; gap: 0.375rem;">
+                                                        <div style="display: flex; gap: 0.5rem;">
                                                             <template x-for="combo in combos()" :key="combo.qty">
                                                                 <button type="button"
                                                                         @click="selectCombo(combo)"
-                                                                        style="flex: 1; padding: 0.375rem 0.5rem; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.15s; border: 1px solid;"
+                                                                        style="flex: 1; padding: 0.625rem 0.5rem; border-radius: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; border: 2px solid; position: relative; overflow: hidden;"
                                                                         :style="item.quantity === combo.qty
-                                                                            ? 'background: #7c3aed; color: white; border-color: #7c3aed;'
-                                                                            : 'background: white; color: #6b7280; border-color: #e5e7eb;'">
-                                                                    <span x-text="combo.qty + 'x'"></span>
-                                                                    <span style="display: block; font-size: 0.625rem; font-weight: 700;" x-text="'R$ ' + combo.total"></span>
-                                                                    <span x-show="combo.discount > 0" style="display: block; font-size: 0.5625rem; color: #f59e0b;" x-text="'-' + combo.discount + '%'"></span>
+                                                                            ? 'background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-color: #7c3aed; box-shadow: 0 2px 8px rgba(124,58,237,0.3);'
+                                                                            : 'background: white; color: #374151; border-color: #e5e7eb;'">
+                                                                    <span style="display: block; font-size: 0.8125rem; font-weight: 700;" x-text="combo.label"></span>
+                                                                    <span style="display: block; font-size: 1rem; font-weight: 800; margin-top: 0.125rem;"
+                                                                          :style="item.quantity === combo.qty ? 'color: white;' : 'color: #111827;'"
+                                                                          x-text="'R$ ' + combo.total.toFixed(0) + ',00'"></span>
+                                                                    <span x-show="combo.discount > 0"
+                                                                          style="display: inline-block; margin-top: 0.25rem; font-size: 0.625rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px;"
+                                                                          :style="item.quantity === combo.qty
+                                                                              ? 'background: rgba(255,255,255,0.25); color: white;'
+                                                                              : 'background: #fef3c7; color: #92400e;'"
+                                                                          x-text="'-' + combo.discount + '% desc.'"></span>
+                                                                    <span x-show="combo.discount === 0"
+                                                                          style="display: inline-block; margin-top: 0.25rem; font-size: 0.625rem; font-weight: 500; padding: 0.125rem 0.5rem;"
+                                                                          :style="item.quantity === combo.qty ? 'color: rgba(255,255,255,0.7);' : 'color: #9ca3af;'"
+                                                                          x-text="'preço cheio'"></span>
                                                                 </button>
                                                             </template>
                                                         </div>
@@ -1020,6 +1030,20 @@
                                         <dd x-text="formatMoney(totalProfit)"></dd>
                                     </div>
                                     @endif
+
+                                    {{-- Prévia de comissão do vendedor --}}
+                                    <div x-show="sellerHasCommission && items.length > 0 && estimatedCommission > 0"
+                                         style="margin-top: 0.25rem; padding: 0.5rem 0.625rem; background: #1a1a2e; border: 1px solid #7c3aed40; border-radius: 0.5rem;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <dt style="font-size: 0.75rem; color: #a78bfa; display: flex; align-items: center; gap: 0.375rem;">
+                                                <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                Comissão <span x-text="sellerName" style="font-weight: 600;"></span>
+                                            </dt>
+                                            <dd style="font-size: 0.9375rem; font-weight: 700; color: #c4b5fd;" x-text="formatMoney(estimatedCommission)"></dd>
+                                        </div>
+                                    </div>
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <dt style="color: #d1d5db;">Desconto</dt>
                                         <dd>
@@ -1666,6 +1690,7 @@
                     const matchName = Object.keys(sellerMap).find(s => userName.toLowerCase().includes(s.toLowerCase()));
                     return matchName ? sellerMap[matchName] : '';
                 })(),
+                sellerRoles: @json($sellers->mapWithKeys(fn($s) => [$s->id => $s->role->value])->toArray()),
                 deliveryType: '',
                 deliveryMethod: '',
 
@@ -2212,6 +2237,41 @@
 
                 get totalProfit() {
                     return this.items.reduce((sum, item) => sum + this.getItemProfit(item), 0);
+                },
+
+                get sellerHasCommission() {
+                    if (!this.sellerId || this.saleType === 'repasse') return false;
+                    const role = this.sellerRoles[this.sellerId];
+                    return role === 'seller' || role === 'intern';
+                },
+
+                get estimatedCommission() {
+                    if (!this.sellerHasCommission) return 0;
+
+                    let profitComm = 0;
+                    let accessoryComm = 0;
+                    const deviceCats = ['smartphone', 'tablet', 'notebook', 'smartwatch'];
+                    const accMinPrices = { case: 10, charger: 50, cable: 100 };
+                    const accRates = { case: 0.50, charger: 0.50, cable: 0.20 };
+
+                    for (const item of this.items) {
+                        const cat = item.category || '';
+                        const unitPrice = parseFloat(item.price) || 0;
+                        const qty = parseInt(item.quantity) || 0;
+                        const commCost = parseFloat(item.commission_cost) || 0;
+
+                        if (deviceCats.includes(cat)) {
+                            const profit = (unitPrice - commCost) * qty;
+                            if (profit > 0) profitComm += profit * 0.10;
+                        }
+
+                        if (accMinPrices[cat] !== undefined) {
+                            const surplus = (unitPrice - accMinPrices[cat]) * qty;
+                            if (surplus > 0) accessoryComm += surplus * accRates[cat];
+                        }
+                    }
+
+                    return Math.round((profitComm + accessoryComm) * 100) / 100;
                 },
                 
                 formatMoney(value) {

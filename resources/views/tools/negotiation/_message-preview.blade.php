@@ -45,19 +45,31 @@
 
 {{-- Confirmação de vínculo --}}
 <div x-show="productPrice > 0 && saveModal.selectedCustomer" x-cloak x-transition
-     class="bg-emerald-50 border border-emerald-300 rounded-xl p-3 flex items-center gap-2.5 mt-3">
-    <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-    </svg>
-    <div class="flex-1 min-w-0">
-        <p class="text-[0.8rem] font-bold text-emerald-800 leading-tight">
-            Proposta vinculada a <span x-text="saveModal.selectedCustomer?.name"></span>
-        </p>
+     class="bg-emerald-50 border border-emerald-300 rounded-xl p-3 mt-3">
+    <div class="flex items-center gap-2.5">
+        <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div class="flex-1 min-w-0">
+            <p class="text-[0.8rem] font-bold text-emerald-800 leading-tight">
+                Proposta vinculada a <span x-text="saveModal.selectedCustomer?.name"></span>
+            </p>
+        </div>
+        <button @click="saveModal.selectedCustomer = null" type="button"
+                class="text-[0.7rem] font-semibold text-emerald-600 hover:text-emerald-800 bg-transparent border-none cursor-pointer">
+            Trocar
+        </button>
     </div>
-    <button @click="saveModal.selectedCustomer = null" type="button"
-            class="text-[0.7rem] font-semibold text-emerald-600 hover:text-emerald-800 bg-transparent border-none cursor-pointer">
-        Trocar
-    </button>
+    <div class="mt-2 pt-2 border-t border-emerald-200">
+        <button @click="copySaleSummary()" type="button"
+                class="w-full px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5 transition-colors"
+                :class="copiedSummary ? 'bg-emerald-600 text-white' : 'bg-gray-900 text-white hover:bg-gray-800'">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+            <span x-text="copiedSummary ? 'Copiado!' : 'Resumo da Venda'"></span>
+        </button>
+    </div>
 </div>
 
 {{-- Modal: Salvar Simulação p/ Cliente --}}
