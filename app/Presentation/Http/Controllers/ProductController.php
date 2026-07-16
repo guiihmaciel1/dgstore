@@ -154,6 +154,7 @@ class ProductController extends Controller
             'id' => $product->id,
             'name' => $product->full_name,
             'sku' => $product->sku,
+            'category' => $product->category->value,
             'stock' => $product->stock_quantity,
             'cost_price' => $canViewFinancials && $product->cost_price ? (float) $product->cost_price : null,
             'sale_price' => $product->sale_price ? (float) $product->sale_price : null,

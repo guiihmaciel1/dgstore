@@ -309,6 +309,45 @@
                                                     </div>
                                                 </div>
 
+                                                {{-- Combos de capinha --}}
+                                                <template x-if="item.category === 'case'">
+                                                    <div style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 0.5rem;"
+                                                         x-data="{
+                                                             basePrice() { return item.original_sale_price || item.price; },
+                                                             combos() {
+                                                                 const p = this.basePrice();
+                                                                 const t2 = Math.round(p * 2 * 0.85 / 5) * 5;
+                                                                 const t3 = Math.round(p * 3 * 0.75 / 5) * 5;
+                                                                 return [
+                                                                     { qty: 1, total: p, unitPrice: p, discount: 0 },
+                                                                     { qty: 2, total: t2, unitPrice: Math.round(t2 / 2 * 100) / 100, discount: Math.round((1 - t2 / (p * 2)) * 100) },
+                                                                     { qty: 3, total: t3, unitPrice: Math.round(t3 / 3 * 100) / 100, discount: Math.round((1 - t3 / (p * 3)) * 100) },
+                                                                 ];
+                                                             },
+                                                             selectCombo(combo) {
+                                                                 item.quantity = combo.qty;
+                                                                 item.price = combo.unitPrice;
+                                                                 updateTotals();
+                                                             }
+                                                         }">
+                                                        <p style="font-size: 0.5625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #7c3aed; margin-bottom: 0.375rem;">Combo capinhas</p>
+                                                        <div style="display: flex; gap: 0.375rem;">
+                                                            <template x-for="combo in combos()" :key="combo.qty">
+                                                                <button type="button"
+                                                                        @click="selectCombo(combo)"
+                                                                        style="flex: 1; padding: 0.375rem 0.5rem; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.15s; border: 1px solid;"
+                                                                        :style="item.quantity === combo.qty
+                                                                            ? 'background: #7c3aed; color: white; border-color: #7c3aed;'
+                                                                            : 'background: white; color: #6b7280; border-color: #e5e7eb;'">
+                                                                    <span x-text="combo.qty + 'x'"></span>
+                                                                    <span style="display: block; font-size: 0.625rem; font-weight: 700;" x-text="'R$ ' + combo.total"></span>
+                                                                    <span x-show="combo.discount > 0" style="display: block; font-size: 0.5625rem; color: #f59e0b;" x-text="'-' + combo.discount + '%'"></span>
+                                                                </button>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
                                                 {{-- Linha 2: Custo Financeiro, Custo Comissão, Origem, Frete --}}
                                                 <input type="hidden" :name="'items['+index+'][cost_price]'" :value="item.cost_price">
                                                 <input type="hidden" :name="'items['+index+'][financial_cost]'" :value="item.financial_cost">
@@ -1948,6 +1987,7 @@
                             this.items.push({
                                 id: product.id,
                                 name: product.name,
+                                category: product.category || null,
                                 price: price,
                                 original_sale_price: parseFloat(product.sale_price) || 0,
                                 cost_price: costPrice,
