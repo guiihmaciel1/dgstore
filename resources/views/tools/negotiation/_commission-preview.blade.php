@@ -56,14 +56,12 @@
                     <p class="text-[10px] font-semibold uppercase tracking-wider mb-2"
                        :class="caseQty > 0 && caseUnitPrice > 10 ? 'text-purple-600' : 'text-gray-500'">Capinha</p>
 
-                    <div>
+                    <div x-init="caseUnitPrice = 30; caseQty = caseQty || 1">
                         <label class="text-[9px] text-gray-400 font-medium block mb-0.5">Preço unitário (1 capinha)</label>
                         <div class="relative">
                             <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
-                            <input type="number" x-model.number="caseUnitPrice" min="0" step="5" placeholder="0"
-                                   @input="caseQty = caseQty || 1; caseTotalOverride = null"
-                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
-                                   :class="caseUnitPrice > 10 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+                            <input type="number" :value="caseUnitPrice" readonly
+                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center bg-gray-100 border-purple-300 text-purple-800 cursor-not-allowed">
                         </div>
                     </div>
 
@@ -86,8 +84,9 @@
                              x-data="{
                                  combos() {
                                      const p = caseUnitPrice;
-                                     const p2 = Math.round(p * 2 * 0.80 / 5) * 5;
-                                     const p3 = Math.round(p * 3 * 0.67 / 5) * 5;
+                                     const base = 10;
+                                     const p2 = Math.round(p * 2 * 0.85 / 5) * 5;
+                                     const p3 = Math.round(p * 3 * 0.75 / 5) * 5;
                                      return [
                                          { qty: 1, total: p, discount: 0 },
                                          { qty: 2, total: p2, discount: Math.round((1 - p2 / (p * 2)) * 100) },

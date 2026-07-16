@@ -77,7 +77,7 @@
 
             productCost: 0,
             caseQty: 0,
-            caseUnitPrice: 0,
+            caseUnitPrice: 30,
             caseTotalOverride: null,
             accessoryCasePrice: 0,
             accessoryChargerPrice: 0,
