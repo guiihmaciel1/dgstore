@@ -28,7 +28,7 @@
                             <input type="text"
                                    x-model="rateInput"
                                    x-ref="rateField"
-                                   placeholder="5,45"
+                                   placeholder="{{ $cpLatest ? number_format((float) $cpLatest->rate, 2, ',', '.') : '5,45' }}"
                                    required
                                    style="width: 100px; padding: 6px 10px 6px 32px; border: 2px solid #b45309; border-radius: 8px; font-size: 14px; font-weight: 600; color: #92400e; background: rgba(255,255,255,0.8); outline: none; text-align: right;"
                                    onfocus="this.style.borderColor='#92400e'; this.style.background='white'"
