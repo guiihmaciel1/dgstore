@@ -27,7 +27,8 @@ class FetchComprasParaguaiDollarCommand extends Command
         $latest = DollarCpRate::latestRate();
 
         if ($latest && (float) $latest->rate === $rate) {
-            $this->info("Cotação inalterada: R$ {$rate}. Não salvo duplicado.");
+            $latest->update(['fetched_at' => now()]);
+            $this->info("Cotação inalterada: R$ {$rate}. Horário atualizado.");
 
             return self::SUCCESS;
         }
