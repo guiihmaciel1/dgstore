@@ -448,6 +448,9 @@
                         : 'Seminovo do cliente';
                     lines.push('');
                     lines.push(`Seminovo (trade-in): ${tiModel}`);
+                    if (this.tradeIn.battery && this.tradeIn.battery < 100) {
+                        lines.push(`Saúde da bateria: ${this.tradeIn.battery}%`);
+                    }
                     lines.push(`Valor do seminovo: R$ ${this.fmt(this.tradeInValue)}`);
                 }
 

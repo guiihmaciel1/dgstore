@@ -330,28 +330,23 @@
                                                                  updateTotals();
                                                              }
                                                          }">
-                                                        <div style="display: flex; gap: 0.5rem;">
+                                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
                                                             <template x-for="combo in combos()" :key="combo.qty">
                                                                 <button type="button"
                                                                         @click="selectCombo(combo)"
-                                                                        style="flex: 1; padding: 0.625rem 0.5rem; border-radius: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; border: 2px solid; position: relative; overflow: hidden;"
+                                                                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 4.5rem; padding: 0.5rem; border-radius: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; border: 2px solid;"
                                                                         :style="item.quantity === combo.qty
                                                                             ? 'background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-color: #7c3aed; box-shadow: 0 2px 8px rgba(124,58,237,0.3);'
                                                                             : 'background: white; color: #374151; border-color: #e5e7eb;'">
-                                                                    <span style="display: block; font-size: 0.8125rem; font-weight: 700;" x-text="combo.label"></span>
-                                                                    <span style="display: block; font-size: 1rem; font-weight: 800; margin-top: 0.125rem;"
+                                                                    <span style="font-size: 0.75rem; font-weight: 600; line-height: 1;" x-text="combo.label"></span>
+                                                                    <span style="font-size: 1.0625rem; font-weight: 800; margin-top: 0.25rem; line-height: 1;"
                                                                           :style="item.quantity === combo.qty ? 'color: white;' : 'color: #111827;'"
-                                                                          x-text="'R$ ' + combo.total.toFixed(0) + ',00'"></span>
-                                                                    <span x-show="combo.discount > 0"
-                                                                          style="display: inline-block; margin-top: 0.25rem; font-size: 0.625rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px;"
-                                                                          :style="item.quantity === combo.qty
-                                                                              ? 'background: rgba(255,255,255,0.25); color: white;'
-                                                                              : 'background: #fef3c7; color: #92400e;'"
-                                                                          x-text="'-' + combo.discount + '% desc.'"></span>
-                                                                    <span x-show="combo.discount === 0"
-                                                                          style="display: inline-block; margin-top: 0.25rem; font-size: 0.625rem; font-weight: 500; padding: 0.125rem 0.5rem;"
-                                                                          :style="item.quantity === combo.qty ? 'color: rgba(255,255,255,0.7);' : 'color: #9ca3af;'"
-                                                                          x-text="'preço cheio'"></span>
+                                                                          x-text="'R$ ' + combo.total.toFixed(0)"></span>
+                                                                    <span style="font-size: 0.625rem; font-weight: 700; margin-top: 0.25rem; line-height: 1; min-height: 0.875rem;"
+                                                                          :style="combo.discount > 0
+                                                                              ? (item.quantity === combo.qty ? 'color: #fde68a;' : 'color: #d97706;')
+                                                                              : (item.quantity === combo.qty ? 'color: rgba(255,255,255,0.5);' : 'color: #d1d5db;')"
+                                                                          x-text="combo.discount > 0 ? '-' + combo.discount + '%' : 'unitário'"></span>
                                                                 </button>
                                                             </template>
                                                         </div>
