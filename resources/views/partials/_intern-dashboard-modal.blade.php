@@ -128,6 +128,12 @@
                             <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                             Individual
                         </button>
+                        <button @click="tab = 'vendas'"
+                                :style="tab === 'vendas' ? 'background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(6,182,212,0.1)); color: #67e8f9; box-shadow: 0 0 12px rgba(6,182,212,0.1);' : 'color: #64748b;'"
+                                style="padding: 0.4rem 0.875rem; border-radius: 7px; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
+                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            Vendas
+                        </button>
                     </div>
 
                     {{-- Hide values --}}
@@ -356,6 +362,74 @@
                     </div>
                 @endif
             </div>
+
+            @if(auth()->user()->isAdminGeral())
+            {{-- ======================== VENDAS TAB ======================== --}}
+            <div x-show="tab === 'vendas'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0">
+
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <h3 style="font-size: 0.9375rem; font-weight: 600; color: #e2e8f0; display: flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 1rem; height: 1rem; color: #67e8f9;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            Vendas Contabilizadas para Meta
+                        </h3>
+                        <span style="font-size: 0.75rem; color: #64748b; background: rgba(255,255,255,0.04); padding: 0.25rem 0.625rem; border-radius: 6px;"
+                              x-text="internStats.sales_detail?.length + ' vendas'"></span>
+                    </div>
+
+                    <div x-data="{ filterSeller: '' }">
+                        <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button @click="filterSeller = ''"
+                                    :style="filterSeller === '' ? 'background: rgba(6,182,212,0.15); border-color: rgba(6,182,212,0.4); color: #67e8f9;' : 'background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); color: #94a3b8;'"
+                                    style="padding: 0.375rem 0.75rem; border-radius: 8px; border: 1px solid; font-size: 0.75rem; font-weight: 500; transition: all 0.2s; cursor: pointer;">
+                                Todas
+                            </button>
+                            <template x-for="intern in internStats.interns" :key="intern.id">
+                                <button @click="filterSeller = intern.name"
+                                        :style="filterSeller === intern.name ? 'background: rgba(6,182,212,0.15); border-color: rgba(6,182,212,0.4); color: #67e8f9;' : 'background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); color: #94a3b8;'"
+                                        style="padding: 0.375rem 0.75rem; border-radius: 8px; border: 1px solid; font-size: 0.75rem; font-weight: 500; transition: all 0.2s; cursor: pointer;"
+                                        x-text="intern.name"></button>
+                            </template>
+                        </div>
+
+                        <div style="overflow-x: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.8125rem;">
+                                <thead>
+                                    <tr style="background: rgba(255,255,255,0.04);">
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">#</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Vendedora</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Produtos</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: right; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template x-for="(sale, index) in (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller)" :key="index">
+                                        <tr style="border-top: 1px solid rgba(255,255,255,0.04);"
+                                            :style="index % 2 === 0 ? '' : 'background: rgba(255,255,255,0.015);'">
+                                            <td style="padding: 0.5rem 0.75rem; color: #64748b; font-size: 0.75rem;" x-text="sale.sale_number"></td>
+                                            <td style="padding: 0.5rem 0.75rem; color: #cbd5e1; white-space: nowrap;" x-text="sale.sold_at"></td>
+                                            <td style="padding: 0.5rem 0.75rem;">
+                                                <span style="background: rgba(139,92,246,0.1); color: #c4b5fd; padding: 0.125rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500;" x-text="sale.seller_name"></span>
+                                            </td>
+                                            <td style="padding: 0.5rem 0.75rem; color: #e2e8f0; font-weight: 500;" x-text="sale.customer_name"></td>
+                                            <td style="padding: 0.5rem 0.75rem; color: #94a3b8; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="sale.products"></td>
+                                            <td style="padding: 0.5rem 0.75rem; color: #34d399; font-weight: 600; text-align: right;" x-text="'R$ ' + sale.total.toFixed(2)"></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div x-show="(internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).length === 0"
+                             style="text-align: center; padding: 2rem; color: #64748b; font-size: 0.8125rem;">
+                            Nenhuma venda encontrada para o filtro selecionado.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
 
             @if(auth()->user()->isAdminGeral())
             {{-- ======================== GERENCIAL TAB ======================== --}}

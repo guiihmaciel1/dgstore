@@ -547,6 +547,20 @@ class DashboardController extends Controller
 
         $dailyChart = $this->buildInternDailyChart($internSales, $start, $end, $referenceDate);
 
+        $salesDetail = $internSales->sortByDesc('sold_at')->map(function (Sale $sale) use ($interns) {
+            $seller = $interns->firstWhere('id', $sale->seller_id);
+            $productNames = $sale->items->map(fn ($item) => $item->product_snapshot['name'] ?? 'Produto')->implode(', ');
+
+            return [
+                'sale_number' => $sale->sale_number,
+                'seller_name' => $seller?->name ?? $sale->seller_name,
+                'customer_name' => $sale->customer?->name ?? 'Sem cliente',
+                'products' => $productNames,
+                'total' => (float) $sale->total,
+                'sold_at' => $sale->sold_at->format('d/m H:i'),
+            ];
+        })->values()->toArray();
+
         return [
             'interns' => $internsData,
             'combined' => [
@@ -561,6 +575,7 @@ class DashboardController extends Controller
                 'weekly' => $weeklyGoalData,
             ],
             'daily_chart' => $dailyChart,
+            'sales_detail' => $salesDetail,
         ];
     }
 
