@@ -38,7 +38,7 @@ class ExecutiveSummaryController extends Controller
     {
         [$start, $end, $periodLabel] = $this->resolvePeriod($period);
 
-        $sales = Sale::with(['items.product', 'customer', 'seller'])
+        $sales = Sale::with(['items.product', 'customer', 'seller', 'commissions'])
             ->whereBetween('sold_at', [$start, $end])
             ->where('payment_status', '!=', PaymentStatus::Cancelled)
             ->get();
@@ -88,8 +88,11 @@ class ExecutiveSummaryController extends Controller
         $totalRevenue = (float) $sales->sum('total');
         $totalCost = (float) $allItems->sum(fn ($item) => $item->total_cost_value * $item->quantity);
         $totalProfit = (float) $allItems->sum(fn ($item) => $item->item_profit);
+        $totalCommissions = (float) $sales->sum(fn ($sale) => $sale->commissions->sum('commission_amount'));
+        $netProfit = $totalProfit - $totalCommissions;
         $averageTicket = $totalSales > 0 ? $totalRevenue / $totalSales : 0;
         $margin = $totalRevenue > 0 ? ($totalProfit / $totalRevenue) * 100 : 0;
+        $netMargin = $totalRevenue > 0 ? ($netProfit / $totalRevenue) * 100 : 0;
 
         $repasseCount = $sales->where('sale_type', SaleType::Repasse)->count();
         $repasseTotal = (float) $sales->where('sale_type', SaleType::Repasse)->sum('total');
@@ -151,7 +154,10 @@ class ExecutiveSummaryController extends Controller
             'total_revenue' => $totalRevenue,
             'total_cost' => $totalCost,
             'total_profit' => $totalProfit,
+            'total_commissions' => $totalCommissions,
+            'net_profit' => $netProfit,
             'margin' => round($margin, 1),
+            'net_margin' => round($netMargin, 1),
             'average_ticket' => round($averageTicket, 2),
             'repasse' => ['count' => $repasseCount, 'total' => $repasseTotal],
             'cliente_final' => ['count' => $cfCount, 'total' => $cfTotal],

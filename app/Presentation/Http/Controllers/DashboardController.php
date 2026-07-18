@@ -471,7 +471,7 @@ class DashboardController extends Controller
 
         $internIds = $interns->pluck('id');
 
-        $internSales = Sale::with(['items', 'customer'])
+        $internSales = Sale::with(['items.product', 'customer', 'commissions'])
             ->whereBetween('sold_at', [$start, $end])
             ->where('payment_status', '!=', PaymentStatus::Cancelled)
             ->whereIn('seller_id', $internIds)
@@ -551,12 +551,39 @@ class DashboardController extends Controller
             $seller = $interns->firstWhere('id', $sale->seller_id);
             $productNames = $sale->items->map(fn ($item) => $item->product_snapshot['name'] ?? 'Produto')->implode(', ');
 
+            $totalCost = (float) $sale->items->sum(fn ($item) => ($item->total_cost_value ?? 0) * $item->quantity);
+            $grossProfit = (float) $sale->profit;
+            $commission = (float) $sale->commissions->sum('commission_amount');
+            $netProfit = $grossProfit - $commission;
+
+            $conditions = $sale->items->map(function ($item) {
+                $rawCond = $item->product?->condition ?? ($item->product_snapshot['condition'] ?? null);
+                if ($rawCond instanceof \App\Domain\Product\Enums\ProductCondition) {
+                    return $rawCond->value;
+                }
+                return is_string($rawCond) ? $rawCond : null;
+            })->filter()->unique()->values()->toArray();
+
+            $conditionLabel = 'Outro';
+            if (in_array('new', $conditions) && count($conditions) === 1) {
+                $conditionLabel = 'Novo';
+            } elseif (count(array_intersect(['used', 'refurbished'], $conditions)) > 0 && !in_array('new', $conditions)) {
+                $conditionLabel = 'Seminovo';
+            } elseif (in_array('new', $conditions) && count(array_intersect(['used', 'refurbished'], $conditions)) > 0) {
+                $conditionLabel = 'Misto';
+            }
+
             return [
                 'sale_number' => $sale->sale_number,
                 'seller_name' => $seller?->name ?? $sale->seller_name,
                 'customer_name' => $sale->customer?->name ?? 'Sem cliente',
                 'products' => $productNames,
                 'total' => (float) $sale->total,
+                'cost' => $totalCost,
+                'gross_profit' => $grossProfit,
+                'commission' => $commission,
+                'net_profit' => $netProfit,
+                'condition' => $conditionLabel,
                 'sold_at' => $sale->sold_at->format('d/m H:i'),
             ];
         })->values()->toArray();

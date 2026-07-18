@@ -757,6 +757,15 @@
                                     </span>
                                 </div>
                                 @endif
+                                @if(($profit['month_commissions'] ?? 0) > 0)
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="text-gray-400">Comissões</span>
+                                    <span class="font-semibold text-purple-500">
+                                        <span x-show="showValues">− R$ {{ number_format($profit['month_commissions'] ?? 0, 2, ',', '.') }}</span>
+                                        <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
+                                    </span>
+                                </div>
+                                @endif
                             </div>
                         </div>
                         {{-- Tooltip hover: composição do lucro líquido --}}
@@ -787,6 +796,12 @@
                                     <div class="flex items-center justify-between text-xs">
                                         <span class="text-gray-500">Total despesas pagas</span>
                                         <span class="font-bold text-red-500">− R$ {{ number_format($profit['month_expenses_paid'], 2, ',', '.') }}</span>
+                                    </div>
+                                    @endif
+                                    @if(($profit['month_commissions'] ?? 0) > 0)
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="text-gray-500">Comissões pagas</span>
+                                        <span class="font-bold text-purple-500">− R$ {{ number_format($profit['month_commissions'] ?? 0, 2, ',', '.') }}</span>
                                     </div>
                                     @endif
                                     <div class="border-t border-gray-200 pt-1.5 flex items-center justify-between text-xs">

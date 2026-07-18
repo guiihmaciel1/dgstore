@@ -155,6 +155,7 @@ class SaleController extends Controller
             'customer',
             'user',
             'seller',
+            'commissions',
             'stockMovements',
             'tradeIns.product.saleItems.sale.customer',
         ]);

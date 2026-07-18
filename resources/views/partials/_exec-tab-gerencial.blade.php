@@ -42,12 +42,23 @@
             <span x-show="!hideValues" x-text="formatCurrency(execData?.gerencial?.total_profit)"></span>
             <span x-show="hideValues" x-cloak>R$ ••••</span>
         </p>
+        <p style="font-size: 0.6875rem; color: #64748b; margin-top: 0.25rem;" x-text="(execData?.gerencial?.margin ?? 0) + '% margem'"></p>
     </div>
     <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.25rem;">
-        <p style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem;">Margem</p>
+        <p style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem;">Comissões</p>
+        <p style="font-size: 1.75rem; font-weight: 700; color: #c084fc;">
+            <span x-show="!hideValues" x-text="formatCurrency(execData?.gerencial?.total_commissions)"></span>
+            <span x-show="hideValues" x-cloak>R$ ••••</span>
+        </p>
+    </div>
+    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(6,182,212,0.15); border-radius: 12px; padding: 1.25rem;">
+        <p style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.25rem;">Lucro Líquido</p>
         <p style="font-size: 1.75rem; font-weight: 700;"
-           :style="(execData?.gerencial?.margin ?? 0) >= 0 ? 'color: #34d399;' : 'color: #f87171;'"
-           x-text="(execData?.gerencial?.margin ?? 0) + '%'"></p>
+           :style="(execData?.gerencial?.net_profit ?? 0) >= 0 ? 'color: #67e8f9;' : 'color: #f87171;'">
+            <span x-show="!hideValues" x-text="formatCurrency(execData?.gerencial?.net_profit)"></span>
+            <span x-show="hideValues" x-cloak>R$ ••••</span>
+        </p>
+        <p style="font-size: 0.6875rem; color: #64748b; margin-top: 0.25rem;" x-text="(execData?.gerencial?.net_margin ?? 0) + '% líquido'"></p>
     </div>
 </div>
 

@@ -287,6 +287,9 @@
                         $tradeInVal = (float) $sale->trade_in_value;
                         $profit = $sale->profit;
                         $margin = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
+                        $commissionTotal = $sale->commissions->sum('commission_amount');
+                        $netProfit = $profit - $commissionTotal;
+                        $netMargin = $revenue > 0 ? ($netProfit / $revenue) * 100 : 0;
                     @endphp
                     @if(auth()->user()->canViewFinancials())
                     <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
@@ -299,7 +302,7 @@
                             </h3>
                         </div>
                         <div style="padding: 1.5rem;">
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                                 <!-- Receita -->
                                 <div style="text-align: center; padding: 0.75rem; background: #f0fdf4; border-radius: 0.75rem;">
                                     <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Receita</div>
@@ -310,17 +313,35 @@
                                     <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Custo (CMV)</div>
                                     <div style="font-size: 1.125rem; font-weight: 700; color: #dc2626;">R$ {{ number_format($totalCost, 2, ',', '.') }}</div>
                                 </div>
-                                <!-- Lucro -->
+                                <!-- Lucro Bruto -->
                                 <div style="text-align: center; padding: 0.75rem; background: {{ $profit >= 0 ? '#f0fdf4' : '#fef2f2' }}; border-radius: 0.75rem;">
                                     <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Lucro Bruto</div>
                                     <div style="font-size: 1.125rem; font-weight: 700; color: {{ $profit >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($profit, 2, ',', '.') }}</div>
-                                </div>
-                                <!-- Margem -->
-                                <div style="text-align: center; padding: 0.75rem; background: #eff6ff; border-radius: 0.75rem;">
-                                    <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Margem</div>
-                                    <div style="font-size: 1.125rem; font-weight: 700; color: #2563eb;">{{ number_format($margin, 1, ',', '.') }}%</div>
+                                    <div style="font-size: 0.625rem; color: #6b7280; margin-top: 0.125rem;">{{ number_format($margin, 1, ',', '.') }}% margem</div>
                                 </div>
                             </div>
+
+                            @if($commissionTotal > 0)
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-3">
+                                <!-- Comissão -->
+                                <div style="text-align: center; padding: 0.75rem; background: #f5f3ff; border-radius: 0.75rem;">
+                                    <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Comissão</div>
+                                    <div style="font-size: 1.125rem; font-weight: 700; color: #7c3aed;">− R$ {{ number_format($commissionTotal, 2, ',', '.') }}</div>
+                                </div>
+                                <!-- Lucro Líquido -->
+                                <div style="text-align: center; padding: 0.75rem; background: {{ $netProfit >= 0 ? '#ecfdf5' : '#fef2f2' }}; border-radius: 0.75rem; border: 2px solid {{ $netProfit >= 0 ? '#a7f3d0' : '#fecaca' }};">
+                                    <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Lucro Líquido</div>
+                                    <div style="font-size: 1.125rem; font-weight: 700; color: {{ $netProfit >= 0 ? '#059669' : '#dc2626' }};">R$ {{ number_format($netProfit, 2, ',', '.') }}</div>
+                                    <div style="font-size: 0.625rem; color: #6b7280; margin-top: 0.125rem;">{{ number_format($netMargin, 1, ',', '.') }}% líquido</div>
+                                </div>
+                                <!-- Margem Comparativa -->
+                                <div style="text-align: center; padding: 0.75rem; background: #eff6ff; border-radius: 0.75rem;">
+                                    <div style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem;">Impacto Comissão</div>
+                                    <div style="font-size: 1.125rem; font-weight: 700; color: #2563eb;">{{ number_format($margin - $netMargin, 1, ',', '.') }}%</div>
+                                    <div style="font-size: 0.625rem; color: #6b7280; margin-top: 0.125rem;">da receita</div>
+                                </div>
+                            </div>
+                            @endif
 
                             @if($tradeInVal > 0)
                             <div style="margin-top: 1rem; padding: 0.75rem; background: #f5f3ff; border-radius: 0.5rem; border: 1px solid #ddd6fe;">

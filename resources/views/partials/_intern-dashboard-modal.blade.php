@@ -393,32 +393,65 @@
                         </div>
 
                         <div style="overflow-x: auto; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
-                            <table style="width: 100%; border-collapse: collapse; font-size: 0.8125rem;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
                                 <thead>
                                     <tr style="background: rgba(255,255,255,0.04);">
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">#</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Vendedora</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Produtos</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: right; color: #94a3b8; font-weight: 600; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Total</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">#</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Vendedora</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Produtos</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: center; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Cond.</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: right; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Custo</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: right; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Venda</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: right; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Lucro B.</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: right; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Comissão</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: right; color: #94a3b8; font-weight: 600; font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.05em;">Lucro Líq.</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <template x-for="(sale, index) in (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller)" :key="index">
                                         <tr style="border-top: 1px solid rgba(255,255,255,0.04);"
                                             :style="index % 2 === 0 ? '' : 'background: rgba(255,255,255,0.015);'">
-                                            <td style="padding: 0.5rem 0.75rem; color: #64748b; font-size: 0.75rem;" x-text="sale.sale_number"></td>
-                                            <td style="padding: 0.5rem 0.75rem; color: #cbd5e1; white-space: nowrap;" x-text="sale.sold_at"></td>
-                                            <td style="padding: 0.5rem 0.75rem;">
-                                                <span style="background: rgba(139,92,246,0.1); color: #c4b5fd; padding: 0.125rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500;" x-text="sale.seller_name"></span>
+                                            <td style="padding: 0.4rem 0.5rem; color: #64748b; font-size: 0.6875rem;" x-text="sale.sale_number"></td>
+                                            <td style="padding: 0.4rem 0.5rem; color: #cbd5e1; white-space: nowrap;" x-text="sale.sold_at"></td>
+                                            <td style="padding: 0.4rem 0.5rem;">
+                                                <span style="background: rgba(139,92,246,0.1); color: #c4b5fd; padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.6875rem; font-weight: 500;" x-text="sale.seller_name"></span>
                                             </td>
-                                            <td style="padding: 0.5rem 0.75rem; color: #e2e8f0; font-weight: 500;" x-text="sale.customer_name"></td>
-                                            <td style="padding: 0.5rem 0.75rem; color: #94a3b8; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="sale.products"></td>
-                                            <td style="padding: 0.5rem 0.75rem; color: #34d399; font-weight: 600; text-align: right;" x-text="'R$ ' + sale.total.toFixed(2)"></td>
+                                            <td style="padding: 0.4rem 0.5rem; color: #e2e8f0; font-weight: 500;" x-text="sale.customer_name"></td>
+                                            <td style="padding: 0.4rem 0.5rem; color: #94a3b8; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="sale.products"></td>
+                                            <td style="padding: 0.4rem 0.5rem; text-align: center;">
+                                                <span style="padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.625rem; font-weight: 600;"
+                                                      :style="sale.condition === 'Novo' ? 'background: rgba(16,185,129,0.15); color: #6ee7b7;' : sale.condition === 'Seminovo' ? 'background: rgba(251,191,36,0.15); color: #fcd34d;' : sale.condition === 'Misto' ? 'background: rgba(99,102,241,0.15); color: #a5b4fc;' : 'background: rgba(255,255,255,0.05); color: #64748b;'"
+                                                      x-text="sale.condition"></span>
+                                            </td>
+                                            <td style="padding: 0.4rem 0.5rem; color: #f87171; text-align: right; font-weight: 500;" x-text="'R$ ' + sale.cost.toFixed(2)"></td>
+                                            <td style="padding: 0.4rem 0.5rem; color: #e2e8f0; text-align: right; font-weight: 600;" x-text="'R$ ' + sale.total.toFixed(2)"></td>
+                                            <td style="padding: 0.4rem 0.5rem; text-align: right; font-weight: 600;"
+                                                :style="sale.gross_profit >= 0 ? 'color: #34d399;' : 'color: #f87171;'"
+                                                x-text="'R$ ' + sale.gross_profit.toFixed(2)"></td>
+                                            <td style="padding: 0.4rem 0.5rem; color: #c084fc; text-align: right; font-weight: 500;" x-text="sale.commission > 0 ? 'R$ ' + sale.commission.toFixed(2) : '-'"></td>
+                                            <td style="padding: 0.4rem 0.5rem; text-align: right; font-weight: 700;"
+                                                :style="sale.net_profit >= 0 ? 'color: #67e8f9;' : 'color: #f87171;'"
+                                                x-text="'R$ ' + sale.net_profit.toFixed(2)"></td>
                                         </tr>
                                     </template>
                                 </tbody>
+                                <tfoot x-show="(internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).length > 0">
+                                    <tr style="border-top: 2px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);">
+                                        <td colspan="6" style="padding: 0.625rem 0.5rem; font-weight: 700; color: #e2e8f0; font-size: 0.75rem;">TOTAIS</td>
+                                        <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #f87171; font-size: 0.75rem;"
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.cost, 0).toFixed(2)"></td>
+                                        <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #e2e8f0; font-size: 0.75rem;"
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.total, 0).toFixed(2)"></td>
+                                        <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #34d399; font-size: 0.75rem;"
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.gross_profit, 0).toFixed(2)"></td>
+                                        <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #c084fc; font-size: 0.75rem;"
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.commission, 0).toFixed(2)"></td>
+                                        <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #67e8f9; font-size: 0.75rem;"
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.net_profit, 0).toFixed(2)"></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
 

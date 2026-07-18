@@ -300,7 +300,11 @@ class GenerateReportUseCase
         ])->values()->toArray();
 
         $expensesWithoutSalaries = $monthExpensesPaid - $salariesPaid;
-        $realProfit = $monthProfit - $monthExpensesPaid;
+
+        $monthCommissions = (float) Commission::whereBetween('created_at', [$monthStart, $monthEnd->copy()->endOfDay()])
+            ->sum('commission_amount');
+
+        $realProfit = $monthProfit - $monthExpensesPaid - $monthCommissions;
 
         return [
             'today_profit' => $todayProfit,
@@ -310,6 +314,7 @@ class GenerateReportUseCase
             'month_revenue' => $monthRevenue,
             'month_margin' => $monthMargin,
             'month_expenses_paid' => $monthExpensesPaid,
+            'month_commissions' => $monthCommissions,
             'salaries_paid' => $salariesPaid,
             'salary_details' => $salaryDetails,
             'expenses_without_salaries' => $expensesWithoutSalaries,
@@ -348,7 +353,11 @@ class GenerateReportUseCase
             : 0.0;
 
         $expensesWithoutSalaries = $expensesPaid - $salariesPaid;
-        $realProfit = $monthProfit - $expensesPaid;
+
+        $monthCommissions = (float) Commission::whereBetween('created_at', [$monthStart, $monthEnd->copy()->endOfDay()])
+            ->sum('commission_amount');
+
+        $realProfit = $monthProfit - $expensesPaid - $monthCommissions;
 
         return [
             'month_label' => $monthStart->translatedFormat('M/Y'),
