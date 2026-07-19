@@ -1160,7 +1160,7 @@
                         battery_health: p.battery_health || null,
                         has_box: p.has_box || false,
                         has_cable: p.has_cable || false,
-                        notes: '',
+                        notes: p.product_notes || '',
                         visible: true,
                     },
                     images: existing && existing.images ? existing.images.map(img => ({

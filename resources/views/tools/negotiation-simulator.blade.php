@@ -76,6 +76,7 @@
             evalDropdownOpen: false,
 
             productCost: 0,
+            usedMeta: { battery: null, hasBox: false, hasCable: false, notes: '', isUsed: false },
             caseEnabled: false,
             caseQty: 0,
             caseUnitPrice: 30,
@@ -224,10 +225,11 @@
                 };
             },
 
-            selectQuickValue(name, value, costPrice) {
+            selectQuickValue(name, value, costPrice, meta) {
                 this.product.description = name;
                 this.product.priceInput = this.fmt(value);
                 this.productCost = costPrice || 0;
+                this.usedMeta = meta || { battery: null, hasBox: false, hasCable: false, notes: '', isUsed: false };
                 this.recalculate();
             },
             isQuickValueActive(name, value) {
@@ -392,6 +394,15 @@
 
                 const desc = this.product.description || 'Produto';
                 lines.push(`📱 *${desc}*`);
+
+                if (this.usedMeta?.isUsed) {
+                    const details = [];
+                    if (this.usedMeta.battery) details.push(`🔋 Bateria: *${this.usedMeta.battery}%*`);
+                    if (this.usedMeta.hasBox) details.push('📦 Com caixa');
+                    if (this.usedMeta.hasCable) details.push('🔌 Com cabo');
+                    if (details.length > 0) lines.push(details.join(' | '));
+                    if (this.usedMeta.notes) lines.push(`📝 _${this.usedMeta.notes}_`);
+                }
 
                 if (this.tradeInValue > 0) {
                     const tiDesc = this.tradeIn.model

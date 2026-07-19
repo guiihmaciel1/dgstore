@@ -109,6 +109,7 @@ class MarketingController extends Controller
                 'color' => $p->color,
                 'condition' => $p->condition->value,
                 'stock' => $p->stock_quantity,
+                'product_notes' => $p->notes,
             ];
         })->values();
 
@@ -370,6 +371,7 @@ class MarketingController extends Controller
             'battery_health' => $request->battery_health,
             'has_box' => $request->boolean('has_box'),
             'has_cable' => $request->boolean('has_cable'),
+            'notes' => $request->notes,
         ];
 
         if (auth()->user()->role->isAdminGeral()) {
