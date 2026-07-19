@@ -401,7 +401,9 @@
                     if (this.usedMeta.hasBox) details.push('📦 Com caixa');
                     if (this.usedMeta.hasCable) details.push('🔌 Com cabo');
                     if (details.length > 0) lines.push(details.join(' | '));
-                    if (this.usedMeta.notes) lines.push(`📝 _${this.usedMeta.notes}_`);
+                    if (this.usedMeta.notes && !this.usedMeta.notes.startsWith('Origem:')) {
+                        lines.push(`📝 _${this.usedMeta.notes}_`);
+                    }
                 }
 
                 if (this.tradeInValue > 0) {
