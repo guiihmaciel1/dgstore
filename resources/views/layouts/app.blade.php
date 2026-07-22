@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,8 +11,9 @@
         <link rel="icon" type="image/png" href="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}">
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -21,17 +22,14 @@
             [x-cloak] { display: none !important; }
         </style>
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-50">
-            @auth
-                <x-dollar-rate-banner />
-            @endauth
+    <body class="font-sans antialiased bg-surface text-dg-100">
+        <div class="min-h-screen">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header class="bg-surface-raised border-b border-border">
+                    <div class="py-6 px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
@@ -50,6 +48,20 @@
         <x-stone-fab-calculator />
 
         @stack('scripts')
+
+        {{-- Chart.js dark theme defaults --}}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof Chart !== 'undefined') {
+                    Chart.defaults.color = '#a4a4a4';
+                    Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+                    Chart.defaults.backgroundColor = 'transparent';
+                    if (Chart.defaults.plugins && Chart.defaults.plugins.legend) {
+                        Chart.defaults.plugins.legend.labels.color = '#a4a4a4';
+                    }
+                }
+            });
+        </script>
 
         @auth
         <script>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Dashboard</x-slot>
     <div class="py-6" x-data="{ stockModalOpen: false, simSearch: '', simResults: [], simSearching: false, async searchSimulations() { if (this.simSearch.length < 2) { this.simResults = []; return; } this.simSearching = true; try { const res = await fetch(`{{ route('simulations.search') }}?q=${encodeURIComponent(this.simSearch)}`); this.simResults = await res.json(); } catch(e) { this.simResults = []; } this.simSearching = false; } }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('success'))
                 <div class="mb-4">
                     <x-alert type="success">{{ session('success') }}</x-alert>
@@ -18,7 +18,7 @@
             <div class="mb-4 sm:mb-6 relative" @click.outside="simResults = []">
                 <div class="relative">
                     <div style="position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); pointer-events: none;">
-                        <svg style="width: 1.125rem; height: 1.125rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="width: 1.125rem; height: 1.125rem; color: #666666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                     </div>
@@ -27,8 +27,8 @@
                            @input.debounce.300ms="searchSimulations()"
                            @focus="if(simSearch.length >= 2) searchSimulations()"
                            placeholder="Buscar simulação salva (nome ou telefone do cliente)..."
-                           style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.75rem; border: 2px solid #e5e7eb; border-radius: 0.75rem; font-size: 0.875rem; outline: none; background: white; transition: border-color 0.15s;"
-                           onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'">
+                           style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.75rem; font-size: 0.875rem; outline: none; background: #1a1a1a; transition: border-color 0.15s;"
+                           onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                     <div x-show="simSearching" style="position: absolute; right: 0.875rem; top: 50%; transform: translateY(-50%);">
                         <svg style="width: 1.125rem; height: 1.125rem; color: #6366f1; animation: spin 1s linear infinite;" fill="none" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" style="opacity: 0.25;"></circle>
@@ -39,22 +39,22 @@
 
                 {{-- Resultados da busca --}}
                 <div x-show="simResults.length > 0" x-cloak x-transition
-                     style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); max-height: 20rem; overflow-y: auto;">
+                     style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); max-height: 20rem; overflow-y: auto;">
                     <template x-for="snap in simResults" :key="snap.id">
-                        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
+                        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
                             <div style="min-width: 0; flex: 1;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.125rem;">
-                                    <span style="font-weight: 600; font-size: 0.8125rem; color: #111827;" x-text="snap.customer?.name || 'Cliente'"></span>
-                                    <span style="font-size: 0.6875rem; color: #6b7280; background: #f3f4f6; padding: 0.125rem 0.375rem; border-radius: 0.25rem;" x-text="snap.customer?.phone || ''"></span>
+                                    <span style="font-weight: 600; font-size: 0.8125rem; color: #e3e3e3;" x-text="snap.customer?.name || 'Cliente'"></span>
+                                    <span style="font-size: 0.6875rem; color: #818181; background: #222222; padding: 0.125rem 0.375rem; border-radius: 0.25rem;" x-text="snap.customer?.phone || ''"></span>
                                 </div>
-                                <div style="font-size: 0.75rem; color: #4b5563;">
+                                <div style="font-size: 0.75rem; color: #818181;">
                                     <span x-text="snap.product_description"></span>
-                                    <span style="color: #9ca3af;"> · </span>
+                                    <span style="color: #666666;"> · </span>
                                     <span style="font-weight: 600;" x-text="'R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2})"></span>
-                                    <span x-show="snap.trade_in_model" style="color: #9ca3af;"> · </span>
-                                    <span x-show="snap.trade_in_model" style="color: #7c3aed;" x-text="'Troca: ' + (snap.trade_in_model || '')"></span>
+                                    <span x-show="snap.trade_in_model" style="color: #666666;"> · </span>
+                                    <span x-show="snap.trade_in_model" style="color: #c4b5fd;" x-text="'Troca: ' + (snap.trade_in_model || '')"></span>
                                 </div>
-                                <div style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.125rem;" x-text="new Date(snap.created_at).toLocaleDateString('pt-BR') + ' · Válida por 7 dias'"></div>
+                                <div style="font-size: 0.6875rem; color: #666666; margin-top: 0.125rem;" x-text="new Date(snap.created_at).toLocaleDateString('pt-BR') + ' · Válida por 7 dias'"></div>
                             </div>
                             <div style="display: flex; gap: 0.375rem; flex-shrink: 0;">
                                 <a :href="'{{ route('sales.create') }}?snapshot_id=' + snap.id"
@@ -63,7 +63,7 @@
                                     Abrir Venda
                                 </a>
                                 <a :href="'{{ route('tools.negotiation-simulator') }}?snap_product=' + encodeURIComponent(snap.product_description) + '&snap_price=' + snap.product_price + (snap.product_cost ? '&snap_cost=' + snap.product_cost : '') + (snap.trade_in_model ? '&snap_tradein_model=' + encodeURIComponent(snap.trade_in_model) + '&snap_tradein_value=' + (snap.trade_in_value || '') + '&snap_tradein_system_value=' + (snap.trade_in_system_value || '') + '&snap_tradein_storage=' + encodeURIComponent(snap.trade_in_storage || '') + '&snap_tradein_battery=' + (snap.trade_in_battery || '') : '')"
-                                   style="padding: 0.375rem 0.625rem; background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; text-decoration: none; white-space: nowrap;"
+                                   style="padding: 0.375rem 0.625rem; background: rgba(99,102,241,0.1); color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; text-decoration: none; white-space: nowrap;"
                                    onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'">
                                     Reabrir Simulador
                                 </a>
@@ -74,8 +74,8 @@
 
                 {{-- Nenhum resultado --}}
                 <div x-show="simSearch.length >= 2 && simResults.length === 0 && !simSearching" x-cloak
-                     style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 1.5rem; text-align: center;">
-                    <p style="font-size: 0.8125rem; color: #6b7280;">Nenhuma simulação ativa encontrada.</p>
+                     style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); padding: 1.5rem; text-align: center;">
+                    <p style="font-size: 0.8125rem; color: #818181;">Nenhuma simulação ativa encontrada.</p>
                 </div>
             </div>
 
@@ -210,8 +210,8 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    background: white;
-                    color: #dc2626;
+                    background: #141414;
+                    color: #fca5a5;
                     font-size: 0.7rem;
                     font-weight: 800;
                     border-radius: 9999px;
@@ -240,7 +240,7 @@
                 .new-leads-dot {
                     width: 0.375rem;
                     height: 0.375rem;
-                    background: white;
+                    background: #141414;
                     border-radius: 9999px;
                     flex-shrink: 0;
                     animation: newLeadsDot 1.5s ease-in-out infinite;
@@ -308,11 +308,11 @@
 
             <!-- PRÓXIMOS ANIVERSARIANTES DO MÊS -->
             @if($birthdayCustomers->count() > 0)
-            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
                 <span style="font-size: 0.9rem;">&#127874;</span>
-                <span style="color: #6b7280; font-weight: 500;">Próximos aniversariantes do mês:</span>
+                <span style="color: #818181; font-weight: 500;">Próximos aniversariantes do mês:</span>
                 @foreach($birthdayCustomers as $customer)
-                    <a href="{{ route('customers.show', $customer) }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; {{ $customer->birth_date->day === now()->day ? 'background: #fef3c7; color: #92400e;' : 'background: #f3f4f6; color: #374151;' }}" title="{{ $customer->phone }}">
+                    <a href="{{ route('customers.show', $customer) }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; {{ $customer->birth_date->day === now()->day ? 'background: #fef3c7; color: #fbbf24;' : 'background: #222222; color: #a4a4a4;' }}" title="{{ $customer->phone }}">
                         <span style="color: #ec4899; font-weight: 800;">{{ $customer->birth_date->format('d') }}</span>
                         {{ $customer->name }}
                         @if($customer->birth_date->day === now()->day)
@@ -325,21 +325,21 @@
 
             <!-- CONTAS A PAGAR HOJE -->
             @if($todayPayables->count() > 0)
-            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.875rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
-                <svg style="width: 1rem; height: 1rem; color: #dc2626; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.875rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
+                <svg style="width: 1rem; height: 1rem; color: #fca5a5; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                 </svg>
-                <span style="color: #991b1b; font-weight: 600;">Contas a pagar hoje:</span>
+                <span style="color: #fca5a5; font-weight: 600;">Contas a pagar hoje:</span>
                 @foreach($todayPayables as $payable)
-                    <a href="{{ route('finance.payables') }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; background: #fee2e2; color: #991b1b;" title="{{ $payable->description }}">
+                    <a href="{{ route('finance.payables') }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; background: rgba(239,68,68,0.15); color: #fca5a5;" title="{{ $payable->description }}">
                         <span style="font-weight: 800;">R$ {{ number_format($payable->amount, 2, ',', '.') }}</span>
                         {{ $payable->description }}
                         @if($payable->category)
-                            <span style="font-size: 0.625rem; color: #b91c1c; opacity: 0.7;">({{ $payable->category->name }})</span>
+                            <span style="font-size: 0.625rem; color: #fca5a5; opacity: 0.7;">({{ $payable->category->name }})</span>
                         @endif
                     </a>
                 @endforeach
-                <a href="{{ route('finance.payables') }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; font-size: 0.7rem; font-weight: 700; color: #dc2626; text-decoration: none;">
+                <a href="{{ route('finance.payables') }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; font-size: 0.7rem; font-weight: 700; color: #fca5a5; text-decoration: none;">
                     Ver todas →
                 </a>
             </div>
@@ -348,8 +348,8 @@
             <!-- PRÓXIMO AGENDAMENTO -->
             @if($nextAppointment)
             <div style="margin-bottom: 1rem;">
-                <a href="{{ route('schedule.index') }}" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.75rem 1rem; background: white; border: 1px solid #c7d2fe; border-radius: 0.625rem; text-decoration: none; transition: all 0.15s; box-shadow: 0 1px 3px rgba(99,102,241,0.08);" onmouseover="this.style.borderColor='#818cf8'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.15)'" onmouseout="this.style.borderColor='#c7d2fe'; this.style.boxShadow='0 1px 3px rgba(99,102,241,0.08)'">
-                    <div style="width: 2.5rem; height: 2.5rem; background: #eef2ff; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <a href="{{ route('schedule.index') }}" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.75rem 1rem; background: #141414; border: 1px solid #c7d2fe; border-radius: 0.625rem; text-decoration: none; transition: all 0.15s; box-shadow: 0 1px 3px rgba(99,102,241,0.08);" onmouseover="this.style.borderColor='#818cf8'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.15)'" onmouseout="this.style.borderColor='#c7d2fe'; this.style.boxShadow='0 1px 3px rgba(99,102,241,0.08)'">
+                    <div style="width: 2.5rem; height: 2.5rem; background: rgba(99,102,241,0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #4f46e5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
@@ -357,15 +357,15 @@
                     <div style="flex: 1; min-width: 0;">
                         <div style="display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap;">
                             <span style="font-size: 0.8rem; font-weight: 700; color: #4f46e5;">Próximo agendamento</span>
-                            <span style="font-size: 0.7rem; font-weight: 600; color: #111827; background: #e0e7ff; padding: 0.0625rem 0.5rem; border-radius: 9999px;">{{ substr($nextAppointment->start_time, 0, 5) }}</span>
+                            <span style="font-size: 0.7rem; font-weight: 600; color: #e3e3e3; background: rgba(99,102,241,0.15); padding: 0.0625rem 0.5rem; border-radius: 9999px;">{{ substr($nextAppointment->start_time, 0, 5) }}</span>
                         </div>
-                        <div style="font-size: 0.775rem; color: #374151; margin-top: 0.125rem;">
+                        <div style="font-size: 0.775rem; color: #a4a4a4; margin-top: 0.125rem;">
                             <span style="font-weight: 600;">{{ $nextAppointment->customer_name }}</span>
-                            <span style="color: #6b7280;">com</span>
+                            <span style="color: #818181;">com</span>
                             <span style="font-weight: 600; color: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$nextAppointment->attendant] ?? '#6b7280' }};">{{ $nextAppointment->attendant_name }}</span>
                             @if($nextAppointment->service_description)
-                                <span style="color: #9ca3af;">·</span>
-                                <span style="color: #6b7280;">{{ $nextAppointment->service_description }}</span>
+                                <span style="color: #666666;">·</span>
+                                <span style="color: #818181;">{{ $nextAppointment->service_description }}</span>
                             @endif
                         </div>
                     </div>
@@ -379,7 +379,7 @@
 
             <!-- ATALHOS RÁPIDOS -->
             <div class="dashboard-shortcuts">
-                <a href="{{ route('sales.create') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #111827; color: white; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" onmouseout="this.style.transform=''; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'">
+                <a href="{{ route('sales.create') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #111827; color: white; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" onmouseout="this.style.transform=''; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'">
                     <div style="width: 2.5rem; height: 2.5rem; background: #22c55e; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
@@ -387,40 +387,40 @@
                     </div>
                     <div>
                         <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Venda</span>
-                        <span style="font-size: 0.6875rem; color: #9ca3af;">Nova venda</span>
+                        <span style="font-size: 0.6875rem; color: #666666;">Nova venda</span>
                     </div>
                 </a>
-                <a href="{{ route('tools.negotiation-simulator') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: white; border: 2px solid #e5e7eb; color: #111827; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#6366f1'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='#e5e7eb'; this.style.boxShadow=''">
-                    <div style="width: 2.5rem; height: 2.5rem; background: #eef2ff; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <a href="{{ route('tools.negotiation-simulator') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #141414; border: 2px solid rgba(255,255,255,0.08); color: #e3e3e3; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#818181'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.boxShadow=''">
+                    <div style="width: 2.5rem; height: 2.5rem; background: rgba(99,102,241,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #6366f1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
                     </div>
                     <div>
                         <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Simular</span>
-                        <span style="font-size: 0.6875rem; color: #9ca3af;">Negociação</span>
+                        <span style="font-size: 0.6875rem; color: #666666;">Negociação</span>
                     </div>
                 </a>
-                <a href="{{ route('crm.board') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: white; border: 2px solid #e5e7eb; color: #111827; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#f59e0b'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='#e5e7eb'; this.style.boxShadow=''">
-                    <div style="width: 2.5rem; height: 2.5rem; background: #fffbeb; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <a href="{{ route('crm.board') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #141414; border: 2px solid rgba(255,255,255,0.08); color: #e3e3e3; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#f59e0b'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.boxShadow=''">
+                    <div style="width: 2.5rem; height: 2.5rem; background: #141414beb; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                         </svg>
                     </div>
                     <div>
                         <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Pipeline</span>
-                        <span style="font-size: 0.6875rem; color: #9ca3af;">CRM / Leads</span>
+                        <span style="font-size: 0.6875rem; color: #666666;">CRM / Leads</span>
                     </div>
                 </a>
-                <a href="{{ route('marketing.index') }}?tab=used" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: white; border: 2px solid #e5e7eb; color: #111827; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#ec4899'; this.style.boxShadow='0 4px 12px rgba(236,72,153,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='#e5e7eb'; this.style.boxShadow=''">
-                    <div style="width: 2.5rem; height: 2.5rem; background: #fdf2f8; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <a href="{{ route('marketing.index') }}?tab=used" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #141414; border: 2px solid rgba(255,255,255,0.08); color: #e3e3e3; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#ec4899'; this.style.boxShadow='0 4px 12px rgba(236,72,153,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.boxShadow=''">
+                    <div style="width: 2.5rem; height: 2.5rem; background: rgba(236,72,153,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #ec4899;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
                     </div>
                     <div>
                         <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Seminovos</span>
-                        <span style="font-size: 0.6875rem; color: #9ca3af;">Marketing</span>
+                        <span style="font-size: 0.6875rem; color: #666666;">Marketing</span>
                     </div>
                 </a>
             </div>
@@ -467,7 +467,7 @@
                 }
                 .dg-hidden-value {
                     letter-spacing: 0.1em;
-                    color: #d1d5db;
+                    color: #515151;
                     user-select: none;
                 }
                 .sn-card {
@@ -494,19 +494,19 @@
                     margin-top: 2px;
                     opacity: 0.8;
                 }
-                .sn-card-danger { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
-                .sn-card-warning { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+                .sn-card-danger { background: rgba(239,68,68,0.1); border-color: #fecaca; color: #fca5a5; }
+                .sn-card-warning { background: #141414beb; border-color: #fde68a; color: #fbbf24; }
                 .sn-card-info { background: #f0f9ff; border-color: #bae6fd; color: #0c4a6e; }
-                .sn-card-success { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+                .sn-card-success { background: rgba(16,185,129,0.1); border-color: #bbf7d0; color: #6ee7b7; }
                 .sn-ok {
                     display: inline-flex;
                     align-items: center;
                     gap: 6px;
                     padding: 8px 14px;
-                    background: #f0fdf4;
+                    background: rgba(16,185,129,0.1);
                     border: 1px solid #bbf7d0;
                     border-radius: 10px;
-                    color: #166534;
+                    color: #6ee7b7;
                     font-size: 0.8rem;
                     font-weight: 600;
                 }
@@ -519,26 +519,26 @@
                 $nextMonth = $referenceDate->copy()->addMonth();
                 $canGoNext = !$isCurrentMonth;
             @endphp
-            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 0.625rem 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 0.625rem 1.25rem;">
                 <a href="{{ route('dashboard', ['month' => $prevMonth->month, 'year' => $prevMonth->year]) }}"
-                   style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
-                   onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                   style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #222222; text-decoration: none; color: #a4a4a4; transition: all 0.15s;"
+                   onmouseover="this.style.background='#222222'" onmouseout="this.style.background='transparent'">
                     <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </a>
                 <div style="text-align: center; min-width: 160px;">
-                    <span style="font-size: 1rem; font-weight: 700; color: #111827; text-transform: capitalize;">{{ $referenceDate->translatedFormat('F Y') }}</span>
+                    <span style="font-size: 1rem; font-weight: 700; color: #e3e3e3; text-transform: capitalize;">{{ $referenceDate->translatedFormat('F Y') }}</span>
                     @if(!$isCurrentMonth)
                         <a href="{{ route('dashboard') }}" style="display: block; font-size: 0.6875rem; color: #2563eb; text-decoration: none; font-weight: 500; margin-top: 0.125rem;">Voltar ao mês atual</a>
                     @endif
                 </div>
                 @if($canGoNext)
                     <a href="{{ route('dashboard', ['month' => $nextMonth->month, 'year' => $nextMonth->year]) }}"
-                       style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
-                       onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                       style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #222222; text-decoration: none; color: #a4a4a4; transition: all 0.15s;"
+                       onmouseover="this.style.background='#222222'" onmouseout="this.style.background='transparent'">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
                 @else
-                    <div style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f9fafb; display: flex; align-items: center; justify-content: center; color: #d1d5db;">
+                    <div style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: #515151;">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </div>
                 @endif
@@ -560,7 +560,7 @@
                     </button>
                     <button type="button" @click="showValues = !showValues"
                             class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors"
-                            :class="showValues ? 'text-gray-400 hover:text-gray-600 hover:bg-gray-100' : 'text-gray-500 bg-gray-100 hover:bg-gray-200'"
+                            :class="showValues ? 'text-dg-500 hover:text-dg-400 hover:bg-surface-overlay' : 'text-dg-500 bg-surface-overlay hover:bg-surface-elevated'"
                             :title="showValues ? 'Ocultar valores' : 'Mostrar valores'">
                         {{-- Olho aberto --}}
                         <svg x-show="showValues" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -576,16 +576,16 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                    <div class="bg-surface-raised rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border">
                         <div class="flex items-center justify-between">
                             <div class="min-w-0 flex-1">
-                                <p class="text-xs sm:text-sm text-gray-500">Vendas Hoje</p>
-                                <p class="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                                <p class="text-xs sm:text-sm text-dg-500">Vendas Hoje</p>
+                                <p class="text-xl sm:text-2xl font-bold text-dg-100 truncate">
                                     <span x-show="showValues">R$ {{ number_format($todayTotal, 2, ',', '.') }}</span>
                                     <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
                                 </p>
                             </div>
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-900 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-surface rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
                                 <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
@@ -593,13 +593,13 @@
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                    <div class="bg-surface-raised rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs sm:text-sm text-gray-500">Pedidos Hoje</p>
-                                <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ $todayCount }}</p>
+                                <p class="text-xs sm:text-sm text-dg-500">Pedidos Hoje</p>
+                                <p class="text-xl sm:text-2xl font-bold text-dg-100">{{ $todayCount }}</p>
                             </div>
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-surface-elevated rounded-lg flex items-center justify-center flex-shrink-0">
                                 <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                 </svg>
@@ -607,16 +607,16 @@
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100">
+                    <div class="bg-surface-raised rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border">
                         <div class="flex items-center justify-between">
                             <div class="min-w-0 flex-1">
-                                <p class="text-xs sm:text-sm text-gray-500">Vendas do Mês</p>
-                                <p class="text-xl sm:text-2xl font-bold text-gray-900 truncate">
+                                <p class="text-xs sm:text-sm text-dg-500">Vendas do Mês</p>
+                                <p class="text-xl sm:text-2xl font-bold text-dg-100 truncate">
                                     <span x-show="showValues">R$ {{ number_format($monthTotal, 2, ',', '.') }}</span>
                                     <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
                                 </p>
                             </div>
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-500 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-surface0 rounded-lg flex items-center justify-center flex-shrink-0 ml-3">
                                 <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                 </svg>
@@ -624,11 +624,11 @@
                         </div>
                     </div>
 
-                    <a href="{{ route('schedule.index') }}" class="bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 block text-decoration-none hover:shadow-md transition-shadow" style="text-decoration: none;">
+                    <a href="{{ route('schedule.index') }}" class="bg-surface-raised rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border block text-decoration-none hover: transition-shadow" style="text-decoration: none;">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-xs sm:text-sm text-gray-500">Agenda Hoje</p>
-                                <p class="text-xl sm:text-2xl font-bold text-gray-900">{{ $todayAppointments->count() }} <span class="text-base font-medium text-gray-500">agendamento{{ $todayAppointments->count() !== 1 ? 's' : '' }}</span></p>
+                                <p class="text-xs sm:text-sm text-dg-500">Agenda Hoje</p>
+                                <p class="text-xl sm:text-2xl font-bold text-dg-100">{{ $todayAppointments->count() }} <span class="text-base font-medium text-dg-500">agendamento{{ $todayAppointments->count() !== 1 ? 's' : '' }}</span></p>
                             </div>
                             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <svg class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -646,11 +646,11 @@
                 @if(auth()->user()->canViewFinancials())
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mt-3 sm:mt-4">
                     {{-- Lucro Bruto do Mês --}}
-                    <div class="group/card bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 relative overflow-hidden">
+                    <div class="group/card bg-surface-raised rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-xl"></div>
                         <div class="pl-2">
                             <div class="flex items-center justify-between mb-1">
-                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Lucro Bruto</p>
+                                <p class="text-xs font-medium text-dg-500 uppercase tracking-wide">Lucro Bruto</p>
                                 <span class="text-[0.65rem] px-1.5 py-0.5 rounded-full font-medium {{ $profit['month_margin'] >= 20 ? 'bg-emerald-50 text-emerald-700' : ($profit['month_margin'] >= 10 ? 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-700') }}">
                                     <span x-show="showValues">{{ number_format($profit['month_margin'], 1, ',', '.') }}% margem</span>
                                     <span x-show="!showValues" x-cloak>&bull;&bull;&bull;</span>
@@ -660,16 +660,16 @@
                                 <span x-show="showValues">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
                                 <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
                             </p>
-                            <div class="mt-2.5 pt-2.5 border-t border-gray-100">
+                            <div class="mt-2.5 pt-2.5 border-t border-border">
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Faturamento</span>
-                                    <span class="font-semibold text-gray-700">
+                                    <span class="text-dg-500">Faturamento</span>
+                                    <span class="font-semibold text-dg-300">
                                         <span x-show="showValues">R$ {{ number_format($profit['month_revenue'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs mt-1">
-                                    <span class="text-gray-400">Hoje</span>
+                                    <span class="text-dg-500">Hoje</span>
                                     <span class="font-semibold {{ $profit['today_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
                                         <span x-show="showValues">R$ {{ number_format($profit['today_profit'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
@@ -678,34 +678,34 @@
                             </div>
                         </div>
                         {{-- Tooltip hover: composição do lucro bruto --}}
-                        <div class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 flex items-center justify-center z-10 pointer-events-none group-hover/card:pointer-events-auto">
+                        <div class="absolute inset-0 bg-surface-raised/95 backdrop-blur-sm rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 flex items-center justify-center z-10 pointer-events-none group-hover/card:pointer-events-auto">
                             <div class="text-center px-4 w-full" x-show="showValues">
-                                <p class="text-[0.6rem] uppercase tracking-wide text-gray-400 font-medium mb-2">Composição do Lucro Bruto</p>
+                                <p class="text-[0.6rem] uppercase tracking-wide text-dg-500 font-medium mb-2">Composição do Lucro Bruto</p>
                                 <div class="space-y-1.5">
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Faturamento (vendas)</span>
-                                        <span class="font-bold text-gray-800">R$ {{ number_format($profit['month_revenue'], 2, ',', '.') }}</span>
+                                        <span class="text-dg-500">Faturamento (vendas)</span>
+                                        <span class="font-bold text-dg-200">R$ {{ number_format($profit['month_revenue'], 2, ',', '.') }}</span>
                                     </div>
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Custo dos produtos</span>
+                                        <span class="text-dg-500">Custo dos produtos</span>
                                         <span class="font-bold text-red-500">− R$ {{ number_format($profit['month_revenue'] - $profit['month_profit'], 2, ',', '.') }}</span>
                                     </div>
-                                    <div class="border-t border-gray-200 pt-1.5 flex items-center justify-between text-xs">
-                                        <span class="font-semibold text-gray-700">= Lucro Bruto</span>
+                                    <div class="border-t border-border pt-1.5 flex items-center justify-between text-xs">
+                                        <span class="font-semibold text-dg-300">= Lucro Bruto</span>
                                         <span class="font-bold text-emerald-600">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div x-show="!showValues" x-cloak class="text-sm text-gray-400">Valores ocultos</div>
+                            <div x-show="!showValues" x-cloak class="text-sm text-dg-500">Valores ocultos</div>
                         </div>
                     </div>
 
                     {{-- Lucro Líquido do Mês --}}
-                    <div class="group/card bg-white rounded-xl p-4 sm:p-5 shadow-sm border border-gray-100 relative overflow-hidden">
+                    <div class="group/card bg-surface-raised rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-1 h-full {{ $profit['real_profit'] >= 0 ? 'bg-blue-500' : 'bg-red-500' }} rounded-l-xl"></div>
                         <div class="pl-2">
                             <div class="flex items-center justify-between mb-1">
-                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Lucro Líquido</p>
+                                <p class="text-xs font-medium text-dg-500 uppercase tracking-wide">Lucro Líquido</p>
                                 @php
                                     $liquidMargin = $profit['month_revenue'] > 0 ? ($profit['real_profit'] / $profit['month_revenue']) * 100 : 0;
                                 @endphp
@@ -714,13 +714,13 @@
                                     <span x-show="!showValues" x-cloak>&bull;&bull;&bull;</span>
                                 </span>
                             </div>
-                            <p class="text-2xl sm:text-3xl font-bold {{ $profit['real_profit'] >= 0 ? 'text-gray-900' : 'text-red-600' }}">
+                            <p class="text-2xl sm:text-3xl font-bold {{ $profit['real_profit'] >= 0 ? 'text-dg-100' : 'text-red-600' }}">
                                 <span x-show="showValues">R$ {{ number_format($profit['real_profit'], 2, ',', '.') }}</span>
                                 <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
                             </p>
-                            <div class="mt-2.5 pt-2.5 border-t border-gray-100 space-y-1">
+                            <div class="mt-2.5 pt-2.5 border-t border-border space-y-1">
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Lucro bruto</span>
+                                    <span class="text-dg-500">Lucro bruto</span>
                                     <span class="font-semibold text-emerald-600">
                                         <span x-show="showValues">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
@@ -728,14 +728,14 @@
                                 </div>
                                 @if($profit['salaries_paid'] > 0)
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Salários</span>
+                                    <span class="text-dg-500">Salários</span>
                                     <span class="font-semibold text-red-500">
                                         <span x-show="showValues">− R$ {{ number_format($profit['salaries_paid'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Despesas</span>
+                                    <span class="text-dg-500">Despesas</span>
                                     <span class="font-semibold text-red-400">
                                         <span x-show="showValues">− R$ {{ number_format($profit['expenses_without_salaries'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
@@ -743,7 +743,7 @@
                                 </div>
                                 @else
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Despesas</span>
+                                    <span class="text-dg-500">Despesas</span>
                                     <span class="font-semibold text-red-500">
                                         <span x-show="showValues">− R$ {{ number_format($profit['month_expenses_paid'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
@@ -752,7 +752,7 @@
                                 @endif
                                 @if(($profit['month_commissions'] ?? 0) > 0)
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Comissões</span>
+                                    <span class="text-dg-500">Comissões</span>
                                     <span class="font-semibold text-purple-500">
                                         <span x-show="showValues">− R$ {{ number_format($profit['month_commissions'] ?? 0, 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
@@ -762,69 +762,69 @@
                             </div>
                         </div>
                         {{-- Tooltip hover: composição do lucro líquido --}}
-                        <div class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 flex items-center justify-center z-10 pointer-events-none group-hover/card:pointer-events-auto">
+                        <div class="absolute inset-0 bg-surface-raised/95 backdrop-blur-sm rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 flex items-center justify-center z-10 pointer-events-none group-hover/card:pointer-events-auto">
                             <div class="text-center px-4 w-full" x-show="showValues">
-                                <p class="text-[0.6rem] uppercase tracking-wide text-gray-400 font-medium mb-2">Composição do Lucro Líquido</p>
+                                <p class="text-[0.6rem] uppercase tracking-wide text-dg-500 font-medium mb-2">Composição do Lucro Líquido</p>
                                 <div class="space-y-1.5">
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Lucro bruto</span>
+                                        <span class="text-dg-500">Lucro bruto</span>
                                         <span class="font-bold text-emerald-600">R$ {{ number_format($profit['month_profit'], 2, ',', '.') }}</span>
                                     </div>
                                     @if($profit['salaries_paid'] > 0)
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Salários ({{ count($profit['salary_details']) }})</span>
+                                        <span class="text-dg-500">Salários ({{ count($profit['salary_details']) }})</span>
                                         <span class="font-bold text-red-500">− R$ {{ number_format($profit['salaries_paid'], 2, ',', '.') }}</span>
                                     </div>
                                     @foreach($profit['salary_details'] as $sd)
                                     <div class="flex items-center justify-between text-[0.65rem] pl-3">
-                                        <span class="text-gray-400 truncate mr-2">{{ $sd['description'] }}</span>
-                                        <span class="text-gray-500 whitespace-nowrap">R$ {{ number_format($sd['amount'], 2, ',', '.') }}</span>
+                                        <span class="text-dg-500 truncate mr-2">{{ $sd['description'] }}</span>
+                                        <span class="text-dg-500 whitespace-nowrap">R$ {{ number_format($sd['amount'], 2, ',', '.') }}</span>
                                     </div>
                                     @endforeach
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Outras despesas</span>
+                                        <span class="text-dg-500">Outras despesas</span>
                                         <span class="font-bold text-red-400">− R$ {{ number_format($profit['expenses_without_salaries'], 2, ',', '.') }}</span>
                                     </div>
                                     @else
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Total despesas pagas</span>
+                                        <span class="text-dg-500">Total despesas pagas</span>
                                         <span class="font-bold text-red-500">− R$ {{ number_format($profit['month_expenses_paid'], 2, ',', '.') }}</span>
                                     </div>
                                     @endif
                                     @if(($profit['month_commissions'] ?? 0) > 0)
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Comissões pagas</span>
+                                        <span class="text-dg-500">Comissões pagas</span>
                                         <span class="font-bold text-purple-500">− R$ {{ number_format($profit['month_commissions'] ?? 0, 2, ',', '.') }}</span>
                                     </div>
                                     @endif
-                                    <div class="border-t border-gray-200 pt-1.5 flex items-center justify-between text-xs">
-                                        <span class="font-semibold text-gray-700">= Lucro Líquido</span>
-                                        <span class="font-bold {{ $profit['real_profit'] >= 0 ? 'text-gray-900' : 'text-red-600' }}">R$ {{ number_format($profit['real_profit'], 2, ',', '.') }}</span>
+                                    <div class="border-t border-border pt-1.5 flex items-center justify-between text-xs">
+                                        <span class="font-semibold text-dg-300">= Lucro Líquido</span>
+                                        <span class="font-bold {{ $profit['real_profit'] >= 0 ? 'text-dg-100' : 'text-red-600' }}">R$ {{ number_format($profit['real_profit'], 2, ',', '.') }}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div x-show="!showValues" x-cloak class="text-sm text-gray-400">Valores ocultos</div>
+                            <div x-show="!showValues" x-cloak class="text-sm text-dg-500">Valores ocultos</div>
                         </div>
                     </div>
 
                     {{-- Mês Anterior (Comparativo) --}}
-                    <div class="group/card bg-gray-50 rounded-xl p-4 sm:p-5 shadow-sm border border-gray-200 relative overflow-hidden">
+                    <div class="group/card bg-surface rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-1 h-full bg-gray-400 rounded-l-xl"></div>
                         <div class="pl-2">
                             <div class="flex items-center justify-between mb-1">
-                                <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Mês Anterior</p>
-                                <span class="text-[0.65rem] px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-600 font-medium" style="text-transform: capitalize;">
+                                <p class="text-xs font-medium text-dg-500 uppercase tracking-wide">Mês Anterior</p>
+                                <span class="text-[0.65rem] px-1.5 py-0.5 rounded-full bg-surface-elevated text-dg-400 font-medium" style="text-transform: capitalize;">
                                     {{ $prevMonthProfit['month_label'] }}
                                 </span>
                             </div>
-                            <p class="text-2xl sm:text-3xl font-bold {{ $prevMonthProfit['real_profit'] >= 0 ? 'text-gray-700' : 'text-red-600' }}">
+                            <p class="text-2xl sm:text-3xl font-bold {{ $prevMonthProfit['real_profit'] >= 0 ? 'text-dg-300' : 'text-red-600' }}">
                                 <span x-show="showValues">R$ {{ number_format($prevMonthProfit['real_profit'], 2, ',', '.') }}</span>
                                 <span x-show="!showValues" x-cloak class="dg-hidden-value">R$ &bull;&bull;&bull;&bull;&bull;</span>
                             </p>
-                            <p class="text-[0.65rem] text-gray-400 -mt-0.5 mb-1">lucro líquido acumulado</p>
-                            <div class="mt-2 pt-2.5 border-t border-gray-200 space-y-1">
+                            <p class="text-[0.65rem] text-dg-500 -mt-0.5 mb-1">lucro líquido acumulado</p>
+                            <div class="mt-2 pt-2.5 border-t border-border space-y-1">
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Lucro bruto</span>
+                                    <span class="text-dg-500">Lucro bruto</span>
                                     <span class="font-semibold {{ $prevMonthProfit['month_profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
                                         <span x-show="showValues">R$ {{ number_format($prevMonthProfit['month_profit'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
@@ -832,14 +832,14 @@
                                 </div>
                                 @if($prevMonthProfit['salaries_paid'] > 0)
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Salários</span>
+                                    <span class="text-dg-500">Salários</span>
                                     <span class="font-semibold text-red-500">
                                         <span x-show="showValues">− R$ {{ number_format($prevMonthProfit['salaries_paid'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Despesas</span>
+                                    <span class="text-dg-500">Despesas</span>
                                     <span class="font-semibold text-red-400">
                                         <span x-show="showValues">− R$ {{ number_format($prevMonthProfit['expenses_without_salaries'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
@@ -847,7 +847,7 @@
                                 </div>
                                 @else
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-400">Despesas</span>
+                                    <span class="text-dg-500">Despesas</span>
                                     <span class="font-semibold text-red-500">
                                         <span x-show="showValues">− R$ {{ number_format($prevMonthProfit['month_expenses'], 2, ',', '.') }}</span>
                                         <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
@@ -855,8 +855,8 @@
                                 </div>
                                 @endif
                                 @if($profit['real_profit'] != 0 && $prevMonthProfit['real_profit'] != 0)
-                                <div class="flex items-center justify-between text-xs pt-1 border-t border-gray-200">
-                                    <span class="text-gray-400">Variação</span>
+                                <div class="flex items-center justify-between text-xs pt-1 border-t border-border">
+                                    <span class="text-dg-500">Variação</span>
                                     @php
                                         $variation = $prevMonthProfit['real_profit'] != 0
                                             ? (($profit['real_profit'] - $prevMonthProfit['real_profit']) / abs($prevMonthProfit['real_profit'])) * 100
@@ -873,40 +873,40 @@
                             </div>
                         </div>
                         {{-- Tooltip hover: composição do mês anterior --}}
-                        <div class="absolute inset-0 bg-gray-50/95 backdrop-blur-sm rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 flex items-center justify-center z-10 pointer-events-none group-hover/card:pointer-events-auto">
+                        <div class="absolute inset-0 bg-surface/95 backdrop-blur-sm rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 flex items-center justify-center z-10 pointer-events-none group-hover/card:pointer-events-auto">
                             <div class="text-center px-4 w-full" x-show="showValues">
-                                <p class="text-[0.6rem] uppercase tracking-wide text-gray-400 font-medium mb-2" style="text-transform: capitalize;">Resumo {{ $prevMonthProfit['month_label'] }}</p>
+                                <p class="text-[0.6rem] uppercase tracking-wide text-dg-500 font-medium mb-2" style="text-transform: capitalize;">Resumo {{ $prevMonthProfit['month_label'] }}</p>
                                 <div class="space-y-1.5">
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Faturamento</span>
-                                        <span class="font-bold text-gray-700">R$ {{ number_format($prevMonthProfit['month_revenue'], 2, ',', '.') }}</span>
+                                        <span class="text-dg-500">Faturamento</span>
+                                        <span class="font-bold text-dg-300">R$ {{ number_format($prevMonthProfit['month_revenue'], 2, ',', '.') }}</span>
                                     </div>
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Lucro bruto</span>
+                                        <span class="text-dg-500">Lucro bruto</span>
                                         <span class="font-bold text-emerald-600">R$ {{ number_format($prevMonthProfit['month_profit'], 2, ',', '.') }}</span>
                                     </div>
                                     @if($prevMonthProfit['salaries_paid'] > 0)
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Salários</span>
+                                        <span class="text-dg-500">Salários</span>
                                         <span class="font-bold text-red-500">− R$ {{ number_format($prevMonthProfit['salaries_paid'], 2, ',', '.') }}</span>
                                     </div>
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Outras despesas</span>
+                                        <span class="text-dg-500">Outras despesas</span>
                                         <span class="font-bold text-red-400">− R$ {{ number_format($prevMonthProfit['expenses_without_salaries'], 2, ',', '.') }}</span>
                                     </div>
                                     @else
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="text-gray-500">Total despesas</span>
+                                        <span class="text-dg-500">Total despesas</span>
                                         <span class="font-bold text-red-500">− R$ {{ number_format($prevMonthProfit['month_expenses'], 2, ',', '.') }}</span>
                                     </div>
                                     @endif
-                                    <div class="border-t border-gray-300 pt-1.5 flex items-center justify-between text-xs">
-                                        <span class="font-semibold text-gray-600">= Lucro Líquido</span>
-                                        <span class="font-bold {{ $prevMonthProfit['real_profit'] >= 0 ? 'text-gray-800' : 'text-red-600' }}">R$ {{ number_format($prevMonthProfit['real_profit'], 2, ',', '.') }}</span>
+                                    <div class="border-t border-border-strong pt-1.5 flex items-center justify-between text-xs">
+                                        <span class="font-semibold text-dg-400">= Lucro Líquido</span>
+                                        <span class="font-bold {{ $prevMonthProfit['real_profit'] >= 0 ? 'text-dg-200' : 'text-red-600' }}">R$ {{ number_format($prevMonthProfit['real_profit'], 2, ',', '.') }}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div x-show="!showValues" x-cloak class="text-sm text-gray-400">Valores ocultos</div>
+                            <div x-show="!showValues" x-cloak class="text-sm text-dg-500">Valores ocultos</div>
                         </div>
                     </div>
                 </div>
@@ -916,24 +916,24 @@
                 @if(auth()->user()->canViewFinancials() && ($profit['top_products']->count() > 0 || $profit['category_ranking']->count() > 0))
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6">
                     {{-- Top Produtos por Lucro --}}
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                    <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-base sm:text-lg font-semibold text-gray-900">Produtos Mais Lucrativos</h3>
-                            <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
+                            <h3 class="text-base sm:text-lg font-semibold text-dg-100">Produtos Mais Lucrativos</h3>
+                            <span class="text-xs text-dg-500 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
                         </div>
                         @if($profit['top_products']->count() > 0)
                             @php $maxProfit = $profit['top_products']->max('profit'); @endphp
                             <div class="space-y-3">
                                 @foreach($profit['top_products'] as $index => $item)
-                                    <div class="relative p-3 rounded-lg {{ $index === 0 ? 'bg-emerald-50 border border-emerald-100' : 'hover:bg-gray-50' }}">
+                                    <div class="relative p-3 rounded-lg {{ $index === 0 ? 'bg-emerald-50 border border-emerald-100' : 'hover:bg-surface' }}">
                                         <div class="flex items-center justify-between mb-1.5">
                                             <div class="flex items-center min-w-0 flex-1">
-                                                <span class="w-6 h-6 {{ $index === 0 ? 'bg-emerald-600' : 'bg-gray-900' }} text-white rounded-full flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
+                                                <span class="w-6 h-6 {{ $index === 0 ? 'bg-emerald-600' : 'bg-surface' }} text-white rounded-full flex items-center justify-center text-xs font-bold mr-3 flex-shrink-0">
                                                     {{ $index + 1 }}
                                                 </span>
                                                 <div class="min-w-0">
-                                                    <p class="font-medium text-gray-900 text-sm truncate">{{ $item['name'] ?? $item['product']?->name ?? 'Produto removido' }}</p>
-                                                    <p class="text-xs text-gray-400">{{ $item['quantity'] }} un. vendidas</p>
+                                                    <p class="font-medium text-dg-100 text-sm truncate">{{ $item['name'] ?? $item['product']?->name ?? 'Produto removido' }}</p>
+                                                    <p class="text-xs text-dg-500">{{ $item['quantity'] }} un. vendidas</p>
                                                 </div>
                                             </div>
                                             <div class="text-right flex-shrink-0 ml-3">
@@ -948,7 +948,7 @@
                                             </div>
                                         </div>
                                         @if($maxProfit > 0)
-                                        <div class="ml-9 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="ml-9 h-1.5 bg-surface-overlay rounded-full overflow-hidden">
                                             <div class="h-full rounded-full {{ $item['profit'] >= 0 ? 'bg-emerald-400' : 'bg-red-400' }}" style="width: {{ $maxProfit > 0 ? min(100, max(2, ($item['profit'] / $maxProfit) * 100)) : 0 }}%"></div>
                                         </div>
                                         @endif
@@ -956,25 +956,25 @@
                                 @endforeach
                             </div>
                         @else
-                            <p class="text-gray-500 text-center py-8 text-sm">Nenhuma venda com dados de custo este mês.</p>
+                            <p class="text-dg-500 text-center py-8 text-sm">Nenhuma venda com dados de custo este mês.</p>
                         @endif
                     </div>
 
                     {{-- Lucro por Categoria --}}
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                    <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-base sm:text-lg font-semibold text-gray-900">Lucro por Categoria</h3>
-                            <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
+                            <h3 class="text-base sm:text-lg font-semibold text-dg-100">Lucro por Categoria</h3>
+                            <span class="text-xs text-dg-500 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
                         </div>
                         @if($profit['category_ranking']->count() > 0)
                             @php $maxCatRevenue = $profit['category_ranking']->max('revenue'); @endphp
                             <div class="space-y-3">
                                 @foreach($profit['category_ranking'] as $cat)
-                                    <div class="p-3 rounded-lg hover:bg-gray-50">
+                                    <div class="p-3 rounded-lg hover:bg-surface">
                                         <div class="flex items-center justify-between mb-1">
                                             <div class="flex items-center gap-2">
-                                                <span class="font-medium text-sm text-gray-900">{{ $cat['label'] }}</span>
-                                                <span class="text-xs text-gray-400">{{ $cat['quantity'] }} un.</span>
+                                                <span class="font-medium text-sm text-dg-100">{{ $cat['label'] }}</span>
+                                                <span class="text-xs text-dg-500">{{ $cat['quantity'] }} un.</span>
                                             </div>
                                             <div class="flex items-center gap-3">
                                                 <span class="text-sm font-bold {{ $cat['profit'] >= 0 ? 'text-emerald-600' : 'text-red-600' }}">
@@ -988,17 +988,17 @@
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                            <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                            <div class="flex-1 h-2 bg-surface-overlay rounded-full overflow-hidden">
                                                 @php
                                                     $revenueWidth = $maxCatRevenue > 0 ? min(100, max(2, ($cat['revenue'] / $maxCatRevenue) * 100)) : 0;
                                                     $profitWidth = $cat['revenue'] > 0 ? max(0, min(100, ($cat['profit'] / $cat['revenue']) * 100)) : 0;
                                                 @endphp
                                                 <div class="h-full rounded-full flex overflow-hidden" style="width: {{ $revenueWidth }}%">
                                                     <div class="h-full {{ $cat['profit'] >= 0 ? 'bg-emerald-400' : 'bg-red-400' }}" style="width: {{ $profitWidth }}%"></div>
-                                                    <div class="h-full bg-gray-300 flex-1"></div>
+                                                    <div class="h-full bg-dg-700 flex-1"></div>
                                                 </div>
                                             </div>
-                                            <span class="text-xs text-gray-400 whitespace-nowrap w-20 text-right">
+                                            <span class="text-xs text-dg-500 whitespace-nowrap w-20 text-right">
                                                 <span x-show="showValues">R$ {{ number_format($cat['revenue'], 0, ',', '.') }}</span>
                                                 <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
                                             </span>
@@ -1006,18 +1006,18 @@
                                     </div>
                                 @endforeach
                             </div>
-                            <div class="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100">
+                            <div class="flex items-center gap-4 mt-4 pt-3 border-t border-border">
                                 <div class="flex items-center gap-1.5">
                                     <div class="w-3 h-2 bg-emerald-400 rounded-sm"></div>
-                                    <span class="text-xs text-gray-400">Lucro</span>
+                                    <span class="text-xs text-dg-500">Lucro</span>
                                 </div>
                                 <div class="flex items-center gap-1.5">
-                                    <div class="w-3 h-2 bg-gray-300 rounded-sm"></div>
-                                    <span class="text-xs text-gray-400">Custo</span>
+                                    <div class="w-3 h-2 bg-dg-700 rounded-sm"></div>
+                                    <span class="text-xs text-dg-500">Custo</span>
                                 </div>
                             </div>
                         @else
-                            <p class="text-gray-500 text-center py-8 text-sm">Nenhuma venda registrada este mês.</p>
+                            <p class="text-dg-500 text-center py-8 text-sm">Nenhuma venda registrada este mês.</p>
                         @endif
                     </div>
                 </div>
@@ -1026,33 +1026,33 @@
                 {{-- Inteligência de Vendas --}}
                 @if(auth()->user()->canViewFinancials())
                 <div class="mt-4 sm:mt-6">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-3">Inteligência de Vendas</h3>
+                    <h3 class="text-base sm:text-lg font-semibold text-dg-100 mb-3">Inteligência de Vendas</h3>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                         {{-- Card: iPhones do Mês --}}
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5" x-data="{ expanded: false }">
+                        <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-5" x-data="{ expanded: false }">
                             <div class="flex items-center justify-between mb-3">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                                    <div class="w-8 h-8 bg-surface rounded-lg flex items-center justify-center">
                                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                         </svg>
                                     </div>
-                                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">iPhones</span>
+                                    <span class="text-xs font-semibold text-dg-500 uppercase tracking-wide">iPhones</span>
                                 </div>
-                                <button @click="expanded = !expanded" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                <button @click="expanded = !expanded" class="text-dg-500 hover:text-dg-400 transition-colors">
                                     <svg class="w-4 h-4 transition-transform" :class="expanded && 'rotate-180'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                     </svg>
                                 </button>
                             </div>
-                            <p class="text-3xl font-extrabold text-gray-900 leading-none" x-data="countUp({{ $monthSummary['iphone_total'] }})" x-text="display"></p>
-                            <p class="text-xs text-gray-400 mt-1">vendidos no mês</p>
+                            <p class="text-3xl font-extrabold text-dg-100 leading-none" x-data="countUp({{ $monthSummary['iphone_total'] }})" x-text="display"></p>
+                            <p class="text-xs text-dg-500 mt-1">vendidos no mês</p>
 
                             @if($monthSummary['iphone_total'] > 0)
                             {{-- Barra de proporção Cliente Final vs Repasse --}}
                             @php $cfPct = $monthSummary['iphone_total'] > 0 ? ($monthSummary['iphone_cf_total'] / $monthSummary['iphone_total']) * 100 : 0; @endphp
-                            <div class="mt-3 h-2.5 bg-gray-100 rounded-full overflow-hidden flex">
+                            <div class="mt-3 h-2.5 bg-surface-overlay rounded-full overflow-hidden flex">
                                 <div class="h-full bg-blue-400 rounded-l-full transition-all duration-700" style="width: {{ $cfPct }}%"></div>
                                 <div class="h-full bg-purple-400 rounded-r-full transition-all duration-700" style="width: {{ 100 - $cfPct }}%"></div>
                             </div>
@@ -1062,21 +1062,21 @@
                                 <div class="flex items-center justify-between text-xs">
                                     <span class="flex items-center gap-1">
                                         <span class="w-2.5 h-2.5 bg-blue-400 rounded-full"></span>
-                                        <span class="text-gray-600 font-semibold">Cliente Final</span>
+                                        <span class="text-dg-400 font-semibold">Cliente Final</span>
                                     </span>
                                     <span class="font-bold text-blue-600">{{ $monthSummary['iphone_cf_total'] }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs pl-4">
                                     <span class="flex items-center gap-1">
                                         <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
-                                        <span class="text-gray-400">Novos</span>
+                                        <span class="text-dg-500">Novos</span>
                                     </span>
                                     <span class="font-bold text-emerald-600">{{ $monthSummary['iphone_cf_new'] }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs pl-4">
                                     <span class="flex items-center gap-1">
                                         <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
-                                        <span class="text-gray-400">Seminovos</span>
+                                        <span class="text-dg-500">Seminovos</span>
                                     </span>
                                     <span class="font-bold text-amber-600">{{ $monthSummary['iphone_cf_used'] }}</span>
                                 </div>
@@ -1087,43 +1087,43 @@
                                 <div class="flex items-center justify-between text-xs">
                                     <span class="flex items-center gap-1">
                                         <span class="w-2.5 h-2.5 bg-purple-400 rounded-full"></span>
-                                        <span class="text-gray-600 font-semibold">Repasse</span>
+                                        <span class="text-dg-400 font-semibold">Repasse</span>
                                     </span>
                                     <span class="font-bold text-purple-600">{{ $monthSummary['iphone_repasse_total'] }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs pl-4">
                                     <span class="flex items-center gap-1">
                                         <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
-                                        <span class="text-gray-400">Novos</span>
+                                        <span class="text-dg-500">Novos</span>
                                     </span>
                                     <span class="font-bold text-emerald-600">{{ $monthSummary['iphone_repasse_new'] }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs pl-4">
                                     <span class="flex items-center gap-1">
                                         <span class="w-1.5 h-1.5 bg-amber-400 rounded-full"></span>
-                                        <span class="text-gray-400">Seminovos</span>
+                                        <span class="text-dg-500">Seminovos</span>
                                     </span>
                                     <span class="font-bold text-amber-600">{{ $monthSummary['iphone_repasse_used'] }}</span>
                                 </div>
                             </div>
                             @endif
 
-                            <div x-show="expanded" x-transition x-cloak class="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                            <div x-show="expanded" x-transition x-cloak class="mt-3 pt-3 border-t border-border space-y-2">
                                 @if($monthSummary['accessories'] > 0)
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-500">Acessórios</span>
-                                    <span class="font-bold text-gray-700">{{ $monthSummary['accessories'] }} un.</span>
+                                    <span class="text-dg-500">Acessórios</span>
+                                    <span class="font-bold text-dg-300">{{ $monthSummary['accessories'] }} un.</span>
                                 </div>
                                 @endif
                                 @if($monthSummary['other_apple'] > 0)
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-500">Outros Apple</span>
-                                    <span class="font-bold text-gray-700">{{ $monthSummary['other_apple'] }} un.</span>
+                                    <span class="text-dg-500">Outros Apple</span>
+                                    <span class="font-bold text-dg-300">{{ $monthSummary['other_apple'] }} un.</span>
                                 </div>
                                 @endif
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-gray-500">Total de itens</span>
-                                    <span class="font-bold text-gray-900">{{ $monthSummary['total_items'] }} un.</span>
+                                    <span class="text-dg-500">Total de itens</span>
+                                    <span class="font-bold text-dg-100">{{ $monthSummary['total_items'] }} un.</span>
                                 </div>
                                 @if($monthSummary['trade_ins_received'] > 0)
                                 <div class="flex items-center justify-between text-xs">
@@ -1135,14 +1135,14 @@
                         </div>
 
                         {{-- Card: PIX vs Parcelado --}}
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5">
+                        <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-5">
                             <div class="flex items-center gap-2 mb-3">
                                 <div class="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                     </svg>
                                 </div>
-                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">PIX vs Parcelado</span>
+                                <span class="text-xs font-semibold text-dg-500 uppercase tracking-wide">PIX vs Parcelado</span>
                             </div>
                             <div class="space-y-3">
                                 <div class="flex items-center justify-between p-2.5 bg-teal-50 rounded-lg border border-teal-100">
@@ -1175,14 +1175,14 @@
                         </div>
 
                         {{-- Card: Alertas de Margem --}}
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5" x-data="{ showZero: false, showHigh: false }">
+                        <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-5" x-data="{ showZero: false, showHigh: false }">
                             <div class="flex items-center gap-2 mb-3">
                                 <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                                     </svg>
                                 </div>
-                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Margem</span>
+                                <span class="text-xs font-semibold text-dg-500 uppercase tracking-wide">Margem</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
                                 <button @click="showZero = !showZero; showHigh = false"
@@ -1212,68 +1212,68 @@
                             </div>
 
                             {{-- Detalhes margem zerada --}}
-                            <div x-show="showZero" x-transition x-cloak class="mt-3 pt-3 border-t border-gray-100">
+                            <div x-show="showZero" x-transition x-cloak class="mt-3 pt-3 border-t border-border">
                                 @if(count($salesAnalytics['margin_alerts']['zero_margin_items']) > 0)
                                     <div class="space-y-1.5">
                                         @foreach($salesAnalytics['margin_alerts']['zero_margin_items'] as $zi)
                                         <div class="group relative flex items-center justify-between text-xs py-1.5 px-2 rounded-md hover:bg-red-50/50 cursor-default transition-colors">
-                                            <span class="text-gray-600 truncate flex-1 mr-2">{{ $zi['name'] }}</span>
+                                            <span class="text-dg-400 truncate flex-1 mr-2">{{ $zi['name'] }}</span>
                                             <span class="font-bold text-red-600 whitespace-nowrap">
                                                 <span x-show="showValues">R$ {{ number_format($zi['profit'], 2, ',', '.') }}</span>
                                                 <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;</span>
                                             </span>
                                             <div class="dg-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
-                                                <div class="bg-gray-900 text-white text-[0.65rem] rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                                                <div class="bg-surface text-white text-[0.65rem] rounded-lg px-3 py-2 whitespace-nowrap ring-1 ring-border-strong">
                                                     <div class="font-semibold mb-1">{{ $zi['customer'] ?? 'Sem cliente' }}</div>
                                                     <div class="text-gray-300">{{ $zi['name'] }}</div>
-                                                    <div class="flex gap-3 mt-1 text-gray-400">
+                                                    <div class="flex gap-3 mt-1 text-dg-500">
                                                         <span>Venda: <span class="text-white font-medium">R$ {{ number_format($zi['unit_price'], 2, ',', '.') }}</span></span>
                                                         <span>Custo: <span class="text-red-300 font-medium">R$ {{ number_format($zi['cost'], 2, ',', '.') }}</span></span>
                                                     </div>
-                                                    <div class="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                                                    <div class="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-surface rotate-45 -mt-1"></div>
                                                 </div>
                                             </div>
                                         </div>
                                         @endforeach
                                     </div>
                                 @else
-                                    <p class="text-xs text-gray-400 text-center py-2">Nenhum item sem margem</p>
+                                    <p class="text-xs text-dg-500 text-center py-2">Nenhum item sem margem</p>
                                 @endif
                             </div>
 
                             {{-- Detalhes margem alta --}}
-                            <div x-show="showHigh" x-transition x-cloak class="mt-3 pt-3 border-t border-gray-100">
+                            <div x-show="showHigh" x-transition x-cloak class="mt-3 pt-3 border-t border-border">
                                 @if(count($salesAnalytics['margin_alerts']['high_margin_items']) > 0)
                                     <div class="space-y-1.5">
                                         @foreach($salesAnalytics['margin_alerts']['high_margin_items'] as $hi)
                                         <div class="group relative flex items-center justify-between text-xs py-1.5 px-2 rounded-md hover:bg-emerald-50/50 cursor-default transition-colors">
-                                            <span class="text-gray-600 truncate flex-1 mr-2">{{ $hi['name'] }}</span>
+                                            <span class="text-dg-400 truncate flex-1 mr-2">{{ $hi['name'] }}</span>
                                             <span class="font-bold text-emerald-600 whitespace-nowrap">
                                                 <span x-show="showValues">R$ {{ number_format($hi['profit'], 2, ',', '.') }}</span>
                                                 <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;</span>
                                             </span>
                                             <div class="dg-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
-                                                <div class="bg-gray-900 text-white text-[0.65rem] rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+                                                <div class="bg-surface text-white text-[0.65rem] rounded-lg px-3 py-2 whitespace-nowrap ring-1 ring-border-strong">
                                                     <div class="font-semibold mb-1">{{ $hi['customer'] ?? 'Sem cliente' }}</div>
                                                     <div class="text-gray-300">{{ $hi['name'] }}</div>
-                                                    <div class="flex gap-3 mt-1 text-gray-400">
+                                                    <div class="flex gap-3 mt-1 text-dg-500">
                                                         <span>Venda: <span class="text-white font-medium">R$ {{ number_format($hi['unit_price'], 2, ',', '.') }}</span></span>
                                                         <span>Custo: <span class="text-emerald-300 font-medium">R$ {{ number_format($hi['cost'], 2, ',', '.') }}</span></span>
                                                     </div>
-                                                    <div class="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                                                    <div class="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-surface rotate-45 -mt-1"></div>
                                                 </div>
                                             </div>
                                         </div>
                                         @endforeach
                                     </div>
                                 @else
-                                    <p class="text-xs text-gray-400 text-center py-2">Nenhum item com margem > R$ 500</p>
+                                    <p class="text-xs text-dg-500 text-center py-2">Nenhum item com margem > R$ 500</p>
                                 @endif
                             </div>
                         </div>
 
                         {{-- Card: Mix de Vendas --}}
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5">
+                        <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-5">
                             <div class="flex items-center gap-2 mb-3">
                                 <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
                                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1281,7 +1281,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/>
                                     </svg>
                                 </div>
-                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Mix de Vendas</span>
+                                <span class="text-xs font-semibold text-dg-500 uppercase tracking-wide">Mix de Vendas</span>
                             </div>
                             <div class="flex items-center justify-center" style="height: 130px;">
                                 <canvas id="mixChart"></canvas>
@@ -1290,19 +1290,19 @@
                                 @if($monthSummary['iphone_total'] > 0)
                                 <span class="flex items-center gap-1 text-[0.625rem]">
                                     <span class="w-2 h-2 rounded-full" style="background: #111827"></span>
-                                    <span class="text-gray-500">iPhones {{ $monthSummary['iphone_total'] }}</span>
+                                    <span class="text-dg-500">iPhones {{ $monthSummary['iphone_total'] }}</span>
                                 </span>
                                 @endif
                                 @if($monthSummary['accessories'] > 0)
                                 <span class="flex items-center gap-1 text-[0.625rem]">
                                     <span class="w-2 h-2 rounded-full" style="background: #6366f1"></span>
-                                    <span class="text-gray-500">Acessórios {{ $monthSummary['accessories'] }}</span>
+                                    <span class="text-dg-500">Acessórios {{ $monthSummary['accessories'] }}</span>
                                 </span>
                                 @endif
                                 @if($monthSummary['other_apple'] > 0)
                                 <span class="flex items-center gap-1 text-[0.625rem]">
                                     <span class="w-2 h-2 rounded-full" style="background: #06b6d4"></span>
-                                    <span class="text-gray-500">Outros {{ $monthSummary['other_apple'] }}</span>
+                                    <span class="text-dg-500">Outros {{ $monthSummary['other_apple'] }}</span>
                                 </span>
                                 @endif
                             </div>
@@ -1312,10 +1312,10 @@
                     {{-- Distribuição por Forma de Pagamento --}}
                     @if(count($salesAnalytics['payment_methods']) > 0)
                     <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                        <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm sm:text-base font-semibold text-gray-900">Formas de Pagamento</h3>
-                                <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-dg-100">Formas de Pagamento</h3>
+                                <span class="text-xs text-dg-500 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
                             </div>
                             @php $maxPayment = collect($salesAnalytics['payment_methods'])->max('total'); @endphp
                             <div class="space-y-2.5">
@@ -1327,23 +1327,23 @@
                                         'debit_card' => ['bg' => 'bg-cyan-500', 'light' => 'bg-cyan-50', 'text' => 'text-cyan-700'],
                                         'cash' => ['bg' => 'bg-emerald-500', 'light' => 'bg-emerald-50', 'text' => 'text-emerald-700'],
                                         'installment' => ['bg' => 'bg-violet-500', 'light' => 'bg-violet-50', 'text' => 'text-violet-700'],
-                                        'bank_transfer' => ['bg' => 'bg-gray-500', 'light' => 'bg-gray-50', 'text' => 'text-gray-700'],
+                                        'bank_transfer' => ['bg' => 'bg-surface0', 'light' => 'bg-surface', 'text' => 'text-dg-300'],
                                     ];
-                                    $c = $pmColors[$pm['method']] ?? ['bg' => 'bg-gray-400', 'light' => 'bg-gray-50', 'text' => 'text-gray-600'];
+                                    $c = $pmColors[$pm['method']] ?? ['bg' => 'bg-gray-400', 'light' => 'bg-surface', 'text' => 'text-dg-400'];
                                 @endphp
                                 <div class="group">
                                     <div class="flex items-center justify-between mb-1">
                                         <div class="flex items-center gap-2">
                                             <span class="w-2.5 h-2.5 rounded-full {{ $c['bg'] }}"></span>
-                                            <span class="text-sm font-medium text-gray-700">{{ $pm['label'] }}</span>
-                                            <span class="text-xs text-gray-400">{{ $pm['count'] }} {{ $pm['count'] === 1 ? 'venda' : 'vendas' }}</span>
+                                            <span class="text-sm font-medium text-dg-300">{{ $pm['label'] }}</span>
+                                            <span class="text-xs text-dg-500">{{ $pm['count'] }} {{ $pm['count'] === 1 ? 'venda' : 'vendas' }}</span>
                                         </div>
                                         <span class="text-sm font-bold {{ $c['text'] }}">
                                             <span x-show="showValues">R$ {{ number_format($pm['total'], 0, ',', '.') }}</span>
                                             <span x-show="!showValues" x-cloak class="dg-hidden-value">&bull;&bull;&bull;</span>
                                         </span>
                                     </div>
-                                    <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                                    <div class="h-2 bg-surface-overlay rounded-full overflow-hidden">
                                         <div class="h-full rounded-full {{ $c['bg'] }} transition-all duration-700" style="width: {{ $maxPayment > 0 ? max(3, ($pm['total'] / $maxPayment) * 100) : 0 }}%"></div>
                                     </div>
                                 </div>
@@ -1352,10 +1352,10 @@
                         </div>
 
                         {{-- Distribuição de Margem --}}
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                        <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm sm:text-base font-semibold text-gray-900">Distribuição de Margem</h3>
-                                <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-dg-100">Distribuição de Margem</h3>
+                                <span class="text-xs text-dg-500 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
                             </div>
                             <div class="flex items-center justify-center" style="height: 180px;">
                                 <canvas id="marginChart"></canvas>
@@ -1375,22 +1375,22 @@
                                 @if($count > 0)
                                 <div class="group relative text-center p-1.5 rounded-lg {{ $bucketConfig[$bucket]['bg'] }} cursor-default">
                                     <p class="text-lg font-extrabold {{ $bucketConfig[$bucket]['color'] }}">{{ $count }}</p>
-                                    <p class="text-[0.6rem] text-gray-500 font-medium">{{ $bucketConfig[$bucket]['label'] }}</p>
+                                    <p class="text-[0.6rem] text-dg-500 font-medium">{{ $bucketConfig[$bucket]['label'] }}</p>
                                     @if(count($salesAnalytics['bucket_samples'][$bucket] ?? []) > 0)
                                     <div class="dg-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
-                                        <div class="bg-gray-900 text-white text-[0.6rem] rounded-lg px-3 py-2 shadow-lg" style="min-width: 200px;">
+                                        <div class="bg-surface text-white text-[0.6rem] rounded-lg px-3 py-2 ring-1 ring-border-strong" style="min-width: 200px;">
                                             <p class="font-bold text-gray-300 mb-1.5 text-[0.55rem] uppercase tracking-wide">Exemplos ({{ $bucketConfig[$bucket]['label'] }})</p>
                                             @foreach($salesAnalytics['bucket_samples'][$bucket] as $sample)
-                                            <div class="py-1 {{ !$loop->last ? 'border-b border-gray-700' : '' }}">
+                                            <div class="py-1 {{ !$loop->last ? 'border-b border-border' : '' }}">
                                                 <div class="font-semibold text-white truncate">{{ $sample['customer'] }}</div>
-                                                <div class="text-gray-400 truncate">{{ $sample['name'] }}</div>
+                                                <div class="text-dg-500 truncate">{{ $sample['name'] }}</div>
                                                 <div class="flex gap-2 mt-0.5">
-                                                    <span class="text-gray-400">Venda: <span class="text-white">R$ {{ number_format($sample['unit_price'], 0, ',', '.') }}</span></span>
-                                                    <span class="text-gray-400">Custo: <span class="text-gray-300">R$ {{ number_format($sample['cost'], 0, ',', '.') }}</span></span>
+                                                    <span class="text-dg-500">Venda: <span class="text-white">R$ {{ number_format($sample['unit_price'], 0, ',', '.') }}</span></span>
+                                                    <span class="text-dg-500">Custo: <span class="text-gray-300">R$ {{ number_format($sample['cost'], 0, ',', '.') }}</span></span>
                                                 </div>
                                             </div>
                                             @endforeach
-                                            <div class="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                                            <div class="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-surface rotate-45 -mt-1"></div>
                                         </div>
                                     </div>
                                     @endif
@@ -1424,21 +1424,21 @@
                         $lightColors = ['Branco', 'Prata', 'Natural', 'Não informada', 'Deserto'];
                     @endphp
                     <div class="mt-4">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                        <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm sm:text-base font-semibold text-gray-900">Cores por Modelo</h3>
-                                <span class="text-xs text-gray-400 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
+                                <h3 class="text-sm sm:text-base font-semibold text-dg-100">Cores por Modelo</h3>
+                                <span class="text-xs text-dg-500 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
                             </div>
                             <div class="space-y-4">
                                 @foreach($salesAnalytics['top_model_colors'] as $modelIdx => $tmc)
                                 @php $maxColorQty = collect($tmc['colors'])->max('quantity'); @endphp
-                                <div class="{{ $modelIdx > 0 ? 'pt-4 border-t border-gray-100' : '' }}">
+                                <div class="{{ $modelIdx > 0 ? 'pt-4 border-t border-border' : '' }}">
                                     <div class="flex items-center justify-between mb-2.5">
                                         <div class="flex items-center gap-2">
-                                            <span class="w-5 h-5 bg-gray-900 text-white rounded-full flex items-center justify-center text-[0.6rem] font-bold">{{ $modelIdx + 1 }}</span>
-                                            <span class="text-sm font-semibold text-gray-800">{{ $tmc['model'] }}</span>
+                                            <span class="w-5 h-5 bg-surface text-white rounded-full flex items-center justify-center text-[0.6rem] font-bold">{{ $modelIdx + 1 }}</span>
+                                            <span class="text-sm font-semibold text-dg-200">{{ $tmc['model'] }}</span>
                                         </div>
-                                        <span class="text-xs font-bold text-gray-500">{{ $tmc['total'] }} un.</span>
+                                        <span class="text-xs font-bold text-dg-500">{{ $tmc['total'] }} un.</span>
                                     </div>
                                     <div class="flex flex-wrap items-end gap-3 pl-7">
                                         @foreach($tmc['colors'] as $cidx => $colorItem)
@@ -1449,7 +1449,7 @@
                                         @endphp
                                         <div class="flex flex-col items-center gap-1 min-w-[3.5rem]">
                                             <div class="relative">
-                                                <div class="w-8 h-8 rounded-full shadow-sm {{ $isLight ? 'border border-gray-200' : '' }}"
+                                                <div class="w-8 h-8 rounded-full ring-1 ring-white/[0.03] {{ $isLight ? 'border border-border' : '' }}"
                                                      style="background: {{ $hex }};"></div>
                                                 @if($cidx === 0)
                                                 <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full flex items-center justify-center">
@@ -1459,9 +1459,9 @@
                                                 </span>
                                                 @endif
                                             </div>
-                                            <span class="text-[0.6rem] font-medium text-gray-500">{{ $colorItem['color'] }}</span>
-                                            <span class="text-sm font-extrabold text-gray-900">{{ $colorItem['quantity'] }}</span>
-                                            <div class="w-6 h-1 bg-gray-100 rounded-full overflow-hidden">
+                                            <span class="text-[0.6rem] font-medium text-dg-500">{{ $colorItem['color'] }}</span>
+                                            <span class="text-sm font-extrabold text-dg-100">{{ $colorItem['quantity'] }}</span>
+                                            <div class="w-6 h-1 bg-surface-overlay rounded-full overflow-hidden">
                                                 <div class="h-full rounded-full" style="width: {{ $pct }}%; background: {{ $hex }};"></div>
                                             </div>
                                         </div>
@@ -1478,11 +1478,11 @@
                     @if(count($salesAnalytics['top_new_models']) > 0 || count($salesAnalytics['top_used_models']) > 0)
                     <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {{-- Top 5 Novos Lacrados --}}
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                        <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-2">
                                     <span class="w-2 h-5 bg-emerald-500 rounded-full"></span>
-                                    <h3 class="text-sm sm:text-base font-semibold text-gray-900">Top 5 Novos Lacrados</h3>
+                                    <h3 class="text-sm sm:text-base font-semibold text-dg-100">Top 5 Novos Lacrados</h3>
                                 </div>
                                 <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{{ collect($salesAnalytics['top_new_models'])->sum('quantity') }} un.</span>
                             </div>
@@ -1490,12 +1490,12 @@
                             <div class="space-y-2">
                                 @foreach($salesAnalytics['top_new_models'] as $idx => $model)
                                 @php $maxNewQty = collect($salesAnalytics['top_new_models'])->max('quantity'); @endphp
-                                <div class="flex items-center gap-3 p-2 rounded-lg {{ $idx === 0 ? 'bg-emerald-50/70' : 'hover:bg-gray-50' }}">
+                                <div class="flex items-center gap-3 p-2 rounded-lg {{ $idx === 0 ? 'bg-emerald-50/70' : 'hover:bg-surface' }}">
                                     <span class="w-5 h-5 {{ $idx === 0 ? 'bg-emerald-600' : 'bg-gray-400' }} text-white rounded-full flex items-center justify-center text-[0.6rem] font-bold flex-shrink-0">{{ $idx + 1 }}</span>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900 truncate">{{ $model['name'] }}</p>
+                                        <p class="text-sm font-medium text-dg-100 truncate">{{ $model['name'] }}</p>
                                         @if($model['storage'] || $model['color'])
-                                        <p class="text-[0.65rem] text-gray-400">
+                                        <p class="text-[0.65rem] text-dg-500">
                                             @if($model['storage']){{ $model['storage'] }}@endif
                                             @if($model['storage'] && $model['color']) · @endif
                                             @if($model['color']){{ $model['color'] }}@endif
@@ -1503,25 +1503,25 @@
                                         @endif
                                     </div>
                                     <div class="flex items-center gap-2 flex-shrink-0">
-                                        <div class="w-12 h-1.5 bg-gray-100 rounded-full overflow-hidden hidden sm:block">
+                                        <div class="w-12 h-1.5 bg-surface-overlay rounded-full overflow-hidden hidden sm:block">
                                             <div class="h-full bg-emerald-400 rounded-full" style="width: {{ $maxNewQty > 0 ? max(10, ($model['quantity'] / $maxNewQty) * 100) : 0 }}%"></div>
                                         </div>
-                                        <span class="text-sm font-extrabold text-gray-900">{{ $model['quantity'] }}</span>
+                                        <span class="text-sm font-extrabold text-dg-100">{{ $model['quantity'] }}</span>
                                     </div>
                                 </div>
                                 @endforeach
                             </div>
                             @else
-                            <p class="text-xs text-gray-400 text-center py-4">Nenhum iPhone novo vendido</p>
+                            <p class="text-xs text-dg-500 text-center py-4">Nenhum iPhone novo vendido</p>
                             @endif
                         </div>
 
                         {{-- Top 5 Seminovos --}}
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                        <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-2">
                                     <span class="w-2 h-5 bg-amber-500 rounded-full"></span>
-                                    <h3 class="text-sm sm:text-base font-semibold text-gray-900">Top 5 Seminovos</h3>
+                                    <h3 class="text-sm sm:text-base font-semibold text-dg-100">Top 5 Seminovos</h3>
                                 </div>
                                 <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{{ collect($salesAnalytics['top_used_models'])->sum('quantity') }} un.</span>
                             </div>
@@ -1529,12 +1529,12 @@
                             <div class="space-y-2">
                                 @foreach($salesAnalytics['top_used_models'] as $idx => $model)
                                 @php $maxUsedQty = collect($salesAnalytics['top_used_models'])->max('quantity'); @endphp
-                                <div class="flex items-center gap-3 p-2 rounded-lg {{ $idx === 0 ? 'bg-amber-50/70' : 'hover:bg-gray-50' }}">
+                                <div class="flex items-center gap-3 p-2 rounded-lg {{ $idx === 0 ? 'bg-amber-50/70' : 'hover:bg-surface' }}">
                                     <span class="w-5 h-5 {{ $idx === 0 ? 'bg-amber-600' : 'bg-gray-400' }} text-white rounded-full flex items-center justify-center text-[0.6rem] font-bold flex-shrink-0">{{ $idx + 1 }}</span>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-sm font-medium text-gray-900 truncate">{{ $model['name'] }}</p>
+                                        <p class="text-sm font-medium text-dg-100 truncate">{{ $model['name'] }}</p>
                                         @if($model['storage'] || $model['color'])
-                                        <p class="text-[0.65rem] text-gray-400">
+                                        <p class="text-[0.65rem] text-dg-500">
                                             @if($model['storage']){{ $model['storage'] }}@endif
                                             @if($model['storage'] && $model['color']) · @endif
                                             @if($model['color']){{ $model['color'] }}@endif
@@ -1542,16 +1542,16 @@
                                         @endif
                                     </div>
                                     <div class="flex items-center gap-2 flex-shrink-0">
-                                        <div class="w-12 h-1.5 bg-gray-100 rounded-full overflow-hidden hidden sm:block">
+                                        <div class="w-12 h-1.5 bg-surface-overlay rounded-full overflow-hidden hidden sm:block">
                                             <div class="h-full bg-amber-400 rounded-full" style="width: {{ $maxUsedQty > 0 ? max(10, ($model['quantity'] / $maxUsedQty) * 100) : 0 }}%"></div>
                                         </div>
-                                        <span class="text-sm font-extrabold text-gray-900">{{ $model['quantity'] }}</span>
+                                        <span class="text-sm font-extrabold text-dg-100">{{ $model['quantity'] }}</span>
                                     </div>
                                 </div>
                                 @endforeach
                             </div>
                             @else
-                            <p class="text-xs text-gray-400 text-center py-4">Nenhum seminovo vendido</p>
+                            <p class="text-xs text-dg-500 text-center py-4">Nenhum seminovo vendido</p>
                             @endif
                         </div>
                     </div>
@@ -1562,10 +1562,10 @@
 
             <!-- Agenda do Dia -->
             @if($todayAppointments->count() > 0)
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-4 sm:mb-6">
+            <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6 mb-4 sm:mb-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-900">Agenda de Hoje</h3>
-                    <a href="{{ route('schedule.index') }}" class="text-xs sm:text-sm text-gray-600 hover:text-gray-900">Ver agenda completa →</a>
+                    <h3 class="text-base sm:text-lg font-semibold text-dg-100">Agenda de Hoje</h3>
+                    <a href="{{ route('schedule.index') }}" class="text-xs sm:text-sm text-dg-400 hover:text-dg-100">Ver agenda completa →</a>
                 </div>
                 <div class="space-y-2">
                     @foreach($todayAppointments as $appt)
@@ -1575,7 +1575,7 @@
                             $statusColors = [
                                 'scheduled' => ['border' => '#bfdbfe', 'bg' => '#eff6ff', 'dot' => '#3b82f6'],
                                 'confirmed' => ['border' => '#bbf7d0', 'bg' => '#f0fdf4', 'dot' => '#16a34a'],
-                                'completed' => ['border' => '#e5e7eb', 'bg' => '#f9fafb', 'dot' => '#9ca3af'],
+                                'completed' => ['border' => 'rgba(255,255,255,0.06)', 'bg' => '#1a1a1a', 'dot' => '#666666'],
                                 'cancelled' => ['border' => '#fecaca', 'bg' => '#fef2f2', 'dot' => '#dc2626'],
                                 'no_show'   => ['border' => '#fde68a', 'bg' => '#fefce8', 'dot' => '#d97706'],
                             ];
@@ -1587,9 +1587,9 @@
                                 {{ substr($appt->start_time, 0, 5) }} - {{ substr($appt->end_time, 0, 5) }}
                             </div>
                             <div style="flex: 1; min-width: 0;">
-                                <span style="font-size: 0.8rem; font-weight: 600; color: #111827;">{{ $appt->customer_name }}</span>
+                                <span style="font-size: 0.8rem; font-weight: 600; color: #e3e3e3;">{{ $appt->customer_name }}</span>
                                 @if($appt->service_description)
-                                    <span style="font-size: 0.7rem; color: #6b7280; margin-left: 0.375rem;">· {{ $appt->service_description }}</span>
+                                    <span style="font-size: 0.7rem; color: #818181; margin-left: 0.375rem;">· {{ $appt->service_description }}</span>
                                 @endif
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.375rem; flex-shrink: 0;">
@@ -1604,35 +1604,35 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <!-- Gráfico de Vendas -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Vendas dos Últimos 7 Dias</h3>
+                <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">
+                    <h3 class="text-base sm:text-lg font-semibold text-dg-100 mb-4">Vendas dos Últimos 7 Dias</h3>
                     <div class="h-48 sm:h-auto">
                         <canvas id="salesChart" height="200"></canvas>
                     </div>
                 </div>
 
                 <!-- Produtos Mais Vendidos -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
-                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Produtos Mais Vendidos</h3>
+                <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">
+                    <h3 class="text-base sm:text-lg font-semibold text-dg-100 mb-4">Produtos Mais Vendidos</h3>
                     @if(count($topProducts) > 0)
                         <div class="space-y-3">
                             @foreach($topProducts as $index => $item)
-                                <div class="flex items-center justify-between p-3 rounded-lg {{ $index === 0 ? 'bg-gray-100' : 'hover:bg-gray-50' }}">
+                                <div class="flex items-center justify-between p-3 rounded-lg {{ $index === 0 ? 'bg-surface-overlay' : 'hover:bg-surface' }}">
                                     <div class="flex items-center">
-                                        <span class="w-6 h-6 bg-gray-900 text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">
+                                        <span class="w-6 h-6 bg-surface text-white rounded-full flex items-center justify-center text-xs font-bold mr-3">
                                             {{ $index + 1 }}
                                         </span>
                                         <div>
-                                            <p class="font-medium text-gray-900">{{ $item['name'] ?? $item['product']?->name ?? 'Produto removido' }}</p>
-                                            <p class="text-xs text-gray-500">{{ $item['sku'] ?? $item['product']?->sku ?? '-' }}</p>
+                                            <p class="font-medium text-dg-100">{{ $item['name'] ?? $item['product']?->name ?? 'Produto removido' }}</p>
+                                            <p class="text-xs text-dg-500">{{ $item['sku'] ?? $item['product']?->sku ?? '-' }}</p>
                                         </div>
                                     </div>
-                                    <span class="px-3 py-1 bg-gray-900 text-white text-sm rounded-full">{{ $item['total_sold'] }} un</span>
+                                    <span class="px-3 py-1 bg-surface text-white text-sm rounded-full">{{ $item['total_sold'] }} un</span>
                                 </div>
                             @endforeach
                         </div>
                     @else
-                        <p class="text-gray-500 text-center py-8">Nenhuma venda registrada ainda.</p>
+                        <p class="text-dg-500 text-center py-8">Nenhuma venda registrada ainda.</p>
                     @endif
                 </div>
             </div>
@@ -1648,14 +1648,14 @@
              x-data="stockCatalogModal()"
              style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1.5rem;">
             <div @click="stockModalOpen = false" style="position: absolute; inset: 0; background: rgba(0,0,0,0.5);"></div>
-            <div @click.stop style="position: relative; background: white; border-radius: 1rem; width: 100%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
-                <div class="p-4 sm:px-6 sm:py-5 border-b border-gray-200 rounded-t-2xl shrink-0">
+            <div @click.stop style="position: relative; background: #141414; border-radius: 1rem; width: 100%; max-width: 1000px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.25);">
+                <div class="p-4 sm:px-6 sm:py-5 border-b border-border rounded-t-2xl shrink-0">
                     <div class="flex items-start justify-between mb-3">
                         <div>
-                            <h2 class="text-xl font-extrabold text-gray-900 m-0">📱 Nosso Estoque</h2>
-                            <p class="text-xs text-gray-500 mt-1 mb-0">Consulte o que temos disponível para venda</p>
+                            <h2 class="text-xl font-extrabold text-dg-100 m-0">📱 Nosso Estoque</h2>
+                            <p class="text-xs text-dg-500 mt-1 mb-0">Consulte o que temos disponível para venda</p>
                         </div>
-                        <button @click="stockModalOpen = false" class="w-8 h-8 rounded-lg bg-gray-100 border-none cursor-pointer flex items-center justify-center text-base text-gray-500 shrink-0 hover:bg-gray-200 transition-colors">✕</button>
+                        <button @click="stockModalOpen = false" class="w-8 h-8 rounded-lg bg-surface-overlay border-none cursor-pointer flex items-center justify-center text-base text-dg-500 shrink-0 hover:bg-surface-elevated transition-colors">✕</button>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         @if(count($stockItems['used']) > 0)
@@ -1675,8 +1675,8 @@
                     <div style="margin-bottom: 1.5rem;">
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="font-size: 1.125rem;">🔄</span>
-                            <h3 style="font-size: 0.9375rem; font-weight: 800; color: #111827; margin: 0;">Seminovos</h3>
-                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fff7ed; color: #ea580c;">{{ $stockItems['usedCount'] }} un.</span>
+                            <h3 style="font-size: 0.9375rem; font-weight: 800; color: #e3e3e3; margin: 0;">Seminovos</h3>
+                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #1414147ed; color: #ea580c;">{{ $stockItems['usedCount'] }} un.</span>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.625rem;">
                             @foreach($stockItems['used'] as $idx => $item)
@@ -1687,13 +1687,13 @@
                                     <span class="text-[0.7rem] font-extrabold text-orange-600">{{ $item['qty'] }}x</span>
                                     @endif
                                 </div>
-                                <p class="text-[0.8rem] font-bold text-gray-900 mt-2 mb-1 leading-tight">{{ $item['name'] }}</p>
+                                <p class="text-[0.8rem] font-bold text-dg-100 mt-2 mb-1 leading-tight">{{ $item['name'] }}</p>
                                 <div class="flex flex-wrap gap-1 mb-1.5">
                                     @if($item['storage'])
-                                    <span class="text-[0.625rem] font-semibold px-1.5 py-px rounded-full bg-white text-gray-700 border border-gray-200">💾 {{ $item['storage'] }}</span>
+                                    <span class="text-[0.625rem] font-semibold px-1.5 py-px rounded-full bg-surface-raised text-dg-300 border border-border">💾 {{ $item['storage'] }}</span>
                                     @endif
                                     @if($item['color'])
-                                    <span class="text-[0.625rem] font-semibold px-1.5 py-px rounded-full bg-white text-gray-700 border border-gray-200">🎨 {{ $item['color'] }}</span>
+                                    <span class="text-[0.625rem] font-semibold px-1.5 py-px rounded-full bg-surface-raised text-dg-300 border border-border">🎨 {{ $item['color'] }}</span>
                                     @endif
                                 </div>
                                 <div class="flex flex-wrap gap-1 mb-1.5">
@@ -1708,11 +1708,11 @@
                                     @endif
                                 </div>
                                 @if(!empty($item['notes']))
-                                <p class="text-[0.65rem] text-gray-500 italic mb-1.5 leading-snug">📝 {{ $item['notes'] }}</p>
+                                <p class="text-[0.65rem] text-dg-500 italic mb-1.5 leading-snug">📝 {{ $item['notes'] }}</p>
                                 @endif
                                 @if($item['price'] > 0)
                                 <div class="mt-auto">
-                                    <span class="text-[0.7rem] text-gray-400 line-through">De R$ {{ number_format($item['price'] + 200, 2, ',', '.') }}</span>
+                                    <span class="text-[0.7rem] text-dg-500 line-through">De R$ {{ number_format($item['price'] + 200, 2, ',', '.') }}</span>
                                     <p class="text-[0.875rem] font-extrabold text-emerald-600 m-0">Por R$ {{ number_format($item['price'], 2, ',', '.') }}</p>
                                 </div>
                                 @endif
@@ -1730,8 +1730,8 @@
                     <div>
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="font-size: 1.125rem;">✨</span>
-                            <h3 style="font-size: 0.9375rem; font-weight: 800; color: #111827; margin: 0;">Estoque Novo</h3>
-                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #eff6ff; color: #2563eb;">{{ $stockItems['newCount'] }} mod.</span>
+                            <h3 style="font-size: 0.9375rem; font-weight: 800; color: #e3e3e3; margin: 0;">Estoque Novo</h3>
+                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: rgba(59,130,246,0.1); color: #2563eb;">{{ $stockItems['newCount'] }} mod.</span>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.625rem;">
                             @foreach($stockItems['new'] as $item)
@@ -1742,13 +1742,13 @@
                                     <span style="font-size: 0.7rem; font-weight: 800; color: #2563eb;">{{ $item['qty'] }}x</span>
                                     @endif
                                 </div>
-                                <p style="font-size: 0.8rem; font-weight: 700; color: #111827; margin: 0.5rem 0 0.25rem 0; line-height: 1.2;">{{ $item['name'] }}</p>
+                                <p style="font-size: 0.8rem; font-weight: 700; color: #e3e3e3; margin: 0.5rem 0 0.25rem 0; line-height: 1.2;">{{ $item['name'] }}</p>
                                 <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 0.375rem;">
                                     @if($item['storage'])
-                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">💾 {{ $item['storage'] }}</span>
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #141414; color: #a4a4a4; border: 1px solid rgba(255,255,255,0.06);">💾 {{ $item['storage'] }}</span>
                                     @endif
                                     @if($item['color'])
-                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: white; color: #374151; border: 1px solid #e5e7eb;">🎨 {{ $item['color'] }}</span>
+                                    <span style="font-size: 0.625rem; font-weight: 600; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #141414; color: #a4a4a4; border: 1px solid rgba(255,255,255,0.06);">🎨 {{ $item['color'] }}</span>
                                     @endif
                                 </div>
                                 @if($item['price'] > 0)
@@ -1760,7 +1760,7 @@
                     </div>
                     @endif
                     @if(count($stockItems['used']) === 0 && count($stockItems['new']) === 0)
-                    <div style="text-align: center; padding: 2rem; color: #6b7280;">
+                    <div style="text-align: center; padding: 2rem; color: #818181;">
                         <p style="font-size: 2rem; margin-bottom: 0.5rem;">📭</p>
                         <p style="font-size: 0.875rem;">Nenhum produto no estoque no momento.</p>
                     </div>
@@ -1868,7 +1868,7 @@
 
         {{-- Container centralizado --}}
         <div style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1rem; pointer-events: none;">
-            <div style="position: relative; background: white; border-radius: 1rem; width: 100%; max-width: 580px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.25); pointer-events: auto;"
+            <div style="position: relative; background: #141414; border-radius: 1rem; width: 100%; max-width: 580px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.25); pointer-events: auto;"
                  x-transition:enter="transition ease-out duration-200"
                  x-transition:enter-start="opacity-0 transform scale-95"
                  x-transition:enter-end="opacity-100 transform scale-100"
@@ -1877,22 +1877,22 @@
                  x-transition:leave-end="opacity-0 transform scale-95">
 
                 {{-- Header fixo --}}
-                <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
                     <div style="min-width: 0;">
                         <div style="display: flex; align-items: center; gap: 0.625rem;">
-                            <div style="width: 2.25rem; height: 2.25rem; background: #eff6ff; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <div style="width: 2.25rem; height: 2.25rem; background: rgba(59,130,246,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <svg style="width: 1.125rem; height: 1.125rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                             </div>
                             <div>
-                                <h2 style="font-size: 1rem; font-weight: 700; color: #111827; line-height: 1.3; margin: 0;">Follow-Up Pós-Venda</h2>
-                                <p style="font-size: 0.6875rem; color: #6b7280; margin: 0;">
+                                <h2 style="font-size: 1rem; font-weight: 700; color: #e3e3e3; line-height: 1.3; margin: 0;">Follow-Up Pós-Venda</h2>
+                                <p style="font-size: 0.6875rem; color: #818181; margin: 0;">
                                     <span x-text="pendingCount"></span> pendente<span x-show="pendingCount !== 1">s</span>
                                     · clientes há 7+ dias sem contato
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <button @click="open = false" style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; background: #f3f4f6; border: none; cursor: pointer; color: #6b7280; flex-shrink: 0; transition: all 0.15s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                    <button @click="open = false" style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; background: #222222; border: none; cursor: pointer; color: #818181; flex-shrink: 0; transition: all 0.15s;" onmouseover="this.style.background='#222222'" onmouseout="this.style.background='transparent'">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
@@ -1900,8 +1900,8 @@
                 {{-- Lista scrollável --}}
                 <div style="flex: 1; overflow-y: auto; min-height: 0;">
                     <template x-if="sales.length === 0">
-                        <div style="text-align: center; padding: 3rem 1.5rem; color: #6b7280;">
-                            <svg style="width: 3rem; height: 3rem; margin: 0 auto 0.75rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <div style="text-align: center; padding: 3rem 1.5rem; color: #818181;">
+                            <svg style="width: 3rem; height: 3rem; margin: 0 auto 0.75rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             <p style="font-weight: 600; font-size: 0.875rem;">Todos os follow-ups estão em dia!</p>
                         </div>
                     </template>
@@ -1910,23 +1910,23 @@
                         <template x-for="(sale, idx) in sales" :key="sale.id">
                             <div style="padding: 0.875rem 1rem; border-radius: 0.75rem; transition: all 0.2s; margin-bottom: 0.5rem;"
                                  :style="sale.done
-                                    ? 'opacity: 0.35; background: #f9fafb;'
-                                    : 'background: white; border: 1px solid #e5e7eb;'">
+                                    ? 'opacity: 0.35; background: #1a1a1a;'
+                                    : 'background: #141414; border: 1px solid rgba(255,255,255,0.06);'">
 
                                 {{-- Info do cliente --}}
                                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.375rem; flex-wrap: wrap;">
-                                    <span style="font-weight: 700; font-size: 0.8125rem; color: #111827;" x-text="sale.customer_name"></span>
-                                    <span style="font-size: 0.5625rem; font-weight: 700; padding: 0.125rem 0.4375rem; border-radius: 9999px; background: #dbeafe; color: #1e40af; white-space: nowrap;" x-text="'há ' + sale.days_since + ' dias'"></span>
+                                    <span style="font-weight: 700; font-size: 0.8125rem; color: #e3e3e3;" x-text="sale.customer_name"></span>
+                                    <span style="font-size: 0.5625rem; font-weight: 700; padding: 0.125rem 0.4375rem; border-radius: 9999px; background: rgba(59,130,246,0.15); color: #93c5fd; white-space: nowrap;" x-text="'há ' + sale.days_since + ' dias'"></span>
                                     <template x-if="sale.done">
-                                        <span style="font-size: 0.5625rem; font-weight: 700; padding: 0.125rem 0.4375rem; border-radius: 9999px; background: #dcfce7; color: #166534;">Concluído</span>
+                                        <span style="font-size: 0.5625rem; font-weight: 700; padding: 0.125rem 0.4375rem; border-radius: 9999px; background: rgba(16,185,129,0.15); color: #6ee7b7;">Concluído</span>
                                     </template>
                                 </div>
 
                                 {{-- Produtos --}}
-                                <p style="font-size: 0.75rem; color: #4b5563; margin: 0 0 0.25rem 0; line-height: 1.4;" x-text="sale.product_names"></p>
+                                <p style="font-size: 0.75rem; color: #818181; margin: 0 0 0.25rem 0; line-height: 1.4;" x-text="sale.product_names"></p>
 
                                 {{-- Venda + data --}}
-                                <p style="font-size: 0.6875rem; color: #9ca3af; margin: 0 0 0.625rem 0;">
+                                <p style="font-size: 0.6875rem; color: #666666; margin: 0 0 0.625rem 0;">
                                     <span x-text="sale.sale_number"></span> · <span x-text="sale.sold_at_formatted"></span>
                                     <template x-if="sale.customer_phone">
                                         <span> · <span x-text="sale.customer_phone"></span></span>
@@ -1944,8 +1944,8 @@
                                         </a>
                                     </template>
                                     <button @click="markDone(sale)"
-                                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.4375rem 0.875rem; background: white; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; border: 1px solid #d1d5db; cursor: pointer; transition: all 0.15s; line-height: 1;"
-                                            onmouseover="this.style.background='#f3f4f6';this.style.borderColor='#9ca3af'" onmouseout="this.style.background='white';this.style.borderColor='#d1d5db'"
+                                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.4375rem 0.875rem; background: #141414; color: #a4a4a4; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; transition: all 0.15s; line-height: 1;"
+                                            onmouseover="this.style.background='#f3f4f6';this.style.borderColor='#9ca3af'" onmouseout="this.style.background='#141414';this.style.borderColor='rgba(255,255,255,0.08)'"
                                             :disabled="sale.loading">
                                         <svg x-show="!sale.loading" style="width: 14px; height: 14px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                         <svg x-show="sale.loading" x-cloak style="width: 14px; height: 14px; flex-shrink: 0; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -1959,8 +1959,8 @@
 
                 {{-- Footer --}}
                 <div style="padding: 0.75rem 1.5rem; border-top: 1px solid #f3f4f6; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;">
-                    <span style="font-size: 0.6875rem; color: #9ca3af;" x-text="doneCount + ' de ' + sales.length + ' concluído' + (doneCount !== 1 ? 's' : '')"></span>
-                    <button @click="open = false" style="padding: 0.375rem 1rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                    <span style="font-size: 0.6875rem; color: #666666;" x-text="doneCount + ' de ' + sales.length + ' concluído' + (doneCount !== 1 ? 's' : '')"></span>
+                    <button @click="open = false" style="padding: 0.375rem 1rem; background: #222222; color: #a4a4a4; font-size: 0.75rem; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='#222222'" onmouseout="this.style.background='transparent'">
                         Fechar
                     </button>
                 </div>
@@ -2058,7 +2058,7 @@
                 {{ $monthSummary['other_apple'] }}
             ];
             if (mixData.every(v => v === 0)) {
-                mixEl.parentElement.innerHTML = '<p style="color:#9ca3af;font-size:0.75rem;text-align:center">Sem dados</p>';
+                mixEl.parentElement.innerHTML = '<p style="color:#666666;font-size:0.75rem;text-align:center">Sem dados</p>';
                 return;
             }
             new Chart(mixEl.getContext('2d'), {

@@ -1,18 +1,18 @@
 <x-app-layout>
     <x-slot name="title">Calculadora Stone</x-slot>
     <div class="py-6" x-data="stoneCalculatorAdvanced()" x-init="init()">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
 
             <!-- Header -->
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Calculadora Stone</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Calcule taxas e gere mensagens para WhatsApp</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Calculadora Stone</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">Calcule taxas e gere mensagens para WhatsApp</p>
                 </div>
                 <button @click="clearAll()" type="button"
-                        style="padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #6b7280; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;"
+                        style="padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; background: #141414; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;"
                         onmouseover="this.style.borderColor='#ef4444'; this.style.color='#ef4444';"
-                        onmouseout="this.style.borderColor='#d1d5db'; this.style.color='#6b7280';">
+                        onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.color='#6b7280';">
                     Limpar tudo
                 </button>
             </div>
@@ -23,11 +23,11 @@
                 <!-- COLUNA ESQUERDA: Inputs -->
                 <div>
                     <!-- Valores Rápidos (sincronizado com Marketing) -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem 1.25rem; margin-bottom: 1rem;">
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem 1.25rem; margin-bottom: 1rem;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Valores Rápidos</label>
+                            <label style="font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Valores Rápidos</label>
                             <a href="{{ route('marketing.index', ['tab' => 'prices']) }}"
-                               style="font-size: 11px; color: #9ca3af; cursor: pointer; background: none; border: none; display: flex; align-items: center; gap: 3px; text-decoration: none;"
+                               style="font-size: 11px; color: #666666; cursor: pointer; background: none; border: none; display: flex; align-items: center; gap: 3px; text-decoration: none;"
                                onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9ca3af'">
                                 <svg style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -37,7 +37,7 @@
                         </div>
 
                         <template x-if="quickValues.length === 0">
-                            <div style="text-align: center; padding: 1rem; color: #9ca3af; font-size: 13px;">
+                            <div style="text-align: center; padding: 1rem; color: #666666; font-size: 13px;">
                                 Nenhum preço ativo no Marketing.
                                 <a href="{{ route('marketing.index', ['tab' => 'prices']) }}" style="color: #3b82f6; text-decoration: underline;">Cadastrar preços</a>
                             </div>
@@ -52,7 +52,7 @@
                                         <button @click="selectQuickValue(qv.name, qv.value)" type="button"
                                                 :style="isQuickValueActive(qv.name, qv.value)
                                                     ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #111827; background: #111827; color: white; white-space: nowrap;'
-                                                    : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: white; color: #374151; white-space: nowrap;'">
+                                                    : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #a4a4a4; white-space: nowrap;'">
                                             <span x-text="qv.name"></span>
                                             <span style="opacity: 0.6; margin-left: 4px;" x-text="'R$ ' + formatNumber(qv.value)"></span>
                                         </button>
@@ -61,8 +61,8 @@
                                     <template x-if="qv.variants && qv.variants.length > 0">
                                         <div :style="isQuickValueActiveByName(qv.name)
                                                 ? 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #111827; overflow: hidden;'
-                                                : 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #e5e7eb; overflow: hidden;'">
-                                            <span style="padding: 6px 8px 6px 12px; font-size: 12px; font-weight: 600; color: #374151; white-space: nowrap;" x-text="qv.name"></span>
+                                                : 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid rgba(255,255,255,0.08); overflow: hidden;'">
+                                            <span style="padding: 6px 8px 6px 12px; font-size: 12px; font-weight: 600; color: #a4a4a4; white-space: nowrap;" x-text="qv.name"></span>
                                             <template x-for="(v, vi) in qv.variants" :key="vi">
                                                 <button @click="selectQuickValue(qv.name + ' ' + v.label, v.value)" type="button"
                                                         :style="isQuickValueActive(qv.name + ' ' + v.label, v.value)
@@ -70,7 +70,7 @@
                                                             : 'padding: 4px 8px; cursor: pointer; border: none; background: transparent; display: flex; align-items: center; gap: 4px;'"
                                                         :title="v.label + ' - R$ ' + formatNumber(v.value)">
                                                     <span :style="'width: 14px; height: 14px; border-radius: 50%; border: 2px solid ' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'white' : '#d1d5db') + '; background: ' + v.color + ';'"></span>
-                                                    <span :style="'font-size: 11px; font-weight: 600;' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? ' color: white;' : ' color: #6b7280;')"
+                                                    <span :style="'font-size: 11px; font-weight: 600;' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? ' color: white;' : ' color: #818181;')"
                                                           x-text="formatNumber(v.value)"></span>
                                                 </button>
                                             </template>
@@ -82,56 +82,56 @@
                     </div>
 
                     <!-- Tipo de Compra -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1rem;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Tipo de Compra</label>
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1rem;">
+                        <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Tipo de Compra</label>
                         <div style="display: flex; gap: 0.5rem;">
                             <button @click="deliveryType = 'pronta'" type="button"
                                     :style="deliveryType === 'pronta'
                                         ? 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #111827; background: #111827; color: white; cursor: pointer;'
-                                        : 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
+                                        : 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 500; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #818181; cursor: pointer;'">
                                 Pronta Entrega
                             </button>
                             <button @click="deliveryType = 'programada'" type="button"
                                     :style="deliveryType === 'programada'
                                         ? 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #111827; background: #111827; color: white; cursor: pointer;'
-                                        : 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
+                                        : 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 500; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #818181; cursor: pointer;'">
                                 Compra Programada
                             </button>
                         </div>
                     </div>
 
                     <!-- Descrição + Valor -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1rem;">
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1rem;">
                         <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Descrição do Aparelho (opcional)</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Descrição do Aparelho (opcional)</label>
                             <input type="text"
                                    x-model="deviceDescription"
                                    x-ref="deviceField"
                                    @keydown.enter="$refs.amountField.focus()"
                                    placeholder="Ex: iPhone 16 Pro Max 256GB Black"
-                                   style="width: 100%; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 15px; color: #111827; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'; this.style.background='white'"
-                                   onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                                   style="width: 100%; padding: 12px 16px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; font-size: 15px; color: #e3e3e3; outline: none;"
+                                   onfocus="this.style.borderColor='#111827'; this.style.background='#141414'"
+                                   onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #111827; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Valor que desejo receber *</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #e3e3e3; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Valor que desejo receber *</label>
                             <div style="position: relative;">
-                                <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 16px; font-weight: 500;">R$</span>
+                                <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #666666; font-size: 16px; font-weight: 500;">R$</span>
                                 <input type="text"
                                        x-model="amountInput"
                                        x-ref="amountField"
                                        @input.debounce.300ms="calculate()"
                                        @keydown.enter="$refs.downPaymentField.focus()"
                                        placeholder="0,00"
-                                       style="width: 100%; padding: 16px 16px 16px 44px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 24px; font-weight: 700; color: #111827; outline: none; text-align: right;"
-                                       onfocus="this.style.borderColor='#111827'; this.style.background='white'"
-                                       onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                                       style="width: 100%; padding: 16px 16px 16px 44px; background: #1a1a1a; border: 2px solid rgba(255,255,255,0.08); border-radius: 10px; font-size: 24px; font-weight: 700; color: #e3e3e3; outline: none; text-align: right;"
+                                       onfocus="this.style.borderColor='#111827'; this.style.background='#141414'"
+                                       onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
                             </div>
                         </div>
                     </div>
 
                     <!-- Entrada + Trade-in -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1rem;">
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1rem;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div>
                                 <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #059669; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.375rem;">Entrada (Pix)</label>
@@ -143,8 +143,8 @@
                                            @input.debounce.300ms="calculate()"
                                            @keydown.enter="$refs.tradeInField.focus()"
                                            placeholder="0,00"
-                                           style="width: 100%; padding: 12px 14px 12px 40px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; font-size: 18px; font-weight: 600; color: #059669; outline: none; text-align: right;"
-                                           onfocus="this.style.borderColor='#059669'; this.style.background='white'"
+                                           style="width: 100%; padding: 12px 14px 12px 40px; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 10px; font-size: 18px; font-weight: 600; color: #059669; outline: none; text-align: right;"
+                                           onfocus="this.style.borderColor='#059669'; this.style.background='#141414'"
                                            onblur="this.style.borderColor='#bbf7d0'; this.style.background='#f0fdf4'">
                                 </div>
                             </div>
@@ -158,7 +158,7 @@
                                            @input.debounce.300ms="calculate()"
                                            placeholder="0,00"
                                            style="width: 100%; padding: 12px 14px 12px 40px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; font-size: 18px; font-weight: 600; color: #d97706; outline: none; text-align: right;"
-                                           onfocus="this.style.borderColor='#d97706'; this.style.background='white'"
+                                           onfocus="this.style.borderColor='#d97706'; this.style.background='#141414'"
                                            onblur="this.style.borderColor='#fde68a'; this.style.background='#fef3c7'">
                                 </div>
                             </div>
@@ -166,24 +166,24 @@
                         <!-- Exibir trade-in na mensagem -->
                         <div x-show="tradeInValue > 0" style="margin-top: 0.75rem; display: flex; align-items: center; gap: 8px;">
                             <input type="checkbox" x-model="showTradeInInMessage" id="showTradeInMsg"
-                                   style="width: 16px; height: 16px; accent-color: #111827; cursor: pointer;">
-                            <label for="showTradeInMsg" style="font-size: 13px; color: #6b7280; cursor: pointer; user-select: none;">
+                                   style="width: 16px; height: 16px; accent-color: #e3e3e3; cursor: pointer;">
+                            <label for="showTradeInMsg" style="font-size: 13px; color: #818181; cursor: pointer; user-select: none;">
                                 Exibir valor trade-in na simulação
                             </label>
                         </div>
 
                         <!-- Resumo -->
-                        <div x-show="finalAmount > 0" style="margin-top: 0.75rem; padding: 0.75rem; background: #f9fafb; border-radius: 8px; display: flex; justify-content: space-between; font-size: 13px;">
-                            <span x-show="downPayment > 0 || tradeInValue > 0" style="color: #6b7280;">Restante no cartão:</span>
-                            <span x-show="downPayment <= 0 && tradeInValue <= 0" style="color: #6b7280;">Valor no cartão:</span>
-                            <span style="font-weight: 700; color: #111827;" x-text="'R$ ' + formatNumber(finalAmount)"></span>
+                        <div x-show="finalAmount > 0" style="margin-top: 0.75rem; padding: 0.75rem; background: #1a1a1a; border-radius: 8px; display: flex; justify-content: space-between; font-size: 13px;">
+                            <span x-show="downPayment > 0 || tradeInValue > 0" style="color: #818181;">Restante no cartão:</span>
+                            <span x-show="downPayment <= 0 && tradeInValue <= 0" style="color: #818181;">Valor no cartão:</span>
+                            <span style="font-weight: 700; color: #e3e3e3;" x-text="'R$ ' + formatNumber(finalAmount)"></span>
                         </div>
                     </div>
 
                     <!-- Preview da mensagem -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem;">
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                            <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Preview da mensagem</label>
+                            <label style="font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Preview da mensagem</label>
                             <div style="display: flex; gap: 0.5rem;">
                                 <button @click="copyAll()" type="button"
                                         :style="copiedAll
@@ -204,7 +204,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; font-size: 13px; color: #374151; white-space: pre-wrap; font-family: monospace; line-height: 1.6; min-height: 120px; max-height: 300px; overflow-y: auto;"
+                        <div style="background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 1rem; font-size: 13px; color: #a4a4a4; white-space: pre-wrap; font-family: monospace; line-height: 1.6; min-height: 120px; max-height: 300px; overflow-y: auto;"
                              x-text="results.length > 0 ? buildAllMessage() : 'Preencha o valor para visualizar a mensagem...'"></div>
                     </div>
                 </div>
@@ -212,38 +212,38 @@
                 <!-- COLUNA DIREITA: Resultados -->
                 <div>
                     <!-- Loading -->
-                    <div x-show="loading" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 3rem; text-align: center;">
-                        <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f4f6; border-top-color: #111827; border-radius: 50%; animation: stoneCalcSpin 1s linear infinite;"></div>
+                    <div x-show="loading" style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 3rem; text-align: center;">
+                        <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f4f6; border-top-color: #e3e3e3; border-radius: 50%; animation: stoneCalcSpin 1s linear infinite;"></div>
                     </div>
 
                     <!-- Erro -->
-                    <div x-show="error && !loading" x-transition style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                    <div x-show="error && !loading" x-transition style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
                         <div style="display: flex; align-items: start; gap: 10px;">
-                            <svg style="width: 20px; height: 20px; color: #dc2626; flex-shrink: 0; margin-top: 2px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg style="width: 20px; height: 20px; color: #fca5a5; flex-shrink: 0; margin-top: 2px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             <div>
-                                <div style="font-size: 14px; font-weight: 600; color: #dc2626; margin-bottom: 4px;">Erro</div>
-                                <div style="font-size: 13px; color: #991b1b;" x-text="error"></div>
+                                <div style="font-size: 14px; font-weight: 600; color: #fca5a5; margin-bottom: 4px;">Erro</div>
+                                <div style="font-size: 13px; color: #fca5a5;" x-text="error"></div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Estado vazio -->
-                    <div x-show="!loading && results.length === 0 && !error" style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 3rem; text-align: center;">
-                        <svg style="width: 48px; height: 48px; color: #d1d5db; margin: 0 auto 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div x-show="!loading && results.length === 0 && !error" style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 3rem; text-align: center;">
+                        <svg style="width: 48px; height: 48px; color: #515151; margin: 0 auto 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                         </svg>
-                        <p style="font-size: 14px; color: #9ca3af;">Preencha o valor desejado para calcular as parcelas</p>
+                        <p style="font-size: 14px; color: #666666;">Preencha o valor desejado para calcular as parcelas</p>
                     </div>
 
                     <!-- Resultados -->
                     <div x-show="!loading && results.length > 0" x-transition>
                         <!-- Pix -->
-                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <div style="background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                             <div>
                                 <div style="font-size: 15px; font-weight: 700; color: #059669;">Pix</div>
-                                <div style="font-size: 12px; color: #6b7280;">Melhor preço - sem taxa</div>
+                                <div style="font-size: 12px; color: #818181;">Melhor preço - sem taxa</div>
                             </div>
                             <div style="font-size: 22px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(finalAmount)"></div>
                         </div>
@@ -254,13 +254,13 @@
                                 <button @click="setSelection(p.key)" type="button"
                                         :style="activePreset === p.key
                                             ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #111827; background: #111827; color: white;'
-                                            : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e5e7eb; background: white; color: #374151;'"
+                                            : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #a4a4a4;'"
                                         x-text="p.label"></button>
                             </template>
                         </div>
 
                         <!-- Tabela -->
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                        <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                             <div style="display: grid; grid-template-columns: 32px 1fr auto 52px; background: #111827; color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
                                 <div style="padding: 10px 0 10px 10px; display: flex; align-items: center;">
                                     <input type="checkbox" :checked="results.every(r => r.selected)" @change="results.forEach(r => r.selected = $event.target.checked); activePreset = $event.target.checked ? 'all' : null"
@@ -271,24 +271,24 @@
                                 <div></div>
                             </div>
                             <template x-for="(row, idx) in results" :key="idx">
-                                <div :style="'display: grid; grid-template-columns: 32px 1fr auto 52px; align-items: center; border-top: 1px solid #f3f4f6; transition: opacity 0.15s;' + (row.selected ? (idx % 2 === 0 ? ' background: white;' : ' background: #f9fafb;') : ' background: #f3f4f6; opacity: 0.4;')">
+                                <div :style="'display: grid; grid-template-columns: 32px 1fr auto 52px; align-items: center; border-top: 1px solid #f3f4f6; transition: opacity 0.15s;' + (row.selected ? (idx % 2 === 0 ? ' background: #141414;' : ' background: #1a1a1a;') : ' background: #222222; opacity: 0.4;')">
                                     <div style="padding: 10px 0 10px 10px; display: flex; align-items: center;">
-                                        <input type="checkbox" x-model="row.selected" @change="activePreset = null" style="width: 15px; height: 15px; accent-color: #111827; cursor: pointer;">
+                                        <input type="checkbox" x-model="row.selected" @change="activePreset = null" style="width: 15px; height: 15px; accent-color: #e3e3e3; cursor: pointer;">
                                     </div>
                                     <div style="padding: 10px 14px;">
-                                        <div style="font-size: 14px; font-weight: 600; color: #111827;" x-text="row.label"></div>
-                                        <div x-show="row.installments > 1" style="font-size: 12px; color: #6b7280;" x-text="row.installments + 'x de R$ ' + formatNumber(row.installment_value)"></div>
-                                        <div style="font-size: 11px; color: #9ca3af;" x-text="'Taxa ' + row.mdr_rate.toString().replace('.', ',') + '%'"></div>
+                                        <div style="font-size: 14px; font-weight: 600; color: #e3e3e3;" x-text="row.label"></div>
+                                        <div x-show="row.installments > 1" style="font-size: 12px; color: #818181;" x-text="row.installments + 'x de R$ ' + formatNumber(row.installment_value)"></div>
+                                        <div style="font-size: 11px; color: #666666;" x-text="'Taxa ' + row.mdr_rate.toString().replace('.', ',') + '%'"></div>
                                     </div>
                                     <div style="padding: 10px 14px; text-align: right;">
-                                        <div style="font-size: 16px; font-weight: 700; color: #111827;" x-text="'R$ ' + formatNumber(row.gross_amount)"></div>
+                                        <div style="font-size: 16px; font-weight: 700; color: #e3e3e3;" x-text="'R$ ' + formatNumber(row.gross_amount)"></div>
                                         <div style="font-size: 11px; color: #ef4444;" x-text="'taxa R$ ' + formatNumber(row.fee_amount)"></div>
                                     </div>
                                     <div style="padding: 6px 8px; display: flex; align-items: center; justify-content: center;">
                                         <button @click.stop="copyRow(row)" type="button"
                                                 :style="row.copied
                                                     ? 'background: #059669; border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center;'
-                                                    : 'background: #e5e7eb; border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: #374151; display: flex; align-items: center; justify-content: center;'"
+                                                    : 'background: #e5e7eb; border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: #a4a4a4; display: flex; align-items: center; justify-content: center;'"
                                                 :title="row.copied ? 'Copiado!' : 'Copiar mensagem'">
                                             <svg x-show="!row.copied" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -303,7 +303,7 @@
                         </div>
 
                         <!-- Você recebe + Ações fixas -->
-                        <div style="margin-top: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1rem 1.25rem;">
+                        <div style="margin-top: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1rem 1.25rem;">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <span style="font-size: 14px; font-weight: 600; color: #059669;">VOCÊ RECEBE</span>
                                 <span style="font-size: 22px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(finalAmount)"></span>

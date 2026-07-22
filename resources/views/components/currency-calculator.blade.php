@@ -21,22 +21,22 @@
          x-transition:leave-end="opacity-0 -translate-x-4"
          @keydown.escape.window="open = false"
          x-cloak
-         style="position: fixed; bottom: 96px; left: 24px; z-index: 50; width: 400px; max-height: 80vh; overflow-y: auto; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);">
+         style="position: fixed; bottom: 96px; left: 24px; z-index: 50; width: 400px; max-height: 80vh; overflow-y: auto; background: #141414; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);">
 
             <!-- Header -->
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 0;">
-                <button @click="open = false" type="button" style="background: none; border: none; cursor: pointer; padding: 4px; color: #6b7280;">
+                <button @click="open = false" type="button" style="background: none; border: none; cursor: pointer; padding: 4px; color: #818181;">
                     <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
-                <h2 style="font-size: 17px; font-weight: 700; color: #111827;">Calculadora de importação</h2>
+                <h2 style="font-size: 17px; font-weight: 700; color: #e3e3e3;">Calculadora de importação</h2>
                 <div style="width: 24px;"></div>
             </div>
 
             <!-- Cotação atual -->
             <div style="padding: 8px 24px 0;">
-                <div style="font-size: 12px; color: #6b7280; text-align: center;">
+                <div style="font-size: 12px; color: #818181; text-align: center;">
                     Cotação: US$ 1,00 = R$ <span x-text="formatNumber(exchangeRate)"></span>
                 </div>
             </div>
@@ -45,17 +45,17 @@
             <div style="padding: 16px 24px 24px;">
                 <!-- Valor em Dólar -->
                 <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Valor em Dólar (US$)</label>
+                    <label style="display: block; font-size: 13px; color: #818181; margin-bottom: 6px;">Valor em Dólar (US$)</label>
                     <div style="position: relative;">
-                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 15px; font-weight: 500;">$</span>
+                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #666666; font-size: 15px; font-weight: 500;">$</span>
                         <input type="text"
                                x-model="dollarValue"
                                @input="calculate()"
                                placeholder="0,00"
                                x-ref="dollarField"
-                               style="width: 100%; padding: 14px 16px 14px 36px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 20px; font-weight: 600; color: #111827; outline: none; text-align: right;"
-                               onfocus="this.style.borderColor='#2563eb'; this.style.background='white'"
-                               onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                               style="width: 100%; padding: 14px 16px 14px 36px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; font-size: 20px; font-weight: 600; color: #e3e3e3; outline: none; text-align: right;"
+                               onfocus="this.style.borderColor='#2563eb'; this.style.background='#141414'"
+                               onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
                     </div>
                 </div>
 
@@ -63,19 +63,19 @@
                 <div style="display: flex; gap: 10px; margin-bottom: 16px;">
                     <!-- Cotação -->
                     <div style="flex: 1;">
-                        <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Cotação (R$)</label>
+                        <label style="display: block; font-size: 13px; color: #818181; margin-bottom: 6px;">Cotação (R$)</label>
                         <input type="text"
                                x-model="exchangeRateInput"
                                @input="updateExchangeRate()"
                                placeholder="5,45"
-                               style="width: 100%; padding: 12px 14px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 15px; color: #111827; outline: none; text-align: center;"
-                               onfocus="this.style.borderColor='#2563eb'; this.style.background='white'"
-                               onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                               style="width: 100%; padding: 12px 14px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; font-size: 15px; color: #e3e3e3; outline: none; text-align: center;"
+                               onfocus="this.style.borderColor='#2563eb'; this.style.background='#141414'"
+                               onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
                     </div>
                     <!-- Taxa Adicional -->
                     <div style="flex: 1;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <label style="font-size: 13px; color: #6b7280;">Taxa (%)</label>
+                            <label style="font-size: 13px; color: #818181;">Taxa (%)</label>
                             <span x-show="taxValue > 0" style="font-size: 11px; color: #f59e0b; font-weight: 600;">R$ <span x-text="formatNumber(taxValue)"></span></span>
                         </div>
                         <div style="position: relative;">
@@ -83,10 +83,10 @@
                                    x-model="taxRate"
                                    @input="calculate()"
                                    placeholder="3,5"
-                                   style="width: 100%; padding: 12px 32px 12px 14px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 15px; color: #111827; outline: none; text-align: center;"
-                                   onfocus="this.style.borderColor='#2563eb'; this.style.background='white'"
-                                   onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
-                            <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px;">%</span>
+                                   style="width: 100%; padding: 12px 32px 12px 14px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; font-size: 15px; color: #e3e3e3; outline: none; text-align: center;"
+                                   onfocus="this.style.borderColor='#2563eb'; this.style.background='#141414'"
+                                   onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
+                            <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #666666; font-size: 14px;">%</span>
                         </div>
                     </div>
                 </div>
@@ -95,10 +95,10 @@
                 <div style="margin-bottom: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
-                            <label style="font-size: 13px; color: #6b7280;" x-text="marginMode === 'percent' ? 'Margem de lucro (%)' : 'Preço final (R$)'"></label>
+                            <label style="font-size: 13px; color: #818181;" x-text="marginMode === 'percent' ? 'Margem de lucro (%)' : 'Preço final (R$)'"></label>
                             <button @click="toggleMarginMode()"
                                     type="button"
-                                    style="background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 8px; cursor: pointer; font-size: 11px; color: #6b7280; display: flex; align-items: center; gap: 4px;"
+                                    style="background: #222222; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 3px 8px; cursor: pointer; font-size: 11px; color: #818181; display: flex; align-items: center; gap: 4px;"
                                     :title="marginMode === 'percent' ? 'Mudar para Preço Final' : 'Mudar para Margem %'">
                                 <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
@@ -115,60 +115,60 @@
                                x-model="profitMargin"
                                @input="calculate()"
                                placeholder="12"
-                               style="width: 100%; padding: 12px 32px 12px 14px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 15px; color: #111827; outline: none; text-align: center;"
-                               onfocus="this.style.borderColor='#2563eb'; this.style.background='white'"
-                               onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
-                        <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px;">%</span>
+                               style="width: 100%; padding: 12px 32px 12px 14px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; font-size: 15px; color: #e3e3e3; outline: none; text-align: center;"
+                               onfocus="this.style.borderColor='#2563eb'; this.style.background='#141414'"
+                               onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
+                        <span style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #666666; font-size: 14px;">%</span>
                     </div>
                     <!-- Input Preço Final -->
                     <div x-show="marginMode === 'price'" style="position: relative;">
-                        <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px;">R$</span>
+                        <span style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #666666; font-size: 14px;">R$</span>
                         <input type="text"
                                x-model="targetPrice"
                                @input="calculateFromPrice()"
                                placeholder="10000"
-                               style="width: 100%; padding: 12px 14px 12px 38px; background: #f9fafb; border: 1px solid #059669; border-radius: 12px; font-size: 15px; color: #111827; outline: none; text-align: right;"
-                               onfocus="this.style.borderColor='#059669'; this.style.background='white'"
-                               onblur="this.style.borderColor='#059669'; this.style.background='#f9fafb'">
+                               style="width: 100%; padding: 12px 14px 12px 38px; background: #1a1a1a; border: 1px solid #059669; border-radius: 12px; font-size: 15px; color: #e3e3e3; outline: none; text-align: right;"
+                               onfocus="this.style.borderColor='#059669'; this.style.background='#141414'"
+                               onblur="this.style.borderColor='#059669'; this.style.background='#1a1a1a'">
                     </div>
                 </div>
 
                 <!-- Resultados -->
                 <div x-show="valueInReais > 0" x-transition>
-                    <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 16px; padding: 20px; margin-bottom: 12px;">
+                    <div style="background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; margin-bottom: 12px;">
                         <!-- Linha de cálculo -->
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: #6b7280; flex-wrap: wrap; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: #818181; flex-wrap: wrap; margin-bottom: 16px;">
                             <span>US$ <strong x-text="dollarValue || '0'"></strong></span>
                             <span>×</span>
                             <span>R$ <strong x-text="exchangeRateInput || '0'"></strong></span>
                             <span>=</span>
-                            <span style="font-weight: 600; color: #111827;">R$ <span x-text="formatNumber(valueInReais)"></span></span>
+                            <span style="font-weight: 600; color: #e3e3e3;">R$ <span x-text="formatNumber(valueInReais)"></span></span>
                         </div>
 
                         <!-- Cards de resultado -->
                         <div style="display: flex; gap: 8px;">
                             <!-- Valor em R$ -->
-                            <div style="flex: 1; text-align: center; padding: 12px 8px; background: white; border-radius: 12px; border: 1px solid #e5e7eb;">
-                                <div style="font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Valor em R$</div>
-                                <div style="font-size: 16px; font-weight: 700; color: #111827;">R$ <span x-text="formatNumber(valueInReais)"></span></div>
+                            <div style="flex: 1; text-align: center; padding: 12px 8px; background: #141414; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                                <div style="font-size: 10px; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Valor em R$</div>
+                                <div style="font-size: 16px; font-weight: 700; color: #e3e3e3;">R$ <span x-text="formatNumber(valueInReais)"></span></div>
                             </div>
                             <!-- Com Taxa -->
-                            <div style="flex: 1; text-align: center; padding: 12px 8px; background: white; border-radius: 12px; border: 1px solid #e5e7eb;">
-                                <div style="font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Com Taxa</div>
+                            <div style="flex: 1; text-align: center; padding: 12px 8px; background: #141414; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+                                <div style="font-size: 10px; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Com Taxa</div>
                                 <div style="font-size: 16px; font-weight: 700; color: #f59e0b;">R$ <span x-text="formatNumber(valueWithTax)"></span></div>
                             </div>
                         </div>
 
                         <!-- Preço Sugerido (destaque) -->
                         <div style="margin-top: 12px; background: #111827; border-radius: 12px; padding: 16px; text-align: center;">
-                            <div style="font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Preço Sugerido</div>
+                            <div style="font-size: 10px; color: #666666; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Preço Sugerido</div>
                             <div style="font-size: 26px; font-weight: 800; color: #4ade80;">R$ <span x-text="formatNumber(suggestedPrice)"></span></div>
                         </div>
                     </div>
 
                     <!-- Resumo detalhado -->
-                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px 16px;">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #1e40af; flex-wrap: wrap; text-align: center;">
+                    <div style="background: rgba(59,130,246,0.1); border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px 16px;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #93c5fd; flex-wrap: wrap; text-align: center;">
                             <span>R$ <strong x-text="formatNumber(valueInReais)"></strong></span>
                             <span>+</span>
                             <span style="color: #f59e0b;"><strong x-text="(taxRate || '0') + '%'"></strong></span>
@@ -183,7 +183,7 @@
 
                     <!-- Botão copiar resumo para funcionário -->
                     <button @click="copySummary()" type="button"
-                            :style="copied ? 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:#059669;color:white;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;' : 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:1px solid #e5e7eb;cursor:pointer;font-size:13px;font-weight:600;background:white;color:#374151;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;'">
+                            :style="copied ? 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:#059669;color:white;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;' : 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:1px solid #e5e7eb;cursor:pointer;font-size:13px;font-weight:600;background:white;color:#a4a4a4;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;'">
                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                         </svg>
@@ -192,7 +192,7 @@
                 </div>
 
                 <!-- Estado vazio -->
-                <div x-show="valueInReais <= 0" style="text-align: center; padding: 32px 16px; color: #9ca3af;">
+                <div x-show="valueInReais <= 0" style="text-align: center; padding: 32px 16px; color: #666666;">
                     <svg style="width: 48px; height: 48px; margin: 0 auto 12px; opacity: 0.4;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>

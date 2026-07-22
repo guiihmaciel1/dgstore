@@ -1,79 +1,82 @@
 <x-guest-layout>
-    <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
+        <!-- Email -->
         <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
-                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-all" 
-                   placeholder="seu@email.com" />
-            <x-input-error :messages="$errors->get('email')" class="mt-1" />
+            <label for="email" style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.5rem;">Email</label>
+            <div style="position: relative;">
+                <span style="position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); pointer-events: none; color: #4a4a4a;">
+                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                </span>
+                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                       class="login-input" placeholder="seu@email.com" />
+            </div>
+            <x-input-error :messages="$errors->get('email')" class="mt-1.5" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-            <input id="password" type="password" name="password" required autocomplete="current-password"
-                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-all"
-                   placeholder="••••••••" />
-            <x-input-error :messages="$errors->get('password')" class="mt-1" />
+        <div style="margin-top: 1.25rem;">
+            <label for="password" style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.5rem;">Senha</label>
+            <div style="position: relative;">
+                <span style="position: absolute; left: 0.875rem; top: 50%; transform: translateY(-50%); pointer-events: none; color: #4a4a4a;">
+                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                </span>
+                <input id="password" type="password" name="password" required autocomplete="current-password"
+                       class="login-input" placeholder="••••••••" />
+            </div>
+            <x-input-error :messages="$errors->get('password')" class="mt-1.5" />
         </div>
 
-        <!-- Remember Me & Forgot -->
-        <div class="flex items-center justify-between mt-4">
-            <label for="remember_me" class="inline-flex items-center cursor-pointer">
-                <input id="remember_me" type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900">
-                <span class="ml-2 text-sm text-gray-600">Lembrar-me</span>
+        <!-- Remember + Forgot -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem;">
+            <label for="remember_me" style="display: inline-flex; align-items: center; cursor: pointer;">
+                <input id="remember_me" type="checkbox" name="remember" 
+                       style="width: 0.875rem; height: 0.875rem; border-radius: 0.25rem; border: 1px solid rgba(255,255,255,0.12); background: #0d0d0d; accent-color: #e3e3e3; cursor: pointer;">
+                <span style="margin-left: 0.5rem; font-size: 0.8rem; color: #666666;">Lembrar-me</span>
             </label>
             
             @if (Route::has('password.request'))
-                <a class="text-sm text-gray-500 hover:text-gray-900 transition-colors" href="{{ route('password.request') }}">
+                <a href="{{ route('password.request') }}" style="font-size: 0.8rem; color: #666666; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#666666'">
                     Esqueceu a senha?
                 </a>
             @endif
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit" 
-                class="w-full mt-6 py-3 px-4 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+        <!-- Submit -->
+        <button type="submit" class="login-btn" style="margin-top: 1.5rem;">
             Entrar
         </button>
 
-        <!-- Apple B2B -->
-        <div class="mt-4 pt-4 border-t border-gray-200 space-y-3">
-            <a href="{{ route('b2b.login') }}"
-               class="w-full flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        <!-- B2B Portal -->
+        <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.06);">
+            <a href="{{ route('b2b.login') }}" class="login-b2b">
+                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                 </svg>
                 {{ \App\Domain\B2B\Models\B2BSetting::getCompanyName() }}
             </a>
-
         </div>
 
-        <!-- Botões de preenchimento automático (apenas ambiente de desenvolvimento) -->
+        <!-- Dev quick access -->
         @if(app()->environment('local', 'development'))
-        <div class="mt-6 pt-5 border-t border-gray-200">
-            <p class="text-xs text-gray-400 text-center mb-3">Acesso rápido</p>
-            <div class="grid grid-cols-2 gap-3">
-                <button type="button" 
-                        onclick="fillCredentials('admin@dgstore.com.br', 'password')"
-                        class="flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-900 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
+        <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.04);">
+            <p style="font-size: 0.65rem; color: #4a4a4a; text-align: center; margin-bottom: 0.75rem;">Acesso rápido</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                <button type="button" onclick="fillCredentials('admin@dgstore.com.br', 'password')"
+                        style="padding: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); border-radius: 0.5rem; color: #666666; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.06)';this.style.color='#e3e3e3'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='#666666'">
                     Admin
                 </button>
-                <button type="button" 
-                        onclick="fillCredentials('vendedor@dgstore.com.br', 'password')"
-                        class="flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-500 hover:bg-gray-400 text-white text-sm font-medium rounded-lg transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
+                <button type="button" onclick="fillCredentials('vendedor@dgstore.com.br', 'password')"
+                        style="padding: 0.5rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.04); border-radius: 0.5rem; color: #666666; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.background='rgba(255,255,255,0.06)';this.style.color='#e3e3e3'" onmouseout="this.style.background='rgba(255,255,255,0.03)';this.style.color='#666666'">
                     Vendedor
                 </button>
             </div>

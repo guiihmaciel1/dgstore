@@ -10,10 +10,10 @@
 
 <div {{ $attributes->only('class') }}>
     @if($label)
-        <label for="{{ $name }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label for="{{ $name }}" class="block text-sm font-medium text-dg-300">
             {{ $label }}
             @if($required)
-                <span class="text-red-500">*</span>
+                <span class="text-red-400">*</span>
             @endif
         </label>
     @endif
@@ -26,11 +26,11 @@
             {{ $required ? 'required' : '' }}
             {{ $disabled ? 'disabled' : '' }}
             placeholder="{{ $placeholder }}"
-            {{ $attributes->except('class')->merge(['class' => 'shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-md']) }}
+            {{ $attributes->except('class')->merge(['class' => 'w-full px-4 py-3 bg-surface-overlay border border-border rounded-xl text-sm text-dg-100 placeholder-dg-500 focus:ring-2 focus:ring-dg-400/20 focus:border-dg-400 resize-y transition-all duration-150']) }}
         >{{ old($name, $value) }}</textarea>
     </div>
     
     @error($name)
-        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+        <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
     @enderror
 </div>

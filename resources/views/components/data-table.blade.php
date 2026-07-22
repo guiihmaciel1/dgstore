@@ -4,23 +4,23 @@
 ])
 
 <div class="overflow-x-auto">
-    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead class="bg-gray-50 dark:bg-gray-700">
+    <table class="min-w-full divide-y divide-border">
+        <thead class="bg-surface-overlay">
             <tr>
                 @foreach($headers as $header)
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dg-400 uppercase tracking-wider">
                         {{ $header }}
                     </th>
                 @endforeach
             </tr>
         </thead>
-        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody class="bg-surface-raised divide-y divide-border">
             {{ $slot }}
         </tbody>
     </table>
     
     @if($slot->isEmpty())
-        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+        <div class="text-center py-8 text-dg-500">
             {{ $empty }}
         </div>
     @endif

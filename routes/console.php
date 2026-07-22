@@ -16,5 +16,6 @@ Schedule::command('crm:check-overdue-deals')->hourly();
 Schedule::command('imports:check-delayed')->dailyAt('08:05');
 Schedule::command('news:fetch-apple')->hourly();
 Schedule::command('db:backup')->dailyAt('03:00');
+Schedule::command('sessions:flush-all')->dailyAt('00:01');
 Schedule::command('dollar:reset')->dailyAt('00:01');
 Schedule::command('dollar:fetch-cp')->everyThirtyMinutes();

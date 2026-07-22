@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="title">Estoque</x-slot>
     <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #065f46;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -11,8 +11,8 @@
             <!-- Cabeçalho -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Movimentações de Estoque</h1>
-                    <p class="text-sm text-gray-500">Histórico de entradas, saídas e ajustes de estoque</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-dg-100">Movimentações de Estoque</h1>
+                    <p class="text-sm text-dg-500">Histórico de entradas, saídas e ajustes de estoque</p>
                 </div>
                 <div style="display: flex; gap: 0.75rem;">
                     <a href="{{ route('stock.trade-ins') }}" 
@@ -24,7 +24,7 @@
                         <span>Trade-ins</span>
                     </a>
                     <a href="{{ route('stock.create') }}" 
-                       class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">
+                       class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-surface text-white font-semibold rounded-lg hover:bg-surface-elevated transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                         </svg>
@@ -34,32 +34,32 @@
             </div>
 
             <!-- Card Principal -->
-            <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+            <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
                 
                 <!-- Tabela -->
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead>
-                            <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
-                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Produto</th>
-                                <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Tipo</th>
-                                <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Quantidade</th>
-                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Motivo</th>
-                                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Usuário</th>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
+                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Produto</th>
+                                <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Tipo</th>
+                                <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Quantidade</th>
+                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Motivo</th>
+                                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Usuário</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($movements as $movement)
-                                <tr style="border-bottom: 1px solid #f3f4f6;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
-                                    <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: #6b7280;">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                                    <td style="padding: 1rem 1.5rem; font-size: 0.875rem; color: #818181;">
                                         {{ $movement->created_at->format('d/m/Y H:i') }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem;">
-                                        <a href="{{ route('products.show', $movement->product) }}" style="font-weight: 500; color: #111827; text-decoration: none;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#111827'">
+                                        <a href="{{ route('products.show', $movement->product) }}" style="font-weight: 500; color: #e3e3e3; text-decoration: none;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#111827'">
                                             {{ $movement->product?->name ?? 'Produto removido' }}
                                         </a>
-                                        <div style="font-size: 0.75rem; color: #9ca3af;">
+                                        <div style="font-size: 0.75rem; color: #666666;">
                                             SKU: {{ $movement->product?->sku ?? '-' }}
                                         </div>
                                     </td>
@@ -81,22 +81,22 @@
                                         @if($movement->isAddition())
                                             <span style="font-weight: 700; font-size: 1rem; color: #16a34a;">+{{ $movement->quantity }}</span>
                                         @else
-                                            <span style="font-weight: 700; font-size: 1rem; color: #dc2626;">-{{ $movement->quantity }}</span>
+                                            <span style="font-weight: 700; font-size: 1rem; color: #fca5a5;">-{{ $movement->quantity }}</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280; max-width: 250px;">
+                                    <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #818181; max-width: 250px;">
                                         <span style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                             {{ $movement->reason ?? '-' }}
                                         </span>
                                     </td>
-                                    <td style="padding: 0.75rem 1.5rem; font-size: 0.875rem; color: #6b7280;">
+                                    <td style="padding: 0.75rem 1.5rem; font-size: 0.875rem; color: #818181;">
                                         {{ $movement->user?->name ?? 'Sistema' }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" style="padding: 3rem; text-align: center; color: #6b7280;">
-                                        <svg style="margin: 0 auto 1rem; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <td colspan="6" style="padding: 3rem; text-align: center; color: #818181;">
+                                        <svg style="margin: 0 auto 1rem; width: 3rem; height: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                         </svg>
                                         Nenhuma movimentação registrada.

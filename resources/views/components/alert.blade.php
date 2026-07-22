@@ -5,10 +5,10 @@
 
 @php
     $classes = [
-        'success' => 'bg-green-50 dark:bg-green-900/50 border-green-400 text-green-800 dark:text-green-200',
-        'error' => 'bg-red-50 dark:bg-red-900/50 border-red-400 text-red-800 dark:text-red-200',
-        'warning' => 'bg-yellow-50 dark:bg-yellow-900/50 border-yellow-400 text-yellow-800 dark:text-yellow-200',
-        'info' => 'bg-blue-50 dark:bg-blue-900/50 border-blue-400 text-blue-800 dark:text-blue-200',
+        'success' => 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300',
+        'error' => 'bg-red-500/10 border-red-500/30 text-red-300',
+        'warning' => 'bg-amber-500/10 border-amber-500/30 text-amber-300',
+        'info' => 'bg-blue-500/10 border-blue-500/30 text-blue-300',
     ];
     
     $icons = [
@@ -23,7 +23,7 @@
     x-data="{ show: true }" 
     x-show="show" 
     x-transition
-    {{ $attributes->merge(['class' => 'rounded-md border-l-4 p-4 ' . ($classes[$type] ?? $classes['info'])]) }}
+    {{ $attributes->merge(['class' => 'rounded-xl border-l-4 p-4 ' . ($classes[$type] ?? $classes['info'])]) }}
 >
     <div class="flex">
         <div class="flex-shrink-0">
@@ -34,7 +34,7 @@
         </div>
         @if($dismissible)
             <div class="ml-auto pl-3">
-                <button @click="show = false" class="inline-flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2">
+                <button @click="show = false" class="inline-flex rounded-md text-current opacity-60 hover:opacity-100 focus:outline-none transition">
                     <span class="sr-only">Fechar</span>
                     <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>

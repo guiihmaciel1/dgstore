@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Importações</x-slot>
     <div class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('success'))
                 <div class="mb-4">
                     <x-alert type="success">{{ session('success') }}</x-alert>
@@ -11,8 +11,8 @@
             <!-- Cabeçalho -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Pedidos de Importação</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Controle de pedidos em trânsito</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Pedidos de Importação</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">Controle de pedidos em trânsito</p>
                 </div>
                 <a href="{{ route('imports.create') }}" 
                    style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: #111827; color: white; font-weight: 600; border-radius: 0.5rem; text-decoration: none;"
@@ -35,38 +35,38 @@
                         </div>
                         <div>
                             <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['in_transit'] > 0 ? '#2563eb' : '#111827' }};">{{ $stats['in_transit'] }}</p>
-                            <p style="font-size: 0.75rem; color: #6b7280;">Em trânsito</p>
+                            <p style="font-size: 0.75rem; color: #818181;">Em trânsito</p>
                         </div>
                     </div>
                 </div>
 
-                <div style="padding: 1.25rem; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb;">
+                <div style="padding: 1.25rem; background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06);">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.625rem; background: #f3f4f6; border-radius: 0.5rem;">
-                            <svg style="width: 1.25rem; height: 1.25rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div style="padding: 0.625rem; background: #222222; border-radius: 0.5rem;">
+                            <svg style="width: 1.25rem; height: 1.25rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                             </svg>
                         </div>
                         <div>
-                            <p style="font-size: 1.5rem; font-weight: 700; color: #111827;">{{ $stats['active'] }}</p>
-                            <p style="font-size: 0.75rem; color: #6b7280;">Pedidos ativos</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">{{ $stats['active'] }}</p>
+                            <p style="font-size: 0.75rem; color: #818181;">Pedidos ativos</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Filtros -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1rem;">
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem; margin-bottom: 1rem;">
                 <form method="GET" x-data x-ref="filterForm" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
                     <div style="flex: 1; min-width: 200px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Buscar</label>
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Buscar</label>
                         <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Número, rastreio ou fornecedor..."
-                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                               style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
                                x-on:input.debounce.400ms="$refs.filterForm.submit()">
                     </div>
                     <div style="min-width: 150px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Status</label>
-                        <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Status</label>
+                        <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;"
                                 x-on:change="$refs.filterForm.submit()">
                             <option value="">Todos</option>
                             @foreach($statuses as $status)
@@ -75,47 +75,47 @@
                         </select>
                     </div>
                     @if($filters['search'] || $filters['status'])
-                        <a href="{{ route('imports.index') }}" style="padding: 0.5rem 1rem; color: #6b7280; font-size: 0.875rem; text-decoration: none;">Limpar</a>
+                        <a href="{{ route('imports.index') }}" style="padding: 0.5rem 1rem; color: #818181; font-size: 0.875rem; text-decoration: none;">Limpar</a>
                     @endif
                 </form>
             </div>
 
             <!-- Lista -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
                 @if($orders->isEmpty())
                     <div style="padding: 3rem; text-align: center;">
-                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                         </svg>
-                        <p style="margin-top: 1rem; color: #6b7280;">Nenhum pedido encontrado</p>
+                        <p style="margin-top: 1rem; color: #818181;">Nenhum pedido encontrado</p>
                         <a href="{{ route('imports.create') }}" style="display: inline-block; margin-top: 1rem; color: #2563eb; text-decoration: none;">Criar primeiro pedido</a>
                     </div>
                 @else
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
-                                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Pedido</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Fornecedor</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Status</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Itens</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo Est. (R$)</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Previsão</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ações</th>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Pedido</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Fornecedor</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Status</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Itens</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Custo Est. (R$)</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Previsão</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($orders as $order)
-                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                                         <td style="padding: 0.75rem 1rem;">
-                                            <div style="font-weight: 600; color: #111827;">{{ $order->order_number }}</div>
-                                            <div style="font-size: 0.75rem; color: #6b7280;">{{ $order->ordered_at->format('d/m/Y') }}</div>
+                                            <div style="font-weight: 600; color: #e3e3e3;">{{ $order->order_number }}</div>
+                                            <div style="font-size: 0.75rem; color: #818181;">{{ $order->ordered_at->format('d/m/Y') }}</div>
                                             @if($order->tracking_code)
-                                                <div style="font-size: 0.75rem; color: #9ca3af; font-family: monospace;">{{ $order->tracking_code }}</div>
+                                                <div style="font-size: 0.75rem; color: #666666; font-family: monospace;">{{ $order->tracking_code }}</div>
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem;">
-                                            <span style="color: #374151;">{{ $order->supplier?->name ?? 'Não informado' }}</span>
+                                            <span style="color: #a4a4a4;">{{ $order->supplier?->name ?? 'Não informado' }}</span>
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @php
@@ -134,22 +134,22 @@
                                             </span>
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
-                                            <span style="font-weight: 500; color: #111827;">{{ $order->total_items }}</span>
+                                            <span style="font-weight: 500; color: #e3e3e3;">{{ $order->total_items }}</span>
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
-                                            <span style="font-weight: 600; color: #111827;">{{ $order->formatted_estimated_total_brl }}</span>
+                                            <span style="font-weight: 600; color: #e3e3e3;">{{ $order->formatted_estimated_total_brl }}</span>
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @if($order->estimated_arrival)
-                                                <span style="color: #374151;">{{ $order->estimated_arrival->format('d/m/Y') }}</span>
+                                                <span style="color: #a4a4a4;">{{ $order->estimated_arrival->format('d/m/Y') }}</span>
                                             @else
-                                                <span style="color: #9ca3af;">-</span>
+                                                <span style="color: #666666;">-</span>
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
                                             <a href="{{ route('imports.show', $order) }}" 
-                                               style="padding: 0.375rem 0.75rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none;"
-                                               onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                               style="padding: 0.375rem 0.75rem; background: #222222; color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none;"
+                                               onmouseover="this.style.background='#222222'" onmouseout="this.style.background='#1a1a1a'">
                                                 Ver detalhes
                                             </a>
                                         </td>
@@ -160,7 +160,7 @@
                     </div>
 
                     @if($orders->hasPages())
-                        <div style="padding: 1rem; border-top: 1px solid #e5e7eb;">
+                        <div style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.06);">
                             {{ $orders->links() }}
                         </div>
                     @endif

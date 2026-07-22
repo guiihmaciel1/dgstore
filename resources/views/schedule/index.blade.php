@@ -1,15 +1,15 @@
 <x-app-layout>
     <x-slot name="title">Agenda</x-slot>
     <div class="py-4" x-data="scheduleApp()">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #065f46;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
             @if(session('error'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; color: #991b1b;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
                     {{ session('error') }}
                 </div>
             @endif
@@ -17,14 +17,14 @@
             {{-- Cabeçalho --}}
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Agenda</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Controle de agendamentos · {{ $date->translatedFormat('l, d \d\e F \d\e Y') }}</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Agenda</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">Controle de agendamentos · {{ $date->translatedFormat('l, d \d\e F \d\e Y') }}</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                     <input type="date" value="{{ $date->format('Y-m-d') }}"
-                           style="padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                           style="padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
                            onchange="window.location.href='{{ route('schedule.index') }}?date='+this.value+'&attendant={{ $attendantFilter }}'">
-                    <select style="padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                    <select style="padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;"
                             onchange="window.location.href='{{ route('schedule.index') }}?date={{ $date->format('Y-m-d') }}&attendant='+this.value">
                         <option value="">Todos</option>
                         @foreach($attendants as $key => $name)
@@ -43,21 +43,21 @@
             </div>
 
             {{-- Navegação de data + resumo --}}
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1rem;">
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem; margin-bottom: 1rem;">
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <a href="{{ route('schedule.index', ['date' => $date->copy()->subDay()->format('Y-m-d'), 'attendant' => $attendantFilter]) }}"
-                           style="padding: 0.375rem; border-radius: 0.375rem; color: #374151; text-decoration: none; border: 1px solid #e5e7eb; background: white; display: inline-flex;"
-                           onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='white'">
+                           style="padding: 0.375rem; border-radius: 0.375rem; color: #a4a4a4; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); background: #141414; display: inline-flex;"
+                           onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
                             <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                         </a>
                         <div style="text-align: center;">
-                            <span style="font-size: 1rem; font-weight: 700; color: #111827;">{{ $date->translatedFormat('l') }}</span>
-                            <span style="font-size: 0.8rem; color: #6b7280; margin-left: 0.375rem;">{{ $date->format('d/m/Y') }}</span>
+                            <span style="font-size: 1rem; font-weight: 700; color: #e3e3e3;">{{ $date->translatedFormat('l') }}</span>
+                            <span style="font-size: 0.8rem; color: #818181; margin-left: 0.375rem;">{{ $date->format('d/m/Y') }}</span>
                         </div>
                         <a href="{{ route('schedule.index', ['date' => $date->copy()->addDay()->format('Y-m-d'), 'attendant' => $attendantFilter]) }}"
-                           style="padding: 0.375rem; border-radius: 0.375rem; color: #374151; text-decoration: none; border: 1px solid #e5e7eb; background: white; display: inline-flex;"
-                           onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='white'">
+                           style="padding: 0.375rem; border-radius: 0.375rem; color: #a4a4a4; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); background: #141414; display: inline-flex;"
+                           onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
                             <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
                         @if(!$date->isToday())
@@ -69,8 +69,8 @@
                             @php $count = $appointments->where('attendant', $key)->whereNotIn('status', [\App\Domain\Schedule\Enums\AppointmentStatus::Cancelled])->count(); @endphp
                             <span style="display: inline-flex; align-items: center; gap: 0.375rem;">
                                 <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$key] ?? '#6b7280' }};"></span>
-                                <span style="font-weight: 600; color: #374151;">{{ $name }}:</span>
-                                <span style="color: #6b7280;">{{ $count }}</span>
+                                <span style="font-weight: 600; color: #a4a4a4;">{{ $name }}:</span>
+                                <span style="color: #818181;">{{ $count }}</span>
                             </span>
                         @endforeach
                     </div>
@@ -78,14 +78,14 @@
             </div>
 
             {{-- Grade de horários --}}
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
                 {{-- Header da grade --}}
                 @php $colCount = $attendantFilter ? 1 : count($attendants); @endphp
-                <div style="display: grid; grid-template-columns: 70px repeat({{ $colCount }}, 1fr); border-bottom: 1px solid #e5e7eb;">
-                    <div style="padding: 0.75rem; background: #f9fafb; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Hora</div>
+                <div style="display: grid; grid-template-columns: 70px repeat({{ $colCount }}, 1fr); border-bottom: 1px solid rgba(255,255,255,0.06);">
+                    <div style="padding: 0.75rem; background: #1a1a1a; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase;">Hora</div>
                     @foreach($attendants as $key => $name)
                         @if(!$attendantFilter || $attendantFilter === $key)
-                            <div style="padding: 0.75rem; background: #f9fafb; text-align: center; font-size: 0.8rem; font-weight: 600; color: #374151; border-left: 1px solid #e5e7eb;">
+                            <div style="padding: 0.75rem; background: #1a1a1a; text-align: center; font-size: 0.8rem; font-weight: 600; color: #a4a4a4; border-left: 1px solid #e5e7eb;">
                                 <span style="display: inline-flex; align-items: center; gap: 0.375rem;">
                                     <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$key] ?? '#6b7280' }};"></span>
                                     {{ $name }}
@@ -97,14 +97,14 @@
 
                 {{-- Linhas de horários --}}
                 @foreach($timeSlots as $slot)
-                    <div style="display: grid; grid-template-columns: 70px repeat({{ $colCount }}, 1fr); border-bottom: 1px solid #f3f4f6; min-height: 48px;" class="schedule-row">
-                        <div style="padding: 0.5rem; font-size: 0.75rem; font-family: monospace; color: #9ca3af; text-align: center; display: flex; align-items: center; justify-content: center; background: #fafafa;">
+                    <div style="display: grid; grid-template-columns: 70px repeat({{ $colCount }}, 1fr); border-bottom: 1px solid rgba(255,255,255,0.04); min-height: 48px;" class="schedule-row">
+                        <div style="padding: 0.5rem; font-size: 0.75rem; font-family: monospace; color: #666666; text-align: center; display: flex; align-items: center; justify-content: center; background: #1a1a1a;">
                             {{ $slot }}
                         </div>
 
                         @foreach($attendants as $attKey => $attName)
                             @if(!$attendantFilter || $attendantFilter === $attKey)
-                                <div style="padding: 0.25rem 0.375rem; border-left: 1px solid #f3f4f6; position: relative;">
+                                <div style="padding: 0.25rem 0.375rem; border-left: 1px solid rgba(255,255,255,0.04); position: relative;">
                                     @php
                                         $appt = ($appointmentsByAttendant[$attKey] ?? collect())->get($slot . ':00') ?? ($appointmentsByAttendant[$attKey] ?? collect())->get($slot);
                                     @endphp
@@ -125,10 +125,10 @@
                                              onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
                                             <div style="display: flex; align-items: start; justify-content: space-between; gap: 0.375rem;">
                                                 <div style="min-width: 0; flex: 1;">
-                                                    <p style="font-size: 0.8rem; font-weight: 600; color: #111827; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $appt->customer_name }}</p>
-                                                    <p style="font-size: 0.7rem; color: #6b7280; margin: 0.125rem 0 0;">{{ $appt->formatted_start_time }} - {{ $appt->formatted_end_time }}</p>
+                                                    <p style="font-size: 0.8rem; font-weight: 600; color: #e3e3e3; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $appt->customer_name }}</p>
+                                                    <p style="font-size: 0.7rem; color: #818181; margin: 0.125rem 0 0;">{{ $appt->formatted_start_time }} - {{ $appt->formatted_end_time }}</p>
                                                     @if($appt->service_description)
-                                                        <p style="font-size: 0.675rem; color: #6b7280; margin: 0.25rem 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $appt->service_description }}</p>
+                                                        <p style="font-size: 0.675rem; color: #818181; margin: 0.25rem 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $appt->service_description }}</p>
                                                     @endif
                                                 </div>
                                                 <span style="display: inline-block; padding: 0.125rem 0.375rem; border-radius: 9999px; font-size: 0.6rem; font-weight: 600; white-space: nowrap; background: {{ $sc['badge_bg'] }}; color: {{ $sc['badge_color'] }};">
@@ -139,8 +139,8 @@
                                     @else
                                         <div class="schedule-add-btn" style="height: 100%; display: flex; align-items: center; justify-content: center;">
                                             <button @click="openNewModalAt('{{ $attKey }}', '{{ $slot }}')" type="button"
-                                                    style="opacity: 0; padding: 0.25rem; color: #9ca3af; background: none; border: 1px dashed #d1d5db; border-radius: 0.25rem; cursor: pointer; transition: opacity 0.15s;"
-                                                    onmouseover="this.style.color='#4f46e5'; this.style.borderColor='#818cf8'" onmouseout="this.style.color='#9ca3af'; this.style.borderColor='#d1d5db'">
+                                                    style="opacity: 0; padding: 0.25rem; color: #666666; background: none; border: 1px dashed rgba(255,255,255,0.12); border-radius: 0.25rem; cursor: pointer; transition: opacity 0.15s;"
+                                                    onmouseover="this.style.color='#4f46e5'; this.style.borderColor='#818cf8'" onmouseout="this.style.color='#9ca3af'; this.style.borderColor='rgba(255,255,255,0.08)'">
                                                 <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                             </button>
                                         </div>
@@ -155,8 +155,8 @@
 
         {{-- Modal: Novo Agendamento --}}
         <div x-show="showNewModal" x-transition.opacity style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: flex-start; justify-content: center; background: rgba(0,0,0,0.4); padding-top: 5vh; overflow-y: auto;" x-cloak>
-            <div @click.away="showNewModal = false" style="background: white; border-radius: 0.75rem; padding: 1.5rem; width: 100%; max-width: 40rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; margin-bottom: 2rem;">
-                <h2 style="font-size: 1.125rem; font-weight: 700; color: #111827; margin-bottom: 1.25rem;">Novo Agendamento</h2>
+            <div @click.away="showNewModal = false" style="background: #141414; border-radius: 0.75rem; padding: 1.5rem; width: 100%; max-width: 40rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3; margin-bottom: 1.25rem;">Novo Agendamento</h2>
 
                 <form method="POST" action="{{ route('schedule.store') }}">
                     @csrf
@@ -164,9 +164,9 @@
                     {{-- Atendente, Data, Duração --}}
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Atendente *</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Atendente *</label>
                             <select name="attendant" x-model="newForm.attendant" @change="fetchSlots()" required
-                                    style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                    style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
                                 <option value="">Selecione...</option>
                                 @foreach($attendants as $key => $name)
                                     <option value="{{ $key }}">{{ $name }}</option>
@@ -174,14 +174,14 @@
                             </select>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Data *</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Data *</label>
                             <input type="date" name="date" x-model="newForm.date" @change="fetchSlots()" required
-                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                   style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Duração *</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Duração *</label>
                             <select name="duration_minutes" x-model="newForm.duration_minutes" @change="fetchSlots()" required
-                                    style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                    style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
                                 @foreach($durationOptions as $minutes => $label)
                                     <option value="{{ $minutes }}">{{ $label }}</option>
                                 @endforeach
@@ -191,35 +191,35 @@
 
                     {{-- Horário --}}
                     <div style="margin-bottom: 1rem;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.5rem;">Horário *</label>
+                        <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.5rem;">Horário *</label>
                         <div x-show="availableSlots.length > 0" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.375rem;">
                             <template x-for="slot in availableSlots" :key="slot.start">
                                 <label style="cursor: pointer;">
                                     <input type="radio" name="start_time" :value="slot.start" x-model="newForm.start_time" style="display: none;" required>
                                     <div :style="newForm.start_time === slot.start
                                             ? 'text-align: center; padding: 0.375rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; border: 2px solid #111827; background: #111827; color: white;'
-                                            : 'text-align: center; padding: 0.375rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 500; border: 1px solid #e5e7eb; color: #374151; background: white;'"
+                                            : 'text-align: center; padding: 0.375rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.06); color: #a4a4a4; background: #141414;'"
                                          x-text="slot.label"
-                                         onmouseover="if(!this.previousElementSibling.checked) this.style.borderColor='#9ca3af'" onmouseout="if(!this.previousElementSibling.checked) this.style.borderColor='#e5e7eb'">
+                                         onmouseover="if(!this.previousElementSibling.checked) this.style.borderColor='#9ca3af'" onmouseout="if(!this.previousElementSibling.checked) this.style.borderColor='rgba(255,255,255,0.06)'">
                                     </div>
                                 </label>
                             </template>
                         </div>
-                        <p x-show="availableSlots.length === 0 && newForm.attendant && newForm.date" style="font-size: 0.8rem; color: #6b7280; font-style: italic;">Nenhum horário disponível.</p>
-                        <p x-show="!newForm.attendant || !newForm.date" style="font-size: 0.8rem; color: #9ca3af; font-style: italic;">Selecione atendente, data e duração para ver os horários.</p>
+                        <p x-show="availableSlots.length === 0 && newForm.attendant && newForm.date" style="font-size: 0.8rem; color: #818181; font-style: italic;">Nenhum horário disponível.</p>
+                        <p x-show="!newForm.attendant || !newForm.date" style="font-size: 0.8rem; color: #666666; font-style: italic;">Selecione atendente, data e duração para ver os horários.</p>
                     </div>
 
                     {{-- Cliente --}}
                     <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-bottom: 1rem;">
                         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                            <span style="font-size: 0.8rem; font-weight: 700; color: #111827;">Dados do Cliente</span>
-                            <div style="display: flex; border: 1px solid #e5e7eb; border-radius: 0.375rem; overflow: hidden;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #e3e3e3;">Dados do Cliente</span>
+                            <div style="display: flex; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; overflow: hidden;">
                                 <button type="button" @click="customerMode = 'search'"
-                                        :style="customerMode === 'search' ? 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: #111827; color: white; border: none; cursor: pointer;' : 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 500; background: white; color: #6b7280; border: none; cursor: pointer;'">
+                                        :style="customerMode === 'search' ? 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: #111827; color: white; border: none; cursor: pointer;' : 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 500; background: #141414; color: #818181; border: none; cursor: pointer;'">
                                     Buscar existente
                                 </button>
                                 <button type="button" @click="customerMode = 'new'"
-                                        :style="customerMode === 'new' ? 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: #111827; color: white; border: none; border-left: 1px solid #e5e7eb; cursor: pointer;' : 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 500; background: white; color: #6b7280; border: none; border-left: 1px solid #e5e7eb; cursor: pointer;'">
+                                        :style="customerMode === 'new' ? 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: #111827; color: white; border: none; border-left: 1px solid #e5e7eb; cursor: pointer;' : 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 500; background: #141414; color: #818181; border: none; border-left: 1px solid #e5e7eb; cursor: pointer;'">
                                     Cadastrar novo
                                 </button>
                             </div>
@@ -228,27 +228,27 @@
                         {{-- Buscar existente --}}
                         <div x-show="customerMode === 'search'">
                             <div style="position: relative; margin-bottom: 0.5rem;">
-                                <svg style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                <svg style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: #666666;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                 <input type="text" x-model="customerSearch" @input.debounce.300ms="searchCustomers()"
                                        placeholder="Buscar por nome ou telefone..."
-                                       style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                       style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                             </div>
-                            <div x-show="customerResults.length > 0" style="border: 1px solid #e5e7eb; border-radius: 0.5rem; max-height: 10rem; overflow-y: auto; margin-bottom: 0.5rem;">
+                            <div x-show="customerResults.length > 0" style="border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; max-height: 10rem; overflow-y: auto; margin-bottom: 0.5rem;">
                                 <template x-for="c in customerResults" :key="c.id">
                                     <button type="button" @click="selectCustomer(c)"
-                                            style="display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: none; border-bottom: 1px solid #f3f4f6; background: white; cursor: pointer; font-size: 0.8rem;"
-                                            onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
-                                        <span><strong x-text="c.name"></strong> <span style="color: #6b7280; margin-left: 0.25rem;" x-text="c.phone"></span></span>
-                                        <svg style="width: 0.875rem; height: 0.875rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                            style="display: flex; align-items: center; justify-content: space-between; width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: none; border-bottom: 1px solid rgba(255,255,255,0.04); background: #141414; cursor: pointer; font-size: 0.8rem;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                                        <span><strong x-text="c.name"></strong> <span style="color: #818181; margin-left: 0.25rem;" x-text="c.phone"></span></span>
+                                        <svg style="width: 0.875rem; height: 0.875rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                     </button>
                                 </template>
                             </div>
-                            <div x-show="selectedCustomer" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem;">
+                            <div x-show="selectedCustomer" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem;">
                                 <div>
-                                    <span style="font-size: 0.8rem; font-weight: 600; color: #166534;" x-text="selectedCustomer?.name"></span>
-                                    <span style="font-size: 0.75rem; color: #15803d; margin-left: 0.25rem;" x-text="selectedCustomer?.phone"></span>
+                                    <span style="font-size: 0.8rem; font-weight: 600; color: #6ee7b7;" x-text="selectedCustomer?.name"></span>
+                                    <span style="font-size: 0.75rem; color: #6ee7b7; margin-left: 0.25rem;" x-text="selectedCustomer?.phone"></span>
                                 </div>
-                                <button type="button" @click="clearCustomer()" style="color: #6b7280; background: none; border: none; cursor: pointer; padding: 0.25rem;">
+                                <button type="button" @click="clearCustomer()" style="color: #818181; background: none; border: none; cursor: pointer; padding: 0.25rem;">
                                     <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
@@ -267,29 +267,29 @@
                             <input type="hidden" name="create_customer" value="1">
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem;">
                                 <div>
-                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">Nome Completo *</label>
+                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #818181; margin-bottom: 0.125rem;">Nome Completo *</label>
                                     <input type="text" name="customer_name" x-model="newCustomer.name" required
-                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                           style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                                 <div>
-                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">Telefone</label>
+                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #818181; margin-bottom: 0.125rem;">Telefone</label>
                                     <input type="text" name="customer_phone" x-model="newCustomer.phone" placeholder="(00) 00000-0000"
-                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                           style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                                 <div>
-                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">Instagram</label>
+                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #818181; margin-bottom: 0.125rem;">Instagram</label>
                                     <input type="text" name="customer_instagram" x-model="newCustomer.instagram" placeholder="@usuario"
-                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                           style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                                 <div>
-                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">Data de Nascimento</label>
+                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #818181; margin-bottom: 0.125rem;">Data de Nascimento</label>
                                     <input type="date" name="customer_birth_date" x-model="newCustomer.birth_date"
-                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                           style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                                 <div>
-                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #6b7280; margin-bottom: 0.125rem;">Endereço</label>
+                                    <label style="display: block; font-size: 0.7rem; font-weight: 600; color: #818181; margin-bottom: 0.125rem;">Endereço</label>
                                     <input type="text" name="customer_address" x-model="newCustomer.address"
-                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                           style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                             </div>
                         </div>
@@ -299,20 +299,20 @@
                     {{-- Serviço e Observações --}}
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Produto/Serviço de Interesse</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Produto/Serviço de Interesse</label>
                             <input type="text" name="service_description" placeholder="Ex: iPhone 15 Pro Max..."
-                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                   style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Observações</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Observações</label>
                             <input type="text" name="notes" placeholder="Informações adicionais..."
-                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                   style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                         </div>
                     </div>
 
                     <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
                         <button @click.prevent="showNewModal = false" type="button"
-                                style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white; color: #6b7280; cursor: pointer;">
+                                style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; background: #141414; color: #818181; cursor: pointer;">
                             Cancelar
                         </button>
                         <button type="submit"
@@ -326,20 +326,20 @@
 
         {{-- Modal: Detalhes / Editar / WhatsApp --}}
         <div x-show="showEditModal" x-transition.opacity style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: flex-start; justify-content: center; background: rgba(0,0,0,0.4); padding-top: 5vh; overflow-y: auto;" x-cloak>
-            <div @click.away="showEditModal = false" style="background: white; border-radius: 0.75rem; padding: 1.5rem; width: 100%; max-width: 40rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; margin-bottom: 2rem;">
+            <div @click.away="showEditModal = false" style="background: #141414; border-radius: 0.75rem; padding: 1.5rem; width: 100%; max-width: 40rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto; margin-bottom: 2rem;">
 
                 {{-- Tabs --}}
-                <div style="display: flex; gap: 0; border-bottom: 1px solid #e5e7eb; margin-bottom: 1.25rem;">
+                <div style="display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 1.25rem;">
                     <button type="button" @click="editTab = 'details'"
-                            :style="editTab === 'details' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #111827; border-bottom: 2px solid #111827; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #6b7280; border: none; background: none; cursor: pointer;'">
+                            :style="editTab === 'details' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #e3e3e3; border-bottom: 2px solid #111827; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; border: none; background: none; cursor: pointer;'">
                         Detalhes
                     </button>
                     <button type="button" @click="editTab = 'edit'"
-                            :style="editTab === 'edit' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #111827; border-bottom: 2px solid #111827; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #6b7280; border: none; background: none; cursor: pointer;'">
+                            :style="editTab === 'edit' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #e3e3e3; border-bottom: 2px solid #111827; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; border: none; background: none; cursor: pointer;'">
                         Editar
                     </button>
                     <button type="button" @click="editTab = 'whatsapp'"
-                            :style="editTab === 'whatsapp' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #111827; border-bottom: 2px solid #111827; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #6b7280; border: none; background: none; cursor: pointer;'">
+                            :style="editTab === 'whatsapp' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #e3e3e3; border-bottom: 2px solid #111827; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; border: none; background: none; cursor: pointer;'">
                         WhatsApp
                     </button>
                 </div>
@@ -347,38 +347,38 @@
                 {{-- Tab: Detalhes --}}
                 <div x-show="editTab === 'details'">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-                        <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem;">
-                            <p style="font-size: 0.7rem; color: #6b7280; margin: 0 0 0.25rem;">Cliente</p>
-                            <p style="font-size: 0.875rem; font-weight: 600; color: #111827; margin: 0;" x-text="editAppt?.customer_name"></p>
-                            <p style="font-size: 0.75rem; color: #6b7280; margin: 0.125rem 0 0;" x-text="editAppt?.customer_phone"></p>
+                        <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem;">
+                            <p style="font-size: 0.7rem; color: #818181; margin: 0 0 0.25rem;">Cliente</p>
+                            <p style="font-size: 0.875rem; font-weight: 600; color: #e3e3e3; margin: 0;" x-text="editAppt?.customer_name"></p>
+                            <p style="font-size: 0.75rem; color: #818181; margin: 0.125rem 0 0;" x-text="editAppt?.customer_phone"></p>
                         </div>
-                        <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem;">
-                            <p style="font-size: 0.7rem; color: #6b7280; margin: 0 0 0.25rem;">Atendente</p>
-                            <p style="font-size: 0.875rem; font-weight: 600; color: #111827; margin: 0;" x-text="getAttendantName(editAppt?.attendant)"></p>
+                        <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem;">
+                            <p style="font-size: 0.7rem; color: #818181; margin: 0 0 0.25rem;">Atendente</p>
+                            <p style="font-size: 0.875rem; font-weight: 600; color: #e3e3e3; margin: 0;" x-text="getAttendantName(editAppt?.attendant)"></p>
                         </div>
-                        <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem;">
-                            <p style="font-size: 0.7rem; color: #6b7280; margin: 0 0 0.25rem;">Data e Horário</p>
-                            <p style="font-size: 0.875rem; font-weight: 600; color: #111827; margin: 0;">
+                        <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem;">
+                            <p style="font-size: 0.7rem; color: #818181; margin: 0 0 0.25rem;">Data e Horário</p>
+                            <p style="font-size: 0.875rem; font-weight: 600; color: #e3e3e3; margin: 0;">
                                 <span x-text="formatDate(editAppt?.date)"></span> · <span x-text="formatTime(editAppt?.start_time)"></span> - <span x-text="formatTime(editAppt?.end_time)"></span>
                             </p>
                         </div>
-                        <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem;">
-                            <p style="font-size: 0.7rem; color: #6b7280; margin: 0 0 0.25rem;">Duração</p>
-                            <p style="font-size: 0.875rem; font-weight: 600; color: #111827; margin: 0;" x-text="getDurationLabel(editAppt?.duration_minutes)"></p>
+                        <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem;">
+                            <p style="font-size: 0.7rem; color: #818181; margin: 0 0 0.25rem;">Duração</p>
+                            <p style="font-size: 0.875rem; font-weight: 600; color: #e3e3e3; margin: 0;" x-text="getDurationLabel(editAppt?.duration_minutes)"></p>
                         </div>
                     </div>
 
                     <template x-if="editAppt?.service_description">
-                        <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; margin-bottom: 0.75rem;">
-                            <p style="font-size: 0.7rem; color: #6b7280; margin: 0 0 0.25rem;">Produto/Serviço</p>
-                            <p style="font-size: 0.8rem; color: #111827; margin: 0;" x-text="editAppt?.service_description"></p>
+                        <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                            <p style="font-size: 0.7rem; color: #818181; margin: 0 0 0.25rem;">Produto/Serviço</p>
+                            <p style="font-size: 0.8rem; color: #e3e3e3; margin: 0;" x-text="editAppt?.service_description"></p>
                         </div>
                     </template>
 
                     <template x-if="editAppt?.notes">
-                        <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; margin-bottom: 0.75rem;">
-                            <p style="font-size: 0.7rem; color: #6b7280; margin: 0 0 0.25rem;">Observações</p>
-                            <p style="font-size: 0.8rem; color: #111827; margin: 0;" x-text="editAppt?.notes"></p>
+                        <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                            <p style="font-size: 0.7rem; color: #818181; margin: 0 0 0.25rem;">Observações</p>
+                            <p style="font-size: 0.8rem; color: #e3e3e3; margin: 0;" x-text="editAppt?.notes"></p>
                         </div>
                     </template>
 
@@ -389,7 +389,7 @@
                                 @csrf
                                 @method('PATCH')
                                 <input type="hidden" name="status" value="confirmed">
-                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; border-radius: 0.375rem; cursor: pointer;"
+                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid #bbf7d0; border-radius: 0.375rem; cursor: pointer;"
                                         onmouseover="this.style.background='#bbf7d0'" onmouseout="this.style.background='#dcfce7'">
                                     <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                     Confirmar
@@ -401,8 +401,8 @@
                                 @csrf
                                 @method('PATCH')
                                 <input type="hidden" name="status" value="completed">
-                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; border-radius: 0.375rem; cursor: pointer;"
-                                        onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: #222222; color: #a4a4a4; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; cursor: pointer;"
+                                        onmouseover="this.style.background='#222222'" onmouseout="this.style.background='#1a1a1a'">
                                     <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     Concluir
                                 </button>
@@ -413,7 +413,7 @@
                                 @csrf
                                 @method('PATCH')
                                 <input type="hidden" name="status" value="no_show">
-                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; border-radius: 0.375rem; cursor: pointer;"
+                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: #fef3c7; color: #fbbf24; border: 1px solid #fde68a; border-radius: 0.375rem; cursor: pointer;"
                                         onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">
                                     <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     Não Compareceu
@@ -424,7 +424,7 @@
                             <form :action="'/schedule/' + editAppt?.id" method="POST" style="display: inline;" onsubmit="return confirm('Cancelar este agendamento?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 0.375rem; cursor: pointer;"
+                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid #fecaca; border-radius: 0.375rem; cursor: pointer;"
                                         onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
                                     <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                     Cancelar
@@ -441,23 +441,23 @@
                         @method('PUT')
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Atendente *</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Atendente *</label>
                                 <select name="attendant" x-model="editForm.attendant" required
-                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
                                     @foreach($attendants as $key => $name)
                                         <option value="{{ $key }}">{{ $name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Data *</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Data *</label>
                                 <input type="date" name="date" x-model="editForm.date" required
-                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Duração *</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Duração *</label>
                                 <select name="duration_minutes" x-model="editForm.duration_minutes" required
-                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
                                     @foreach($durationOptions as $minutes => $label)
                                         <option value="{{ $minutes }}">{{ $label }}</option>
                                     @endforeach
@@ -465,37 +465,37 @@
                             </div>
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Horário *</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Horário *</label>
                             <input type="time" name="start_time" x-model="editForm.start_time" step="1800" required
-                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                   style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Nome do Cliente *</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Nome do Cliente *</label>
                                 <input type="text" name="customer_name" x-model="editForm.customer_name" required
-                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Telefone</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Telefone</label>
                                 <input type="text" name="customer_phone" x-model="editForm.customer_phone"
-                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Produto/Serviço</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Produto/Serviço</label>
                                 <input type="text" name="service_description" x-model="editForm.service_description"
-                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.25rem;">Observações</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 600; color: #818181; margin-bottom: 0.25rem;">Observações</label>
                                 <input type="text" name="notes" x-model="editForm.notes"
-                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                             </div>
                         </div>
                         <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
                             <button type="button" @click="editTab = 'details'"
-                                    style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white; color: #6b7280; cursor: pointer;">
+                                    style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; background: #141414; color: #818181; cursor: pointer;">
                                 Voltar
                             </button>
                             <button type="submit"
@@ -509,13 +509,13 @@
                 {{-- Tab: WhatsApp --}}
                 <div x-show="editTab === 'whatsapp'" style="display: flex; flex-direction: column; gap: 0.75rem;">
                     <template x-for="msgType in whatsappTypes" :key="msgType.key">
-                        <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden;">
-                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #f9fafb;">
-                                <span style="font-size: 0.8rem; font-weight: 600; color: #374151;" x-text="msgType.label"></span>
+                        <div style="border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; overflow: hidden;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: #1a1a1a;">
+                                <span style="font-size: 0.8rem; font-weight: 600; color: #a4a4a4;" x-text="msgType.label"></span>
                                 <button type="button" @click="copyWhatsapp(msgType.key)"
                                         :style="copiedType === msgType.key
-                                            ? 'display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; border-radius: 0.375rem; cursor: pointer;'
-                                            : 'display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 500; background: white; color: #374151; border: 1px solid #e5e7eb; border-radius: 0.375rem; cursor: pointer;'">
+                                            ? 'display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid #bbf7d0; border-radius: 0.375rem; cursor: pointer;'
+                                            : 'display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 500; background: #141414; color: #a4a4a4; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; cursor: pointer;'">
                                     <template x-if="copiedType !== msgType.key">
                                         <span style="display: flex; align-items: center; gap: 0.25rem;">
                                             <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
@@ -531,7 +531,7 @@
                                 </button>
                             </div>
                             <div style="padding: 0.75rem;">
-                                <pre style="font-size: 0.8rem; color: #374151; white-space: pre-wrap; font-family: inherit; line-height: 1.5; margin: 0;" x-text="whatsappMessages[msgType.key] || 'Carregando...'"></pre>
+                                <pre style="font-size: 0.8rem; color: #a4a4a4; white-space: pre-wrap; font-family: inherit; line-height: 1.5; margin: 0;" x-text="whatsappMessages[msgType.key] || 'Carregando...'"></pre>
                             </div>
                         </div>
                     </template>

@@ -1,10 +1,10 @@
-<div class="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+<div class="bg-surface-raised rounded-xl border border-border p-4 sm:p-5">
     <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
         <label class="apple-section-title">Preview da mensagem</label>
         <div class="flex gap-2 flex-wrap">
             <button @click="copyMessage()" type="button"
                     class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-none flex items-center gap-1 transition-colors"
-                    :class="copied ? 'bg-emerald-600 text-white' : 'bg-gray-900 text-white hover:bg-gray-800'">
+                    :class="copied ? 'bg-emerald-600 text-white' : 'bg-surface text-white hover:bg-surface-overlay'">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                 </svg>
@@ -20,7 +20,7 @@
             </a>
         </div>
     </div>
-    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-[13px] text-gray-700 whitespace-pre-wrap font-mono leading-relaxed min-h-[100px] max-h-[520px] overflow-y-auto"
+    <div class="bg-surface border border-border rounded-lg p-4 text-[13px] text-dg-300 whitespace-pre-wrap font-mono leading-relaxed min-h-[100px] max-h-[520px] overflow-y-auto"
          x-text="productPrice > 0 ? buildMessage() : 'Preencha o valor do produto para visualizar a mensagem...'"></div>
 </div>
 
@@ -63,7 +63,7 @@
     <div class="mt-2 pt-2 border-t border-emerald-200">
         <button @click="copySaleSummary()" type="button"
                 class="w-full px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5 transition-colors"
-                :class="copiedSummary ? 'bg-emerald-600 text-white' : 'bg-gray-900 text-white hover:bg-gray-800'">
+                :class="copiedSummary ? 'bg-emerald-600 text-white' : 'bg-surface text-white hover:bg-surface-overlay'">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
             </svg>
@@ -77,53 +77,53 @@
      class="fixed inset-0 z-50 flex items-center justify-center p-4"
      @keydown.escape.window="saveModal.open = false">
     <div class="fixed inset-0 bg-black/50" @click="saveModal.open = false"></div>
-    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto" @click.stop>
+    <div class="relative bg-surface-raised rounded-2xl shadow-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto" @click.stop>
         <button @click="saveModal.open = false" type="button"
-                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
+                class="absolute top-4 right-4 text-dg-500 hover:text-dg-400 bg-transparent border-none cursor-pointer">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>
 
-        <h3 class="text-lg font-bold text-gray-900 mb-1">Salvar Simulação</h3>
-        <p class="text-sm text-gray-500 mb-4">Vincule esta proposta a um cliente existente ou cadastre um novo.</p>
+        <h3 class="text-lg font-bold text-dg-100 mb-1">Salvar Simulação</h3>
+        <p class="text-sm text-dg-500 mb-4">Vincule esta proposta a um cliente existente ou cadastre um novo.</p>
 
         {{-- Tabs: Buscar / Cadastrar --}}
         <div x-show="!saveModal.selectedCustomer" class="mb-4">
-            <div class="flex border-b border-gray-200 mb-4">
+            <div class="flex border-b border-border mb-4">
                 <button type="button" @click="saveModal.tab = 'search'"
                         class="flex-1 pb-2 text-sm font-semibold border-b-2 transition-colors bg-transparent cursor-pointer"
-                        :class="saveModal.tab === 'search' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600'">
+                        :class="saveModal.tab === 'search' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-dg-500 hover:text-dg-400'">
                     Buscar existente
                 </button>
                 <button type="button" @click="saveModal.tab = 'create'"
                         class="flex-1 pb-2 text-sm font-semibold border-b-2 transition-colors bg-transparent cursor-pointer"
-                        :class="saveModal.tab === 'create' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-gray-400 hover:text-gray-600'">
+                        :class="saveModal.tab === 'create' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-dg-500 hover:text-dg-400'">
                     + Novo cliente
                 </button>
             </div>
 
             {{-- Tab: Buscar --}}
             <div x-show="saveModal.tab === 'search'" class="relative">
-                <label class="text-xs font-semibold text-gray-600 mb-1 block">Buscar cliente</label>
+                <label class="text-xs font-semibold text-dg-400 mb-1 block">Buscar cliente</label>
                 <input type="text"
                        x-model="saveModal.search"
                        @input.debounce.300ms="searchSaveCustomers()"
                        placeholder="Nome ou telefone..."
-                       class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:border-indigo-500 focus:outline-none transition-colors">
+                       class="w-full px-3 py-2.5 border-2 border-border rounded-lg text-sm focus:border-dg-400 focus:outline-none transition-colors">
 
                 <div x-show="saveModal.results.length > 0" x-cloak
-                     class="absolute z-50 mt-1 w-full bg-white shadow-xl rounded-lg border border-gray-200 max-h-48 overflow-y-auto">
+                     class="absolute z-50 mt-1 w-full bg-surface-raised shadow-xl rounded-lg border border-border max-h-48 overflow-y-auto">
                     <template x-for="c in saveModal.results" :key="c.id">
                         <button type="button" @click="selectSaveCustomer(c)"
-                                class="w-full px-3 py-2.5 text-left border-b border-gray-100 cursor-pointer bg-white hover:bg-gray-50 transition-colors">
-                            <span class="font-medium text-gray-900 text-sm" x-text="c.name"></span>
-                            <span class="text-xs text-gray-500 block" x-text="c.phone"></span>
+                                class="w-full px-3 py-2.5 text-left border-b border-border cursor-pointer bg-surface-raised hover:bg-surface transition-colors">
+                            <span class="font-medium text-dg-100 text-sm" x-text="c.name"></span>
+                            <span class="text-xs text-dg-500 block" x-text="c.phone"></span>
                         </button>
                     </template>
                 </div>
 
-                <p x-show="saveModal.search.length >= 2 && saveModal.results.length === 0" class="text-xs text-gray-400 mt-2">
+                <p x-show="saveModal.search.length >= 2 && saveModal.results.length === 0" class="text-xs text-dg-500 mt-2">
                     Nenhum cliente encontrado.
                     <button type="button" @click="saveModal.tab = 'create'" class="text-indigo-600 font-semibold bg-transparent border-none cursor-pointer underline">Cadastrar novo</button>
                 </p>
@@ -133,21 +133,21 @@
             <div x-show="saveModal.tab === 'create'">
                 <div class="space-y-3">
                     <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Nome *</label>
+                        <label class="text-xs font-semibold text-dg-400 mb-1 block">Nome *</label>
                         <input type="text" x-model="saveModal.newCustomer.name" placeholder="Nome completo"
-                               class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:border-emerald-500 focus:outline-none transition-colors">
+                               class="w-full px-3 py-2.5 border-2 border-border rounded-lg text-sm focus:border-emerald-500 focus:outline-none transition-colors">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Telefone *</label>
+                        <label class="text-xs font-semibold text-dg-400 mb-1 block">Telefone *</label>
                         <input type="text" x-model="saveModal.newCustomer.phone" placeholder="(00) 00000-0000"
                                maxlength="15"
                                @input="saveModal.newCustomer.phone = $el.value.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2').substring(0,15)"
-                               class="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:border-emerald-500 focus:outline-none transition-colors">
+                               class="w-full px-3 py-2.5 border-2 border-border rounded-lg text-sm focus:border-emerald-500 focus:outline-none transition-colors">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-gray-600 mb-1 block">Instagram</label>
+                        <label class="text-xs font-semibold text-dg-400 mb-1 block">Instagram</label>
                         <input type="text" x-model="saveModal.newCustomer.instagram" placeholder="@usuario"
-                               class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-emerald-500 focus:outline-none transition-colors">
+                               class="w-full px-3 py-2 border-2 border-border rounded-lg text-sm focus:border-emerald-500 focus:outline-none transition-colors">
                     </div>
                 </div>
 
@@ -156,7 +156,7 @@
                 <button @click="createAndSelectCustomer()" type="button"
                         :disabled="saveModal.creating || !saveModal.newCustomer.name || !saveModal.newCustomer.phone"
                         class="w-full mt-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-white border-none cursor-pointer transition-colors"
-                        :class="saveModal.newCustomer.name && saveModal.newCustomer.phone && !saveModal.creating ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-300 cursor-not-allowed'">
+                        :class="saveModal.newCustomer.name && saveModal.newCustomer.phone && !saveModal.creating ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-dg-700 cursor-not-allowed'">
                     <span x-show="!saveModal.creating">Cadastrar e selecionar</span>
                     <span x-show="saveModal.creating">Cadastrando...</span>
                 </button>
@@ -166,8 +166,8 @@
         {{-- Cliente selecionado --}}
         <div x-show="saveModal.selectedCustomer" class="mb-4 p-3 bg-indigo-50 rounded-lg border border-indigo-200 flex items-center justify-between">
             <div>
-                <span class="font-semibold text-gray-900 text-sm" x-text="saveModal.selectedCustomer?.name"></span>
-                <span class="text-xs text-gray-600 block" x-text="saveModal.selectedCustomer?.phone"></span>
+                <span class="font-semibold text-dg-100 text-sm" x-text="saveModal.selectedCustomer?.name"></span>
+                <span class="text-xs text-dg-400 block" x-text="saveModal.selectedCustomer?.phone"></span>
             </div>
             <button type="button" @click="saveModal.selectedCustomer = null; saveModal.search = ''; saveModal.tab = 'search'"
                     class="text-indigo-600 hover:text-indigo-800 bg-transparent border-none cursor-pointer text-xs font-semibold">
@@ -177,29 +177,29 @@
 
         {{-- Notas opcionais --}}
         <div class="mb-4">
-            <label class="text-xs font-semibold text-gray-600 mb-1 block">Observação (opcional)</label>
+            <label class="text-xs font-semibold text-dg-400 mb-1 block">Observação (opcional)</label>
             <input type="text" x-model="saveModal.notes" placeholder="Ex: Cliente quer receber segunda..."
-                   class="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-indigo-500 focus:outline-none transition-colors"
+                   class="w-full px-3 py-2 border-2 border-border rounded-lg text-sm focus:border-dg-400 focus:outline-none transition-colors"
                    maxlength="500">
         </div>
 
         {{-- Resumo --}}
-        <div class="bg-gray-50 rounded-lg p-3 mb-4 text-xs text-gray-600 space-y-1">
-            <div class="flex justify-between"><span>Produto:</span><span class="font-medium text-gray-900" x-text="product.description || '-'"></span></div>
-            <div class="flex justify-between"><span>Preço:</span><span class="font-medium text-gray-900" x-text="'R$ ' + fmt(productPrice)"></span></div>
-            <div x-show="tradeInValue > 0" class="flex justify-between"><span>Seminovo:</span><span class="font-medium text-gray-900" x-text="'R$ ' + fmt(tradeInValue)"></span></div>
+        <div class="bg-surface rounded-lg p-3 mb-4 text-xs text-dg-400 space-y-1">
+            <div class="flex justify-between"><span>Produto:</span><span class="font-medium text-dg-100" x-text="product.description || '-'"></span></div>
+            <div class="flex justify-between"><span>Preço:</span><span class="font-medium text-dg-100" x-text="'R$ ' + fmt(productPrice)"></span></div>
+            <div x-show="tradeInValue > 0" class="flex justify-between"><span>Seminovo:</span><span class="font-medium text-dg-100" x-text="'R$ ' + fmt(tradeInValue)"></span></div>
         </div>
 
         {{-- Botões --}}
         <div class="flex gap-3">
             <button @click="saveModal.open = false" type="button"
-                    class="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 border-none cursor-pointer transition-colors">
+                    class="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold bg-surface-overlay text-dg-300 hover:bg-surface-elevated border-none cursor-pointer transition-colors">
                 Cancelar
             </button>
             <button @click="saveSnapshot()" type="button"
                     :disabled="!saveModal.selectedCustomer || saveModal.saving"
                     class="flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold text-white border-none cursor-pointer transition-colors"
-                    :class="saveModal.selectedCustomer && !saveModal.saving ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-300 cursor-not-allowed'">
+                    :class="saveModal.selectedCustomer && !saveModal.saving ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-dg-700 cursor-not-allowed'">
                 <span x-show="!saveModal.saving">Salvar</span>
                 <span x-show="saveModal.saving">Salvando...</span>
             </button>

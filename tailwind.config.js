@@ -3,6 +3,8 @@ import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class',
+
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
@@ -10,7 +12,7 @@ export default {
     ],
 
     safelist: [
-        // B2B + Perfumes dynamic colors: order statuses, retailer status, badges
+        // B2B + Perfumes dynamic colors (legacy light)
         ...['blue', 'yellow', 'amber', 'indigo', 'green', 'emerald', 'red', 'purple', 'gray', 'orange', 'pink', 'rose', 'violet'].flatMap(c => [
             `bg-${c}-50`, `bg-${c}-100`, `bg-${c}-200`,
             `text-${c}-600`, `text-${c}-700`, `text-${c}-800`,
@@ -18,10 +20,10 @@ export default {
             `bg-${c}-500`, `text-${c}-500`,
             `border-l-${c}-500`,
         ]),
-        // User role badges + avatar initials (dark theme with opacity modifiers)
-        ...['purple', 'blue', 'green', 'indigo', 'pink'].flatMap(c => [
+        // Dark theme badges (ERP + B2B)
+        ...['blue', 'yellow', 'amber', 'indigo', 'green', 'emerald', 'red', 'purple', 'gray', 'orange', 'pink', 'rose', 'violet'].flatMap(c => [
             `bg-${c}-500/10`, `bg-${c}-500/15`,
-            `text-${c}-400`,
+            `text-${c}-400`, `text-${c}-300`,
             `border-${c}-500/20`, `border-${c}-500/30`, `border-${c}-500/60`,
         ]),
     ],
@@ -29,10 +31,9 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['"Inter"', '"SF Pro Display"', '"SF Pro"', ...defaultTheme.fontFamily.sans],
+                sans: ['"Geist"', '"Inter"', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                // Paleta DG Store - baseada na logo
                 'dg': {
                     50: '#f7f7f7',
                     100: '#e3e3e3',
@@ -45,6 +46,17 @@ export default {
                     800: '#383838',
                     900: '#1a1a1a',
                     950: '#0d0d0d',
+                },
+                surface: {
+                    DEFAULT: '#0d0d0d',
+                    raised: '#141414',
+                    overlay: '#1a1a1a',
+                    elevated: '#222222',
+                },
+                border: {
+                    DEFAULT: 'rgba(255,255,255,0.06)',
+                    subtle: 'rgba(255,255,255,0.04)',
+                    strong: 'rgba(255,255,255,0.12)',
                 },
             },
         },

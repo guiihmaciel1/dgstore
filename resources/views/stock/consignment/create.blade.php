@@ -1,32 +1,32 @@
 <x-app-layout>
     <x-slot name="title">Nova Entrada Consignada</x-slot>
     <div class="py-6">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             <div class="flex items-center mb-6">
-                <a href="{{ route('stock.consignment.index') }}" class="mr-3 p-2 text-gray-500 rounded-lg hover:bg-gray-100 transition-colors">
+                <a href="{{ route('stock.consignment.index') }}" class="mr-3 p-2 text-dg-500 rounded-lg hover:bg-surface-overlay transition-colors">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
                 </a>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Nova Entrada Consignada</h1>
-                    <p class="text-sm text-gray-500">Registre um produto recebido de fornecedor em consignação</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-dg-100">Nova Entrada Consignada</h1>
+                    <p class="text-sm text-dg-500">Registre um produto recebido de fornecedor em consignação</p>
                 </div>
             </div>
 
             <form method="POST" action="{{ route('stock.consignment.store') }}">
                 @csrf
 
-                <div x-data="{ condition: '{{ old('condition', 'new') }}' }" style="background: white; border: 1px solid #e5e7eb; border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+                <div x-data="{ condition: '{{ old('condition', 'new') }}' }" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 1rem; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
 
                     {{-- Fornecedor --}}
                     <div>
-                        <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.375rem;">
-                            Fornecedor <span style="color: #dc2626;">*</span>
+                        <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #a4a4a4; margin-bottom: 0.375rem;">
+                            Fornecedor <span style="color: #fca5a5;">*</span>
                         </label>
                         <select name="supplier_id" required
-                                style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             <option value="">Selecione o fornecedor</option>
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}" {{ old('supplier_id') === $supplier->id ? 'selected' : '' }}>
@@ -34,142 +34,142 @@
                                 </option>
                             @endforeach
                         </select>
-                        @error('supplier_id') <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                        @error('supplier_id') <span style="color: #fca5a5; font-size: 0.75rem;">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Nome do Produto --}}
                     <div>
-                        <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.375rem;">
-                            Nome do Produto <span style="color: #dc2626;">*</span>
+                        <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #a4a4a4; margin-bottom: 0.375rem;">
+                            Nome do Produto <span style="color: #fca5a5;">*</span>
                         </label>
                         <input type="text" name="name" value="{{ old('name') }}" required placeholder="Ex: iPhone 17 Pro Max"
-                               style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                        @error('name') <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                               style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                        @error('name') <span style="color: #fca5a5; font-size: 0.75rem;">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Modelo / Storage / Cor --}}
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Modelo</label>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Modelo</label>
                             <input type="text" name="model" value="{{ old('model') }}" placeholder="Ex: A3106"
-                                   style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                   style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Storage</label>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Storage</label>
                             <input type="text" name="storage" value="{{ old('storage') }}" placeholder="Ex: 256GB"
-                                   style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                   style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Cor</label>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Cor</label>
                             <input type="text" name="color" value="{{ old('color') }}" placeholder="Ex: Silver"
-                                   style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                   style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                         </div>
                     </div>
 
                     {{-- Condição --}}
                     <div>
-                        <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.375rem;">
-                            Condição <span style="color: #dc2626;">*</span>
+                        <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #a4a4a4; margin-bottom: 0.375rem;">
+                            Condição <span style="color: #fca5a5;">*</span>
                         </label>
                         <div style="display: flex; gap: 0.75rem;">
                             <label :style="condition === 'new' ? 'display:flex;align-items:center;gap:0.5rem;padding:0.625rem 1rem;border:2px solid #111827;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:500;' : 'display:flex;align-items:center;gap:0.5rem;padding:0.625rem 1rem;border:2px solid #e5e7eb;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:500;'">
-                                <input type="radio" name="condition" value="new" x-model="condition" style="accent-color: #111827;">
+                                <input type="radio" name="condition" value="new" x-model="condition" style="accent-color: #e3e3e3;">
                                 Novo
                             </label>
                             <label :style="condition === 'used' ? 'display:flex;align-items:center;gap:0.5rem;padding:0.625rem 1rem;border:2px solid #111827;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:500;' : 'display:flex;align-items:center;gap:0.5rem;padding:0.625rem 1rem;border:2px solid #e5e7eb;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;font-weight:500;'">
-                                <input type="radio" name="condition" value="used" x-model="condition" style="accent-color: #111827;">
+                                <input type="radio" name="condition" value="used" x-model="condition" style="accent-color: #e3e3e3;">
                                 Seminovo
                             </label>
                         </div>
-                        @error('condition') <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                        @error('condition') <span style="color: #fca5a5; font-size: 0.75rem;">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Campos de Seminovo (bateria, caixa, cabo) --}}
                     <div x-show="condition === 'used'" x-cloak
-                         style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 0.75rem; padding: 1rem; display: flex; flex-direction: column; gap: 1rem;">
-                        <div style="font-size: 0.8rem; font-weight: 600; color: #92400e; display: flex; align-items: center; gap: 0.375rem;">
+                         style="background: #141414beb; border: 1px solid #fde68a; border-radius: 0.75rem; padding: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="font-size: 0.8rem; font-weight: 600; color: #fbbf24; display: flex; align-items: center; gap: 0.375rem;">
                             <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                             Informações do Seminovo
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; align-items: end;">
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Bateria (%)</label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Bateria (%)</label>
                                 <input type="number" name="battery_health" value="{{ old('battery_health') }}" min="0" max="100" placeholder="Ex: 87"
-                                       style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0;">
                                 <input type="checkbox" name="has_box" value="1" {{ old('has_box') ? 'checked' : '' }}
-                                       id="has_box" style="width: 1rem; height: 1rem; accent-color: #111827; cursor: pointer;">
-                                <label for="has_box" style="font-size: 0.875rem; font-weight: 500; color: #374151; cursor: pointer;">Com caixa</label>
+                                       id="has_box" style="width: 1rem; height: 1rem; accent-color: #e3e3e3; cursor: pointer;">
+                                <label for="has_box" style="font-size: 0.875rem; font-weight: 500; color: #a4a4a4; cursor: pointer;">Com caixa</label>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0;">
                                 <input type="checkbox" name="has_cable" value="1" {{ old('has_cable') ? 'checked' : '' }}
-                                       id="has_cable" style="width: 1rem; height: 1rem; accent-color: #111827; cursor: pointer;">
-                                <label for="has_cable" style="font-size: 0.875rem; font-weight: 500; color: #374151; cursor: pointer;">Com cabo</label>
+                                       id="has_cable" style="width: 1rem; height: 1rem; accent-color: #e3e3e3; cursor: pointer;">
+                                <label for="has_cable" style="font-size: 0.875rem; font-weight: 500; color: #a4a4a4; cursor: pointer;">Com cabo</label>
                             </div>
                         </div>
                     </div>
 
                     {{-- IMEI --}}
                     <div>
-                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">IMEI</label>
+                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">IMEI</label>
                         <input type="text" name="imei" value="{{ old('imei') }}" placeholder="Número IMEI (opcional)"
-                               style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none; font-family: monospace;"
-                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                        @error('imei') <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                               style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none; font-family: monospace;"
+                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                        @error('imei') <span style="color: #fca5a5; font-size: 0.75rem;">{{ $message }}</span> @enderror
                     </div>
 
                     {{-- Custo / Preço Sugerido / Quantidade --}}
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.375rem;">
-                                Custo Fornecedor (R$) <span style="color: #dc2626;">*</span>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #a4a4a4; margin-bottom: 0.375rem;">
+                                Custo Fornecedor (R$) <span style="color: #fca5a5;">*</span>
                             </label>
                             <input type="number" name="supplier_cost" value="{{ old('supplier_cost') }}" required step="0.01" min="0" placeholder="0,00"
-                                   style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
-                            @error('supplier_cost') <span style="color: #dc2626; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                                   style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                            @error('supplier_cost') <span style="color: #fca5a5; font-size: 0.75rem;">{{ $message }}</span> @enderror
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Preço Sugerido (R$)</label>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Preço Sugerido (R$)</label>
                             <input type="number" name="suggested_price" value="{{ old('suggested_price') }}" step="0.01" min="0" placeholder="0,00"
-                                   style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                   style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.375rem;">
-                                Quantidade <span style="color: #dc2626;">*</span>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #a4a4a4; margin-bottom: 0.375rem;">
+                                Quantidade <span style="color: #fca5a5;">*</span>
                             </label>
                             <input type="number" name="quantity" value="{{ old('quantity', 1) }}" required min="1"
-                                   style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                   style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                         </div>
                     </div>
 
                     {{-- Data Recebimento --}}
                     <div>
-                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Data de Recebimento</label>
+                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Data de Recebimento</label>
                         <input type="date" name="received_at" value="{{ old('received_at', now()->toDateString()) }}"
-                               style="width: 100%; max-width: 220px; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                               style="width: 100%; max-width: 220px; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                     </div>
 
                     {{-- Observações --}}
                     <div>
-                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Observações</label>
+                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Observações</label>
                         <textarea name="notes" rows="2" placeholder="Observações (opcional)"
-                                  style="width: 100%; padding: 0.625rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none; resize: vertical;"
-                                  onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">{{ old('notes') }}</textarea>
+                                  style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none; resize: vertical;"
+                                  onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">{{ old('notes') }}</textarea>
                     </div>
 
                     <div style="display: flex; justify-content: flex-end; gap: 0.75rem; padding-top: 0.5rem;">
                         <a href="{{ route('stock.consignment.index') }}"
-                           style="padding: 0.625rem 1.5rem; color: #6b7280; font-size: 0.875rem; text-decoration: none; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
+                           style="padding: 0.625rem 1.5rem; color: #818181; font-size: 0.875rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem;">
                             Cancelar
                         </a>
                         <button type="submit"

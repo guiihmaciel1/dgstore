@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Detalhes da Reserva</x-slot>
     <div class="py-4">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('success'))
                 <div class="mb-4">
                     <x-alert type="success">{{ session('success') }}</x-alert>
@@ -17,22 +17,22 @@
             <!-- Cabeçalho -->
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
                 <div style="display: flex; align-items: center;">
-                    <a href="{{ route('reservations.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
-                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                    <a href="{{ route('reservations.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #818181; border-radius: 0.5rem;"
+                       onmouseover="this.style.backgroundColor='#222222'" onmouseout="this.style.backgroundColor='transparent'">
                         <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">{{ $reservation->reservation_number }}</h1>
-                        <p style="font-size: 0.875rem; color: #6b7280;">Criada em {{ $reservation->created_at->format('d/m/Y H:i') }}</p>
+                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">{{ $reservation->reservation_number }}</h1>
+                        <p style="font-size: 0.875rem; color: #818181;">Criada em {{ $reservation->created_at->format('d/m/Y H:i') }}</p>
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
                     @if($reservation->status !== App\Domain\Reservation\Enums\ReservationStatus::Converted && 
                         $reservation->status !== App\Domain\Reservation\Enums\ReservationStatus::Cancelled)
                         <a href="{{ route('reservations.edit', $reservation) }}"
-                           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #eff6ff; color: #2563eb; font-weight: 500; font-size: 0.875rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid #bfdbfe;"
+                           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(59,130,246,0.1); color: #2563eb; font-weight: 500; font-size: 0.875rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid #bfdbfe;"
                            onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
                             <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -71,11 +71,11 @@
                     <span style="font-weight: 600; color: {{ $sc['color'] }};">{{ $reservation->status->label() }}</span>
                     @if($reservation->status->isActive())
                         @if($reservation->is_overdue)
-                            <span style="margin-left: 0.5rem; font-size: 0.875rem; color: #dc2626;">- Vencida!</span>
+                            <span style="margin-left: 0.5rem; font-size: 0.875rem; color: #fca5a5;">- Vencida!</span>
                         @elseif($reservation->is_expiring_soon)
                             <span style="margin-left: 0.5rem; font-size: 0.875rem; color: #d97706;">- Vence em {{ $reservation->days_until_expiration }} dias</span>
                         @else
-                            <span style="margin-left: 0.5rem; font-size: 0.875rem; color: #6b7280;">- Vence em {{ $reservation->expires_at->format('d/m/Y') }}</span>
+                            <span style="margin-left: 0.5rem; font-size: 0.875rem; color: #818181;">- Vence em {{ $reservation->expires_at->format('d/m/Y') }}</span>
                         @endif
                     @endif
                 </div>
@@ -90,14 +90,14 @@
                 <!-- Coluna Esquerda -->
                 <div>
                     <!-- Cliente -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                        <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                            <h3 style="font-weight: 600; color: #111827;">Cliente</h3>
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                        <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Cliente</h3>
                         </div>
                         <div style="padding: 1.25rem;">
-                            <div style="font-size: 1.125rem; font-weight: 600; color: #111827;">{{ $reservation->customer?->name ?? 'Não informado' }}</div>
+                            <div style="font-size: 1.125rem; font-weight: 600; color: #e3e3e3;">{{ $reservation->customer?->name ?? 'Não informado' }}</div>
                             @if($reservation->customer)
-                                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+                                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #818181;">
                                     @if($reservation->customer->phone)
                                         <div>{{ $reservation->customer->formatted_phone }}</div>
                                     @endif
@@ -113,9 +113,9 @@
                     </div>
 
                     <!-- Produto -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                        <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-                            <h3 style="font-weight: 600; color: #111827;">Produto Reservado</h3>
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                        <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Produto Reservado</h3>
                             @php
                                 $sourceColors = [
                                     'stock' => ['bg' => '#dcfce7', 'color' => '#16a34a', 'label' => 'Estoque'],
@@ -129,9 +129,9 @@
                             </span>
                         </div>
                         <div style="padding: 1.25rem;">
-                            <div style="font-size: 1.125rem; font-weight: 600; color: #111827;">{{ $reservation->product_name }}</div>
+                            <div style="font-size: 1.125rem; font-weight: 600; color: #e3e3e3;">{{ $reservation->product_name }}</div>
                             @if($reservation->product)
-                                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+                                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #818181;">
                                     <div>SKU: {{ $reservation->product->sku }}</div>
                                     @if($reservation->product->imei)
                                         <div>IMEI: {{ $reservation->product->imei }}</div>
@@ -150,16 +150,16 @@
                             $best = $bestQuotations->first();
                             $hasManySuppliers = $bestQuotations->count() > 1;
                         @endphp
-                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                            <div style="padding: 1rem; background: #eff6ff; border-bottom: 1px solid #bfdbfe; display: flex; justify-content: space-between; align-items: center;">
-                                <h3 style="font-weight: 600; color: #1d4ed8;">
+                        <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                            <div style="padding: 1rem; background: rgba(59,130,246,0.1); border-bottom: 1px solid #bfdbfe; display: flex; justify-content: space-between; align-items: center;">
+                                <h3 style="font-weight: 600; color: #93c5fd;">
                                     <svg style="width: 1.25rem; height: 1.25rem; display: inline; vertical-align: text-bottom; margin-right: 0.375rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
                                     </svg>
                                     Melhor Cotação
                                 </h3>
                                 @if($hasManySuppliers)
-                                    <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500; background: #dbeafe; color: #2563eb;">
+                                    <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500; background: rgba(59,130,246,0.15); color: #2563eb;">
                                         {{ $bestQuotations->count() }} fornecedores
                                     </span>
                                 @endif
@@ -167,15 +167,15 @@
                             <div style="padding: 1.25rem;">
                                 {{-- Melhor fornecedor --}}
                                 <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
-                                    <div style="padding: 0.5rem; background: #dcfce7; border-radius: 0.5rem; min-width: 2.25rem; text-align: center;">
+                                    <div style="padding: 0.5rem; background: rgba(16,185,129,0.15); border-radius: 0.5rem; min-width: 2.25rem; text-align: center;">
                                         <svg style="width: 1.25rem; height: 1.25rem; color: #16a34a; margin: 0 auto;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                         </svg>
                                     </div>
                                     <div style="flex: 1;">
-                                        <div style="font-size: 0.75rem; color: #6b7280;">Comprar de</div>
-                                        <div style="font-weight: 700; color: #111827; font-size: 1.05rem;">{{ $best->supplier->name }}</div>
-                                        <div style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.125rem;">
+                                        <div style="font-size: 0.75rem; color: #818181;">Comprar de</div>
+                                        <div style="font-weight: 700; color: #e3e3e3; font-size: 1.05rem;">{{ $best->supplier->name }}</div>
+                                        <div style="font-size: 0.7rem; color: #666666; margin-top: 0.125rem;">
                                             {{ $best->supplier->origin?->label() ?? '' }}
                                             &middot; Cotado em {{ $best->quoted_at->format('d/m/Y') }}
                                         </div>
@@ -183,25 +183,25 @@
                                 </div>
 
                                 {{-- Detalhamento de custos --}}
-                                <div style="background: #f9fafb; border-radius: 0.5rem; padding: 0.875rem; margin-bottom: 0.75rem;">
+                                <div style="background: #1a1a1a; border-radius: 0.5rem; padding: 0.875rem; margin-bottom: 0.75rem;">
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
-                                        <span style="color: #6b7280;">Preço do produto</span>
-                                        <span style="font-weight: 500; color: #111827;">R$ {{ number_format((float) $best->unit_price, 2, ',', '.') }}</span>
+                                        <span style="color: #818181;">Preço do produto</span>
+                                        <span style="font-weight: 500; color: #e3e3e3;">R$ {{ number_format((float) $best->unit_price, 2, ',', '.') }}</span>
                                     </div>
                                     @if($best->price_usd)
                                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.8rem;">
-                                            <span style="color: #9ca3af;">Preço USD</span>
-                                            <span style="color: #6b7280;">US$ {{ number_format((float) $best->price_usd, 2, ',', '.') }}</span>
+                                            <span style="color: #666666;">Preço USD</span>
+                                            <span style="color: #818181;">US$ {{ number_format((float) $best->price_usd, 2, ',', '.') }}</span>
                                         </div>
                                     @endif
                                     @if($best->freight_percent > 0)
                                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem;">
-                                            <span style="color: #6b7280;">Frete ({{ number_format($best->freight_percent * 100, 0) }}%)</span>
+                                            <span style="color: #818181;">Frete ({{ number_format($best->freight_percent * 100, 0) }}%)</span>
                                             <span style="font-weight: 500; color: #d97706;">+ R$ {{ number_format($best->freight_cost, 2, ',', '.') }}</span>
                                         </div>
                                     @endif
-                                    <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid #e5e7eb; font-size: 1rem;">
-                                        <span style="font-weight: 700; color: #111827;">Total com frete</span>
+                                    <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.06); font-size: 1rem;">
+                                        <span style="font-weight: 700; color: #e3e3e3;">Total com frete</span>
                                         <span style="font-weight: 700; color: #16a34a;">R$ {{ number_format($best->total_cost, 2, ',', '.') }}</span>
                                     </div>
                                 </div>
@@ -212,7 +212,7 @@
                                         $costDiff = (float) $reservation->cost_price - $best->total_cost;
                                     @endphp
                                     @if(abs($costDiff) > 0.01)
-                                        <div style="padding: 0.5rem 0.75rem; border-radius: 0.375rem; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; {{ $costDiff > 0 ? 'background: #f0fdf4; color: #16a34a;' : 'background: #fef2f2; color: #dc2626;' }}">
+                                        <div style="padding: 0.5rem 0.75rem; border-radius: 0.375rem; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; {{ $costDiff > 0 ? 'background: rgba(16,185,129,0.1); color: #16a34a;' : 'background: rgba(239,68,68,0.1); color: #fca5a5;' }}">
                                             <span>{{ $costDiff > 0 ? 'Mais barato que o custo da reserva' : 'Mais caro que o custo da reserva' }}</span>
                                             <span style="font-weight: 700;">{{ $costDiff > 0 ? '-' : '+' }} R$ {{ number_format(abs($costDiff), 2, ',', '.') }}</span>
                                         </div>
@@ -227,15 +227,15 @@
                                         </summary>
                                         <div style="margin-top: 0.5rem;">
                                             @foreach($bestQuotations->skip(1) as $alt)
-                                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; font-size: 0.8rem;">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem;">
                                                     <div>
-                                                        <span style="font-weight: 500; color: #374151;">{{ $alt->supplier->name }}</span>
-                                                        <span style="color: #9ca3af; margin-left: 0.25rem;">{{ $alt->supplier->origin?->label() ?? '' }}</span>
+                                                        <span style="font-weight: 500; color: #a4a4a4;">{{ $alt->supplier->name }}</span>
+                                                        <span style="color: #666666; margin-left: 0.25rem;">{{ $alt->supplier->origin?->label() ?? '' }}</span>
                                                     </div>
                                                     <div style="text-align: right;">
-                                                        <div style="font-weight: 600; color: #111827;">R$ {{ number_format($alt->total_cost, 2, ',', '.') }}</div>
+                                                        <div style="font-weight: 600; color: #e3e3e3;">R$ {{ number_format($alt->total_cost, 2, ',', '.') }}</div>
                                                         @if($alt->freight_percent > 0)
-                                                            <div style="font-size: 0.7rem; color: #9ca3af;">
+                                                            <div style="font-size: 0.7rem; color: #666666;">
                                                                 R$ {{ number_format((float) $alt->unit_price, 2, ',', '.') }} + {{ number_format($alt->freight_percent * 100, 0) }}% frete
                                                             </div>
                                                         @endif
@@ -250,31 +250,31 @@
                     @endif
 
                     <!-- Pagamentos -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
-                        <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-                            <h3 style="font-weight: 600; color: #111827;">Pagamentos do Sinal</h3>
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                        <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Pagamentos do Sinal</h3>
                         </div>
                         <div>
                             @if($reservation->payments->isEmpty())
-                                <div style="padding: 2rem; text-align: center; color: #6b7280;">
+                                <div style="padding: 2rem; text-align: center; color: #818181;">
                                     Nenhum pagamento registrado.
                                 </div>
                             @else
                                 <div style="overflow-x: auto;">
                                     <table style="width: 100%; border-collapse: collapse;">
                                         <thead>
-                                            <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                                <th style="padding: 0.5rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Data</th>
-                                                <th style="padding: 0.5rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Forma</th>
-                                                <th style="padding: 0.5rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Valor</th>
+                                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                                <th style="padding: 0.5rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181;">Data</th>
+                                                <th style="padding: 0.5rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181;">Forma</th>
+                                                <th style="padding: 0.5rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181;">Valor</th>
                                                 @if($reservation->isActive())
-                                                    <th style="padding: 0.5rem 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; width: 70px;"></th>
+                                                    <th style="padding: 0.5rem 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; width: 70px;"></th>
                                                 @endif
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach($reservation->payments as $payment)
-                                                <tr style="border-bottom: 1px solid #f3f4f6;">
+                                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                                                     <td style="padding: 0.5rem 1rem; font-size: 0.875rem;">{{ $payment->paid_at->format('d/m/Y H:i') }}</td>
                                                     <td style="padding: 0.5rem 1rem; font-size: 0.875rem;">{{ $payment->payment_method->label() }}</td>
                                                     <td style="padding: 0.5rem 1rem; font-size: 0.875rem; text-align: right; font-weight: 600; color: #16a34a;">{{ $payment->formatted_amount }}</td>
@@ -286,7 +286,7 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" title="Estornar pagamento"
-                                                                        style="padding: 0.25rem 0.5rem; background: none; color: #dc2626; font-size: 0.7rem; font-weight: 500; border: 1px solid #fecaca; border-radius: 0.25rem; cursor: pointer;"
+                                                                        style="padding: 0.25rem 0.5rem; background: none; color: #fca5a5; font-size: 0.7rem; font-weight: 500; border: 1px solid #fecaca; border-radius: 0.25rem; cursor: pointer;"
                                                                         onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
                                                                     Estornar
                                                                 </button>
@@ -301,17 +301,17 @@
                             @endif
 
                             @if($reservation->canReceivePayment())
-                                <div style="padding: 1.25rem; border-top: 1px solid #e5e7eb;">
+                                <div style="padding: 1.25rem; border-top: 1px solid rgba(255,255,255,0.06);">
                                     <form method="POST" action="{{ route('reservations.payments.store', $reservation) }}" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end;">
                                         @csrf
                                         <div style="flex: 1; min-width: 100px;">
-                                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Valor</label>
+                                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Valor</label>
                                             <input type="number" name="amount" required min="0.01" step="0.01" value="{{ $reservation->deposit_pending }}"
-                                                   style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                                   style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem;">
                                         </div>
                                         <div style="flex: 1; min-width: 120px;">
-                                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Forma</label>
-                                            <select name="payment_method" required style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
+                                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Forma</label>
+                                            <select name="payment_method" required style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; background: #141414;">
                                                 @foreach($paymentMethods as $method)
                                                     <option value="{{ $method->value }}">{{ $method->label() }}</option>
                                                 @endforeach
@@ -387,22 +387,22 @@
                     </div>
 
                     <!-- Informações -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                        <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                            <h3 style="font-weight: 600; color: #111827;">Informações</h3>
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                        <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Informações</h3>
                         </div>
                         <div style="padding: 1rem;">
                             <dl style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem;">
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Vendedor:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $reservation->user?->name }}</dd>
+                                    <dt style="color: #818181;">Vendedor:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $reservation->user?->name }}</dd>
                                 </div>
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Data da Reserva:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $reservation->created_at->format('d/m/Y H:i') }}</dd>
+                                    <dt style="color: #818181;">Data da Reserva:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $reservation->created_at->format('d/m/Y H:i') }}</dd>
                                 </div>
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Data Limite:</dt>
+                                    <dt style="color: #818181;">Data Limite:</dt>
                                     <dd style="font-weight: 500; color: {{ $reservation->is_overdue ? '#dc2626' : ($reservation->is_expiring_soon ? '#d97706' : '#111827') }};">
                                         {{ $reservation->expires_at->format('d/m/Y') }}
                                     </dd>
@@ -412,12 +412,12 @@
                     </div>
 
                     @if($reservation->notes)
-                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                <h3 style="font-weight: 600; color: #111827;">Observações</h3>
+                        <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                            <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                <h3 style="font-weight: 600; color: #e3e3e3;">Observações</h3>
                             </div>
                             <div style="padding: 1rem;">
-                                <p style="font-size: 0.875rem; color: #374151; white-space: pre-line;">{{ $reservation->notes }}</p>
+                                <p style="font-size: 0.875rem; color: #a4a4a4; white-space: pre-line;">{{ $reservation->notes }}</p>
                             </div>
                         </div>
                     @endif
@@ -450,7 +450,7 @@
                         <form method="POST" action="{{ route('reservations.cancel', $reservation) }}"
                               onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva? O produto será liberado.');">
                             @csrf
-                            <button type="submit" style="width: 100%; padding: 0.5rem; color: #dc2626; font-size: 0.875rem; background: none; border: 1px solid #fecaca; border-radius: 0.5rem; cursor: pointer;"
+                            <button type="submit" style="width: 100%; padding: 0.5rem; color: #fca5a5; font-size: 0.875rem; background: none; border: 1px solid #fecaca; border-radius: 0.5rem; cursor: pointer;"
                                     onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
                                 Cancelar Reserva
                             </button>

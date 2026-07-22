@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Detalhes da Importação</x-slot>
     <div class="py-4">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('success'))
                 <div class="mb-4">
                     <x-alert type="success">{{ session('success') }}</x-alert>
@@ -17,15 +17,15 @@
             <!-- Cabeçalho -->
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
                 <div style="display: flex; align-items: center;">
-                    <a href="{{ route('imports.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
-                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                    <a href="{{ route('imports.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #818181; border-radius: 0.5rem;"
+                       onmouseover="this.style.backgroundColor='#222222'" onmouseout="this.style.backgroundColor='transparent'">
                         <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">{{ $order->order_number }}</h1>
-                        <p style="font-size: 0.875rem; color: #6b7280;">Pedido de {{ $order->ordered_at->format('d/m/Y') }}</p>
+                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">{{ $order->order_number }}</h1>
+                        <p style="font-size: 0.875rem; color: #818181;">Pedido de {{ $order->ordered_at->format('d/m/Y') }}</p>
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
@@ -43,9 +43,9 @@
             </div>
 
             <!-- Timeline de Status -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                    <h3 style="font-weight: 600; color: #111827;">Status do Pedido</h3>
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                    <h3 style="font-weight: 600; color: #e3e3e3;">Status do Pedido</h3>
                 </div>
                 <div style="padding: 1.5rem;">
                     <div style="display: flex; justify-content: space-between; position: relative;">
@@ -77,7 +77,7 @@
                                 $isCurrent = $currentStep === $step['step'] && $order->status !== \App\Domain\Import\Enums\ImportOrderStatus::Cancelled;
                             @endphp
                             <div style="display: flex; flex-direction: column; align-items: center; z-index: 1; flex: 1;">
-                                <div style="width: 2rem; height: 2rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; {{ $isCompleted ? 'background: #16a34a; color: white;' : 'background: #e5e7eb; color: #9ca3af;' }} {{ $isCurrent ? 'box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2);' : '' }}">
+                                <div style="width: 2rem; height: 2rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; {{ $isCompleted ? 'background: #16a34a; color: white;' : 'background: #e5e7eb; color: #666666;' }} {{ $isCurrent ? 'box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2);' : '' }}">
                                     @if($isCompleted)
                                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
@@ -92,20 +92,20 @@
                     </div>
 
                     @if($order->status === \App\Domain\Import\Enums\ImportOrderStatus::Cancelled)
-                        <div style="margin-top: 1.5rem; padding: 1rem; background: #fef2f2; border-radius: 0.5rem; text-align: center;">
-                            <span style="color: #dc2626; font-weight: 600;">Pedido Cancelado</span>
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(239,68,68,0.1); border-radius: 0.5rem; text-align: center;">
+                            <span style="color: #fca5a5; font-weight: 600;">Pedido Cancelado</span>
                         </div>
                     @endif
 
                     <!-- Atualizar Status -->
                     @if($order->isActive())
-                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06);">
                             <form method="POST" action="{{ route('imports.status', $order) }}" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end;">
                                 @csrf
                                 @method('PATCH')
                                 <div style="flex: 1; min-width: 150px;">
-                                    <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Atualizar Status</label>
-                                    <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                    <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Atualizar Status</label>
+                                    <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
                                         @foreach($statuses as $status)
                                             @if($order->canAdvanceTo($status))
                                                 <option value="{{ $status->value }}">{{ $status->label() }}</option>
@@ -114,9 +114,9 @@
                                     </select>
                                 </div>
                                 <div style="flex: 1; min-width: 150px;">
-                                    <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Rastreio (opcional)</label>
+                                    <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Rastreio (opcional)</label>
                                     <input type="text" name="tracking_code" value="{{ $order->tracking_code }}" placeholder="Código de rastreio"
-                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;">
+                                           style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
                                 </div>
                                 <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; font-size: 0.875rem; font-weight: 500; border-radius: 0.5rem; border: none; cursor: pointer;">
                                     Atualizar
@@ -129,28 +129,28 @@
 
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
                 <!-- Itens do Pedido -->
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
-                    <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                        <h3 style="font-weight: 600; color: #111827;">Itens do Pedido ({{ $order->total_items }})</h3>
+                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                    <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                        <h3 style="font-weight: 600; color: #e3e3e3;">Itens do Pedido ({{ $order->total_items }})</h3>
                     </div>
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
-                                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Descrição</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Qtd</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Custo Unit.</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Total</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280;">Recebido</th>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181;">Descrição</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181;">Qtd</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181;">Custo Unit.</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181;">Total</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181;">Recebido</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($order->items as $item)
-                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                                         <td style="padding: 0.75rem 1rem;">
-                                            <span style="font-weight: 500; color: #111827;">{{ $item->description }}</span>
+                                            <span style="font-weight: 500; color: #e3e3e3;">{{ $item->description }}</span>
                                             @if($item->product)
-                                                <div style="font-size: 0.75rem; color: #6b7280;">SKU: {{ $item->product->sku }}</div>
+                                                <div style="font-size: 0.75rem; color: #818181;">SKU: {{ $item->product->sku }}</div>
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">{{ $item->quantity }}</td>
@@ -158,7 +158,7 @@
                                         <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 500;">{{ $item->formatted_total_cost }}</td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @if($item->is_fully_received)
-                                                <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #dcfce7; color: #16a34a; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">
+                                                <span style="display: inline-block; padding: 0.125rem 0.5rem; background: rgba(16,185,129,0.15); color: #16a34a; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">
                                                     {{ $item->received_quantity }}/{{ $item->quantity }}
                                                 </span>
                                             @elseif($item->is_partially_received)
@@ -166,7 +166,7 @@
                                                     {{ $item->received_quantity }}/{{ $item->quantity }}
                                                 </span>
                                             @else
-                                                <span style="color: #9ca3af;">0/{{ $item->quantity }}</span>
+                                                <span style="color: #666666;">0/{{ $item->quantity }}</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -179,48 +179,48 @@
                 <!-- Informações e Custos -->
                 <div>
                     <!-- Informações -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1rem;">
-                        <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                            <h3 style="font-weight: 600; color: #111827;">Informações</h3>
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1rem;">
+                        <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Informações</h3>
                         </div>
                         <div style="padding: 1rem;">
                             <dl style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem;">
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Fornecedor:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $order->supplier?->name ?? '-' }}</dd>
+                                    <dt style="color: #818181;">Fornecedor:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $order->supplier?->name ?? '-' }}</dd>
                                 </div>
                                 @if($order->tracking_code)
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Rastreio:</dt>
-                                    <dd style="font-weight: 500; color: #111827; font-family: monospace;">{{ $order->tracking_code }}</dd>
+                                    <dt style="color: #818181;">Rastreio:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3; font-family: monospace;">{{ $order->tracking_code }}</dd>
                                 </div>
                                 @endif
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Data do Pedido:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $order->ordered_at->format('d/m/Y') }}</dd>
+                                    <dt style="color: #818181;">Data do Pedido:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $order->ordered_at->format('d/m/Y') }}</dd>
                                 </div>
                                 @if($order->shipped_at)
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Data Envio:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $order->shipped_at->format('d/m/Y') }}</dd>
+                                    <dt style="color: #818181;">Data Envio:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $order->shipped_at->format('d/m/Y') }}</dd>
                                 </div>
                                 @endif
                                 @if($order->estimated_arrival)
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Previsão:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $order->estimated_arrival->format('d/m/Y') }}</dd>
+                                    <dt style="color: #818181;">Previsão:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $order->estimated_arrival->format('d/m/Y') }}</dd>
                                 </div>
                                 @endif
                                 @if($order->received_at)
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Data Recebimento:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $order->received_at->format('d/m/Y') }}</dd>
+                                    <dt style="color: #818181;">Data Recebimento:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $order->received_at->format('d/m/Y') }}</dd>
                                 </div>
                                 @endif
                                 @if($order->days_in_transit)
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Dias em trânsito:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $order->days_in_transit }} dias</dd>
+                                    <dt style="color: #818181;">Dias em trânsito:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $order->days_in_transit }} dias</dd>
                                 </div>
                                 @endif
                             </dl>
@@ -228,36 +228,36 @@
                     </div>
 
                     <!-- Custos -->
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
-                        <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                            <h3 style="font-weight: 600; color: #111827;">Custos</h3>
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                        <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Custos</h3>
                         </div>
                         <div style="padding: 1rem;">
                             <dl style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem;">
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Subtotal (USD):</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $order->formatted_estimated_cost }}</dd>
+                                    <dt style="color: #818181;">Subtotal (USD):</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $order->formatted_estimated_cost }}</dd>
                                 </div>
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Cotação USD:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">R$ {{ number_format($order->exchange_rate, 4, ',', '.') }}</dd>
+                                    <dt style="color: #818181;">Cotação USD:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">R$ {{ number_format($order->exchange_rate, 4, ',', '.') }}</dd>
                                 </div>
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Frete:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $order->formatted_shipping_cost }}</dd>
+                                    <dt style="color: #818181;">Frete:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $order->formatted_shipping_cost }}</dd>
                                 </div>
                                 <div style="display: flex; justify-content: space-between;">
-                                    <dt style="color: #6b7280;">Impostos/Taxas/TAXI:</dt>
-                                    <dd style="font-weight: 500; color: #111827;">{{ $order->formatted_taxes }}</dd>
+                                    <dt style="color: #818181;">Impostos/Taxas/TAXI:</dt>
+                                    <dd style="font-weight: 500; color: #e3e3e3;">{{ $order->formatted_taxes }}</dd>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid #e5e7eb;">
-                                    <dt style="font-weight: 600; color: #111827;">Total Estimado:</dt>
-                                    <dd style="font-weight: 700; color: #111827;">{{ $order->formatted_estimated_total_brl }}</dd>
+                                <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.06);">
+                                    <dt style="font-weight: 600; color: #e3e3e3;">Total Estimado:</dt>
+                                    <dd style="font-weight: 700; color: #e3e3e3;">{{ $order->formatted_estimated_total_brl }}</dd>
                                 </div>
                                 @if($order->actual_cost !== null)
-                                    <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid #e5e7eb;">
-                                        <dt style="font-weight: 600; color: #111827;">Total Real:</dt>
-                                        <dd style="font-weight: 700; color: #111827;">{{ $order->formatted_actual_total_brl }}</dd>
+                                    <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.06);">
+                                        <dt style="font-weight: 600; color: #e3e3e3;">Total Real:</dt>
+                                        <dd style="font-weight: 700; color: #e3e3e3;">{{ $order->formatted_actual_total_brl }}</dd>
                                     </div>
                                     @if($order->cost_difference !== null)
                                         @php
@@ -265,7 +265,7 @@
                                             $isPositive = $diff > 0;
                                         @endphp
                                         <div style="display: flex; justify-content: space-between;">
-                                            <dt style="color: #6b7280;">Diferença:</dt>
+                                            <dt style="color: #818181;">Diferença:</dt>
                                             <dd style="font-weight: 600; color: {{ $isPositive ? '#dc2626' : '#16a34a' }};">
                                                 {{ $isPositive ? '+' : '' }}R$ {{ number_format($diff, 2, ',', '.') }}
                                                 ({{ number_format($order->cost_difference_percent, 1, ',', '.') }}%)
@@ -278,12 +278,12 @@
                     </div>
 
                     @if($order->notes)
-                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-top: 1rem;">
-                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                <h3 style="font-weight: 600; color: #111827;">Observações</h3>
+                        <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-top: 1rem;">
+                            <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                <h3 style="font-weight: 600; color: #e3e3e3;">Observações</h3>
                             </div>
                             <div style="padding: 1rem;">
-                                <p style="font-size: 0.875rem; color: #374151; white-space: pre-line;">{{ $order->notes }}</p>
+                                <p style="font-size: 0.875rem; color: #a4a4a4; white-space: pre-line;">{{ $order->notes }}</p>
                             </div>
                         </div>
                     @endif
@@ -292,7 +292,7 @@
                         <form method="POST" action="{{ route('imports.cancel', $order) }}" style="margin-top: 1rem;"
                               onsubmit="return confirm('Tem certeza que deseja cancelar este pedido?');">
                             @csrf
-                            <button type="submit" style="width: 100%; padding: 0.5rem; color: #dc2626; font-size: 0.875rem; background: none; border: 1px solid #fecaca; border-radius: 0.5rem; cursor: pointer;"
+                            <button type="submit" style="width: 100%; padding: 0.5rem; color: #fca5a5; font-size: 0.875rem; background: none; border: 1px solid #fecaca; border-radius: 0.5rem; cursor: pointer;"
                                     onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
                                 Cancelar Pedido
                             </button>

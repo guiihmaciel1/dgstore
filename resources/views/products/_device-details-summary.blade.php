@@ -19,10 +19,10 @@
     @foreach($summaryKeys as $key => $label)
         @if(!empty($details[$key]))
             <div style="display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px solid #fef3c7;">
-                <span style="font-size: 0.6875rem; font-weight: 500; color: #92400e;">{{ $label }}</span>
+                <span style="font-size: 0.6875rem; font-weight: 500; color: #fbbf24;">{{ $label }}</span>
                 <span style="font-size: 0.6875rem; color: #78350f; font-family: monospace;">{{ $details[$key] }}</span>
             </div>
         @endif
     @endforeach
 </div>
-<p style="font-size: 0.6875rem; color: #92400e; margin-top: 0.5rem; font-style: italic;">{{ count($details) }} propriedades importadas do dispositivo.</p>
+<p style="font-size: 0.6875rem; color: #fbbf24; margin-top: 0.5rem; font-style: italic;">{{ count($details) }} propriedades importadas do dispositivo.</p>

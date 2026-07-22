@@ -4,22 +4,22 @@
         $activeStages = \App\Domain\CRM\Models\PipelineStage::where('is_won', false)->where('is_lost', false)->orderBy('position')->get();
     @endphp
     <div class="py-6" x-data="dealPage()">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #166534; font-size: 0.875rem;">
+                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
                     {{ session('success') }}
                 </div>
             @endif
 
             {{-- Breadcrumb com botão voltar --}}
             <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                <a href="{{ route('crm.board') }}" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 0.375rem; border: 1px solid #e5e7eb; background: white; color: #374151; text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='white'" title="Voltar ao Pipeline">
+                <a href="{{ route('crm.board') }}" style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.06); background: #141414; color: #a4a4a4; text-decoration: none; transition: background 0.15s;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'" title="Voltar ao Pipeline">
                     <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
                 </a>
-                <div style="font-size: 0.8rem; color: #6b7280;">
+                <div style="font-size: 0.8rem; color: #818181;">
                     <a href="{{ route('crm.board') }}" style="color: #3b82f6; text-decoration: none;">Pipeline</a>
                     <span style="margin: 0 0.375rem;">/</span>
                     <span>{{ $deal->title }}</span>
@@ -28,7 +28,7 @@
 
             <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; {{ !$deal->isOpen() ? '' : '' }}">
                 @if(!$deal->isOpen())
-                    <div style="padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; {{ $deal->isWon() ? 'background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534;' : 'background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;' }}">
+                    <div style="padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; {{ $deal->isWon() ? 'background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; color: #6ee7b7;' : 'background: rgba(239,68,68,0.1); border: 1px solid #fecaca; color: #fca5a5;' }}">
                         {{ $deal->isWon() ? 'Negócio GANHO em ' . $deal->won_at->format('d/m/Y H:i') : 'Negócio PERDIDO em ' . $deal->lost_at->format('d/m/Y H:i') }}
                         @if($deal->lost_reason)
                             — Motivo: {{ $deal->lost_reason }}
@@ -50,15 +50,15 @@
                     <div style="display: flex; flex-direction: column; gap: 1rem;">
 
                         {{-- Card: Dados do Negócio --}}
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem;">
+                        <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1.25rem;">
                             <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;">
                                 <div>
                                     @if($deal->product_interest)
-                                        <span style="font-size: 0.7rem; font-weight: 600; color: #374151; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;">
+                                        <span style="font-size: 0.7rem; font-weight: 600; color: #a4a4a4; background: #222222; padding: 2px 8px; border-radius: 4px;">
                                             {{ $deal->product_interest }}
                                         </span>
                                     @endif
-                                    <h1 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-top: 0.25rem;">{{ $deal->title }}</h1>
+                                    <h1 style="font-size: 1.25rem; font-weight: 700; color: #e3e3e3; margin-top: 0.25rem;">{{ $deal->title }}</h1>
                                 </div>
                                 @if($deal->value)
                                     <span style="font-size: 1.125rem; font-weight: 700; color: #059669;">
@@ -69,19 +69,19 @@
 
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; font-size: 0.8rem;">
                                 <div>
-                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Etapa</span>
+                                    <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block;">Etapa</span>
                                     <span style="display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 2px;">
                                         <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $deal->stage->color }};"></span>
                                         {{ $deal->stage->name }}
                                     </span>
                                 </div>
                                 <div>
-                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Vendedor</span>
+                                    <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block;">Vendedor</span>
                                     <span style="margin-top: 2px;">{{ $deal->user->name }}</span>
                                 </div>
                                 @if($deal->customer)
                                     <div>
-                                        <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Cliente</span>
+                                        <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block;">Cliente</span>
                                         <a href="{{ route('customers.show', $deal->customer) }}" style="color: #3b82f6; text-decoration: none; margin-top: 2px; display: block;">
                                             {{ $deal->customer->name }}
                                         </a>
@@ -89,8 +89,8 @@
                                 @endif
                                 @if($deal->expected_close_date)
                                     <div>
-                                        <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Previsão</span>
-                                        <span style="margin-top: 2px; {{ $deal->isOverdue() ? 'color: #dc2626; font-weight: 600;' : '' }}">
+                                        <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block;">Previsão</span>
+                                        <span style="margin-top: 2px; {{ $deal->isOverdue() ? 'color: #fca5a5; font-weight: 600;' : '' }}">
                                             {{ $deal->expected_close_date->format('d/m/Y') }}
                                             @if($deal->isOverdue())
                                                 (atrasado)
@@ -99,11 +99,11 @@
                                     </div>
                                 @endif
                                 <div>
-                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Criado em</span>
+                                    <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block;">Criado em</span>
                                     <span style="margin-top: 2px;">{{ $deal->created_at->format('d/m/Y') }}</span>
                                 </div>
                                 <div>
-                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Última interação</span>
+                                    <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block;">Última interação</span>
                                     @php
                                         $waitColor = ['green' => '#059669', 'yellow' => '#ca8a04', 'orange' => '#ea580c', 'red' => '#dc2626'][$deal->waiting_urgency] ?? '#6b7280';
                                     @endphp
@@ -112,7 +112,7 @@
                                     </span>
                                 </div>
                                 <div>
-                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Origem</span>
+                                    <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block;">Origem</span>
                                     @if($deal->lead_source)
                                         <span style="display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 2px; font-size: 0.8rem; color: {{ $deal->lead_source->color() }}; font-weight: 600;">
                                             <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -121,7 +121,7 @@
                                             {{ $deal->lead_source->label() }}
                                         </span>
                                     @else
-                                        <span style="margin-top: 2px; color: #9ca3af;">Não informada</span>
+                                        <span style="margin-top: 2px; color: #666666;">Não informada</span>
                                     @endif
                                 </div>
                                 <div>
@@ -129,7 +129,7 @@
                                         $tempColors = ['hot' => '#ef4444', 'warm' => '#f59e0b', 'cold' => '#3b82f6'];
                                         $tempLabels = ['hot' => 'Quente', 'warm' => 'Morno', 'cold' => 'Frio'];
                                     @endphp
-                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block;">Temperatura</span>
+                                    <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block;">Temperatura</span>
                                     <span style="display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 2px;">
                                         <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $tempColors[$deal->temperature] ?? '#f59e0b' }};"></span>
                                         {{ $tempLabels[$deal->temperature] ?? 'Morno' }}
@@ -139,13 +139,13 @@
 
                             {{-- Próxima Ação --}}
                             @if($deal->next_action || $deal->next_action_at)
-                                <div style="margin-top: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; {{ $deal->is_followup_overdue ? 'background: #fef2f2; border: 1px solid #fecaca;' : 'background: #f0f9ff; border: 1px solid #bae6fd;' }}">
+                                <div style="margin-top: 0.75rem; padding: 0.625rem 0.75rem; border-radius: 0.5rem; {{ $deal->is_followup_overdue ? 'background: rgba(239,68,68,0.1); border: 1px solid #fecaca;' : 'background: #f0f9ff; border: 1px solid #bae6fd;' }}">
                                     <span style="font-size: 0.7rem; font-weight: 600; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#0369a1' }}; display: block; margin-bottom: 0.25rem;">
                                         {{ $deal->is_followup_overdue ? 'Follow-up atrasado!' : 'Próximo Passo' }}
                                     </span>
                                     <div style="display: flex; align-items: center; justify-content: space-between;">
                                         @if($deal->next_action)
-                                            <span style="font-size: 0.8rem; color: #111827; font-weight: 500;">{{ $deal->next_action }}</span>
+                                            <span style="font-size: 0.8rem; color: #e3e3e3; font-weight: 500;">{{ $deal->next_action }}</span>
                                         @endif
                                         @if($deal->next_action_at)
                                             <span style="font-size: 0.75rem; font-weight: 600; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#6b7280' }};">
@@ -158,40 +158,40 @@
 
                             @if($deal->description)
                                 <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6;">
-                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block; margin-bottom: 0.25rem;">Observações</span>
-                                    <p style="font-size: 0.8rem; color: #374151; line-height: 1.5;">{{ $deal->description }}</p>
+                                    <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block; margin-bottom: 0.25rem;">Observações</span>
+                                    <p style="font-size: 0.8rem; color: #a4a4a4; line-height: 1.5;">{{ $deal->description }}</p>
                                 </div>
                             @endif
 
                             {{-- Interesses de Produto --}}
                             @if($deal->productInterests->isNotEmpty())
                                 <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6;">
-                                    <span style="color: #6b7280; font-weight: 600; font-size: 0.7rem; display: block; margin-bottom: 0.5rem;">Interesse de Produto</span>
+                                    <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block; margin-bottom: 0.5rem;">Interesse de Produto</span>
                                     @foreach($deal->productInterests as $interest)
                                         @php $inStock = $interest->hasMatchInStock(); @endphp
                                         <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: {{ $inStock ? '#f0fdf4' : '#fef2f2' }}; border: 1px solid {{ $inStock ? '#bbf7d0' : '#fecaca' }}; border-radius: 0.375rem; margin-bottom: 0.375rem;">
                                             <div style="flex: 1;">
-                                                <div style="font-size: 0.8rem; font-weight: 600; color: #111827;">
+                                                <div style="font-size: 0.8rem; font-weight: 600; color: #e3e3e3;">
                                                     {{ $interest->model }}
                                                     @if($interest->storage)
-                                                        <span style="font-weight: 400; color: #6b7280;">{{ $interest->storage }}</span>
+                                                        <span style="font-weight: 400; color: #818181;">{{ $interest->storage }}</span>
                                                     @endif
                                                 </div>
                                                 <div style="display: flex; gap: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap;">
                                                     @if($interest->color)
-                                                        <span style="font-size: 0.7rem; color: #6b7280;">{{ $interest->color }}</span>
+                                                        <span style="font-size: 0.7rem; color: #818181;">{{ $interest->color }}</span>
                                                     @endif
                                                     @if($interest->condition)
-                                                        <span style="font-size: 0.65rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: #dbeafe; color: #1e40af;' : 'background: #fef3c7; color: #92400e;' }}">
+                                                        <span style="font-size: 0.65rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.15); color: #93c5fd;' : 'background: #fef3c7; color: #fbbf24;' }}">
                                                             {{ $interest->condition === 'novo' ? 'Novo' : 'Seminovo' }}
                                                         </span>
                                                     @endif
                                                     @if($interest->max_budget)
-                                                        <span style="font-size: 0.7rem; color: #6b7280;">Até R$ {{ number_format((float)$interest->max_budget, 2, ',', '.') }}</span>
+                                                        <span style="font-size: 0.7rem; color: #818181;">Até R$ {{ number_format((float)$interest->max_budget, 2, ',', '.') }}</span>
                                                     @endif
                                                 </div>
                                             </div>
-                                            <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; {{ $inStock ? 'background: #dcfce7; color: #166534;' : 'background: #fee2e2; color: #991b1b;' }}">
+                                            <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; {{ $inStock ? 'background: rgba(16,185,129,0.15); color: #6ee7b7;' : 'background: rgba(239,68,68,0.15); color: #fca5a5;' }}">
                                                 {{ $inStock ? 'Em estoque' : 'Sem estoque' }}
                                             </span>
                                         </div>
@@ -226,7 +226,7 @@
                                     </button>
 
                                     <button @click="showEditForm = !showEditForm" type="button"
-                                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid #e5e7eb; cursor: pointer;">
+                                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #222222; color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;">
                                         Editar
                                     </button>
 
@@ -234,7 +234,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
-                                                style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #fef2f2; color: #dc2626; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid #fecaca; cursor: pointer;">
+                                                style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); color: #fca5a5; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid #fecaca; cursor: pointer;">
                                             Excluir
                                         </button>
                                     </form>
@@ -243,58 +243,58 @@
                         </div>
 
                         {{-- Form: Marcar como perdido --}}
-                        <div x-show="showLostForm" x-transition style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1rem;">
+                        <div x-show="showLostForm" x-transition style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1rem;">
                             <form method="POST" action="{{ route('crm.deals.lose', $deal) }}">
                                 @csrf
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #991b1b; display: block; margin-bottom: 0.375rem;">Motivo da perda *</label>
+                                <label style="font-size: 0.75rem; font-weight: 600; color: #fca5a5; display: block; margin-bottom: 0.375rem;">Motivo da perda *</label>
                                 <input type="text" name="lost_reason" required minlength="3" placeholder="Ex: Preço alto, comprou na concorrência, desistiu..."
                                        value="{{ old('lost_reason') }}"
                                        style="width: 100%; padding: 0.5rem; border: 1px solid {{ $errors->has('lost_reason') ? '#dc2626' : '#fecaca' }}; border-radius: 0.375rem; font-size: 0.8rem; margin-bottom: 0.25rem;">
                                 @error('lost_reason')
-                                    <p style="font-size: 0.7rem; color: #dc2626; margin: 0 0 0.375rem 0;">{{ $message }}</p>
+                                    <p style="font-size: 0.7rem; color: #fca5a5; margin: 0 0 0.375rem 0;">{{ $message }}</p>
                                 @enderror
                                 <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.375rem;">
-                                    <button @click.prevent="showLostForm = false" type="button" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white; cursor: pointer;">Cancelar</button>
+                                    <button @click.prevent="showLostForm = false" type="button" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; background: #141414; cursor: pointer;">Cancelar</button>
                                     <button type="submit" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; background: #dc2626; color: white; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600;">Marcar como Perdido</button>
                                 </div>
                             </form>
                         </div>
 
                         {{-- Form: Editar Deal --}}
-                        <div x-show="showEditForm" x-transition style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem;">
-                            <h3 style="font-size: 0.9rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">Editar Negócio</h3>
+                        <div x-show="showEditForm" x-transition style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1.25rem;">
+                            <h3 style="font-size: 0.9rem; font-weight: 700; color: #e3e3e3; margin-bottom: 0.75rem;">Editar Negócio</h3>
                             <form method="POST" action="{{ route('crm.deals.update', $deal) }}">
                                 @csrf
                                 @method('PUT')
                                 <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                                     <div>
-                                        <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Título *</label>
-                                        <input type="text" name="title" required value="{{ $deal->title }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                        <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Título *</label>
+                                        <input type="text" name="title" required value="{{ $deal->title }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                     </div>
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                                         <div>
-                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Produto</label>
-                                            <input type="text" name="product_interest" value="{{ $deal->product_interest }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Produto</label>
+                                            <input type="text" name="product_interest" value="{{ $deal->product_interest }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                         </div>
                                         <div>
-                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Valor (R$)</label>
-                                            <input type="number" name="value" step="0.01" value="{{ $deal->value }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
-                                        </div>
-                                    </div>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                        <div>
-                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Telefone</label>
-                                            <input type="text" name="phone" value="{{ $deal->phone }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
-                                        </div>
-                                        <div>
-                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Previsão</label>
-                                            <input type="date" name="expected_close_date" value="{{ $deal->expected_close_date?->format('Y-m-d') }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Valor (R$)</label>
+                                            <input type="number" name="value" step="0.01" value="{{ $deal->value }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                         </div>
                                     </div>
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                                         <div>
-                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Origem do Lead</label>
-                                            <select name="lead_source" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Telefone</label>
+                                            <input type="text" name="phone" value="{{ $deal->phone }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
+                                        </div>
+                                        <div>
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Previsão</label>
+                                            <input type="date" name="expected_close_date" value="{{ $deal->expected_close_date?->format('Y-m-d') }}" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                        <div>
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Origem do Lead</label>
+                                            <select name="lead_source" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                                 <option value="">Não informada</option>
                                                 @foreach(\App\Domain\CRM\Enums\LeadSource::cases() as $src)
                                                     <option value="{{ $src->value }}" {{ $deal->lead_source === $src ? 'selected' : '' }}>{{ $src->label() }}</option>
@@ -302,8 +302,8 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Temperatura</label>
-                                            <select name="temperature" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Temperatura</label>
+                                            <select name="temperature" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                                 <option value="hot" {{ $deal->temperature === 'hot' ? 'selected' : '' }}>Quente</option>
                                                 <option value="warm" {{ $deal->temperature === 'warm' ? 'selected' : '' }}>Morno</option>
                                                 <option value="cold" {{ $deal->temperature === 'cold' ? 'selected' : '' }}>Frio</option>
@@ -312,31 +312,31 @@
                                     </div>
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                                         <div>
-                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Próximo Passo</label>
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Próximo Passo</label>
                                             <input type="text" name="next_action" value="{{ $deal->next_action }}" placeholder="Ex: Enviar orçamento"
-                                                   style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                                   style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                         </div>
                                         <div>
-                                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Data Próximo Contato</label>
+                                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Data Próximo Contato</label>
                                             <input type="datetime-local" name="next_action_at" value="{{ $deal->next_action_at?->format('Y-m-d\TH:i') }}"
-                                                   style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                                   style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                         </div>
                                     </div>
                                     <div>
-                                        <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280;">Observações</label>
-                                        <textarea name="description" rows="2" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; resize: vertical;">{{ $deal->description }}</textarea>
+                                        <label style="font-size: 0.7rem; font-weight: 600; color: #818181;">Observações</label>
+                                        <textarea name="description" rows="2" style="width: 100%; padding: 0.4rem 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; resize: vertical;">{{ $deal->description }}</textarea>
                                     </div>
                                 </div>
                                 <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.75rem;">
-                                    <button @click.prevent="showEditForm = false" type="button" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white; cursor: pointer;">Cancelar</button>
+                                    <button @click.prevent="showEditForm = false" type="button" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; background: #141414; cursor: pointer;">Cancelar</button>
                                     <button type="submit" style="padding: 0.375rem 0.75rem; font-size: 0.75rem; background: #111827; color: white; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600;">Salvar</button>
                                 </div>
                             </form>
                         </div>
 
                         {{-- IA Section --}}
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem;">
-                            <h3 style="font-size: 0.9rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.375rem;">
+                        <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1.25rem;">
+                            <h3 style="font-size: 0.9rem; font-weight: 700; color: #e3e3e3; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.375rem;">
                                 <svg style="width: 18px; height: 18px; color: #8b5cf6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                                 </svg>
@@ -344,34 +344,34 @@
                             </h3>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                 <button @click="suggestMessage()" :disabled="aiLoading" type="button"
-                                        style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid #e5e7eb; cursor: pointer;">
+                                        style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #222222; color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;">
                                     <span x-show="!aiLoading">Sugerir Mensagem WhatsApp</span>
                                     <span x-show="aiLoading">Gerando...</span>
                                 </button>
                                 <button @click="analyzeDeal()" :disabled="aiLoading" type="button"
-                                        style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid #e5e7eb; cursor: pointer;">
+                                        style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #222222; color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;">
                                     <span x-show="!aiLoading">Analisar Negócio</span>
                                     <span x-show="aiLoading">Analisando...</span>
                                 </button>
                             </div>
                             <div x-show="aiResult" x-transition style="margin-top: 0.75rem; padding: 0.75rem; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 0.375rem;">
-                                <p style="font-size: 0.8rem; color: #374151; line-height: 1.5; white-space: pre-line;" x-text="aiResult"></p>
+                                <p style="font-size: 0.8rem; color: #a4a4a4; line-height: 1.5; white-space: pre-line;" x-text="aiResult"></p>
                                 <button @click="copyAiResult()" type="button" style="margin-top: 0.5rem; font-size: 0.7rem; color: #8b5cf6; border: none; background: none; cursor: pointer; text-decoration: underline;">
                                     Copiar texto
                                 </button>
                             </div>
-                            <div x-show="aiError" x-transition style="margin-top: 0.75rem; padding: 0.5rem; background: #fef2f2; border-radius: 0.375rem; font-size: 0.75rem; color: #dc2626;" x-text="aiError"></div>
+                            <div x-show="aiError" x-transition style="margin-top: 0.75rem; padding: 0.5rem; background: rgba(239,68,68,0.1); border-radius: 0.375rem; font-size: 0.75rem; color: #fca5a5;" x-text="aiError"></div>
                         </div>
 
                         {{-- Registrar Atividade --}}
                         @if($deal->isOpen())
-                            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem;">
-                                <h3 style="font-size: 0.9rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">Registrar Atividade</h3>
+                            <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1.25rem;">
+                                <h3 style="font-size: 0.9rem; font-weight: 700; color: #e3e3e3; margin-bottom: 0.75rem;">Registrar Atividade</h3>
                                 <form method="POST" action="{{ route('crm.deals.activities.store', $deal) }}">
                                     @csrf
                                     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                                         @foreach($activityTypes as $aType)
-                                            <label style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; cursor: pointer; font-size: 0.75rem; font-weight: 500;">
+                                            <label style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; cursor: pointer; font-size: 0.75rem; font-weight: 500;">
                                                 <input type="radio" name="type" value="{{ $aType->value }}" {{ $loop->first ? 'checked' : '' }}
                                                        style="width: 14px; height: 14px;">
                                                 <svg style="width: 14px; height: 14px; color: {{ $aType->color() }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -382,7 +382,7 @@
                                         @endforeach
                                     </div>
                                     <textarea name="description" required rows="2" placeholder="Descreva a interação..."
-                                              style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; resize: vertical; margin-bottom: 0.5rem;"></textarea>
+                                              style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; resize: vertical; margin-bottom: 0.5rem;"></textarea>
                                     <div style="text-align: right;">
                                         <button type="submit" style="padding: 0.375rem 1rem; font-size: 0.8rem; background: #111827; color: white; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600;">
                                             Registrar
@@ -396,8 +396,8 @@
                     {{-- Coluna Direita: Timeline --}}
                     <div style="display: flex; flex-direction: column; gap: 1rem;">
                         {{-- Progress do Pipeline --}}
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem;">
-                            <h3 style="font-size: 0.8rem; font-weight: 700; color: #6b7280; margin-bottom: 0.5rem;">PIPELINE</h3>
+                        <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1rem;">
+                            <h3 style="font-size: 0.8rem; font-weight: 700; color: #818181; margin-bottom: 0.5rem;">PIPELINE</h3>
                             <div style="display: flex; gap: 2px;">
                                 @foreach($activeStages as $s)
                                     @php
@@ -408,14 +408,14 @@
                                          title="{{ $s->name }}"></div>
                                 @endforeach
                             </div>
-                            <div style="font-size: 0.7rem; color: #6b7280; margin-top: 0.375rem;">
+                            <div style="font-size: 0.7rem; color: #818181; margin-top: 0.375rem;">
                                 Etapa atual: <strong style="color: {{ $deal->stage->color }};">{{ $deal->stage->name }}</strong>
                             </div>
                         </div>
 
                         {{-- Timeline de Atividades --}}
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem;">
-                            <h3 style="font-size: 0.8rem; font-weight: 700; color: #6b7280; margin-bottom: 0.75rem;">TIMELINE</h3>
+                        <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1rem;">
+                            <h3 style="font-size: 0.8rem; font-weight: 700; color: #818181; margin-bottom: 0.75rem;">TIMELINE</h3>
                             <div style="display: flex; flex-direction: column;">
                                 @forelse($deal->activities as $activity)
                                     <div style="display: flex; gap: 0.75rem; padding-bottom: 0.75rem; {{ !$loop->last ? 'border-left: 2px solid #e5e7eb; margin-left: 9px; padding-left: 1.25rem;' : 'margin-left: 9px; padding-left: 1.25rem;' }}; position: relative;">
@@ -423,16 +423,16 @@
                                         <div style="flex: 1; min-width: 0;">
                                             <div style="display: flex; align-items: center; gap: 0.375rem; margin-bottom: 0.125rem;">
                                                 <span style="font-size: 0.7rem; font-weight: 600; color: {{ $activity->type->color() }};">{{ $activity->type->label() }}</span>
-                                                <span style="font-size: 0.65rem; color: #9ca3af;">{{ $activity->created_at->format('d/m H:i') }}</span>
+                                                <span style="font-size: 0.65rem; color: #666666;">{{ $activity->created_at->format('d/m H:i') }}</span>
                                             </div>
                                             @if($activity->description)
-                                                <p style="font-size: 0.775rem; color: #374151; line-height: 1.4; margin: 0;">{{ $activity->description }}</p>
+                                                <p style="font-size: 0.775rem; color: #a4a4a4; line-height: 1.4; margin: 0;">{{ $activity->description }}</p>
                                             @endif
-                                            <span style="font-size: 0.625rem; color: #9ca3af;">{{ $activity->user->name }}</span>
+                                            <span style="font-size: 0.625rem; color: #666666;">{{ $activity->user->name }}</span>
                                         </div>
                                     </div>
                                 @empty
-                                    <p style="font-size: 0.8rem; color: #9ca3af; text-align: center; padding: 1rem 0;">Nenhuma atividade registrada.</p>
+                                    <p style="font-size: 0.8rem; color: #666666; text-align: center; padding: 1rem 0;">Nenhuma atividade registrada.</p>
                                 @endforelse
                             </div>
                         </div>

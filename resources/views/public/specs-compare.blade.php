@@ -11,7 +11,7 @@
 
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Figtree', system-ui, sans-serif; background: #f8fafc; color: #111827; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Figtree', system-ui, sans-serif; background: #f8fafc; color: #e3e3e3; -webkit-font-smoothing: antialiased; }
         [x-cloak] { display: none !important; }
 
         .container { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
@@ -23,21 +23,21 @@
         }
         .brand-header img { height: 40px; margin-bottom: 0.5rem; }
         .brand-header h1 {
-            font-size: 1.25rem; font-weight: 700; color: #111827;
+            font-size: 1.25rem; font-weight: 700; color: #e3e3e3;
             display: inline-flex; align-items: center; gap: 0.5rem;
         }
-        .brand-header p { font-size: 0.8125rem; color: #6b7280; margin-top: 0.25rem; }
+        .brand-header p { font-size: 0.8125rem; color: #818181; margin-top: 0.25rem; }
 
         /* Empty state */
         .empty-state {
-            text-align: center; padding: 4rem 1rem; color: #9ca3af;
+            text-align: center; padding: 4rem 1rem; color: #666666;
         }
         .empty-state svg { width: 3rem; height: 3rem; margin: 0 auto 0.75rem; opacity: 0.3; }
         .empty-state p { font-size: 0.875rem; }
 
         /* Table card */
         .compare-card {
-            background: white; border: 1px solid #e5e7eb; border-radius: 1rem; overflow: hidden;
+            background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 1rem; overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
         .header-row { display: grid; }
@@ -45,9 +45,9 @@
         .header-row.single { grid-template-columns: minmax(110px, 0.7fr) 1fr; }
 
         .header-label {
-            padding: 1rem 1.25rem; background: #f9fafb;
-            border-bottom: 2px solid #e5e7eb; border-right: 1px solid #e5e7eb;
-            font-size: 0.6875rem; font-weight: 600; color: #9ca3af;
+            padding: 1rem 1.25rem; background: #1a1a1a;
+            border-bottom: 2px solid rgba(255,255,255,0.06); border-right: 1px solid #e5e7eb;
+            font-size: 0.6875rem; font-weight: 600; color: #666666;
             text-transform: uppercase; letter-spacing: 0.05em;
         }
         .header-m1 {
@@ -58,23 +58,23 @@
             border-left: 1px solid #4b5563;
         }
         .header-m1 .name, .header-m2 .name { font-size: 1rem; font-weight: 700; color: white; }
-        .header-m1 .year, .header-m2 .year { font-size: 0.75rem; color: #9ca3af; }
+        .header-m1 .year, .header-m2 .year { font-size: 0.75rem; color: #666666; }
 
         /* Section header */
         .section-title {
-            padding: 0.5rem 1.25rem; background: #f3f4f6;
-            border-bottom: 1px solid #e5e7eb; border-top: 1px solid #e5e7eb;
-            font-size: 0.6875rem; font-weight: 700; color: #6b7280;
+            padding: 0.5rem 1.25rem; background: #222222;
+            border-bottom: 1px solid rgba(255,255,255,0.06); border-top: 1px solid rgba(255,255,255,0.06);
+            font-size: 0.6875rem; font-weight: 700; color: #818181;
             text-transform: uppercase; letter-spacing: 0.05em;
         }
 
         /* Spec rows */
-        .spec-row { display: grid; border-bottom: 1px solid #f3f4f6; }
+        .spec-row { display: grid; border-bottom: 1px solid rgba(255,255,255,0.04); }
         .spec-row.dual { grid-template-columns: minmax(110px, 0.7fr) 1fr 1fr; }
         .spec-row.single { grid-template-columns: minmax(110px, 0.7fr) 1fr; }
 
         .spec-label {
-            padding: 0.625rem 1.25rem; font-size: 0.8125rem; color: #6b7280;
+            padding: 0.625rem 1.25rem; font-size: 0.8125rem; color: #818181;
             border-right: 1px solid #f3f4f6; display: flex; align-items: center;
         }
         .spec-val {
@@ -83,17 +83,17 @@
         }
         .spec-val.m2 { border-left: 1px solid #f3f4f6; }
 
-        .better { background: #f0fdf4; color: #166534; font-weight: 600; }
-        .worse  { background: #fef2f2; color: #991b1b; }
-        .diff   { background: #fefce8; color: #92400e; }
-        .equal  { color: #111827; }
+        .better { background: rgba(16,185,129,0.1); color: #6ee7b7; font-weight: 600; }
+        .worse  { background: rgba(239,68,68,0.1); color: #fca5a5; }
+        .diff   { background: rgba(245,158,11,0.1); color: #fbbf24; }
+        .equal  { color: #e3e3e3; }
 
         .check-icon { width: 0.875rem; height: 0.875rem; flex-shrink: 0; color: #16a34a; }
 
         /* Legend */
         .legend {
             display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap;
-            margin-top: 0.75rem; font-size: 0.75rem; color: #6b7280;
+            margin-top: 0.75rem; font-size: 0.75rem; color: #818181;
         }
         .legend span { display: flex; align-items: center; gap: 0.25rem; }
         .legend-dot {
@@ -104,10 +104,10 @@
         /* Footer */
         .footer {
             text-align: center; margin-top: 2rem; padding-top: 1.5rem;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid rgba(255,255,255,0.06);
         }
         .footer-logo { height: 28px; opacity: 0.5; margin-bottom: 0.5rem; }
-        .footer p { font-size: 0.75rem; color: #9ca3af; }
+        .footer p { font-size: 0.75rem; color: #666666; }
         .footer a {
             display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1.25rem;
             background: #16a34a; color: white; font-size: 0.8125rem; font-weight: 600;

@@ -22,7 +22,7 @@
         <input type="text" x-model="execSearch"
                placeholder="Buscar vendedor, cliente, produto..."
                style="width: 100%; padding: 0.5rem 0.875rem 0.5rem 2.25rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; font-size: 0.75rem; color: #e2e8f0; outline: none;"
-               onfocus="this.style.borderColor='rgba(99,102,241,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
+               onfocus="this.style.borderColor='rgba(99,102,241,0.4)'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
     </div>
 </div>
 

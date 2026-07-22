@@ -1,31 +1,31 @@
 <x-app-layout>
     <x-slot name="title">Ficha Técnica</x-slot>
     <div class="py-6">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8" x-data="specsApp()">
+        <div class="px-6 lg:px-8" x-data="specsApp()">
 
             <!-- Header + Seletores -->
-            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 1rem; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;">
+            <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 1rem; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                     <div>
-                        <h1 style="font-size: 1.375rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 0.5rem;">
+                        <h1 style="font-size: 1.375rem; font-weight: 700; color: #e3e3e3; display: flex; align-items: center; gap: 0.5rem;">
                             <svg style="width:1.5rem;height:1.5rem;" viewBox="0 0 24 24" fill="#111827"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
                             Ficha T&eacute;cnica Apple
                         </h1>
-                        <p style="font-size: 0.8125rem; color: #6b7280;">Compare especifica&ccedil;&otilde;es entre modelos</p>
+                        <p style="font-size: 0.8125rem; color: #818181;">Compare especifica&ccedil;&otilde;es entre modelos</p>
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
                         <button x-show="model1 && model2" @click="swapModels()" type="button" title="Inverter modelos"
-                                style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; background: white; cursor: pointer; color: #6b7280;"
-                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='white'">
+                                style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); background: #141414; cursor: pointer; color: #818181;"
+                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
                             <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                             </svg>
                         </button>
                         <button x-show="model1" @click="shareCompare()" type="button" :title="shareCopied ? 'Link copiado!' : 'Enviar comparativo para cliente'"
                                 :style="shareCopied
-                                    ? 'padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #16a34a; background: #f0fdf4; cursor: pointer; color: #16a34a; display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 500; transition: all 0.15s;'
-                                    : 'padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; background: white; cursor: pointer; color: #6b7280; display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 500; transition: all 0.15s;'"
-                                onmouseover="if(!this.__x_refs)this.style.background='#f3f4f6'" onmouseout="if(!this.__x_refs)this.style.background='white'">
+                                    ? 'padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #16a34a; background: rgba(16,185,129,0.1); cursor: pointer; color: #16a34a; display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 500; transition: all 0.15s;'
+                                    : 'padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); background: #141414; cursor: pointer; color: #818181; display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 500; transition: all 0.15s;'"
+                                onmouseover="if(!this.__x_refs)this.style.background='#f3f4f6'" onmouseout="if(!this.__x_refs)this.style.background='#141414'">
                             <template x-if="!shareCopied">
                                 <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
@@ -42,8 +42,8 @@
                 </div>
                 <div style="display: flex; gap: 0.75rem; align-items: end; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 200px;">
-                        <label style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">Modelo 1</label>
-                        <select x-model="selected1" style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; font-size: 0.875rem; background: white; outline: none;" onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                        <label style="font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">Modelo 1</label>
+                        <select x-model="selected1" style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; font-size: 0.875rem; background: #1a1a1a; outline: none;" onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             <option value="">Selecione...</option>
                             <template x-for="(cat, catName) in groupedModels" :key="catName">
                                 <optgroup :label="catName">
@@ -55,11 +55,11 @@
                         </select>
                     </div>
                     <div style="padding-bottom: 0.5rem;">
-                        <span style="font-size: 0.8125rem; font-weight: 700; color: #d1d5db;">VS</span>
+                        <span style="font-size: 0.8125rem; font-weight: 700; color: #515151;">VS</span>
                     </div>
                     <div style="flex: 1; min-width: 200px;">
-                        <label style="font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">Modelo 2 (comparar)</label>
-                        <select x-model="selected2" style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.75rem; font-size: 0.875rem; background: white; outline: none;" onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                        <label style="font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 4px;">Modelo 2 (comparar)</label>
+                        <select x-model="selected2" style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; font-size: 0.875rem; background: #1a1a1a; outline: none;" onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             <option value="">Nenhum</option>
                             <template x-for="(cat, catName) in groupedModels" :key="catName">
                                 <optgroup :label="catName">
@@ -74,7 +74,7 @@
             </div>
 
             <!-- Estado vazio -->
-            <div x-show="!model1" style="text-align: center; padding: 4rem 1rem; color: #9ca3af;">
+            <div x-show="!model1" style="text-align: center; padding: 4rem 1rem; color: #666666;">
                 <svg style="width: 3rem; height: 3rem; margin: 0 auto 0.75rem; opacity: 0.3;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                 </svg>
@@ -82,19 +82,19 @@
             </div>
 
             <!-- Tabela de Comparação -->
-            <div x-show="model1" x-transition style="background: white; border: 1px solid #e5e7eb; border-radius: 1rem; overflow: hidden;">
+            <div x-show="model1" x-transition style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 1rem; overflow: hidden;">
                 <!-- Cabeçalho com nomes dos modelos -->
                 <div :style="model2
                     ? 'display: grid; grid-template-columns: minmax(120px, 0.8fr) 1fr 1fr;'
                     : 'display: grid; grid-template-columns: minmax(120px, 0.8fr) 1fr;'">
-                    <div style="padding: 1rem 1.25rem; background: #f9fafb; border-bottom: 2px solid #e5e7eb; border-right: 1px solid #e5e7eb;">
-                        <span style="font-size: 0.6875rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">Especifica&ccedil;&atilde;o</span>
+                    <div style="padding: 1rem 1.25rem; background: #1a1a1a; border-bottom: 2px solid rgba(255,255,255,0.06); border-right: 1px solid #e5e7eb;">
+                        <span style="font-size: 0.6875rem; font-weight: 600; color: #666666; text-transform: uppercase; letter-spacing: 0.05em;">Especifica&ccedil;&atilde;o</span>
                     </div>
                     <div style="padding: 1rem 1.25rem; background: #111827; border-bottom: 2px solid #111827;">
                         <template x-if="model1">
                             <div>
                                 <div style="font-size: 1rem; font-weight: 700; color: white;" x-text="model1.name"></div>
-                                <div style="font-size: 0.75rem; color: #9ca3af;" x-text="model1.year"></div>
+                                <div style="font-size: 0.75rem; color: #666666;" x-text="model1.year"></div>
                             </div>
                         </template>
                     </div>
@@ -102,7 +102,7 @@
                         <template x-if="model2">
                             <div>
                                 <div style="font-size: 1rem; font-weight: 700; color: white;" x-text="model2.name"></div>
-                                <div style="font-size: 0.75rem; color: #9ca3af;" x-text="model2.year"></div>
+                                <div style="font-size: 0.75rem; color: #666666;" x-text="model2.year"></div>
                             </div>
                         </template>
                     </div>
@@ -112,8 +112,8 @@
                 <template x-for="(section, sIdx) in specSections" :key="sIdx">
                     <div>
                         <!-- Cabeçalho da seção -->
-                        <div style="padding: 0.5rem 1.25rem; background: #f3f4f6; border-bottom: 1px solid #e5e7eb; border-top: 1px solid #e5e7eb;">
-                            <span style="font-size: 0.6875rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;" x-text="section.label"></span>
+                        <div style="padding: 0.5rem 1.25rem; background: #222222; border-bottom: 1px solid rgba(255,255,255,0.06); border-top: 1px solid rgba(255,255,255,0.06);">
+                            <span style="font-size: 0.6875rem; font-weight: 700; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;" x-text="section.label"></span>
                         </div>
 
                         <!-- Linhas de specs -->
@@ -121,9 +121,9 @@
                             <div :style="(model2
                                 ? 'display: grid; grid-template-columns: minmax(120px, 0.8fr) 1fr 1fr;'
                                 : 'display: grid; grid-template-columns: minmax(120px, 0.8fr) 1fr;')
-                                + 'border-bottom: 1px solid #f3f4f6;'">
+                                + 'border-bottom: 1px solid rgba(255,255,255,0.04);'">
                                 <!-- Label -->
-                                <div style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; color: #6b7280; border-right: 1px solid #f3f4f6; display: flex; align-items: center;" x-text="field.label"></div>
+                                <div style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; color: #818181; border-right: 1px solid #f3f4f6; display: flex; align-items: center;" x-text="field.label"></div>
                                 <!-- Valor Modelo 1 -->
                                 <div style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; font-weight: 500; display: flex; align-items: center; gap: 0.375rem;"
                                      :style="getCellStyle(field.key, 1)">
@@ -147,21 +147,21 @@
             </div>
 
             <!-- Legenda -->
-            <div x-show="model1 && model2" style="display: flex; gap: 1.25rem; justify-content: center; margin-top: 0.75rem; font-size: 0.75rem; color: #6b7280; flex-wrap: wrap;">
+            <div x-show="model1 && model2" style="display: flex; gap: 1.25rem; justify-content: center; margin-top: 0.75rem; font-size: 0.75rem; color: #818181; flex-wrap: wrap;">
                 <span style="display: flex; align-items: center; gap: 0.25rem;">
-                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: #dcfce7; border: 1px solid #bbf7d0;"></span>
+                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: rgba(16,185,129,0.15); border: 1px solid #bbf7d0;"></span>
                     Melhor
                 </span>
                 <span style="display: flex; align-items: center; gap: 0.25rem;">
-                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: #fee2e2; border: 1px solid #fecaca;"></span>
+                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: rgba(239,68,68,0.15); border: 1px solid #fecaca;"></span>
                     Inferior
                 </span>
                 <span style="display: flex; align-items: center; gap: 0.25rem;">
-                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: #fefce8; border: 1px solid #fef08a;"></span>
+                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: rgba(245,158,11,0.1); border: 1px solid #fef08a;"></span>
                     Diferente
                 </span>
                 <span style="display: flex; align-items: center; gap: 0.25rem;">
-                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: white; border: 1px solid #e5e7eb;"></span>
+                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: #141414; border: 1px solid rgba(255,255,255,0.06);"></span>
                     Igual
                 </span>
             </div>
@@ -274,19 +274,19 @@
             },
 
             getCellStyle(key, modelNum) {
-                if (!this.model2) return 'color: #111827;';
+                if (!this.model2) return 'color: #e3e3e3;';
                 const cmp = this.getComparison(key);
-                if (cmp === 0) return 'color: #111827;';
-                if (cmp === 2) return 'background: #fefce8; color: #92400e;';
+                if (cmp === 0) return 'color: #e3e3e3;';
+                if (cmp === 2) return 'background: rgba(245,158,11,0.1); color: #fbbf24;';
 
                 if (modelNum === 1) {
                     return cmp === 1
-                        ? 'background: #f0fdf4; color: #166534; font-weight: 600;'
-                        : 'background: #fef2f2; color: #991b1b;';
+                        ? 'background: rgba(16,185,129,0.1); color: #6ee7b7; font-weight: 600;'
+                        : 'background: rgba(239,68,68,0.1); color: #fca5a5;';
                 }
                 return cmp === -1
-                    ? 'background: #f0fdf4; color: #166534; font-weight: 600;'
-                    : 'background: #fef2f2; color: #991b1b;';
+                    ? 'background: rgba(16,185,129,0.1); color: #6ee7b7; font-weight: 600;'
+                    : 'background: rgba(239,68,68,0.1); color: #fca5a5;';
             },
 
             extractNum(str) {

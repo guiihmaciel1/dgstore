@@ -1,5 +1,5 @@
 <div x-data="dailyChecklist()" x-init="init()" class="mb-4">
-    <div class="bg-white rounded-xl border overflow-hidden shadow-sm"
+    <div class="bg-surface-raised rounded-xl border overflow-hidden ring-1 ring-white/[0.03]"
          :class="progressPercent === 100 ? 'border-emerald-200' : 'border-amber-300'">
 
         {{-- Header com progresso e alerta --}}
@@ -8,13 +8,13 @@
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-lg">📋</span>
-                    <h3 class="text-sm font-extrabold text-gray-900 m-0">Checklist do Dia</h3>
+                    <h3 class="text-sm font-extrabold text-dg-100 m-0">Checklist do Dia</h3>
                 </div>
                 <span class="text-xs font-bold px-2 py-0.5 rounded-full"
                       :class="progressPercent === 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
                       x-text="totalDone + '/' + totalItems + ' (' + Math.round(progressPercent) + '%)'"></span>
             </div>
-            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div class="w-full h-2 bg-surface-elevated rounded-full overflow-hidden">
                 <div class="h-full rounded-full transition-all duration-500 ease-out"
                      :style="'width: ' + progressPercent + '%'"
                      :class="{
@@ -37,19 +37,19 @@
         </div>
 
         {{-- Categorias --}}
-        <div class="divide-y divide-gray-100">
+        <div class="divide-y divide-border">
             <template x-for="(cat, catIdx) in categories" :key="catIdx">
                 <div>
                     <button @click="cat.open = !cat.open" type="button"
-                            class="w-full flex items-center justify-between px-4 py-2.5 bg-transparent border-none cursor-pointer hover:bg-gray-50 transition-colors">
+                            class="w-full flex items-center justify-between px-4 py-2.5 bg-transparent border-none cursor-pointer hover:bg-surface transition-colors">
                         <div class="flex items-center gap-2">
-                            <svg class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200"
+                            <svg class="w-3.5 h-3.5 text-dg-500 transition-transform duration-200"
                                  :class="cat.open ? 'rotate-90' : ''"
                                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                             </svg>
                             <span class="text-sm" x-text="cat.icon"></span>
-                            <span class="text-xs font-bold text-gray-700" x-text="cat.name"></span>
+                            <span class="text-xs font-bold text-dg-300" x-text="cat.name"></span>
                         </div>
                         <span class="text-[0.65rem] font-bold px-2 py-0.5 rounded-full"
                               :class="catDone(catIdx) === cat.items.length ? 'bg-emerald-100 text-emerald-700' : (catDone(catIdx) > 0 ? 'bg-amber-100 text-amber-600' : 'bg-red-50 text-red-500')"
@@ -59,12 +59,12 @@
                         <div class="px-4 pb-3 space-y-1">
                             <template x-for="(item, itemIdx) in cat.items" :key="itemIdx">
                                 <label class="flex items-start gap-2.5 px-2.5 py-2 rounded-lg cursor-pointer transition-colors"
-                                       :class="item.done ? 'bg-emerald-50/60' : 'hover:bg-gray-50'">
+                                       :class="item.done ? 'bg-emerald-50/60' : 'hover:bg-surface'">
                                     <input type="checkbox" :checked="item.done"
                                            @change="toggle(catIdx, itemIdx)"
-                                           class="mt-0.5 w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
+                                           class="mt-0.5 w-4 h-4 rounded border-border-strong text-emerald-600 focus:ring-emerald-500 cursor-pointer shrink-0">
                                     <span class="text-xs leading-relaxed transition-all duration-200"
-                                          :class="item.done ? 'line-through text-gray-400' : 'text-gray-700 font-medium'"
+                                          :class="item.done ? 'line-through text-dg-500' : 'text-dg-300 font-medium'"
                                           x-text="item.label"></span>
                                 </label>
                             </template>

@@ -44,16 +44,16 @@
 
         {{-- Loading --}}
         <template x-if="loading">
-            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem;">
+            <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1.25rem;">
                 <div style="display: flex; flex-direction: column; gap: 0.875rem;">
                     <template x-for="i in 3" :key="i">
                         <div style="display: flex; gap: 0.75rem; align-items: center;">
-                            <div style="width: 2.25rem; height: 2.25rem; background: #f3f4f6; border-radius: 0.5rem; animation: idlePulse 1.5s ease-in-out infinite;"></div>
+                            <div style="width: 2.25rem; height: 2.25rem; background: #222222; border-radius: 0.5rem; animation: idlePulse 1.5s ease-in-out infinite;"></div>
                             <div style="flex: 1;">
-                                <div style="height: 0.75rem; background: #f3f4f6; border-radius: 0.25rem; width: 35%; margin-bottom: 0.375rem; animation: idlePulse 1.5s ease-in-out infinite;"></div>
-                                <div style="height: 0.625rem; background: #f3f4f6; border-radius: 0.25rem; width: 65%; animation: idlePulse 1.5s ease-in-out infinite;"></div>
+                                <div style="height: 0.75rem; background: #222222; border-radius: 0.25rem; width: 35%; margin-bottom: 0.375rem; animation: idlePulse 1.5s ease-in-out infinite;"></div>
+                                <div style="height: 0.625rem; background: #222222; border-radius: 0.25rem; width: 65%; animation: idlePulse 1.5s ease-in-out infinite;"></div>
                             </div>
-                            <div style="width: 4.5rem; height: 1.75rem; background: #f3f4f6; border-radius: 0.375rem; animation: idlePulse 1.5s ease-in-out infinite;"></div>
+                            <div style="width: 4.5rem; height: 1.75rem; background: #222222; border-radius: 0.375rem; animation: idlePulse 1.5s ease-in-out infinite;"></div>
                         </div>
                     </template>
                 </div>
@@ -63,33 +63,33 @@
         {{-- Estado vazio --}}
         <template x-if="!loading && suggestions.length === 0">
             <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #a7f3d0; border-radius: 0.75rem; padding: 1.5rem; text-align: center;">
-                <div style="width: 2.5rem; height: 2.5rem; background: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.625rem; box-shadow: 0 2px 8px rgba(5,150,105,0.15);">
+                <div style="width: 2.5rem; height: 2.5rem; background: #141414; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 0.625rem; box-shadow: 0 2px 8px rgba(5,150,105,0.15);">
                     <svg style="width: 1.25rem; height: 1.25rem; color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
-                <p style="font-weight: 700; color: #065f46; font-size: 0.875rem; margin: 0 0 0.25rem 0;">Tudo em dia!</p>
-                <p style="font-size: 0.8rem; color: #047857; margin: 0;">Nenhuma pendencia encontrada. Revise o checklist abaixo ou organize a loja.</p>
+                <p style="font-weight: 700; color: #6ee7b7; font-size: 0.875rem; margin: 0 0 0.25rem 0;">Tudo em dia!</p>
+                <p style="font-size: 0.8rem; color: #6ee7b7; margin: 0;">Nenhuma pendencia encontrada. Revise o checklist abaixo ou organize a loja.</p>
             </div>
         </template>
 
         {{-- Lista de sugestões --}}
         <template x-if="!loading && suggestions.length > 0">
-            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+            <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
                 {{-- Header com resumo --}}
-                <div style="padding: 0.625rem 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.375rem;">
-                    <span style="font-size: 0.75rem; font-weight: 600; color: #374151;">
+                <div style="padding: 0.625rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.375rem;">
+                    <span style="font-size: 0.75rem; font-weight: 600; color: #a4a4a4;">
                         <span x-text="suggestions.length"></span> sugestoes encontradas
                     </span>
                     <div style="display: flex; gap: 0.375rem; flex-wrap: wrap;">
                         <span x-show="suggestions.filter(s => s.priority === 'high').length > 0"
-                              style="font-size: 0.625rem; padding: 0.125rem 0.4375rem; border-radius: 9999px; font-weight: 700; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;"
+                              style="font-size: 0.625rem; padding: 0.125rem 0.4375rem; border-radius: 9999px; font-weight: 700; background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid #fecaca;"
                               x-text="suggestions.filter(s => s.priority === 'high').length + ' urgente(s)'"></span>
                         <span x-show="suggestions.filter(s => s.priority === 'medium').length > 0"
-                              style="font-size: 0.625rem; padding: 0.125rem 0.4375rem; border-radius: 9999px; font-weight: 700; background: #fffbeb; color: #d97706; border: 1px solid #fde68a;"
+                              style="font-size: 0.625rem; padding: 0.125rem 0.4375rem; border-radius: 9999px; font-weight: 700; background: #141414beb; color: #d97706; border: 1px solid #fde68a;"
                               x-text="suggestions.filter(s => s.priority === 'medium').length + ' atencao'"></span>
                         <span x-show="suggestions.filter(s => s.priority === 'low').length > 0"
-                              style="font-size: 0.625rem; padding: 0.125rem 0.4375rem; border-radius: 9999px; font-weight: 700; background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe;"
+                              style="font-size: 0.625rem; padding: 0.125rem 0.4375rem; border-radius: 9999px; font-weight: 700; background: rgba(59,130,246,0.1); color: #2563eb; border: 1px solid #bfdbfe;"
                               x-text="suggestions.filter(s => s.priority === 'low').length + ' dica(s)'"></span>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                 <div style="max-height: 22rem; overflow-y: auto;">
                     <template x-for="(item, idx) in suggestions" :key="idx">
                         <div style="display: flex; align-items: stretch;"
-                             :style="idx < suggestions.length - 1 ? 'border-bottom: 1px solid #f3f4f6;' : ''">
+                             :style="idx < suggestions.length - 1 ? 'border-bottom: 1px solid rgba(255,255,255,0.04);' : ''">
 
                             <div style="width: 3px; flex-shrink: 0; border-radius: 0 0 0 0;"
                                  :style="item.priority === 'high' ? 'background: #ef4444;' : (item.priority === 'medium' ? 'background: #f59e0b;' : 'background: #3b82f6;')"></div>
@@ -111,18 +111,18 @@
 
                                 <div style="flex: 1; min-width: 0;">
                                     <div style="display: flex; align-items: center; gap: 0.3125rem; flex-wrap: wrap;">
-                                        <span style="font-size: 0.775rem; font-weight: 700; color: #111827;" x-text="item.title"></span>
+                                        <span style="font-size: 0.775rem; font-weight: 700; color: #e3e3e3;" x-text="item.title"></span>
                                         <span style="font-size: 0.5625rem; padding: 0.0625rem 0.3125rem; border-radius: 0.1875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;"
-                                              :style="item.priority === 'high' ? 'background: #fef2f2; color: #dc2626;' : (item.priority === 'medium' ? 'background: #fffbeb; color: #d97706;' : 'background: #eff6ff; color: #2563eb;')"
+                                              :style="item.priority === 'high' ? 'background: rgba(239,68,68,0.1); color: #fca5a5;' : (item.priority === 'medium' ? 'background: #141414beb; color: #d97706;' : 'background: rgba(59,130,246,0.1); color: #2563eb;')"
                                               x-text="item.priority === 'high' ? 'urgente' : (item.priority === 'medium' ? 'atencao' : 'dica')"></span>
                                     </div>
-                                    <p style="font-size: 0.725rem; color: #6b7280; margin: 0.125rem 0 0 0; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.message"></p>
+                                    <p style="font-size: 0.725rem; color: #818181; margin: 0.125rem 0 0 0; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="item.message"></p>
                                 </div>
 
                                 <div style="display: flex; gap: 0.3125rem; flex-shrink: 0; align-items: center;">
                                     <template x-if="item.whatsapp_url">
                                         <a :href="item.whatsapp_url" target="_blank" rel="noopener"
-                                           style="width: 1.875rem; height: 1.875rem; display: flex; align-items: center; justify-content: center; background: #dcfce7; border-radius: 0.375rem; text-decoration: none; transition: background 0.15s; border: 1px solid #bbf7d0;"
+                                           style="width: 1.875rem; height: 1.875rem; display: flex; align-items: center; justify-content: center; background: rgba(16,185,129,0.15); border-radius: 0.375rem; text-decoration: none; transition: background 0.15s; border: 1px solid #bbf7d0;"
                                            onmouseover="this.style.background='#bbf7d0'" onmouseout="this.style.background='#dcfce7'"
                                            title="Enviar WhatsApp">
                                             <svg style="width: 0.875rem; height: 0.875rem; color: #16a34a;" fill="currentColor" viewBox="0 0 24 24">
@@ -141,8 +141,8 @@
                 </div>
 
                 {{-- Rodapé --}}
-                <div style="padding: 0.4375rem 1rem; background: #f9fafb; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 0.6875rem; color: #9ca3af;" x-text="'Atualizado ' + lastRefreshLabel"></span>
+                <div style="padding: 0.4375rem 1rem; background: #1a1a1a; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.6875rem; color: #666666;" x-text="'Atualizado ' + lastRefreshLabel"></span>
                     <button @click.stop="refresh()"
                             style="font-size: 0.6875rem; color: #4f46e5; font-weight: 600; background: none; border: none; cursor: pointer; padding: 0.25rem 0.5rem; border-radius: 0.25rem; display: flex; align-items: center; gap: 0.25rem;"
                             onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='transparent'"
@@ -239,14 +239,14 @@ function idleMode() {
 
         getCategoryStyle(category) {
             const styles = {
-                crm: 'background: #eef2ff; color: #4f46e5;',
-                sales: 'background: #f0fdf4; color: #16a34a;',
+                crm: 'background: rgba(99,102,241,0.1); color: #4f46e5;',
+                sales: 'background: rgba(16,185,129,0.1); color: #16a34a;',
                 customers: 'background: #fef3c7; color: #d97706;',
-                stock: 'background: #f5f3ff; color: #7c3aed;',
-                marketing: 'background: #fdf2f8; color: #db2777;',
-                schedule: 'background: #ecfdf5; color: #059669;',
+                stock: 'background: rgba(168,85,247,0.1); color: #c4b5fd;',
+                marketing: 'background: rgba(236,72,153,0.1); color: #db2777;',
+                schedule: 'background: rgba(16,185,129,0.1); color: #059669;',
             };
-            return styles[category] || 'background: #f3f4f6; color: #6b7280;';
+            return styles[category] || 'background: #222222; color: #818181;';
         },
 
         getCategoryEmoji(icon) {

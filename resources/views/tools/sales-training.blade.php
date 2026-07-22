@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Treinamento de Vendas</x-slot>
     <div class="py-6">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8" x-data="salesTraining()">
+        <div class="px-6 lg:px-8" x-data="salesTraining()">
 
             {{-- Header --}}
             <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; position: relative; overflow: hidden;">

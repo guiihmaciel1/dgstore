@@ -7,7 +7,7 @@
         <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #166534; font-size: 0.875rem;">
+                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -15,24 +15,24 @@
             {{-- Header --}}
             <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Pipeline de Vendas</h1>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Pipeline de Vendas</h1>
                     <div style="display: flex; gap: 1rem; margin-top: 0.375rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.75rem; color: #6b7280;">
-                            <strong style="color: #111827;">{{ $metrics['total_open'] }}</strong> em aberto
+                        <span style="font-size: 0.75rem; color: #818181;">
+                            <strong style="color: #e3e3e3;">{{ $metrics['total_open'] }}</strong> em aberto
                             &middot;
                             <strong style="color: #059669;">R$ {{ number_format($metrics['total_value'], 2, ',', '.') }}</strong> no pipeline
                         </span>
-                        <span style="font-size: 0.75rem; color: #6b7280;">
+                        <span style="font-size: 0.75rem; color: #818181;">
                             Mês:
                             <strong style="color: #059669;">{{ $metrics['won_month'] }} ganhos</strong> (R$ {{ number_format($metrics['won_value_month'], 2, ',', '.') }})
                             &middot;
-                            <strong style="color: #dc2626;">{{ $metrics['lost_month'] }} perdidos</strong>
+                            <strong style="color: #fca5a5;">{{ $metrics['lost_month'] }} perdidos</strong>
                         </span>
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     <select onchange="window.location.href='{{ route('crm.board') }}?user_id=' + this.value"
-                            style="padding: 0.4rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.8rem; background: white;">
+                            style="padding: 0.4rem 0.75rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.8rem; background: #141414;">
                         <option value="">Todos os vendedores</option>
                         @foreach($sellers as $seller)
                             <option value="{{ $seller->id }}" {{ $filterUserId === $seller->id ? 'selected' : '' }}>
@@ -40,18 +40,18 @@
                             </option>
                         @endforeach
                     </select>
-                    <a href="{{ route('crm.history') }}" style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; color: #374151; text-decoration: none; background: white; font-weight: 500;">
+                    <a href="{{ route('crm.history') }}" style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; color: #a4a4a4; text-decoration: none; background: #141414; font-weight: 500;">
                         Histórico
                     </a>
                     <button @click="showCustomerForm = true" type="button"
-                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: white; color: #374151; font-size: 0.8rem; font-weight: 500; border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer;">
+                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #141414; color: #a4a4a4; font-size: 0.8rem; font-weight: 500; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;">
                         <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
                         + Cliente
                     </button>
                     <button @click="showScheduleForm = true" type="button"
-                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: white; color: #374151; font-size: 0.8rem; font-weight: 500; border-radius: 0.5rem; border: 1px solid #e5e7eb; cursor: pointer;">
+                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #141414; color: #a4a4a4; font-size: 0.8rem; font-weight: 500; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;">
                         <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
@@ -71,7 +71,7 @@
             @if($metrics['stale_4h'] > 0 || $metrics['overdue_followups'] > 0)
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
                     @if($metrics['stale_24h'] > 0)
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #dc2626;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #fca5a5;">
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                             </svg>
@@ -79,7 +79,7 @@
                         </div>
                     @endif
                     @if($metrics['stale_4h'] > $metrics['stale_24h'])
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #ea580c;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #1414147ed; border: 1px solid #fed7aa; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #ea580c;">
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
@@ -87,7 +87,7 @@
                         </div>
                     @endif
                     @if($metrics['overdue_followups'] > 0)
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #dc2626;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #fca5a5;">
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                             </svg>
@@ -104,21 +104,21 @@
             {{-- Kanban Board --}}
             <div style="display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 1rem; min-height: 65vh;">
                 @foreach($activeStages as $stage)
-                    <div style="min-width: 280px; max-width: 320px; flex-shrink: 0; display: flex; flex-direction: column; background: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb;">
+                    <div style="min-width: 280px; max-width: 320px; flex-shrink: 0; display: flex; flex-direction: column; background: #1a1a1a; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06);">
                         {{-- Stage Header --}}
                         <div style="padding: 0.75rem 1rem; border-bottom: 2px solid {{ $stage->color }};">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <span style="width: 10px; height: 10px; border-radius: 50%; background: {{ $stage->color }};"></span>
-                                    <span style="font-size: 0.8rem; font-weight: 700; color: #111827;">{{ $stage->name }}</span>
+                                    <span style="font-size: 0.8rem; font-weight: 700; color: #e3e3e3;">{{ $stage->name }}</span>
                                 </div>
-                                <span style="font-size: 0.7rem; font-weight: 600; color: #6b7280; background: #e5e7eb; padding: 2px 8px; border-radius: 9999px;">
+                                <span style="font-size: 0.7rem; font-weight: 600; color: #818181; background: #e5e7eb; padding: 2px 8px; border-radius: 9999px;">
                                     {{ ($dealsByStage[$stage->id] ?? collect())->count() }}
                                 </span>
                             </div>
                             @php $stageValue = ($dealsByStage[$stage->id] ?? collect())->sum('value'); @endphp
                             @if($stageValue > 0)
-                                <div style="font-size: 0.7rem; color: #6b7280; margin-top: 0.25rem;">
+                                <div style="font-size: 0.7rem; color: #818181; margin-top: 0.25rem;">
                                     R$ {{ number_format($stageValue, 2, ',', '.') }}
                                 </div>
                             @endif
@@ -148,7 +148,7 @@
                                     ];
                                 @endphp
                                 <a href="{{ route('crm.show', $deal) }}" class="deal-card" data-deal-id="{{ $deal->id }}"
-                                   style="display: block; background: white; border: 1px solid #e5e7eb; border-left: 3px solid {{ $borderColor }}; border-radius: 0.5rem; padding: 0.75rem; cursor: grab; text-decoration: none; transition: box-shadow 0.15s;"
+                                   style="display: block; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid {{ $borderColor }}; border-radius: 0.5rem; padding: 0.75rem; cursor: grab; text-decoration: none; transition: box-shadow 0.15s;"
                                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
 
                                     {{-- Badges: origem + temperatura + condição --}}
@@ -164,21 +164,21 @@
                                         <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $tempColors[$deal->temperature] ?? '#f59e0b' }}; flex-shrink: 0;"
                                               title="{{ $tempLabels[$deal->temperature] ?? 'Morno' }}"></span>
                                         @if($deal->product_interest)
-                                            <span style="font-size: 0.6rem; font-weight: 600; color: #374151; background: #f3f4f6; padding: 1px 5px; border-radius: 4px;">
+                                            <span style="font-size: 0.6rem; font-weight: 600; color: #a4a4a4; background: #222222; padding: 1px 5px; border-radius: 4px;">
                                                 {{ $deal->product_interest }}
                                             </span>
                                         @endif
                                         @if($interest && $interest->condition)
-                                            <span style="font-size: 0.55rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: #dbeafe; color: #1e40af;' : 'background: #fef3c7; color: #92400e;' }}">
+                                            <span style="font-size: 0.55rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.15); color: #93c5fd;' : 'background: #fef3c7; color: #fbbf24;' }}">
                                                 {{ $interest->condition === 'novo' ? 'Novo' : 'Seminovo' }}
                                             </span>
                                         @endif
                                     </div>
 
-                                    <div style="font-size: 0.8125rem; font-weight: 600; color: #111827; line-height: 1.3;">{{ $deal->title }}</div>
+                                    <div style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3; line-height: 1.3;">{{ $deal->title }}</div>
 
                                     @if($deal->customer)
-                                        <div style="font-size: 0.7rem; color: #6b7280; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">
+                                        <div style="font-size: 0.7rem; color: #818181; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">
                                             <svg style="width: 12px; height: 12px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                             </svg>
@@ -197,11 +197,11 @@
 
                                         <div style="display: flex; align-items: center; gap: 0.375rem;">
                                             @if($deal->isOverdue())
-                                                <span style="font-size: 0.6rem; font-weight: 700; color: #dc2626;" title="Atrasado">
+                                                <span style="font-size: 0.6rem; font-weight: 700; color: #fca5a5;" title="Atrasado">
                                                     {{ $deal->expected_close_date->format('d/m') }}
                                                 </span>
                                             @elseif($deal->expected_close_date)
-                                                <span style="font-size: 0.6rem; color: #9ca3af;">
+                                                <span style="font-size: 0.6rem; color: #666666;">
                                                     {{ $deal->expected_close_date->format('d/m') }}
                                                 </span>
                                             @endif
@@ -226,7 +226,7 @@
                                             {{ $deal->waiting_time_label }}
                                         </span>
                                         @if($deal->user)
-                                            <span style="font-size: 0.6rem; color: #9ca3af;">
+                                            <span style="font-size: 0.6rem; color: #666666;">
                                                 {{ $deal->user->name }}
                                             </span>
                                         @endif

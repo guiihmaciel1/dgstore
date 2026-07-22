@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="title">Simulador de Negociação</x-slot>
     <div class="py-4 sm:py-6" x-data="negotiationSimulator()" x-init="init()">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
 
             {{-- Header --}}
             <div class="flex items-center justify-between mb-4 sm:mb-6 flex-wrap gap-3">
                 <div>
-                    <h1 class="text-lg sm:text-2xl font-bold text-gray-900">Simulador de Negociação</h1>
-                    <p class="text-sm text-gray-500">Monte propostas completas com trade-in e parcelamento</p>
+                    <h1 class="text-lg sm:text-2xl font-bold text-dg-100">Simulador de Negociação</h1>
+                    <p class="text-sm text-dg-500">Monte propostas completas com trade-in e parcelamento</p>
                 </div>
                 <button @click="clearAll()" type="button"
                         class="apple-btn-dark text-[0.8rem]">
@@ -27,11 +27,11 @@
 
                     {{-- Estado vazio --}}
                     <div x-show="!cardLoading && cardResults.length === 0 && productPrice <= 0"
-                         class="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                         class="bg-surface-raised rounded-xl border border-border p-12 text-center">
                         <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                         </svg>
-                        <p class="text-sm text-gray-400">Preencha o valor do produto para montar a proposta</p>
+                        <p class="text-sm text-dg-500">Preencha o valor do produto para montar a proposta</p>
                     </div>
                 </div>
 
@@ -53,7 +53,7 @@
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
              x-cloak
-             class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-[0_8px_24px_rgba(0,0,0,0.3)] z-50 flex items-center gap-2">
+             class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-surface text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-[0_8px_24px_rgba(0,0,0,0.3)] z-50 flex items-center gap-2">
             <svg class="w-[18px] h-[18px] text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
             </svg>

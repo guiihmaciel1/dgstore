@@ -1,10 +1,10 @@
 <x-app-layout>
     <x-slot name="title">CRM - Histórico</x-slot>
     <div class="py-6">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
 
             {{-- Breadcrumb --}}
-            <div style="margin-bottom: 1rem; font-size: 0.8rem; color: #6b7280;">
+            <div style="margin-bottom: 1rem; font-size: 0.8rem; color: #818181;">
                 <a href="{{ route('crm.board') }}" style="color: #3b82f6; text-decoration: none;">Pipeline</a>
                 <span style="margin: 0 0.375rem;">/</span>
                 <span>Histórico</span>
@@ -12,11 +12,11 @@
 
             {{-- Header --}}
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
-                <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Histórico de Negócios</h1>
+                <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Histórico de Negócios</h1>
 
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <select onchange="window.location.href='{{ route('crm.history') }}?tab={{ $tab }}&user_id=' + this.value"
-                            style="padding: 0.4rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.8rem; background: white;">
+                            style="padding: 0.4rem 0.75rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.8rem; background: #141414;">
                         <option value="">Todos</option>
                         @foreach($sellers as $seller)
                             <option value="{{ $seller->id }}" {{ $filterUserId === $seller->id ? 'selected' : '' }}>
@@ -42,22 +42,22 @@
             {{-- Lista --}}
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                 @forelse($deals as $deal)
-                    <a href="{{ route('crm.show', $deal) }}" style="display: block; background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 0.875rem 1.25rem; text-decoration: none; transition: box-shadow 0.15s;"
+                    <a href="{{ route('crm.show', $deal) }}" style="display: block; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 0.875rem 1.25rem; text-decoration: none; transition: box-shadow 0.15s;"
                        onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'" onmouseout="this.style.boxShadow='none'">
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <div style="min-width: 0; flex: 1;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                                     @if($deal->product_interest)
-                                        <span style="font-size: 0.65rem; font-weight: 600; color: #374151; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">
+                                        <span style="font-size: 0.65rem; font-weight: 600; color: #a4a4a4; background: #222222; padding: 2px 6px; border-radius: 4px;">
                                             {{ $deal->product_interest }}
                                         </span>
                                     @endif
-                                    <span style="font-size: 0.65rem; font-weight: 600; padding: 2px 8px; border-radius: 9999px; {{ $tab === 'won' ? 'background: #dcfce7; color: #166534;' : 'background: #fef2f2; color: #991b1b;' }}">
+                                    <span style="font-size: 0.65rem; font-weight: 600; padding: 2px 8px; border-radius: 9999px; {{ $tab === 'won' ? 'background: rgba(16,185,129,0.15); color: #6ee7b7;' : 'background: rgba(239,68,68,0.1); color: #fca5a5;' }}">
                                         {{ $tab === 'won' ? 'GANHO' : 'PERDIDO' }}
                                     </span>
                                 </div>
-                                <div style="font-size: 0.875rem; font-weight: 600; color: #111827; margin-top: 0.25rem;">{{ $deal->title }}</div>
-                                <div style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.25rem; display: flex; gap: 0.75rem;">
+                                <div style="font-size: 0.875rem; font-weight: 600; color: #e3e3e3; margin-top: 0.25rem;">{{ $deal->title }}</div>
+                                <div style="font-size: 0.75rem; color: #666666; margin-top: 0.25rem; display: flex; gap: 0.75rem;">
                                     @if($deal->customer)
                                         <span>{{ $deal->customer->name }}</span>
                                     @endif
@@ -66,7 +66,7 @@
                                         <span>{{ $deal->user->name }}</span>
                                     @endif
                                     @if($deal->lost_reason)
-                                        <span style="color: #dc2626;">{{ $deal->lost_reason }}</span>
+                                        <span style="color: #fca5a5;">{{ $deal->lost_reason }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                         </div>
                     </a>
                 @empty
-                    <div style="text-align: center; padding: 2.5rem; color: #9ca3af; font-size: 0.875rem;">
+                    <div style="text-align: center; padding: 2.5rem; color: #666666; font-size: 0.875rem;">
                         Nenhum negócio {{ $tab === 'won' ? 'ganho' : 'perdido' }} encontrado.
                     </div>
                 @endforelse

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Nova Venda</x-slot>
     <div class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('error'))
                 <div class="mb-4">
                     <x-alert type="error">{{ session('error') }}</x-alert>
@@ -9,14 +9,14 @@
             @endif
 
             @if($errors->any())
-                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
+                <div style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: #dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #fca5a5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span style="font-weight: 600; color: #991b1b;">Corrija os erros abaixo:</span>
+                        <span style="font-weight: 600; color: #fca5a5;">Corrija os erros abaixo:</span>
                     </div>
-                    <ul style="list-style: disc; padding-left: 1.5rem; color: #dc2626; font-size: 0.875rem;">
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: #fca5a5; font-size: 0.875rem;">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -27,28 +27,28 @@
             <!-- Cabeçalho -->
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center">
-                    <a href="{{ route('sales.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;" 
-                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                    <a href="{{ route('sales.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #818181; border-radius: 0.5rem;" 
+                       onmouseover="this.style.backgroundColor='#222222'" onmouseout="this.style.backgroundColor='transparent'">
                         <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Nova Venda</h1>
-                        <p style="font-size: 0.875rem; color: #6b7280;">Preencha os dados para registrar uma venda</p>
+                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Nova Venda</h1>
+                        <p style="font-size: 0.875rem; color: #818181;">Preencha os dados para registrar uma venda</p>
                     </div>
                 </div>
-                <span style="font-size: 0.875rem; color: #9ca3af;">ESC para cancelar</span>
+                <span style="font-size: 0.875rem; color: #666666;">ESC para cancelar</span>
             </div>
 
             @if(isset($reservation) && $reservation)
-                <div style="background: #eff6ff; border: 1px solid #93c5fd; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                <div style="background: rgba(59,130,246,0.1); border: 1px solid #93c5fd; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
                     <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                     </svg>
                     <div>
-                        <span style="font-weight: 600; color: #1d4ed8;">Convertendo Reserva #{{ $reservation->reservation_number }}</span>
-                        <span style="font-size: 0.875rem; color: #6b7280; margin-left: 0.5rem;">
+                        <span style="font-weight: 600; color: #93c5fd;">Convertendo Reserva #{{ $reservation->reservation_number }}</span>
+                        <span style="font-size: 0.875rem; color: #818181; margin-left: 0.5rem;">
                             O sinal de {{ $reservation->formatted_deposit_paid }} será aplicado como desconto.
                         </span>
                     </div>
@@ -67,10 +67,10 @@
                     <div class="sale-main">
                         
                         <!-- PASSO 1: TIPO DE VENDA + CONFIGURAÇÕES -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: visible;">
+                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: visible;">
                             <div style="background: #111827; color: white; padding: 1rem 1.5rem; border-radius: 1rem 1rem 0 0;">
                                 <div style="display: flex; align-items: center;">
-                                    <span style="width: 2rem; height: 2rem; background: white; color: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">1</span>
+                                    <span style="width: 2rem; height: 2rem; background: #141414; color: #e3e3e3; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">1</span>
                                     <span style="font-size: 1.125rem; font-weight: 600;">Primeiro Passo</span>
                                 </div>
                             </div>
@@ -78,18 +78,18 @@
                             <div style="display: flex; flex-wrap: wrap; gap: 1.5rem;">
                                 <!-- Tipo de Venda -->
                                 <div style="flex: 1; min-width: 200px;">
-                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #374151; margin-bottom: 0.75rem;">
-                                        Tipo de Venda <span style="color: #dc2626;">*</span>
+                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #a4a4a4; margin-bottom: 0.75rem;">
+                                        Tipo de Venda <span style="color: #fca5a5;">*</span>
                                     </label>
                                     <div style="display: flex; gap: 1rem;">
-                                        <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s;"
+                                        <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; transition: all 0.2s;"
                                                :style="{ borderColor: saleType === 'cliente_final' ? '#3b82f6' : '#e5e7eb', background: saleType === 'cliente_final' ? '#eff6ff' : 'white' }">
                                             <input type="radio" name="sale_type" value="cliente_final" 
                                                    x-model="saleType" required
                                                    style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #3b82f6;">
                                             <span style="font-size: 0.9375rem; font-weight: 500;">Cliente</span>
                                         </label>
-                                        <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; transition: all 0.2s;"
+                                        <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; transition: all 0.2s;"
                                                :style="{ borderColor: saleType === 'repasse' ? '#8b5cf6' : '#e5e7eb', background: saleType === 'repasse' ? '#f5f3ff' : 'white' }">
                                             <input type="radio" name="sale_type" value="repasse" 
                                                    x-model="saleType" required
@@ -101,12 +101,12 @@
 
                                 <!-- Vendedor Responsável -->
                                 <div style="flex: 1; min-width: 200px;">
-                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #374151; margin-bottom: 0.75rem;">
-                                        Vendedor Responsável <span style="color: #dc2626;">*</span>
+                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #a4a4a4; margin-bottom: 0.75rem;">
+                                        Vendedor Responsável <span style="color: #fca5a5;">*</span>
                                     </label>
                                     <select name="seller_name" x-model="sellerName" required
-                                            style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.9375rem; background: white; outline: none;"
-                                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                            style="width: 100%; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.9375rem; background: #1a1a1a; outline: none;"
+                                            onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                             @change="sellerId = $event.target.selectedOptions[0]?.dataset?.userId || ''">
                                         <option value="">Selecione...</option>
                                         @foreach($sellers as $seller)
@@ -118,12 +118,12 @@
 
                                 <!-- Tipo de Entrega -->
                                 <div style="flex: 1; min-width: 200px;">
-                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #374151; margin-bottom: 0.75rem;">
-                                        Entrega <span style="color: #dc2626;">*</span>
+                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #a4a4a4; margin-bottom: 0.75rem;">
+                                        Entrega <span style="color: #fca5a5;">*</span>
                                     </label>
                                     <select name="delivery_type" x-model="deliveryType" required
-                                            style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.9375rem; background: white; outline: none;"
-                                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                            style="width: 100%; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.9375rem; background: #1a1a1a; outline: none;"
+                                            onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                         <option value="">Selecione...</option>
                                         <option value="retirada">Retirada</option>
                                         <option value="entrega">Entrega</option>
@@ -131,12 +131,12 @@
                                     </select>
                                     <!-- Sub-opção de entrega -->
                                     <div x-show="deliveryType === 'entrega'" x-collapse style="margin-top: 0.75rem;">
-                                        <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">
+                                        <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">
                                             Método de Entrega
                                         </label>
                                         <select name="delivery_method" x-model="deliveryMethod"
-                                                style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white; outline: none;"
-                                                onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #1a1a1a; outline: none;"
+                                                onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                             <option value="">Selecione...</option>
                                             <option value="motoboy_nosso">Motoboy Nosso</option>
                                             <option value="motoboy_cliente">Motoboy Cliente</option>
@@ -149,11 +149,11 @@
                         </div>
 
                         <!-- PASSO 2: BUSCAR PRODUTO -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: visible;">
+                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: visible;">
                             <div style="background: #111827; color: white; padding: 1rem 1.5rem; border-radius: 1rem 1rem 0 0;">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center;">
-                                        <span style="width: 2rem; height: 2rem; background: white; color: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">2</span>
+                                        <span style="width: 2rem; height: 2rem; background: #141414; color: #e3e3e3; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">2</span>
                                         <span style="font-size: 1.125rem; font-weight: 600;">Adicionar Produtos</span>
                                     </div>
                                     <button type="button" @click="showProductModal = true; productForm = resetProductForm()"
@@ -168,7 +168,7 @@
                             </div>
                             <div style="padding: 1.5rem;">
                                 <div style="position: relative;">
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">
                                         Buscar produto por nome, SKU ou código
                                     </label>
                                     <div style="position: relative;">
@@ -178,12 +178,12 @@
                                             @input.debounce.300ms="searchProducts"
                                             @keydown.enter.prevent="if(searchResults.length > 0) addItem(searchResults[0])"
                                             placeholder="Digite para buscar... (Enter para adicionar o primeiro)"
-                                            style="width: 100%; padding: 1rem 1rem 1rem 3rem; font-size: 1.125rem; border: 2px solid #e5e7eb; border-radius: 0.75rem; outline: none;"
-                                            onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                            style="width: 100%; padding: 1rem 1rem 1rem 3rem; font-size: 1.125rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.75rem; outline: none;"
+                                            onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                             autofocus
                                         >
                                         <div style="position: absolute; top: 50%; left: 1rem; transform: translateY(-50%); pointer-events: none;">
-                                            <svg style="height: 1.5rem; width: 1.5rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg style="height: 1.5rem; width: 1.5rem; color: #666666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                             </svg>
                                         </div>
@@ -191,29 +191,29 @@
                                     
                                     <!-- Resultados da busca -->
                                     <div x-show="searchResults.length > 0 || (searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading)" x-cloak 
-                                         style="position: absolute; z-index: 20; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border-radius: 0.75rem; border: 1px solid #e5e7eb; max-height: 20rem; overflow: auto;">
+                                         style="position: absolute; z-index: 20; margin-top: 0.5rem; width: 100%; background: #141414; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); max-height: 20rem; overflow: auto;">
                                         <template x-for="(product, pIdx) in searchResults" :key="(product.is_consignment ? 'c_' : 'p_') + product.id">
                                             <button 
                                                 type="button"
                                                 @click="addItem(product)"
-                                                style="width: 100%; padding: 0.75rem 1rem; text-align: left; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6;"
+                                                style="width: 100%; padding: 0.75rem 1rem; text-align: left; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.04);"
                                                 onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'"
                                             >
                                                 <div>
                                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                        <span style="font-weight: 600; color: #111827;" x-text="product.name"></span>
-                                                        <span x-show="product.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Trade-in</span>
-                                                        <span x-show="product.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Consignado</span>
+                                                        <span style="font-weight: 600; color: #e3e3e3;" x-text="product.name"></span>
+                                                        <span x-show="product.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Trade-in</span>
+                                                        <span x-show="product.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #fbbf24; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Consignado</span>
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
-                                                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #4b5563; border-radius: 0.25rem;" x-text="product.sku"></span>
+                                                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #222222; color: #818181; border-radius: 0.25rem;" x-text="product.sku"></span>
                                                         <span style="font-size: 0.75rem;" :style="{ color: product.stock > 0 ? '#6b7280' : '#ea580c', fontWeight: product.stock <= 0 ? '600' : '400' }" x-text="product.stock > 0 ? product.stock + ' em estoque' : 'Sem estoque'"></span>
                                                         @if(auth()->user()->canViewFinancials())
                                                         <span x-show="product.cost_price" style="font-size: 0.75rem; color: #059669; font-weight: 500;" x-text="product.cost_price ? 'Custo: R$ ' + product.cost_price.toFixed(2).replace('.', ',') : ''"></span>
                                                         @endif
                                                     </div>
                                                 </div>
-                                                <svg style="width: 1.25rem; height: 1.25rem; color: #9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg style="width: 1.25rem; height: 1.25rem; color: #666666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                                 </svg>
                                             </button>
@@ -221,7 +221,7 @@
                                         <!-- Opção de cadastrar quando não encontra -->
                                         <div x-show="searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading"
                                              style="padding: 1rem; text-align: center; border-top: 1px solid #f3f4f6;">
-                                            <p style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.75rem;">Nenhum produto encontrado para "<span x-text="searchTerm" style="font-weight: 600;"></span>"</p>
+                                            <p style="font-size: 0.875rem; color: #818181; margin-bottom: 0.75rem;">Nenhum produto encontrado para "<span x-text="searchTerm" style="font-weight: 600;"></span>"</p>
                                             <button type="button" 
                                                     @click="productForm = resetProductForm(); productForm.name = searchTerm; showProductModal = true; searchResults = [];"
                                                     style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer;"
@@ -238,23 +238,23 @@
                                 <!-- Lista de itens adicionados -->
                                 <div style="margin-top: 1.5rem;">
                                     <div x-show="items.length === 0" style="text-align: center; padding: 3rem 1rem; border: 2px dashed #e5e7eb; border-radius: 0.75rem;">
-                                        <svg style="margin: 0 auto; height: 3rem; width: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg style="margin: 0 auto; height: 3rem; width: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                         </svg>
-                                        <p style="margin-top: 1rem; color: #6b7280;">Nenhum produto adicionado</p>
-                                        <p style="font-size: 0.875rem; color: #9ca3af;">Use o campo acima para buscar e adicionar produtos</p>
+                                        <p style="margin-top: 1rem; color: #818181;">Nenhum produto adicionado</p>
+                                        <p style="font-size: 0.875rem; color: #666666;">Use o campo acima para buscar e adicionar produtos</p>
                                     </div>
                                     
                                     <div x-show="items.length > 0">
                                         <template x-for="(item, index) in items" :key="index">
-                                            <div style="padding: 1rem; background: #f9fafb; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 0.75rem;">
+                                            <div style="padding: 1rem; background: #1a1a1a; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.75rem;">
                                                 {{-- Linha 1: Nome + badges + botão remover --}}
                                                 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.75rem;">
                                                     <div style="flex: 1; min-width: 0;">
                                                         <div style="display: flex; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
-                                                            <p style="font-weight: 600; color: #111827; font-size: 0.9375rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" x-text="item.name"></p>
-                                                            <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #dbeafe; color: #1d4ed8; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">TRADE-IN</span>
-                                                            <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #92400e; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">CONSIGNADO</span>
+                                                            <p style="font-weight: 600; color: #e3e3e3; font-size: 0.9375rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" x-text="item.name"></p>
+                                                            <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">TRADE-IN</span>
+                                                            <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #fbbf24; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">CONSIGNADO</span>
                                                         </div>
                                                         <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.is_consignment ? '' : (item.id || '')">
                                                         <input type="hidden" :name="'items['+index+'][consignment_item_id]'" :value="item.consignment_item_id || ''">
@@ -273,7 +273,7 @@
                                                 <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                                                         <button type="button" @click="item.quantity = Math.max(1, item.quantity - 1); updateTotals()" 
-                                                                style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;">
+                                                                style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: #141414; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;">
                                                             <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
                                                         </button>
                                                         <input 
@@ -283,16 +283,16 @@
                                                             @input="updateTotals"
                                                             min="1"
                                                             :max="Math.max(1, item.stock)"
-                                                            style="width: 3.5rem; text-align: center; font-weight: 700; font-size: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.25rem;"
+                                                            style="width: 3.5rem; text-align: center; font-weight: 700; font-size: 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; padding: 0.25rem;"
                                                         >
                                                         <button type="button" @click="item.quantity = Math.min(Math.max(1, item.stock), item.quantity + 1); updateTotals()" 
-                                                                style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;">
+                                                                style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: #141414; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;">
                                                             <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                                         </button>
                                                     </div>
                                                     
                                                     <div style="width: 7rem;">
-                                                        <label style="display: block; font-size: 0.625rem; color: #6b7280; text-transform: uppercase; margin-bottom: 0.125rem;">Venda</label>
+                                                        <label style="display: block; font-size: 0.625rem; color: #818181; text-transform: uppercase; margin-bottom: 0.125rem;">Venda</label>
                                                         <input type="hidden" :name="'items['+index+'][unit_price]'" :value="item.price">
                                                         <input 
                                                             type="text"
@@ -300,12 +300,12 @@
                                                             :value="toMoneyMask(item.price)"
                                                             @input="applyMoneyMask($event); item.price = parseMoney($event.target.value); updateTotals()"
                                                             placeholder="0,00"
-                                                            style="width: 100%; text-align: right; font-weight: 600; border: 2px solid #e5e7eb; border-radius: 0.5rem; padding: 0.25rem 0.5rem;"
+                                                            style="width: 100%; text-align: right; font-weight: 600; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; padding: 0.25rem 0.5rem;"
                                                         >
                                                     </div>
                                                     
                                                     <div style="flex: 1; text-align: right;">
-                                                        <span style="font-size: 1.125rem; font-weight: 700; color: #111827;" x-text="formatMoney(item.quantity * item.price)"></span>
+                                                        <span style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;" x-text="formatMoney(item.quantity * item.price)"></span>
                                                     </div>
                                                 </div>
 
@@ -336,16 +336,16 @@
                                                                         @click="selectCombo(combo)"
                                                                         style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 4.5rem; padding: 0.5rem; border-radius: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; border: 2px solid;"
                                                                         :style="item.quantity === combo.qty
-                                                                            ? 'background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-color: #7c3aed; box-shadow: 0 2px 8px rgba(124,58,237,0.3);'
-                                                                            : 'background: white; color: #374151; border-color: #e5e7eb;'">
+                                                                            ? 'background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-color: #c4b5fd; box-shadow: 0 2px 8px rgba(124,58,237,0.3);'
+                                                                            : 'background: #141414; color: #a4a4a4; border-color: #e5e7eb;'">
                                                                     <span style="font-size: 0.75rem; font-weight: 600; line-height: 1;" x-text="combo.label"></span>
                                                                     <span style="font-size: 1.0625rem; font-weight: 800; margin-top: 0.25rem; line-height: 1;"
-                                                                          :style="item.quantity === combo.qty ? 'color: white;' : 'color: #111827;'"
+                                                                          :style="item.quantity === combo.qty ? 'color: white;' : 'color: #e3e3e3;'"
                                                                           x-text="'R$ ' + combo.total.toFixed(0)"></span>
                                                                     <span style="font-size: 0.625rem; font-weight: 700; margin-top: 0.25rem; line-height: 1; min-height: 0.875rem;"
                                                                           :style="combo.discount > 0
                                                                               ? (item.quantity === combo.qty ? 'color: #fde68a;' : 'color: #d97706;')
-                                                                              : (item.quantity === combo.qty ? 'color: rgba(255,255,255,0.5);' : 'color: #d1d5db;')"
+                                                                              : (item.quantity === combo.qty ? 'color: rgba(255,255,255,0.5);' : 'color: #515151;')"
                                                                           x-text="combo.discount > 0 ? '-' + combo.discount + '%' : 'unitário'"></span>
                                                                 </button>
                                                             </template>
@@ -358,21 +358,21 @@
                                                 <input type="hidden" :name="'items['+index+'][financial_cost]'" :value="item.financial_cost">
                                                 <input type="hidden" :name="'items['+index+'][commission_cost]'" :value="item.commission_cost">
                                                 @if(auth()->user()->canViewFinancials())
-                                                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #e5e7eb; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
+                                                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.06); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
                                                     <div>
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
-                                                            Custo (R$) <span style="color: #dc2626;">*</span>
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">
+                                                            Custo (R$) <span style="color: #fca5a5;">*</span>
                                                         </label>
                                                         <input type="text"
                                                                inputmode="numeric"
                                                                :value="toMoneyMask(item.cost_price)"
                                                                @input="applyMoneyMask($event); item.cost_price = parseMoney($event.target.value); syncCosts(item); updateTotals()"
                                                                placeholder="0,00"
-                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
-                                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
+                                                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                                     </div>
                                                     <div>
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">
                                                             Custo Financeiro (R$)
                                                         </label>
                                                         <input type="text"
@@ -380,11 +380,11 @@
                                                                :value="toMoneyMask(item.financial_cost)"
                                                                @input="applyMoneyMask($event); item.financial_cost = parseMoney($event.target.value); updateTotals()"
                                                                placeholder="0,00"
-                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #d1fae5; border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: #f0fdf4;"
+                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #d1fae5; border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: rgba(16,185,129,0.1);"
                                                                onfocus="this.style.borderColor='#16a34a'" onblur="this.style.borderColor='#d1fae5'">
                                                     </div>
                                                     <div>
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">
                                                             Custo Comissão (R$)
                                                         </label>
                                                         <input type="text"
@@ -392,49 +392,49 @@
                                                                :value="toMoneyMask(item.commission_cost)"
                                                                @input="applyMoneyMask($event); item.commission_cost = parseMoney($event.target.value); updateTotals()"
                                                                placeholder="0,00"
-                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #fef3c7; border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: #fffbeb;"
+                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #fef3c7; border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: #141414beb;"
                                                                onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#fef3c7'">
                                                     </div>
                                                 </div>
                                                 <div style="margin-top: 0.5rem; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
                                                     <div>
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Origem</label>
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Origem</label>
                                                         <select :name="'items['+index+'][supplier_origin]'"
                                                                 x-model="item.supplier_origin"
                                                                 @change="updateTotals"
-                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; background: white; outline: none;">
+                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; background: #1a1a1a; outline: none;">
                                                             <option value="">-</option>
                                                             <option value="br">BR (Brasil)</option>
                                                             <option value="py">PY (Paraguai)</option>
                                                         </select>
                                                     </div>
                                                     <div x-show="item.supplier_origin">
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Tipo Frete</label>
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Tipo Frete</label>
                                                         <select :name="'items['+index+'][freight_type]'"
                                                                 x-model="item.freight_type"
                                                                 @change="updateTotals"
-                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; background: white; outline: none;">
+                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; background: #1a1a1a; outline: none;">
                                                             <option value="">Sem frete</option>
                                                             <option value="percentage">% sobre custo</option>
                                                             <option value="fixed">Valor fixo (R$)</option>
                                                         </select>
                                                     </div>
                                                     <div x-show="item.supplier_origin && item.freight_type">
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;" 
+                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;" 
                                                                x-text="item.freight_type === 'percentage' ? 'Frete (%)' : 'Frete (R$)'">Frete</label>
                                                         <input type="number" 
                                                                :name="'items['+index+'][freight_value]'"
                                                                x-model.number="item.freight_value"
                                                                @input="updateTotals"
                                                                step="0.01" min="0" placeholder="0.00"
-                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
-                                                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
+                                                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                                     </div>
                                                 </div>
 
                                                 {{-- Linha 3: Resumo de custo/lucro --}}
                                                 <div x-show="item.cost_price > 0" 
-                                                     style="margin-top: 0.5rem; display: flex; gap: 1rem; font-size: 0.75rem; color: #6b7280;">
+                                                     style="margin-top: 0.5rem; display: flex; gap: 1rem; font-size: 0.75rem; color: #818181;">
                                                     <span x-show="getItemFreightAmount(item) > 0">
                                                         Frete: <span style="font-weight: 600;" x-text="formatMoney(getItemFreightAmount(item))"></span>
                                                     </span>
@@ -449,7 +449,7 @@
 
                                                 {{-- Alerta de sem estoque --}}
                                                 <div x-show="item.stock <= 0"
-                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 0.375rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #1414147ed; border: 1px solid #fed7aa; border-radius: 0.375rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
                                                     <div style="display: flex; align-items: center; gap: 0.375rem;">
                                                         <svg style="width: 1rem; height: 1rem; color: #ea580c; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
@@ -470,11 +470,11 @@
                                                 {{-- Alerta de preço abaixo do custo total --}}
                                                 @if(auth()->user()->canViewFinancials())
                                                 <div x-show="item.cost_price > 0 && item.price > 0 && item.price < getItemTotalCost(item)"
-                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.375rem; display: flex; align-items: center; gap: 0.375rem;">
-                                                    <svg style="width: 1rem; height: 1rem; color: #dc2626; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.375rem; display: flex; align-items: center; gap: 0.375rem;">
+                                                    <svg style="width: 1rem; height: 1rem; color: #fca5a5; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                                                     </svg>
-                                                    <span style="font-size: 0.75rem; color: #dc2626; font-weight: 600;">
+                                                    <span style="font-size: 0.75rem; color: #fca5a5; font-weight: 600;">
                                                         Preço abaixo do custo total! Custo: <span x-text="formatMoney(getItemTotalCost(item))"></span>
                                                     </span>
                                                 </div>
@@ -488,7 +488,7 @@
                         
                         
                         <!-- TRADE-IN (Aparelhos como entrada) -->
-                        <div x-show="saleType === 'cliente_final' || saleType === null" style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div x-show="saleType === 'cliente_final' || saleType === null" style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
                             <div style="background: #7c3aed; color: white; padding: 0.75rem 1.5rem;">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center;">
@@ -508,7 +508,7 @@
                                 <template x-for="(ti, tiIndex) in tradeIns" :key="tiIndex">
                                     <div style="background: #faf5ff; border: 1px solid #ddd6fe; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; position: relative;">
                                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #7c3aed;" x-text="'Aparelho ' + (tiIndex + 1)"></span>
+                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #c4b5fd;" x-text="'Aparelho ' + (tiIndex + 1)"></span>
                                             <button type="button" @click="removeTradeIn(tiIndex)" 
                                                     x-show="tradeIns.length > 1"
                                                     style="padding: 0.25rem; color: #ef4444; background: none; border: none; cursor: pointer;"
@@ -521,19 +521,19 @@
                                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
                                             <!-- Nome/Descrição -->
                                             <div style="grid-column: span 3;">
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
-                                                    Nome/Descrição <span style="color: #dc2626;">*</span>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
+                                                    Nome/Descrição <span style="color: #fca5a5;">*</span>
                                                 </label>
                                                 <input type="text" :name="'trade_ins['+tiIndex+'][device_name]'" x-model="ti.device_name" 
                                                        placeholder="Ex: iPhone 13 Pro Max"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                             </div>
                                             <!-- Categoria -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Categoria</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Categoria</label>
                                                 <select :name="'trade_ins['+tiIndex+'][category]'" x-model="ti.category"
-                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
                                                     <option value="">Selecione...</option>
                                                     @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
                                                         <optgroup label="{{ $group }}">
@@ -546,17 +546,17 @@
                                             </div>
                                             <!-- Modelo -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Modelo</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Modelo</label>
                                                 <input type="text" :name="'trade_ins['+tiIndex+'][device_model]'" x-model="ti.device_model" 
                                                        placeholder="Ex: 15 Pro Max"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                             </div>
                                             <!-- Condição Cosmética -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Condição Cosmética</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Condição Cosmética</label>
                                                 <select :name="'trade_ins['+tiIndex+'][condition]'" x-model="ti.condition"
-                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
                                                     @foreach($tradeInConditions as $condition)
                                                         <option value="{{ $condition->value }}">{{ $condition->label() }}</option>
                                                     @endforeach
@@ -564,111 +564,111 @@
                                             </div>
                                             <!-- Armazenamento -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
-                                                    Armazenamento <span style="color: #dc2626;">*</span>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
+                                                    Armazenamento <span style="color: #fca5a5;">*</span>
                                                 </label>
                                                 <input type="text" :name="'trade_ins['+tiIndex+'][storage]'" x-model="ti.storage" required
                                                        placeholder="Ex: 256GB"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                             </div>
                                             <!-- Cor -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
-                                                    Cor <span style="color: #dc2626;">*</span>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
+                                                    Cor <span style="color: #fca5a5;">*</span>
                                                 </label>
                                                 <input type="text" :name="'trade_ins['+tiIndex+'][color]'" x-model="ti.color" required
                                                        placeholder="Ex: Preto"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                             </div>
                                             <!-- IMEI -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">IMEI</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">IMEI</label>
                                                 <input type="text" :name="'trade_ins['+tiIndex+'][imei]'" x-model="ti.imei" 
                                                        placeholder="Ex: 123456789012345"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                             </div>
 
                                             <!-- Separador Valores -->
-                                            <div style="grid-column: span 3; border-top: 1px solid #e5e7eb; margin-top: 0.25rem; padding-top: 0.75rem;">
-                                                <span style="font-size: 0.75rem; font-weight: 600; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.05em;">Valores</span>
+                                            <div style="grid-column: span 3; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 0.25rem; padding-top: 0.75rem;">
+                                                <span style="font-size: 0.75rem; font-weight: 600; color: #c4b5fd; text-transform: uppercase; letter-spacing: 0.05em;">Valores</span>
                                             </div>
                                             <!-- Valor Negociado (= Preço Custo) -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
-                                                    Valor Negociado <span style="color: #dc2626;">*</span>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
+                                                    Valor Negociado <span style="color: #fca5a5;">*</span>
                                                 </label>
                                                 <div style="position: relative;">
-                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
+                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.8125rem;">R$</span>
                                                     <input type="number" :name="'trade_ins['+tiIndex+'][estimated_value]'" x-model.number="ti.estimated_value" 
                                                            @input="updateTotals" step="0.01" min="0" required
-                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                                 </div>
                                             </div>
                                             <!-- Preço Final -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
-                                                    Preço Final <span style="color: #dc2626;">*</span>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
+                                                    Preço Final <span style="color: #fca5a5;">*</span>
                                                 </label>
                                                 <div style="position: relative;">
-                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
+                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.8125rem;">R$</span>
                                                     <input type="number" :name="'trade_ins['+tiIndex+'][sale_price]'" x-model.number="ti.sale_price" 
                                                            step="0.01" min="0" placeholder="0,00" required
-                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                                 </div>
                                             </div>
                                             <!-- Preço Repasse -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
-                                                    Preço Repasse <span style="color: #dc2626;">*</span>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
+                                                    Preço Repasse <span style="color: #fca5a5;">*</span>
                                                 </label>
                                                 <div style="position: relative;">
-                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.8125rem;">R$</span>
+                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.8125rem;">R$</span>
                                                     <input type="number" :name="'trade_ins['+tiIndex+'][resale_price]'" x-model.number="ti.resale_price" 
                                                            step="0.01" min="0" placeholder="0,00" required
-                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                                 </div>
                                             </div>
 
                                             <!-- Separador Seminovo -->
-                                            <div style="grid-column: span 3; border-top: 1px solid #e5e7eb; margin-top: 0.25rem; padding-top: 0.75rem;">
-                                                <span style="font-size: 0.75rem; font-weight: 600; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.05em;">Informações do Seminovo</span>
+                                            <div style="grid-column: span 3; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 0.25rem; padding-top: 0.75rem;">
+                                                <span style="font-size: 0.75rem; font-weight: 600; color: #c4b5fd; text-transform: uppercase; letter-spacing: 0.05em;">Informações do Seminovo</span>
                                             </div>
                                             <!-- Bateria -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">
-                                                    Bateria (%) <span style="color: #dc2626;">*</span>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
+                                                    Bateria (%) <span style="color: #fca5a5;">*</span>
                                                 </label>
                                                 <input type="number" :name="'trade_ins['+tiIndex+'][battery_health]'" x-model.number="ti.battery_health"
                                                        min="0" max="100" placeholder="Ex: 87" required
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
+                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                             </div>
                                             <!-- Checkboxes -->
                                             <div style="display: flex; gap: 1.5rem; align-items: center; padding-top: 0.25rem; grid-column: span 2;">
-                                                <label style="display: flex; align-items: center; gap: 0.375rem; cursor: pointer; font-size: 0.8125rem; color: #374151;">
+                                                <label style="display: flex; align-items: center; gap: 0.375rem; cursor: pointer; font-size: 0.8125rem; color: #a4a4a4;">
                                                     <input type="hidden" :name="'trade_ins['+tiIndex+'][has_box]'" value="0">
                                                     <input type="checkbox" :name="'trade_ins['+tiIndex+'][has_box]'" x-model="ti.has_box" value="1"
-                                                           style="width: 1.125rem; height: 1.125rem; accent-color: #7c3aed;">
-                                                    <svg style="width: 1rem; height: 1rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                                           style="width: 1.125rem; height: 1.125rem; accent-color: #c4b5fd;">
+                                                    <svg style="width: 1rem; height: 1rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                                                     Com caixa
                                                 </label>
-                                                <label style="display: flex; align-items: center; gap: 0.375rem; cursor: pointer; font-size: 0.8125rem; color: #374151;">
+                                                <label style="display: flex; align-items: center; gap: 0.375rem; cursor: pointer; font-size: 0.8125rem; color: #a4a4a4;">
                                                     <input type="hidden" :name="'trade_ins['+tiIndex+'][has_cable]'" value="0">
                                                     <input type="checkbox" :name="'trade_ins['+tiIndex+'][has_cable]'" x-model="ti.has_cable" value="1"
-                                                           style="width: 1.125rem; height: 1.125rem; accent-color: #7c3aed;">
-                                                    <svg style="width: 1rem; height: 1rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                                           style="width: 1.125rem; height: 1.125rem; accent-color: #c4b5fd;">
+                                                    <svg style="width: 1rem; height: 1rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                                                     Com cabo
                                                 </label>
                                             </div>
                                             <!-- Vincular Checklist -->
                                             <div style="grid-column: span 3;" x-data="{ clSearch: '', clOpen: false, clResults: [], clDebounce: null }">
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Vincular Checklist</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Vincular Checklist</label>
                                                 <input type="hidden" :name="'trade_ins['+tiIndex+'][checklist_id]'" :value="ti.checklist_id || ''">
                                                 <div style="position: relative;">
                                                     <input type="text" x-model="clSearch" @focus="clOpen = true"
@@ -676,21 +676,21 @@
                                                            @click.away="clOpen = false"
                                                            placeholder="Buscar checklist..." autocomplete="off"
                                                            x-show="!ti.checklist_id"
-                                                           style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'">
-                                                    <div x-show="ti.checklist_id" style="display: flex; align-items: center; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; background: #f0fdf4;">
-                                                        <span style="flex: 1; font-size: 0.875rem; color: #111827;" x-text="ti.checklist_label || ''"></span>
-                                                        <button type="button" @click="ti.checklist_id = ''; ti.checklist_label = ''" style="background: none; border: none; cursor: pointer; color: #9ca3af; padding: 2px;">
+                                                           style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                    <div x-show="ti.checklist_id" style="display: flex; align-items: center; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; background: rgba(16,185,129,0.1);">
+                                                        <span style="flex: 1; font-size: 0.875rem; color: #e3e3e3;" x-text="ti.checklist_label || ''"></span>
+                                                        <button type="button" @click="ti.checklist_id = ''; ti.checklist_label = ''" style="background: none; border: none; cursor: pointer; color: #666666; padding: 2px;">
                                                             <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                                         </button>
                                                     </div>
-                                                    <div x-show="clOpen && clResults.length > 0" style="position: absolute; z-index: 50; width: 100%; margin-top: 4px; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto;">
+                                                    <div x-show="clOpen && clResults.length > 0" style="position: absolute; z-index: 50; width: 100%; margin-top: 4px; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto;">
                                                         <template x-for="cl in clResults" :key="cl.id">
                                                             <button type="button" @click="ti.checklist_id = cl.id; ti.checklist_label = cl.name + ' (' + cl.summary + ')'; clOpen = false; clSearch = ''"
-                                                                    style="width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: none; background: white; cursor: pointer; font-size: 0.8rem;"
-                                                                    onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
-                                                                <div style="font-weight: 500; color: #111827;" x-text="cl.name"></div>
-                                                                <div style="font-size: 0.7rem; color: #6b7280;" x-text="cl.summary + ' — ' + cl.status"></div>
+                                                                    style="width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: none; background: #141414; cursor: pointer; font-size: 0.8rem;"
+                                                                    onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                                                                <div style="font-weight: 500; color: #e3e3e3;" x-text="cl.name"></div>
+                                                                <div style="font-size: 0.7rem; color: #818181;" x-text="cl.summary + ' — ' + cl.status"></div>
                                                             </button>
                                                         </template>
                                                     </div>
@@ -699,11 +699,11 @@
 
                                             <!-- Observações -->
                                             <div style="grid-column: span 3;">
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Observações</label>
+                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Observações</label>
                                                 <textarea :name="'trade_ins['+tiIndex+'][notes]'" x-model="ti.notes" rows="2"
                                                           placeholder="Estado da tela, detalhes adicionais..."
-                                                          style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
-                                                          onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+                                                          style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
+                                                          onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -735,19 +735,19 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 <div>
-                                    <p style="font-weight: 600; color: #92400e; margin-bottom: 0.25rem;">Trade-in não disponível</p>
+                                    <p style="font-weight: 600; color: #fbbf24; margin-bottom: 0.25rem;">Trade-in não disponível</p>
                                     <p style="font-size: 0.875rem; color: #78350f;">Vendas do tipo <strong>Repasse</strong> não permitem aparelhos como entrada (trade-in).</p>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Observações -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem;">
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Observações (opcional)</label>
+                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 1.5rem;">
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">Observações (opcional)</label>
                             <textarea name="notes" rows="2" 
                                       placeholder="Anotações sobre a venda..."
-                                      style="width: 100%; border: 2px solid #e5e7eb; border-radius: 0.75rem; padding: 0.75rem; outline: none; resize: vertical;"
-                                      onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+                                      style="width: 100%; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.75rem; padding: 0.75rem; outline: none; resize: vertical;"
+                                      onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"></textarea>
                         </div>
                     </div>
                     
@@ -755,11 +755,11 @@
                     <div class="sale-sidebar">
                         
                         <!-- PASSO 3: CLIENTE -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; position: relative; z-index: 30;">
+                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); position: relative; z-index: 30;">
                             <div style="background: #374151; color: white; padding: 0.75rem 1.5rem; border-radius: 1rem 1rem 0 0;">
                                 <div style="display: flex; align-items: center; justify-content: space-between;">
                                     <div style="display: flex; align-items: center;">
-                                        <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">3</span>
+                                        <span style="width: 1.5rem; height: 1.5rem; background: #141414; color: #a4a4a4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">3</span>
                                         <span style="font-weight: 600;">Cliente <span style="color: #fca5a5;">*</span></span>
                                     </div>
                                     <button type="button" @click="showCustomerModal = true; customerForm = resetCustomerForm()"
@@ -779,25 +779,25 @@
                                         x-model="customerSearch"
                                         @input.debounce.300ms="searchCustomers"
                                         placeholder="Buscar cliente por nome ou telefone..."
-                                        style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e5e7eb; border-radius: 0.75rem; outline: none;"
-                                        onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                        style="width: 100%; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.75rem; outline: none;"
+                                        onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                     >
                                     <input type="hidden" name="customer_id" x-model="selectedCustomer.id">
                                     
                                     <div x-show="customerResults.length > 0 || (customerSearch.length >= 2 && customerResults.length === 0 && !customerSearchLoading)" x-cloak 
-                                         style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: white; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border-radius: 0.75rem; border: 1px solid #e5e7eb; max-height: 16rem; overflow: auto;">
+                                         style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: #141414; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); max-height: 16rem; overflow: auto;">
                                         <template x-for="customer in customerResults" :key="customer.id">
                                             <button type="button" @click="selectCustomer(customer)"
-                                                    style="width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #f3f4f6; cursor: pointer; background: white;"
+                                                    style="width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; background: #141414;"
                                                     onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
-                                                <span style="font-weight: 500; color: #111827;" x-text="customer.name"></span>
-                                                <span style="font-size: 0.875rem; color: #6b7280; display: block;" x-text="customer.phone"></span>
+                                                <span style="font-weight: 500; color: #e3e3e3;" x-text="customer.name"></span>
+                                                <span style="font-size: 0.875rem; color: #818181; display: block;" x-text="customer.phone"></span>
                                             </button>
                                         </template>
                                         <!-- Opção de cadastrar quando não encontra -->
                                         <div x-show="customerSearch.length >= 2 && customerResults.length === 0 && !customerSearchLoading"
                                              style="padding: 0.75rem 1rem; text-align: center; border-top: 1px solid #f3f4f6;">
-                                            <p style="font-size: 0.8125rem; color: #6b7280; margin-bottom: 0.5rem;">Cliente não encontrado</p>
+                                            <p style="font-size: 0.8125rem; color: #818181; margin-bottom: 0.5rem;">Cliente não encontrado</p>
                                             <button type="button" 
                                                     @click="customerForm = resetCustomerForm(); customerForm.name = customerSearch; showCustomerModal = true; customerResults = [];"
                                                     style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: #111827; color: white; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 500; border: none; cursor: pointer;">
@@ -810,17 +810,17 @@
                                     </div>
                                 </div>
                                 
-                                <div x-show="selectedCustomer.id" style="position: relative; padding: 0.625rem 2.5rem 0.625rem 0.75rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0; display: flex; align-items: center; gap: 0.625rem;">
-                                    <div style="width: 2rem; height: 2rem; min-width: 2rem; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <div x-show="selectedCustomer.id" style="position: relative; padding: 0.625rem 2.5rem 0.625rem 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid #bbf7d0; display: flex; align-items: center; gap: 0.625rem;">
+                                    <div style="width: 2rem; height: 2rem; min-width: 2rem; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                         <svg style="width: 1rem; height: 1rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                         </svg>
                                     </div>
                                     <div style="min-width: 0;">
-                                        <span style="font-weight: 600; color: #111827; font-size: 0.875rem;" x-text="selectedCustomer.name"></span>
-                                        <span style="font-size: 0.75rem; color: #6b7280; margin-left: 0.5rem;" x-text="selectedCustomer.phone"></span>
+                                        <span style="font-weight: 600; color: #e3e3e3; font-size: 0.875rem;" x-text="selectedCustomer.name"></span>
+                                        <span style="font-size: 0.75rem; color: #818181; margin-left: 0.5rem;" x-text="selectedCustomer.phone"></span>
                                     </div>
-                                    <button type="button" @click="clearCustomer" style="position: absolute; top: 0.375rem; right: 0.375rem; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                                    <button type="button" @click="clearCustomer" style="position: absolute; top: 0.375rem; right: 0.375rem; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
                                             onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
                                         <svg style="height: 0.875rem; width: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -833,7 +833,7 @@
                                     <div style="margin-top: 0.375rem;">
                                         <template x-for="snap in customerSnapshots" :key="snap.id">
                                             <button type="button" @click="useSnapshot(snap)"
-                                                    style="display: flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0; background: none; border: none; cursor: pointer; font-size: 0.6875rem; color: #6b7280; width: 100%; text-align: left;"
+                                                    style="display: flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0; background: none; border: none; cursor: pointer; font-size: 0.6875rem; color: #818181; width: 100%; text-align: left;"
                                                     onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'">
                                                 <span style="font-size: 0.625rem; opacity: 0.6;">&#128203;</span>
                                                 <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="snap.product_description + ' · R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2})"></span>
@@ -845,10 +845,10 @@
                         </div>
                         
                         <!-- PASSO 4: PAGAMENTO MISTO -->
-                        <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
+                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
                             <div style="background: #374151; color: white; padding: 0.75rem 1.5rem;">
                                 <div style="display: flex; align-items: center;">
-                                    <span style="width: 1.5rem; height: 1.5rem; background: white; color: #374151; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">4</span>
+                                    <span style="width: 1.5rem; height: 1.5rem; background: #141414; color: #a4a4a4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">4</span>
                                     <span style="font-weight: 600;">Pagamento</span>
                                 </div>
                             </div>
@@ -856,46 +856,46 @@
                                 <!-- Dinheiro + PIX -->
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
                                     <!-- Dinheiro -->
-                                    <div style="padding: 1rem; background: #f0fdf4; border-radius: 0.75rem; border: 1px solid #bbf7d0;">
-                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #166534; margin-bottom: 0.75rem;">
+                                    <div style="padding: 1rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid #bbf7d0;">
+                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #6ee7b7; margin-bottom: 0.75rem;">
                                             <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                             </svg>
                                             Dinheiro
                                         </label>
                                         <div style="position: relative;">
-                                            <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
+                                            <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.75rem;">R$</span>
                                             <input type="number" name="cash_payment" x-model.number="cashPayment" @input="updateTotals"
                                                    step="0.01" min="0" placeholder="0,00"
-                                                   style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #86efac; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                                   style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #86efac; border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
                                         </div>
                                     </div>
                                     <!-- PIX -->
-                                    <div style="padding: 1rem; background: #ecfdf5; border-radius: 0.75rem; border: 1px solid #6ee7b7;">
-                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #047857; margin-bottom: 0.75rem;">
+                                    <div style="padding: 1rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid #6ee7b7;">
+                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #6ee7b7; margin-bottom: 0.75rem;">
                                             <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                             </svg>
                                             PIX
                                         </label>
                                         <div style="position: relative;">
-                                            <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.75rem;">R$</span>
+                                            <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.75rem;">R$</span>
                                             <input type="number" name="pix_payment" x-model.number="pixPayment" @input="updateTotals"
                                                    step="0.01" min="0" placeholder="0,00"
-                                                   style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.875rem; background: white;">
+                                                   style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <!-- Parcelamentos em Cartões (Múltiplos) com Taxa Stone -->
-                                <div x-show="saleType === 'cliente_final' || saleType === null" style="margin-bottom: 1rem; padding: 1rem; background: #eff6ff; border-radius: 0.75rem; border: 1px solid #bfdbfe;">
+                                <div x-show="saleType === 'cliente_final' || saleType === null" style="margin-bottom: 1rem; padding: 1rem; background: rgba(59,130,246,0.1); border-radius: 0.75rem; border: 1px solid #bfdbfe;">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #1e40af;">
+                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #93c5fd;">
                                             <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                             </svg>
                                             Parcelamento em Cartão
-                                            <span style="font-size: 0.6875rem; font-weight: 400; color: #6b7280; margin-left: 0.5rem;">(Taxa Stone aplicada)</span>
+                                            <span style="font-size: 0.6875rem; font-weight: 400; color: #818181; margin-left: 0.5rem;">(Taxa Stone aplicada)</span>
                                         </label>
                                         <button type="button" @click="addCardPayment()" 
                                                 style="display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: #3b82f6; color: white; border-radius: 0.375rem; font-size: 0.75rem; border: none; cursor: pointer;">
@@ -908,7 +908,7 @@
                                     
                                     <!-- Lista de cartões -->
                                     <template x-for="(card, cardIndex) in cardPayments" :key="cardIndex">
-                                        <div style="background: white; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #dbeafe;">
+                                        <div style="background: #141414; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #dbeafe;">
                                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
                                                 <span style="font-size: 0.75rem; font-weight: 600; color: #3b82f6;" x-text="'Cartão ' + (cardIndex + 1)"></span>
                                                 <button type="button" @click="removeCardPayment(cardIndex)" 
@@ -920,21 +920,21 @@
                                             </div>
                                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                                                 <div>
-                                                    <label style="display: block; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.125rem;">Valor Líquido (recebido)</label>
+                                                    <label style="display: block; font-size: 0.7rem; color: #818181; margin-bottom: 0.125rem;">Valor Líquido (recebido)</label>
                                                     <div style="position: relative;">
-                                                        <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.7rem;">R$</span>
+                                                        <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.7rem;">R$</span>
                                                         <input type="number" :name="'card_payments['+cardIndex+'][amount]'" 
                                                                x-model.number="card.amount" @input="calculateCardFee(cardIndex)"
                                                                step="0.01" min="0" placeholder="0,00"
-                                                               style="width: 100%; padding: 0.375rem 0.375rem 0.375rem 1.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem;">
+                                                               style="width: 100%; padding: 0.375rem 0.375rem 0.375rem 1.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem;">
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label style="display: block; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.125rem;">Parcelas</label>
+                                                    <label style="display: block; font-size: 0.7rem; color: #818181; margin-bottom: 0.125rem;">Parcelas</label>
                                                     <select :name="'card_payments['+cardIndex+'][installments]'" 
                                                             x-model.number="card.installments"
                                                             @change="calculateCardFee(cardIndex)"
-                                                            style="width: 100%; padding: 0.375rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; background: white;">
+                                                            style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; background: #141414;">
                                                         @for($i = 1; $i <= 18; $i++)
                                                             <option value="{{ $i }}">{{ $i }}x</option>
                                                         @endfor
@@ -943,7 +943,7 @@
                                             </div>
                                             <!-- Info da taxa Stone -->
                                             <div x-show="card.amount > 0 && card.installments >= 1" 
-                                                 style="margin-top: 0.5rem; padding: 0.5rem; background: #f8fafc; border-radius: 0.375rem; border: 1px solid #e2e8f0;">
+                                                 style="margin-top: 0.5rem; padding: 0.5rem; background: #f8fafc; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.06);">
                                                 <div style="font-size: 0.75rem; color: #1e293b; font-weight: 500;">
                                                     <span x-text="card.installments + 'x'"></span> - 
                                                     Taxa: <strong x-text="(card.mdr_rate || 0).toFixed(2) + '%'"></strong> - 
@@ -951,7 +951,7 @@
                                                 </div>
                                                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #64748b; margin-top: 0.375rem;">
                                                     <span>Cliente paga: <strong x-text="formatMoney(card.gross_amount || card.amount || 0)"></strong></span>
-                                                    <span style="color: #dc2626;">Taxa: <strong x-text="formatMoney(card.fee_amount || 0)"></strong></span>
+                                                    <span style="color: #fca5a5;">Taxa: <strong x-text="formatMoney(card.fee_amount || 0)"></strong></span>
                                                 </div>
                                                 <div x-show="card.installments > 1" style="font-size: 0.7rem; color: #64748b; text-align: right; margin-top: 0.125rem;">
                                                     <span x-text="card.installments + 'x de ' + formatMoney((card.gross_amount || card.amount || 0) / card.installments)"></span>
@@ -960,7 +960,7 @@
                                         </div>
                                     </template>
                                     
-                                    <div x-show="cardPayments.length === 0" style="text-align: center; padding: 1rem; color: #6b7280; font-size: 0.75rem;">
+                                    <div x-show="cardPayments.length === 0" style="text-align: center; padding: 1rem; color: #818181; font-size: 0.75rem;">
                                         Clique em "Adicionar Cartão" para parcelar
                                     </div>
                                 </div>
@@ -986,8 +986,8 @@
                                 
                                 <!-- Status -->
                                 <div>
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Status</label>
-                                    <select name="payment_status" x-model="paymentStatus" required style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; outline: none; background: white;">
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Status</label>
+                                    <select name="payment_status" x-model="paymentStatus" required style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; outline: none; background: #141414;">
                                         @foreach($paymentStatuses as $status)
                                             <option value="{{ $status->value }}" {{ $status->value === 'paid' ? 'selected' : '' }}>{{ $status->label() }}</option>
                                         @endforeach
@@ -1002,20 +1002,20 @@
                                 <h3 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Resumo da Venda</h3>
                                 
                                 <dl style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                    <div style="display: flex; justify-content: space-between; color: #d1d5db;">
+                                    <div style="display: flex; justify-content: space-between; color: #515151;">
                                         <dt>Itens</dt>
                                         <dd x-text="items.length + ' produto(s)'"></dd>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; color: #d1d5db;">
+                                    <div style="display: flex; justify-content: space-between; color: #515151;">
                                         <dt>Subtotal</dt>
                                         <dd x-text="formatMoney(subtotal)"></dd>
                                     </div>
                                     @if(auth()->user()->canViewFinancials())
-                                    <div x-show="totalCost > 0" style="display: flex; justify-content: space-between; color: #9ca3af; font-size: 0.8125rem;">
+                                    <div x-show="totalCost > 0" style="display: flex; justify-content: space-between; color: #666666; font-size: 0.8125rem;">
                                         <dt>Custo total</dt>
                                         <dd x-text="formatMoney(totalCost)"></dd>
                                     </div>
-                                    <div x-show="totalFreight > 0" style="display: flex; justify-content: space-between; color: #9ca3af; font-size: 0.8125rem;">
+                                    <div x-show="totalFreight > 0" style="display: flex; justify-content: space-between; color: #666666; font-size: 0.8125rem;">
                                         <dt>Frete total</dt>
                                         <dd x-text="formatMoney(totalFreight)"></dd>
                                     </div>
@@ -1040,7 +1040,7 @@
                                         </div>
                                     </div>
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <dt style="color: #d1d5db;">Desconto</dt>
+                                        <dt style="color: #515151;">Desconto</dt>
                                         <dd>
                                             <input 
                                                 type="number" 
@@ -1064,7 +1064,7 @@
                                     <!-- Breakdown do pagamento -->
                                     <div x-show="hasTradeIn || cashPayment > 0 || pixPayment > 0 || totalCardPayments > 0" 
                                          style="padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid #374151;">
-                                        <div style="font-size: 0.75rem; font-weight: 600; color: #9ca3af; margin-bottom: 0.5rem;">FORMA DE PAGAMENTO</div>
+                                        <div style="font-size: 0.75rem; font-weight: 600; color: #666666; margin-bottom: 0.5rem;">FORMA DE PAGAMENTO</div>
                                         <template x-for="(ti, tiIdx) in tradeIns" :key="tiIdx">
                                             <div x-show="hasTradeIn && ti.estimated_value > 0" style="display: flex; justify-content: space-between; color: #a78bfa; font-size: 0.875rem;">
                                                 <dt x-text="'Trade-in ' + (tradeIns.length > 1 ? (tiIdx + 1) + ' ' : '') + '(' + (ti.device_name || 'aparelho') + ')'"></dt>
@@ -1157,21 +1157,21 @@
                  style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem;"
                  @keydown.escape.window="showCustomerModal = false">
                 <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5);" @click="showCustomerModal = false"></div>
-                <div style="position: relative; background: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 100%; max-width: 32rem; max-height: 90vh; overflow-y: auto;"
+                <div style="position: relative; background: #141414; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); width: 100%; max-width: 32rem; max-height: 90vh; overflow-y: auto;"
                      @click.stop>
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; background: #f0fdf4; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 2.5rem; height: 2.5rem; background: rgba(16,185,129,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
                                 <svg style="width: 1.25rem; height: 1.25rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Cadastro Rápido de Cliente</h3>
-                                <p style="font-size: 0.8125rem; color: #6b7280;">O cliente será vinculado automaticamente à venda</p>
+                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;">Cadastro Rápido de Cliente</h3>
+                                <p style="font-size: 0.8125rem; color: #818181;">O cliente será vinculado automaticamente à venda</p>
                             </div>
                         </div>
-                        <button type="button" @click="showCustomerModal = false" style="padding: 0.375rem; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                        <button type="button" @click="showCustomerModal = false" style="padding: 0.375rem; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
                                 onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
                             <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -1179,51 +1179,51 @@
                         </button>
                     </div>
                     <div style="padding: 1.5rem;">
-                        <div x-show="customerFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; color: #dc2626;" x-text="customerFormError"></p>
+                        <div x-show="customerFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; color: #fca5a5;" x-text="customerFormError"></p>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div style="grid-column: span 2;">
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Nome <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Nome <span style="color: #fca5a5;">*</span></label>
                                 <input type="text" x-model="customerForm.name" x-ref="customerNameInput"
                                        placeholder="Nome completo do cliente"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                        @keydown.enter.prevent="saveCustomer">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Telefone <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Telefone <span style="color: #fca5a5;">*</span></label>
                                 <input type="text" x-model="customerForm.phone"
                                        placeholder="(00) 00000-0000"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                        @keydown.enter.prevent="saveCustomer">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">CPF</label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">CPF</label>
                                 <input type="text" x-model="customerForm.cpf"
                                        placeholder="000.000.000-00"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Instagram</label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Instagram</label>
                                 <input type="text" x-model="customerForm.instagram"
                                        placeholder="@usuario"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Data de Nascimento</label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Data de Nascimento</label>
                                 <input type="date" x-model="customerForm.birth_date"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                         </div>
                     </div>
-                    <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem; background: #f9fafb; border-radius: 0 0 1rem 1rem;">
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: flex-end; gap: 0.75rem; background: #1a1a1a; border-radius: 0 0 1rem 1rem;">
                         <button type="button" @click="showCustomerModal = false"
-                                style="padding: 0.625rem 1.25rem; background: white; color: #374151; font-weight: 500; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                                style="padding: 0.625rem 1.25rem; background: #141414; color: #a4a4a4; font-weight: 500; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
                             Cancelar
                         </button>
                         <button type="button" @click="saveCustomer" :disabled="customerFormSaving"
@@ -1243,21 +1243,21 @@
                  style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem;"
                  @keydown.escape.window="showProductModal = false">
                 <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5);" @click="showProductModal = false"></div>
-                <div style="position: relative; background: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 100%; max-width: 40rem; max-height: 90vh; overflow-y: auto;"
+                <div style="position: relative; background: #141414; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); width: 100%; max-width: 40rem; max-height: 90vh; overflow-y: auto;"
                      @click.stop>
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; background: #eff6ff; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 2.5rem; height: 2.5rem; background: rgba(59,130,246,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
                                 <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Cadastro Rápido de Produto</h3>
-                                <p style="font-size: 0.8125rem; color: #6b7280;">O produto será adicionado automaticamente à venda</p>
+                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;">Cadastro Rápido de Produto</h3>
+                                <p style="font-size: 0.8125rem; color: #818181;">O produto será adicionado automaticamente à venda</p>
                             </div>
                         </div>
-                        <button type="button" @click="showProductModal = false" style="padding: 0.375rem; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                        <button type="button" @click="showProductModal = false" style="padding: 0.375rem; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
                                 onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
                             <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -1265,21 +1265,21 @@
                         </button>
                     </div>
                     <div style="padding: 1.5rem;">
-                        <div x-show="productFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; color: #dc2626;" x-text="productFormError"></p>
+                        <div x-show="productFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; color: #fca5a5;" x-text="productFormError"></p>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                             <div style="grid-column: span 2;">
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Nome <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Nome <span style="color: #fca5a5;">*</span></label>
                                 <input type="text" x-model="productForm.name" x-ref="productNameInput"
                                        placeholder="Ex: iPhone 15 Pro Max 256GB"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Categoria <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Categoria <span style="color: #fca5a5;">*</span></label>
                                 <select x-model="productForm.category" @change="generateProductSku"
-                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white; outline: none;">
+                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #1a1a1a; outline: none;">
                                     <option value="">Selecione...</option>
                                     @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
                                         <optgroup label="{{ $group }}">
@@ -1291,101 +1291,101 @@
                                 </select>
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Condição <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Condição <span style="color: #fca5a5;">*</span></label>
                                 <select x-model="productForm.condition"
-                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; background: white; outline: none;">
+                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #1a1a1a; outline: none;">
                                     @foreach(\App\Domain\Product\Enums\ProductCondition::cases() as $condition)
                                         <option value="{{ $condition->value }}">{{ $condition->label() }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">SKU <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">SKU <span style="color: #fca5a5;">*</span></label>
                                 <div style="display: flex; gap: 0.5rem;">
                                     <input type="text" x-model="productForm.sku"
                                            placeholder="Gerado automaticamente"
-                                           style="flex: 1; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                           style="flex: 1; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                           onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                     <button type="button" @click="generateProductSku" title="Gerar SKU"
-                                            style="padding: 0.5rem; background: #f3f4f6; border: 2px solid #e5e7eb; border-radius: 0.5rem; cursor: pointer;">
-                                        <svg style="width: 1.125rem; height: 1.125rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            style="padding: 0.5rem; background: #222222; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;">
+                                        <svg style="width: 1.125rem; height: 1.125rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                         </svg>
                                     </button>
                                 </div>
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">IMEI</label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">IMEI</label>
                                 <input type="text" x-model="productForm.imei"
                                        placeholder="000000000000000"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Modelo <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Modelo <span style="color: #fca5a5;">*</span></label>
                                 <input type="text" x-model="productForm.model"
                                        placeholder="Ex: 15 Pro Max"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Armazenamento <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Armazenamento <span style="color: #fca5a5;">*</span></label>
                                 <input type="text" x-model="productForm.storage"
                                        placeholder="Ex: 256GB"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Cor <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Cor <span style="color: #fca5a5;">*</span></label>
                                 <input type="text" x-model="productForm.color"
                                        placeholder="Ex: Preto"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Quantidade <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Quantidade <span style="color: #fca5a5;">*</span></label>
                                 <input type="number" x-model.number="productForm.stock_quantity" min="1"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                         </div>
 
                         <!-- Campos Seminovo -->
                         <div x-show="productForm.condition === 'used' || productForm.condition === 'refurbished'"
                              x-transition
-                             style="margin-top: 1rem; padding: 1rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; font-weight: 600; color: #92400e; margin-bottom: 0.75rem;">Informações do Seminovo</p>
+                             style="margin-top: 1rem; padding: 1rem; background: #141414beb; border: 1px solid #fde68a; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; font-weight: 600; color: #fbbf24; margin-bottom: 0.75rem;">Informações do Seminovo</p>
                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
                                 <div>
                                     <label style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
                                         <input type="checkbox" x-model="productForm.has_box"
-                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #111827;">
-                                        <span style="font-size: 0.8125rem; color: #374151;">Tem caixa</span>
+                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #e3e3e3;">
+                                        <span style="font-size: 0.8125rem; color: #a4a4a4;">Tem caixa</span>
                                     </label>
                                 </div>
                                 <div>
                                     <label style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
                                         <input type="checkbox" x-model="productForm.has_cable"
-                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #111827;">
-                                        <span style="font-size: 0.8125rem; color: #374151;">Tem cabo</span>
+                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #e3e3e3;">
+                                        <span style="font-size: 0.8125rem; color: #a4a4a4;">Tem cabo</span>
                                     </label>
                                 </div>
                                 <div>
-                                    <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Saúde da Bateria (%)</label>
+                                    <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Saúde da Bateria (%)</label>
                                     <input type="number" x-model.number="productForm.battery_health" min="0" max="100" placeholder="Ex: 87"
-                                           style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                           style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                           onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                 </div>
                             </div>
                         </div>
 
-                        <p style="margin-top: 1rem; padding: 0.75rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.5rem; font-size: 0.8125rem; color: #1e40af;">
+                        <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(59,130,246,0.1); border: 1px solid #bfdbfe; border-radius: 0.5rem; font-size: 0.8125rem; color: #93c5fd;">
                             Os valores de custo e venda serão informados na hora da venda.
                         </p>
                     </div>
-                    <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem; background: #f9fafb; border-radius: 0 0 1rem 1rem;">
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: flex-end; gap: 0.75rem; background: #1a1a1a; border-radius: 0 0 1rem 1rem;">
                         <button type="button" @click="showProductModal = false"
-                                style="padding: 0.625rem 1.25rem; background: white; color: #374151; font-weight: 500; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                                style="padding: 0.625rem 1.25rem; background: #141414; color: #a4a4a4; font-weight: 500; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
                             Cancelar
                         </button>
                         <button type="button" @click="saveProduct" :disabled="productFormSaving"
@@ -1405,21 +1405,21 @@
                  style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem;"
                  @keydown.escape.window="showStockModal = false">
                 <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5);" @click="showStockModal = false"></div>
-                <div style="position: relative; background: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 100%; max-width: 28rem;"
+                <div style="position: relative; background: #141414; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); width: 100%; max-width: 28rem;"
                      @click.stop>
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; background: #fff7ed; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 2.5rem; height: 2.5rem; background: #1414147ed; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
                                 <svg style="width: 1.25rem; height: 1.25rem; color: #ea580c;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Entrada Rápida de Estoque</h3>
-                                <p style="font-size: 0.8125rem; color: #6b7280;" x-text="stockItemName"></p>
+                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;">Entrada Rápida de Estoque</h3>
+                                <p style="font-size: 0.8125rem; color: #818181;" x-text="stockItemName"></p>
                             </div>
                         </div>
-                        <button type="button" @click="showStockModal = false" style="padding: 0.375rem; color: #9ca3af; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
+                        <button type="button" @click="showStockModal = false" style="padding: 0.375rem; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
                                 onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
                             <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -1427,40 +1427,40 @@
                         </button>
                     </div>
                     <div style="padding: 1.5rem;">
-                        <div x-show="stockFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; color: #dc2626;" x-text="stockFormError"></p>
+                        <div x-show="stockFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; color: #fca5a5;" x-text="stockFormError"></p>
                         </div>
-                        <div x-show="stockFormSuccess" style="margin-bottom: 1rem; padding: 0.75rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; color: #166534;" x-text="stockFormSuccess"></p>
+                        <div x-show="stockFormSuccess" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem;">
+                            <p style="font-size: 0.8125rem; color: #6ee7b7;" x-text="stockFormSuccess"></p>
                         </div>
                         <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Quantidade a adicionar <span style="color: #dc2626;">*</span></label>
+                            <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Quantidade a adicionar <span style="color: #fca5a5;">*</span></label>
                             <input type="number" x-model.number="stockForm.quantity" min="1" x-ref="stockQuantityInput"
                                    @keydown.enter.prevent="saveStock"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 1.125rem; font-weight: 700; text-align: center; outline: none;"
-                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e5e7eb'">
+                                   style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 1.125rem; font-weight: 700; text-align: center; outline: none;"
+                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                         </div>
                         <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem;">Motivo <span style="color: #9ca3af;">(opcional)</span></label>
+                            <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Motivo <span style="color: #666666;">(opcional)</span></label>
                             <input type="text" x-model="stockForm.reason"
                                    placeholder="Ex: Reposição de estoque"
-                                   style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='#e5e7eb'">
+                                   style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                         </div>
-                        <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; border: 1px solid #e5e7eb; margin-bottom: 1rem;">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; color: #6b7280;">
+                        <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; color: #818181;">
                                 <span>Estoque atual:</span>
                                 <span style="font-weight: 600;" x-text="stockCurrentStock + ' un.'"></span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; color: #111827; margin-top: 0.25rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; color: #e3e3e3; margin-top: 0.25rem;">
                                 <span style="font-weight: 600;">Estoque após entrada:</span>
                                 <span style="font-weight: 700; color: #16a34a;" x-text="(stockCurrentStock + (stockForm.quantity || 0)) + ' un.'"></span>
                             </div>
                         </div>
                     </div>
-                    <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 0.75rem; background: #f9fafb; border-radius: 0 0 1rem 1rem;">
+                    <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: flex-end; gap: 0.75rem; background: #1a1a1a; border-radius: 0 0 1rem 1rem;">
                         <button type="button" @click="showStockModal = false"
-                                style="padding: 0.625rem 1.25rem; background: white; color: #374151; font-weight: 500; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                                style="padding: 0.625rem 1.25rem; background: #141414; color: #a4a4a4; font-weight: 500; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
                             Cancelar
                         </button>
                         <button type="button" @click="saveStock" :disabled="stockFormSaving"
@@ -1521,7 +1521,7 @@
         
         .sale-submit-btn-disabled {
             background: #374151;
-            color: #9ca3af;
+            color: #666666;
             cursor: not-allowed;
         }
         

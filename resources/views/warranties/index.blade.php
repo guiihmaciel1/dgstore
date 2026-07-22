@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Garantias</x-slot>
     <div class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('success'))
                 <div class="mb-4">
                     <x-alert type="success">{{ session('success') }}</x-alert>
@@ -11,8 +11,8 @@
             <!-- Cabeçalho -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Garantias</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Controle de garantias dos produtos vendidos</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Garantias</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">Controle de garantias dos produtos vendidos</p>
                 </div>
             </div>
 
@@ -27,7 +27,7 @@
                         </div>
                         <div>
                             <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['expiring_soon'] > 0 ? '#d97706' : '#111827' }};">{{ $stats['expiring_soon'] }}</p>
-                            <p style="font-size: 0.75rem; color: #6b7280;">Vencendo em 30 dias</p>
+                            <p style="font-size: 0.75rem; color: #818181;">Vencendo em 30 dias</p>
                         </div>
                     </div>
                 </div>
@@ -41,24 +41,24 @@
                         </div>
                         <div>
                             <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['open_claims'] > 0 ? '#dc2626' : '#111827' }};">{{ $stats['open_claims'] }}</p>
-                            <p style="font-size: 0.75rem; color: #6b7280;">Acionamentos abertos</p>
+                            <p style="font-size: 0.75rem; color: #818181;">Acionamentos abertos</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Filtros -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1rem;">
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem; margin-bottom: 1rem;">
                 <form method="GET" x-data x-ref="filterForm" style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
                     <div style="flex: 1; min-width: 200px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Buscar</label>
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Buscar</label>
                         <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="IMEI, venda, cliente ou produto..."
-                               style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                               style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
                                x-on:input.debounce.400ms="$refs.filterForm.submit()">
                     </div>
                     <div style="min-width: 180px;">
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Filtrar por</label>
-                        <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Filtrar por</label>
+                        <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;"
                                 x-on:change="$refs.filterForm.submit()">
                             <option value="">Todas</option>
                             <option value="expiring" {{ $filters['status'] === 'expiring' ? 'selected' : '' }}>Vencendo em 30 dias</option>
@@ -68,45 +68,45 @@
                         </select>
                     </div>
                     @if($filters['search'] || $filters['status'])
-                        <a href="{{ route('warranties.index') }}" style="padding: 0.5rem 1rem; color: #6b7280; font-size: 0.875rem; text-decoration: none;">Limpar</a>
+                        <a href="{{ route('warranties.index') }}" style="padding: 0.5rem 1rem; color: #818181; font-size: 0.875rem; text-decoration: none;">Limpar</a>
                     @endif
                 </form>
             </div>
 
             <!-- Lista -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
                 @if($warranties->isEmpty())
                     <div style="padding: 3rem; text-align: center;">
-                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                         </svg>
-                        <p style="margin-top: 1rem; color: #6b7280;">Nenhuma garantia encontrada</p>
+                        <p style="margin-top: 1rem; color: #818181;">Nenhuma garantia encontrada</p>
                     </div>
                 @else
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
-                                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cliente</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Gar. Fornecedor</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Gar. Cliente</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Acionamentos</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ações</th>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Produto</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Cliente</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Gar. Fornecedor</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Gar. Cliente</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Acionamentos</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($warranties as $warranty)
-                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                                         <td style="padding: 0.75rem 1rem;">
-                                            <div style="font-weight: 500; color: #111827;">{{ $warranty->product_name }}</div>
+                                            <div style="font-weight: 500; color: #e3e3e3;">{{ $warranty->product_name }}</div>
                                             @if($warranty->imei)
-                                                <div style="font-size: 0.75rem; color: #9ca3af; font-family: monospace;">IMEI: {{ $warranty->imei }}</div>
+                                                <div style="font-size: 0.75rem; color: #666666; font-family: monospace;">IMEI: {{ $warranty->imei }}</div>
                                             @endif
-                                            <div style="font-size: 0.75rem; color: #6b7280;">Venda: {{ $warranty->sale_number }}</div>
+                                            <div style="font-size: 0.75rem; color: #818181;">Venda: {{ $warranty->sale_number }}</div>
                                         </td>
                                         <td style="padding: 0.75rem 1rem;">
-                                            <span style="color: #374151;">{{ $warranty->customer_name ?? 'Não informado' }}</span>
+                                            <span style="color: #a4a4a4;">{{ $warranty->customer_name ?? 'Não informado' }}</span>
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @if($warranty->supplier_warranty_until)
@@ -126,7 +126,7 @@
                                                     @endif
                                                 </div>
                                             @else
-                                                <span style="color: #9ca3af;">-</span>
+                                                <span style="color: #666666;">-</span>
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
@@ -147,22 +147,22 @@
                                                     @endif
                                                 </div>
                                             @else
-                                                <span style="color: #9ca3af;">-</span>
+                                                <span style="color: #666666;">-</span>
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @if($warranty->open_claims_count > 0)
-                                                <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #fef2f2; color: #dc2626; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
+                                                <span style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(239,68,68,0.1); color: #fca5a5; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                                     {{ $warranty->open_claims_count }} aberto(s)
                                                 </span>
                                             @else
-                                                <span style="color: #9ca3af;">-</span>
+                                                <span style="color: #666666;">-</span>
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
                                             <a href="{{ route('warranties.show', $warranty) }}" 
-                                               style="padding: 0.375rem 0.75rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none;"
-                                               onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                               style="padding: 0.375rem 0.75rem; background: #222222; color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none;"
+                                               onmouseover="this.style.background='#222222'" onmouseout="this.style.background='#1a1a1a'">
                                                 Ver detalhes
                                             </a>
                                         </td>
@@ -173,7 +173,7 @@
                     </div>
 
                     @if($warranties->hasPages())
-                        <div style="padding: 1rem; border-top: 1px solid #e5e7eb;">
+                        <div style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.06);">
                             {{ $warranties->links() }}
                         </div>
                     @endif

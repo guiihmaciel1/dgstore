@@ -21,17 +21,17 @@
          x-transition:leave-end="opacity-0 translate-x-4"
          @keydown.escape.window="open = false"
          x-cloak
-         style="position: fixed; bottom: 96px; right: 24px; z-index: 50; width: 440px; max-height: 85vh; overflow-y: auto; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);">
+         style="position: fixed; bottom: 96px; right: 24px; z-index: 50; width: 440px; max-height: 85vh; overflow-y: auto; background: #141414; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.25);">
 
             <!-- Header -->
             <div style="padding: 16px 24px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                    <button @click="open = false" type="button" style="background: none; border: none; cursor: pointer; padding: 4px; color: #6b7280;">
+                    <button @click="open = false" type="button" style="background: none; border: none; cursor: pointer; padding: 4px; color: #818181;">
                         <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
-                    <h2 style="font-size: 17px; font-weight: 700; color: #111827;">Calculadora Stone</h2>
+                    <h2 style="font-size: 17px; font-weight: 700; color: #e3e3e3;">Calculadora Stone</h2>
                     <div style="width: 24px;"></div>
                 </div>
             </div>
@@ -41,18 +41,18 @@
                 
                 <!-- Tipo de Compra -->
                 <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Tipo de Compra</label>
+                    <label style="display: block; font-size: 13px; color: #818181; margin-bottom: 6px;">Tipo de Compra</label>
                     <div style="display: flex; gap: 8px;">
                         <button @click="deliveryType = 'pronta'" type="button"
                                 :style="deliveryType === 'pronta'
                                     ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 2px solid #111827; background: #111827; color: white; cursor: pointer;'
-                                    : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
+                                    : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #818181; cursor: pointer;'">
                             Pronta Entrega
                         </button>
                         <button @click="deliveryType = 'programada'" type="button"
                                 :style="deliveryType === 'programada'
                                     ? 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 2px solid #111827; background: #111827; color: white; cursor: pointer;'
-                                    : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; border: 2px solid #e5e7eb; background: white; color: #6b7280; cursor: pointer;'">
+                                    : 'flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #818181; cursor: pointer;'">
                             Compra Programada
                         </button>
                     </div>
@@ -60,42 +60,42 @@
 
                 <!-- Descrição do Aparelho (Opcional) -->
                 <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Descrição do Aparelho (opcional)</label>
+                    <label style="display: block; font-size: 13px; color: #818181; margin-bottom: 6px;">Descrição do Aparelho (opcional)</label>
                     <input type="text"
                            x-model="deviceDescription"
                            placeholder="Ex: iPhone 15 Pro Max 256GB Blue"
-                           style="width: 100%; padding: 12px 16px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 14px; color: #111827; outline: none;"
-                           onfocus="this.style.borderColor='#111827'; this.style.background='white'"
-                           onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                           style="width: 100%; padding: 12px 16px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; font-size: 14px; color: #e3e3e3; outline: none;"
+                           onfocus="this.style.borderColor='#111827'; this.style.background='#141414'"
+                           onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
                 </div>
 
                 <!-- Valor que desejo receber -->
                 <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Valor que desejo receber</label>
+                    <label style="display: block; font-size: 13px; color: #818181; margin-bottom: 6px;">Valor que desejo receber</label>
                     <div style="position: relative;">
-                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 15px; font-weight: 500;">R$</span>
+                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #666666; font-size: 15px; font-weight: 500;">R$</span>
                         <input type="text"
                                x-model="amountInput"
                                @input.debounce.500ms="calculate()"
                                placeholder="0,00"
                                x-ref="amountField"
-                               style="width: 100%; padding: 14px 16px 14px 42px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; font-size: 20px; font-weight: 600; color: #111827; outline: none; text-align: right;"
-                               onfocus="this.style.borderColor='#111827'; this.style.background='white'"
-                               onblur="this.style.borderColor='#e5e7eb'; this.style.background='#f9fafb'">
+                               style="width: 100%; padding: 14px 16px 14px 42px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; font-size: 20px; font-weight: 600; color: #e3e3e3; outline: none; text-align: right;"
+                               onfocus="this.style.borderColor='#111827'; this.style.background='#141414'"
+                               onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
                     </div>
                 </div>
 
                 <!-- Entrada Pix (Opcional) -->
                 <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Entrada (Pix) - Opcional</label>
+                    <label style="display: block; font-size: 13px; color: #818181; margin-bottom: 6px;">Entrada (Pix) - Opcional</label>
                     <div style="position: relative;">
-                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 15px; font-weight: 500;">R$</span>
+                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #666666; font-size: 15px; font-weight: 500;">R$</span>
                         <input type="text"
                                x-model="downPaymentInput"
                                @input.debounce.500ms="calculate()"
                                placeholder="0,00"
-                               style="width: 100%; padding: 12px 16px 12px 42px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; font-size: 16px; font-weight: 600; color: #059669; outline: none; text-align: right;"
-                               onfocus="this.style.borderColor='#059669'; this.style.background='white'"
+                               style="width: 100%; padding: 12px 16px 12px 42px; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 12px; font-size: 16px; font-weight: 600; color: #059669; outline: none; text-align: right;"
+                               onfocus="this.style.borderColor='#059669'; this.style.background='#141414'"
                                onblur="this.style.borderColor='#bbf7d0'; this.style.background='#f0fdf4'">
                     </div>
                     <div x-show="downPayment > 0" style="font-size: 11px; color: #059669; margin-top: 6px; font-weight: 600;">
@@ -105,15 +105,15 @@
 
                 <!-- Trade-in (Opcional) -->
                 <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 13px; color: #6b7280; margin-bottom: 6px;">Trade-in (Opcional)</label>
+                    <label style="display: block; font-size: 13px; color: #818181; margin-bottom: 6px;">Trade-in (Opcional)</label>
                     <div style="position: relative;">
-                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 15px; font-weight: 500;">R$</span>
+                        <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #666666; font-size: 15px; font-weight: 500;">R$</span>
                         <input type="text"
                                x-model="tradeInInput"
                                @input.debounce.500ms="calculate()"
                                placeholder="0,00"
                                style="width: 100%; padding: 12px 16px 12px 42px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 12px; font-size: 16px; font-weight: 600; color: #d97706; outline: none; text-align: right;"
-                               onfocus="this.style.borderColor='#d97706'; this.style.background='white'"
+                               onfocus="this.style.borderColor='#d97706'; this.style.background='#141414'"
                                onblur="this.style.borderColor='#fde68a'; this.style.background='#fef3c7'">
                     </div>
                     <div x-show="tradeInValue > 0" style="font-size: 11px; color: #d97706; margin-top: 6px; font-weight: 600;">
@@ -123,18 +123,18 @@
 
                 <!-- Loading -->
                 <div x-show="loading" style="text-align: center; padding: 20px;">
-                    <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f4f6; border-top-color: #111827; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f4f6; border-top-color: #e3e3e3; border-radius: 50%; animation: spin 1s linear infinite;"></div>
                 </div>
 
                 <!-- Erro -->
-                <div x-show="error && !loading" x-transition style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
+                <div x-show="error && !loading" x-transition style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
                     <div style="display: flex; align-items: start; gap: 10px;">
-                        <svg style="width: 20px; height: 20px; color: #dc2626; flex-shrink: 0; margin-top: 2px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="width: 20px; height: 20px; color: #fca5a5; flex-shrink: 0; margin-top: 2px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <div>
-                            <div style="font-size: 13px; font-weight: 600; color: #dc2626; margin-bottom: 4px;">Erro</div>
-                            <div style="font-size: 12px; color: #991b1b;" x-text="error"></div>
+                            <div style="font-size: 13px; font-weight: 600; color: #fca5a5; margin-bottom: 4px;">Erro</div>
+                            <div style="font-size: 12px; color: #fca5a5;" x-text="error"></div>
                         </div>
                     </div>
                 </div>
@@ -142,10 +142,10 @@
                 <!-- Resultados -->
                 <div x-show="!loading && results.length > 0" x-transition>
                     <!-- Pix (melhor preço) -->
-                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <div style="background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                         <div>
                             <div style="font-size: 14px; font-weight: 700; color: #059669;">Pix</div>
-                            <div style="font-size: 11px; color: #6b7280;">Melhor preço - sem taxa</div>
+                            <div style="font-size: 11px; color: #818181;">Melhor preço - sem taxa</div>
                         </div>
                         <div style="text-align: right;">
                             <div style="font-size: 20px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(finalAmount)"></div>
@@ -155,34 +155,34 @@
                     <!-- Filtro de parcelas -->
                     <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
                         <button @click="setSelection('all')" type="button"
-                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
-                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; color: #a4a4a4;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#1a1a1a'; this.style.color='#374151'">
                             Todas
                         </button>
                         <button @click="setSelection('up_to_12')" type="button"
-                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
-                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; color: #a4a4a4;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#1a1a1a'; this.style.color='#374151'">
                             Até 12x
                         </button>
                         <button @click="setSelection('above_6')" type="button"
-                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
-                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; color: #a4a4a4;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#1a1a1a'; this.style.color='#374151'">
                             Acima de 6x
                         </button>
                         <button @click="setSelection('above_8')" type="button"
-                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
-                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; color: #a4a4a4;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#1a1a1a'; this.style.color='#374151'">
                             Acima de 8x
                         </button>
                         <button @click="setSelection('above_10')" type="button"
-                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid #e5e7eb; background: #f9fafb; color: #374151;"
-                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#f9fafb'; this.style.color='#374151'">
+                                style="padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; color: #a4a4a4;"
+                                onmouseover="this.style.background='#111827'; this.style.color='white'" onmouseout="this.style.background='#1a1a1a'; this.style.color='#374151'">
                             Acima de 10x
                         </button>
                     </div>
 
                     <!-- Cartão -->
-                    <div style="border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;">
+                    <div style="border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; overflow: hidden;">
                         <div style="display: grid; grid-template-columns: 28px 1fr auto 56px; background: #111827; color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
                             <div style="padding: 10px 0 10px 10px; display: flex; align-items: center;">
                                 <input type="checkbox" :checked="results.every(r => r.selected)" @change="results.forEach(r => r.selected = $event.target.checked)"
@@ -193,17 +193,17 @@
                             <div style="padding: 10px 10px; text-align: center;"></div>
                         </div>
                         <template x-for="(row, idx) in results" :key="idx">
-                            <div :style="'display: grid; grid-template-columns: 28px 1fr auto 56px; align-items: center; border-top: 1px solid #f3f4f6;' + (row.selected ? (idx % 2 === 0 ? ' background: white;' : ' background: #f9fafb;') : ' background: #f3f4f6; opacity: 0.5;')">
+                            <div :style="'display: grid; grid-template-columns: 28px 1fr auto 56px; align-items: center; border-top: 1px solid #f3f4f6;' + (row.selected ? (idx % 2 === 0 ? ' background: #141414;' : ' background: #1a1a1a;') : ' background: #222222; opacity: 0.5;')">
                                 <div style="padding: 10px 0 10px 10px; display: flex; align-items: center;">
-                                    <input type="checkbox" x-model="row.selected" style="width: 14px; height: 14px; accent-color: #111827; cursor: pointer;">
+                                    <input type="checkbox" x-model="row.selected" style="width: 14px; height: 14px; accent-color: #e3e3e3; cursor: pointer;">
                                 </div>
                                 <div style="padding: 10px 14px;">
-                                    <div style="font-size: 13px; font-weight: 600; color: #111827;" x-text="row.label"></div>
-                                    <div x-show="row.installments > 1" style="font-size: 11px; color: #6b7280;" x-text="row.installments + 'x de R$ ' + formatNumber(row.installment_value)"></div>
-                                    <div style="font-size: 11px; color: #9ca3af;" x-text="'Taxa ' + row.mdr_rate.toString().replace('.', ',') + '%'"></div>
+                                    <div style="font-size: 13px; font-weight: 600; color: #e3e3e3;" x-text="row.label"></div>
+                                    <div x-show="row.installments > 1" style="font-size: 11px; color: #818181;" x-text="row.installments + 'x de R$ ' + formatNumber(row.installment_value)"></div>
+                                    <div style="font-size: 11px; color: #666666;" x-text="'Taxa ' + row.mdr_rate.toString().replace('.', ',') + '%'"></div>
                                 </div>
                                 <div style="padding: 10px 14px; text-align: right;">
-                                    <div style="font-size: 15px; font-weight: 700; color: #111827;" x-text="'R$ ' + formatNumber(row.gross_amount)"></div>
+                                    <div style="font-size: 15px; font-weight: 700; color: #e3e3e3;" x-text="'R$ ' + formatNumber(row.gross_amount)"></div>
                                     <div style="font-size: 10px; color: #ef4444;" x-text="'taxa R$ ' + formatNumber(row.fee_amount)"></div>
                                 </div>
                                 <div style="padding: 6px 10px; display: flex; align-items: center; justify-content: center;">
@@ -211,7 +211,7 @@
                                             type="button"
                                             :style="row.copied
                                                 ? 'background: #059669; border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center;'
-                                                : 'background: #e5e7eb; border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: #374151; display: flex; align-items: center; justify-content: center;'"
+                                                : 'background: #e5e7eb; border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: #a4a4a4; display: flex; align-items: center; justify-content: center;'"
                                             :title="row.copied ? 'Copiado!' : 'Copiar mensagem'">
                                         <svg x-show="!row.copied" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -227,7 +227,7 @@
 
                     <!-- Você recebe -->
                     <div style="margin-top: 16px;">
-                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 18px;">
+                        <div style="background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 18px;">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <span style="font-size: 13px; font-weight: 600; color: #059669;">VOCÊ RECEBE</span>
                                 <span style="font-size: 20px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(finalAmount)"></span>

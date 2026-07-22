@@ -17,25 +17,25 @@
 
         <div class="p-4 space-y-3">
 
-            <p class="text-[10px] text-gray-400 italic leading-tight">Pode alterar caso o preço de custo aumente até o ato da venda.</p>
+            <p class="text-[10px] text-dg-500 italic leading-tight">Pode alterar caso o preço de custo aumente até o ato da venda.</p>
 
             {{-- Barra: Comissão do Aparelho --}}
             <div>
                 <div class="flex items-center justify-between mb-1">
-                    <span class="text-xs font-semibold text-gray-700 flex items-center gap-1">
+                    <span class="text-xs font-semibold text-dg-300 flex items-center gap-1">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
                         Lucro do aparelho
                     </span>
-                    <span class="text-xs font-bold" :class="commissionEstimate.profit > 0 ? 'text-emerald-700' : 'text-gray-400'"
+                    <span class="text-xs font-bold" :class="commissionEstimate.profit > 0 ? 'text-emerald-700' : 'text-dg-500'"
                           x-text="commissionEstimate.profit > 0 ? 'R$ ' + fmt(commissionEstimate.profit) : 'R$ 0'"></span>
                 </div>
-                <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div class="w-full h-2 bg-surface-overlay rounded-full overflow-hidden">
                     <div class="h-full rounded-full transition-all duration-500 ease-out"
-                         :class="commissionEstimate.profit > 0 ? 'bg-emerald-500' : 'bg-gray-200'"
+                         :class="commissionEstimate.profit > 0 ? 'bg-emerald-500' : 'bg-surface-elevated'"
                          :style="'width: ' + (productCost > 0 ? Math.min(100, Math.max(0, ((productPrice - productCost) / productCost) * 100)) : 0) + '%'"></div>
                 </div>
                 <div class="flex items-center justify-between mt-1">
-                    <span class="text-[10px] text-gray-400" x-text="'Lucro: R$ ' + fmt(Math.max(0, productPrice - productCost))"></span>
+                    <span class="text-[10px] text-dg-500" x-text="'Lucro: R$ ' + fmt(Math.max(0, productPrice - productCost))"></span>
                     <span class="text-[10px]"
                           :class="((productPrice - productCost) / productCost) >= 0.17 ? 'text-emerald-600' : 'text-red-500'"
                           x-text="productCost > 0 ? (((productPrice - productCost) / productCost * 100).toFixed(0) + '% margem') : ''"></span>
@@ -46,38 +46,38 @@
             <div class="border-t border-dashed pt-3" :class="commissionEstimate.total > 0 ? 'border-emerald-200' : 'border-amber-200'">
                 <div class="flex items-center gap-1.5 mb-2">
                     <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
-                    <span class="text-xs font-semibold text-gray-700">Acessórios</span>
-                    <span class="text-[10px] text-gray-400 font-normal">— preencha o valor de venda</span>
+                    <span class="text-xs font-semibold text-dg-300">Acessórios</span>
+                    <span class="text-[10px] text-dg-500 font-normal">— preencha o valor de venda</span>
                 </div>
 
                 {{-- Capinha: toggle + combos --}}
                 <div class="rounded-lg p-3 border transition-all duration-200 mb-2"
-                     :class="caseEnabled ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
+                     :class="caseEnabled ? 'bg-purple-50 border-purple-300' : 'bg-surface border-border'">
                     <label class="flex items-center justify-between cursor-pointer mb-0"
                            :class="caseEnabled ? 'mb-2' : ''">
                         <span class="text-[10px] font-semibold uppercase tracking-wider"
-                              :class="caseEnabled ? 'text-purple-600' : 'text-gray-500'">Capinha</span>
+                              :class="caseEnabled ? 'text-purple-600' : 'text-dg-500'">Capinha</span>
                         <div class="relative" @click.prevent="caseEnabled = !caseEnabled; if(caseEnabled) { caseQty = caseQty || 1; } else { caseQty = 0; caseTotalOverride = null; }">
                             <div class="w-8 h-[18px] rounded-full transition-colors duration-200"
-                                 :class="caseEnabled ? 'bg-purple-500' : 'bg-gray-300'"></div>
-                            <div class="absolute top-[2px] left-[2px] w-[14px] h-[14px] bg-white rounded-full shadow transition-transform duration-200"
+                                 :class="caseEnabled ? 'bg-purple-500' : 'bg-dg-700'"></div>
+                            <div class="absolute top-[2px] left-[2px] w-[14px] h-[14px] bg-surface-raised rounded-full shadow transition-transform duration-200"
                                  :class="caseEnabled ? 'translate-x-[14px]' : ''"></div>
                         </div>
                     </label>
 
                     <div x-show="caseEnabled" x-transition x-collapse>
                         <div>
-                            <label class="text-[9px] text-gray-400 font-medium block mb-0.5">Preço unitário (1 capinha)</label>
+                            <label class="text-[9px] text-dg-500 font-medium block mb-0.5">Preço unitário (1 capinha)</label>
                             <div class="relative">
-                                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
+                                <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-dg-500">R$</span>
                                 <input type="number" :value="caseUnitPrice" readonly
-                                       class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center bg-gray-100 border-purple-300 text-purple-800 cursor-not-allowed">
+                                       class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center bg-surface-overlay border-purple-300 text-purple-800 cursor-not-allowed">
                             </div>
                         </div>
 
                         {{-- Resultado atual --}}
                         <div x-show="caseQty > 0 && caseUnitPrice > 10" x-transition class="mt-2 text-center">
-                            <span class="text-[10px] text-gray-400">
+                            <span class="text-[10px] text-dg-500">
                                 <span x-text="caseQty"></span> capinha<span x-show="caseQty > 1">s</span> por
                                 <strong x-text="'R$ ' + fmt(caseTotalOverride !== null ? caseTotalOverride : caseUnitPrice * caseQty)"></strong>
                                 <span x-show="caseTotalOverride !== null && caseQty > 1" class="line-through text-gray-300 ml-1"
@@ -108,11 +108,11 @@
                                         @click="caseQty = combo.qty; caseTotalOverride = combo.qty === 1 ? null : combo.total"
                                         class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-[11px] transition-all border"
                                         :class="caseQty === combo.qty
-                                            ? 'bg-purple-100 border-purple-300 text-purple-800 font-bold shadow-sm'
-                                            : 'bg-white border-gray-100 text-gray-600 hover:bg-purple-50 hover:border-purple-200'">
+                                            ? 'bg-purple-100 border-purple-300 text-purple-800 font-bold ring-1 ring-white/[0.03]'
+                                            : 'bg-surface-raised border-border text-dg-400 hover:bg-purple-50 hover:border-purple-200'">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold"
-                                              :class="caseQty === combo.qty ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-500'"
+                                              :class="caseQty === combo.qty ? 'bg-purple-600 text-white' : 'bg-surface-overlay text-dg-500'"
                                               x-text="combo.qty"></span>
                                         <span>
                                             <span x-text="combo.qty === 1 ? '1 capinha' : combo.qty + ' capinhas'"></span>
@@ -133,30 +133,30 @@
 
                 {{-- Carregador --}}
                 <div class="rounded-lg p-2.5 border transition-all duration-200"
-                     :class="chargerEnabled && accessoryChargerPrice > 50 ? 'bg-purple-50 border-purple-300' : 'bg-gray-50 border-gray-200'">
+                     :class="chargerEnabled && accessoryChargerPrice > 50 ? 'bg-purple-50 border-purple-300' : 'bg-surface border-border'">
                     <label class="flex items-center justify-between cursor-pointer"
                            :class="chargerEnabled ? 'mb-1.5' : ''">
                         <span class="text-[10px] font-semibold uppercase tracking-wider"
-                              :class="chargerEnabled && accessoryChargerPrice > 50 ? 'text-purple-600' : 'text-gray-500'">Carregador</span>
+                              :class="chargerEnabled && accessoryChargerPrice > 50 ? 'text-purple-600' : 'text-dg-500'">Carregador</span>
                         <div class="relative" @click.prevent="chargerEnabled = !chargerEnabled; if(!chargerEnabled) { accessoryChargerPrice = 0; }">
                             <div class="w-8 h-[18px] rounded-full transition-colors duration-200"
-                                 :class="chargerEnabled ? 'bg-purple-500' : 'bg-gray-300'"></div>
-                            <div class="absolute top-[2px] left-[2px] w-[14px] h-[14px] bg-white rounded-full shadow transition-transform duration-200"
+                                 :class="chargerEnabled ? 'bg-purple-500' : 'bg-dg-700'"></div>
+                            <div class="absolute top-[2px] left-[2px] w-[14px] h-[14px] bg-surface-raised rounded-full shadow transition-transform duration-200"
                                  :class="chargerEnabled ? 'translate-x-[14px]' : ''"></div>
                         </div>
                     </label>
                     <div x-show="chargerEnabled" x-transition x-collapse>
                         <div class="relative">
-                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-gray-400">R$</span>
+                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-dg-500">R$</span>
                             <input type="number" x-model.number="accessoryChargerPrice" min="0" step="10" placeholder="0"
                                    class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
-                                   :class="accessoryChargerPrice > 50 ? 'border-purple-300 bg-white focus:ring-purple-400 text-purple-800' : 'border-gray-200 bg-white focus:ring-gray-300 text-gray-700'">
+                                   :class="accessoryChargerPrice > 50 ? 'border-purple-300 bg-surface-raised focus:ring-purple-400 text-purple-800' : 'border-border bg-surface-raised focus:ring-gray-300 text-dg-300'">
                         </div>
                         <div class="mt-1.5 text-center" x-show="accessoryChargerPrice > 50">
-                            <span class="text-[10px] text-gray-400">Lucro: R$ <span x-text="fmt(accessoryChargerPrice - 50)"></span></span>
+                            <span class="text-[10px] text-dg-500">Lucro: R$ <span x-text="fmt(accessoryChargerPrice - 50)"></span></span>
                             <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.chargerComm)"></span></p>
                         </div>
-                        <p class="text-[9px] text-gray-400 mt-1 text-center" x-show="accessoryChargerPrice <= 50">Base R$ 50 · 50% do lucro</p>
+                        <p class="text-[9px] text-dg-500 mt-1 text-center" x-show="accessoryChargerPrice <= 50">Base R$ 50 · 50% do lucro</p>
                     </div>
                 </div>
 
@@ -175,13 +175,13 @@
 
 {{-- Estado vazio: sem custo informado --}}
 <div x-show="productPrice > 0 && productCost <= 0" x-cloak
-     class="rounded-xl border border-gray-200 bg-white p-4">
+     class="rounded-xl border border-border bg-surface-raised p-4">
     <div class="flex items-center gap-2 mb-2">
-        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 text-dg-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        <span class="text-xs font-semibold text-gray-500">Comissão</span>
+        <span class="text-xs font-semibold text-dg-500">Comissão</span>
     </div>
-    <p class="text-xs text-gray-400">Selecione um <strong>seminovo do estoque</strong> ou preencha o campo <strong>Custo</strong> para ver sua comissão estimada.</p>
+    <p class="text-xs text-dg-500">Selecione um <strong>seminovo do estoque</strong> ou preencha o campo <strong>Custo</strong> para ver sua comissão estimada.</p>
 </div>
 @endif

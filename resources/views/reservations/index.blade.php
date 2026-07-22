@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Reservas</x-slot>
     <div class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('success'))
                 <div class="mb-4">
                     <x-alert type="success">{{ session('success') }}</x-alert>
@@ -11,8 +11,8 @@
             <!-- Cabeçalho -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Reservas de Produtos</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Gerencie reservas e sinais de clientes</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Reservas de Produtos</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">Gerencie reservas e sinais de clientes</p>
                 </div>
                 <a href="{{ route('reservations.create') }}" 
                    style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: #111827; color: white; font-weight: 600; border-radius: 0.5rem; text-decoration: none;"
@@ -26,7 +26,7 @@
 
             <!-- Cards de Estatísticas -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-                <a href="{{ route('reservations.index', ['status' => 'active']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['active'] > 0 ? '#f0fdf4' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['active'] > 0 ? '#bbf7d0' : '#e5e7eb' }}; transition: box-shadow 0.15s; cursor: pointer;"
+                <a href="{{ route('reservations.index', ['status' => 'active']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['active'] > 0 ? rgba(16,185,129,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['active'] > 0 ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.625rem; background: {{ $stats['active'] > 0 ? '#dcfce7' : '#f3f4f6' }}; border-radius: 0.5rem;">
@@ -36,12 +36,12 @@
                         </div>
                         <div>
                             <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['active'] > 0 ? '#16a34a' : '#111827' }};">{{ $stats['active'] }}</p>
-                            <p style="font-size: 0.75rem; color: #6b7280;">Reservas ativas</p>
+                            <p style="font-size: 0.75rem; color: #818181;">Reservas ativas</p>
                         </div>
                     </div>
                 </a>
 
-                <a href="{{ route('reservations.index', ['status' => 'active', 'sort' => 'expires_at', 'direction' => 'asc']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['expiring_soon'] > 0 ? '#fefce8' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['expiring_soon'] > 0 ? '#fde68a' : '#e5e7eb' }}; transition: box-shadow 0.15s; cursor: pointer;"
+                <a href="{{ route('reservations.index', ['status' => 'active', 'sort' => 'expires_at', 'direction' => 'asc']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['expiring_soon'] > 0 ? rgba(245,158,11,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.625rem; background: {{ $stats['expiring_soon'] > 0 ? '#fef3c7' : '#f3f4f6' }}; border-radius: 0.5rem;">
@@ -51,12 +51,12 @@
                         </div>
                         <div>
                             <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['expiring_soon'] > 0 ? '#d97706' : '#111827' }};">{{ $stats['expiring_soon'] }}</p>
-                            <p style="font-size: 0.75rem; color: #6b7280;">Vencendo em 3 dias</p>
+                            <p style="font-size: 0.75rem; color: #818181;">Vencendo em 3 dias</p>
                         </div>
                     </div>
                 </a>
 
-                <a href="{{ route('reservations.index', ['status' => 'expired']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['overdue'] > 0 ? '#fef2f2' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['overdue'] > 0 ? '#fecaca' : '#e5e7eb' }}; transition: box-shadow 0.15s; cursor: pointer;"
+                <a href="{{ route('reservations.index', ['status' => 'expired']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['overdue'] > 0 ? rgba(239,68,68,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['overdue'] > 0 ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.625rem; background: {{ $stats['overdue'] > 0 ? '#fee2e2' : '#f3f4f6' }}; border-radius: 0.5rem;">
@@ -66,25 +66,25 @@
                         </div>
                         <div>
                             <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['overdue'] > 0 ? '#dc2626' : '#111827' }};">{{ $stats['overdue'] }}</p>
-                            <p style="font-size: 0.75rem; color: #6b7280;">Vencidas</p>
+                            <p style="font-size: 0.75rem; color: #818181;">Vencidas</p>
                         </div>
                     </div>
                 </a>
             </div>
 
             <!-- Filtros -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1rem;">
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem; margin-bottom: 1rem;">
                 <form method="GET" x-data="{ showMore: {{ ($filters['source'] || $filters['date_from'] || $filters['date_to']) ? 'true' : 'false' }} }" x-ref="filterForm">
                     <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
                         <div style="flex: 1; min-width: 200px;">
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Buscar</label>
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Buscar</label>
                             <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Número, cliente ou produto..."
-                                   style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                                   style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
                                    x-on:input.debounce.400ms="$refs.filterForm.submit()">
                         </div>
                         <div style="min-width: 130px;">
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Status</label>
-                            <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Status</label>
+                            <select name="status" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;"
                                     x-on:change="$refs.filterForm.submit()">
                                 <option value="">Todos</option>
                                 @foreach($statuses as $status)
@@ -93,8 +93,8 @@
                             </select>
                         </div>
                         <div style="min-width: 120px;">
-                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Origem</label>
-                            <select name="source" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                            <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Origem</label>
+                            <select name="source" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;"
                                     x-on:change="$refs.filterForm.submit()">
                                 <option value="">Todas</option>
                                 <option value="stock" {{ $filters['source'] === 'stock' ? 'selected' : '' }}>Estoque</option>
@@ -103,8 +103,8 @@
                             </select>
                         </div>
                         <button type="button" @click="showMore = !showMore"
-                                style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: white; color: #6b7280; font-size: 0.8rem; cursor: pointer;"
-                                onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; background: #141414; color: #818181; font-size: 0.8rem; cursor: pointer;"
+                                onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                             <svg :style="showMore ? 'transform: rotate(180deg)' : ''" style="width: 0.875rem; height: 0.875rem; transition: transform 0.2s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
@@ -115,7 +115,7 @@
                         @endphp
                         @if($hasFilters)
                             <a href="{{ route('reservations.index') }}"
-                               style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; color: #dc2626; font-size: 0.8rem; text-decoration: none; border: 1px solid #fecaca; border-radius: 0.5rem; background: #fef2f2;"
+                               style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; color: #fca5a5; font-size: 0.8rem; text-decoration: none; border: 1px solid #fecaca; border-radius: 0.5rem; background: rgba(239,68,68,0.1);"
                                onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
                                 <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -127,20 +127,20 @@
                     <div x-show="showMore" x-collapse style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6;">
                         <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
                             <div style="min-width: 150px;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data inicial</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Data inicial</label>
                                 <input type="date" name="date_from" value="{{ $filters['date_from'] }}"
-                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
                                        x-on:change="$refs.filterForm.submit()">
                             </div>
                             <div style="min-width: 150px;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Data final</label>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Data final</label>
                                 <input type="date" name="date_to" value="{{ $filters['date_to'] }}"
-                                       style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem;"
+                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
                                        x-on:change="$refs.filterForm.submit()">
                             </div>
                             <div style="min-width: 150px;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Ordenar por</label>
-                                <select name="sort" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Ordenar por</label>
+                                <select name="sort" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;"
                                         x-on:change="$refs.filterForm.submit()">
                                     <option value="created_at" {{ ($filters['sort'] ?? 'created_at') === 'created_at' ? 'selected' : '' }}>Data de criação</option>
                                     <option value="expires_at" {{ ($filters['sort'] ?? '') === 'expires_at' ? 'selected' : '' }}>Vencimento</option>
@@ -149,8 +149,8 @@
                                 </select>
                             </div>
                             <div style="min-width: 120px;">
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #6b7280; margin-bottom: 0.25rem;">Ordem</label>
-                                <select name="direction" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; background: white;"
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Ordem</label>
+                                <select name="direction" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;"
                                         x-on:change="$refs.filterForm.submit()">
                                     <option value="desc" {{ ($filters['direction'] ?? 'desc') === 'desc' ? 'selected' : '' }}>Mais recente</option>
                                     <option value="asc" {{ ($filters['direction'] ?? '') === 'asc' ? 'selected' : '' }}>Mais antigo</option>
@@ -162,47 +162,47 @@
             </div>
 
             <!-- Lista -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
                 @if($reservations->isEmpty())
                     <div style="padding: 3rem; text-align: center;">
-                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                         </svg>
-                        <p style="margin-top: 1rem; color: #6b7280;">Nenhuma reserva encontrada</p>
+                        <p style="margin-top: 1rem; color: #818181;">Nenhuma reserva encontrada</p>
                         <a href="{{ route('reservations.create') }}" style="display: inline-block; margin-top: 1rem; color: #2563eb; text-decoration: none;">Criar primeira reserva</a>
                     </div>
                 @else
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
-                                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Reserva</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Cliente</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Status</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Sinal</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Vencimento</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ações</th>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Reserva</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Cliente</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Produto</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Status</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Sinal</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Vencimento</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($reservations as $reservation)
-                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                                         <td style="padding: 0.75rem 1rem;">
                                             <a href="{{ route('reservations.show', $reservation) }}" style="font-weight: 600; color: #2563eb; text-decoration: none;"
                                                onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ $reservation->reservation_number }}</a>
-                                            <div style="font-size: 0.75rem; color: #6b7280;">{{ $reservation->created_at->format('d/m/Y') }}</div>
+                                            <div style="font-size: 0.75rem; color: #818181;">{{ $reservation->created_at->format('d/m/Y') }}</div>
                                         </td>
                                         <td style="padding: 0.75rem 1rem;">
-                                            <span style="color: #374151;">{{ $reservation->customer?->name ?? 'Não informado' }}</span>
+                                            <span style="color: #a4a4a4;">{{ $reservation->customer?->name ?? 'Não informado' }}</span>
                                         </td>
                                         <td style="padding: 0.75rem 1rem;">
-                                            <span style="font-weight: 500; color: #111827;">{{ $reservation->product_name }}</span>
-                                            <div style="font-size: 0.75rem; color: #6b7280;">
+                                            <span style="font-weight: 500; color: #e3e3e3;">{{ $reservation->product_name }}</span>
+                                            <div style="font-size: 0.75rem; color: #818181;">
                                                 {{ $reservation->formatted_product_price }}
                                                 @php $resSource = $reservation->source ?? 'stock'; @endphp
                                                 @if($resSource !== 'stock')
-                                                    <span style="margin-left: 0.25rem; font-size: 0.625rem; padding: 0.0625rem 0.375rem; border-radius: 1rem; font-weight: 500; {{ $resSource === 'quotation' ? 'background: #dbeafe; color: #2563eb;' : 'background: #fef3c7; color: #d97706;' }}">
+                                                    <span style="margin-left: 0.25rem; font-size: 0.625rem; padding: 0.0625rem 0.375rem; border-radius: 1rem; font-weight: 500; {{ $resSource === 'quotation' ? 'background: rgba(59,130,246,0.15); color: #2563eb;' : 'background: #fef3c7; color: #d97706;' }}">
                                                         {{ $resSource === 'quotation' ? 'Cotação' : 'Manual' }}
                                                     </span>
                                                 @endif
@@ -237,8 +237,8 @@
                                             </span>
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
-                                            <div style="font-weight: 600; color: #111827;">{{ $reservation->formatted_deposit_paid }}</div>
-                                            <div style="font-size: 0.75rem; color: #6b7280;">de {{ $reservation->formatted_deposit_amount }}</div>
+                                            <div style="font-weight: 600; color: #e3e3e3;">{{ $reservation->formatted_deposit_paid }}</div>
+                                            <div style="font-size: 0.75rem; color: #818181;">de {{ $reservation->formatted_deposit_amount }}</div>
                                             @if($reservation->deposit_amount > 0)
                                                 <div style="margin-top: 0.25rem; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
                                                     <div style="height: 100%; background: #16a34a; width: {{ $reservation->deposit_percent_paid }}%;"></div>
@@ -248,23 +248,23 @@
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @if($reservation->status->isActive())
                                                 @if($reservation->is_overdue)
-                                                    <span style="font-weight: 600; color: #dc2626;">Vencida</span>
+                                                    <span style="font-weight: 600; color: #fca5a5;">Vencida</span>
                                                 @elseif($reservation->is_expiring_soon)
                                                     <span style="font-weight: 600; color: #d97706;">{{ $reservation->expires_at->format('d/m/Y') }}</span>
                                                     <div style="font-size: 0.75rem; color: #d97706;">{{ $reservation->days_until_expiration }} dias</div>
                                                 @else
-                                                    <span style="color: #374151;">{{ $reservation->expires_at->format('d/m/Y') }}</span>
-                                                    <div style="font-size: 0.75rem; color: #6b7280;">{{ $reservation->days_until_expiration }} dias</div>
+                                                    <span style="color: #a4a4a4;">{{ $reservation->expires_at->format('d/m/Y') }}</span>
+                                                    <div style="font-size: 0.75rem; color: #818181;">{{ $reservation->days_until_expiration }} dias</div>
                                                 @endif
                                             @else
-                                                <span style="color: #9ca3af;">-</span>
+                                                <span style="color: #666666;">-</span>
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
                                             <div style="display: flex; gap: 0.375rem; justify-content: flex-end; flex-wrap: wrap;">
                                                 @if($reservation->canConvert())
                                                     <a href="{{ route('reservations.convert', $reservation) }}" title="Converter em venda"
-                                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: #dcfce7; color: #166534; font-size: 0.75rem; font-weight: 600; border-radius: 0.375rem; text-decoration: none; border: 1px solid #bbf7d0;"
+                                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: rgba(16,185,129,0.15); color: #6ee7b7; font-size: 0.75rem; font-weight: 600; border-radius: 0.375rem; text-decoration: none; border: 1px solid #bbf7d0;"
                                                        onmouseover="this.style.background='#bbf7d0'" onmouseout="this.style.background='#dcfce7'">
                                                         <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -274,7 +274,7 @@
                                                 @endif
                                                 @if($reservation->status->isActive())
                                                     <a href="{{ route('reservations.edit', $reservation) }}" title="Editar reserva"
-                                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: #eff6ff; color: #2563eb; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid #bfdbfe;"
+                                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: rgba(59,130,246,0.1); color: #2563eb; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid #bfdbfe;"
                                                        onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
                                                         <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -283,8 +283,8 @@
                                                     </a>
                                                 @endif
                                                 <a href="{{ route('reservations.show', $reservation) }}" title="Ver detalhes"
-                                                   style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: #f3f4f6; color: #374151; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid #e5e7eb;"
-                                                   onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                                   style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: #222222; color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.06);"
+                                                   onmouseover="this.style.background='#222222'" onmouseout="this.style.background='#1a1a1a'">
                                                     <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -300,7 +300,7 @@
                     </div>
 
                     @if($reservations->hasPages())
-                        <div style="padding: 1rem; border-top: 1px solid #e5e7eb;">
+                        <div style="padding: 1rem; border-top: 1px solid rgba(255,255,255,0.06);">
                             {{ $reservations->links() }}
                         </div>
                     @endif

@@ -1,22 +1,22 @@
 <x-app-layout>
     <x-slot name="title">Detalhes do Cliente</x-slot>
     <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             <!-- Cabeçalho -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div class="flex items-center">
-                    <a href="{{ route('customers.index') }}" class="mr-3 sm:mr-4 p-2 text-gray-500 rounded-lg hover:bg-gray-100 transition-colors">
+                    <a href="{{ route('customers.index') }}" class="mr-3 sm:mr-4 p-2 text-dg-500 rounded-lg hover:bg-surface-overlay transition-colors">
                         <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="w-10 h-10 sm:w-14 sm:h-14 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0">
+                        <div class="w-10 h-10 sm:w-14 sm:h-14 bg-surface rounded-full flex items-center justify-center flex-shrink-0">
                             <span class="text-white text-lg sm:text-2xl font-semibold">{{ strtoupper(substr($customer->name, 0, 1)) }}</span>
                         </div>
                         <div class="min-w-0">
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <h1 class="text-lg sm:text-2xl font-bold text-gray-900 truncate">{{ $customer->name }}</h1>
+                                <h1 class="text-lg sm:text-2xl font-bold text-dg-100 truncate">{{ $customer->name }}</h1>
                                 @if($customer->is_birthday_month)
                                     <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; background: #fef3c7; color: #d97706; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; white-space: nowrap;">
                                         <svg style="width: 0.875rem; height: 0.875rem;" fill="currentColor" viewBox="0 0 20 20">
@@ -26,7 +26,7 @@
                                     </span>
                                 @endif
                             </div>
-                            <p class="text-sm text-gray-500">Cliente desde {{ $customer->created_at->format('d/m/Y') }}</p>
+                            <p class="text-sm text-dg-500">Cliente desde {{ $customer->created_at->format('d/m/Y') }}</p>
                         </div>
                     </div>
                 </div>
@@ -51,14 +51,14 @@
                         Nova Venda
                     </a>
                     <a href="{{ route('customers.edit', $customer) }}" 
-                       class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors">
+                       class="flex-1 sm:flex-none inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-surface text-white font-medium rounded-lg hover:bg-surface-elevated transition-colors">
                         Editar
                     </a>
                 </div>
             </div>
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #16a34a;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #16a34a;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -67,37 +67,37 @@
                 <!-- Coluna Principal -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     <!-- Dados do Cliente -->
-                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
-                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-                            <h3 style="font-weight: 600; color: #111827;">Dados do Cliente</h3>
+                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a;">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Dados do Cliente</h3>
                         </div>
                         <div style="padding: 1.5rem;">
                             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
                                 <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Telefone</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827; font-weight: 500;">{{ $customer->formatted_phone }}</dd>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Telefone</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3; font-weight: 500;">{{ $customer->formatted_phone }}</dd>
                                 </div>
                                 <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Instagram</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Instagram</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3;">
                                         @if($customer->instagram)
-                                            <a href="https://instagram.com/{{ ltrim($customer->instagram, '@') }}" target="_blank" style="color: #111827; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ $customer->formatted_instagram }}</a>
+                                            <a href="https://instagram.com/{{ ltrim($customer->instagram, '@') }}" target="_blank" style="color: #e3e3e3; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ $customer->formatted_instagram }}</a>
                                         @else
                                             -
                                         @endif
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">CPF</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $customer->formatted_cpf ?? '-' }}</dd>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">CPF</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3;">{{ $customer->formatted_cpf ?? '-' }}</dd>
                                 </div>
                                 <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Data de Nascimento</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Data de Nascimento</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3;">
                                         @if($customer->birth_date)
                                             {{ $customer->formatted_birth_date }}
                                             @if($customer->age)
-                                                <span style="color: #6b7280;">({{ $customer->age }} anos)</span>
+                                                <span style="color: #818181;">({{ $customer->age }} anos)</span>
                                             @endif
                                         @else
                                             -
@@ -105,40 +105,40 @@
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Cliente desde</dt>
-                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $customer->created_at->format('d/m/Y') }}</dd>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Cliente desde</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3;">{{ $customer->created_at->format('d/m/Y') }}</dd>
                                 </div>
                             </div>
                             @if($customer->address)
-                            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
-                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Endereço</dt>
-                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $customer->address }}</dd>
+                            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06);">
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Endereço</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3;">{{ $customer->address }}</dd>
                             </div>
                             @endif
                             @if($customer->notes)
                             <div style="margin-top: 1rem;">
-                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Observações</dt>
-                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #111827;">{{ $customer->notes }}</dd>
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Observações</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3;">{{ $customer->notes }}</dd>
                             </div>
                             @endif
                         </div>
                     </div>
 
                     <!-- Histórico de Compras -->
-                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
-                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-                            <h3 style="font-weight: 600; color: #111827;">Histórico de Compras</h3>
+                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a;">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Histórico de Compras</h3>
                         </div>
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse;">
                                 <thead>
-                                    <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                        <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Venda</th>
-                                        <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Data</th>
-                                        <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Itens</th>
-                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Total</th>
-                                        <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Status</th>
-                                        <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ações</th>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                        <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Venda</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Data</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Itens</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Total</th>
+                                        <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Status</th>
+                                        <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Ações</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -152,17 +152,17 @@
                                             ];
                                             $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
                                         @endphp
-                                        <tr style="border-bottom: 1px solid #f3f4f6;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
-                                            <td style="padding: 0.75rem 1.5rem; font-weight: 600; color: #111827;">
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                                            <td style="padding: 0.75rem 1.5rem; font-weight: 600; color: #e3e3e3;">
                                                 {{ $sale->sale_number }}
                                             </td>
-                                            <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #6b7280;">
+                                            <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #818181;">
                                                 {{ $sale->sold_at->format('d/m/Y H:i') }}
                                             </td>
-                                            <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; color: #6b7280;">
+                                            <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; color: #818181;">
                                                 {{ $sale->items->count() }} {{ $sale->items->count() === 1 ? 'item' : 'itens' }}
                                             </td>
-                                            <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #111827;">
+                                            <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #e3e3e3;">
                                                 {{ $sale->formatted_total }}
                                             </td>
                                             <td style="padding: 0.75rem 1rem; text-align: center;">
@@ -172,7 +172,7 @@
                                             </td>
                                             <td style="padding: 0.75rem 1.5rem; text-align: right;">
                                                 <a href="{{ route('sales.show', $sale) }}" 
-                                                   style="font-size: 0.875rem; color: #111827; text-decoration: none; font-weight: 500;"
+                                                   style="font-size: 0.875rem; color: #e3e3e3; text-decoration: none; font-weight: 500;"
                                                    onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                                                     Ver →
                                                 </a>
@@ -180,8 +180,8 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" style="padding: 3rem; text-align: center; color: #6b7280;">
-                                                <svg style="margin: 0 auto 1rem; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <td colspan="6" style="padding: 3rem; text-align: center; color: #818181;">
+                                                <svg style="margin: 0 auto 1rem; width: 3rem; height: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                                 </svg>
                                                 Nenhuma compra registrada.
@@ -197,33 +197,33 @@
                 <!-- Coluna Lateral -->
                 <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     {{-- Simulações Salvas --}}
-                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;"
+                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;"
                          x-data="{ snapshots: {{ Js::from($snapshots) }}, deleting: null }">
-                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; display: flex; align-items: center; justify-content: space-between;">
-                            <h3 style="font-weight: 600; color: #111827;">Simulações Salvas</h3>
-                            <span style="font-size: 0.75rem; color: #6b7280; background: #f3f4f6; padding: 0.125rem 0.5rem; border-radius: 9999px;" x-text="snapshots.length"></span>
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; display: flex; align-items: center; justify-content: space-between;">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Simulações Salvas</h3>
+                            <span style="font-size: 0.75rem; color: #818181; background: #222222; padding: 0.125rem 0.5rem; border-radius: 9999px;" x-text="snapshots.length"></span>
                         </div>
                         <div style="padding: 1rem 1.5rem;">
                             <template x-if="snapshots.length === 0">
-                                <p style="text-align: center; color: #9ca3af; font-size: 0.8125rem; padding: 1rem 0;">Nenhuma simulação ativa.</p>
+                                <p style="text-align: center; color: #666666; font-size: 0.8125rem; padding: 1rem 0;">Nenhuma simulação ativa.</p>
                             </template>
                             <template x-for="(snap, idx) in snapshots" :key="snap.id">
-                                <div style="padding: 0.75rem 0; border-bottom: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;" :style="idx === snapshots.length - 1 ? 'border-bottom: none' : ''">
+                                <div style="padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;" :style="idx === snapshots.length - 1 ? 'border-bottom: none' : ''">
                                     <div style="min-width: 0; flex: 1;">
-                                        <span style="font-weight: 600; font-size: 0.8125rem; color: #111827; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="snap.product_description"></span>
-                                        <span style="font-size: 0.75rem; color: #6b7280;" x-text="'R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) + (snap.trade_in_model ? ' · Troca: ' + snap.trade_in_model : '')"></span>
-                                        <span style="font-size: 0.6875rem; color: #9ca3af; display: block;" x-text="new Date(snap.created_at).toLocaleDateString('pt-BR')"></span>
+                                        <span style="font-weight: 600; font-size: 0.8125rem; color: #e3e3e3; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="snap.product_description"></span>
+                                        <span style="font-size: 0.75rem; color: #818181;" x-text="'R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2}) + (snap.trade_in_model ? ' · Troca: ' + snap.trade_in_model : '')"></span>
+                                        <span style="font-size: 0.6875rem; color: #666666; display: block;" x-text="new Date(snap.created_at).toLocaleDateString('pt-BR')"></span>
                                     </div>
                                     <div style="display: flex; gap: 0.375rem; flex-shrink: 0;">
                                         <a :href="'{{ route('tools.negotiation-simulator') }}?snap_product=' + encodeURIComponent(snap.product_description) + '&snap_price=' + snap.product_price + (snap.product_cost ? '&snap_cost=' + snap.product_cost : '') + (snap.trade_in_model ? '&snap_tradein_model=' + encodeURIComponent(snap.trade_in_model) + '&snap_tradein_value=' + (snap.trade_in_value || '') + '&snap_tradein_system_value=' + (snap.trade_in_system_value || '') + '&snap_tradein_storage=' + encodeURIComponent(snap.trade_in_storage || '') + '&snap_tradein_battery=' + (snap.trade_in_battery || '') : '')"
-                                           style="padding: 0.25rem 0.5rem; background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; text-decoration: none;"
+                                           style="padding: 0.25rem 0.5rem; background: rgba(99,102,241,0.1); color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; text-decoration: none;"
                                            onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'">
                                             Abrir
                                         </a>
                                         <button type="button"
                                                 @click="if(confirm('Excluir esta simulação?')) { deleting = snap.id; fetch('/api/simulations/' + snap.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content } }).then(() => { snapshots = snapshots.filter(s => s.id !== snap.id); deleting = null; }); }"
                                                 :disabled="deleting === snap.id"
-                                                style="padding: 0.25rem 0.5rem; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; cursor: pointer;"
+                                                style="padding: 0.25rem 0.5rem; background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid #fecaca; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; cursor: pointer;"
                                                 onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
                                             <span x-show="deleting !== snap.id">Excluir</span>
                                             <span x-show="deleting === snap.id">...</span>
@@ -235,17 +235,17 @@
                     </div>
 
                     {{-- Resumo de Compras --}}
-                    <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
-                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-                            <h3 style="font-weight: 600; color: #111827;">Resumo de Compras</h3>
+                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a;">
+                            <h3 style="font-weight: 600; color: #e3e3e3;">Resumo de Compras</h3>
                         </div>
                         <div style="padding: 1.5rem;">
                             <div style="margin-bottom: 1.5rem;">
-                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Total de Compras</dt>
-                                <dd style="margin-top: 0.25rem; font-size: 2rem; font-weight: 700; color: #111827;">{{ $customer->purchases_count }}</dd>
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Total de Compras</dt>
+                                <dd style="margin-top: 0.25rem; font-size: 2rem; font-weight: 700; color: #e3e3e3;">{{ $customer->purchases_count }}</dd>
                             </div>
                             <div>
-                                <dt style="font-size: 0.75rem; font-weight: 500; color: #6b7280; text-transform: uppercase;">Valor Total</dt>
+                                <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Valor Total</dt>
                                 <dd style="margin-top: 0.25rem; font-size: 1.75rem; font-weight: 700; color: #16a34a;">R$ {{ number_format($customer->total_purchases, 2, ',', '.') }}</dd>
                             </div>
                         </div>

@@ -1,22 +1,22 @@
 <x-app-layout>
     <x-slot name="title">Avaliação de Seminovos</x-slot>
     <div class="py-4">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8" x-data="valuationApp()" x-init="init()">
+        <div class="px-6 lg:px-8" x-data="valuationApp()" x-init="init()">
 
             <!-- Cabeçalho -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Avaliador de Seminovos</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Avalie iPhones usados com base nos preços de mercado</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Avaliador de Seminovos</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">Avalie iPhones usados com base nos preços de mercado</p>
                 </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
 
                 <!-- Card: Checklist de Avaliação -->
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.5rem;">
-                    <h2 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.5rem;">
+                    <h2 style="font-size: 1.125rem; font-weight: 600; color: #e3e3e3; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                         </svg>
                         Checklist do Aparelho
@@ -25,9 +25,9 @@
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
                         <!-- Modelo -->
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Modelo</label>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Modelo</label>
                             <select x-model="form.model_id" @change="onModelChange()"
-                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; color: #111827; background: white;">
+                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; color: #e3e3e3; background: #141414;">
                                 <option value="">Selecione o modelo</option>
                                 <template x-for="model in models" :key="model.id">
                                     <option :value="model.id" x-text="model.name"></option>
@@ -37,9 +37,9 @@
 
                         <!-- Capacidade -->
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Capacidade</label>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Capacidade</label>
                             <select x-model="form.storage" @change="onStorageChange()"
-                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; color: #111827; background: white;"
+                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; color: #e3e3e3; background: #141414;"
                                     :disabled="!form.model_id">
                                 <option value="">Selecione</option>
                                 <template x-for="s in currentStorages" :key="s">
@@ -50,9 +50,9 @@
 
                         <!-- Cor -->
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Cor</label>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Cor</label>
                             <select x-model="form.color"
-                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; color: #111827; background: white;"
+                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; color: #e3e3e3; background: #141414;"
                                     :disabled="!form.model_id">
                                 <option value="">Selecione</option>
                                 <template x-for="c in currentColors" :key="c">
@@ -63,7 +63,7 @@
 
                         <!-- Saúde da Bateria -->
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">
                                 Saúde da Bateria
                                 <span x-show="form.battery_percentage" x-text="'(' + batteryLabel + ')'"
                                       :style="'font-size: 0.75rem; color: ' + batteryColor"></span>
@@ -71,16 +71,16 @@
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
                                 <input type="number" x-model.number="form.battery_percentage"
                                        min="0" max="100" placeholder="Ex: 87"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; color: #111827;">
-                                <span style="font-size: 0.875rem; color: #6b7280;">%</span>
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; color: #e3e3e3;">
+                                <span style="font-size: 0.875rem; color: #818181;">%</span>
                             </div>
                         </div>
 
                         <!-- Estado do aparelho -->
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Já foi aberto/trocou peça?</label>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Já foi aberto/trocou peça?</label>
                             <select x-model="form.device_state"
-                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; color: #111827; background: white;">
+                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; color: #e3e3e3; background: #141414;">
                                 <option value="original">Não — Original</option>
                                 <option value="repaired">Sim — Já foi reparado</option>
                             </select>
@@ -88,9 +88,9 @@
 
                         <!-- Acessórios -->
                         <div>
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Possui caixa/cabo?</label>
+                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Possui caixa/cabo?</label>
                             <select x-model="form.accessory_state"
-                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; color: #111827; background: white;">
+                                    style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; color: #e3e3e3; background: #141414;">
                                 <option value="complete">Caixa e cabo</option>
                                 <option value="partial">Só caixa ou só cabo</option>
                                 <option value="none">Nenhum</option>
@@ -100,9 +100,9 @@
 
                     <!-- Info adicional -->
                     <div style="margin-top: 1rem;">
-                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.375rem;">Informação Adicional</label>
+                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Informação Adicional</label>
                         <textarea x-model="form.notes" rows="2" placeholder="Riscos, detalhes, observações..."
-                                  style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; color: #111827; resize: vertical;"></textarea>
+                                  style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; color: #e3e3e3; resize: vertical;"></textarea>
                     </div>
 
                     <!-- Botão Avaliar -->
@@ -121,7 +121,7 @@
 
                 <!-- Card: Resultado da Avaliação -->
                 <div x-show="result" x-transition
-                     style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
+                     style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
 
                     <!-- Header do resultado -->
                     <div style="padding: 1.25rem 1.5rem; background: linear-gradient(135deg, #111827, #1f2937); color: white;">
@@ -131,7 +131,7 @@
                             </svg>
                             Resultado da Avaliação
                         </h2>
-                        <p style="font-size: 0.75rem; margin-top: 0.25rem; color: #9ca3af;">
+                        <p style="font-size: 0.75rem; margin-top: 0.25rem; color: #666666;">
                             <span x-text="result?.model_name"></span> — <span x-text="result?.storage"></span>
                             <template x-if="result?.color"> · <span x-text="result.color"></span></template>
                         </p>
@@ -140,22 +140,22 @@
                     <div style="padding: 1.5rem;">
                         <!-- Preço de Mercado (Usado) -->
                         <div style="margin-bottom: 1.5rem;">
-                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Preço de Mercado — Usado</h3>
+                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Preço de Mercado — Usado</h3>
                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
-                                <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; text-align: center;">
-                                    <p style="font-size: 0.75rem; color: #6b7280;">Mínimo</p>
-                                    <p style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="formatCurrency(result?.market_min)"></p>
+                                <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem; text-align: center;">
+                                    <p style="font-size: 0.75rem; color: #818181;">Mínimo</p>
+                                    <p style="font-size: 1rem; font-weight: 700; color: #e3e3e3;" x-text="formatCurrency(result?.market_min)"></p>
                                 </div>
-                                <div style="padding: 0.75rem; background: #eff6ff; border-radius: 0.5rem; text-align: center; border: 1px solid #bfdbfe;">
+                                <div style="padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 0.5rem; text-align: center; border: 1px solid #bfdbfe;">
                                     <p style="font-size: 0.75rem; color: #3b82f6;">Média</p>
-                                    <p style="font-size: 1.125rem; font-weight: 700; color: #1d4ed8;" x-text="formatCurrency(result?.market_avg)"></p>
+                                    <p style="font-size: 1.125rem; font-weight: 700; color: #93c5fd;" x-text="formatCurrency(result?.market_avg)"></p>
                                 </div>
-                                <div style="padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; text-align: center;">
-                                    <p style="font-size: 0.75rem; color: #6b7280;">Máximo</p>
-                                    <p style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="formatCurrency(result?.market_max)"></p>
+                                <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem; text-align: center;">
+                                    <p style="font-size: 0.75rem; color: #818181;">Máximo</p>
+                                    <p style="font-size: 1rem; font-weight: 700; color: #e3e3e3;" x-text="formatCurrency(result?.market_max)"></p>
                                 </div>
                             </div>
-                            <p style="font-size: 0.75rem; color: #9ca3af; text-align: center; margin-top: 0.5rem;">
+                            <p style="font-size: 0.75rem; color: #666666; text-align: center; margin-top: 0.5rem;">
                                 Baseado em <span x-text="result?.sample_count"></span> anúncios
                                 <template x-if="result?.data_age_days > 0">
                                     <span> · Dados de <span x-text="result?.data_age_days"></span> dia(s) atrás</span>
@@ -168,10 +168,10 @@
 
                         <!-- Modificadores -->
                         <div style="margin-bottom: 1.5rem;">
-                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Ajustes Aplicados</h3>
+                            <h3 style="font-size: 0.875rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Ajustes Aplicados</h3>
                             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #f9fafb; border-radius: 0.375rem;">
-                                    <span style="font-size: 0.875rem; color: #374151;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #1a1a1a; border-radius: 0.375rem;">
+                                    <span style="font-size: 0.875rem; color: #a4a4a4;">
                                         Bateria <span x-text="result?.battery_percentage + '%'"></span>
                                         (<span x-text="result?.battery_health_label"></span>)
                                     </span>
@@ -179,30 +179,30 @@
                                           :style="'color: ' + modifierColor(result?.modifiers?.battery)"
                                           x-text="formatModifier(result?.modifiers?.battery)"></span>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #f9fafb; border-radius: 0.375rem;">
-                                    <span style="font-size: 0.875rem; color: #374151;" x-text="result?.device_state_label"></span>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #1a1a1a; border-radius: 0.375rem;">
+                                    <span style="font-size: 0.875rem; color: #a4a4a4;" x-text="result?.device_state_label"></span>
                                     <span style="font-size: 0.875rem; font-weight: 600;"
                                           :style="'color: ' + modifierColor(result?.modifiers?.device_state)"
                                           x-text="formatModifier(result?.modifiers?.device_state)"></span>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #f9fafb; border-radius: 0.375rem;">
-                                    <span style="font-size: 0.875rem; color: #374151;" x-text="result?.accessory_state_label"></span>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #1a1a1a; border-radius: 0.375rem;">
+                                    <span style="font-size: 0.875rem; color: #a4a4a4;" x-text="result?.accessory_state_label"></span>
                                     <span style="font-size: 0.875rem; font-weight: 600;"
                                           :style="'color: ' + modifierColor(result?.modifiers?.accessories)"
                                           x-text="formatModifier(result?.modifiers?.accessories)"></span>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: #fef2f2; border-radius: 0.375rem; border: 1px solid #fecaca;">
-                                    <span style="font-size: 0.875rem; color: #991b1b; font-weight: 500;">Margem DG Store</span>
-                                    <span style="font-size: 0.875rem; font-weight: 600; color: #dc2626;">-15%</span>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: rgba(239,68,68,0.1); border-radius: 0.375rem; border: 1px solid #fecaca;">
+                                    <span style="font-size: 0.875rem; color: #fca5a5; font-weight: 500;">Margem DG Store</span>
+                                    <span style="font-size: 0.875rem; font-weight: 600; color: #fca5a5;">-15%</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Valor Sugerido -->
                         <div style="padding: 1.25rem; background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-radius: 0.75rem; border: 1px solid #a7f3d0; text-align: center; margin-bottom: 1.25rem;">
-                            <p style="font-size: 0.75rem; font-weight: 600; color: #065f46; text-transform: uppercase; letter-spacing: 0.05em;">Valor Sugerido de Compra</p>
-                            <p style="font-size: 2rem; font-weight: 800; color: #047857; margin-top: 0.25rem;" x-text="formatCurrency(result?.suggested_buy_price)"></p>
-                            <p style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+                            <p style="font-size: 0.75rem; font-weight: 600; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.05em;">Valor Sugerido de Compra</p>
+                            <p style="font-size: 2rem; font-weight: 800; color: #6ee7b7; margin-top: 0.25rem;" x-text="formatCurrency(result?.suggested_buy_price)"></p>
+                            <p style="font-size: 0.75rem; color: #818181; margin-top: 0.25rem;">
                                 Desconto total: <span x-text="Math.round((result?.total_discount || 0) * 100) + '%'"></span> sobre o preço de mercado
                             </p>
                         </div>
@@ -230,20 +230,20 @@
 
                 <!-- Card: Sem dados -->
                 <div x-show="noData" x-transition
-                     style="background: #fffbeb; border-radius: 0.75rem; border: 1px solid #fde68a; padding: 1.5rem; text-align: center;">
+                     style="background: #141414beb; border-radius: 0.75rem; border: 1px solid #fde68a; padding: 1.5rem; text-align: center;">
                     <svg style="width: 2.5rem; height: 2.5rem; color: #d97706; margin: 0 auto 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
-                    <h3 style="font-size: 1rem; font-weight: 600; color: #92400e;">Sem dados de mercado</h3>
-                    <p style="font-size: 0.875rem; color: #a16207; margin-top: 0.5rem;">
+                    <h3 style="font-size: 1rem; font-weight: 600; color: #fbbf24;">Sem dados de mercado</h3>
+                    <p style="font-size: 0.875rem; color: #fbbf24; margin-top: 0.5rem;">
                         Ainda não temos dados de preço para este modelo/armazenamento.
                     </p>
                 </div>
 
                 <!-- Card: Erro -->
                 <div x-show="error" x-transition
-                     style="background: #fef2f2; border-radius: 0.75rem; border: 1px solid #fecaca; padding: 1rem; text-align: center;">
-                    <p style="font-size: 0.875rem; color: #991b1b;" x-text="error"></p>
+                     style="background: rgba(239,68,68,0.1); border-radius: 0.75rem; border: 1px solid #fecaca; padding: 1rem; text-align: center;">
+                    <p style="font-size: 0.875rem; color: #fca5a5;" x-text="error"></p>
                 </div>
             </div>
         </div>

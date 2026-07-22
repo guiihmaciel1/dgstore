@@ -1,17 +1,17 @@
 <x-app-layout>
     <x-slot name="title">Dashboard Executivo</x-slot>
     <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                <a href="{{ route('reports.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem; text-decoration: none;"
-                   onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                <a href="{{ route('reports.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #818181; border-radius: 0.5rem; text-decoration: none;"
+                   onmouseover="this.style.backgroundColor='#222222'" onmouseout="this.style.backgroundColor='transparent'">
                     <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
                 </a>
                 <div style="flex: 1;">
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Dashboard Executivo</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Visão estratégica com evolução e comparativos</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Dashboard Executivo</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">Visão estratégica com evolução e comparativos</p>
                 </div>
                 @include('reports.partials.export-button', ['route' => 'reports.executive.export', 'params' => ['month' => $referenceDate->month, 'year' => $referenceDate->year]])
             </div>
@@ -23,19 +23,19 @@
                     $nextMonth = $referenceDate->copy()->addMonth();
                 @endphp
                 <a href="{{ route('reports.executive', ['month' => $prevMonth->month, 'year' => $prevMonth->year]) }}"
-                   style="padding: 0.5rem; color: #6b7280; border-radius: 0.5rem; text-decoration: none;"
-                   onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                   style="padding: 0.5rem; color: #818181; border-radius: 0.5rem; text-decoration: none;"
+                   onmouseover="this.style.backgroundColor='#222222'" onmouseout="this.style.backgroundColor='transparent'">
                     <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                     </svg>
                 </a>
-                <span style="font-size: 1.125rem; font-weight: 600; color: #111827; min-width: 10rem; text-align: center;">
+                <span style="font-size: 1.125rem; font-weight: 600; color: #e3e3e3; min-width: 10rem; text-align: center;">
                     {{ $referenceDate->translatedFormat('F / Y') }}
                 </span>
                 @if(!$isCurrentMonth)
                 <a href="{{ route('reports.executive', ['month' => $nextMonth->month, 'year' => $nextMonth->year]) }}"
-                   style="padding: 0.5rem; color: #6b7280; border-radius: 0.5rem; text-decoration: none;"
-                   onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                   style="padding: 0.5rem; color: #818181; border-radius: 0.5rem; text-decoration: none;"
+                   onmouseover="this.style.backgroundColor='#222222'" onmouseout="this.style.backgroundColor='transparent'">
                     <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
@@ -64,9 +64,9 @@
                         $prevPositive = $deltaPrev >= 0;
                         $yearPositive = $deltaYear >= 0;
                     @endphp
-                    <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem;">
-                        <div style="font-size: 0.7rem; font-weight: 500; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">{{ $kpi['label'] }}</div>
-                        <div style="font-size: 1.5rem; font-weight: 700; color: #111827; margin-top: 0.25rem;">
+                    <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem;">
+                        <div style="font-size: 0.7rem; font-weight: 500; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">{{ $kpi['label'] }}</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3; margin-top: 0.25rem;">
                             {{ $kpi['prefix'] }}{{ $kpi['monetary'] ? number_format((float)$val, 2, ',', '.') : $val }}
                         </div>
                         <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
@@ -82,28 +82,28 @@
             </div>
 
             {{-- Gráfico de evolução mensal --}}
-            <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
-                <h3 style="font-weight: 600; color: #111827; margin-bottom: 1rem;">Evolução Mensal (12 meses)</h3>
+            <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 1.5rem; margin-bottom: 1.5rem;">
+                <h3 style="font-weight: 600; color: #e3e3e3; margin-bottom: 1rem;">Evolução Mensal (12 meses)</h3>
                 <div style="height: 350px;">
                     <canvas id="evolutionChart"></canvas>
                 </div>
             </div>
 
             {{-- Top Vendedores --}}
-            <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
-                    <h3 style="font-weight: 600; color: #111827;">Top 5 Vendedores do Mês</h3>
+            <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a;">
+                    <h3 style="font-weight: 600; color: #e3e3e3;">Top 5 Vendedores do Mês</h3>
                 </div>
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead>
-                            <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Vendedor</th>
-                                <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Vendas</th>
-                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Faturamento</th>
-                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Lucro</th>
-                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ticket Médio</th>
-                                <th style="padding: 0.75rem 1.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Margem</th>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Vendedor</th>
+                                <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Vendas</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Faturamento</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Lucro</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Ticket Médio</th>
+                                <th style="padding: 0.75rem 1.5rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Margem</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -112,7 +112,7 @@
                                     $isTop3 = $index < 3;
                                     $medalColors = ['#fbbf24', '#9ca3af', '#d97706'];
                                 @endphp
-                                <tr style="border-bottom: 1px solid #f3f4f6; {{ $isTop3 ? 'background: #fefce8;' : '' }}" onmouseover="this.style.background='{{ $isTop3 ? '#fef9c3' : '#f9fafb' }}'" onmouseout="this.style.background='{{ $isTop3 ? '#fefce8' : 'white' }}'">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); {{ $isTop3 ? 'background: rgba(245,158,11,0.1);' : '' }}" onmouseover="this.style.background='{{ $isTop3 ? '#fef9c3' : '#f9fafb' }}'" onmouseout="this.style.background='{{ $isTop3 ? '#fefce8' : 'white' }}'">
                                     <td style="padding: 0.75rem 1.5rem;">
                                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                                             @if($isTop3)
@@ -120,13 +120,13 @@
                                                 {{ $index + 1 }}
                                             </span>
                                             @endif
-                                            <span style="font-weight: 500; color: #111827;">{{ $seller['name'] }}</span>
+                                            <span style="font-weight: 500; color: #e3e3e3;">{{ $seller['name'] }}</span>
                                         </div>
                                     </td>
-                                    <td style="padding: 0.75rem 1rem; text-align: center; color: #374151;">{{ $seller['count'] }}</td>
-                                    <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #111827;">R$ {{ number_format($seller['revenue'], 2, ',', '.') }}</td>
+                                    <td style="padding: 0.75rem 1rem; text-align: center; color: #a4a4a4;">{{ $seller['count'] }}</td>
+                                    <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #e3e3e3;">R$ {{ number_format($seller['revenue'], 2, ',', '.') }}</td>
                                     <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; color: #16a34a;">R$ {{ number_format($seller['profit'], 2, ',', '.') }}</td>
-                                    <td style="padding: 0.75rem 1rem; text-align: right; color: #374151;">R$ {{ number_format($seller['ticket'], 2, ',', '.') }}</td>
+                                    <td style="padding: 0.75rem 1rem; text-align: right; color: #a4a4a4;">R$ {{ number_format($seller['ticket'], 2, ',', '.') }}</td>
                                     <td style="padding: 0.75rem 1.5rem; text-align: center;">
                                         @php $mColor = $seller['margin'] >= 20 ? '#16a34a' : ($seller['margin'] >= 10 ? '#ca8a04' : '#dc2626'); @endphp
                                         <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $mColor }}15; color: {{ $mColor }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
@@ -135,7 +135,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="6" style="padding: 3rem; text-align: center; color: #6b7280;">Nenhuma venda no período.</td></tr>
+                                <tr><td colspan="6" style="padding: 3rem; text-align: center; color: #818181;">Nenhuma venda no período.</td></tr>
                             @endforelse
                         </tbody>
                     </table>

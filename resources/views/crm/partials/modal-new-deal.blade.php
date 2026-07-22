@@ -1,23 +1,23 @@
 {{-- Modal: Novo Negócio --}}
 <div x-show="showNewDealForm" x-transition.opacity style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4);" x-cloak>
-    <div @click.away="showNewDealForm = false" style="background: white; border-radius: 0.75rem; padding: 1.5rem; width: 100%; max-width: 36rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto;">
-        <h2 style="font-size: 1.125rem; font-weight: 700; color: #111827; margin-bottom: 1rem;">Novo Negócio</h2>
+    <div @click.away="showNewDealForm = false" style="background: #141414; border-radius: 0.75rem; padding: 1.5rem; width: 100%; max-width: 36rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto;">
+        <h2 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3; margin-bottom: 1rem;">Novo Negócio</h2>
         <form method="POST" action="{{ route('crm.deals.store') }}">
             @csrf
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <div>
-                    <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Título <span style="color: #dc2626;">*</span></label>
+                    <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Título <span style="color: #fca5a5;">*</span></label>
                     <input type="text" name="title" required value="{{ old('title') }}" placeholder="Ex: iPhone 16 Pro Max - João"
                            style="width: 100%; padding: 0.5rem; border: 1px solid {{ $errors->has('title') ? '#fca5a5' : '#e5e7eb' }}; border-radius: 0.375rem; font-size: 0.875rem;">
                 </div>
 
                 {{-- Interesse de Produto (estruturado) --}}
-                <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.75rem;">
-                    <label style="font-size: 0.75rem; font-weight: 700; color: #374151; display: block; margin-bottom: 0.5rem;">Interesse de Produto</label>
+                <div style="background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; padding: 0.75rem;">
+                    <label style="font-size: 0.75rem; font-weight: 700; color: #a4a4a4; display: block; margin-bottom: 0.5rem;">Interesse de Produto</label>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                         <div>
-                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Modelo</label>
-                            <select name="interest_model" style="width: 100%; padding: 0.4rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Modelo</label>
+                            <select name="interest_model" style="width: 100%; padding: 0.4rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                 <option value="">Selecione...</option>
                                 <optgroup label="iPhone">
                                     <option {{ old('interest_model') === 'iPhone 17 Pro Max' ? 'selected' : '' }}>iPhone 17 Pro Max</option>
@@ -49,8 +49,8 @@
                             </select>
                         </div>
                         <div>
-                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Armazenamento</label>
-                            <select name="interest_storage" style="width: 100%; padding: 0.4rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Armazenamento</label>
+                            <select name="interest_storage" style="width: 100%; padding: 0.4rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                 <option value="">Qualquer</option>
                                 <option {{ old('interest_storage') === '64GB' ? 'selected' : '' }}>64GB</option>
                                 <option {{ old('interest_storage') === '128GB' ? 'selected' : '' }}>128GB</option>
@@ -60,13 +60,13 @@
                             </select>
                         </div>
                         <div>
-                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Cor</label>
+                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Cor</label>
                             <input type="text" name="interest_color" value="{{ old('interest_color') }}" placeholder="Ex: Titânio Natural"
-                                   style="width: 100%; padding: 0.4rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                   style="width: 100%; padding: 0.4rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                         </div>
                         <div>
-                            <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Condição</label>
-                            <select name="interest_condition" style="width: 100%; padding: 0.4rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                            <label style="font-size: 0.7rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Condição</label>
+                            <select name="interest_condition" style="width: 100%; padding: 0.4rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                 <option value="">Qualquer</option>
                                 <option value="novo" {{ old('interest_condition') === 'novo' ? 'selected' : '' }}>Novo</option>
                                 <option value="seminovo" {{ old('interest_condition') === 'seminovo' ? 'selected' : '' }}>Seminovo</option>
@@ -74,39 +74,39 @@
                         </div>
                     </div>
                     <div style="margin-top: 0.5rem;">
-                        <label style="font-size: 0.7rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Orçamento máximo (R$)</label>
+                        <label style="font-size: 0.7rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Orçamento máximo (R$)</label>
                         <input type="number" name="interest_max_budget" step="0.01" value="{{ old('interest_max_budget') }}" placeholder="0,00"
-                               style="width: 100%; padding: 0.4rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                               style="width: 100%; padding: 0.4rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                     </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Valor (R$)</label>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Valor (R$)</label>
                         <input type="number" name="value" step="0.01" value="{{ old('value') }}" placeholder="0,00"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                               style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Telefone / WhatsApp <span style="color: #dc2626;">*</span></label>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Telefone / WhatsApp <span style="color: #fca5a5;">*</span></label>
                         <input type="text" name="phone" required value="{{ old('phone') }}" placeholder="(00) 00000-0000"
                                maxlength="15"
                                @input="$el.value = $el.value.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2').substring(0,15)"
                                style="width: 100%; padding: 0.5rem; border: 1px solid {{ $errors->has('phone') ? '#fca5a5' : '#e5e7eb' }}; border-radius: 0.375rem; font-size: 0.875rem;">
                         @error('phone')
-                            <p style="font-size: 0.7rem; color: #dc2626; margin: 0.25rem 0 0 0;">{{ $message }}</p>
+                            <p style="font-size: 0.7rem; color: #fca5a5; margin: 0.25rem 0 0 0;">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Previsão de Fechamento</label>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Previsão de Fechamento</label>
                         <input type="date" name="expected_close_date" value="{{ old('expected_close_date') }}"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                               style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Etapa</label>
-                        <select name="pipeline_stage_id" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Etapa</label>
+                        <select name="pipeline_stage_id" style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
                             @foreach($activeStages as $stage)
                                 <option value="{{ $stage->id }}" {{ $stage->is_default ? 'selected' : '' }}>{{ $stage->name }}</option>
                             @endforeach
@@ -117,8 +117,8 @@
                 {{-- Origem e Temperatura --}}
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Origem do Lead</label>
-                        <select name="lead_source" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Origem do Lead</label>
+                        <select name="lead_source" style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
                             <option value="">Não informada</option>
                             @foreach(\App\Domain\CRM\Enums\LeadSource::cases() as $src)
                                 <option value="{{ $src->value }}" {{ old('lead_source') === $src->value ? 'selected' : '' }}>{{ $src->label() }}</option>
@@ -126,8 +126,8 @@
                         </select>
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Temperatura</label>
-                        <select name="temperature" style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Temperatura</label>
+                        <select name="temperature" style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
                             <option value="hot" {{ old('temperature') === 'hot' ? 'selected' : '' }}>Quente</option>
                             <option value="warm" {{ old('temperature', 'warm') === 'warm' ? 'selected' : '' }}>Morno</option>
                             <option value="cold" {{ old('temperature') === 'cold' ? 'selected' : '' }}>Frio</option>
@@ -138,49 +138,49 @@
                 {{-- Próximo Passo --}}
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Próximo Passo</label>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Próximo Passo</label>
                         <input type="text" name="next_action" value="{{ old('next_action') }}" placeholder="Ex: Enviar orçamento"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                               style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Data do Próximo Contato</label>
+                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Data do Próximo Contato</label>
                         <input type="datetime-local" name="next_action_at" value="{{ old('next_action_at') }}"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                               style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
                     </div>
                 </div>
 
                 <div>
-                    <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Buscar Cliente</label>
+                    <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Buscar Cliente</label>
                     <div style="position: relative;">
                         <input type="text" x-model="customerSearch" @input.debounce.300ms="searchCustomers()"
                                placeholder="Digite o nome do cliente..."
-                               style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem;">
+                               style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
                         <input type="hidden" name="customer_id" x-model="selectedCustomerId">
-                        <div x-show="customerResults.length > 0" style="position: absolute; z-index: 10; width: 100%; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; margin-top: 2px; max-height: 150px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <div x-show="customerResults.length > 0" style="position: absolute; z-index: 10; width: 100%; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; margin-top: 2px; max-height: 150px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                             <template x-for="c in customerResults" :key="c.id">
-                                <div @click="selectCustomer(c)" style="padding: 0.5rem; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid #f3f4f6;"
-                                     class="hover:bg-gray-50">
+                                <div @click="selectCustomer(c)" style="padding: 0.5rem; cursor: pointer; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.04);"
+                                     class="hover:bg-surface">
                                     <span x-text="c.name" style="font-weight: 600;"></span>
-                                    <span x-text="c.phone ? ' - ' + c.phone : ''" style="color: #6b7280;"></span>
+                                    <span x-text="c.phone ? ' - ' + c.phone : ''" style="color: #818181;"></span>
                                 </div>
                             </template>
                         </div>
                     </div>
                     <div x-show="selectedCustomerName" style="margin-top: 0.25rem; font-size: 0.75rem; color: #059669;">
                         Selecionado: <strong x-text="selectedCustomerName"></strong>
-                        <button type="button" @click="clearCustomer()" style="color: #dc2626; margin-left: 0.5rem; font-size: 0.7rem; border: none; background: none; cursor: pointer;">[remover]</button>
+                        <button type="button" @click="clearCustomer()" style="color: #fca5a5; margin-left: 0.5rem; font-size: 0.7rem; border: none; background: none; cursor: pointer;">[remover]</button>
                     </div>
                 </div>
 
                 <div>
-                    <label style="font-size: 0.75rem; font-weight: 600; color: #6b7280; display: block; margin-bottom: 2px;">Observações</label>
+                    <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Observações</label>
                     <textarea name="description" rows="2" placeholder="Detalhes sobre o interesse, condições, etc."
-                              style="width: 100%; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;">{{ old('description') }}</textarea>
+                              style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;">{{ old('description') }}</textarea>
                 </div>
             </div>
 
             @if($errors->any())
-                <div style="margin-top: 0.75rem; color: #dc2626; font-size: 0.75rem;">
+                <div style="margin-top: 0.75rem; color: #fca5a5; font-size: 0.75rem;">
                     @foreach($errors->all() as $error)
                         <div>{{ $error }}</div>
                     @endforeach
@@ -189,7 +189,7 @@
 
             <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
                 <button @click.prevent="showNewDealForm = false" type="button"
-                        style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; background: white; color: #6b7280; cursor: pointer;">
+                        style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; background: #141414; color: #818181; cursor: pointer;">
                     Cancelar
                 </button>
                 <button type="submit"

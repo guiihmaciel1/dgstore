@@ -12,26 +12,26 @@
     @if(!$dollarRate)
     {{-- Banner de alerta: cotação não preenchida --}}
     <div class="bg-amber-500" style="padding: 0;">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0; flex-wrap: wrap; gap: 8px;">
                 {{-- Lado esquerdo: alerta DG --}}
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <svg style="width: 20px; height: 20px; color: #92400e; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="width: 20px; height: 20px; color: #fbbf24; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                         </svg>
-                        <span style="font-size: 14px; font-weight: 600; color: #92400e;">Cotação do dólar não informada hoje!</span>
+                        <span style="font-size: 14px; font-weight: 600; color: #fbbf24;">Cotação do dólar não informada hoje!</span>
                     </div>
                     <form @submit.prevent="saveDollarRate()" style="display: flex; align-items: center; gap: 8px;">
                         <div style="position: relative;">
-                            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: #92400e;">R$</span>
+                            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: #fbbf24;">R$</span>
                             <input type="text"
                                    x-model="rateInput"
                                    x-ref="rateField"
                                    placeholder="{{ $cpLatest ? number_format((float) $cpLatest->rate, 2, ',', '.') : '5,45' }}"
                                    required
-                                   style="width: 100px; padding: 6px 10px 6px 32px; border: 2px solid #b45309; border-radius: 8px; font-size: 14px; font-weight: 600; color: #92400e; background: rgba(255,255,255,0.8); outline: none; text-align: right;"
-                                   onfocus="this.style.borderColor='#92400e'; this.style.background='white'"
+                                   style="width: 100px; padding: 6px 10px 6px 32px; border: 2px solid #b45309; border-radius: 8px; font-size: 14px; font-weight: 600; color: #fbbf24; background: #1a1a1a; outline: none; text-align: right;"
+                                   onfocus="this.style.borderColor='#92400e'; this.style.background='#141414'"
                                    onblur="this.style.borderColor='#b45309'; this.style.background='rgba(255,255,255,0.8)'">
                         </div>
                         <button type="submit"
@@ -48,7 +48,7 @@
                 {{-- Lado direito: Compras Paraguai --}}
                 @if($cpLatest)
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <span style="font-size: 11px; font-weight: 600; color: #92400e; letter-spacing: 0.5px; text-transform: uppercase;">Compras Paraguai</span>
+                    <span style="font-size: 11px; font-weight: 600; color: #fbbf24; letter-spacing: 0.5px; text-transform: uppercase;">Compras Paraguai</span>
                     <span style="font-size: 14px; font-weight: 700; color: #78350f;">R$ {{ number_format((float) $cpLatest->rate, 2, ',', '.') }}</span>
                     @if($cpPrevious)
                         @php
@@ -76,7 +76,7 @@
     @else
     {{-- Indicador discreto: cotação preenchida --}}
     <div style="background: #065f46; padding: 0;">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0; flex-wrap: wrap; gap: 8px;">
                 {{-- Lado esquerdo: Dólar DG --}}
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">

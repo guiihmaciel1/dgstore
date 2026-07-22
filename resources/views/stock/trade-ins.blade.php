@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Trade-ins</x-slot>
     <div class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('success'))
                 <div class="mb-4">
                     <x-alert type="success">{{ session('success') }}</x-alert>
@@ -17,15 +17,15 @@
             <!-- Cabeçalho -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <div style="display: flex; align-items: center;">
-                    <a href="{{ route('stock.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
-                       onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                    <a href="{{ route('stock.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #818181; border-radius: 0.5rem;"
+                       onmouseover="this.style.backgroundColor='#222222'" onmouseout="this.style.backgroundColor='transparent'">
                         <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Trade-ins</h1>
-                        <p style="font-size: 0.875rem; color: #6b7280;">Aparelhos recebidos como entrada em vendas</p>
+                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Trade-ins</h1>
+                        <p style="font-size: 0.875rem; color: #818181;">Aparelhos recebidos como entrada em vendas</p>
                     </div>
                 </div>
             </div>
@@ -36,14 +36,14 @@
                    style="display: block; padding: 1.5rem; background: {{ $currentStatus === 'pending' ? '#fefce8' : 'white' }}; border-radius: 1rem; border: 2px solid {{ $currentStatus === 'pending' ? '#fde68a' : '#e5e7eb' }}; text-decoration: none; transition: all 0.2s;"
                    onmouseover="this.style.borderColor='#fde68a'" onmouseout="this.style.borderColor='{{ $currentStatus === 'pending' ? '#fde68a' : '#e5e7eb' }}'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.75rem; background: #fefce8; border-radius: 0.75rem;">
+                        <div style="padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 0.75rem;">
                             <svg style="width: 1.5rem; height: 1.5rem; color: #ca8a04;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                         <div>
                             <p style="font-size: 2rem; font-weight: 700; color: #ca8a04;">{{ $stats['pending'] }}</p>
-                            <p style="font-size: 0.875rem; color: #6b7280;">Pendentes</p>
+                            <p style="font-size: 0.875rem; color: #818181;">Pendentes</p>
                         </div>
                     </div>
                 </a>
@@ -52,14 +52,14 @@
                    style="display: block; padding: 1.5rem; background: {{ $currentStatus === 'processed' ? '#f0fdf4' : 'white' }}; border-radius: 1rem; border: 2px solid {{ $currentStatus === 'processed' ? '#bbf7d0' : '#e5e7eb' }}; text-decoration: none; transition: all 0.2s;"
                    onmouseover="this.style.borderColor='#bbf7d0'" onmouseout="this.style.borderColor='{{ $currentStatus === 'processed' ? '#bbf7d0' : '#e5e7eb' }}'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.75rem; background: #f0fdf4; border-radius: 0.75rem;">
+                        <div style="padding: 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem;">
                             <svg style="width: 1.5rem; height: 1.5rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
                         </div>
                         <div>
                             <p style="font-size: 2rem; font-weight: 700; color: #16a34a;">{{ $stats['processed'] }}</p>
-                            <p style="font-size: 0.875rem; color: #6b7280;">Processados</p>
+                            <p style="font-size: 0.875rem; color: #818181;">Processados</p>
                         </div>
                     </div>
                 </a>
@@ -68,23 +68,23 @@
                    style="display: block; padding: 1.5rem; background: {{ $currentStatus === 'rejected' ? '#fef2f2' : 'white' }}; border-radius: 1rem; border: 2px solid {{ $currentStatus === 'rejected' ? '#fecaca' : '#e5e7eb' }}; text-decoration: none; transition: all 0.2s;"
                    onmouseover="this.style.borderColor='#fecaca'" onmouseout="this.style.borderColor='{{ $currentStatus === 'rejected' ? '#fecaca' : '#e5e7eb' }}'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.75rem; background: #fef2f2; border-radius: 0.75rem;">
-                            <svg style="width: 1.5rem; height: 1.5rem; color: #dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div style="padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 0.75rem;">
+                            <svg style="width: 1.5rem; height: 1.5rem; color: #fca5a5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </div>
                         <div>
-                            <p style="font-size: 2rem; font-weight: 700; color: #dc2626;">{{ $stats['rejected'] }}</p>
-                            <p style="font-size: 0.875rem; color: #6b7280;">Rejeitados</p>
+                            <p style="font-size: 2rem; font-weight: 700; color: #fca5a5;">{{ $stats['rejected'] }}</p>
+                            <p style="font-size: 0.875rem; color: #818181;">Rejeitados</p>
                         </div>
                     </div>
                 </a>
             </div>
 
             <!-- Lista de Trade-ins -->
-            <div style="background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;">
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background: #f9fafb; display: flex; justify-content: between; align-items: center;">
-                    <h3 style="font-weight: 600; color: #111827;">
+            <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; display: flex; justify-content: between; align-items: center;">
+                    <h3 style="font-weight: 600; color: #e3e3e3;">
                         @if($currentStatus === 'pending')
                             Trade-ins Pendentes
                         @elseif($currentStatus === 'processed')
@@ -96,7 +96,7 @@
                         @endif
                     </h3>
                     <a href="{{ route('stock.trade-ins', ['status' => 'all']) }}" 
-                       style="margin-left: auto; font-size: 0.875rem; color: #6b7280; text-decoration: none;"
+                       style="margin-left: auto; font-size: 0.875rem; color: #818181; text-decoration: none;"
                        onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                         Ver todos
                     </a>
@@ -104,46 +104,46 @@
 
                 @if($tradeIns->isEmpty())
                     <div style="padding: 3rem; text-align: center;">
-                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
-                        <p style="margin-top: 1rem; color: #6b7280;">Nenhum trade-in encontrado</p>
+                        <p style="margin-top: 1rem; color: #818181;">Nenhum trade-in encontrado</p>
                     </div>
                 @else
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead>
-                                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Aparelho</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Venda</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Condição</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Bat.</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Valor Neg.</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Custo</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Final</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Repasse</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Status</th>
-                                    <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Ações</th>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Aparelho</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Venda</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Condição</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Bat.</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Valor Neg.</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Custo</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Final</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Repasse</th>
+                                    <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Status</th>
+                                    <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase;">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($tradeIns as $tradeIn)
-                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                                         <td style="padding: 1rem 1.5rem;">
-                                            <div style="font-weight: 600; color: #111827;">{{ $tradeIn->full_name }}</div>
+                                            <div style="font-weight: 600; color: #e3e3e3;">{{ $tradeIn->full_name }}</div>
                                             <div style="display: flex; gap: 0.375rem; flex-wrap: wrap; margin-top: 0.25rem;">
                                                 @if($tradeIn->storage)
-                                                    <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #374151; font-size: 0.6875rem; border-radius: 9999px;">{{ $tradeIn->storage }}</span>
+                                                    <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #222222; color: #a4a4a4; font-size: 0.6875rem; border-radius: 9999px;">{{ $tradeIn->storage }}</span>
                                                 @endif
                                                 @if($tradeIn->color)
-                                                    <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #f3f4f6; color: #374151; font-size: 0.6875rem; border-radius: 9999px;">{{ $tradeIn->color }}</span>
+                                                    <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #222222; color: #a4a4a4; font-size: 0.6875rem; border-radius: 9999px;">{{ $tradeIn->color }}</span>
                                                 @endif
                                             </div>
                                             @if($tradeIn->imei)
-                                                <div style="font-size: 0.75rem; color: #9ca3af; font-family: monospace;">IMEI: {{ $tradeIn->imei }}</div>
+                                                <div style="font-size: 0.75rem; color: #666666; font-family: monospace;">IMEI: {{ $tradeIn->imei }}</div>
                                             @endif
                                             @if($tradeIn->notes)
-                                                <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">{{ Str::limit($tradeIn->notes, 50) }}</div>
+                                                <div style="font-size: 0.75rem; color: #818181; margin-top: 0.25rem;">{{ Str::limit($tradeIn->notes, 50) }}</div>
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem;">
@@ -152,9 +152,9 @@
                                                onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                                                 #{{ $tradeIn->sale->sale_number }}
                                             </a>
-                                            <div style="font-size: 0.75rem; color: #6b7280;">{{ $tradeIn->created_at->format('d/m/Y') }}</div>
+                                            <div style="font-size: 0.75rem; color: #818181;">{{ $tradeIn->created_at->format('d/m/Y') }}</div>
                                             @if($tradeIn->sale->customer)
-                                                <div style="font-size: 0.75rem; color: #9ca3af;">{{ $tradeIn->sale->customer->name }}</div>
+                                                <div style="font-size: 0.75rem; color: #666666;">{{ $tradeIn->sale->customer->name }}</div>
                                             @endif
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
@@ -171,19 +171,19 @@
                                                 {{ $tradeIn->condition->label() }}
                                             </span>
                                         </td>
-                                        <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.8125rem; color: #374151;">
+                                        <td style="padding: 0.75rem 1rem; text-align: center; font-size: 0.8125rem; color: #a4a4a4;">
                                             {{ $tradeIn->battery_health ? $tradeIn->battery_health . '%' : '-' }}
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: right;">
-                                            <div style="font-weight: 600; color: #7c3aed;">{{ $tradeIn->formatted_value }}</div>
+                                            <div style="font-weight: 600; color: #c4b5fd;">{{ $tradeIn->formatted_value }}</div>
                                         </td>
-                                        <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.8125rem; color: #374151;">
+                                        <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.8125rem; color: #a4a4a4;">
                                             {{ $tradeIn->cost_price ? 'R$ ' . number_format((float) $tradeIn->cost_price, 2, ',', '.') : '-' }}
                                         </td>
-                                        <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.8125rem; color: #374151;">
+                                        <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.8125rem; color: #a4a4a4;">
                                             {{ $tradeIn->sale_price ? 'R$ ' . number_format((float) $tradeIn->sale_price, 2, ',', '.') : '-' }}
                                         </td>
-                                        <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.8125rem; color: #374151;">
+                                        <td style="padding: 0.75rem 1rem; text-align: right; font-size: 0.8125rem; color: #a4a4a4;">
                                             {{ $tradeIn->resale_price ? 'R$ ' . number_format((float) $tradeIn->resale_price, 2, ',', '.') : '-' }}
                                         </td>
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
@@ -216,8 +216,8 @@
                                                         @csrf
                                                         <input type="hidden" name="action" value="reject">
                                                         <button type="submit" 
-                                                                style="padding: 0.375rem 0.75rem; background: #f3f4f6; color: #6b7280; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer;"
-                                                                onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                                                                style="padding: 0.375rem 0.75rem; background: #222222; color: #818181; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer;"
+                                                                onmouseover="this.style.background='#222222'" onmouseout="this.style.background='#1a1a1a'">
                                                             Rejeitar
                                                         </button>
                                                     </form>
@@ -229,7 +229,7 @@
                                                     Ver Produto
                                                 </a>
                                             @else
-                                                <span style="font-size: 0.75rem; color: #9ca3af;">-</span>
+                                                <span style="font-size: 0.75rem; color: #666666;">-</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -239,7 +239,7 @@
                     </div>
 
                     @if($tradeIns->hasPages())
-                        <div style="padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb;">
+                        <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06);">
                             {{ $tradeIns->links() }}
                         </div>
                     @endif

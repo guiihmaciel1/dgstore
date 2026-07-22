@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Editar Reserva</x-slot>
     <div class="py-4">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             @if(session('error'))
                 <div class="mb-4">
                     <x-alert type="error">{{ session('error') }}</x-alert>
@@ -10,15 +10,15 @@
 
             <!-- Cabeçalho -->
             <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
-                <a href="{{ route('reservations.show', $reservation) }}" style="margin-right: 1rem; padding: 0.5rem; color: #6b7280; border-radius: 0.5rem;"
-                   onmouseover="this.style.backgroundColor='#f3f4f6'" onmouseout="this.style.backgroundColor='transparent'">
+                <a href="{{ route('reservations.show', $reservation) }}" style="margin-right: 1rem; padding: 0.5rem; color: #818181; border-radius: 0.5rem;"
+                   onmouseover="this.style.backgroundColor='#222222'" onmouseout="this.style.backgroundColor='transparent'">
                     <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
                 </a>
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Editar Reserva</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">{{ $reservation->reservation_number }}</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Editar Reserva</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">{{ $reservation->reservation_number }}</p>
                 </div>
             </div>
 
@@ -31,9 +31,9 @@
                     <!-- Coluna Principal -->
                     <div>
                         <!-- Cliente -->
-                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 1.5rem; position: relative;">
-                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; border-radius: 0.75rem 0.75rem 0 0;">
-                                <h3 style="font-weight: 600; color: #111827;">
+                        <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 1.5rem; position: relative;">
+                            <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem 0.75rem 0 0;">
+                                <h3 style="font-weight: 600; color: #e3e3e3;">
                                     <svg style="width: 1.25rem; height: 1.25rem; display: inline; vertical-align: text-bottom; margin-right: 0.375rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
@@ -46,28 +46,28 @@
                                         <input type="text" x-model="customerSearch" @input.debounce.300ms="searchCustomers()"
                                                @focus="showCustomerDropdown = true"
                                                placeholder="Digite o nome ou telefone do cliente..."
-                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; transition: border-color 0.2s;"
-                                               onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
-                                        <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.375rem;">Mínimo 2 caracteres para buscar</p>
+                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; transition: border-color 0.2s;"
+                                               onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                        <p style="font-size: 0.75rem; color: #666666; margin-top: 0.375rem;">Mínimo 2 caracteres para buscar</p>
                                     </div>
                                 </template>
 
                                 <!-- Dropdown de resultados -->
                                 <div x-show="customerResults.length > 0 && !selectedCustomer" x-cloak
                                      @click.outside="customerResults = []"
-                                     style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; box-shadow: 0 8px 24px -4px rgba(0,0,0,0.2); max-height: 220px; overflow-y: auto; z-index: 100;">
+                                     style="position: absolute; top: 100%; left: 0; right: 0; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; box-shadow: 0 8px 24px -4px rgba(0,0,0,0.2); max-height: 220px; overflow-y: auto; z-index: 100;">
                                     <template x-for="customer in customerResults" :key="customer.id">
                                         <div @click="selectCustomer(customer)"
-                                             style="padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid #f3f4f6; transition: background 0.15s;"
-                                             onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='white'">
-                                            <div style="font-weight: 500; color: #111827;" x-text="customer.name"></div>
-                                            <div style="font-size: 0.75rem; color: #6b7280;" x-text="customer.phone || 'Sem telefone'"></div>
+                                             style="padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.15s;"
+                                             onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='transparent'">
+                                            <div style="font-weight: 500; color: #e3e3e3;" x-text="customer.name"></div>
+                                            <div style="font-size: 0.75rem; color: #818181;" x-text="customer.phone || 'Sem telefone'"></div>
                                         </div>
                                     </template>
                                 </div>
 
                                 <!-- Cliente selecionado -->
-                                <div x-show="selectedCustomer" x-cloak style="padding: 0.625rem 0.75rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <div x-show="selectedCustomer" x-cloak style="padding: 0.625rem 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
                                         <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; min-width: 1.5rem; background: #16a34a; border-radius: 50%; color: white;">
                                             <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
@@ -75,11 +75,11 @@
                                             </svg>
                                         </span>
                                         <div style="min-width: 0;">
-                                            <div style="font-weight: 600; font-size: 0.875rem; color: #15803d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="selectedCustomer?.name"></div>
-                                            <div style="font-size: 0.75rem; color: #6b7280;" x-text="selectedCustomer?.phone"></div>
+                                            <div style="font-weight: 600; font-size: 0.875rem; color: #6ee7b7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="selectedCustomer?.name"></div>
+                                            <div style="font-size: 0.75rem; color: #818181;" x-text="selectedCustomer?.phone"></div>
                                         </div>
                                     </div>
-                                    <button type="button" @click="clearCustomer()" style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; min-width: 1.5rem; color: #dc2626; background: none; border: none; cursor: pointer; border-radius: 0.375rem;"
+                                    <button type="button" @click="clearCustomer()" style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; min-width: 1.5rem; color: #fca5a5; background: none; border: none; cursor: pointer; border-radius: 0.375rem;"
                                             onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'" title="Trocar cliente">
                                         <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -90,9 +90,9 @@
                         </div>
 
                         <!-- Produto -->
-                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; margin-bottom: 1.5rem;">
-                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; border-radius: 0.75rem 0.75rem 0 0;">
-                                <h3 style="font-weight: 600; color: #111827;">
+                        <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 1.5rem;">
+                            <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem 0.75rem 0 0;">
+                                <h3 style="font-weight: 600; color: #e3e3e3;">
                                     <svg style="width: 1.25rem; height: 1.25rem; display: inline; vertical-align: text-bottom; margin-right: 0.375rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                     </svg>
@@ -100,13 +100,13 @@
                                 </h3>
                             </div>
                             <div style="padding: 1.25rem;">
-                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Descrição do Produto <span style="color: #dc2626;">*</span></label>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">Descrição do Produto <span style="color: #fca5a5;">*</span></label>
                                 <input type="text" name="product_description" value="{{ old('product_description', $reservation->product_description) }}"
                                        required
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; transition: border-color 0.2s;"
-                                       onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; transition: border-color 0.2s;"
+                                       onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                 @if($reservation->product)
-                                    <p style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.375rem;">
+                                    <p style="font-size: 0.75rem; color: #666666; margin-top: 0.375rem;">
                                         Produto vinculado: {{ $reservation->product->sku }}
                                         @if($reservation->product->imei) | IMEI: {{ $reservation->product->imei }} @endif
                                     </p>
@@ -115,14 +115,14 @@
                         </div>
 
                         <!-- Observações -->
-                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb;">
-                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb; border-radius: 0.75rem 0.75rem 0 0;">
-                                <h3 style="font-weight: 600; color: #111827;">Observações</h3>
+                        <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06);">
+                            <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem 0.75rem 0 0;">
+                                <h3 style="font-weight: 600; color: #e3e3e3;">Observações</h3>
                             </div>
                             <div style="padding: 1.25rem;">
                                 <textarea name="notes" rows="3" placeholder="Anotações sobre a reserva..."
-                                          style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
-                                          onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">{{ old('notes', $reservation->notes) }}</textarea>
+                                          style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
+                                          onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">{{ old('notes', $reservation->notes) }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -130,9 +130,9 @@
                     <!-- Coluna Lateral -->
                     <div>
                         <!-- Valores e Prazo -->
-                        <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-bottom: 1.5rem;">
-                            <div style="padding: 1rem; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                <h3 style="font-weight: 600; color: #111827;">
+                        <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                            <div style="padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                <h3 style="font-weight: 600; color: #e3e3e3;">
                                     <svg style="width: 1.25rem; height: 1.25rem; display: inline; vertical-align: text-bottom; margin-right: 0.375rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
@@ -142,34 +142,34 @@
                             <div style="padding: 1.25rem;">
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
                                     <div>
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Valor de Custo (R$) <span style="color: #dc2626;">*</span></label>
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">Valor de Custo (R$) <span style="color: #fca5a5;">*</span></label>
                                         <input type="number" name="cost_price" value="{{ old('cost_price', $reservation->cost_price) }}" required min="0" step="0.01"
                                                x-model.number="costPrice"
-                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                               onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                                               style="width: 100%; padding: 0.625rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                               onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                     </div>
                                     <div>
-                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Valor de Venda (R$) <span style="color: #dc2626;">*</span></label>
+                                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">Valor de Venda (R$) <span style="color: #fca5a5;">*</span></label>
                                         <input type="number" name="product_price" value="{{ old('product_price', $reservation->product_price) }}" required min="0.01" step="0.01"
                                                x-model.number="productPrice"
-                                               style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                               onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                                               style="width: 100%; padding: 0.625rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                               onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                     </div>
                                 </div>
 
                                 <!-- Lucro estimado -->
                                 <div x-show="costPrice > 0 && productPrice > 0" x-cloak
                                      style="padding: 0.5rem 0.75rem; border-radius: 0.375rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;"
-                                     :style="(productPrice - costPrice) > 0 ? 'background: #f0fdf4; color: #16a34a;' : 'background: #fef2f2; color: #dc2626;'">
+                                     :style="(productPrice - costPrice) > 0 ? 'background: rgba(16,185,129,0.1); color: #16a34a;' : 'background: rgba(239,68,68,0.1); color: #fca5a5;'">
                                     <span style="font-weight: 500;">Lucro estimado:</span>
                                     <span style="font-weight: 700;" x-text="'R$ ' + (productPrice - costPrice).toFixed(2).replace('.', ',')"></span>
                                 </div>
 
                                 <div style="margin-bottom: 1rem;">
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Valor do Sinal (R$) <span style="color: #dc2626;">*</span></label>
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">Valor do Sinal (R$) <span style="color: #fca5a5;">*</span></label>
                                     <input type="number" name="deposit_amount" value="{{ old('deposit_amount', $reservation->deposit_amount) }}" required min="{{ $reservation->deposit_paid }}" step="0.01"
-                                           style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                           onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
+                                           style="width: 100%; padding: 0.625rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                           onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                     @if($reservation->deposit_paid > 0)
                                         <p style="font-size: 0.7rem; color: #d97706; margin-top: 0.25rem;">
                                             Mínimo: R$ {{ number_format((float) $reservation->deposit_paid, 2, ',', '.') }} (já pago)
@@ -178,11 +178,11 @@
                                 </div>
 
                                 <div>
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem;">Data Limite <span style="color: #dc2626;">*</span></label>
+                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">Data Limite <span style="color: #fca5a5;">*</span></label>
                                     <input type="date" name="expires_at" value="{{ old('expires_at', $reservation->expires_at->format('Y-m-d')) }}" required
-                                           style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem;"
-                                           onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#e5e7eb'">
-                                    <p style="font-size: 0.7rem; color: #9ca3af; margin-top: 0.25rem;">Até quando o cliente pode finalizar</p>
+                                           style="width: 100%; padding: 0.625rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
+                                           onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                    <p style="font-size: 0.7rem; color: #666666; margin-top: 0.25rem;">Até quando o cliente pode finalizar</p>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +220,7 @@
                                 Salvar Alterações
                             </button>
                             <a href="{{ route('reservations.show', $reservation) }}"
-                               style="display: block; width: 100%; padding: 0.75rem; margin-top: 0.75rem; text-align: center; color: #9ca3af; font-weight: 500; text-decoration: none; font-size: 0.875rem; transition: color 0.2s;"
+                               style="display: block; width: 100%; padding: 0.75rem; margin-top: 0.75rem; text-align: center; color: #666666; font-weight: 500; text-decoration: none; font-size: 0.875rem; transition: color 0.2s;"
                                onmouseover="this.style.color='#374151';"
                                onmouseout="this.style.color='#9ca3af';">
                                 Cancelar

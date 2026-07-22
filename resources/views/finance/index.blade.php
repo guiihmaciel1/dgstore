@@ -1,18 +1,18 @@
 <x-app-layout>
     <x-slot name="title">Financeiro</x-slot>
     <div class="py-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
             <!-- Cabeçalho -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Painel Financeiro</h1>
-                    <p class="text-sm text-gray-500">Visão geral das finanças da empresa</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-dg-100">Painel Financeiro</h1>
+                    <p class="text-sm text-dg-500">Visão geral das finanças da empresa</p>
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{ route('finance.payables') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-sm">
+                    <a href="{{ route('finance.payables') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-surface-raised text-dg-300 font-medium rounded-lg border border-border-strong hover:bg-surface transition-colors text-sm">
                         Contas a Pagar
                     </a>
-                    <a href="{{ route('finance.receivables') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                    <a href="{{ route('finance.receivables') }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-surface text-white font-medium rounded-lg hover:bg-surface-elevated transition-colors text-sm">
                         Contas a Receber
                     </a>
                 </div>
@@ -24,26 +24,26 @@
                 $nextMonth = $referenceDate->copy()->addMonth();
                 $canGoNext = !$isCurrentMonth;
             @endphp
-            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 0.625rem 1.25rem;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 0.625rem 1.25rem;">
                 <a href="{{ route('finance.index', ['month' => $prevMonth->month, 'year' => $prevMonth->year]) }}"
-                   style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
-                   onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                   style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #222222; text-decoration: none; color: #a4a4a4; transition: all 0.15s;"
+                   onmouseover="this.style.background='#222222'" onmouseout="this.style.background='#1a1a1a'">
                     <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </a>
                 <div style="text-align: center; min-width: 160px;">
-                    <span style="font-size: 1rem; font-weight: 700; color: #111827; text-transform: capitalize;">{{ $referenceDate->translatedFormat('F Y') }}</span>
+                    <span style="font-size: 1rem; font-weight: 700; color: #e3e3e3; text-transform: capitalize;">{{ $referenceDate->translatedFormat('F Y') }}</span>
                     @if(!$isCurrentMonth)
                         <a href="{{ route('finance.index') }}" style="display: block; font-size: 0.6875rem; color: #2563eb; text-decoration: none; font-weight: 500; margin-top: 0.125rem;">Voltar ao mês atual</a>
                     @endif
                 </div>
                 @if($canGoNext)
                     <a href="{{ route('finance.index', ['month' => $nextMonth->month, 'year' => $nextMonth->year]) }}"
-                       style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f3f4f6; text-decoration: none; color: #374151; transition: all 0.15s;"
-                       onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                       style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #222222; text-decoration: none; color: #a4a4a4; transition: all 0.15s;"
+                       onmouseover="this.style.background='#222222'" onmouseout="this.style.background='#1a1a1a'">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
                 @else
-                    <div style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #f9fafb; display: flex; align-items: center; justify-content: center; color: #d1d5db;">
+                    <div style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: #515151;">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </div>
                 @endif
@@ -56,32 +56,32 @@
                     <div style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">R$ {{ number_format($totalBalance, 2, ',', '.') }}</div>
                     <div style="font-size: 0.75rem; opacity: 0.5; margin-top: 0.25rem;">{{ $accounts->count() }} {{ $accounts->count() === 1 ? 'carteira' : 'carteiras' }}</div>
                 </div>
-                <div style="background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid #e5e7eb;">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Receitas do Mês</div>
+                <div style="background: #141414; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Receitas do Mês</div>
                     <div style="font-size: 1.5rem; font-weight: 800; color: #16a34a; margin-top: 0.25rem;">R$ {{ number_format($monthIncome, 2, ',', '.') }}</div>
                 </div>
-                <div style="background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid #e5e7eb;">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Despesas Pagas</div>
-                    <div style="font-size: 1.5rem; font-weight: 800; color: #dc2626; margin-top: 0.25rem;">R$ {{ number_format($monthExpensePaid, 2, ',', '.') }}</div>
-                    <div style="font-size: 0.6875rem; color: #9ca3af; margin-top: 0.125rem;">Saídas de caixa no mês</div>
+                <div style="background: #141414; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Despesas Pagas</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #fca5a5; margin-top: 0.25rem;">R$ {{ number_format($monthExpensePaid, 2, ',', '.') }}</div>
+                    <div style="font-size: 0.6875rem; color: #666666; margin-top: 0.125rem;">Saídas de caixa no mês</div>
                 </div>
-                <div style="background: white; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid {{ $monthProfit >= 0 ? '#bbf7d0' : '#fecaca' }};">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Lucro do Mês</div>
+                <div style="background: #141414; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid {{ $monthProfit >= 0 ? '#bbf7d0' : '#fecaca' }};">
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Lucro do Mês</div>
                     <div style="font-size: 1.5rem; font-weight: 800; color: {{ $monthProfit >= 0 ? '#16a34a' : '#dc2626' }}; margin-top: 0.25rem;">R$ {{ number_format($monthProfit, 2, ',', '.') }}</div>
                 </div>
             </div>
 
             <!-- Detalhamento de Despesas -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div style="background: white; border-radius: 0.75rem; padding: 1rem 1.25rem; border: 1px solid #e5e7eb; display: flex; align-items: center; gap: 0.875rem;">
-                    <div style="width: 2.75rem; height: 2.75rem; border-radius: 0.625rem; background: #fef2f2; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: #dc2626;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div style="background: #141414; border-radius: 0.75rem; padding: 1rem 1.25rem; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.875rem;">
+                    <div style="width: 2.75rem; height: 2.75rem; border-radius: 0.625rem; background: rgba(239,68,68,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #fca5a5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                         </svg>
                     </div>
                     <div>
-                        <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Despesas Totais do Mês</div>
-                        <div style="font-size: 1.25rem; font-weight: 800; color: #dc2626;">R$ {{ number_format($monthExpenseTotal, 2, ',', '.') }}</div>
+                        <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Despesas Totais do Mês</div>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: #fca5a5;">R$ {{ number_format($monthExpenseTotal, 2, ',', '.') }}</div>
                         @if($monthExpensePending > 0)
                             <div style="font-size: 0.6875rem; color: #d97706; font-weight: 500;">R$ {{ number_format($monthExpensePending, 2, ',', '.') }} pendente</div>
                         @else
@@ -90,26 +90,26 @@
                     </div>
                 </div>
 
-                <div style="background: white; border-radius: 0.75rem; padding: 1rem 1.25rem; border: 1px solid #e5e7eb; display: flex; align-items: center; gap: 0.875rem;">
-                    <div style="width: 2.75rem; height: 2.75rem; border-radius: 0.625rem; background: #fff7ed; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <div style="background: #141414; border-radius: 0.75rem; padding: 1rem 1.25rem; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.875rem;">
+                    <div style="width: 2.75rem; height: 2.75rem; border-radius: 0.625rem; background: #1414147ed; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #ea580c;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
                     <div>
-                        <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Despesas Próx. Mês</div>
+                        <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Despesas Próx. Mês</div>
                         <div style="font-size: 1.25rem; font-weight: 800; color: #ea580c;">R$ {{ number_format($nextMonthExpenseTotal, 2, ',', '.') }}</div>
                         @if($nextMonthExpensePending > 0)
                             <div style="font-size: 0.6875rem; color: #d97706; font-weight: 500;">R$ {{ number_format($nextMonthExpensePending, 2, ',', '.') }} pendente</div>
                         @elseif($nextMonthExpenseTotal > 0)
                             <div style="font-size: 0.6875rem; color: #16a34a; font-weight: 500;">Tudo pago</div>
                         @else
-                            <div style="font-size: 0.6875rem; color: #9ca3af;">Nenhuma despesa lançada</div>
+                            <div style="font-size: 0.6875rem; color: #666666;">Nenhuma despesa lançada</div>
                         @endif
                     </div>
                 </div>
 
-                <a href="{{ route('finance.payables') }}" style="background: white; border-radius: 0.75rem; padding: 1rem 1.25rem; border: 1px solid #e5e7eb; display: flex; align-items: center; gap: 0.875rem; text-decoration: none; transition: box-shadow 0.15s;"
+                <a href="{{ route('finance.payables') }}" style="background: #141414; border-radius: 0.75rem; padding: 1rem 1.25rem; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.875rem; text-decoration: none; transition: box-shadow 0.15s;"
                    onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
                     <div style="width: 2.75rem; height: 2.75rem; border-radius: 0.625rem; background: #f0f9ff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,8 +117,8 @@
                         </svg>
                     </div>
                     <div>
-                        <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Resumo</div>
-                        <div style="font-size: 0.8125rem; font-weight: 600; color: #111827;">
+                        <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Resumo</div>
+                        <div style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3;">
                             @if($monthExpensePending > 0)
                                 {{ number_format(($monthExpensePaid / max($monthExpenseTotal, 1)) * 100, 0) }}% das despesas pagas
                             @else
@@ -132,36 +132,36 @@
 
             <!-- Vendas do Mês -->
             @if($salesData['salesCount'] > 0)
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1.5rem;">
+                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="width: 1.25rem; height: 1.25rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
-                        <span style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Vendas do Mês</span>
-                        <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; font-weight: 600;">{{ $salesData['salesCount'] }} {{ $salesData['salesCount'] === 1 ? 'venda' : 'vendas' }}</span>
+                        <span style="font-size: 0.9375rem; font-weight: 600; color: #e3e3e3;">Vendas do Mês</span>
+                        <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #222222; color: #818181; font-weight: 600;">{{ $salesData['salesCount'] }} {{ $salesData['salesCount'] === 1 ? 'venda' : 'vendas' }}</span>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Faturamento</div>
-                            <div style="font-size: 1.125rem; font-weight: 800; color: #111827;">R$ {{ number_format($salesData['salesRevenue'], 2, ',', '.') }}</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Faturamento</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: #e3e3e3;">R$ {{ number_format($salesData['salesRevenue'], 2, ',', '.') }}</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Custo (CMV)</div>
-                            <div style="font-size: 1.125rem; font-weight: 800; color: #dc2626;">R$ {{ number_format($salesData['salesCost'], 2, ',', '.') }}</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Custo (CMV)</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: #fca5a5;">R$ {{ number_format($salesData['salesCost'], 2, ',', '.') }}</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Lucro das Vendas</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Lucro das Vendas</div>
                             <div style="font-size: 1.125rem; font-weight: 800; color: {{ $salesData['salesProfit'] >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($salesData['salesProfit'], 2, ',', '.') }}</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Margem</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Margem</div>
                             <div style="font-size: 1.125rem; font-weight: 800; color: {{ $salesData['salesMargin'] >= 0 ? '#16a34a' : '#dc2626' }};">{{ $salesData['salesMargin'] }}%</div>
                         </div>
                         @if(($salesData['tradeInTotal'] ?? 0) > 0)
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Trade-ins Recebidos</div>
-                            <div style="font-size: 1.125rem; font-weight: 800; color: #7c3aed;">R$ {{ number_format($salesData['tradeInTotal'], 2, ',', '.') }}</div>
-                            <div style="font-size: 0.6875rem; color: #6b7280;">Abatidos nas vendas</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Trade-ins Recebidos</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: #c4b5fd;">R$ {{ number_format($salesData['tradeInTotal'], 2, ',', '.') }}</div>
+                            <div style="font-size: 0.6875rem; color: #818181;">Abatidos nas vendas</div>
                         </div>
                         @endif
                     </div>
@@ -170,33 +170,33 @@
 
             <!-- Inventário de Seminovos -->
             @if($inventoryData['totalItems'] > 0)
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; padding: 1.25rem; margin-bottom: 1.5rem;">
+                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1.5rem;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <svg style="width: 1.25rem; height: 1.25rem; color: #6b7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg style="width: 1.25rem; height: 1.25rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                             </svg>
-                            <span style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Inventário de Seminovos</span>
-                            <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #f3f4f6; color: #6b7280; font-weight: 600;">{{ $inventoryData['totalItems'] }} {{ $inventoryData['totalItems'] === 1 ? 'item' : 'itens' }}</span>
+                            <span style="font-size: 0.9375rem; font-weight: 600; color: #e3e3e3;">Inventário de Seminovos</span>
+                            <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #222222; color: #818181; font-weight: 600;">{{ $inventoryData['totalItems'] }} {{ $inventoryData['totalItems'] === 1 ? 'item' : 'itens' }}</span>
                         </div>
                         @if($inventoryData['withoutPrice'] > 0)
                             <div x-data="{ showMissing: false }" style="position: relative;">
-                                <button @click="showMissing = !showMissing" style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fef3c7; color: #92400e; font-weight: 600; border: 1px solid #fcd34d; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">
+                                <button @click="showMissing = !showMissing" style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fef3c7; color: #fbbf24; font-weight: 600; border: 1px solid #fcd34d; cursor: pointer; transition: all 0.15s;" onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">
                                     {{ $inventoryData['withoutPrice'] }} sem preço de venda
                                     <svg style="width: 0.75rem; height: 0.75rem; display: inline; vertical-align: middle; margin-left: 0.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                                 </button>
                                 <div x-show="showMissing" @click.away="showMissing = false" x-transition
-                                     style="position: absolute; right: 0; top: 100%; margin-top: 0.375rem; background: white; border-radius: 0.5rem; border: 1px solid #e5e7eb; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); min-width: 280px; z-index: 50; overflow: hidden;">
-                                    <div style="padding: 0.625rem 0.75rem; border-bottom: 1px solid #f3f4f6; font-size: 0.6875rem; font-weight: 600; color: #92400e; background: #fffbeb;">
+                                     style="position: absolute; right: 0; top: 100%; margin-top: 0.375rem; background: #141414; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); min-width: 280px; z-index: 50; overflow: hidden;">
+                                    <div style="padding: 0.625rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.6875rem; font-weight: 600; color: #fbbf24; background: #141414beb;">
                                         Produtos sem preço de venda
                                     </div>
                                     @foreach($inventoryData['itemsWithoutPrice'] as $missingItem)
-                                        <a href="{{ route('products.edit', $missingItem['id']) }}" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; border-bottom: 1px solid #f9fafb; text-decoration: none; transition: background 0.1s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                        <a href="{{ route('products.edit', $missingItem['id']) }}" style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; border-bottom: 1px solid #f9fafb; text-decoration: none; transition: background 0.1s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                                             <div>
-                                                <div style="font-size: 0.8125rem; font-weight: 500; color: #111827;">{{ $missingItem['name'] }}</div>
-                                                <div style="font-size: 0.6875rem; color: #6b7280;">Custo: R$ {{ number_format($missingItem['cost'], 2, ',', '.') }}</div>
+                                                <div style="font-size: 0.8125rem; font-weight: 500; color: #e3e3e3;">{{ $missingItem['name'] }}</div>
+                                                <div style="font-size: 0.6875rem; color: #818181;">Custo: R$ {{ number_format($missingItem['cost'], 2, ',', '.') }}</div>
                                             </div>
-                                            <svg style="width: 1rem; height: 1rem; color: #9ca3af; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                            <svg style="width: 1rem; height: 1rem; color: #666666; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                         </a>
                                     @endforeach
                                 </div>
@@ -207,25 +207,25 @@
                     {{-- Cards resumo --}}
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-4">
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Valor em Estoque</div>
-                            <div style="font-size: 1.125rem; font-weight: 800; color: #111827;">R$ {{ number_format($inventoryData['totalCost'], 2, ',', '.') }}</div>
-                            <div style="font-size: 0.6875rem; color: #9ca3af;">Custo total investido</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Valor em Estoque</div>
+                            <div style="font-size: 1.125rem; font-weight: 800; color: #e3e3e3;">R$ {{ number_format($inventoryData['totalCost'], 2, ',', '.') }}</div>
+                            <div style="font-size: 0.6875rem; color: #666666;">Custo total investido</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Valor Potencial</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Valor Potencial</div>
                             <div style="font-size: 1.125rem; font-weight: 800; color: #2563eb;">R$ {{ number_format($inventoryData['totalSaleValue'], 2, ',', '.') }}</div>
-                            <div style="font-size: 0.6875rem; color: #9ca3af;">Se vender tudo</div>
+                            <div style="font-size: 0.6875rem; color: #666666;">Se vender tudo</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Lucro Possível</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Lucro Possível</div>
                             <div style="font-size: 1.125rem; font-weight: 800; color: {{ $inventoryData['potentialProfit'] >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($inventoryData['potentialProfit'], 2, ',', '.') }}</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Margem Potencial</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Margem Potencial</div>
                             <div style="font-size: 1.125rem; font-weight: 800; color: {{ $inventoryData['potentialMargin'] >= 0 ? '#16a34a' : '#dc2626' }};">{{ $inventoryData['potentialMargin'] }}%</div>
                         </div>
                         <div>
-                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #6b7280; letter-spacing: 0.05em;">Tempo Médio</div>
+                            <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: #818181; letter-spacing: 0.05em;">Tempo Médio</div>
                             <div style="font-size: 1.125rem; font-weight: 800; color: {{ $inventoryData['avgDaysInStock'] > 30 ? '#dc2626' : ($inventoryData['avgDaysInStock'] > 15 ? '#d97706' : '#111827') }};">{{ $inventoryData['avgDaysInStock'] }} dias</div>
                             <div style="font-size: 0.6875rem; color: {{ $inventoryData['avgDaysInStock'] > 30 ? '#dc2626' : '#9ca3af' }};">
                                 {{ $inventoryData['avgDaysInStock'] > 30 ? 'Atenção: estoque parado' : 'Em estoque' }}
@@ -236,55 +236,55 @@
                     {{-- Breakdown: Próprios vs Consignação --}}
                     @if($inventoryData['ownData']['itemCount'] > 0 || $inventoryData['consignmentData']['itemCount'] > 0)
                         <div style="border-top: 1px solid #f3f4f6; padding-top: 0.75rem;">
-                            <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #9ca3af; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Detalhamento por Origem</div>
+                            <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #666666; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Detalhamento por Origem</div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 @if($inventoryData['ownData']['itemCount'] > 0)
-                                    <div style="background: #f9fafb; border-radius: 0.5rem; padding: 0.75rem 1rem; border: 1px solid #e5e7eb;">
+                                    <div style="background: #1a1a1a; border-radius: 0.5rem; padding: 0.75rem 1rem; border: 1px solid rgba(255,255,255,0.06);">
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.375rem;">
-                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #111827;">Próprios</span>
-                                            <span style="font-size: 0.6875rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #e0e7ff; color: #3730a3; font-weight: 600;">{{ $inventoryData['ownData']['itemCount'] }} {{ $inventoryData['ownData']['itemCount'] === 1 ? 'item' : 'itens' }}</span>
+                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3;">Próprios</span>
+                                            <span style="font-size: 0.6875rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: rgba(99,102,241,0.15); color: #a5b4fc; font-weight: 600;">{{ $inventoryData['ownData']['itemCount'] }} {{ $inventoryData['ownData']['itemCount'] === 1 ? 'item' : 'itens' }}</span>
                                         </div>
                                         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                                             <div>
-                                                <div style="font-size: 0.625rem; color: #6b7280;">Custo</div>
-                                                <div style="font-size: 0.875rem; font-weight: 700; color: #111827;">R$ {{ number_format($inventoryData['ownData']['totalCost'], 2, ',', '.') }}</div>
+                                                <div style="font-size: 0.625rem; color: #818181;">Custo</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: #e3e3e3;">R$ {{ number_format($inventoryData['ownData']['totalCost'], 2, ',', '.') }}</div>
                                             </div>
                                             <div>
-                                                <div style="font-size: 0.625rem; color: #6b7280;">Venda</div>
+                                                <div style="font-size: 0.625rem; color: #818181;">Venda</div>
                                                 <div style="font-size: 0.875rem; font-weight: 700; color: #2563eb;">R$ {{ number_format($inventoryData['ownData']['totalSaleValue'], 2, ',', '.') }}</div>
                                             </div>
                                             <div>
-                                                <div style="font-size: 0.625rem; color: #6b7280;">Lucro</div>
+                                                <div style="font-size: 0.625rem; color: #818181;">Lucro</div>
                                                 <div style="font-size: 0.875rem; font-weight: 700; color: {{ $inventoryData['ownData']['profit'] >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($inventoryData['ownData']['profit'], 2, ',', '.') }}</div>
                                             </div>
                                             <div>
-                                                <div style="font-size: 0.625rem; color: #6b7280;">Margem</div>
+                                                <div style="font-size: 0.625rem; color: #818181;">Margem</div>
                                                 <div style="font-size: 0.875rem; font-weight: 700; color: {{ $inventoryData['ownData']['margin'] >= 0 ? '#16a34a' : '#dc2626' }};">{{ $inventoryData['ownData']['margin'] }}%</div>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
                                 @if($inventoryData['consignmentData']['itemCount'] > 0)
-                                    <div style="background: #f9fafb; border-radius: 0.5rem; padding: 0.75rem 1rem; border: 1px solid #e5e7eb;">
+                                    <div style="background: #1a1a1a; border-radius: 0.5rem; padding: 0.75rem 1rem; border: 1px solid rgba(255,255,255,0.06);">
                                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.375rem;">
-                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #111827;">Consignação</span>
-                                            <span style="font-size: 0.6875rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #fef3c7; color: #92400e; font-weight: 600;">{{ $inventoryData['consignmentData']['itemCount'] }} {{ $inventoryData['consignmentData']['itemCount'] === 1 ? 'item' : 'itens' }}</span>
+                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3;">Consignação</span>
+                                            <span style="font-size: 0.6875rem; padding: 0.0625rem 0.375rem; border-radius: 9999px; background: #fef3c7; color: #fbbf24; font-weight: 600;">{{ $inventoryData['consignmentData']['itemCount'] }} {{ $inventoryData['consignmentData']['itemCount'] === 1 ? 'item' : 'itens' }}</span>
                                         </div>
                                         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                                             <div>
-                                                <div style="font-size: 0.625rem; color: #6b7280;">Custo Fornecedor</div>
-                                                <div style="font-size: 0.875rem; font-weight: 700; color: #111827;">R$ {{ number_format($inventoryData['consignmentData']['totalCost'], 2, ',', '.') }}</div>
+                                                <div style="font-size: 0.625rem; color: #818181;">Custo Fornecedor</div>
+                                                <div style="font-size: 0.875rem; font-weight: 700; color: #e3e3e3;">R$ {{ number_format($inventoryData['consignmentData']['totalCost'], 2, ',', '.') }}</div>
                                             </div>
                                             <div>
-                                                <div style="font-size: 0.625rem; color: #6b7280;">Venda Sugerida</div>
+                                                <div style="font-size: 0.625rem; color: #818181;">Venda Sugerida</div>
                                                 <div style="font-size: 0.875rem; font-weight: 700; color: #2563eb;">R$ {{ number_format($inventoryData['consignmentData']['totalSaleValue'], 2, ',', '.') }}</div>
                                             </div>
                                             <div>
-                                                <div style="font-size: 0.625rem; color: #6b7280;">Lucro</div>
+                                                <div style="font-size: 0.625rem; color: #818181;">Lucro</div>
                                                 <div style="font-size: 0.875rem; font-weight: 700; color: {{ $inventoryData['consignmentData']['profit'] >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($inventoryData['consignmentData']['profit'], 2, ',', '.') }}</div>
                                             </div>
                                             <div>
-                                                <div style="font-size: 0.625rem; color: #6b7280;">Margem</div>
+                                                <div style="font-size: 0.625rem; color: #818181;">Margem</div>
                                                 <div style="font-size: 0.875rem; font-weight: 700; color: {{ $inventoryData['consignmentData']['margin'] >= 0 ? '#16a34a' : '#dc2626' }};">{{ $inventoryData['consignmentData']['margin'] }}%</div>
                                             </div>
                                         </div>
@@ -354,7 +354,7 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
                     @foreach($accounts as $account)
                         <a href="{{ route('finance.accounts', ['account_id' => $account->id]) }}" 
-                           style="background: white; border-radius: 0.75rem; padding: 1rem; border: 1px solid #e5e7eb; display: flex; align-items: center; gap: 0.75rem; text-decoration: none; transition: box-shadow 0.15s;"
+                           style="background: #141414; border-radius: 0.75rem; padding: 1rem; border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 0.75rem; text-decoration: none; transition: box-shadow 0.15s;"
                            onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
                             <div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; background: {{ $account->color }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                                 <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -362,7 +362,7 @@
                                 </svg>
                             </div>
                             <div style="min-width: 0;">
-                                <div style="font-size: 0.75rem; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $account->name }}</div>
+                                <div style="font-size: 0.75rem; color: #818181; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $account->name }}</div>
                                 <div style="font-size: 1rem; font-weight: 700; color: {{ (float)$account->current_balance >= 0 ? '#111827' : '#dc2626' }};">{{ $account->formatted_balance }}</div>
                             </div>
                         </a>
@@ -372,9 +372,9 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Gráfico Receitas vs Despesas -->
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
-                    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb;">
-                        <h2 style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Receitas vs Despesas — <span style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('F/Y') }}</span></h2>
+                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                        <h2 style="font-size: 0.9375rem; font-weight: 600; color: #e3e3e3;">Receitas vs Despesas — <span style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('F/Y') }}</span></h2>
                     </div>
                     <div style="padding: 1.25rem;">
                         <canvas id="financeChart" height="200"></canvas>
@@ -382,18 +382,18 @@
                 </div>
 
                 <!-- Contas Vencendo -->
-                <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden;">
-                    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
-                        <h2 style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Próximos Vencimentos</h2>
+                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
+                    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="font-size: 0.9375rem; font-weight: 600; color: #e3e3e3;">Próximos Vencimentos</h2>
                         @if($dueSoon->count() > 0)
-                            <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #fef2f2; color: #dc2626; font-weight: 600;">{{ $dueSoon->count() }}</span>
+                            <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: rgba(239,68,68,0.1); color: #fca5a5; font-weight: 600;">{{ $dueSoon->count() }}</span>
                         @endif
                     </div>
                     <div style="max-height: 300px; overflow-y: auto;">
                         @forelse($dueSoon as $item)
-                            <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;">
                                 <div>
-                                    <div style="font-size: 0.8125rem; font-weight: 500; color: #111827;">{{ $item->description }}</div>
+                                    <div style="font-size: 0.8125rem; font-weight: 500; color: #e3e3e3;">{{ $item->description }}</div>
                                     <div style="font-size: 0.6875rem; color: {{ $item->due_date?->isPast() ? '#dc2626' : '#d97706' }};">
                                         {{ $item->due_date?->format('d/m/Y') ?? '-' }}
                                         @if($item->due_date?->isPast()) — Vencido @endif
@@ -409,7 +409,7 @@
                                 </div>
                             </div>
                         @empty
-                            <div style="padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
+                            <div style="padding: 2rem; text-align: center; color: #666666; font-size: 0.875rem;">
                                 Nenhuma conta pendente nos próximos 7 dias.
                             </div>
                         @endforelse
@@ -418,35 +418,35 @@
             </div>
 
             <!-- Últimas Movimentações -->
-            <div style="background: white; border-radius: 0.75rem; border: 1px solid #e5e7eb; overflow: hidden; margin-top: 1.5rem;">
-                <div style="padding: 1rem 1.25rem; border-bottom: 1px solid #e5e7eb;">
-                    <h2 style="font-size: 0.9375rem; font-weight: 600; color: #111827;">Últimas Movimentações</h2>
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-top: 1.5rem;">
+                <div style="padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                    <h2 style="font-size: 0.9375rem; font-weight: 600; color: #e3e3e3;">Últimas Movimentações</h2>
                 </div>
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead>
-                            <tr style="background: #f9fafb;">
-                                <th style="padding: 0.625rem 1.25rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Data</th>
-                                <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Descrição</th>
-                                <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Categoria</th>
-                                <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Carteira</th>
-                                <th style="padding: 0.625rem 1rem; text-align: center; font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Status</th>
-                                <th style="padding: 0.625rem 1.25rem; text-align: right; font-size: 0.6875rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Valor</th>
+                            <tr style="background: #1a1a1a;">
+                                <th style="padding: 0.625rem 1.25rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Data</th>
+                                <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Descrição</th>
+                                <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Categoria</th>
+                                <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Carteira</th>
+                                <th style="padding: 0.625rem 1rem; text-align: center; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Status</th>
+                                <th style="padding: 0.625rem 1.25rem; text-align: right; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Valor</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($recentTransactions as $tx)
-                                <tr style="border-bottom: 1px solid #f3f4f6;">
-                                    <td style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; color: #6b7280;">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; color: #818181;">
                                         {{ $tx->paid_at ? $tx->paid_at->format('d/m H:i') : $tx->due_date->format('d/m/Y') }}
                                     </td>
-                                    <td style="padding: 0.625rem 1rem; font-size: 0.8125rem; font-weight: 500; color: #111827;">{{ Str::limit($tx->description, 40) }}</td>
+                                    <td style="padding: 0.625rem 1rem; font-size: 0.8125rem; font-weight: 500; color: #e3e3e3;">{{ Str::limit($tx->description, 40) }}</td>
                                     <td style="padding: 0.625rem 1rem;">
                                         <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: {{ $tx->category->color ?? '#6b7280' }}20; color: {{ $tx->category->color ?? '#6b7280' }}; font-weight: 500;">
                                             {{ $tx->category->name ?? '-' }}
                                         </span>
                                     </td>
-                                    <td style="padding: 0.625rem 1rem; font-size: 0.75rem; color: #6b7280;">{{ $tx->account->name ?? '-' }}</td>
+                                    <td style="padding: 0.625rem 1rem; font-size: 0.75rem; color: #818181;">{{ $tx->account->name ?? '-' }}</td>
                                     <td style="padding: 0.625rem 1rem; text-align: center;">
                                         <span style="font-size: 0.625rem; padding: 0.125rem 0.375rem; border-radius: 9999px; font-weight: 600; background: {{ $tx->status->bgColor() }}; color: {{ $tx->status->color() }};">
                                             {{ $tx->status->label() }}
@@ -458,7 +458,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" style="padding: 2rem; text-align: center; color: #9ca3af;">Nenhuma movimentação registrada.</td>
+                                    <td colspan="6" style="padding: 2rem; text-align: center; color: #666666;">Nenhuma movimentação registrada.</td>
                                 </tr>
                             @endforelse
                         </tbody>

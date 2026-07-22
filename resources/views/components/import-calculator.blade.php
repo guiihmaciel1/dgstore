@@ -4,16 +4,7 @@
 @endphp
 
 @if($isAdmin && $dollarRate)
-<div x-data="importCalc({{ (float) $dollarRate }})" x-init="init()">
-    {{-- FAB --}}
-    <button @click="open = true"
-            :class="{ 'imp-fab-pulse': !open }"
-            style="position: fixed; bottom: 24px; left: 24px; z-index: 40; width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; border: none; cursor: pointer; box-shadow: 0 8px 32px rgba(37, 99, 235, 0.4); display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(.4,0,.2,1);"
-            title="Calculadora de importação">
-        <svg style="width: 22px; height: 22px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-    </button>
+<div x-data="importCalc({{ (float) $dollarRate }})" x-init="init()" @open-import-calc.window="open = true">
 
     {{-- Overlay --}}
     <div x-show="open" x-transition.opacity.duration.200ms @click="open = false"
@@ -280,7 +271,7 @@
 
         .imp-rate-badge {
             background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
             padding: 10px 14px;
             margin-bottom: 14px;
@@ -337,7 +328,7 @@
             letter-spacing: -0.02em;
         }
         .imp-input-primary:focus {
-            background: white;
+            background: #141414;
             box-shadow: inset 0 0 0 2px #2563eb, 0 0 0 4px rgba(37, 99, 235, 0.1);
         }
 
@@ -347,17 +338,17 @@
             font-size: 15px;
             font-weight: 700;
             color: #d97706;
-            background: #fffbeb;
+            background: #141414beb;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
         }
         .imp-input-amber:focus {
-            background: white;
+            background: #141414;
             box-shadow: inset 0 0 0 2px #f59e0b, 0 0 0 3px rgba(245, 158, 11, 0.1);
         }
 
         .imp-input-wrap-amber {
             border-radius: 10px;
-            background: #fffbeb;
+            background: #141414beb;
         }
 
         .imp-formula {
@@ -368,7 +359,7 @@
             padding: 12px;
             margin-bottom: 12px;
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
             flex-wrap: wrap;
         }
@@ -388,7 +379,7 @@
             color: #64748b;
         }
         .imp-formula-highlight {
-            background: #eef2ff;
+            background: rgba(99,102,241,0.1);
             padding: 4px 10px;
             border-radius: 8px;
         }
@@ -403,8 +394,8 @@
             align-items: center;
             gap: 10px;
             padding: 12px;
-            background: white;
-            border: 1px solid #e2e8f0;
+            background: #141414;
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
             transition: all 0.15s;
         }
@@ -481,8 +472,8 @@
         }
 
         .imp-breakdown {
-            background: white;
-            border: 1px solid #e2e8f0;
+            background: #141414;
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
             padding: 12px 14px;
             font-size: 12px;

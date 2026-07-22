@@ -1,15 +1,15 @@
 <x-app-layout>
     <x-slot name="title">Checklist: {{ $checklist->name }}</x-slot>
     <div class="py-4">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-6 lg:px-8">
 
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
                 <div>
-                    <a href="{{ route('checklists.index') }}" style="font-size: 0.75rem; color: #6b7280; text-decoration: none;">
+                    <a href="{{ route('checklists.index') }}" style="font-size: 0.75rem; color: #818181; text-decoration: none;">
                         &larr; Voltar para listagem
                     </a>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827; margin-top: 0.25rem;">{{ $checklist->name }}</h1>
-                    <p style="font-size: 0.8rem; color: #6b7280;">
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3; margin-top: 0.25rem;">{{ $checklist->name }}</h1>
+                    <p style="font-size: 0.8rem; color: #818181;">
                         Salvo em {{ $checklist->created_at->format('d/m/Y H:i') }} por {{ $checklist->user?->name ?? '-' }}
                     </p>
                 </div>
@@ -25,7 +25,7 @@
             </div>
 
             @if($checklist->product || $checklist->tradeIn)
-                <div style="background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 0.75rem; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: #4338ca;">
+                <div style="background: rgba(99,102,241,0.1); border: 1px solid #c7d2fe; border-radius: 0.75rem; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: #a5b4fc;">
                     Vinculado a:
                     @if($checklist->product)
                         <strong>Produto — {{ $checklist->product->name }}</strong>
@@ -42,10 +42,10 @@
                         <span style="font-size: 1rem;">📱</span>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #312e81;">{{ $deviceInfo['modelName'] ?? 'Dispositivo' }}</span>
                         @if(!empty($deviceInfo['capacity']))
-                            <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #4338ca;">{{ $deviceInfo['capacity'] }}</span>
+                            <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #a5b4fc;">{{ $deviceInfo['capacity'] }}</span>
                         @endif
                         @if(!empty($deviceInfo['color']))
-                            <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #e0e7ff; color: #4338ca;">{{ $deviceInfo['color'] }}</span>
+                            <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: rgba(99,102,241,0.15); color: #a5b4fc;">{{ $deviceInfo['color'] }}</span>
                         @endif
                     </div>
 
@@ -105,7 +105,7 @@
                                 @foreach($fields as $key => $label)
                                     @if(!empty($deviceInfo[$key]))
                                         <div>
-                                            <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">{{ $label }}</span>
+                                            <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;">{{ $label }}</span>
                                             @php
                                                 $val = $deviceInfo[$key];
                                                 $textColor = '#111827';
@@ -134,13 +134,13 @@
                 </div>
             @endif
 
-            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
+            <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <span style="font-size: 0.8rem; font-weight: 600; color: #374151;">Progresso</span>
-                    <span style="font-size: 0.8rem; font-weight: 700; color: #111827;">{{ $checklist->passed_items + $checklist->failed_items }} / {{ $checklist->total_items }}</span>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: #a4a4a4;">Progresso</span>
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #e3e3e3;">{{ $checklist->passed_items + $checklist->failed_items }} / {{ $checklist->total_items }}</span>
                 </div>
                 @php $pct = $checklist->total_items > 0 ? round((($checklist->passed_items + $checklist->failed_items) / $checklist->total_items) * 100) : 0; @endphp
-                <div style="width: 100%; height: 8px; background: #f3f4f6; border-radius: 9999px; overflow: hidden;">
+                <div style="width: 100%; height: 8px; background: #222222; border-radius: 9999px; overflow: hidden;">
                     <div style="height: 100%; border-radius: 9999px; transition: width 0.3s; background: {{ $pct === 100 ? '#059669' : '#111827' }}; width: {{ $pct }}%;"></div>
                 </div>
             </div>
@@ -148,14 +148,14 @@
             @php $sections = $checklist->sections ?? []; @endphp
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 @foreach($sections as $section)
-                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
-                        <div style="padding: 0.875rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid #f3f4f6;">
+                    <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
+                        <div style="padding: 0.875rem 1.25rem; display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04);">
                             <span style="font-size: 1.25rem;">{{ $section['icon'] ?? '' }}</span>
-                            <span style="font-size: 0.9375rem; font-weight: 700; color: #111827;">{{ $section['title'] ?? '' }}</span>
+                            <span style="font-size: 0.9375rem; font-weight: 700; color: #e3e3e3;">{{ $section['title'] ?? '' }}</span>
                         </div>
                         @foreach($section['subs'] ?? [] as $sub)
                             @if(!empty($sub['label']))
-                                <div style="padding: 0.5rem 1.25rem 0.25rem; font-size: 0.7rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;">{{ $sub['label'] }}</div>
+                                <div style="padding: 0.5rem 1.25rem 0.25rem; font-size: 0.7rem; font-weight: 600; color: #666666; text-transform: uppercase; letter-spacing: 0.05em;">{{ $sub['label'] }}</div>
                             @endif
                             @foreach($sub['items'] ?? [] as $item)
                                 @php
@@ -178,11 +178,11 @@
                                         @endif
                                     </div>
                                     <div style="flex: 1; min-width: 0;">
-                                        <span style="font-size: 0.875rem; {{ $status === 'ok' ? 'color: #374151; text-decoration: line-through; opacity: 0.5;' : ($status === 'fail' ? 'color: #dc2626; font-weight: 500;' : 'color: #374151;') }}">
+                                        <span style="font-size: 0.875rem; {{ $status === 'ok' ? 'color: #a4a4a4; text-decoration: line-through; opacity: 0.5;' : ($status === 'fail' ? 'color: #fca5a5; font-weight: 500;' : 'color: #a4a4a4;') }}">
                                             {{ $item['label'] ?? '' }}
                                         </span>
                                         @if(!empty($item['hint']))
-                                            <span style="display: block; font-size: 0.7rem; color: #9ca3af; margin-top: 1px;">{{ $item['hint'] }}</span>
+                                            <span style="display: block; font-size: 0.7rem; color: #666666; margin-top: 1px;">{{ $item['hint'] }}</span>
                                         @endif
                                     </div>
                                 </div>

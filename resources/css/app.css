@@ -4,7 +4,145 @@
 
 [x-cloak] { display: none !important; }
 
+@layer base {
+    body {
+        @apply bg-surface text-dg-100;
+    }
+
+    /* Global dark inputs - prevents white bg on unstyled form elements */
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="search"],
+    input[type="date"],
+    input[type="datetime-local"],
+    input[type="time"],
+    input[type="month"],
+    input[type="week"],
+    select,
+    textarea {
+        background-color: #1a1a1a;
+        color: #e3e3e3;
+        border-color: rgba(255, 255, 255, 0.06);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #666666;
+    }
+
+    select option {
+        background-color: #141414;
+        color: #e3e3e3;
+    }
+}
+
 @layer components {
+    /* ===========================
+       DG Design System (Dark)
+       =========================== */
+
+    /* Cards */
+    .dg-card {
+        @apply bg-surface-raised rounded-2xl border border-border;
+    }
+    .dg-card-hover {
+        @apply dg-card hover:bg-surface-elevated hover:border-border-strong transition-all duration-200;
+    }
+    .dg-card-flat {
+        @apply bg-surface-raised rounded-xl border border-border;
+    }
+
+    /* Buttons */
+    .dg-btn {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-150 active:scale-[0.97];
+    }
+    .dg-btn-primary {
+        @apply dg-btn bg-white text-dg-950 hover:bg-dg-100;
+    }
+    .dg-btn-secondary {
+        @apply dg-btn bg-surface-elevated text-dg-200 border border-border hover:bg-dg-800 hover:border-border-strong;
+    }
+    .dg-btn-ghost {
+        @apply dg-btn text-dg-300 hover:text-dg-100 hover:bg-surface-elevated;
+    }
+    .dg-btn-danger {
+        @apply dg-btn bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20;
+    }
+    .dg-btn-success {
+        @apply dg-btn bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20;
+    }
+
+    /* Form Inputs */
+    .dg-input {
+        @apply w-full px-4 py-3 bg-surface-overlay border border-border rounded-xl text-sm text-dg-100 placeholder-dg-500 focus:ring-2 focus:ring-dg-400/20 focus:border-dg-400 transition-all duration-150;
+    }
+    .dg-select {
+        @apply dg-input appearance-none cursor-pointer;
+    }
+    .dg-textarea {
+        @apply dg-input resize-y;
+    }
+    .dg-label {
+        @apply block text-sm font-medium text-dg-300 mb-1.5;
+    }
+
+    /* Badges */
+    .dg-badge {
+        @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-dg-800 text-dg-300 border border-border;
+    }
+    .dg-badge-success {
+        @apply dg-badge bg-emerald-500/10 text-emerald-400 border-emerald-500/20;
+    }
+    .dg-badge-danger {
+        @apply dg-badge bg-red-500/10 text-red-400 border-red-500/20;
+    }
+    .dg-badge-warning {
+        @apply dg-badge bg-amber-500/10 text-amber-400 border-amber-500/20;
+    }
+    .dg-badge-info {
+        @apply dg-badge bg-blue-500/10 text-blue-400 border-blue-500/20;
+    }
+
+    /* Tables */
+    .dg-table-header {
+        @apply bg-surface-overlay text-dg-400 text-xs font-medium uppercase tracking-wider;
+    }
+    .dg-table-row {
+        @apply border-b border-border hover:bg-surface-elevated/50 transition-colors duration-100;
+    }
+    .dg-table-cell {
+        @apply px-6 py-4 text-sm text-dg-200;
+    }
+
+    /* Typography */
+    .dg-section-title {
+        @apply text-xs font-semibold text-dg-500 uppercase tracking-wider;
+    }
+    .dg-heading {
+        @apply text-lg font-semibold text-dg-50;
+    }
+    .dg-subheading {
+        @apply text-sm text-dg-400;
+    }
+
+    /* Dividers */
+    .dg-divider {
+        @apply border-t border-border;
+    }
+
+    /* Glass / Blur */
+    .dg-glass {
+        @apply bg-surface-raised/80 backdrop-blur-xl border-b border-border;
+    }
+
+    /* ===========================
+       Legacy Apple Classes (B2B/Perfumes)
+       Manter para portais que ainda usam
+       =========================== */
     .glass {
         @apply bg-white/80 backdrop-blur-xl border-b border-gray-200/60;
     }

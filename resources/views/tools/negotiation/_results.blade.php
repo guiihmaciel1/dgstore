@@ -1,6 +1,6 @@
 {{-- Loading --}}
-<div x-show="cardLoading" class="bg-white rounded-xl border border-gray-200 p-12 text-center">
-    <div class="inline-block w-10 h-10 border-4 border-gray-100 border-t-gray-900 rounded-full animate-spin"></div>
+<div x-show="cardLoading" class="bg-surface-raised rounded-xl border border-border p-12 text-center">
+    <div class="inline-block w-10 h-10 border-4 border-border border-t-gray-900 rounded-full animate-spin"></div>
 </div>
 
 {{-- Resultados --}}
@@ -9,7 +9,7 @@
     <div x-show="cardBalance > 0" class="bg-green-50 border border-green-200 rounded-xl px-4 py-3 sm:px-5 sm:py-4 flex items-center justify-between mb-3">
         <div>
             <div class="text-[15px] font-bold text-emerald-600">Pix / Dinheiro</div>
-            <div class="text-xs text-gray-500">Melhor preço - sem taxa</div>
+            <div class="text-xs text-dg-500">Melhor preço - sem taxa</div>
         </div>
         <div class="text-right">
             <div class="text-[22px] font-extrabold text-emerald-600" x-text="'R$ ' + fmt(cardBalance)"></div>
@@ -22,15 +22,15 @@
             <button @click="setSelection(p.key)" type="button"
                     class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-2 transition-colors"
                     :class="activePreset === p.key
-                        ? 'border-gray-900 bg-gray-900 text-white'
-                        : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'"
+                        ? 'border-gray-900 bg-surface text-white'
+                        : 'border-border bg-surface-raised text-dg-300 hover:border-border-strong'"
                     x-text="p.label"></button>
         </template>
     </div>
 
     {{-- Tabela --}}
-    <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
-        <div class="grid grid-cols-[32px_1fr_auto] bg-gray-900 text-white text-[11px] font-semibold uppercase tracking-wider">
+    <div class="bg-surface-raised border border-border rounded-xl overflow-hidden">
+        <div class="grid grid-cols-[32px_1fr_auto] bg-surface text-white text-[11px] font-semibold uppercase tracking-wider">
             <div class="py-2.5 pl-2.5 flex items-center">
                 <input type="checkbox" :checked="cardResults.every(r => r.selected)" @change="cardResults.forEach(r => r.selected = $event.target.checked); activePreset = $event.target.checked ? 'all' : null"
                        class="w-[15px] h-[15px] accent-white cursor-pointer">
@@ -39,18 +39,18 @@
             <div class="py-2.5 px-3.5 text-right">Cliente Paga</div>
         </div>
         <template x-for="(row, idx) in cardResults" :key="idx">
-            <div class="grid grid-cols-[32px_1fr_auto] items-center border-t border-gray-100 transition-opacity duration-150"
-                 :class="row.selected ? (idx % 2 === 0 ? 'bg-white' : 'bg-gray-50') : 'bg-gray-100 opacity-40'">
+            <div class="grid grid-cols-[32px_1fr_auto] items-center border-t border-border transition-opacity duration-150"
+                 :class="row.selected ? (idx % 2 === 0 ? 'bg-surface-raised' : 'bg-surface') : 'bg-surface-overlay opacity-40'">
                 <div class="py-2.5 pl-2.5 flex items-center">
                     <input type="checkbox" x-model="row.selected" @change="activePreset = null" class="w-[15px] h-[15px] accent-gray-900 cursor-pointer">
                 </div>
                 <div class="py-2.5 px-3.5">
-                    <div class="text-sm font-semibold text-gray-900" x-text="row.label"></div>
-                    <div x-show="row.installments > 1" class="text-xs text-gray-500" x-text="row.installments + 'x de R$ ' + fmt(row.installment_value)"></div>
-                    <div class="text-[11px] text-gray-400" x-text="'Taxa ' + row.mdr_rate.toString().replace('.', ',') + '%'"></div>
+                    <div class="text-sm font-semibold text-dg-100" x-text="row.label"></div>
+                    <div x-show="row.installments > 1" class="text-xs text-dg-500" x-text="row.installments + 'x de R$ ' + fmt(row.installment_value)"></div>
+                    <div class="text-[11px] text-dg-500" x-text="'Taxa ' + row.mdr_rate.toString().replace('.', ',') + '%'"></div>
                 </div>
                 <div class="py-2.5 px-3.5 text-right">
-                    <div class="text-base font-bold text-gray-900" x-text="'R$ ' + fmt(row.gross_amount)"></div>
+                    <div class="text-base font-bold text-dg-100" x-text="'R$ ' + fmt(row.gross_amount)"></div>
                     <div class="text-[11px] text-red-500" x-text="'taxa R$ ' + fmt(row.fee_amount)"></div>
                 </div>
             </div>
@@ -58,11 +58,11 @@
     </div>
 
     {{-- Resumo Negociação --}}
-    <div x-show="productPrice > 0" class="mt-3 bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
-        <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2">Resumo</div>
+    <div x-show="productPrice > 0" class="mt-3 bg-surface-raised border border-border rounded-xl p-4 sm:p-5">
+        <div class="text-[11px] font-semibold text-dg-500 uppercase tracking-wider mb-2">Resumo</div>
         <div class="flex justify-between py-1 text-[13px]">
-            <span class="text-gray-700" x-text="product.description || 'Produto'"></span>
-            <span class="font-bold text-gray-900" x-text="'R$ ' + fmt(productPrice)"></span>
+            <span class="text-dg-300" x-text="product.description || 'Produto'"></span>
+            <span class="font-bold text-dg-100" x-text="'R$ ' + fmt(productPrice)"></span>
         </div>
         <template x-if="tradeInValue > 0">
             <div class="flex justify-between py-1 text-[13px]">
@@ -76,9 +76,9 @@
                 <span class="font-bold text-emerald-600" x-text="'- R$ ' + fmt(downPayment)"></span>
             </div>
         </template>
-        <div class="flex justify-between pt-2 mt-1 border-t border-gray-100">
-            <span class="text-sm font-bold text-gray-900">Saldo no cartão</span>
-            <span class="text-lg font-extrabold text-gray-900" x-text="'R$ ' + fmt(cardBalance)"></span>
+        <div class="flex justify-between pt-2 mt-1 border-t border-border">
+            <span class="text-sm font-bold text-dg-100">Saldo no cartão</span>
+            <span class="text-lg font-extrabold text-dg-100" x-text="'R$ ' + fmt(cardBalance)"></span>
         </div>
     </div>
 
@@ -86,7 +86,7 @@
     <div class="flex flex-col sm:flex-row gap-2.5 mt-3">
         <button @click="copyMessage()" type="button"
                 class="flex-1 py-3.5 rounded-xl text-sm font-bold cursor-pointer border-none flex items-center justify-center gap-2 transition-colors"
-                :class="copied ? 'bg-emerald-600 text-white' : 'bg-gray-900 text-white hover:bg-gray-800'">
+                :class="copied ? 'bg-emerald-600 text-white' : 'bg-surface text-white hover:bg-surface-overlay'">
             <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
             </svg>

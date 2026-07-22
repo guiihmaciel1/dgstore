@@ -1,7 +1,7 @@
 @php $isIntern = auth()->user()->isIntern(); @endphp
-<nav x-data="{ open: false, commercialOpen: false, financeOpen: false, stockOpen: false, toolsOpen: false }" class="bg-gray-900 shadow-lg" @click.away="commercialOpen = false; financeOpen = false; stockOpen = false; toolsOpen = false">
+<nav x-data="{ open: false, commercialOpen: false, financeOpen: false, stockOpen: false, toolsOpen: false }" class="bg-surface-raised border-b border-border" @click.away="commercialOpen = false; financeOpen = false; stockOpen = false; toolsOpen = false">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
@@ -13,14 +13,14 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden sm:-my-px sm:ms-6 sm:flex items-center gap-0.5">
-                    <a href="{{ $isIntern ? route('intern.dashboard') : route('dashboard') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('dashboard') || request()->routeIs('intern.dashboard') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                    <a href="{{ $isIntern ? route('intern.dashboard') : route('dashboard') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('dashboard') || request()->routeIs('intern.dashboard') ? 'text-white bg-surface-overlay rounded-lg' : 'text-dg-300 hover:text-white hover:bg-surface-overlay rounded-lg' }} transition">
                         Dashboard
                     </a>
                     
                     <!-- Dropdown: Comercial -->
                     <div class="relative">
                         <button @click="commercialOpen = !commercialOpen; financeOpen = false; stockOpen = false; toolsOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('customers.*') || request()->routeIs('sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') || request()->routeIs('schedule.*') || request()->routeIs('suppliers.*') || request()->routeIs('quotations.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('customers.*') || request()->routeIs('sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') || request()->routeIs('schedule.*') || request()->routeIs('suppliers.*') || request()->routeIs('quotations.*') ? 'text-white bg-surface-overlay' : 'text-dg-300 hover:text-white hover:bg-surface-overlay' }}">
                             <span>Comercial</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': commercialOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -33,48 +33,48 @@
                              x-transition:leave="transition ease-in duration-75"
                              x-transition:leave-start="transform opacity-100 scale-100"
                              x-transition:leave-end="transform opacity-0 scale-95"
-                             class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
+                             class="absolute left-0 mt-2 w-48 rounded-lg bg-surface-overlay border border-border z-50"
                              x-cloak>
                             <div class="py-1">
-                                <a href="{{ route('customers.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('customers.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('customers.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('customers.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     </svg>
                                     Clientes
                                 </a>
-                                <a href="{{ route('sales.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('sales.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('sales.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('sales.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                     </svg>
                                     Vendas
                                 </a>
-                                <a href="{{ route('reservations.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('reservations.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reservations.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                     Reservas
                                 </a>
-                                <a href="{{ route('schedule.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('schedule.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('schedule.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('schedule.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                     </svg>
                                     Agenda
                                 </a>
-                                <a href="{{ route('warranties.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('warranties.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('warranties.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                                     </svg>
                                     Garantias
                                 </a>
                                 @if(!$isIntern)
-                                <div class="border-t border-gray-700 my-1"></div>
-                                <a href="{{ route('suppliers.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <div class="border-t border-border my-1"></div>
+                                <a href="{{ route('suppliers.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('suppliers.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                     </svg>
                                     Fornecedores
                                 </a>
-                                <a href="{{ route('quotations.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('quotations.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('quotations.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
                                     </svg>
@@ -89,7 +89,7 @@
                     <!-- Dropdown: Financeiro -->
                     <div class="relative">
                         <button @click="financeOpen = !financeOpen; commercialOpen = false; stockOpen = false; toolsOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('finance.*') || request()->routeIs('admin.commissions.*') || request()->routeIs('admin.time-clock.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('finance.*') || request()->routeIs('admin.commissions.*') || request()->routeIs('admin.time-clock.*') ? 'text-white bg-surface-overlay' : 'text-dg-300 hover:text-white hover:bg-surface-overlay' }}">
                             <span>Financeiro</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': financeOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -102,48 +102,48 @@
                              x-transition:leave="transition ease-in duration-75"
                              x-transition:leave-start="transform opacity-100 scale-100"
                              x-transition:leave-end="transform opacity-0 scale-95"
-                             class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
+                             class="absolute left-0 mt-2 w-48 rounded-lg bg-surface-overlay border border-border z-50"
                              x-cloak>
                             <div class="py-1">
-                                <a href="{{ route('finance.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.index') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('finance.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.index') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                     </svg>
                                     Painel
                                 </a>
-                                <a href="{{ route('finance.payables') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.payables') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('finance.payables') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.payables') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     Contas a Pagar
                                 </a>
-                                <a href="{{ route('finance.receivables') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.receivables') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('finance.receivables') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.receivables') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                     </svg>
                                     Contas a Receber
                                 </a>
-                                <a href="{{ route('finance.accounts') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.accounts') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('finance.accounts') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.accounts') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                     </svg>
                                     Carteiras
                                 </a>
-                                <a href="{{ route('finance.categories') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.categories') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('finance.categories') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('finance.categories') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                     </svg>
                                     Categorias
                                 </a>
                                 @if(auth()->user()->isAdminGeral())
-                                    <div class="border-t border-gray-700 my-1"></div>
-                                    <a href="{{ route('admin.commissions.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('admin.commissions.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <div class="border-t border-border my-1"></div>
+                                    <a href="{{ route('admin.commissions.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('admin.commissions.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                         <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                         </svg>
                                         Comissões
                                     </a>
-                                    <a href="{{ route('admin.time-clock.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('admin.time-clock.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <a href="{{ route('admin.time-clock.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('admin.time-clock.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                         <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
@@ -158,7 +158,7 @@
                     <!-- Dropdown: Estoque -->
                     <div class="relative">
                         <button @click="stockOpen = !stockOpen; commercialOpen = false; financeOpen = false; toolsOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('products.*') || request()->routeIs('stock.*') || request()->routeIs('stock.consignment.*') || request()->routeIs('imports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('products.*') || request()->routeIs('stock.*') || request()->routeIs('stock.consignment.*') || request()->routeIs('imports.*') ? 'text-white bg-surface-overlay' : 'text-dg-300 hover:text-white hover:bg-surface-overlay' }}">
                             <span>Estoque</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': stockOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -171,29 +171,29 @@
                              x-transition:leave="transition ease-in duration-75"
                              x-transition:leave-start="transform opacity-100 scale-100"
                              x-transition:leave-end="transform opacity-0 scale-95"
-                             class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
+                             class="absolute left-0 mt-2 w-48 rounded-lg bg-surface-overlay border border-border z-50"
                              x-cloak>
                             <div class="py-1">
-                                <a href="{{ route('products.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('products.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('products.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('products.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                     </svg>
                                     Produtos
                                 </a>
                                 @if(!$isIntern)
-                                <a href="{{ route('stock.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.*') && !request()->routeIs('stock.alerts') && !request()->routeIs('stock.consignment.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('stock.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.*') && !request()->routeIs('stock.alerts') && !request()->routeIs('stock.consignment.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
                                     </svg>
                                     Movimentações
                                 </a>
-                                <a href="{{ route('imports.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('imports.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('imports.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('imports.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     Importações
                                 </a>
-                                <a href="{{ route('stock.consignment.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.consignment.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('stock.consignment.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.consignment.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                                     </svg>
@@ -205,7 +205,7 @@
                     </div>
                     
                     <!-- Link: Marketing -->
-                    <a href="{{ route('marketing.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('marketing.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                    <a href="{{ route('marketing.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('marketing.*') ? 'text-white bg-surface-overlay rounded-lg' : 'text-dg-300 hover:text-white hover:bg-surface-overlay rounded-lg' }} transition">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
                         </svg>
@@ -213,7 +213,7 @@
                     </a>
 
                     <!-- Link: Simulador -->
-                    <a href="{{ route('tools.negotiation-simulator') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('tools.negotiation-simulator') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                    <a href="{{ route('tools.negotiation-simulator') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('tools.negotiation-simulator') ? 'text-white bg-surface-overlay rounded-lg' : 'text-dg-300 hover:text-white hover:bg-surface-overlay rounded-lg' }} transition">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                         </svg>
@@ -223,7 +223,7 @@
                     <!-- Dropdown: Ferramentas -->
                     <div class="relative">
                         <button @click="toolsOpen = !toolsOpen; commercialOpen = false; financeOpen = false; stockOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || (request()->routeIs('tools.*') && !request()->routeIs('tools.negotiation-simulator')) || request()->routeIs('crm.*') || request()->routeIs('reports.*') ? 'text-white bg-gray-800' : 'text-gray-300 hover:text-white hover:bg-gray-800' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || (request()->routeIs('tools.*') && !request()->routeIs('tools.negotiation-simulator')) || request()->routeIs('crm.*') || request()->routeIs('reports.*') ? 'text-white bg-surface-overlay' : 'text-dg-300 hover:text-white hover:bg-surface-overlay' }}">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -240,61 +240,61 @@
                              x-transition:leave="transition ease-in duration-75"
                              x-transition:leave-start="transform opacity-100 scale-100"
                              x-transition:leave-end="transform opacity-0 scale-95"
-                             class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
+                             class="absolute left-0 mt-2 w-48 rounded-lg bg-surface-overlay border border-border z-50"
                              x-cloak>
                             <div class="py-1">
-                                <a href="https://ifipe.dgstorerp.com.br/evaluator" target="_blank" class="flex items-center px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-gray-700">
+                                <a href="https://ifipe.dgstorerp.com.br/evaluator" target="_blank" class="flex items-center px-4 py-2.5 text-sm text-dg-300 hover:text-white hover:bg-surface-elevated">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                     </svg>
                                     Avaliador
                                     <svg class="w-3 h-3 ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                                 </a>
-                                {{-- <a href="{{ route('tools.stone-calculator') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.stone-calculator') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                {{-- <a href="{{ route('tools.stone-calculator') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.stone-calculator') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                     </svg>
                                     Calculadora Stone
                                 </a> --}}
-                                <a href="{{ route('imei-lookup') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('imei-lookup') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('imei-lookup') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('imei-lookup') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                     </svg>
                                     Consulta IMEI
                                 </a>
-                                <a href="{{ route('tools.checklist') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.checklist') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('tools.checklist') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.checklist') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                                     </svg>
                                     Checklist Seminovo
                                 </a>
-                                <a href="{{ route('checklists.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('checklists.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('checklists.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('checklists.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                     </svg>
                                     Checklists Salvos
                                 </a>
-                                <a href="{{ route('tools.whatsapp-messages') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.whatsapp-messages') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('tools.whatsapp-messages') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.whatsapp-messages') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                     </svg>
                                     Mensagens WhatsApp
                                 </a>
-                                <a href="{{ route('tools.specs') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.specs') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('tools.specs') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.specs') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                     </svg>
                                     Ficha Tecnica
                                 </a>
-                                <a href="{{ route('tools.sales-training') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.sales-training') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('tools.sales-training') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.sales-training') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 7l-9-5 9-5 9 5-9 5z"/>
                                     </svg>
                                     Treinamento
                                 </a>
-                                <div class="border-t border-gray-700 my-1"></div>
-                                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">CRM</div>
-                                <a href="{{ route('crm.board') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <div class="border-t border-border my-1"></div>
+                                <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">CRM</div>
+                                <a href="{{ route('crm.board') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                                     </svg>
@@ -303,21 +303,21 @@
                                         <span class="ml-auto inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
                                     @endif
                                 </a>
-                                <a href="{{ route('crm.history') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('crm.history') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                <a href="{{ route('crm.history') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('crm.history') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     Histórico CRM
                                 </a>
                                 @if(auth()->user()->isAdminGeral())
-                                    <div class="border-t border-gray-700 my-1"></div>
-                                    <a href="{{ route('reports.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reports.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <div class="border-t border-border my-1"></div>
+                                    <a href="{{ route('reports.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reports.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                         <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                         </svg>
                                         Relatórios
                                     </a>
-                                    <a href="{{ route('admin.users.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('admin.users.*') ? 'text-white bg-gray-700' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                                    <a href="{{ route('admin.users.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('admin.users.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                         <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                                         </svg>
@@ -329,7 +329,7 @@
                     </div>
 
                     @if($isIntern)
-                    <a href="{{ route('crm.board') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('crm.*') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                    <a href="{{ route('crm.board') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('crm.*') ? 'text-white bg-surface-overlay rounded-lg' : 'text-dg-300 hover:text-white hover:bg-surface-overlay rounded-lg' }} transition">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                         </svg>
@@ -338,7 +338,7 @@
                             <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
                         @endif
                     </a>
-                    <a href="{{ route('tools.sales-training') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-gray-800 rounded-lg' : 'text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg' }} transition">
+                    <a href="{{ route('tools.sales-training') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-surface-overlay rounded-lg' : 'text-dg-300 hover:text-white hover:bg-surface-overlay rounded-lg' }} transition">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 7l-9-5 9-5 9 5-9 5z"/>
                         </svg>
@@ -351,11 +351,19 @@
             </div>
 
             <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex sm:items-center sm:ms-6 sm:gap-3 relative">
                 @if(!$isIntern)
+                {{-- Dollar Rate Indicator (inline) --}}
+                @auth
+                    <x-dollar-rate-inline />
+                @endauth
+
+                {{-- Calculator Triggers --}}
+                <x-calculator-nav-buttons />
+
                 <!-- Alerta de Estoque Baixo -->
-                <a href="{{ route('stock.alerts') }}" class="relative mr-4 text-gray-300 hover:text-white transition" title="Alertas de estoque">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('stock.alerts') }}" class="relative text-dg-300 hover:text-white transition" title="Alertas de estoque">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
                 </a>
@@ -363,9 +371,9 @@
                 
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-gray-700 text-sm leading-4 font-medium rounded-lg text-gray-300 bg-gray-800 hover:text-white hover:border-gray-600 focus:outline-none transition ease-in-out duration-150">
+                        <button class="inline-flex items-center px-3 py-2 border border-border text-sm leading-4 font-medium rounded-lg text-gray-300 bg-surface-overlay hover:text-white hover:border-border-strong focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
-                            <div class="ms-1 text-xs text-gray-500">({{ Auth::user()->role->label() }})</div>
+                            <div class="ms-1 text-xs text-dg-500">({{ Auth::user()->role->label() }})</div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -396,7 +404,7 @@
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-800 focus:outline-none transition duration-150 ease-in-out">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-dg-300 hover:text-white hover:bg-surface-overlay focus:outline-none transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -407,35 +415,35 @@
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-gray-800">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-surface-overlay">
         <div class="pt-2 pb-3 space-y-1">
-            <a href="{{ $isIntern ? route('intern.dashboard') : route('dashboard') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') || request()->routeIs('intern.dashboard') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+            <a href="{{ $isIntern ? route('intern.dashboard') : route('dashboard') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('dashboard') || request()->routeIs('intern.dashboard') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                 Dashboard
             </a>
             
             <!-- Mobile: Comercial -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Comercial</div>
-                <a href="{{ route('customers.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('customers.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+            <div class="border-t border-border mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">Comercial</div>
+                <a href="{{ route('customers.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('customers.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Clientes
                 </a>
-                <a href="{{ route('sales.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('sales.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('sales.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('sales.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Vendas
                 </a>
-                <a href="{{ route('reservations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('reservations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Reservas
                 </a>
-                <a href="{{ route('schedule.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('schedule.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('schedule.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('schedule.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Agenda
                 </a>
-                <a href="{{ route('warranties.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('warranties.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('warranties.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('warranties.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Garantias
                 </a>
                 @if(!$isIntern)
-                <a href="{{ route('suppliers.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('suppliers.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('suppliers.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('suppliers.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Fornecedores
                 </a>
-                <a href="{{ route('quotations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('quotations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('quotations.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Cotações
                 </a>
                 @endif
@@ -443,28 +451,28 @@
             
             @if(!$isIntern)
             <!-- Mobile: Financeiro -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Financeiro</div>
-                <a href="{{ route('finance.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.index') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+            <div class="border-t border-border mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">Financeiro</div>
+                <a href="{{ route('finance.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.index') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Painel
                 </a>
-                <a href="{{ route('finance.payables') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.payables') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('finance.payables') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.payables') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Contas a Pagar
                 </a>
-                <a href="{{ route('finance.receivables') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.receivables') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('finance.receivables') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.receivables') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Contas a Receber
                 </a>
-                <a href="{{ route('finance.accounts') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.accounts') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('finance.accounts') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.accounts') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Carteiras
                 </a>
-                <a href="{{ route('finance.categories') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.categories') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('finance.categories') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('finance.categories') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Categorias
                 </a>
                 @if(auth()->user()->isAdminGeral())
-                    <a href="{{ route('admin.commissions.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('admin.commissions.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    <a href="{{ route('admin.commissions.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('admin.commissions.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                         Comissões
                     </a>
-                    <a href="{{ route('admin.time-clock.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('admin.time-clock.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    <a href="{{ route('admin.time-clock.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('admin.time-clock.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                         Registro de Ponto
                     </a>
                 @endif
@@ -472,112 +480,112 @@
             @endif
             
             <!-- Mobile: Estoque -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Estoque</div>
-                <a href="{{ route('products.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('products.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+            <div class="border-t border-border mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">Estoque</div>
+                <a href="{{ route('products.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('products.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Produtos
                 </a>
                 @if(!$isIntern)
-                <a href="{{ route('stock.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('stock.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Movimentações
                 </a>
-                <a href="{{ route('imports.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('imports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('imports.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('imports.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Importações
                 </a>
-                <a href="{{ route('stock.consignment.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.consignment.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('stock.consignment.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.consignment.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Fornecedor Interno
                 </a>
                 @endif
             </div>
             
             <!-- Mobile: Marketing -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Marketing</div>
-                <a href="{{ route('marketing.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('marketing.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+            <div class="border-t border-border mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">Marketing</div>
+                <a href="{{ route('marketing.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('marketing.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Painel Marketing
                 </a>
             </div>
 
             @if($isIntern)
             <!-- Mobile: CRM (destaque para intern) -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">CRM</div>
-                <a href="{{ route('crm.board') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+            <div class="border-t border-border mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">CRM</div>
+                <a href="{{ route('crm.board') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Pipeline
                     @if(($openDealsCount ?? 0) > 0)
                         <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
                     @endif
                 </a>
-                <a href="{{ route('crm.history') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.history') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('crm.history') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.history') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Histórico CRM
                 </a>
             </div>
 
             <!-- Mobile: Treinamento (destaque para intern) -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Treinamento</div>
-                <a href="{{ route('tools.sales-training') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+            <div class="border-t border-border mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">Treinamento</div>
+                <a href="{{ route('tools.sales-training') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Treinamento de Vendas
                 </a>
             </div>
             @endif
 
             <!-- Mobile: Simulador -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <a href="{{ route('tools.negotiation-simulator') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('tools.negotiation-simulator') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+            <div class="border-t border-border mt-2 pt-2">
+                <a href="{{ route('tools.negotiation-simulator') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('tools.negotiation-simulator') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Simulador
                 </a>
             </div>
 
             <!-- Mobile: Ferramentas -->
-            <div class="border-t border-gray-700 mt-2 pt-2">
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ferramentas</div>
-                <a href="https://ifipe.dgstorerp.com.br/evaluator" target="_blank" class="flex items-center px-6 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+            <div class="border-t border-border mt-2 pt-2">
+                <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">Ferramentas</div>
+                <a href="https://ifipe.dgstorerp.com.br/evaluator" target="_blank" class="flex items-center px-6 py-2 text-base font-medium text-dg-300 hover:text-white hover:bg-surface-elevated">
                     Avaliador
                     <svg class="w-3 h-3 ml-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 </a>
-                {{-- <a href="{{ route('tools.stone-calculator') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.stone-calculator') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                {{-- <a href="{{ route('tools.stone-calculator') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.stone-calculator') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Calculadora Stone
                 </a> --}}
-                <a href="{{ route('imei-lookup') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('imei-lookup') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('imei-lookup') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('imei-lookup') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Consulta IMEI
                 </a>
-                <a href="{{ route('tools.checklist') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.checklist') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('tools.checklist') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.checklist') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Checklist Seminovo
                 </a>
-                <a href="{{ route('checklists.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('checklists.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('checklists.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('checklists.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Checklists Salvos
                 </a>
-                <a href="{{ route('tools.whatsapp-messages') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.whatsapp-messages') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('tools.whatsapp-messages') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.whatsapp-messages') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Mensagens WhatsApp
                 </a>
-                <a href="{{ route('tools.specs') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.specs') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('tools.specs') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.specs') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Ficha Tecnica
                 </a>
                 @if(!$isIntern)
-                <a href="{{ route('tools.sales-training') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('tools.sales-training') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Treinamento
                 </a>
-                <div class="border-t border-gray-600 mt-1 pt-1 mx-4"></div>
-                <div class="px-4 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">CRM</div>
-                <a href="{{ route('crm.board') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <div class="border-t border-border-strong mt-1 pt-1 mx-4"></div>
+                <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">CRM</div>
+                <a href="{{ route('crm.board') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.board') || request()->routeIs('crm.show') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Pipeline
                     @if(($openDealsCount ?? 0) > 0)
                         <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
                     @endif
                 </a>
-                <a href="{{ route('crm.history') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.history') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <a href="{{ route('crm.history') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.history') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Histórico CRM
                 </a>
                 @endif
             </div>
 
             @if(auth()->user()->isAdminGeral())
-                <div class="border-t border-gray-700 mt-2 pt-2">
-                    <a href="{{ route('reports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                <div class="border-t border-border mt-2 pt-2">
+                    <a href="{{ route('reports.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('reports.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                         Relatórios
                     </a>
-                    <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('admin.users.*') ? 'text-white bg-gray-900' : 'text-gray-300 hover:text-white hover:bg-gray-700' }}">
+                    <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 text-base font-medium {{ request()->routeIs('admin.users.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                         Usuários
                     </a>
                 </div>
@@ -586,19 +594,19 @@
         </div>
 
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-3 border-t border-gray-700">
+        <div class="pt-4 pb-3 border-t border-border">
             <div class="px-4">
                 <div class="font-medium text-base text-white">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-400">{{ Auth::user()->email }}</div>
+                <div class="font-medium text-sm text-dg-500">{{ Auth::user()->email }}</div>
             </div>
 
             <div class="mt-3 space-y-1">
-                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-base font-medium text-dg-300 hover:text-white hover:bg-surface-elevated">
                     Meu Perfil
                 </a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="block w-full text-left px-4 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">
+                    <button type="submit" class="block w-full text-left px-4 py-2 text-base font-medium text-dg-300 hover:text-white hover:bg-surface-elevated">
                         Sair
                     </button>
                 </form>

@@ -1,15 +1,4 @@
-<div x-data="stoneFabCalc()" x-init="init()">
-    <!-- FAB Button -->
-    <button x-ref="fab"
-            @mousedown="startDrag($event)"
-            @touchstart.passive="startDrag($event)"
-            :class="{ 'fab-pulse': !open }"
-            :style="'position: fixed; bottom: 24px; ' + side + ': 24px; z-index: 40; width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; cursor: grab; box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4); display: flex; align-items: center; justify-content: center; transition: ' + (dragging ? 'none' : 'all 0.3s cubic-bezier(.4,0,.2,1)') + '; user-select: none; -webkit-user-select: none; touch-action: none;'"
-            title="Calculadora Stone">
-        <svg style="width: 22px; height: 22px;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25v-.008zm2.25-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008v-.008zm2.25-2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zM6.75 19.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm4.5-15v3.75"/>
-        </svg>
-    </button>
+<div x-data="stoneFabCalc()" x-init="init()" @open-stone-calc.window="open = true">
 
     <!-- Overlay -->
     <div x-show="open" x-transition.opacity.duration.200ms @click="open = false"
@@ -314,7 +303,7 @@
             letter-spacing: -0.02em;
         }
         .calc-input-primary:focus {
-            background: white;
+            background: #141414;
             box-shadow: inset 0 0 0 2px #6366f1, 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
@@ -324,11 +313,11 @@
             font-size: 15px;
             font-weight: 700;
             color: #d97706;
-            background: #fffbeb;
+            background: #141414beb;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
         }
         .calc-input-amber:focus {
-            background: white;
+            background: #141414;
             box-shadow: inset 0 0 0 2px #f59e0b, 0 0 0 3px rgba(245, 158, 11, 0.1);
         }
 
@@ -338,26 +327,26 @@
             font-size: 15px;
             font-weight: 700;
             color: #059669;
-            background: #ecfdf5;
+            background: rgba(16,185,129,0.1);
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
         }
         .calc-input-green:focus {
-            background: white;
+            background: #141414;
             box-shadow: inset 0 0 0 2px #10b981, 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
         .calc-input-wrap-amber {
             border-radius: 10px;
-            background: #fffbeb;
+            background: #141414beb;
         }
         .calc-input-wrap-green {
             border-radius: 10px;
-            background: #ecfdf5;
+            background: rgba(16,185,129,0.1);
         }
 
         .calc-balance {
             background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
             padding: 10px 14px;
             margin-bottom: 14px;
@@ -378,8 +367,8 @@
             border-radius: 8px;
             font-size: 11px;
             font-weight: 600;
-            border: 1px solid #e2e8f0;
-            background: white;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: #141414;
             color: #64748b;
             cursor: pointer;
             transition: all 0.15s ease;
@@ -431,7 +420,7 @@
         .calc-results {
             border-radius: 12px;
             overflow: hidden;
-            border: 1px solid #e2e8f0;
+            border: 1px solid rgba(255,255,255,0.06);
         }
 
         .calc-row {
@@ -439,7 +428,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 10px 12px;
-            background: white;
+            background: #141414;
             transition: background 0.15s;
         }
         .calc-row:not(:last-child) {
@@ -470,8 +459,8 @@
             width: 32px;
             height: 32px;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            background: white;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: #141414;
             color: #94a3b8;
             cursor: pointer;
             display: flex;
@@ -482,7 +471,7 @@
         .calc-copy-btn:hover {
             border-color: #6366f1;
             color: #6366f1;
-            background: #eef2ff;
+            background: rgba(99,102,241,0.1);
         }
         .calc-copy-btn-done {
             background: #10b981 !important;
@@ -549,9 +538,7 @@ function stoneFabCalc() {
             if (isMobile) {
                 return 'bottom: 0; left: 0; right: 0; max-height: 85dvh; box-shadow: 0 -10px 60px rgba(0,0,0,0.15);';
             }
-            return this.side === 'right'
-                ? 'bottom: 90px; right: 24px; width: 370px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05); max-height: calc(100vh - 110px);'
-                : 'bottom: 90px; left: 24px; width: 370px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05); max-height: calc(100vh - 110px);';
+            return 'bottom: 24px; right: 24px; width: 370px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.06); max-height: calc(100vh - 80px);';
         },
 
         get bodyMaxHeight() {

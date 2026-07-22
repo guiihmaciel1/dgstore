@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="title">Marketing</x-slot>
     <div class="py-4">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" x-data="marketingApp()">
+        <div class="px-6 lg:px-8" x-data="marketingApp()">
 
             @if(session('success'))
                 <div style="margin-bottom: 1rem;">
@@ -17,41 +17,42 @@
             <!-- Header -->
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Marketing</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Precos, criativos e seminovos para o dia a dia</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Marketing</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">Precos, criativos e seminovos para o dia a dia</p>
                 </div>
             </div>
 
             <!-- Tabs -->
-            <div style="display: flex; gap: 0.25rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0;">
+            <div style="display: flex; gap: 0.25rem; margin-bottom: 1.5rem; border-bottom: 2px solid rgba(255,255,255,0.06); padding-bottom: 0;">
                 <button @click="tab = 'prices'" type="button"
                         :style="tab === 'prices'
-                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #111827; border-bottom: 2px solid #111827; margin-bottom: -2px;'
-                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Tabela de Precos
                 </button>
                 <button @click="tab = 'creatives'" type="button"
                         :style="tab === 'creatives'
-                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #111827; border-bottom: 2px solid #111827; margin-bottom: -2px;'
-                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Criativos do Dia
                 </button>
                 <button @click="tab = 'used'" type="button"
                         :style="tab === 'used'
-                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #111827; border-bottom: 2px solid #111827; margin-bottom: -2px;'
-                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Seminovos
                 </button>
                 <button @click="tab = 'resale'" type="button"
                         :style="tab === 'resale'
-                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #111827; border-bottom: 2px solid #111827; margin-bottom: -2px;'
-                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Repasses
                 </button>
                 <button @click="tab = 'contents'" type="button"
+                        class="hidden sm:inline-block"
                         :style="tab === 'contents'
-                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #111827; border-bottom: 2px solid #111827; margin-bottom: -2px;'
-                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Conteúdos
                 </button>
             </div>
@@ -66,8 +67,8 @@
                     <!-- Busca + Copiar WhatsApp -->
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
                         <input type="text" x-model="priceSearch" placeholder="Buscar por nome, storage ou cor..."
-                               style="width: 100%; max-width: 360px; padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                               style="width: 100%; max-width: 360px; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                         <button type="button" @click="copyPriceListToClipboard()"
                                 :style="priceCopied
                                     ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#059669;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:default;white-space:nowrap;'
@@ -80,31 +81,31 @@
                         </button>
                     </div>
 
-                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                    <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse;">
                                 <thead>
-                                    <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                        <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; width: 24px;" x-show="!priceSearch"></th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 30px;">#</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Modelo</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Storage</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Cor</th>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                        <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; width: 24px;" x-show="!priceSearch"></th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 30px;">#</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase;">Modelo</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Storage</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Cor</th>
                                         @if(auth()->user()->role->isAdminGeral())
-                                        <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Custo</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Custo</th>
                                         @endif
-                                        <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Venda</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 150px;">Obs</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Ativo</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Fotos</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Venda</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 150px;">Obs</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 50px;">Ativo</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 50px;">Fotos</th>
                                         @if(auth()->user()->role->isAdminGeral())
-                                        <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;"></th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 40px;"></th>
                                         @endif
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <template x-for="(row, idx) in filteredPrices" :key="row._key">
-                                        <tr style="border-bottom: 1px solid #f3f4f6;"
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);"
                                             :style="dragOverIdx === idx ? 'border-top: 2px solid #6d28d9;' : ''"
                                             draggable="true"
                                             x-show-drag="!priceSearch"
@@ -113,34 +114,34 @@
                                             @dragover.prevent="if(priceSearch) return; dragOverIdx = idx; $event.dataTransfer.dropEffect = 'move';"
                                             @dragleave="if(dragOverIdx === idx) dragOverIdx = null;"
                                             @drop.prevent="if(priceSearch || dragIdx === null || dragIdx === idx) { dragOverIdx = null; return; } movePrice(dragIdx, idx); dragIdx = null; dragOverIdx = null;">
-                                            <td x-show="!priceSearch" style="padding: 0.375rem 0.25rem; text-align: center; cursor: grab; color: #9ca3af; user-select: none;" title="Arrastar para reordenar">
+                                            <td x-show="!priceSearch" style="padding: 0.375rem 0.25rem; text-align: center; cursor: grab; color: #666666; user-select: none;" title="Arrastar para reordenar">
                                                 <svg style="width: 1rem; height: 1rem; display: inline;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
                                             </td>
-                                            <td style="padding: 0.375rem 0.75rem; font-size: 0.75rem; color: #9ca3af;" x-text="idx + 1"></td>
+                                            <td style="padding: 0.375rem 0.75rem; font-size: 0.75rem; color: #666666;" x-text="idx + 1"></td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="hidden" :name="'prices[' + row._origIdx + '][id]'" :value="row.id || ''">
                                                 <input type="text" :name="'prices[' + row._origIdx + '][name]'" x-model="row.name" required
-                                                       style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                                       style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                                        placeholder="Ex: iPhone 16 Pro">
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="text" :name="'prices[' + row._origIdx + '][storage]'" x-model="row.storage"
-                                                       style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                                       style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                                        placeholder="128GB">
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="text" :name="'prices[' + row._origIdx + '][color]'" x-model="row.color"
-                                                       style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                                       style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                                        placeholder="Preto">
                                             </td>
                                             @if(auth()->user()->role->isAdminGeral())
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="number" step="0.01" :name="'prices[' + row._origIdx + '][cost_price]'" x-model="row.cost_price"
-                                                       style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
-                                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                                       style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
+                                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                                        placeholder="0.00">
                                             </td>
                                             @else
@@ -148,25 +149,25 @@
                                             @endif
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="number" step="0.01" :name="'prices[' + row._origIdx + '][price]'" x-model="row.price" required
-                                                       style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
-                                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                                       style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
+                                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                                        placeholder="0.00">
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="text" :name="'prices[' + row._origIdx + '][notes]'" x-model="row.notes"
-                                                       style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"
+                                                       style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                                        placeholder="Obs...">
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                                 <input type="checkbox" :name="'prices[' + row._origIdx + '][active]'" x-model="row.active"
-                                                       style="width: 1rem; height: 1rem; cursor: pointer; accent-color: #111827;">
+                                                       style="width: 1rem; height: 1rem; cursor: pointer; accent-color: #e3e3e3;">
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                                 <button type="button" @click="openImageModal(prices.indexOf(row))"
                                                         style="padding: 0.25rem; background: none; border: none; cursor: pointer; border-radius: 0.25rem; position: relative;"
-                                                        :style="(row.images && row.images.length) ? 'color: #059669;' : 'color: #9ca3af;'"
-                                                        onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'"
+                                                        :style="(row.images && row.images.length) ? 'color: #059669;' : 'color: #666666;'"
+                                                        onmouseover="this.style.background='#222222'" onmouseout="this.style.background='transparent'"
                                                         :title="(row.images && row.images.length) ? row.images.length + ' foto(s)' : 'Adicionar fotos'">
                                                     <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
@@ -180,8 +181,8 @@
                                             @if(auth()->user()->role->isAdminGeral())
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                                 <button type="button" @click="removePrice(row._origIdx)"
-                                                        style="padding: 0.25rem; color: #dc2626; background: none; border: none; cursor: pointer; border-radius: 0.25rem;"
-                                                        onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='none'"
+                                                        style="padding: 0.25rem; color: #fca5a5; background: none; border: none; cursor: pointer; border-radius: 0.25rem;"
+                                                        onmouseover="this.style.background=rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'"
                                                         title="Remover">
                                                     <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -194,22 +195,22 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div x-show="filteredPrices.length === 0" style="padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
+                        <div x-show="filteredPrices.length === 0" style="padding: 2rem; text-align: center; color: #666666; font-size: 0.875rem;">
                             Nenhum item na tabela de precos
                         </div>
                     </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 0.75rem;">
                         <button type="button" @click="addPrice()"
-                                style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 500; color: #374151; cursor: pointer;"
-                                onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.8rem; font-weight: 500; color: #a4a4a4; cursor: pointer;"
+                                onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                             <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             Adicionar Linha
                         </button>
                         <button type="submit"
-                                style="padding: 0.5rem 1.5rem; background: #111827; color: white; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer;"
+                                style="padding: 0.5rem 1.5rem; background: white; color: #0d0d0d; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer;"
                                 onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='#111827'">
                             Salvar Tabela
                         </button>
@@ -221,15 +222,15 @@
                      style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;"
                      @keydown.escape.window="closeImageModal()">
                     <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4);" @click="closeImageModal()"></div>
-                    <div style="position: relative; background: white; border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 520px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
+                    <div style="position: relative; background: #141414; border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 520px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                             <div>
-                                <h3 style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="imgModalPrice ? 'Fotos: ' + imgModalPrice.name + (imgModalPrice.storage ? ' ' + imgModalPrice.storage : '') : 'Fotos'"></h3>
-                                <p style="font-size: 0.75rem; color: #9ca3af;" x-text="imgModalPrice ? (imgModalPrice.images || []).length + '/5 imagens' : ''"></p>
+                                <h3 style="font-size: 1rem; font-weight: 700; color: #e3e3e3;" x-text="imgModalPrice ? 'Fotos: ' + imgModalPrice.name + (imgModalPrice.storage ? ' ' + imgModalPrice.storage : '') : 'Fotos'"></h3>
+                                <p style="font-size: 0.75rem; color: #666666;" x-text="imgModalPrice ? (imgModalPrice.images || []).length + '/5 imagens' : ''"></p>
                             </div>
                             <button type="button" @click="closeImageModal()"
-                                    style="padding: 4px; background: none; border: none; cursor: pointer; color: #9ca3af; border-radius: 6px;"
-                                    onmouseover="this.style.background='#f3f4f6'; this.style.color='#111827'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
+                                    style="padding: 4px; background: none; border: none; cursor: pointer; color: #666666; border-radius: 6px;"
+                                    onmouseover="this.style.background='#222222'; this.style.color='#e3e3e3'" onmouseout="this.style.background='transparent'; this.style.color='#666666'">
                                 <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
@@ -239,7 +240,7 @@
                         <!-- Galeria -->
                         <div x-show="imgModalPrice && (imgModalPrice.images || []).length > 0" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem;">
                             <template x-for="img in (imgModalPrice ? imgModalPrice.images : [])" :key="img.id">
-                                <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #f3f4f6; border: 1px solid #e5e7eb;">
+                                <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #222222; border: 1px solid rgba(255,255,255,0.06);">
                                     <img :src="img.url" :alt="img.original_name"
                                          style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;"
                                          @click="window.open(img.url, '_blank')">
@@ -253,8 +254,8 @@
 
                         <!-- Vazio -->
                         <div x-show="imgModalPrice && (imgModalPrice.images || []).length === 0"
-                             style="padding: 2rem; text-align: center; color: #9ca3af; border: 2px dashed #e5e7eb; border-radius: 8px; margin-bottom: 1rem;">
-                            <svg style="width: 32px; height: 32px; margin: 0 auto 0.5rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             style="padding: 2rem; text-align: center; color: #666666; border: 2px dashed rgba(255,255,255,0.08); border-radius: 8px; margin-bottom: 1rem;">
+                            <svg style="width: 32px; height: 32px; margin: 0 auto 0.5rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
@@ -263,8 +264,8 @@
 
                         <!-- Upload -->
                         <div x-show="imgModalPrice && imgModalPrice.id && (imgModalPrice.images || []).length < 5">
-                            <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 2px dashed #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #6b7280; transition: all 0.15s;"
-                                   onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.color='#6b7280'">
+                            <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 2px dashed rgba(255,255,255,0.08); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #818181; transition: all 0.15s;"
+                                   onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.color='#6b7280'">
                                 <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
@@ -275,7 +276,7 @@
 
                         <!-- Aviso para itens novos -->
                         <div x-show="imgModalPrice && !imgModalPrice.id"
-                             style="padding: 12px; background: #fef3c7; border-radius: 8px; font-size: 12px; color: #92400e; text-align: center;">
+                             style="padding: 12px; background: rgba(245,158,11,0.15); border-radius: 8px; font-size: 12px; color: #fbbf24; text-align: center;">
                             Salve a tabela primeiro para poder adicionar fotos a este item.
                         </div>
                     </div>
@@ -287,14 +288,14 @@
                  style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;"
                  @keydown.escape.window="closeUsedImageModal()">
                 <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4);" @click="closeUsedImageModal()"></div>
-                <div style="position: relative; background: white; border-radius: 12px; padding: 1.25rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+                <div style="position: relative; background: #141414; border-radius: 12px; padding: 1.25rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6);">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                         <div>
-                            <h3 style="font-size: 1rem; font-weight: 700; color: #111827;" x-text="usedImgModalItem ? 'Fotos: ' + usedImgModalItem.name + (usedImgModalItem.storage ? ' ' + usedImgModalItem.storage : '') : 'Fotos'"></h3>
-                            <p style="font-size: 0.75rem; color: #9ca3af;" x-text="usedImgModalItem ? (usedImgModalItem.images || []).length + '/5 imagens' : ''"></p>
+                            <h3 style="font-size: 1rem; font-weight: 700; color: #e3e3e3;" x-text="usedImgModalItem ? 'Fotos: ' + usedImgModalItem.name + (usedImgModalItem.storage ? ' ' + usedImgModalItem.storage : '') : 'Fotos'"></h3>
+                            <p style="font-size: 0.75rem; color: #666666;" x-text="usedImgModalItem ? (usedImgModalItem.images || []).length + '/5 imagens' : ''"></p>
                         </div>
                         <button type="button" @click="closeUsedImageModal()"
-                                style="padding: 4px; background: none; border: none; cursor: pointer; color: #9ca3af; border-radius: 4px;"
+                                style="padding: 4px; background: none; border: none; cursor: pointer; color: #666666; border-radius: 4px;"
                                 onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9ca3af'">
                             <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -305,7 +306,7 @@
                     <!-- Galeria -->
                     <div x-show="usedImgModalItem && (usedImgModalItem.images || []).length > 0" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 1rem;">
                         <template x-for="img in (usedImgModalItem ? usedImgModalItem.images : [])" :key="img.id">
-                            <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #f3f4f6; border: 1px solid #e5e7eb;">
+                            <div style="position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 1; background: #222222; border: 1px solid rgba(255,255,255,0.06);">
                                 <img :src="img.url" :alt="img.original_name"
                                      style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;"
                                      @click="window.open(img.url, '_blank')">
@@ -318,8 +319,8 @@
 
                     <!-- Vazio -->
                     <div x-show="usedImgModalItem && (usedImgModalItem.images || []).length === 0"
-                         style="padding: 2rem; text-align: center; color: #9ca3af; border: 2px dashed #e5e7eb; border-radius: 8px; margin-bottom: 1rem;">
-                        <svg style="width: 32px; height: 32px; margin: 0 auto 0.5rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         style="padding: 2rem; text-align: center; color: #666666; border: 2px dashed rgba(255,255,255,0.08); border-radius: 8px; margin-bottom: 1rem;">
+                        <svg style="width: 32px; height: 32px; margin: 0 auto 0.5rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                         <p style="font-size: 0.8rem;">Nenhuma foto adicionada</p>
@@ -327,8 +328,8 @@
 
                     <!-- Upload -->
                     <div x-show="usedImgModalItem && usedImgModalItem.listing_id && (usedImgModalItem.images || []).length < 5">
-                        <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 2px dashed #e5e7eb; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #6b7280; transition: all 0.15s;"
-                               onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='#e5e7eb'; this.style.color='#6b7280'">
+                        <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 2px dashed rgba(255,255,255,0.08); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #818181; transition: all 0.15s;"
+                               onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.color='#6b7280'">
                             <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
@@ -339,7 +340,7 @@
 
                     <!-- Aviso para itens não salvos -->
                     <div x-show="usedImgModalItem && !usedImgModalItem.listing_id"
-                         style="padding: 12px; background: #fef3c7; border-radius: 8px; font-size: 12px; color: #92400e; text-align: center;">
+                         style="padding: 12px; background: rgba(245,158,11,0.15); border-radius: 8px; font-size: 12px; color: #fbbf24; text-align: center;">
                         Salve os seminovos primeiro (clique em "Salvar Tudo") para poder adicionar fotos.
                     </div>
                 </div>
@@ -352,13 +353,13 @@
                 <!-- Filtro de data + botao novo -->
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <label style="font-size: 0.8rem; font-weight: 500; color: #374151;">Data:</label>
+                        <label style="font-size: 0.8rem; font-weight: 500; color: #a4a4a4;">Data:</label>
                         <input type="date" x-model="creativeDate" @change="loadCreativesByDate()"
-                               style="padding: 0.375rem 0.625rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                               onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                               style="padding: 0.375rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                     </div>
                     <button type="button" @click="showCreativeForm = !showCreativeForm"
-                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;"
+                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: white; color: #0d0d0d; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;"
                             onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='#111827'">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -368,36 +369,36 @@
                 </div>
 
                 <!-- Form novo criativo -->
-                <div x-show="showCreativeForm" x-transition style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                <div x-show="showCreativeForm" x-transition style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
                     <form method="POST" action="{{ route('marketing.creatives.store') }}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="date" :value="creativeDate">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                             <div>
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #374151; display: block; margin-bottom: 0.25rem;">Titulo</label>
+                                <label style="font-size: 0.75rem; font-weight: 600; color: #a4a4a4; display: block; margin-bottom: 0.25rem;">Titulo</label>
                                 <input type="text" name="title" required placeholder="Ex: Promo iPhone 16"
-                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem; outline: none;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                             </div>
                             <div>
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #374151; display: block; margin-bottom: 0.25rem;">Imagem</label>
+                                <label style="font-size: 0.75rem; font-weight: 600; color: #a4a4a4; display: block; margin-bottom: 0.25rem;">Imagem</label>
                                 <input type="file" name="image" accept="image/*"
-                                       style="width: 100%; padding: 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem;">
+                                       style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                             </div>
                         </div>
                         <div style="margin-bottom: 1rem;">
-                            <label style="font-size: 0.75rem; font-weight: 600; color: #374151; display: block; margin-bottom: 0.25rem;">Texto para copiar</label>
+                            <label style="font-size: 0.75rem; font-weight: 600; color: #a4a4a4; display: block; margin-bottom: 0.25rem;">Texto para copiar</label>
                             <textarea name="description" rows="4" placeholder="Cole aqui o texto pronto para WhatsApp..."
-                                      style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.875rem; outline: none; resize: vertical;"
-                                      onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+                                      style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem; outline: none; resize: vertical;"
+                                      onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"></textarea>
                         </div>
                         <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
                             <button type="button" @click="showCreativeForm = false"
-                                    style="padding: 0.5rem 1rem; background: #f3f4f6; color: #6b7280; border: none; border-radius: 0.375rem; font-size: 0.8rem; cursor: pointer;">
+                                    style="padding: 0.5rem 1rem; background: #222222; color: #818181; border: none; border-radius: 0.375rem; font-size: 0.8rem; cursor: pointer;">
                                 Cancelar
                             </button>
                             <button type="submit"
-                                    style="padding: 0.5rem 1rem; background: #111827; color: white; border: none; border-radius: 0.375rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;"
+                                    style="padding: 0.5rem 1rem; background: white; color: #0d0d0d; border: none; border-radius: 0.375rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;"
                                     onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='#111827'">
                                 Salvar Criativo
                             </button>
@@ -407,18 +408,18 @@
 
                 <!-- Lista de criativos -->
                 @if($creatives->isEmpty())
-                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 3rem; text-align: center;">
-                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 3rem; text-align: center;">
+                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        <p style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem;">Nenhum criativo para esta data</p>
+                        <p style="margin-top: 0.75rem; color: #818181; font-size: 0.875rem;">Nenhum criativo para esta data</p>
                     </div>
                 @else
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem;">
                         @foreach($creatives as $creative)
-                            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                            <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                                 @if($creative->image_path)
-                                    <div style="position: relative; height: 200px; background: #f3f4f6;">
+                                    <div style="position: relative; height: 200px; background: #222222;">
                                         <img src="{{ route('marketing.creatives.image', $creative) }}" alt="{{ $creative->title }}"
                                              style="width: 100%; height: 100%; object-fit: cover;">
                                         <a href="{{ route('marketing.creatives.download', $creative) }}"
@@ -432,12 +433,12 @@
                                 @endif
                                 <div style="padding: 1rem;">
                                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                                        <h3 style="font-size: 0.9375rem; font-weight: 600; color: #111827;">{{ $creative->title }}</h3>
+                                        <h3 style="font-size: 0.9375rem; font-weight: 600; color: #e3e3e3;">{{ $creative->title }}</h3>
                                         <form method="POST" action="{{ route('marketing.creatives.destroy', $creative) }}"
                                               onsubmit="return confirm('Remover este criativo?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" style="padding: 0.25rem; color: #dc2626; background: none; border: none; cursor: pointer;" title="Remover">
+                                            <button type="submit" style="padding: 0.25rem; color: #fca5a5; background: none; border: none; cursor: pointer;" title="Remover">
                                                 <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                 </svg>
@@ -445,9 +446,9 @@
                                         </form>
                                     </div>
                                     @if($creative->description)
-                                        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.8rem; color: #374151; white-space: pre-wrap; max-height: 150px; overflow-y: auto; line-height: 1.5;">{{ $creative->description }}</div>
+                                        <div style="background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.8rem; color: #a4a4a4; white-space: pre-wrap; max-height: 150px; overflow-y: auto; line-height: 1.5;">{{ $creative->description }}</div>
                                         <button type="button" onclick="copyText(this, {{ json_encode($creative->description) }})"
-                                                style="width: 100%; padding: 0.5rem; background: #111827; color: white; border: none; border-radius: 0.375rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.375rem;"
+                                                style="width: 100%; padding: 0.5rem; background: white; color: #0d0d0d; border: none; border-radius: 0.375rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.375rem;"
                                                 onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='#111827'">
                                             <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
@@ -455,7 +456,7 @@
                                             <span>Copiar Texto</span>
                                         </button>
                                     @endif
-                                    <div style="margin-top: 0.5rem; font-size: 0.7rem; color: #9ca3af;">
+                                    <div style="margin-top: 0.5rem; font-size: 0.7rem; color: #666666;">
                                         Por {{ $creative->user?->name ?? 'Sistema' }} em {{ $creative->created_at->format('d/m H:i') }}
                                     </div>
                                 </div>
@@ -471,8 +472,8 @@
             <div x-show="tab === 'resale'" x-cloak>
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
                     <div>
-                        <h2 style="font-size: 1.125rem; font-weight: 700; color: #111827;">Lista de Repasse</h2>
-                        <p style="font-size: 0.8rem; color: #6b7280;">Selecione os itens e copie a lista formatada para WhatsApp</p>
+                        <h2 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;">Lista de Repasse</h2>
+                        <p style="font-size: 0.8rem; color: #818181;">Selecione os itens e copie a lista formatada para WhatsApp</p>
                     </div>
                     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                         <button type="button" @click="copyResaleLacrados()"
@@ -499,16 +500,16 @@
                 {{-- Novos Lacrados --}}
                 <div style="margin-bottom: 2rem;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                        <h3 style="font-size: 0.9375rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
-                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: #dbeafe; border-radius: 0.375rem;">
+                        <h3 style="font-size: 0.9375rem; font-weight: 700; color: #e3e3e3; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: rgba(59,130,246,0.15); border-radius: 0.375rem;">
                                 <svg style="width: 0.875rem; height: 0.875rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                             </span>
                             Novos Lacrados
-                            <span style="font-size: 0.7rem; font-weight: 500; color: #6b7280;" x-text="'(' + resaleConsignment.length + ' itens)'"></span>
+                            <span style="font-size: 0.7rem; font-weight: 500; color: #818181;" x-text="'(' + resaleConsignment.length + ' itens)'"></span>
                         </h3>
                         <button type="button" @click="saveAllResaleConsignment()" x-show="resaleConsignment.length > 0"
                                 class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-semibold border-none cursor-pointer transition-colors"
-                                :class="resaleConsignmentAllSaving ? 'bg-emerald-600 text-white' : 'bg-gray-900 text-white hover:bg-gray-800'"
+                                :class="resaleConsignmentAllSaving ? 'bg-emerald-600 text-white' : 'bg-surface text-white hover:bg-surface-overlay'"
                                 :disabled="resaleConsignmentAllSaving">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -517,33 +518,33 @@
                         </button>
                     </div>
 
-                    <div x-show="resaleConsignment.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
+                    <div x-show="resaleConsignment.length === 0" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 2rem; text-align: center; color: #666666; font-size: 0.875rem;">
                         Nenhum item novo disponivel
                     </div>
 
-                    <div class="bg-white border border-gray-200 rounded-xl overflow-hidden" x-show="resaleConsignment.length > 0">
+                    <div class="bg-surface-raised border border-border rounded-xl overflow-hidden" x-show="resaleConsignment.length > 0">
                         <div class="overflow-x-auto">
                         <table style="width: 100%; border-collapse: collapse; min-width: 550px;">
                             <thead>
-                                <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                    <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Exibir</th>
-                                    <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Modelo</th>
-                                    <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 80px;">Storage</th>
-                                    <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 100px;">Cor</th>
-                                    <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 130px;">Preco Repasse</th>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 50px;">Exibir</th>
+                                    <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase;">Modelo</th>
+                                    <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 80px;">Storage</th>
+                                    <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Cor</th>
+                                    <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 130px;">Preco Repasse</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template x-for="item in resaleConsignment" :key="(item.morph_type || 'consignment') + '_' + item.id">
-                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
                                         <td style="padding: 0.375rem 0.75rem; text-align: center;">
                                             <input type="checkbox" x-model="item.resale.visible"
                                                    @change="saveResaleVisibility(item)"
-                                                   style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
+                                                   style="width: 0.9rem; height: 0.9rem; accent-color: #e3e3e3; cursor: pointer;">
                                         </td>
-                                        <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; font-weight: 500; color: #111827;" x-text="item.name"></td>
-                                        <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; color: #6b7280;" x-text="item.storage || '-'"></td>
-                                        <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; color: #6b7280;">
+                                        <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; font-weight: 500; color: #e3e3e3;" x-text="item.name"></td>
+                                        <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; color: #818181;" x-text="item.storage || '-'"></td>
+                                        <td style="padding: 0.375rem 0.75rem; font-size: 0.8rem; color: #818181;">
                                             <div style="display: flex; align-items: center; gap: 0.375rem;">
                                                 <span x-show="item._colorHex" :style="'display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid #d1d5db;background:' + item._colorHex"></span>
                                                 <span x-text="item.color || '-'"></span>
@@ -551,8 +552,8 @@
                                         </td>
                                         <td style="padding: 0.375rem 0.5rem;">
                                             <input type="number" step="0.01" x-model="item.resale.resale_price" placeholder="0.00"
-                                                   style="width: 100%; padding: 0.375rem 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
-                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                   style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
+                                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                         </td>
                                     </tr>
                                 </template>
@@ -565,12 +566,12 @@
                 {{-- Seminovos --}}
                 <div>
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                        <h3 style="font-size: 0.9375rem; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 0.5rem;">
-                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: #fef3c7; border-radius: 0.375rem;">
+                        <h3 style="font-size: 0.9375rem; font-weight: 700; color: #e3e3e3; display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; background: rgba(245,158,11,0.15); border-radius: 0.375rem;">
                                 <svg style="width: 0.875rem; height: 0.875rem; color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                             </span>
                             Seminovos
-                            <span style="font-size: 0.7rem; font-weight: 500; color: #6b7280;" x-text="'(' + resaleUsed.length + ' itens)'"></span>
+                            <span style="font-size: 0.7rem; font-weight: 500; color: #818181;" x-text="'(' + resaleUsed.length + ' itens)'"></span>
                         </h3>
                         <button type="button" @click="saveAllResaleUsed()" x-show="resaleUsed.length > 0"
                                 :style="resaleUsedAllSaving
@@ -584,52 +585,52 @@
                         </button>
                     </div>
 
-                    <div x-show="resaleUsed.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 2rem; text-align: center; color: #9ca3af; font-size: 0.875rem;">
+                    <div x-show="resaleUsed.length === 0" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 2rem; text-align: center; color: #666666; font-size: 0.875rem;">
                         Nenhum seminovo disponivel em estoque
                     </div>
 
-                    <div x-show="resaleUsed.length > 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                    <div x-show="resaleUsed.length > 0" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; min-width: 850px;">
                                 <thead>
-                                    <tr style="background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 50px;">Exibir</th>
-                                        <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase;">Produto</th>
-                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 55px;">Bat.</th>
-                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 40px;">Cx</th>
-                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 45px;">Cabo</th>
-                                        <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 120px;">Obs</th>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 50px;">Exibir</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase;">Produto</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 55px;">Bat.</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 40px;">Cx</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 45px;">Cabo</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 120px;">Obs</th>
                                         @if(auth()->user()->role->isAdminGeral())
-                                        <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Custo</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 85px;">Custo</th>
                                         @endif
-                                        <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #6b7280; text-transform: uppercase; width: 85px;">Final</th>
+                                        <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 85px;">Final</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #d97706; text-transform: uppercase; width: 110px;">Repasse</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <template x-for="item in resaleUsed" :key="item.morph_type + '_' + item.id">
-                                        <tr style="border-bottom: 1px solid #f3f4f6; transition: background 0.1s;"
-                                            onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.1s;"
+                                            onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                                             <td style="padding: 0.375rem 0.75rem; text-align: center;">
                                                 <input type="checkbox" x-model="item.resale.visible"
                                                        @change="saveResaleVisibility(item)"
-                                                       style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
+                                                       style="width: 0.9rem; height: 0.9rem; accent-color: #e3e3e3; cursor: pointer;">
                                             </td>
                                             <td style="padding: 0.5rem 0.75rem;">
-                                                <div style="font-size: 0.8125rem; font-weight: 600; color: #111827;" x-text="item.name"></div>
-                                                <div style="font-size: 0.6875rem; color: #9ca3af; display: flex; align-items: center; gap: 0.375rem; margin-top: 1px;">
+                                                <div style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3;" x-text="item.name"></div>
+                                                <div style="font-size: 0.6875rem; color: #666666; display: flex; align-items: center; gap: 0.375rem; margin-top: 1px;">
                                                     <span :style="item.condition === 'used'
-                                                        ? 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#fef3c7;color:#92400e;'
-                                                        : 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#dbeafe;color:#1e40af;'"
+                                                        ? 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:rgba(245,158,11,0.15);color:#fbbf24;'
+                                                        : 'font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:rgba(59,130,246,0.15);color:#93c5fd;'"
                                                           x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
                                                     <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
-                                                        <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:#ede9fe;color:#5b21b6;">Consig.</span>
+                                                        <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:rgba(139,92,246,0.15);color:#c4b5fd;">Consig.</span>
                                                     </template>
-                                                    <span x-show="item.storage" style="font-size:0.6rem;color:#6b7280;" x-text="item.storage"></span>
-                                                    <span x-show="item.color" style="font-size:0.6rem;color:#6b7280;" x-text="item.color"></span>
+                                                    <span x-show="item.storage" style="font-size:0.6rem;color:#818181;" x-text="item.storage"></span>
+                                                    <span x-show="item.color" style="font-size:0.6rem;color:#818181;" x-text="item.color"></span>
                                                 </div>
                                             </td>
-                                            <td style="padding: 0.375rem 0.5rem; text-align: center; font-size: 0.8rem; color: #374151;">
+                                            <td style="padding: 0.375rem 0.5rem; text-align: center; font-size: 0.8rem; color: #a4a4a4;">
                                                 <span x-text="item._usedListing.battery_health ? item._usedListing.battery_health + '%' : '-'" :style="item._usedListing.battery_health ? 'color:#059669;font-weight:600;' : 'color:#d1d5db;'"></span>
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
@@ -639,20 +640,20 @@
                                                 <span :style="item._usedListing.has_cable ? 'color:#059669;font-size:0.8rem;' : 'color:#d1d5db;font-size:0.8rem;'" x-text="item._usedListing.has_cable ? '✓' : '—'"></span>
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
-                                                <span style="font-size: 0.75rem; color: #6b7280;" x-text="item._usedListing.notes || '—'"></span>
+                                                <span style="font-size: 0.75rem; color: #818181;" x-text="item._usedListing.notes || '—'"></span>
                                             </td>
                                             @if(auth()->user()->role->isAdminGeral())
-                                            <td style="padding: 0.375rem 0.75rem; text-align: right; font-size: 0.75rem; color: #6b7280;">
+                                            <td style="padding: 0.375rem 0.75rem; text-align: right; font-size: 0.75rem; color: #818181;">
                                                 <span x-text="item._usedListing.cost_price ? parseFloat(item._usedListing.cost_price).toLocaleString('pt-BR', {minimumFractionDigits:0}) : '-'"></span>
                                             </td>
                                             @endif
-                                            <td style="padding: 0.375rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #374151;">
+                                            <td style="padding: 0.375rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #a4a4a4;">
                                                 <span x-text="item._usedListing.final_price ? parseFloat(item._usedListing.final_price).toLocaleString('pt-BR', {minimumFractionDigits:0}) : '-'"></span>
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="number" step="0.01" x-model="item.resale.resale_price" placeholder="0,00"
-                                                       style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600;"
-                                                       onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#e5e7eb'">
+                                                       style="width: 100%; padding: 0.3rem 0.375rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600;"
+                                                       onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                             </td>
                                         </tr>
                                     </template>
@@ -669,13 +670,13 @@
             <div x-show="tab === 'used'" x-cloak>
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
                     <input type="text" x-model="usedSearch" placeholder="Buscar seminovo por nome..."
-                           style="flex: 1; min-width: 200px; max-width: 360px; padding: 0.5rem 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                           onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                           style="flex: 1; min-width: 200px; max-width: 360px; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                           onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                     <div style="display: flex; gap: 0.5rem;">
                         <button type="button" @click="saveAllUsedListings()"
                                 :style="usedAllSaving
                                     ? 'padding: 0.5rem 1rem; background: #059669; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: default; display: flex; align-items: center; gap: 0.375rem;'
-                                    : 'padding: 0.5rem 1rem; background: #111827; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;'"
+                                    : 'padding: 0.5rem 1rem; background: white; color: #0d0d0d; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;'"
                                 :disabled="usedAllSaving">
                             <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -702,22 +703,22 @@
                 </div>
 
                 <div x-show="filteredUsed.filter(i => (i.images || []).length === 0).length > 0"
-                     style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 0.75rem;">
-                    <svg style="width: 1.125rem; height: 1.125rem; color: #dc2626; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                    <svg style="width: 1.125rem; height: 1.125rem; color: #fca5a5; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
-                    <span style="font-size: 0.8125rem; color: #991b1b; font-weight: 600;"
+                    <span style="font-size: 0.8125rem; color: #fca5a5; font-weight: 600;"
                           x-text="filteredUsed.filter(i => (i.images || []).length === 0).length + ' seminovo(s) sem fotos — adicione fotos a todos antes de divulgar'"></span>
                 </div>
 
-                <div x-show="filteredUsed.length === 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 3rem; text-align: center;">
-                    <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #d1d5db;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div x-show="filteredUsed.length === 0" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 3rem; text-align: center;">
+                    <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                     </svg>
-                    <p style="margin-top: 0.75rem; color: #6b7280; font-size: 0.875rem;">Nenhum seminovo disponivel em estoque</p>
+                    <p style="margin-top: 0.75rem; color: #818181; font-size: 0.875rem;">Nenhum seminovo disponivel em estoque</p>
                 </div>
 
-                <div x-show="filteredUsed.length > 0" style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                <div x-show="filteredUsed.length > 0" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; min-width: 1200px; table-layout: fixed;">
                             <colgroup>
@@ -737,92 +738,92 @@
                                 <col style="width: 40px;">
                             </colgroup>
                             <thead>
-                                <tr style="background: #f3f4f6; border-bottom: 2px solid #d1d5db;">
-                                    <th style="padding: 0.625rem 0.5rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Lista</th>
-                                    <th style="padding: 0.625rem 0.5rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Produto</th>
-                                    <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Storage</th>
-                                    <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Cor</th>
+                                <tr style="background: #222222; border-bottom: 2px solid #d1d5db;">
+                                    <th style="padding: 0.625rem 0.5rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Lista</th>
+                                    <th style="padding: 0.625rem 0.5rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Produto</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Storage</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Cor</th>
                                     @if(auth()->user()->role->isAdminGeral())
-                                    <th style="padding: 0.625rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Custo</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Custo</th>
                                     @endif
-                                    <th style="padding: 0.625rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Final</th>
-                                    <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Bat. %</th>
-                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Cx</th>
-                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Cabo</th>
-                                    <th style="padding: 0.625rem 0.375rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Obs</th>
-                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;"></th>
-                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #374151; text-transform: uppercase; letter-spacing: 0.025em;">Fotos</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: right; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Final</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Bat. %</th>
+                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Cx</th>
+                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Cabo</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Obs</th>
+                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;"></th>
+                                    <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Fotos</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template x-for="(item, idx) in filteredUsed" :key="item.morph_type + '_' + item.id">
-                                    <tr :style="'border-bottom: 1px solid #e5e7eb; transition: background 0.15s;'
+                                    <tr :style="'border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.15s;'
                                             + ((item.images || []).length === 0
-                                                ? ' background: #fef2f2; border-left: 3px solid #dc2626;'
-                                                : (idx % 2 === 1 ? ' background: #f8f9fb;' : ' background: white;'))"
-                                        :data-bg="(item.images || []).length === 0 ? '#fef2f2' : (idx % 2 === 1 ? '#f8f9fb' : 'white')"
-                                        onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background=this.dataset.bg">
+                                                ? ' background: rgba(239,68,68,0.1); border-left: 3px solid #dc2626;'
+                                                : (idx % 2 === 1 ? ' background: #1a1a1a;' : ' background: #141414;'))"
+                                        :data-bg="(item.images || []).length === 0 ? 'rgba(239,68,68,0.08)' : (idx % 2 === 1 ? '#1a1a1a' : 'transparent')"
+                                        onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background=this.dataset.bg">
                                         <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                             <input type="checkbox" x-model="item.listing.visible"
                                                    @change="saveUsedVisibility(item)"
-                                                   style="width: 0.9rem; height: 0.9rem; accent-color: #111827; cursor: pointer;">
+                                                   style="width: 0.9rem; height: 0.9rem; accent-color: #e3e3e3; cursor: pointer;">
                                         </td>
                                         <td style="padding: 0.375rem 0.5rem; overflow: hidden;">
-                                            <div style="font-size: 0.8125rem; font-weight: 600; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="item.name"></div>
-                                            <div style="font-size: 0.6875rem; color: #9ca3af; display: flex; align-items: center; gap: 0.25rem; margin-top: 1px; flex-wrap: wrap;">
+                                            <div style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="item.name"></div>
+                                            <div style="font-size: 0.6875rem; color: #666666; display: flex; align-items: center; gap: 0.25rem; margin-top: 1px; flex-wrap: wrap;">
                                                 <span :style="item.condition === 'used'
-                                                    ? 'font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:#fef3c7;color:#92400e;'
-                                                    : 'font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:#dbeafe;color:#1e40af;'"
+                                                    ? 'font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:rgba(245,158,11,0.15);color:#fbbf24;'
+                                                    : 'font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:rgba(59,130,246,0.15);color:#93c5fd;'"
                                                       x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
-                                                <span style="font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:#f0fdf4;color:#166534;"
+                                                <span style="font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:rgba(16,185,129,0.15);color:#6ee7b7;"
                                                       x-text="'Est: ' + item.stock"></span>
                                                 <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
-                                                    <span style="font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:#ede9fe;color:#5b21b6;">Consig.</span>
+                                                    <span style="font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:rgba(139,92,246,0.15);color:#c4b5fd;">Consig.</span>
                                                 </template>
                                             </div>
                                         </td>
                                         <td style="padding: 0.375rem 0.375rem; text-align: center;">
-                                            <span style="font-size: 0.75rem; color: #374151;" x-text="item.storage || '—'"></span>
+                                            <span style="font-size: 0.75rem; color: #a4a4a4;" x-text="item.storage || '—'"></span>
                                         </td>
                                         <td style="padding: 0.375rem 0.375rem; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                            <span style="font-size: 0.75rem; color: #374151;" x-text="item.color || '—'"></span>
+                                            <span style="font-size: 0.75rem; color: #a4a4a4;" x-text="item.color || '—'"></span>
                                         </td>
                                         @if(auth()->user()->role->isAdminGeral())
                                         <td style="padding: 0.375rem 0.375rem;">
                                             <input type="number" step="0.01" x-model="item.listing.cost_price" placeholder="0,00"
-                                                   style="width: 100%; padding: 0.25rem 0.3rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; box-sizing: border-box;"
-                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                   style="width: 100%; padding: 0.25rem 0.3rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; box-sizing: border-box;"
+                                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                         </td>
                                         @endif
                                         <td style="padding: 0.375rem 0.375rem;">
                                             <input type="number" step="0.01" x-model="item.listing.final_price" placeholder="0,00"
-                                                   style="width: 100%; padding: 0.25rem 0.3rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600; box-sizing: border-box;"
-                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                   style="width: 100%; padding: 0.25rem 0.3rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600; box-sizing: border-box;"
+                                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                         </td>
                                         <td style="padding: 0.375rem 0.375rem;">
                                             <input type="number" min="0" max="100" x-model="item.listing.battery_health" placeholder="%"
-                                                   style="width: 100%; padding: 0.25rem 0.2rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: center; box-sizing: border-box;"
-                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                   style="width: 100%; padding: 0.25rem 0.2rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: center; box-sizing: border-box;"
+                                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                         </td>
                                         <td style="padding: 0.375rem 0.25rem; text-align: center;">
                                             <input type="checkbox" x-model="item.listing.has_box"
-                                                   style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
+                                                   style="width: 0.875rem; height: 0.875rem; accent-color: #e3e3e3; cursor: pointer;">
                                         </td>
                                         <td style="padding: 0.375rem 0.25rem; text-align: center;">
                                             <input type="checkbox" x-model="item.listing.has_cable"
-                                                   style="width: 0.875rem; height: 0.875rem; accent-color: #111827; cursor: pointer;">
+                                                   style="width: 0.875rem; height: 0.875rem; accent-color: #e3e3e3; cursor: pointer;">
                                         </td>
                                         <td style="padding: 0.375rem 0.375rem;">
                                             <input type="text" x-model="item.listing.notes" placeholder="Obs..."
                                                    @input="syncUsedToResale(item)"
-                                                   style="width: 100%; padding: 0.25rem 0.3rem; border: 1px solid #e5e7eb; border-radius: 0.375rem; font-size: 0.75rem; outline: none; box-sizing: border-box;"
-                                                   onfocus="this.style.borderColor='#111827'" onblur="this.style.borderColor='#e5e7eb'">
+                                                   style="width: 100%; padding: 0.25rem 0.3rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.75rem; outline: none; box-sizing: border-box;"
+                                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                                         </td>
                                         <td style="padding: 0.375rem 0.25rem; text-align: center;">
                                             <button type="button" @click="copyUsedToWhatsApp(item)"
                                                     :style="item._copied
                                                         ? 'padding:0.25rem;background:none;border:none;cursor:default;color:#059669;'
-                                                        : 'padding:0.25rem;background:none;border:none;cursor:pointer;color:#9ca3af;border-radius:0.25rem;'"
+                                                        : 'padding:0.25rem;background:none;border:none;cursor:pointer;color:#666666;border-radius:0.25rem;'"
                                                     onmouseover="if(!this.dataset.copied)this.style.color='#25d366'" onmouseout="if(!this.dataset.copied)this.style.color='#9ca3af'"
                                                     title="Copiar para WhatsApp">
                                                 <svg x-show="!item._copied" style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -857,12 +858,12 @@
                     </div>
                     <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0.75rem; margin-top: 0.5rem;">
                         <div style="display: flex; align-items: center; gap: 0.375rem;">
-                            <span style="display: inline-block; width: 12px; height: 12px; background: #fef2f2; border: 1px solid #fca5a5; border-left: 3px solid #dc2626; border-radius: 2px;"></span>
-                            <span style="font-size: 0.6875rem; color: #6b7280;">Sem fotos</span>
+                            <span style="display: inline-block; width: 12px; height: 12px; background: rgba(239,68,68,0.1); border: 1px solid #fca5a5; border-left: 3px solid #dc2626; border-radius: 2px;"></span>
+                            <span style="font-size: 0.6875rem; color: #818181;">Sem fotos</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.375rem;">
-                            <span style="display: inline-block; width: 12px; height: 12px; background: white; border: 1px solid #e5e7eb; border-radius: 2px;"></span>
-                            <span style="font-size: 0.6875rem; color: #6b7280;">Com fotos</span>
+                            <span style="display: inline-block; width: 12px; height: 12px; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 2px;"></span>
+                            <span style="font-size: 0.6875rem; color: #818181;">Com fotos</span>
                         </div>
                     </div>
                 </div>
@@ -1744,7 +1745,7 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: #fff;
+            background: #141414;
             color: #111;
         }
         .grid {
@@ -1798,13 +1799,13 @@
             color: #444;
         }
         .label-battery {
-            background: #f3f4f6;
+            background: #222222;
             padding: 0.3mm 1.5mm;
             border-radius: 1mm;
             font-weight: 600;
         }
         .label-accessories {
-            background: #f3f4f6;
+            background: #222222;
             padding: 0.3mm 1.5mm;
             border-radius: 1mm;
             font-weight: 600;
@@ -1835,7 +1836,7 @@
             letter-spacing: 0.3px;
         }
         @media print {
-            body { background: #fff; }
+            body { background: #141414; }
             .no-print { display: none !important; }
             .grid { gap: 4mm; }
         }
@@ -1844,8 +1845,8 @@
             justify-content: center;
             gap: 12px;
             padding: 16px;
-            background: #f9fafb;
-            border-bottom: 1px solid #e5e7eb;
+            background: #1a1a1a;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         .toolbar button {
             padding: 8px 20px;
@@ -1861,7 +1862,7 @@
         }
         .btn-close {
             background: #e5e7eb;
-            color: #374151;
+            color: #a4a4a4;
         }
     </style>
 </head>

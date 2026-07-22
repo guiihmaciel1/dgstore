@@ -1,19 +1,19 @@
 <x-app-layout>
     <x-slot name="title">Checklist Seminovo</x-slot>
     <div class="py-6">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8" x-data="checklistApp()">
+        <div class="px-6 lg:px-8" x-data="checklistApp()">
 
             <!-- Header -->
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #111827;">Checklist Seminovo</h1>
-                    <p style="font-size: 0.875rem; color: #6b7280;">Avaliacao tecnica completa do aparelho</p>
+                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Checklist Seminovo</h1>
+                    <p style="font-size: 0.875rem; color: #818181;">Avaliacao tecnica completa do aparelho</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                     <button @click="resetAll()" type="button"
-                            style="padding: 0.5rem 0.875rem; font-size: 0.8rem; font-weight: 500; color: #6b7280; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;"
+                            style="padding: 0.5rem 0.875rem; font-size: 0.8rem; font-weight: 500; color: #818181; background: #141414; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;"
                             onmouseover="this.style.borderColor='#ef4444'; this.style.color='#ef4444';"
-                            onmouseout="this.style.borderColor='#d1d5db'; this.style.color='#6b7280';">
+                            onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.color='#6b7280';">
                         Limpar tudo
                     </button>
                     <button @click="copySummary()" type="button"
@@ -33,29 +33,29 @@
             <!-- Importar Device Info -->
             <div style="margin-bottom: 1rem;">
                 <div x-show="!deviceInfo">
-                    <div x-show="!showPasteArea" style="background: white; border: 2px dashed #d1d5db; border-radius: 0.75rem; padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color 0.2s;"
+                    <div x-show="!showPasteArea" style="background: #141414; border: 2px dashed #d1d5db; border-radius: 0.75rem; padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color 0.2s;"
                          @click="showPasteArea = true"
-                         onmouseover="this.style.borderColor='#6366f1'" onmouseout="this.style.borderColor='#d1d5db'">
-                        <svg style="width: 2rem; height: 2rem; color: #9ca3af; margin: 0 auto 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         onmouseover="this.style.borderColor='#818181'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
+                        <svg style="width: 2rem; height: 2rem; color: #666666; margin: 0 auto 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                         </svg>
-                        <p style="font-size: 0.8rem; font-weight: 600; color: #374151; margin: 0;">Importar Device Info (3uTools)</p>
-                        <p style="font-size: 0.7rem; color: #9ca3af; margin: 0.25rem 0 0;">Clique para colar o texto do Device Report</p>
+                        <p style="font-size: 0.8rem; font-weight: 600; color: #a4a4a4; margin: 0;">Importar Device Info (3uTools)</p>
+                        <p style="font-size: 0.7rem; color: #666666; margin: 0.25rem 0 0;">Clique para colar o texto do Device Report</p>
                     </div>
-                    <div x-show="showPasteArea" x-transition style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
-                        <div style="padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f3f4f6;">
-                            <span style="font-size: 0.8rem; font-weight: 600; color: #374151;">Cole o texto do 3uTools abaixo</span>
-                            <button @click="showPasteArea = false; pasteText = ''" type="button" style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid #e5e7eb; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 0.75rem;">✕</button>
+                    <div x-show="showPasteArea" x-transition style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
+                        <div style="padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                            <span style="font-size: 0.8rem; font-weight: 600; color: #a4a4a4;">Cole o texto do 3uTools abaixo</span>
+                            <button @click="showPasteArea = false; pasteText = ''" type="button" style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06); background: #141414; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #818181; font-size: 0.75rem;">✕</button>
                         </div>
                         <div style="padding: 0.75rem 1rem;">
                             <textarea x-model="pasteText" x-ref="pasteArea"
                                       placeholder="Cole aqui o conteudo do Device Report ou Device Info do 3uTools..."
-                                      style="width: 100%; height: 120px; padding: 0.625rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.75rem; font-family: monospace; resize: vertical; box-sizing: border-box;"
-                                      onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
-                                      onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'"></textarea>
+                                      style="width: 100%; height: 120px; padding: 0.625rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.75rem; font-family: monospace; resize: vertical; box-sizing: border-box;"
+                                      onfocus="this.style.borderColor='#818181'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+                                      onblur="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.boxShadow='none'"></textarea>
                             <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
                                 <button @click="showPasteArea = false; pasteText = ''" type="button"
-                                        style="padding: 0.375rem 0.75rem; font-size: 0.75rem; color: #6b7280; background: white; border: 1px solid #d1d5db; border-radius: 0.375rem; cursor: pointer;">
+                                        style="padding: 0.375rem 0.75rem; font-size: 0.75rem; color: #818181; background: #141414; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; cursor: pointer;">
                                     Cancelar
                                 </button>
                                 <button @click="processPastedText()" type="button"
@@ -74,12 +74,12 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                             <span style="font-size: 1rem;">📱</span>
                             <span style="font-size: 0.8rem; font-weight: 700; color: #312e81;" x-text="deviceInfo?.modelName || 'Dispositivo'"></span>
-                            <span x-show="deviceInfo?.capacity" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #4338ca;" x-text="deviceInfo?.capacity"></span>
-                            <span x-show="deviceInfo?.color" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #e0e7ff; color: #4338ca;" x-text="deviceInfo?.color"></span>
+                            <span x-show="deviceInfo?.capacity" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #a5b4fc;" x-text="deviceInfo?.capacity"></span>
+                            <span x-show="deviceInfo?.color" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: rgba(99,102,241,0.15); color: #a5b4fc;" x-text="deviceInfo?.color"></span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <span x-show="importMessage" x-transition style="font-size: 0.65rem; font-weight: 600; color: #059669; background: #dcfce7; padding: 0.125rem 0.5rem; border-radius: 9999px;" x-text="importMessage"></span>
-                            <button @click="removeReport()" type="button" style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid #e5e7eb; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 0.75rem;" title="Remover report">✕</button>
+                            <span x-show="importMessage" x-transition style="font-size: 0.65rem; font-weight: 600; color: #059669; background: rgba(16,185,129,0.15); padding: 0.125rem 0.5rem; border-radius: 9999px;" x-text="importMessage"></span>
+                            <button @click="removeReport()" type="button" style="width: 24px; height: 24px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06); background: #141414; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #818181; font-size: 0.75rem;" title="Remover report">✕</button>
                         </div>
                     </div>
 
@@ -87,7 +87,7 @@
                     <div style="padding: 0.75rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem;">
                         <template x-for="field in _cardFields('identity')">
                             <div x-show="field.show">
-                                <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;" x-text="field.label"></span>
                                 <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="(field.mono ? 'font-family:monospace;' : '') + 'color:' + (field.color || '#111827')" x-text="field.value"></p>
                             </div>
                         </template>
@@ -98,7 +98,7 @@
                         <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
                             <template x-for="field in _cardFields('status')">
                                 <div x-show="field.show">
-                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;" x-text="field.label"></span>
                                     <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (field.color || '#111827')" x-text="field.value"></p>
                                 </div>
                             </template>
@@ -110,8 +110,8 @@
                         <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
                             <template x-for="field in _cardFields('network')">
                                 <div x-show="field.show">
-                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
-                                    <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family:monospace;font-size:0.65rem;' : ''" x-text="field.value"></p>
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;" x-text="field.label"></span>
+                                    <p style="font-size: 0.75rem; font-weight: 600; color: #e3e3e3; margin: 0;" :style="field.mono ? 'font-family:monospace;font-size:0.65rem;' : ''" x-text="field.value"></p>
                                 </div>
                             </template>
                         </div>
@@ -122,8 +122,8 @@
                         <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
                             <template x-for="field in _cardFields('hardware')">
                                 <div x-show="field.show">
-                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
-                                    <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0;" :style="field.mono ? 'font-family:monospace;font-size:0.65rem;word-break:break-all;' : ''" x-text="field.value"></p>
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;" x-text="field.label"></span>
+                                    <p style="font-size: 0.75rem; font-weight: 600; color: #e3e3e3; margin: 0;" :style="field.mono ? 'font-family:monospace;font-size:0.65rem;word-break:break-all;' : ''" x-text="field.value"></p>
                                 </div>
                             </template>
                         </div>
@@ -134,8 +134,8 @@
                         <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
                             <template x-for="field in _cardFields('components')">
                                 <div x-show="field.show">
-                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
-                                    <p style="font-size: 0.75rem; font-weight: 600; color: #111827; margin: 0; font-family: monospace; font-size: 0.65rem; word-break: break-all;" x-text="field.value"></p>
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;" x-text="field.label"></span>
+                                    <p style="font-size: 0.75rem; font-weight: 600; color: #e3e3e3; margin: 0; font-family: monospace; font-size: 0.65rem; word-break: break-all;" x-text="field.value"></p>
                                 </div>
                             </template>
                         </div>
@@ -146,7 +146,7 @@
                         <div style="padding: 0 1.25rem 0.75rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem 1rem; border-top: 1px solid rgba(199,210,254,0.3); padding-top: 0.75rem;">
                             <template x-for="field in _cardFields('sensors')">
                                 <div x-show="field.show">
-                                    <span style="font-size: 0.6rem; font-weight: 600; color: #6b7280; text-transform: uppercase;" x-text="field.label"></span>
+                                    <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;" x-text="field.label"></span>
                                     <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (field.color || '#111827')" x-text="field.value"></p>
                                 </div>
                             </template>
@@ -156,40 +156,40 @@
             </div>
 
             <!-- Barra de progresso -->
-            <div style="margin-bottom: 1.5rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 1rem 1.25rem;">
+            <div style="margin-bottom: 1.5rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1rem 1.25rem;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <span style="font-size: 0.8rem; font-weight: 600; color: #374151;">Progresso</span>
-                    <span style="font-size: 0.8rem; font-weight: 700; color: #111827;" x-text="checkedCount + ' / ' + totalCount"></span>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: #a4a4a4;">Progresso</span>
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #e3e3e3;" x-text="checkedCount + ' / ' + totalCount"></span>
                 </div>
-                <div style="width: 100%; height: 8px; background: #f3f4f6; border-radius: 9999px; overflow: hidden;">
+                <div style="width: 100%; height: 8px; background: #222222; border-radius: 9999px; overflow: hidden;">
                     <div :style="'height: 100%; border-radius: 9999px; transition: width 0.3s; background:' + (percent === 100 ? '#059669' : '#111827') + '; width:' + percent + '%'"></div>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-top: 0.375rem;">
-                    <span style="font-size: 0.7rem; color: #9ca3af;" x-text="percent + '% concluido'"></span>
-                    <span x-show="failCount > 0" style="font-size: 0.7rem; font-weight: 600; color: #dc2626;" x-text="failCount + ' reprovado(s)'"></span>
+                    <span style="font-size: 0.7rem; color: #666666;" x-text="percent + '% concluido'"></span>
+                    <span x-show="failCount > 0" style="font-size: 0.7rem; font-weight: 600; color: #fca5a5;" x-text="failCount + ' reprovado(s)'"></span>
                 </div>
             </div>
 
             <!-- Secoes do checklist -->
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <template x-for="(section, sIdx) in sections" :key="sIdx">
-                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 0.75rem; overflow: hidden;">
+                    <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                         <!-- Header da secao -->
                         <button @click="section.open = !section.open" type="button"
                                 style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0.875rem 1.25rem; background: none; border: none; cursor: pointer; text-align: left;">
                             <div style="display: flex; align-items: center; gap: 0.75rem;">
                                 <span style="font-size: 1.25rem;" x-text="section.icon"></span>
                                 <div>
-                                    <div style="font-size: 0.9375rem; font-weight: 700; color: #111827;" x-text="section.title"></div>
-                                    <div style="font-size: 0.7rem; color: #9ca3af;" x-text="sectionProgress(sIdx)"></div>
+                                    <div style="font-size: 0.9375rem; font-weight: 700; color: #e3e3e3;" x-text="section.title"></div>
+                                    <div style="font-size: 0.7rem; color: #666666;" x-text="sectionProgress(sIdx)"></div>
                                 </div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.75rem;">
                                 <!-- Mini progress -->
-                                <div :style="'width: 40px; height: 4px; background: #f3f4f6; border-radius: 9999px; overflow: hidden;'">
+                                <div :style="'width: 40px; height: 4px; background: #222222; border-radius: 9999px; overflow: hidden;'">
                                     <div :style="'height: 100%; border-radius: 9999px; background: #059669; transition: width 0.2s; width:' + sectionPercent(sIdx) + '%'"></div>
                                 </div>
-                                <svg :style="section.open ? 'transform: rotate(180deg); transition: transform 0.2s; width: 16px; height: 16px; color: #9ca3af;' : 'transition: transform 0.2s; width: 16px; height: 16px; color: #9ca3af;'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg :style="section.open ? 'transform: rotate(180deg); transition: transform 0.2s; width: 16px; height: 16px; color: #666666;' : 'transition: transform 0.2s; width: 16px; height: 16px; color: #666666;'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                 </svg>
                             </div>
@@ -200,15 +200,15 @@
                             <!-- Subsecoes -->
                             <template x-for="(sub, subIdx) in section.subs" :key="subIdx">
                                 <div>
-                                    <div x-show="sub.label" style="padding: 0.5rem 1.25rem 0.25rem; font-size: 0.7rem; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em;" x-text="sub.label"></div>
+                                    <div x-show="sub.label" style="padding: 0.5rem 1.25rem 0.25rem; font-size: 0.7rem; font-weight: 600; color: #666666; text-transform: uppercase; letter-spacing: 0.05em;" x-text="sub.label"></div>
                                     <template x-for="(item, iIdx) in sub.items" :key="iIdx">
                                         <div style="display: flex; align-items: center; gap: 0; padding: 0 1.25rem; border-bottom: 1px solid #fafafa;">
                                             <!-- Botoes OK / Falha -->
                                             <div style="display: flex; gap: 2px; margin-right: 0.75rem; flex-shrink: 0;">
                                                 <button @click="toggleItem(sIdx, subIdx, iIdx, 'ok')" type="button"
                                                         :style="item.status === 'ok'
-                                                            ? 'width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; background: #dcfce7; color: #16a34a;'
-                                                            : 'width: 28px; height: 28px; border-radius: 6px; border: 1px solid #e5e7eb; cursor: pointer; display: flex; align-items: center; justify-content: center; background: white; color: #d1d5db;'"
+                                                            ? 'width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; background: rgba(16,185,129,0.15); color: #16a34a;'
+                                                            : 'width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06); cursor: pointer; display: flex; align-items: center; justify-content: center; background: #141414; color: #515151;'"
                                                         title="OK">
                                                     <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
@@ -216,8 +216,8 @@
                                                 </button>
                                                 <button @click="toggleItem(sIdx, subIdx, iIdx, 'fail')" type="button"
                                                         :style="item.status === 'fail'
-                                                            ? 'width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; background: #fef2f2; color: #dc2626;'
-                                                            : 'width: 28px; height: 28px; border-radius: 6px; border: 1px solid #e5e7eb; cursor: pointer; display: flex; align-items: center; justify-content: center; background: white; color: #d1d5db;'"
+                                                            ? 'width: 28px; height: 28px; border-radius: 6px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; background: rgba(239,68,68,0.1); color: #fca5a5;'
+                                                            : 'width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06); cursor: pointer; display: flex; align-items: center; justify-content: center; background: #141414; color: #515151;'"
                                                         title="Falha">
                                                     <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
@@ -226,9 +226,9 @@
                                             </div>
                                             <!-- Label -->
                                             <div style="flex: 1; padding: 0.625rem 0; min-width: 0;">
-                                                <span :style="item.status === 'ok' ? 'font-size: 0.875rem; color: #374151; text-decoration: line-through; opacity: 0.5;' : item.status === 'fail' ? 'font-size: 0.875rem; color: #dc2626; font-weight: 500;' : 'font-size: 0.875rem; color: #374151;'"
+                                                <span :style="item.status === 'ok' ? 'font-size: 0.875rem; color: #a4a4a4; text-decoration: line-through; opacity: 0.5;' : item.status === 'fail' ? 'font-size: 0.875rem; color: #fca5a5; font-weight: 500;' : 'font-size: 0.875rem; color: #a4a4a4;'"
                                                       x-text="item.label"></span>
-                                                <span x-show="item.hint" style="display: block; font-size: 0.7rem; color: #9ca3af; margin-top: 1px;" x-text="item.hint"></span>
+                                                <span x-show="item.hint" style="display: block; font-size: 0.7rem; color: #666666; margin-top: 1px;" x-text="item.hint"></span>
                                             </div>
                                         </div>
                                     </template>
@@ -243,34 +243,34 @@
             <div x-show="checkedCount === totalCount && totalCount > 0" x-transition
                  style="margin-top: 1.5rem; border-radius: 0.75rem; overflow: hidden;"
                  :style="failCount === 0
-                    ? 'background: #f0fdf4; border: 2px solid #86efac;'
-                    : 'background: #fef2f2; border: 2px solid #fca5a5;'">
+                    ? 'background: rgba(16,185,129,0.1); border: 2px solid #86efac;'
+                    : 'background: rgba(239,68,68,0.1); border: 2px solid #fca5a5;'">
                 <div style="padding: 1.25rem; text-align: center;">
                     <div style="font-size: 2rem; margin-bottom: 0.25rem;" x-text="failCount === 0 ? '✅' : '⚠️'"></div>
-                    <div style="font-size: 1rem; font-weight: 700;" :style="failCount === 0 ? 'color: #166534;' : 'color: #991b1b;'"
+                    <div style="font-size: 1rem; font-weight: 700;" :style="failCount === 0 ? 'color: #6ee7b7;' : 'color: #fca5a5;'"
                          x-text="failCount === 0 ? 'Aparelho aprovado!' : failCount + ' item(ns) reprovado(s)'"></div>
-                    <div style="font-size: 0.8rem; margin-top: 0.25rem;" :style="failCount === 0 ? 'color: #15803d;' : 'color: #b91c1c;'"
+                    <div style="font-size: 0.8rem; margin-top: 0.25rem;" :style="failCount === 0 ? 'color: #6ee7b7;' : 'color: #fca5a5;'"
                          x-text="failCount === 0 ? 'Todos os itens passaram na avaliacao.' : 'Revise os itens com falha antes de prosseguir.'"></div>
                 </div>
             </div>
 
             <!-- Modal Salvar Checklist -->
             <div x-show="showSaveModal" x-transition.opacity style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; background: rgba(0,0,0,0.5);" @click.self="showSaveModal = false">
-                <div x-show="showSaveModal" x-transition style="background: white; border-radius: 0.75rem; width: 100%; max-width: 28rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+                <div x-show="showSaveModal" x-transition style="background: #141414; border-radius: 0.75rem; width: 100%; max-width: 28rem; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
                     <div style="padding: 1.5rem;">
-                        <h3 style="font-size: 1.125rem; font-weight: 700; color: #111827; margin: 0 0 0.25rem;">Salvar Checklist</h3>
-                        <p style="font-size: 0.8rem; color: #6b7280; margin: 0 0 1rem;">Dê um nome para identificar este checklist.</p>
+                        <h3 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3; margin: 0 0 0.25rem;">Salvar Checklist</h3>
+                        <p style="font-size: 0.8rem; color: #818181; margin: 0 0 1rem;">Dê um nome para identificar este checklist.</p>
                         <input type="text" x-model="saveName" x-ref="saveNameInput"
                                @keydown.enter="saveChecklist()"
                                placeholder="Ex: iPhone 16 Pro Max 256GB Titanio"
-                               style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid #d1d5db; border-radius: 0.5rem; outline: none; box-sizing: border-box;"
-                               onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
-                               onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='none'">
-                        <p x-show="saveError" style="font-size: 0.75rem; color: #dc2626; margin: 0.5rem 0 0;" x-text="saveError"></p>
+                               style="width: 100%; padding: 0.625rem 0.75rem; font-size: 0.875rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; outline: none; box-sizing: border-box;"
+                               onfocus="this.style.borderColor='#818181'; this.style.boxShadow='0 0 0 3px rgba(99,102,241,0.1)'"
+                               onblur="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.boxShadow='none'">
+                        <p x-show="saveError" style="font-size: 0.75rem; color: #fca5a5; margin: 0.5rem 0 0;" x-text="saveError"></p>
                     </div>
                     <div style="padding: 0.75rem 1.5rem; display: flex; justify-content: flex-end; gap: 0.5rem; border-top: 1px solid #f3f4f6;">
                         <button @click="showSaveModal = false" type="button"
-                                style="padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #6b7280; background: white; border: 1px solid #d1d5db; border-radius: 0.5rem; cursor: pointer;">
+                                style="padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; background: #141414; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;">
                             Cancelar
                         </button>
                         <button @click="saveChecklist()" type="button" :disabled="saving"
