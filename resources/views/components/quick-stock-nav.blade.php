@@ -45,10 +45,10 @@
                 </button>
             </div>
             @php
-                $ownStockCount = \App\Domain\Product\Models\Product::where('active', true)->sum('stock_quantity');
+                $ownStockCount = \App\Domain\Product\Models\Product::where('active', true)->where('category', 'smartphone')->sum('stock_quantity');
             @endphp
             <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="font-size: 0.6875rem; color: #818181;">{{ $ownStockCount }} produto(s) em estoque</span>
+                <span style="font-size: 0.6875rem; color: #818181;">{{ $ownStockCount }} smartphone(s) em estoque</span>
             </div>
         </div>
 
