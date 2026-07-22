@@ -45,10 +45,13 @@
                 </button>
             </div>
             @php
-                $ownStockCount = \App\Domain\Product\Models\Product::where('active', true)->where('category', 'smartphone')->sum('stock_quantity');
+                $ownNew = \App\Domain\Product\Models\Product::where('active', true)->where('category', 'smartphone')->where('condition', 'new')->sum('stock_quantity');
+                $ownUsed = \App\Domain\Product\Models\Product::where('active', true)->where('category', 'smartphone')->where('condition', 'used')->sum('stock_quantity');
             @endphp
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="font-size: 0.6875rem; color: #818181;">{{ $ownStockCount }} smartphone(s) em estoque</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <span style="font-size: 0.6875rem; font-weight: 600; color: #60a5fa;">{{ $ownNew }} {{ $ownNew == 1 ? 'novo' : 'novos' }}</span>
+                <span style="font-size: 0.6875rem; color: #515151;">·</span>
+                <span style="font-size: 0.6875rem; font-weight: 600; color: #fbbf24;">{{ $ownUsed }} {{ $ownUsed == 1 ? 'seminovo' : 'seminovos' }}</span>
             </div>
         </div>
 
