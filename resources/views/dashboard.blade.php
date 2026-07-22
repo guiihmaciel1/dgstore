@@ -377,13 +377,6 @@
             </div>
             @endif
 
-            <!-- BANNER DG STORE -->
-            <div class="mb-4 sm:mb-6">
-                <div id="banner-container" style="width: 100%; aspect-ratio: 1920/819; background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%); border-radius: 0.75rem; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <img src="{{ asset('images/bannernews.png') }}" alt="DG Store" style="width: 100%; height: 100%; object-fit: cover;">
-                </div>
-            </div>
-
             <!-- ATALHOS RÁPIDOS -->
             <div class="dashboard-shortcuts">
                 <a href="{{ route('sales.create') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #111827; color: white; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" onmouseout="this.style.transform=''; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'">
