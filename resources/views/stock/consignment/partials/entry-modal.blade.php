@@ -168,53 +168,45 @@
                                oninput="checkConsignmentDuplicate()">
                     </div>
 
-                    {{-- Separador: Identificadores --}}
-                    <div style="grid-column: span 4; margin-top: 0.25rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.375rem; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    {{-- Identificadores do Dispositivo --}}
+                    <div class="cs-identifiers-section">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.625rem; padding-bottom: 0.375rem; border-bottom: 1px solid rgba(255,255,255,0.04);">
                             <svg style="width: 0.875rem; height: 0.875rem; color: #555;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/>
                             </svg>
                             <span style="font-size: 0.6875rem; font-weight: 500; color: #555; text-transform: uppercase; letter-spacing: 0.05em;">Identificadores do Dispositivo</span>
                         </div>
-                    </div>
-
-                    {{-- IMEI --}}
-                    <div>
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">IMEI</label>
-                        <input type="text" name="imei" id="cs-imei" maxlength="20" placeholder="IMEI principal"
-                               style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
-                    </div>
-
-                    {{-- IMEI 2 --}}
-                    <div>
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">IMEI 2</label>
-                        <input type="text" name="imei2" id="cs-imei2" maxlength="20" placeholder="Segundo IMEI"
-                               style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
-                    </div>
-
-                    {{-- Serial --}}
-                    <div>
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Nº de Série</label>
-                        <input type="text" name="serial_number" id="cs-serial" maxlength="30" placeholder="Serial Number"
-                               style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
-                    </div>
-
-                    {{-- Model Number --}}
-                    <div>
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Model No.</label>
-                        <input type="text" name="model_number" id="cs-model-number" maxlength="20" placeholder="Ex: A3257"
-                               style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
-                    </div>
-
-                    {{-- Part Number --}}
-                    <div>
-                        <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Part Number</label>
-                        <input type="text" name="part_number" id="cs-part-number" maxlength="30" placeholder="Ex: MFXJ4LL/A"
-                               style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
+                        <div class="cs-identifiers-grid">
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">IMEI</label>
+                                <input type="text" name="imei" id="cs-imei" maxlength="20" placeholder="IMEI principal"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">IMEI 2</label>
+                                <input type="text" name="imei2" id="cs-imei2" maxlength="20" placeholder="Segundo IMEI"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Nº de Série</label>
+                                <input type="text" name="serial_number" id="cs-serial" maxlength="30" placeholder="Serial Number"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Model No.</label>
+                                <input type="text" name="model_number" id="cs-model-number" maxlength="20" placeholder="Ex: A3257"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Part Number</label>
+                                <input type="text" name="part_number" id="cs-part-number" maxlength="30" placeholder="Ex: MFXJ4LL/A"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem;">
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Separador: Preços --}}
-                    <div style="grid-column: span 4; margin-top: 0.25rem;">
+                    <div class="cs-section-separator">
                         <div style="display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.375rem; border-bottom: 1px solid rgba(255,255,255,0.04);">
                             <svg style="width: 0.875rem; height: 0.875rem; color: #555;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -445,9 +437,34 @@
     @keyframes cs-spin {
         to { transform: rotate(360deg); }
     }
+    .cs-identifiers-section {
+        grid-column: span 4;
+        margin-top: 0.25rem;
+    }
+    .cs-identifiers-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.875rem;
+    }
+    .cs-section-separator {
+        grid-column: span 4;
+        margin-top: 0.25rem;
+    }
     @media (max-width: 768px) {
-        #cs-form-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        #cs-form-grid > div[style*="grid-column: span 4"] { grid-column: span 2 !important; }
-        #cs-form-grid > div[style*="grid-column: span 2"] { grid-column: span 2 !important; }
+        #cs-form-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+        #cs-form-grid > div[style*="grid-column: span 2"] {
+            grid-column: span 2 !important;
+        }
+        .cs-identifiers-section {
+            grid-column: span 2 !important;
+        }
+        .cs-identifiers-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+        .cs-section-separator {
+            grid-column: span 2 !important;
+        }
     }
 </style>
