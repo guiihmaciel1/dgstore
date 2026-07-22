@@ -126,12 +126,15 @@
                         <tbody>
                             @forelse($sales as $sale)
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-                                    <td style="padding: 1rem 1.5rem;">
-                                        <div style="font-weight: 600; color: #e3e3e3;">{{ $sale->sale_number }}</div>
-                                        <div style="font-size: 0.75rem; color: #666666;">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name }}</div>
+                                    <td style="padding: 0.75rem 1rem;">
+                                        <div style="font-size: 0.75rem; font-weight: 600; color: #818181;">{{ $sale->sale_number }}</div>
+                                        <div style="font-size: 0.6875rem; color: #515151;">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name }}</div>
                                     </td>
-                                    <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #a4a4a4;">
-                                        {{ $sale->customer?->name ?? 'Cliente não informado' }}
+                                    <td style="padding: 0.75rem 1rem;">
+                                        <div style="font-size: 0.875rem; color: #a4a4a4;">{{ $sale->customer?->name ?? 'Cliente não informado' }}</div>
+                                        <div style="font-size: 0.6875rem; color: #666666; margin-top: 0.125rem; max-width: 18rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $sale->items->map(fn($i) => ($i->quantity > 1 ? $i->quantity.'x ' : '') . $i->product_name)->implode(', ') }}">
+                                            {{ $sale->items->map(fn($i) => ($i->quantity > 1 ? $i->quantity.'x ' : '') . $i->product_name)->implode(', ') }}
+                                        </div>
                                     </td>
                                     <td style="padding: 0.75rem 1rem;">
                                         @if($sale->sale_type)
@@ -163,12 +166,12 @@
                                     <td style="padding: 0.75rem 1rem; text-align: center;">
                                         @php
                                             $statusColors = [
-                                                'paid' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                                'pending' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
-                                                'partial' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                                'cancelled' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
+                                                'paid' => ['bg' => 'rgba(22,163,106,0.12)', 'color' => '#4ade80'],
+                                                'pending' => ['bg' => 'rgba(202,138,4,0.12)', 'color' => '#fbbf24'],
+                                                'partial' => ['bg' => 'rgba(37,99,235,0.12)', 'color' => '#60a5fa'],
+                                                'cancelled' => ['bg' => 'rgba(220,38,38,0.12)', 'color' => '#f87171'],
                                             ];
-                                            $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                            $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => 'rgba(255,255,255,0.06)', 'color' => '#818181'];
                                         @endphp
                                         <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $sc['bg'] }}; color: {{ $sc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                             {{ $sale->payment_status->label() }}
@@ -215,7 +218,7 @@
                                 @endif
                                 <td style="padding: 0.875rem 1rem; text-align: center;">
                                     @if($totals['total_revenue'] > 0)
-                                        <span style="display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; background: {{ ($totals['total_net_profit'] ?? $totals['total_profit']) >= 0 ? '#f0fdf4' : '#fef2f2' }}; color: {{ ($totals['total_net_profit'] ?? $totals['total_profit']) >= 0 ? '#16a34a' : '#dc2626' }};">
+                                        <span style="display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; background: {{ ($totals['total_net_profit'] ?? $totals['total_profit']) >= 0 ? 'rgba(22,163,106,0.12)' : 'rgba(220,38,38,0.12)' }}; color: {{ ($totals['total_net_profit'] ?? $totals['total_profit']) >= 0 ? '#4ade80' : '#f87171' }};">
                                             {{ number_format((($totals['total_net_profit'] ?? $totals['total_profit']) / $totals['total_revenue']) * 100, 1, ',', '.') }}%
                                         </span>
                                     @endif

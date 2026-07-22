@@ -9,7 +9,7 @@
                 </div>
             @endif
             @if(session('error'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 0.5rem; color: #fca5a5;">
                     {{ session('error') }}
                 </div>
             @endif
@@ -48,7 +48,7 @@
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <a href="{{ route('schedule.index', ['date' => $date->copy()->subDay()->format('Y-m-d'), 'attendant' => $attendantFilter]) }}"
                            style="padding: 0.375rem; border-radius: 0.375rem; color: #a4a4a4; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); background: #141414; display: inline-flex;"
-                           onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
+                           onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
                             <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                         </a>
                         <div style="text-align: center;">
@@ -57,7 +57,7 @@
                         </div>
                         <a href="{{ route('schedule.index', ['date' => $date->copy()->addDay()->format('Y-m-d'), 'attendant' => $attendantFilter]) }}"
                            style="padding: 0.375rem; border-radius: 0.375rem; color: #a4a4a4; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); background: #141414; display: inline-flex;"
-                           onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
+                           onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
                             <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
                         @if(!$date->isToday())
@@ -85,7 +85,7 @@
                     <div style="padding: 0.75rem; background: #1a1a1a; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase;">Hora</div>
                     @foreach($attendants as $key => $name)
                         @if(!$attendantFilter || $attendantFilter === $key)
-                            <div style="padding: 0.75rem; background: #1a1a1a; text-align: center; font-size: 0.8rem; font-weight: 600; color: #a4a4a4; border-left: 1px solid #e5e7eb;">
+                            <div style="padding: 0.75rem; background: #1a1a1a; text-align: center; font-size: 0.8rem; font-weight: 600; color: #a4a4a4; border-left: 1px solid rgba(255,255,255,0.06);">
                                 <span style="display: inline-flex; align-items: center; gap: 0.375rem;">
                                     <span style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$key] ?? '#6b7280' }};"></span>
                                     {{ $name }}
@@ -112,11 +112,11 @@
                                     @if($appt)
                                         @php
                                             $slotColors = [
-                                                'scheduled' => ['bg' => '#eff6ff', 'border' => '#3b82f6', 'badge_bg' => '#dbeafe', 'badge_color' => '#1d4ed8'],
-                                                'confirmed' => ['bg' => '#f0fdf4', 'border' => '#16a34a', 'badge_bg' => '#dcfce7', 'badge_color' => '#166534'],
-                                                'completed' => ['bg' => '#f9fafb', 'border' => '#9ca3af', 'badge_bg' => '#f3f4f6', 'badge_color' => '#6b7280'],
-                                                'cancelled' => ['bg' => '#fef2f2', 'border' => '#dc2626', 'badge_bg' => '#fee2e2', 'badge_color' => '#991b1b'],
-                                                'no_show'   => ['bg' => '#fefce8', 'border' => '#d97706', 'badge_bg' => '#fef3c7', 'badge_color' => '#92400e'],
+                                                'scheduled' => ['bg' => 'rgba(59,130,246,0.1)', 'border' => '#3b82f6', 'badge_bg' => 'rgba(59,130,246,0.2)', 'badge_color' => '#60a5fa'],
+                                                'confirmed' => ['bg' => 'rgba(22,163,106,0.1)', 'border' => '#16a34a', 'badge_bg' => 'rgba(22,163,106,0.2)', 'badge_color' => '#4ade80'],
+                                                'completed' => ['bg' => 'rgba(255,255,255,0.04)', 'border' => '#515151', 'badge_bg' => 'rgba(255,255,255,0.08)', 'badge_color' => '#818181'],
+                                                'cancelled' => ['bg' => 'rgba(220,38,38,0.1)', 'border' => '#dc2626', 'badge_bg' => 'rgba(220,38,38,0.2)', 'badge_color' => '#f87171'],
+                                                'no_show'   => ['bg' => 'rgba(217,119,6,0.1)', 'border' => '#d97706', 'badge_bg' => 'rgba(217,119,6,0.2)', 'badge_color' => '#fbbf24'],
                                             ];
                                             $sc = $slotColors[$appt->status->value] ?? $slotColors['scheduled'];
                                         @endphp
@@ -210,7 +210,7 @@
                     </div>
 
                     {{-- Cliente --}}
-                    <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-bottom: 1rem;">
+                    <div style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem; margin-bottom: 1rem;">
                         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                             <span style="font-size: 0.8rem; font-weight: 700; color: #e3e3e3;">Dados do Cliente</span>
                             <div style="display: flex; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; overflow: hidden;">
@@ -219,7 +219,7 @@
                                     Buscar existente
                                 </button>
                                 <button type="button" @click="customerMode = 'new'"
-                                        :style="customerMode === 'new' ? 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: #111827; color: white; border: none; border-left: 1px solid #e5e7eb; cursor: pointer;' : 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 500; background: #141414; color: #818181; border: none; border-left: 1px solid #e5e7eb; cursor: pointer;'">
+                                        :style="customerMode === 'new' ? 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: #111827; color: white; border: none; border-left: 1px solid rgba(255,255,255,0.06); cursor: pointer;' : 'padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 500; background: #141414; color: #818181; border: none; border-left: 1px solid rgba(255,255,255,0.06); cursor: pointer;'">
                                     Cadastrar novo
                                 </button>
                             </div>
@@ -243,7 +243,7 @@
                                     </button>
                                 </template>
                             </div>
-                            <div x-show="selectedCustomer" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem;">
+                            <div x-show="selectedCustomer" style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 0.5rem;">
                                 <div>
                                     <span style="font-size: 0.8rem; font-weight: 600; color: #6ee7b7;" x-text="selectedCustomer?.name"></span>
                                     <span style="font-size: 0.75rem; color: #6ee7b7; margin-left: 0.25rem;" x-text="selectedCustomer?.phone"></span>
@@ -383,14 +383,14 @@
                     </template>
 
                     {{-- Status Actions --}}
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.375rem; padding-top: 1rem; border-top: 1px solid #f3f4f6;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.375rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06);">
                         <template x-if="editAppt?.status !== 'confirmed' && editAppt?.status !== 'completed' && editAppt?.status !== 'cancelled'">
                             <form :action="'/schedule/' + editAppt?.id + '/status'" method="POST" style="display: inline;">
                                 @csrf
                                 @method('PATCH')
                                 <input type="hidden" name="status" value="confirmed">
-                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid #bbf7d0; border-radius: 0.375rem; cursor: pointer;"
-                                        onmouseover="this.style.background='#bbf7d0'" onmouseout="this.style.background='#dcfce7'">
+                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); border-radius: 0.375rem; cursor: pointer;"
+                                        onmouseover="this.style.background='rgba(16,185,129,0.25)'" onmouseout="this.style.background='rgba(16,185,129,0.15)'">
                                     <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                     Confirmar
                                 </button>
@@ -413,8 +413,8 @@
                                 @csrf
                                 @method('PATCH')
                                 <input type="hidden" name="status" value="no_show">
-                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: #fef3c7; color: #fbbf24; border: 1px solid #fde68a; border-radius: 0.375rem; cursor: pointer;"
-                                        onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">
+                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: rgba(217,119,6,0.15); color: #fbbf24; border: 1px solid rgba(217,119,6,0.3); border-radius: 0.375rem; cursor: pointer;"
+                                        onmouseover="this.style.background='rgba(217,119,6,0.25)'" onmouseout="this.style.background='rgba(217,119,6,0.15)'">
                                     <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     Não Compareceu
                                 </button>
@@ -424,8 +424,8 @@
                             <form :action="'/schedule/' + editAppt?.id" method="POST" style="display: inline;" onsubmit="return confirm('Cancelar este agendamento?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid #fecaca; border-radius: 0.375rem; cursor: pointer;"
-                                        onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
+                                <button type="submit" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); border-radius: 0.375rem; cursor: pointer;"
+                                        onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">
                                     <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                     Cancelar
                                 </button>
@@ -514,7 +514,7 @@
                                 <span style="font-size: 0.8rem; font-weight: 600; color: #a4a4a4;" x-text="msgType.label"></span>
                                 <button type="button" @click="copyWhatsapp(msgType.key)"
                                         :style="copiedType === msgType.key
-                                            ? 'display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid #bbf7d0; border-radius: 0.375rem; cursor: pointer;'
+                                            ? 'display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 600; background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); border-radius: 0.375rem; cursor: pointer;'
                                             : 'display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; font-size: 0.7rem; font-weight: 500; background: #141414; color: #a4a4a4; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; cursor: pointer;'">
                                     <template x-if="copiedType !== msgType.key">
                                         <span style="display: flex; align-items: center; gap: 0.25rem;">
