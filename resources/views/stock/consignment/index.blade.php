@@ -114,13 +114,17 @@
             </div>
 
             {{-- Banner de filtro por grupo --}}
-            @if($viewMode === 'detail' && request('filter_name'))
+            @if($viewMode === 'detail' && request('group_filter'))
+                @php
+                    $gf = json_decode(base64_decode(request('group_filter')), true) ?? [];
+                    $gfLabel = ($gf['name'] ?? '') . (!empty($gf['storage']) ? ' ' . $gf['storage'] : '') . (!empty($gf['color']) ? ' ' . $gf['color'] : '');
+                @endphp
                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.625rem 1rem; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); border-radius: 0.5rem; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: #93c5fd;">
                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
                         </svg>
-                        Exibindo itens de: <strong style="color: #e3e3e3;">{{ request('filter_name') }}{{ request('filter_storage') ? ' ' . request('filter_storage') : '' }}{{ request('filter_color') ? ' ' . request('filter_color') : '' }}</strong>
+                        Exibindo itens de: <strong style="color: #e3e3e3;">{{ $gfLabel }}</strong>
                     </div>
                     <a href="{{ route('stock.consignment.index', ['view_mode' => 'summary', 'status' => request('status', 'available'), 'supplier_id' => request('supplier_id')]) }}"
                        style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.06); color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none;"
@@ -186,13 +190,18 @@
                                         </td>
                                         <td style="padding: 0.75rem; text-align: center;">
                                             @php
+                                                $condVal = $group->condition instanceof \App\Domain\Product\Enums\ProductCondition ? $group->condition->value : ($group->condition ?? 'new');
+                                                $groupData = base64_encode(json_encode([
+                                                    'name' => $group->name,
+                                                    'storage' => $group->storage,
+                                                    'color' => $group->color,
+                                                    'condition' => $condVal,
+                                                ]));
                                                 $detailParams = [
                                                     'view_mode' => 'detail',
                                                     'supplier_id' => $group->supplier_id,
                                                     'status' => request('status', 'available'),
-                                                    'filter_name' => $group->name,
-                                                    'filter_storage' => $group->storage ?? '',
-                                                    'filter_color' => $group->color ?? '',
+                                                    'group_filter' => $groupData,
                                                 ];
                                             @endphp
                                             <a href="{{ route('stock.consignment.index', $detailParams) }}"

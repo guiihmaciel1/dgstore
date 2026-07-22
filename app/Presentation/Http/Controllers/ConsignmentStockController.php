@@ -124,19 +124,40 @@ class ConsignmentStockController extends Controller
             $query->search($request->search);
         }
 
-        if ($request->filled('filter_name')) {
-            $query->where('name', $request->filter_name);
-        }
-        if ($request->has('filter_storage')) {
-            $val = $request->filter_storage;
-            $val === '' ? $query->whereNull('storage') : $query->where('storage', $val);
-        }
-        if ($request->has('filter_color')) {
-            $val = $request->filter_color;
-            $val === '' ? $query->whereNull('color') : $query->where('color', $val);
+        if ($request->filled('group_filter')) {
+            $this->applyGroupFilter($query, $request->group_filter);
         }
 
         return $query->orderByDesc('received_at')->paginate(30)->withQueryString();
+    }
+
+    private function applyGroupFilter($query, string $groupFilter): void
+    {
+        $parts = json_decode(base64_decode($groupFilter), true);
+
+        if (!$parts || !is_array($parts)) {
+            return;
+        }
+
+        if (!empty($parts['name'])) {
+            $query->where('name', $parts['name']);
+        }
+
+        if (array_key_exists('storage', $parts)) {
+            $parts['storage']
+                ? $query->where('storage', $parts['storage'])
+                : $query->whereNull('storage');
+        }
+
+        if (array_key_exists('color', $parts)) {
+            $parts['color']
+                ? $query->where('color', $parts['color'])
+                : $query->whereNull('color');
+        }
+
+        if (array_key_exists('condition', $parts)) {
+            $query->where('condition', $parts['condition']);
+        }
     }
 
     public function create(): View
