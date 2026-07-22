@@ -9,6 +9,7 @@ use App\Domain\Product\DTOs\ProductData;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
+use App\Domain\Product\Services\ImeiLookupService;
 use App\Domain\Product\Services\ProductService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreProductRequest;
@@ -198,6 +199,22 @@ class ProductController extends Controller
         $sku = $this->productService->generateSku($category, $model);
 
         return response()->json(['sku' => $sku]);
+    }
+
+    /**
+     * Consulta IMEI no banco TAC e retorna dados do dispositivo.
+     */
+    public function lookupImei(Request $request, ImeiLookupService $imeiLookup): JsonResponse
+    {
+        $imei = $request->get('imei', '');
+
+        if (empty($imei)) {
+            return response()->json(['found' => false, 'error' => 'IMEI não informado']);
+        }
+
+        $result = $imeiLookup->lookup($imei);
+
+        return response()->json($result);
     }
 
     public function label(Product $product): Response

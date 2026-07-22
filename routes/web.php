@@ -141,6 +141,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/products/{product}/label', [ProductController::class, 'label'])->name('products.label');
         Route::get('/api/products/search', [ProductController::class, 'search'])->name('products.search');
         Route::get('/api/products/generate-sku', [ProductController::class, 'generateSku'])->name('products.generate-sku');
+        Route::get('/api/products/imei-lookup', [ProductController::class, 'lookupImei'])->name('products.imei-lookup');
         Route::post('/api/products/store-quick', [ProductController::class, 'storeQuick'])->name('products.store-quick');
 
         // Clientes
