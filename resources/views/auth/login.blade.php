@@ -54,7 +54,8 @@
             Entrar
         </button>
 
-        <!-- B2B Portal -->
+        <!-- B2B Portal + Dev quick access (apenas local) -->
+        @if(app()->environment('local', 'development'))
         <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.06);">
             <a href="{{ route('b2b.login') }}" class="login-b2b">
                 <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,9 +64,6 @@
                 {{ \App\Domain\B2B\Models\B2BSetting::getCompanyName() }}
             </a>
         </div>
-
-        <!-- Dev quick access -->
-        @if(app()->environment('local', 'development'))
         <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.04);">
             <p style="font-size: 0.65rem; color: #4a4a4a; text-align: center; margin-bottom: 0.75rem;">Acesso rápido</p>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
