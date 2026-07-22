@@ -9,6 +9,8 @@ use App\Application\UseCases\CreateSaleUseCase;
 use App\Domain\Customer\Services\CustomerService;
 use App\Domain\Negotiation\Models\NegotiationSnapshot;
 use App\Domain\Product\Services\ProductService;
+use App\Domain\PreSale\Models\PreSale;
+use App\Domain\PreSale\Services\PreSaleService;
 use App\Domain\Reservation\Models\Reservation;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Sale\DTOs\SaleData;
@@ -42,7 +44,8 @@ class SaleController extends Controller
         private readonly CustomerService $customerService,
         private readonly CreateSaleUseCase $createSaleUseCase,
         private readonly CancelSaleUseCase $cancelSaleUseCase,
-        private readonly ReservationService $reservationService
+        private readonly ReservationService $reservationService,
+        private readonly PreSaleService $preSaleService,
     ) {}
 
     public function index(Request $request): View
@@ -87,6 +90,13 @@ class SaleController extends Controller
                 ->find($request->get('snapshot_id'));
         }
 
+        // Carregar pré-venda se vier de conversão
+        $preSale = null;
+        if ($request->get('from_presale')) {
+            $preSale = PreSale::with(['customer', 'product', 'consignmentItem'])
+                ->find($request->get('from_presale'));
+        }
+
         $sellers = User::whereIn('role', [
                 UserRole::AdminGeral->value,
                 UserRole::Seller->value,
@@ -103,6 +113,7 @@ class SaleController extends Controller
             'tradeInConditions' => TradeInCondition::cases(),
             'reservation' => $reservation,
             'snapshot' => $snapshot,
+            'preSale' => $preSale,
         ]);
     }
 
@@ -112,9 +123,10 @@ class SaleController extends Controller
             $validated = $request->validated();
             $validated['user_id'] = auth()->id();
 
-            // Extrair from_reservation antes de criar SaleData
+            // Extrair from_reservation e from_presale antes de criar SaleData
             $fromReservation = $validated['from_reservation'] ?? null;
-            unset($validated['from_reservation']);
+            $fromPresale = $validated['from_presale'] ?? null;
+            unset($validated['from_reservation'], $validated['from_presale']);
 
             $data = SaleData::fromArray($validated);
             $sale = $this->createSaleUseCase->execute($data);
@@ -127,6 +139,17 @@ class SaleController extends Controller
                     }
                 } catch (\Throwable $e) {
                     Log::warning("Não foi possível vincular reserva à venda: {$e->getMessage()}");
+                }
+            }
+
+            if ($fromPresale) {
+                try {
+                    $preSale = PreSale::find($fromPresale);
+                    if ($preSale && $preSale->isPending()) {
+                        $this->preSaleService->markConverted($preSale, $sale->id);
+                    }
+                } catch (\Throwable $e) {
+                    Log::warning("Não foi possível vincular pré-venda à venda: {$e->getMessage()}");
                 }
             }
 

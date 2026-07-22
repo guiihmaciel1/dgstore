@@ -20,7 +20,7 @@
                     <!-- Dropdown: Comercial -->
                     <div class="relative">
                         <button @click="commercialOpen = !commercialOpen; financeOpen = false; stockOpen = false; toolsOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('customers.*') || request()->routeIs('sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') || request()->routeIs('schedule.*') || request()->routeIs('suppliers.*') || request()->routeIs('quotations.*') ? 'text-white bg-surface-overlay' : 'text-dg-300 hover:text-white hover:bg-surface-overlay' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('customers.*') || request()->routeIs('sales.*') || request()->routeIs('pre-sales.*') || request()->routeIs('reservations.*') || request()->routeIs('warranties.*') || request()->routeIs('schedule.*') || request()->routeIs('suppliers.*') || request()->routeIs('quotations.*') ? 'text-white bg-surface-overlay' : 'text-dg-300 hover:text-white hover:bg-surface-overlay' }}">
                             <span>Comercial</span>
                             <svg class="ml-1 h-4 w-4 transition-transform" :class="{ 'rotate-180': commercialOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -47,6 +47,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                     </svg>
                                     Vendas
+                                </a>
+                                <a href="{{ route('pre-sales.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('pre-sales.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                    Pré-Vendas
                                 </a>
                                 <a href="{{ route('reservations.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('reservations.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -432,6 +438,9 @@
                 </a>
                 <a href="{{ route('sales.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('sales.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Vendas
+                </a>
+                <a href="{{ route('pre-sales.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('pre-sales.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
+                    Pré-Vendas
                 </a>
                 <a href="{{ route('reservations.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('reservations.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Reservas

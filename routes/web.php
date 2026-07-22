@@ -21,6 +21,7 @@ use App\Presentation\Http\Controllers\MarketingController;
 use App\Presentation\Http\Controllers\ScheduleController;
 use App\Presentation\Http\Controllers\CardFeeController;
 use App\Presentation\Http\Controllers\ConsignmentStockController;
+use App\Presentation\Http\Controllers\PreSaleController;
 use App\Presentation\Http\Controllers\NegotiationController;
 use App\Presentation\Http\Controllers\NegotiationSnapshotController;
 use App\Presentation\Http\Controllers\DeviceChecklistController;
@@ -249,6 +250,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/reservations/{reservation}/payments/{payment}', [ReservationController::class, 'destroyPayment'])->name('reservations.payments.destroy');
         Route::get('/reservations/{reservation}/convert', [ReservationController::class, 'convert'])->name('reservations.convert');
         Route::post('/reservations/{reservation}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
+
+        // Pré-Vendas
+        Route::get('/pre-vendas', [PreSaleController::class, 'index'])->name('pre-sales.index');
+        Route::get('/pre-vendas/criar', [PreSaleController::class, 'create'])->name('pre-sales.create');
+        Route::post('/pre-vendas', [PreSaleController::class, 'store'])->name('pre-sales.store');
+        Route::get('/pre-vendas/buscar-imei', [PreSaleController::class, 'searchByImei'])->name('pre-sales.search-imei');
+        Route::get('/pre-vendas/buscar-clientes', [PreSaleController::class, 'searchCustomers'])->name('pre-sales.search-customers');
+        Route::get('/pre-vendas/{preSale}', [PreSaleController::class, 'show'])->name('pre-sales.show');
+        Route::post('/pre-vendas/{preSale}/converter', [PreSaleController::class, 'convert'])->name('pre-sales.convert');
+        Route::post('/pre-vendas/{preSale}/cancelar', [PreSaleController::class, 'cancel'])->name('pre-sales.cancel');
 
         // Financeiro
         Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');

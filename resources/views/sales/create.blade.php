@@ -55,11 +55,28 @@
                 </div>
             @endif
 
+            @if(isset($preSale) && $preSale)
+                <div style="background: rgba(22,163,106,0.1); border: 1px solid rgba(22,163,106,0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <svg style="width: 1.25rem; height: 1.25rem; color: #4ade80;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    </svg>
+                    <div>
+                        <span style="font-weight: 600; color: #4ade80;">Efetivando Pré-Venda #{{ $preSale->pre_sale_number }}</span>
+                        <span style="font-size: 0.875rem; color: #818181; margin-left: 0.5rem;">
+                            Cliente: {{ $preSale->customer?->name }} · Produto: {{ $preSale->product_name }} · Sinal: {{ $preSale->formatted_down_payment }}
+                        </span>
+                    </div>
+                </div>
+            @endif
+
             <div x-data="saleForm()" @keydown.escape.window="if(!showCustomerModal && !showProductModal) window.location.href='{{ route('sales.index') }}'">
             <form method="POST" action="{{ route('sales.store') }}" @submit="handleSubmit($event)">
                 @csrf
                 @if(isset($reservation) && $reservation)
                     <input type="hidden" name="from_reservation" value="{{ $reservation->id }}">
+                @endif
+                @if(isset($preSale) && $preSale)
+                    <input type="hidden" name="from_presale" value="{{ $preSale->id }}">
                 @endif
                 
                 <div class="sale-grid">
@@ -1643,6 +1660,26 @@
                 'down_payment' => (float) ($snapshot->down_payment ?? 0),
             ] : null) !!};
 
+            const preSaleData = {!! json_encode(isset($preSale) && $preSale ? [
+                'customer' => $preSale->customer ? [
+                    'id' => $preSale->customer->id,
+                    'name' => $preSale->customer->name,
+                    'phone' => $preSale->customer->formatted_phone ?? '',
+                ] : null,
+                'product' => [
+                    'id' => $preSale->product_id,
+                    'name' => $preSale->product_name,
+                    'price' => (float) $preSale->unit_price,
+                    'cost_price' => (float) $preSale->cost_price,
+                    'stock' => 1,
+                    'is_consignment' => $preSale->isFromConsignment(),
+                    'consignment_item_id' => $preSale->consignment_item_id,
+                ],
+                'down_payment' => (float) $preSale->down_payment,
+                'trade_in' => $preSale->trade_in_device,
+                'trade_in_value' => (float) ($preSale->trade_in_value ?? 0),
+            ] : null) !!};
+
             return {
                 items: [],
                 searchTerm: '',
@@ -1651,8 +1688,8 @@
                 customerSearch: '',
                 customerResults: [],
                 customerSearchLoading: false,
-                selectedCustomer: reservationData?.customer ?? snapshotData?.customer ?? { id: '', name: '', phone: '' },
-                discount: reservationData?.deposit_paid ?? 0,
+                selectedCustomer: reservationData?.customer ?? snapshotData?.customer ?? preSaleData?.customer ?? { id: '', name: '', phone: '' },
+                discount: reservationData?.deposit_paid ?? preSaleData?.down_payment ?? 0,
                 subtotal: 0,
                 total: 0,
                 
@@ -1792,6 +1829,53 @@
 
                         if (snapshotData.customer?.id) {
                             this.fetchCustomerSnapshots(snapshotData.customer.id);
+                        }
+                    }
+
+                    if (preSaleData && !reservationData && !snapshotData) {
+                        this.items.push({
+                            id: preSaleData.product.id || '',
+                            name: preSaleData.product.name,
+                            price: preSaleData.product.price,
+                            cost_price: preSaleData.product.cost_price || 0,
+                            supplier_origin: '',
+                            freight_type: '',
+                            freight_value: 0,
+                            quantity: 1,
+                            stock: preSaleData.product.stock || 1,
+                            is_consignment: preSaleData.product.is_consignment || false,
+                            consignment_item_id: preSaleData.product.consignment_item_id || null,
+                        });
+
+                        if (preSaleData.trade_in && preSaleData.trade_in_value > 0) {
+                            this.hasTradeIn = true;
+                            this.$nextTick(() => {
+                                this.tradeIns.push({
+                                    device_name: preSaleData.trade_in.model || '',
+                                    device_model: preSaleData.trade_in.model || '',
+                                    category: 'smartphone',
+                                    storage: '',
+                                    color: '',
+                                    imei: '',
+                                    estimated_value: preSaleData.trade_in_value,
+                                    sale_price: null,
+                                    resale_price: null,
+                                    condition: preSaleData.trade_in.condition || 'good',
+                                    battery_health: null,
+                                    has_box: false,
+                                    has_cable: false,
+                                    notes: '',
+                                    checklist_id: '',
+                                    checklist_label: '',
+                                });
+                                this.updateTotals();
+                            });
+                        }
+
+                        this.updateTotals();
+
+                        if (preSaleData.customer?.id) {
+                            this.fetchCustomerSnapshots(preSaleData.customer.id);
                         }
                     }
 

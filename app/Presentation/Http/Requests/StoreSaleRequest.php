@@ -55,6 +55,9 @@ class StoreSaleRequest extends FormRequest
             // Reserva (conversão)
             'from_reservation' => ['nullable', 'exists:reservations,id'],
 
+            // Pré-venda (conversão)
+            'from_presale' => ['nullable', 'exists:pre_sales,id'],
+
             // Campos de trade-ins (múltiplos aparelhos)
             'trade_ins' => ['nullable', 'array'],
             'trade_ins.*.device_name' => ['required', 'string', 'max:255'],
