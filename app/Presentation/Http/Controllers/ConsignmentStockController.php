@@ -124,6 +124,18 @@ class ConsignmentStockController extends Controller
             $query->search($request->search);
         }
 
+        if ($request->filled('filter_name')) {
+            $query->where('name', $request->filter_name);
+        }
+        if ($request->has('filter_storage')) {
+            $val = $request->filter_storage;
+            $val === '' ? $query->whereNull('storage') : $query->where('storage', $val);
+        }
+        if ($request->has('filter_color')) {
+            $val = $request->filter_color;
+            $val === '' ? $query->whereNull('color') : $query->where('color', $val);
+        }
+
         return $query->orderByDesc('received_at')->paginate(30)->withQueryString();
     }
 

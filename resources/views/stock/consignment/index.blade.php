@@ -113,6 +113,26 @@
                 </a>
             </div>
 
+            {{-- Banner de filtro por grupo --}}
+            @if($viewMode === 'detail' && request('filter_name'))
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.625rem 1rem; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; color: #93c5fd;">
+                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        </svg>
+                        Exibindo itens de: <strong style="color: #e3e3e3;">{{ request('filter_name') }}{{ request('filter_storage') ? ' ' . request('filter_storage') : '' }}{{ request('filter_color') ? ' ' . request('filter_color') : '' }}</strong>
+                    </div>
+                    <a href="{{ route('stock.consignment.index', ['view_mode' => 'summary', 'status' => request('status', 'available'), 'supplier_id' => request('supplier_id')]) }}"
+                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.06); color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none;"
+                       onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+                        <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Voltar ao resumo
+                    </a>
+                </div>
+            @endif
+
             {{-- Tabela --}}
             <div style="background: #141414; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
                 <div style="overflow-x: auto;">
@@ -166,11 +186,14 @@
                                         </td>
                                         <td style="padding: 0.75rem; text-align: center;">
                                             @php
-                                                $detailParams = array_merge(request()->except('view_mode'), [
+                                                $detailParams = [
                                                     'view_mode' => 'detail',
-                                                    'search' => $group->name . ($group->storage ? ' ' . $group->storage : ''),
                                                     'supplier_id' => $group->supplier_id,
-                                                ]);
+                                                    'status' => request('status', 'available'),
+                                                    'filter_name' => $group->name,
+                                                    'filter_storage' => $group->storage ?? '',
+                                                    'filter_color' => $group->color ?? '',
+                                                ];
                                             @endphp
                                             <a href="{{ route('stock.consignment.index', $detailParams) }}"
                                                style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: #222222; color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none;"
