@@ -30,24 +30,15 @@ class ConsignmentStockController extends Controller
 
     public function index(Request $request): View
     {
-        $query = ConsignmentStockItem::with('supplier', 'batch');
-
-        if ($request->filled('supplier_id')) {
-            $query->bySupplier($request->supplier_id);
-        }
-
+        $viewMode = $request->get('view_mode', 'summary');
         $statusFilter = $request->get('status', 'available');
-        if ($statusFilter !== 'all') {
-            $query->where('status', $statusFilter);
-        }
-
-        if ($request->filled('search')) {
-            $query->search($request->search);
-        }
-
-        $items = $query->orderByDesc('received_at')->paginate(30)->withQueryString();
-
         $suppliers = Supplier::active()->orderBy('name')->get();
+
+        if ($viewMode === 'summary') {
+            $items = $this->buildSummaryQuery($request, $statusFilter);
+        } else {
+            $items = $this->buildDetailQuery($request, $statusFilter);
+        }
 
         $soldMovements = ConsignmentStockMovement::where('type', ConsignmentMovementType::Out);
 
@@ -65,8 +56,75 @@ class ConsignmentStockController extends Controller
             'items' => $items,
             'suppliers' => $suppliers,
             'stats' => $stats,
-            'filters' => array_merge($request->only(['supplier_id', 'search']), ['status' => $statusFilter]),
+            'viewMode' => $viewMode,
+            'filters' => array_merge($request->only(['supplier_id', 'search']), [
+                'status' => $statusFilter,
+                'view_mode' => $viewMode,
+            ]),
         ]);
+    }
+
+    private function buildSummaryQuery(Request $request, string $statusFilter)
+    {
+        $query = ConsignmentStockItem::query()
+            ->selectRaw('
+                name, storage, color, `condition`, supplier_id,
+                COUNT(*) as total_items,
+                SUM(quantity) as total_quantity,
+                SUM(available_quantity) as total_available,
+                ROUND(SUM(supplier_cost * quantity) / SUM(quantity), 2) as avg_cost,
+                MIN(supplier_cost) as min_cost,
+                MAX(supplier_cost) as max_cost,
+                MAX(received_at) as last_received
+            ')
+            ->groupBy('name', 'storage', 'color', 'condition', 'supplier_id');
+
+        if ($request->filled('supplier_id')) {
+            $query->where('supplier_id', $request->supplier_id);
+        }
+
+        if ($statusFilter !== 'all') {
+            $query->where('status', $statusFilter);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('color', 'like', "%{$search}%");
+            });
+        }
+
+        $results = $query->orderByDesc('last_received')->paginate(30)->withQueryString();
+
+        $supplierIds = $results->pluck('supplier_id')->unique()->filter();
+        $supplierNames = Supplier::whereIn('id', $supplierIds)->pluck('name', 'id');
+
+        $results->getCollection()->transform(function ($item) use ($supplierNames) {
+            $item->supplier_name = $supplierNames[$item->supplier_id] ?? 'Desconhecido';
+            return $item;
+        });
+
+        return $results;
+    }
+
+    private function buildDetailQuery(Request $request, string $statusFilter)
+    {
+        $query = ConsignmentStockItem::with('supplier', 'batch');
+
+        if ($request->filled('supplier_id')) {
+            $query->bySupplier($request->supplier_id);
+        }
+
+        if ($statusFilter !== 'all') {
+            $query->where('status', $statusFilter);
+        }
+
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+
+        return $query->orderByDesc('received_at')->paginate(30)->withQueryString();
     }
 
     public function create(): View
