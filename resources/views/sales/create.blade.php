@@ -83,14 +83,14 @@
                                     </label>
                                     <div style="display: flex; gap: 1rem;">
                                         <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; transition: all 0.2s;"
-                                               :style="{ borderColor: saleType === 'cliente_final' ? '#3b82f6' : '#e5e7eb', background: saleType === 'cliente_final' ? '#eff6ff' : 'white' }">
+                                               :style="{ borderColor: saleType === 'cliente_final' ? '#3b82f6' : 'rgba(255,255,255,0.08)', background: saleType === 'cliente_final' ? 'rgba(59,130,246,0.15)' : '#1a1a1a' }">
                                             <input type="radio" name="sale_type" value="cliente_final" 
                                                    x-model="saleType" required
                                                    style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #3b82f6;">
                                             <span style="font-size: 0.9375rem; font-weight: 500;">Cliente</span>
                                         </label>
                                         <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; transition: all 0.2s;"
-                                               :style="{ borderColor: saleType === 'repasse' ? '#8b5cf6' : '#e5e7eb', background: saleType === 'repasse' ? '#f5f3ff' : 'white' }">
+                                               :style="{ borderColor: saleType === 'repasse' ? '#8b5cf6' : 'rgba(255,255,255,0.08)', background: saleType === 'repasse' ? 'rgba(139,92,246,0.15)' : '#1a1a1a' }">
                                             <input type="radio" name="sale_type" value="repasse" 
                                                    x-model="saleType" required
                                                    style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #8b5cf6;">
@@ -197,13 +197,13 @@
                                                 type="button"
                                                 @click="addItem(product)"
                                                 style="width: 100%; padding: 0.75rem 1rem; text-align: left; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.04);"
-                                                onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'"
+                                                onmouseover="this.style.backgroundColor='rgba(255,255,255,0.06)'" onmouseout="this.style.backgroundColor='#1a1a1a'"
                                             >
                                                 <div>
                                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                                                         <span style="font-weight: 600; color: #e3e3e3;" x-text="product.name"></span>
                                                         <span x-show="product.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Trade-in</span>
-                                                        <span x-show="product.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #fbbf24; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Consignado</span>
+                                                        <span x-show="product.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Consignado</span>
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
                                                         <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #222222; color: #818181; border-radius: 0.25rem;" x-text="product.sku"></span>
@@ -220,7 +220,7 @@
                                         </template>
                                         <!-- Opção de cadastrar quando não encontra -->
                                         <div x-show="searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading"
-                                             style="padding: 1rem; text-align: center; border-top: 1px solid #f3f4f6;">
+                                             style="padding: 1rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.06);">
                                             <p style="font-size: 0.875rem; color: #818181; margin-bottom: 0.75rem;">Nenhum produto encontrado para "<span x-text="searchTerm" style="font-weight: 600;"></span>"</p>
                                             <button type="button" 
                                                     @click="productForm = resetProductForm(); productForm.name = searchTerm; showProductModal = true; searchResults = [];"
@@ -237,7 +237,7 @@
                                 
                                 <!-- Lista de itens adicionados -->
                                 <div style="margin-top: 1.5rem;">
-                                    <div x-show="items.length === 0" style="text-align: center; padding: 3rem 1rem; border: 2px dashed #e5e7eb; border-radius: 0.75rem;">
+                                    <div x-show="items.length === 0" style="text-align: center; padding: 3rem 1rem; border: 2px dashed rgba(255,255,255,0.1); border-radius: 0.75rem;">
                                         <svg style="margin: 0 auto; height: 3rem; width: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                         </svg>
@@ -254,7 +254,7 @@
                                                         <div style="display: flex; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
                                                             <p style="font-weight: 600; color: #e3e3e3; font-size: 0.9375rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" x-text="item.name"></p>
                                                             <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">TRADE-IN</span>
-                                                            <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #fbbf24; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">CONSIGNADO</span>
+                                                            <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">CONSIGNADO</span>
                                                         </div>
                                                         <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.is_consignment ? '' : (item.id || '')">
                                                         <input type="hidden" :name="'items['+index+'][consignment_item_id]'" :value="item.consignment_item_id || ''">
@@ -337,7 +337,7 @@
                                                                         style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 4.5rem; padding: 0.5rem; border-radius: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; border: 2px solid;"
                                                                         :style="item.quantity === combo.qty
                                                                             ? 'background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-color: #c4b5fd; box-shadow: 0 2px 8px rgba(124,58,237,0.3);'
-                                                                            : 'background: #141414; color: #a4a4a4; border-color: #e5e7eb;'">
+                                                                            : 'background: #141414; color: #a4a4a4; border-color: rgba(255,255,255,0.1);'">
                                                                     <span style="font-size: 0.75rem; font-weight: 600; line-height: 1;" x-text="combo.label"></span>
                                                                     <span style="font-size: 1.0625rem; font-weight: 800; margin-top: 0.25rem; line-height: 1;"
                                                                           :style="item.quantity === combo.qty ? 'color: white;' : 'color: #e3e3e3;'"
@@ -392,8 +392,8 @@
                                                                :value="toMoneyMask(item.commission_cost)"
                                                                @input="applyMoneyMask($event); item.commission_cost = parseMoney($event.target.value); updateTotals()"
                                                                placeholder="0,00"
-                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #fef3c7; border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: #141414beb;"
-                                                               onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#fef3c7'">
+                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(251,191,36,0.3); border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: #141414;"
+                                                               onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='rgba(251,191,36,0.3)'">
                                                     </div>
                                                 </div>
                                                 <div style="margin-top: 0.5rem; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
@@ -506,7 +506,7 @@
                             <div x-show="hasTradeIn" x-collapse style="padding: 1.5rem;">
                                 <!-- Lista de aparelhos -->
                                 <template x-for="(ti, tiIndex) in tradeIns" :key="tiIndex">
-                                    <div style="background: #faf5ff; border: 1px solid #ddd6fe; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; position: relative;">
+                                    <div style="background: rgba(124,58,237,0.08); border: 1px solid rgba(196,181,253,0.2); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; position: relative;">
                                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
                                             <span style="font-size: 0.8125rem; font-weight: 600; color: #c4b5fd;" x-text="'Aparelho ' + (tiIndex + 1)"></span>
                                             <button type="button" @click="removeTradeIn(tiIndex)" 
@@ -729,14 +729,14 @@
                         </div>
                         
                         <!-- Aviso: Trade-in não disponível para Repasse -->
-                        <div x-show="saleType === 'repasse'" style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 1rem; padding: 1.25rem; margin-bottom: 1.5rem;">
+                        <div x-show="saleType === 'repasse'" style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 1rem; padding: 1.25rem; margin-bottom: 1.5rem;">
                             <div style="display: flex; align-items: start; gap: 0.75rem;">
-                                <svg style="width: 1.5rem; height: 1.5rem; color: #d97706; flex-shrink: 0; margin-top: 0.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg style="width: 1.5rem; height: 1.5rem; color: #fbbf24; flex-shrink: 0; margin-top: 0.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 <div>
                                     <p style="font-weight: 600; color: #fbbf24; margin-bottom: 0.25rem;">Trade-in não disponível</p>
-                                    <p style="font-size: 0.875rem; color: #78350f;">Vendas do tipo <strong>Repasse</strong> não permitem aparelhos como entrada (trade-in).</p>
+                                    <p style="font-size: 0.875rem; color: #a4a4a4;">Vendas do tipo <strong>Repasse</strong> não permitem aparelhos como entrada (trade-in).</p>
                                 </div>
                             </div>
                         </div>
@@ -789,14 +789,14 @@
                                         <template x-for="customer in customerResults" :key="customer.id">
                                             <button type="button" @click="selectCustomer(customer)"
                                                     style="width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; background: #141414;"
-                                                    onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
+                                                    onmouseover="this.style.backgroundColor='rgba(255,255,255,0.06)'" onmouseout="this.style.backgroundColor='#1a1a1a'">
                                                 <span style="font-weight: 500; color: #e3e3e3;" x-text="customer.name"></span>
                                                 <span style="font-size: 0.875rem; color: #818181; display: block;" x-text="customer.phone"></span>
                                             </button>
                                         </template>
                                         <!-- Opção de cadastrar quando não encontra -->
                                         <div x-show="customerSearch.length >= 2 && customerResults.length === 0 && !customerSearchLoading"
-                                             style="padding: 0.75rem 1rem; text-align: center; border-top: 1px solid #f3f4f6;">
+                                             style="padding: 0.75rem 1rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.06);">
                                             <p style="font-size: 0.8125rem; color: #818181; margin-bottom: 0.5rem;">Cliente não encontrado</p>
                                             <button type="button" 
                                                     @click="customerForm = resetCustomerForm(); customerForm.name = customerSearch; showCustomerModal = true; customerResults = [];"
@@ -943,17 +943,17 @@
                                             </div>
                                             <!-- Info da taxa Stone -->
                                             <div x-show="card.amount > 0 && card.installments >= 1" 
-                                                 style="margin-top: 0.5rem; padding: 0.5rem; background: #f8fafc; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.06);">
-                                                <div style="font-size: 0.75rem; color: #1e293b; font-weight: 500;">
+                                                 style="margin-top: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.04); border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.06);">
+                                                <div style="font-size: 0.75rem; color: #c4c4c4; font-weight: 500;">
                                                     <span x-text="card.installments + 'x'"></span> - 
                                                     Taxa: <strong x-text="(card.mdr_rate || 0).toFixed(2) + '%'"></strong> - 
                                                     Você recebe: <strong style="color: #16a34a;" x-text="formatMoney(card.amount)"></strong>
                                                 </div>
-                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #64748b; margin-top: 0.375rem;">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #818181; margin-top: 0.375rem;">
                                                     <span>Cliente paga: <strong x-text="formatMoney(card.gross_amount || card.amount || 0)"></strong></span>
                                                     <span style="color: #fca5a5;">Taxa: <strong x-text="formatMoney(card.fee_amount || 0)"></strong></span>
                                                 </div>
-                                                <div x-show="card.installments > 1" style="font-size: 0.7rem; color: #64748b; text-align: right; margin-top: 0.125rem;">
+                                                <div x-show="card.installments > 1" style="font-size: 0.7rem; color: #818181; text-align: right; margin-top: 0.125rem;">
                                                     <span x-text="card.installments + 'x de ' + formatMoney((card.gross_amount || card.amount || 0) / card.installments)"></span>
                                                 </div>
                                             </div>
@@ -966,13 +966,13 @@
                                 </div>
                                 
                                 <!-- Aviso: Cartão não disponível para Repasse -->
-                                <div x-show="saleType === 'repasse'" style="margin-bottom: 1rem; padding: 1rem; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 0.75rem;">
+                                <div x-show="saleType === 'repasse'" style="margin-bottom: 1rem; padding: 1rem; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 0.75rem;">
                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <svg style="width: 1.25rem; height: 1.25rem; color: #d97706; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg style="width: 1.25rem; height: 1.25rem; color: #fbbf24; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
-                                        <p style="font-size: 0.875rem; color: #78350f; font-weight: 500;">
-                                            <strong>Pagamento com cartão não disponível</strong> para Repasse. Use dinheiro ou PIX.
+                                        <p style="font-size: 0.875rem; color: #a4a4a4; font-weight: 500;">
+                                            <strong style="color: #fbbf24;">Pagamento com cartão não disponível</strong> para Repasse. Use dinheiro ou PIX.
                                         </p>
                                     </div>
                                 </div>
@@ -1172,7 +1172,7 @@
                             </div>
                         </div>
                         <button type="button" @click="showCustomerModal = false" style="padding: 0.375rem; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
+                                onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
                             <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
@@ -1258,7 +1258,7 @@
                             </div>
                         </div>
                         <button type="button" @click="showProductModal = false" style="padding: 0.375rem; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
+                                onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
                             <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
@@ -1420,7 +1420,7 @@
                             </div>
                         </div>
                         <button type="button" @click="showStockModal = false" style="padding: 0.375rem; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
+                                onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
                             <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>

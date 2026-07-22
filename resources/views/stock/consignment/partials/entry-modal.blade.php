@@ -220,7 +220,7 @@
                         <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">
                             Custo Forn. <span style="color: #fca5a5;">*</span>
                         </label>
-                        <input type="number" step="0.01" min="0" name="supplier_cost" id="cs-cost" required placeholder="0,00"
+                        <input type="number" step="0.01" min="0" name="supplier_cost" id="cs-cost" required value="0.00"
                                style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem;">
                     </div>
 

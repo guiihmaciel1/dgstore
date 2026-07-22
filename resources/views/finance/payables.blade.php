@@ -215,7 +215,7 @@
                             @forelse($transactions as $tx)
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                                     <td style="padding: 0.625rem 1.25rem;">
-                                        <div style="font-size: 0.8125rem; font-weight: 500; color: {{ $tx->status->value === 'overdue' ? '#dc2626' : '#111827' }};">{{ $tx->due_date->format('d/m/Y') }}</div>
+                                        <div style="font-size: 0.8125rem; font-weight: 500; color: {{ $tx->status->value === 'overdue' ? '#f87171' : ($tx->status->value === 'paid' ? '#818181' : '#e3e3e3') }};">{{ $tx->due_date->format('d/m/Y') }}</div>
                                         @if($tx->paid_at)
                                             <div style="font-size: 0.6875rem; color: #16a34a;">Pago {{ $tx->paid_at->format('d/m') }}</div>
                                         @endif
@@ -236,7 +236,7 @@
                                             {{ $tx->status->label() }}
                                         </span>
                                     </td>
-                                    <td style="padding: 0.625rem 1rem; text-align: right; font-size: 0.875rem; font-weight: 700; color: #fca5a5;">
+                                    <td style="padding: 0.625rem 1rem; text-align: right; font-size: 0.875rem; font-weight: 700; color: {{ $tx->status->value === 'paid' ? '#818181' : ($tx->status->value === 'overdue' ? '#f87171' : '#e3e3e3') }};">
                                         R$ {{ number_format((float)$tx->amount, 2, ',', '.') }}
                                     </td>
                                     <td style="padding: 0.625rem 1.25rem; text-align: right;">
