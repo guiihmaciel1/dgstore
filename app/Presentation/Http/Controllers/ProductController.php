@@ -9,6 +9,7 @@ use App\Domain\Product\DTOs\ProductData;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
+use App\Domain\AI\Services\GeminiService;
 use App\Domain\Product\Services\ImeiLookupService;
 use App\Domain\Product\Services\ProductService;
 use App\Http\Controllers\Controller;
@@ -215,6 +216,61 @@ class ProductController extends Controller
         $result = $imeiLookup->lookup($imei);
 
         return response()->json($result);
+    }
+
+    /**
+     * Analisa foto da etiqueta da caixa via Gemini Vision e extrai IMEI + dados.
+     */
+    public function analyzeBoxLabel(Request $request, GeminiService $gemini, ImeiLookupService $imeiLookup): JsonResponse
+    {
+        $request->validate(['image' => 'required|string']);
+
+        if (! $gemini->isAvailable()) {
+            return response()->json(['success' => false, 'error' => 'Serviço de IA não disponível.']);
+        }
+
+        $imageData = $request->input('image');
+        $mimeType = 'image/jpeg';
+
+        if (preg_match('/^data:(image\/\w+);base64,(.+)$/', $imageData, $matches)) {
+            $mimeType = $matches[1];
+            $imageData = $matches[2];
+        }
+
+        $prompt = <<<'PROMPT'
+Analise esta foto de uma etiqueta/caixa de produto Apple.
+Extraia as seguintes informações se visíveis:
+- IMEI ou IMEI/MEID (número de 15 dígitos)
+- IMEI2 (se houver)
+- Serial Number
+- Model number (ex: A3257)
+- Nome do produto (ex: iPhone 17 Pro Max)
+- Cor (ex: Deep Blue, Black Titanium)
+- Armazenamento/capacidade (ex: 256GB)
+- Part number (ex: MFXJ4LL/A)
+
+Retorne um JSON com as chaves: imei, imei2, serial, model_number, product_name, color, storage, part_number.
+Use null para campos não encontrados. Para IMEI, retorne apenas os dígitos numéricos.
+PROMPT;
+
+        $result = $gemini->analyzeImage($imageData, $mimeType, $prompt);
+
+        if ($result === null) {
+            return response()->json(['success' => false, 'error' => 'Não foi possível analisar a imagem.']);
+        }
+
+        $imei = $result['imei'] ?? null;
+        $tacResult = null;
+
+        if ($imei) {
+            $tacResult = $imeiLookup->lookup($imei);
+        }
+
+        return response()->json([
+            'success' => true,
+            'extracted' => $result,
+            'tac_lookup' => $tacResult,
+        ]);
     }
 
     public function label(Product $product): Response

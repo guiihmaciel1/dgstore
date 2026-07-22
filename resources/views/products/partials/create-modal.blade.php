@@ -43,7 +43,7 @@
 
                 <div style="display: flex; gap: 0.5rem; align-items: stretch;">
                     <div style="flex: 1; position: relative;">
-                        <input type="text" name="imei" id="modal-imei" maxlength="16" placeholder="Digite o IMEI ou escaneie o barcode da caixa"
+                        <input type="text" name="imei" id="modal-imei" maxlength="16" placeholder="Digite o IMEI ou tire foto da etiqueta"
                                style="width: 100%; padding: 0.75rem 0.875rem; padding-right: 5rem; background: #0d0d0d; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.9375rem; font-family: 'Geist', monospace; letter-spacing: 0.05em;"
                                onfocus="this.style.borderColor='rgba(255,255,255,0.15)'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"
                                oninput="onImeiInput(this.value)">
@@ -56,27 +56,38 @@
                             </svg>
                         </div>
                     </div>
-                    <button type="button" id="scan-btn" onclick="toggleScanner()"
+                    <button type="button" id="photo-btn" onclick="openCamera()"
                             style="padding: 0.75rem 1rem; background: rgba(255,255,255,0.06); color: #a4a4a4; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; font-weight: 500; white-space: nowrap;"
                             onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
                         <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        Câmera
+                        Foto IA
                     </button>
+                    <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;" onchange="onPhotoSelected(this)">
                 </div>
 
-                {{-- Scanner container --}}
-                <div id="scanner-container" style="display: none; margin-top: 0.75rem;">
-                    <div style="border-radius: 0.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); background: #000; position: relative;">
-                        <div id="reader" style="width: 100%;"></div>
-                        <button type="button" onclick="stopScanner()" 
-                                style="position: absolute; top: 0.5rem; right: 0.5rem; z-index: 10; padding: 0.25rem 0.625rem; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.75rem;">
-                            Fechar
-                        </button>
+                {{-- Indicador de análise IA --}}
+                <div id="ai-analyzing" style="display: none; margin-top: 0.75rem; padding: 0.875rem; background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.15); border-radius: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.625rem;">
+                        <div style="width: 1.25rem; height: 1.25rem; border: 2px solid rgba(99,102,241,0.3); border-top-color: #818cf8; border-radius: 50%; animation: spin 0.6s linear infinite;"></div>
+                        <div>
+                            <p style="font-size: 0.8125rem; font-weight: 500; color: #818cf8;">Analisando etiqueta com IA...</p>
+                            <p style="font-size: 0.6875rem; color: #666; margin-top: 0.125rem;">Extraindo IMEI, modelo, cor e armazenamento</p>
+                        </div>
                     </div>
-                    <p style="font-size: 0.6875rem; color: #555; margin-top: 0.375rem; text-align: center;">Aponte para o código de barras do IMEI na caixa do aparelho</p>
+                </div>
+
+                {{-- Resultado da análise IA --}}
+                <div id="ai-result" style="display: none; margin-top: 0.75rem; padding: 0.75rem; background: rgba(99,102,241,0.06); border: 1px solid rgba(99,102,241,0.15); border-radius: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <svg style="width: 0.875rem; height: 0.875rem; color: #818cf8;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                        <span style="font-size: 0.75rem; font-weight: 600; color: #818cf8;">Dados extraídos pela IA</span>
+                    </div>
+                    <div id="ai-result-details" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.25rem 1rem;"></div>
                 </div>
 
                 {{-- Resultado da consulta TAC --}}
@@ -295,30 +306,27 @@
     </div>
 </div>
 
-{{-- html5-qrcode CDN --}}
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-
 <script>
-    let html5QrCode = null;
-    let scannerRunning = false;
     let imeiLookupTimeout = null;
 
     function openCreateModal() {
         document.getElementById('create-product-modal').style.display = 'flex';
         document.body.style.overflow = 'hidden';
         document.getElementById('create-product-form').reset();
-        document.getElementById('tac-result').style.display = 'none';
-        document.getElementById('tac-not-found').style.display = 'none';
-        document.getElementById('imei-lookup-found').style.display = 'none';
-        document.getElementById('imei-lookup-indicator').style.display = 'none';
-        document.getElementById('modal-submit-status').style.display = 'none';
+        hideAllFeedback();
         toggleModalSeminovoFields();
     }
 
     function closeCreateModal() {
-        stopScanner();
         document.getElementById('create-product-modal').style.display = 'none';
         document.body.style.overflow = '';
+    }
+
+    function hideAllFeedback() {
+        ['tac-result', 'tac-not-found', 'imei-lookup-found', 'imei-lookup-indicator', 
+         'modal-submit-status', 'ai-analyzing', 'ai-result'].forEach(id => {
+            document.getElementById(id).style.display = 'none';
+        });
     }
 
     function toggleModalSeminovoFields() {
@@ -329,13 +337,10 @@
 
     function onImeiInput(value) {
         const clean = value.replace(/\D/g, '');
-        
         document.getElementById('tac-result').style.display = 'none';
         document.getElementById('tac-not-found').style.display = 'none';
         document.getElementById('imei-lookup-found').style.display = 'none';
-
         clearTimeout(imeiLookupTimeout);
-
         if (clean.length >= 14) {
             imeiLookupTimeout = setTimeout(() => lookupImei(clean), 400);
         }
@@ -351,23 +356,16 @@
             .then(r => r.json())
             .then(data => {
                 document.getElementById('imei-lookup-indicator').style.display = 'none';
-
                 if (data.found) {
                     document.getElementById('imei-lookup-found').style.display = 'block';
                     document.getElementById('tac-result').style.display = 'block';
                     document.getElementById('tac-device-name').textContent = data.suggested_name;
                     document.getElementById('tac-device-type').textContent = data.device_type ? `Tipo: ${data.device_type}` : '';
-
-                    const nameField = document.getElementById('modal-name');
-                    const modelField = document.getElementById('modal-model');
-                    const categoryField = document.getElementById('modal-category');
-
-                    if (!nameField.value) nameField.value = data.suggested_name;
-                    if (!modelField.value) modelField.value = data.model;
-                    if (categoryField.value === '' && data.suggested_category) {
-                        categoryField.value = data.suggested_category;
+                    fillFieldIfEmpty('modal-name', data.suggested_name);
+                    fillFieldIfEmpty('modal-model', data.model);
+                    if (document.getElementById('modal-category').value === '' && data.suggested_category) {
+                        document.getElementById('modal-category').value = data.suggested_category;
                     }
-
                     modalGenerateSku();
                 } else {
                     document.getElementById('tac-not-found').style.display = 'block';
@@ -379,70 +377,120 @@
             });
     }
 
-    function toggleScanner() {
-        if (scannerRunning) {
-            stopScanner();
-        } else {
-            startScanner();
-        }
+    function fillFieldIfEmpty(id, value) {
+        const el = document.getElementById(id);
+        if (el && !el.value && value) el.value = value;
     }
 
-    function startScanner() {
-        const container = document.getElementById('scanner-container');
-        container.style.display = 'block';
+    function fillField(id, value) {
+        const el = document.getElementById(id);
+        if (el && value) el.value = value;
+    }
 
-        if (!html5QrCode) {
-            html5QrCode = new Html5Qrcode("reader");
-        }
+    // --- Foto IA ---
+    function openCamera() {
+        document.getElementById('camera-input').click();
+    }
 
-        const config = {
-            fps: 10,
-            qrbox: { width: 300, height: 100 },
-            formatsToSupport: [
-                Html5QrcodeSupportedFormats.CODE_128,
-                Html5QrcodeSupportedFormats.CODE_39,
-                Html5QrcodeSupportedFormats.EAN_13,
-                Html5QrcodeSupportedFormats.QR_CODE,
-                Html5QrcodeSupportedFormats.ITF,
-            ],
+    function onPhotoSelected(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            analyzeWithAI(e.target.result);
         };
+        reader.readAsDataURL(file);
+        input.value = '';
+    }
 
-        html5QrCode.start(
-            { facingMode: "environment" },
-            config,
-            (decodedText) => {
-                const clean = decodedText.replace(/\D/g, '');
-                if (clean.length >= 14 && clean.length <= 16) {
-                    document.getElementById('modal-imei').value = clean;
-                    stopScanner();
-                    lookupImei(clean);
-                }
+    function analyzeWithAI(base64DataUrl) {
+        document.getElementById('ai-analyzing').style.display = 'block';
+        document.getElementById('ai-result').style.display = 'none';
+        document.getElementById('tac-result').style.display = 'none';
+        document.getElementById('tac-not-found').style.display = 'none';
+
+        fetch('{{ route("products.analyze-box") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
             },
-            () => {}
-        ).then(() => {
-            scannerRunning = true;
-            document.getElementById('scan-btn').querySelector('span, svg').style.color = '#22c55e';
-        }).catch((err) => {
-            container.style.display = 'none';
-            console.error('Erro ao iniciar câmera:', err);
-            alert('Não foi possível acessar a câmera. Verifique as permissões do navegador.');
+            body: JSON.stringify({ image: base64DataUrl }),
+        })
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('ai-analyzing').style.display = 'none';
+
+            if (!data.success) {
+                alert(data.error || 'Erro ao analisar imagem.');
+                return;
+            }
+
+            const ext = data.extracted || {};
+            showAiResult(ext);
+
+            if (ext.imei) {
+                fillField('modal-imei', ext.imei);
+                document.getElementById('imei-lookup-found').style.display = 'block';
+            }
+
+            if (ext.product_name) {
+                fillField('modal-name', 'Apple ' + ext.product_name);
+                const modelOnly = ext.product_name.replace(/^iPhone\s*/i, '').trim();
+                fillField('modal-model', modelOnly || ext.product_name);
+            }
+
+            if (ext.color) {
+                const colorField = document.querySelector('#create-product-form input[name="color"]');
+                if (colorField) colorField.value = ext.color;
+            }
+
+            if (ext.storage) {
+                const storageField = document.querySelector('#create-product-form input[name="storage"]');
+                if (storageField) storageField.value = ext.storage;
+            }
+
+            if (data.tac_lookup && data.tac_lookup.found) {
+                document.getElementById('tac-result').style.display = 'block';
+                document.getElementById('tac-device-name').textContent = data.tac_lookup.suggested_name;
+                document.getElementById('tac-device-type').textContent = '';
+                if (document.getElementById('modal-category').value === '') {
+                    document.getElementById('modal-category').value = data.tac_lookup.suggested_category || 'smartphone';
+                }
+            } else {
+                document.getElementById('modal-category').value = 'smartphone';
+            }
+
+            modalGenerateSku();
+        })
+        .catch(err => {
+            document.getElementById('ai-analyzing').style.display = 'none';
+            console.error('Erro na análise IA:', err);
+            alert('Erro ao processar a imagem. Tente novamente.');
         });
     }
 
-    function stopScanner() {
-        if (html5QrCode && scannerRunning) {
-            html5QrCode.stop().then(() => {
-                scannerRunning = false;
-                document.getElementById('scanner-container').style.display = 'none';
-            }).catch(() => {
-                scannerRunning = false;
-                document.getElementById('scanner-container').style.display = 'none';
-            });
-        } else {
-            document.getElementById('scanner-container').style.display = 'none';
+    function showAiResult(extracted) {
+        const container = document.getElementById('ai-result-details');
+        const labels = {
+            imei: 'IMEI', imei2: 'IMEI 2', serial: 'Serial', model_number: 'Model No.',
+            product_name: 'Produto', color: 'Cor', storage: 'Armazenamento', part_number: 'Part No.'
+        };
+        let html = '';
+        for (const [key, label] of Object.entries(labels)) {
+            if (extracted[key]) {
+                html += `<div style="display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px solid rgba(99,102,241,0.1);">
+                    <span style="font-size: 0.6875rem; font-weight: 500; color: #818cf8;">${label}</span>
+                    <span style="font-size: 0.6875rem; color: #e3e3e3; font-family: monospace;">${extracted[key]}</span>
+                </div>`;
+            }
         }
+        container.innerHTML = html;
+        document.getElementById('ai-result').style.display = html ? 'block' : 'none';
     }
 
+    // --- SKU e Submit ---
     function modalGenerateSku() {
         const category = document.getElementById('modal-category').value || 'smartphone';
         const model = document.getElementById('modal-model').value || '';
@@ -458,15 +506,13 @@
         btn.disabled = true;
         btn.textContent = 'Salvando...';
 
-        const formData = new FormData(this);
-
         fetch('{{ route("products.store-quick") }}', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 'Accept': 'application/json',
             },
-            body: formData,
+            body: new FormData(this),
         })
         .then(r => {
             if (!r.ok) return r.json().then(d => Promise.reject(d));
@@ -477,19 +523,13 @@
             status.style.display = 'inline';
             btn.textContent = 'Cadastrar';
             btn.disabled = false;
-            
-            setTimeout(() => {
-                closeCreateModal();
-                window.location.reload();
-            }, 800);
+            setTimeout(() => { closeCreateModal(); window.location.reload(); }, 800);
         })
         .catch(err => {
             btn.textContent = 'Cadastrar';
             btn.disabled = false;
-
             if (err.errors) {
-                const messages = Object.values(err.errors).flat().join('\n');
-                alert('Erros de validação:\n' + messages);
+                alert('Erros de validação:\n' + Object.values(err.errors).flat().join('\n'));
             } else {
                 alert(err.message || 'Erro ao cadastrar produto.');
             }
@@ -505,6 +545,4 @@
         #product-form-grid { grid-template-columns: repeat(2, 1fr) !important; }
         #product-form-grid > div[style*="grid-column: span 3"] { grid-column: span 2 !important; }
     }
-    #reader video { border-radius: 0.375rem; }
-    #reader { min-height: 200px; }
 </style>

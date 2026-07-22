@@ -64,6 +64,60 @@ class GeminiService
     }
 
     /**
+     * Gera conteúdo a partir de uma imagem (visão) e parseia como JSON.
+     * Aceita imagem em base64 (sem o prefixo data:image/...).
+     */
+    public function analyzeImage(string $base64Image, string $mimeType, string $prompt, ?string $systemInstruction = null): ?array
+    {
+        if (! $this->isAvailable()) {
+            Log::warning('GeminiService: API key não configurada.');
+            return null;
+        }
+
+        if (! $this->checkRateLimit()) {
+            Log::warning('GeminiService: Rate limit atingido.');
+            return null;
+        }
+
+        $jsonInstruction = ($systemInstruction ? $systemInstruction . "\n\n" : '')
+            . 'IMPORTANTE: Retorne APENAS um JSON válido, sem markdown, sem ```json, sem explicações. Apenas o JSON puro.';
+
+        $body = [
+            'contents' => [
+                [
+                    'parts' => [
+                        ['inlineData' => ['mimeType' => $mimeType, 'data' => $base64Image]],
+                        ['text' => $prompt],
+                    ],
+                ],
+            ],
+            'generationConfig' => [
+                'temperature' => 0.1,
+                'maxOutputTokens' => 2048,
+                'thinkingConfig' => ['thinkingBudget' => 0],
+            ],
+        ];
+
+        if ($jsonInstruction) {
+            $body['systemInstruction'] = ['parts' => [['text' => $jsonInstruction]]];
+        }
+
+        $response = $this->sendRequest($body);
+
+        if ($response === null) {
+            return null;
+        }
+
+        $text = $this->extractText($response);
+
+        if ($text === null) {
+            return null;
+        }
+
+        return $this->parseJsonResponse($text);
+    }
+
+    /**
      * Gera conteúdo e parseia como JSON.
      * Envia instrução para retornar apenas JSON válido.
      */
