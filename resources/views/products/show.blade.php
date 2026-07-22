@@ -106,8 +106,32 @@
                                 @endif
                                 @if($product->imei)
                                 <div>
-                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">IMEI/Serial</dt>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">IMEI</dt>
                                     <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3; font-family: monospace;">{{ $product->imei }}</dd>
+                                </div>
+                                @endif
+                                @if($product->imei2)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">IMEI 2</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3; font-family: monospace;">{{ $product->imei2 }}</dd>
+                                </div>
+                                @endif
+                                @if($product->serial_number)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Nº de Série</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3; font-family: monospace;">{{ $product->serial_number }}</dd>
+                                </div>
+                                @endif
+                                @if($product->model_number)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Model No.</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3; font-family: monospace;">{{ $product->model_number }}</dd>
+                                </div>
+                                @endif
+                                @if($product->part_number)
+                                <div>
+                                    <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Part Number</dt>
+                                    <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3; font-family: monospace;">{{ $product->part_number }}</dd>
                                 </div>
                                 @endif
                                 @if($product->supplier)

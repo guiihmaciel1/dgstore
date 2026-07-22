@@ -106,11 +106,49 @@
                                        style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem;">
                             </div>
 
-                            <!-- IMEI/Serial -->
+                            <!-- IMEI -->
                             <div>
-                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">IMEI/Serial</label>
-                                <input type="text" name="imei" value="{{ old('imei', $product->imei) }}" placeholder="Para eletrônicos"
-                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">IMEI</label>
+                                <input type="text" name="imei" value="{{ old('imei', $product->imei) }}" placeholder="IMEI principal"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
+                            </div>
+
+                            <!-- Identificadores do Dispositivo -->
+                            <div style="grid-column: span 4; margin-top: 0.25rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; padding-bottom: 0.375rem; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <svg style="width: 0.875rem; height: 0.875rem; color: #555;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/>
+                                    </svg>
+                                    <span style="font-size: 0.6875rem; font-weight: 500; color: #555; text-transform: uppercase; letter-spacing: 0.05em;">Identificadores do Dispositivo</span>
+                                </div>
+                            </div>
+
+                            <!-- IMEI 2 -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">IMEI 2</label>
+                                <input type="text" name="imei2" value="{{ old('imei2', $product->imei2) }}" placeholder="Segundo IMEI"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
+                            </div>
+
+                            <!-- Serial -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Nº de Série</label>
+                                <input type="text" name="serial_number" value="{{ old('serial_number', $product->serial_number) }}" placeholder="Serial Number"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
+                            </div>
+
+                            <!-- Model Number -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Model No.</label>
+                                <input type="text" name="model_number" value="{{ old('model_number', $product->model_number) }}" placeholder="Ex: A3257"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
+                            </div>
+
+                            <!-- Part Number -->
+                            <div>
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Part Number</label>
+                                <input type="text" name="part_number" value="{{ old('part_number', $product->part_number) }}" placeholder="Ex: MFXJ4LL/A"
+                                       style="width: 100%; padding: 0.5rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; font-family: monospace;">
                             </div>
 
                             @if(auth()->user()->canViewFinancials())
