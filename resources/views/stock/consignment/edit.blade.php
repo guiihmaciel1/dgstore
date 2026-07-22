@@ -116,13 +116,42 @@
                         </div>
                     </div>
 
-                    {{-- IMEI --}}
+                    {{-- Identificadores do Dispositivo --}}
                     <div>
-                        <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">IMEI</label>
-                        <input type="text" name="imei" value="{{ old('imei', $item->imei) }}" placeholder="Número IMEI (opcional)"
-                               style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none; font-family: monospace;"
-                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                        @error('imei') <span style="color: #fca5a5; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                        <p style="font-size: 0.75rem; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; padding-bottom: 0.375rem; border-bottom: 1px solid rgba(255,255,255,0.04);">Identificadores do Dispositivo</p>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">IMEI</label>
+                                <input type="text" name="imei" value="{{ old('imei', $item->imei) }}" placeholder="IMEI principal"
+                                       style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none; font-family: monospace;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                @error('imei') <span style="color: #fca5a5; font-size: 0.75rem;">{{ $message }}</span> @enderror
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">IMEI 2</label>
+                                <input type="text" name="imei2" value="{{ old('imei2', $item->imei2) }}" placeholder="Segundo IMEI"
+                                       style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none; font-family: monospace;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Nº de Série</label>
+                                <input type="text" name="serial_number" value="{{ old('serial_number', $item->serial_number) }}" placeholder="Serial Number"
+                                       style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none; font-family: monospace;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Model No.</label>
+                                <input type="text" name="model_number" value="{{ old('model_number', $item->model_number) }}" placeholder="Ex: A3257"
+                                       style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none; font-family: monospace;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">Part Number</label>
+                                <input type="text" name="part_number" value="{{ old('part_number', $item->part_number) }}" placeholder="Ex: MFXJ4LL/A"
+                                       style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none; font-family: monospace;"
+                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Custo / Preço Sugerido / Quantidade --}}

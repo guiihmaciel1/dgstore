@@ -164,6 +164,10 @@ class ConsignmentStockController extends Controller
             'has_box' => ['nullable'],
             'has_cable' => ['nullable'],
             'imei' => ['nullable', 'string', 'max:50', 'unique:consignment_stock_items,imei,' . $item->id],
+            'imei2' => ['nullable', 'string', 'max:20'],
+            'serial_number' => ['nullable', 'string', 'max:30'],
+            'model_number' => ['nullable', 'string', 'max:20'],
+            'part_number' => ['nullable', 'string', 'max:30'],
             'supplier_cost' => ['required', 'numeric', 'min:0'],
             'suggested_price' => ['nullable', 'numeric', 'min:0'],
             'quantity' => ['required', 'integer', 'min:1'],
@@ -549,6 +553,80 @@ class ConsignmentStockController extends Controller
                 ]);
             }
         }
+    }
+
+    /**
+     * Verifica se já existe item consolidado com mesma configuração.
+     */
+    public function checkDuplicate(Request $request): JsonResponse
+    {
+        $name = $request->get('name', '');
+        $storage = $request->get('storage', '');
+        $color = $request->get('color', '');
+        $supplierId = $request->get('supplier_id', '');
+
+        if (!$name || !$storage || !$color || !$supplierId) {
+            return response()->json(['exists' => false]);
+        }
+
+        $item = ConsignmentStockItem::where([
+            'supplier_id' => $supplierId,
+            'name' => $name,
+            'storage' => $storage,
+            'color' => $color,
+            'status' => 'available',
+        ])
+        ->whereNull('imei')
+        ->first();
+
+        if ($item) {
+            return response()->json([
+                'exists' => true,
+                'item_name' => $item->full_name,
+                'available_qty' => $item->available_quantity,
+            ]);
+        }
+
+        return response()->json(['exists' => false]);
+    }
+
+    /**
+     * Entrada inteligente: detecta duplicatas e incrementa estoque existente
+     * ou cria novo item. Salva todos os identificadores do dispositivo.
+     */
+    public function smartStore(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'supplier_id' => ['required', 'exists:suppliers,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'model' => ['nullable', 'string', 'max:255'],
+            'storage' => ['required', 'string', 'max:50'],
+            'color' => ['required', 'string', 'max:100'],
+            'condition' => ['required', 'in:new,used'],
+            'quantity' => ['required', 'integer', 'min:1', 'max:999'],
+            'supplier_cost' => ['required', 'numeric', 'min:0'],
+            'suggested_price' => ['nullable', 'numeric', 'min:0'],
+            'imei' => ['nullable', 'string', 'max:20'],
+            'imei2' => ['nullable', 'string', 'max:20'],
+            'serial_number' => ['nullable', 'string', 'max:30'],
+            'model_number' => ['nullable', 'string', 'max:20'],
+            'part_number' => ['nullable', 'string', 'max:30'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $item = $this->service->smartEntry($validated, auth()->id());
+
+        $isNew = $item->wasRecentlyCreated;
+        $qty = (int) $validated['quantity'];
+
+        return response()->json([
+            'success' => true,
+            'message' => $isNew
+                ? "{$item->full_name} cadastrado ({$qty} un.)"
+                : "+{$qty} un. adicionada(s) a {$item->full_name} (total: {$item->available_quantity})",
+            'item_id' => $item->id,
+            'is_new' => $isNew,
+        ]);
     }
 
     /**

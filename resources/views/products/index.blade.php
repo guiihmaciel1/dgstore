@@ -193,4 +193,9 @@
 
     @include('products.partials.create-modal')
 
+    @if(request('open_entry'))
+    <script>
+        document.addEventListener('DOMContentLoaded', () => openCreateModal());
+    </script>
+    @endif
 </x-app-layout>

@@ -353,6 +353,9 @@
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6 sm:gap-3 relative">
                 @if(!$isIntern)
+                {{-- Quick Stock Access --}}
+                <x-quick-stock-nav />
+
                 {{-- Dollar Rate Indicator (inline) --}}
                 @auth
                     <x-dollar-rate-inline />
@@ -592,6 +595,25 @@
             @endif
             {{-- B2B button hidden from mobile nav --}}
         </div>
+
+        <!-- Mobile: Acesso rápido estoque -->
+        @if(!$isIntern)
+        <div class="border-t border-border mt-2 pt-2">
+            <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">Ações Rápidas</div>
+            <button onclick="openProductEntryFromNav()" class="w-full flex items-center px-6 py-2 text-base font-medium text-emerald-400 hover:text-white hover:bg-surface-elevated text-left">
+                <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                + Nosso Estoque
+            </button>
+            <button onclick="openConsignmentEntryFromNav()" class="w-full flex items-center px-6 py-2 text-base font-medium text-indigo-400 hover:text-white hover:bg-surface-elevated text-left">
+                <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                + Estoque Externo
+            </button>
+        </div>
+        @endif
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-3 border-t border-border">

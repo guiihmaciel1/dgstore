@@ -44,6 +44,12 @@
         <!-- Botões Flutuantes + Modais -->
         @auth
             <x-import-calculator />
+            @unless(request()->routeIs('products.index'))
+                @include('products.partials.create-modal')
+            @endunless
+            @unless(request()->routeIs('stock.consignment.index'))
+                @include('stock.consignment.partials.entry-modal')
+            @endunless
         @endauth
         <x-stone-fab-calculator />
 

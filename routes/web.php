@@ -215,6 +215,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/api/consignment/search', [ConsignmentStockController::class, 'search'])->name('stock.consignment.search');
         Route::get('/api/consignment/product-catalog', [ConsignmentStockController::class, 'productCatalog'])->name('stock.consignment.catalog');
         Route::get('/api/consignment/validate-imei', [ConsignmentStockController::class, 'validateImei'])->name('stock.consignment.validate-imei');
+        Route::get('/api/consignment/check-duplicate', [ConsignmentStockController::class, 'checkDuplicate'])->name('stock.consignment.check-duplicate');
+        Route::post('/stock/consignment/smart-store', [ConsignmentStockController::class, 'smartStore'])->name('stock.consignment.smart-store');
 
         // Garantias
         Route::get('/warranties', [WarrantyController::class, 'index'])->name('warranties.index');

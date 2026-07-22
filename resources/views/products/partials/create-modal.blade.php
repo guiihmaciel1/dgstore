@@ -167,7 +167,7 @@
                         </label>
                         <select name="condition" id="modal-condition" required onchange="toggleModalSeminovoFields()"
                                 style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; background: #141414;">
-                            @foreach($conditions as $condition)
+                            @foreach(\App\Domain\Product\Enums\ProductCondition::cases() as $condition)
                                 <option value="{{ $condition->value }}">{{ $condition->label() }}</option>
                             @endforeach
                         </select>

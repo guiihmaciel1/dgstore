@@ -394,6 +394,86 @@ class ConsignmentStockService
     }
 
     /**
+     * Entrada inteligente: detecta se já existe item com mesma configuração.
+     * - Se existe item consolidado (sem IMEI): incrementa quantidade
+     * - Se tem IMEI: sempre cria item individual (rastreável)
+     * - Salva todos os identificadores do dispositivo
+     */
+    public function smartEntry(array $data, string $userId): ConsignmentStockItem
+    {
+        return DB::transaction(function () use ($data, $userId) {
+            $quantity = (int) ($data['quantity'] ?? 1);
+            $hasImei = !empty($data['imei']);
+
+            if (!$hasImei) {
+                $existing = ConsignmentStockItem::where([
+                    'supplier_id' => $data['supplier_id'],
+                    'name' => $data['name'],
+                    'storage' => $data['storage'] ?? null,
+                    'color' => $data['color'],
+                    'condition' => $data['condition'],
+                    'status' => ConsignmentStatus::Available,
+                ])
+                ->whereNull('imei')
+                ->first();
+
+                if ($existing) {
+                    $existing->increment('quantity', $quantity);
+                    $existing->increment('available_quantity', $quantity);
+                    $this->updateConsolidatedPrices($existing, $data, $quantity);
+
+                    ConsignmentStockMovement::create([
+                        'consignment_item_id' => $existing->id,
+                        'user_id' => $userId,
+                        'type' => ConsignmentMovementType::In,
+                        'quantity' => $quantity,
+                        'reason' => "Entrada inteligente - +{$quantity} un. consolidada(s)",
+                    ]);
+
+                    return $existing;
+                }
+            }
+
+            $item = ConsignmentStockItem::create([
+                'supplier_id' => $data['supplier_id'],
+                'batch_id' => null,
+                'name' => $data['name'],
+                'model' => $data['model'] ?? null,
+                'storage' => $data['storage'] ?? null,
+                'color' => $data['color'],
+                'condition' => $data['condition'],
+                'imei' => $data['imei'] ?? null,
+                'imei2' => $data['imei2'] ?? null,
+                'serial_number' => $data['serial_number'] ?? null,
+                'model_number' => $data['model_number'] ?? null,
+                'part_number' => $data['part_number'] ?? null,
+                'battery_health' => null,
+                'has_box' => false,
+                'has_cable' => false,
+                'supplier_cost' => $data['supplier_cost'],
+                'suggested_price' => $data['suggested_price'] ?? null,
+                'quantity' => $hasImei ? 1 : $quantity,
+                'available_quantity' => $hasImei ? 1 : $quantity,
+                'status' => ConsignmentStatus::Available,
+                'notes' => $data['notes'] ?? null,
+                'received_at' => now(),
+            ]);
+
+            ConsignmentStockMovement::create([
+                'consignment_item_id' => $item->id,
+                'user_id' => $userId,
+                'type' => ConsignmentMovementType::In,
+                'quantity' => $hasImei ? 1 : $quantity,
+                'reason' => $hasImei
+                    ? 'Entrada inteligente - item rastreado por IMEI'
+                    : "Entrada inteligente - {$quantity} un.",
+            ]);
+
+            return $item;
+        });
+    }
+
+    /**
      * Encontra item consolidado existente ou cria novo.
      * Agrupa produtos por: supplier_id + name + model + storage + color + condition
      * 
