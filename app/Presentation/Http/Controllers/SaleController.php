@@ -107,7 +107,7 @@ class SaleController extends Controller
 
         $pendingPreSales = PreSale::with('customer')
             ->whereIn('status', ['pending', 'ready'])
-            ->orderByRaw("FIELD(status, 'ready', 'pending')")
+            ->orderBy('status')
             ->orderByDesc('created_at')
             ->get();
 
