@@ -699,6 +699,8 @@
                 },
 
                 get estimatedCommission() {
+                    const cost = parseFloat(this.product.cost_price) || 0;
+                    if (cost <= 0) return 0;
                     const profit = this.estimatedProfit;
                     if (profit <= 0) return 0;
                     return Math.round(profit * 0.10 * 100) / 100;

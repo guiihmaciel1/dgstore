@@ -227,11 +227,12 @@
                             <span style="font-size: 1.25rem; font-weight: 700; color: #4ade80;">{{ $preSale->formatted_final_balance }}</span>
                         </div>
                         @php
+                            $costPrice = (float) $preSale->cost_price;
                             $netReceived = $preSale->payment_method === 'credit_card' && $preSale->card_net_amount > 0
                                 ? (float) $preSale->card_net_amount
                                 : (float) $preSale->unit_price;
-                            $profit = $netReceived - (float) $preSale->cost_price;
-                            $commission = $profit > 0 ? round($profit * 0.10, 2) : 0;
+                            $profit = $costPrice > 0 ? ($netReceived - $costPrice) : 0;
+                            $commission = ($costPrice > 0 && $profit > 0) ? round($profit * 0.10, 2) : 0;
                         @endphp
                         @if(auth()->user()->isAdmin() && $profit != 0)
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
@@ -248,6 +249,10 @@
                                     Sua comissão aproximada
                                 </span>
                                 <span style="font-size: 0.9375rem; font-weight: 700; color: #c4b5fd;">R$ {{ number_format($commission, 2, ',', '.') }}</span>
+                            </div>
+                        @elseif($costPrice <= 0)
+                            <div style="margin-top: 0.375rem; font-size: 0.75rem; color: #666666; font-style: italic;">
+                                Comissão indisponível — custo do produto não informado.
                             </div>
                         @endif
                     </div>

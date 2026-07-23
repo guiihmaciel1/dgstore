@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\PreSale\Services;
 
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
+use App\Domain\Marketing\Models\MarketingPrice;
 use App\Domain\PreSale\Enums\PreSaleStatus;
 use App\Domain\PreSale\Models\PreSale;
 use App\Domain\Product\Models\Product;
@@ -75,6 +76,8 @@ class PreSaleService
             ->first();
 
         if ($product) {
+            $marketingCost = $this->findMarketingCost($product->name, $product->storage);
+
             return [
                 'source' => 'own_stock',
                 'product_id' => $product->id,
@@ -85,7 +88,7 @@ class PreSaleService
                 'color' => $product->color,
                 'condition' => $product->condition?->value ?? 'new',
                 'imei' => $product->imei,
-                'cost_price' => (float) $product->cost_price,
+                'cost_price' => $marketingCost ?? (float) $product->cost_price,
                 'sale_price' => (float) $product->sale_price,
                 'reserved' => (bool) $product->reserved,
                 'reserved_by' => $product->reserved_by,
@@ -100,6 +103,8 @@ class PreSaleService
             ->first();
 
         if ($consignmentItem) {
+            $marketingCost = $this->findMarketingCost($consignmentItem->name, $consignmentItem->storage);
+
             return [
                 'source' => 'consignment',
                 'product_id' => null,
@@ -110,7 +115,7 @@ class PreSaleService
                 'color' => $consignmentItem->color,
                 'condition' => $consignmentItem->condition?->value ?? 'new',
                 'imei' => $consignmentItem->imei,
-                'cost_price' => (float) $consignmentItem->supplier_cost,
+                'cost_price' => $marketingCost ?? (float) $consignmentItem->supplier_cost,
                 'sale_price' => (float) ($consignmentItem->suggested_price ?? $consignmentItem->supplier_cost),
                 'reserved' => (bool) ($consignmentItem->reserved ?? false),
                 'reserved_by' => $consignmentItem->reserved_by ?? null,
@@ -134,6 +139,61 @@ class PreSaleService
                 'reserved_by' => $preSale->id,
             ]);
         }
+    }
+
+    public function getMarketingCost(?string $productName, ?string $storage): ?float
+    {
+        return $this->findMarketingCost($productName, $storage);
+    }
+
+    private function findMarketingCost(?string $productName, ?string $storage): ?float
+    {
+        if (!$productName) {
+            return null;
+        }
+
+        $query = MarketingPrice::where('active', true)
+            ->whereNotNull('cost_price')
+            ->where('cost_price', '>', 0);
+
+        // Extrair palavras relevantes do nome (ignora "Apple")
+        $keywords = collect(explode(' ', $productName))
+            ->filter(fn ($part) => strlen($part) >= 2 && strtolower($part) !== 'apple')
+            ->values();
+
+        if ($keywords->isEmpty()) {
+            return null;
+        }
+
+        // 1) Busca exata: nome + storage (campo separado ou dentro do nome)
+        if ($storage) {
+            $match = (clone $query)
+                ->where(function ($q) use ($keywords) {
+                    foreach ($keywords as $kw) {
+                        $q->where('name', 'like', '%' . $kw . '%');
+                    }
+                })
+                ->where(function ($sq) use ($storage) {
+                    $sq->where('storage', $storage)
+                       ->orWhere('name', 'like', '%' . $storage . '%');
+                })
+                ->first();
+
+            if ($match) {
+                return (float) $match->cost_price;
+            }
+        }
+
+        // 2) Fallback sem storage
+        $match = (clone $query)
+            ->where(function ($q) use ($keywords) {
+                foreach ($keywords as $kw) {
+                    $q->where('name', 'like', '%' . $kw . '%');
+                }
+            })
+            ->first();
+
+        return $match ? (float) $match->cost_price : null;
     }
 
     private function releaseProduct(PreSale $preSale): void

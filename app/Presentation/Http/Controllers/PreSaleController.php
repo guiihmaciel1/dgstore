@@ -129,6 +129,18 @@ class PreSaleController extends Controller
     {
         $preSale->load(['customer', 'seller', 'convertedSale']);
 
+        // Se custo salvo é zero, buscar da tabela de marketing
+        if ((float) $preSale->cost_price <= 0) {
+            $snapshot = $preSale->product_snapshot ?? [];
+            $marketingCost = $this->preSaleService->getMarketingCost(
+                $snapshot['name'] ?? $preSale->product_name,
+                $snapshot['storage'] ?? null
+            );
+            if ($marketingCost) {
+                $preSale->cost_price = $marketingCost;
+            }
+        }
+
         return view('pre-sales.show', [
             'preSale' => $preSale,
         ]);
