@@ -12,7 +12,7 @@
                         <span style="font-size: 1.75rem;">🎓</span>
                         <div>
                             <h1 style="font-size: 1.5rem; font-weight: 800; color: white; letter-spacing: -0.025em;">Treinamento de Vendas</h1>
-                            <p style="font-size: 0.8125rem; color: rgba(255,255,255,0.6);">Sua jornada pra virar expert Apple começa aqui ✨</p>
+                            <p style="font-size: 0.8125rem; color: rgba(255,255,255,0.6);">Domine o produto e a arte de fechar vendas ✨</p>
                         </div>
                     </div>
                     <div style="margin-top: 1rem; background: rgba(255,255,255,0.1); border-radius: 0.75rem; padding: 0.75rem 1rem;">
@@ -27,17 +27,50 @@
                 </div>
             </div>
 
-            {{-- Módulos --}}
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {{-- Seção: Conheça o Produto --}}
+            <div style="margin-bottom: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <div style="height: 1px; flex: 1; background: rgba(255,255,255,0.06);"></div>
+                    <span style="font-size: 0.6875rem; font-weight: 700; color: #818181; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap;">📦 Conheça o Produto</span>
+                    <div style="height: 1px; flex: 1; background: rgba(255,255,255,0.06);"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    @include('tools.training.module-lineup')
+                    @include('tools.training.module-seminovos')
+                    @include('tools.training.module-batalha')
+                    @include('tools.training.module-ai')
+                    @include('tools.training.module-trends')
+                </div>
+            </div>
 
-                @include('tools.training.module-lineup')
-                @include('tools.training.module-seminovos')
-                @include('tools.training.module-batalha')
-                @include('tools.training.module-ai')
-                @include('tools.training.module-vendas')
-                @include('tools.training.module-trends')
-                @include('tools.training.module-quiz')
+            {{-- Seção: Domine a Venda --}}
+            <div style="margin-bottom: 0.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; margin-top: 1.25rem;">
+                    <div style="height: 1px; flex: 1; background: rgba(255,255,255,0.06);"></div>
+                    <span style="font-size: 0.6875rem; font-weight: 700; color: #fbbf24; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap;">🔥 Domine a Venda</span>
+                    <div style="height: 1px; flex: 1; background: rgba(255,255,255,0.06);"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    @include('tools.training.module-consultiva')
+                    @include('tools.training.module-gatilhos')
+                    @include('tools.training.module-whatsapp')
+                    @include('tools.training.module-fechamento')
+                    @include('tools.training.module-objecoes')
+                    @include('tools.training.module-seminovo-venda')
+                    @include('tools.training.module-ferramentas')
+                </div>
+            </div>
 
+            {{-- Seção: Teste seus Conhecimentos --}}
+            <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; margin-top: 1.25rem;">
+                    <div style="height: 1px; flex: 1; background: rgba(255,255,255,0.06);"></div>
+                    <span style="font-size: 0.6875rem; font-weight: 700; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap;">🎓 Certificação</span>
+                    <div style="height: 1px; flex: 1; background: rgba(255,255,255,0.06);"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    @include('tools.training.module-quiz')
+                </div>
             </div>
         </div>
     </div>
@@ -50,7 +83,7 @@
         return {
             openModule: null,
             readModules: JSON.parse(localStorage.getItem('st_read') || '[]'),
-            totalModules: 7,
+            totalModules: 13,
 
             get modulesRead() { return this.readModules.length; },
             get progressPercent() { return Math.round((this.readModules.length / this.totalModules) * 100); },
@@ -81,16 +114,16 @@
                 return '📚';
             },
             get quizTitle() {
-                if (this.quizPercent >= 90) return 'Expert Apple! Arrasou! 🔥';
-                if (this.quizPercent >= 70) return 'Muito bem! Quase lá!';
-                if (this.quizPercent >= 50) return 'Bom começo! Continue estudando!';
+                if (this.quizPercent >= 90) return 'Expert em Vendas! Arrasou! 🔥';
+                if (this.quizPercent >= 70) return 'Certificada! Parabéns! 🎖️';
+                if (this.quizPercent >= 50) return 'Quase lá! Continue estudando!';
                 return 'Bora revisar os módulos!';
             },
             get quizMessage() {
-                if (this.quizPercent >= 90) return 'Você tá mais que pronta pra vender. Manda ver na loja!';
-                if (this.quizPercent >= 70) return 'Sabe bastante! Revisa os pontos que errou e vai ficar expert.';
-                if (this.quizPercent >= 50) return 'Tá no caminho certo. Dá uma relida nos módulos e tenta de novo!';
-                return 'Sem estresse! Lê os módulos com calma e depois volta pro quiz.';
+                if (this.quizPercent >= 90) return 'Você domina produto E vendas. Manda ver no fechamento!';
+                if (this.quizPercent >= 70) return 'Aprovada na certificação! Revise os pontos que errou pra chegar nos 90%.';
+                if (this.quizPercent >= 50) return 'Faltou pouco pros 70%. Releia os módulos de Venda e tente de novo!';
+                return 'Sem estresse! Leia os módulos com calma — foco nos de Venda — e volte pro quiz.';
             },
 
             startQuiz() {

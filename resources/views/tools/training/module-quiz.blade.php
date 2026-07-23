@@ -1,12 +1,12 @@
-{{-- Módulo 7: Quiz --}}
+{{-- Módulo 12: Quiz Atualizado --}}
 <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
     <button @click="toggleModule('quiz')" type="button"
             style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; background: #141414; border: none; cursor: pointer; text-align: left;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
             <span style="font-size: 1.5rem;">🧠</span>
             <div>
-                <span style="font-size: 1rem; font-weight: 700; color: #e3e3e3;">Quiz — Testa teu Conhecimento!</span>
-                <div style="font-size: 0.75rem; color: #666666;">Veja se você tá pronta pra arrasar nas vendas</div>
+                <span style="font-size: 1rem; font-weight: 700; color: #e3e3e3;">Quiz — Certificação de Vendas</span>
+                <div style="font-size: 0.75rem; color: #666666;">20 cenários reais · Mínimo 70% pra certificar</div>
             </div>
         </div>
         <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -17,13 +17,14 @@
         </div>
     </button>
 
-    <div x-show="openModule === 'quiz'" x-transition style="border-top: 1px solid #f3f4f6; padding: 1.25rem;">
+    <div x-show="openModule === 'quiz'" x-transition style="border-top: 1px solid rgba(255,255,255,0.06); padding: 1.25rem;">
 
         {{-- Quiz not started --}}
         <div x-show="!quizStarted && !quizFinished" style="text-align: center; padding: 1.5rem 0;">
             <div style="font-size: 3rem; margin-bottom: 0.75rem;">🏆</div>
-            <h3 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3; margin-bottom: 0.5rem;">Bora testar o que você aprendeu?</h3>
-            <p style="font-size: 0.875rem; color: #818181; margin-bottom: 1rem;">São <span x-text="quizQuestions.length"></span> perguntas sobre tudo que vimos nos módulos.</p>
+            <h3 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3; margin-bottom: 0.5rem;">Hora da Certificação!</h3>
+            <p style="font-size: 0.875rem; color: #818181; margin-bottom: 0.5rem;">São <span x-text="quizQuestions.length"></span> cenários reais cobrindo todos os módulos.</p>
+            <p style="font-size: 0.8rem; color: #fbbf24; margin-bottom: 1rem;">⭐ Mínimo 70% pra conquistar o certificado</p>
             <button @click="startQuiz()" type="button"
                     style="padding: 0.625rem 2rem; background: linear-gradient(135deg, #7c3aed, #6366f1); color: white; border: none; border-radius: 0.5rem; font-size: 0.9375rem; font-weight: 700; cursor: pointer;">
                 Começar Quiz 🚀
@@ -81,6 +82,9 @@
             <div style="font-size: 3.5rem; margin-bottom: 0.5rem;" x-text="quizEmoji"></div>
             <h3 style="font-size: 1.25rem; font-weight: 800; color: #e3e3e3; margin-bottom: 0.375rem;" x-text="quizTitle"></h3>
             <p style="font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem;" :style="'color:' + (quizPercent >= 70 ? '#059669' : quizPercent >= 50 ? '#d97706' : '#dc2626')" x-text="quizScore + '/' + quizQuestions.length"></p>
+            <div x-show="quizPercent >= 70" style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.75rem; display: inline-block;">
+                <p style="font-size: 0.875rem; color: #4ade80; font-weight: 700;">🎖️ Certificada! Você domina o assunto.</p>
+            </div>
             <p style="font-size: 0.875rem; color: #818181; margin-bottom: 1.25rem;" x-text="quizMessage"></p>
             <button @click="resetQuiz()" type="button"
                     style="padding: 0.625rem 2rem; background: #111827; color: white; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer;">
