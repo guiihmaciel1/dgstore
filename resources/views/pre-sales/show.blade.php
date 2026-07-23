@@ -234,12 +234,6 @@
                             $profit = $costPrice > 0 ? ($netReceived - $costPrice) : 0;
                             $commission = ($costPrice > 0 && $profit > 0) ? round($profit * 0.10, 2) : 0;
                         @endphp
-                        @if(auth()->user()->isAdmin() && $profit != 0)
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
-                                <span style="font-size: 0.8125rem; color: #515151;">Lucro estimado:</span>
-                                <span style="font-size: 0.875rem; font-weight: 600; color: {{ $profit >= 0 ? '#4ade80' : '#f87171' }};">R$ {{ number_format($profit, 2, ',', '.') }}</span>
-                            </div>
-                        @endif
                         @if($commission > 0)
                             <div style="margin-top: 0.375rem; padding: 0.5rem 0.625rem; background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.15); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-size: 0.8125rem; color: #a78bfa; display: flex; align-items: center; gap: 0.375rem;">
