@@ -226,31 +226,29 @@
                             <span style="font-size: 0.875rem; font-weight: 600; color: #a4a4a4;">Saldo restante:</span>
                             <span style="font-size: 1.25rem; font-weight: 700; color: #4ade80;">{{ $preSale->formatted_final_balance }}</span>
                         </div>
-                        @if(auth()->user()->isAdmin())
-                            @php
-                                $netReceived = $preSale->payment_method === 'credit_card' && $preSale->card_net_amount > 0
-                                    ? (float) $preSale->card_net_amount
-                                    : (float) $preSale->unit_price;
-                                $profit = $netReceived - (float) $preSale->cost_price;
-                                $commission = $profit > 0 ? round($profit * 0.10, 2) : 0;
-                            @endphp
-                            @if($profit != 0)
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
-                                    <span style="font-size: 0.8125rem; color: #515151;">Lucro estimado:</span>
-                                    <span style="font-size: 0.875rem; font-weight: 600; color: {{ $profit >= 0 ? '#4ade80' : '#f87171' }};">R$ {{ number_format($profit, 2, ',', '.') }}</span>
-                                </div>
-                            @endif
-                            @if($commission > 0)
-                                <div style="margin-top: 0.375rem; padding: 0.5rem 0.625rem; background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.15); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 0.8125rem; color: #a78bfa; display: flex; align-items: center; gap: 0.375rem;">
-                                        <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        Comissão aproximada
-                                    </span>
-                                    <span style="font-size: 0.9375rem; font-weight: 700; color: #c4b5fd;">R$ {{ number_format($commission, 2, ',', '.') }}</span>
-                                </div>
-                            @endif
+                        @php
+                            $netReceived = $preSale->payment_method === 'credit_card' && $preSale->card_net_amount > 0
+                                ? (float) $preSale->card_net_amount
+                                : (float) $preSale->unit_price;
+                            $profit = $netReceived - (float) $preSale->cost_price;
+                            $commission = $profit > 0 ? round($profit * 0.10, 2) : 0;
+                        @endphp
+                        @if(auth()->user()->isAdmin() && $profit != 0)
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
+                                <span style="font-size: 0.8125rem; color: #515151;">Lucro estimado:</span>
+                                <span style="font-size: 0.875rem; font-weight: 600; color: {{ $profit >= 0 ? '#4ade80' : '#f87171' }};">R$ {{ number_format($profit, 2, ',', '.') }}</span>
+                            </div>
+                        @endif
+                        @if($commission > 0)
+                            <div style="margin-top: 0.375rem; padding: 0.5rem 0.625rem; background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.15); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.8125rem; color: #a78bfa; display: flex; align-items: center; gap: 0.375rem;">
+                                    <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Sua comissão aproximada
+                                </span>
+                                <span style="font-size: 0.9375rem; font-weight: 700; color: #c4b5fd;">R$ {{ number_format($commission, 2, ',', '.') }}</span>
+                            </div>
                         @endif
                     </div>
 
