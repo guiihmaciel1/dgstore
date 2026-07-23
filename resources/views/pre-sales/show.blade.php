@@ -36,8 +36,12 @@
                     </div>
                 </div>
 
-                <!-- Ação Vendedora: Marcar como Pronta -->
-                @if(!auth()->user()->isAdmin() && $preSale->isPending())
+                @php
+                    $isOwnerOrAdmin = auth()->user()->isAdmin() || auth()->id() === $preSale->seller_id;
+                @endphp
+
+                <!-- Ação: Marcar como Pronta (vendedoras que NÃO são donas nem admin) -->
+                @if(!$isOwnerOrAdmin && $preSale->isPending())
                     <form method="POST" action="{{ route('pre-sales.mark-ready', $preSale) }}">
                         @csrf
                         <button type="submit"
@@ -50,8 +54,8 @@
                     </form>
                 @endif
 
-                <!-- Ações Admin -->
-                @if(auth()->user()->isAdmin() && $preSale->isActionable())
+                <!-- Ações: Efetivar / Cancelar (admin OU dona da venda) -->
+                @if($isOwnerOrAdmin && $preSale->isActionable())
                     <div class="flex gap-2" x-data="{ showCancelModal: false }">
                         <form method="POST" action="{{ route('pre-sales.convert', $preSale) }}">
                             @csrf
@@ -315,6 +319,49 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Simulação de Parcelamento -->
+            @if(isset($installmentOptions) && count($installmentOptions) > 0)
+                <div style="background: #141414; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-top: 1.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <div style="font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #818181;">
+                            Simulação de Parcelamento
+                        </div>
+                        <span style="font-size: 0.75rem; color: #515151;">
+                            Base: <span style="color: #4ade80; font-weight: 600;">R$ {{ number_format((float) $preSale->final_balance, 2, ',', '.') }}</span>
+                            (saldo restante)
+                        </span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 0.5rem;">
+                        @foreach($installmentOptions as $option)
+                            @php
+                                $isHighlighted = in_array($option->installments, [1, 3, 6, 10, 12]);
+                            @endphp
+                            <div style="padding: 0.625rem 0.75rem; border-radius: 0.5rem; {{ $isHighlighted ? 'background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2);' : 'background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);' }}">
+                                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.25rem;">
+                                    <span style="font-size: 0.8125rem; font-weight: 700; {{ $isHighlighted ? 'color: #60a5fa;' : 'color: #a4a4a4;' }}">
+                                        {{ $option->installments }}x
+                                    </span>
+                                    <span style="font-size: 0.6875rem; color: #666;">
+                                        {{ number_format($option->mdrRate, 1, ',', '') }}%
+                                    </span>
+                                </div>
+                                <div style="font-size: 0.9375rem; font-weight: 600; color: #e3e3e3;">
+                                    R$ {{ number_format($option->installmentValue, 2, ',', '.') }}
+                                </div>
+                                <div style="font-size: 0.6875rem; color: #515151; margin-top: 0.125rem;">
+                                    Total: R$ {{ number_format($option->grossAmount, 2, ',', '.') }}
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div style="margin-top: 0.75rem; font-size: 0.6875rem; color: #515151; font-style: italic;">
+                        * Valores simulados com taxas Stone. O cliente paga o valor bruto (total) e o lojista recebe R$ {{ number_format((float) $preSale->final_balance, 2, ',', '.') }} líquido.
+                    </div>
+                </div>
+            @endif
 
             <!-- Observações -->
             @if($preSale->notes)

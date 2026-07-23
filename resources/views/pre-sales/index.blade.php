@@ -160,8 +160,9 @@
                                         {{ $preSale->created_at->format('d/m/Y') }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: center;">
+                                        @php $isOwner = auth()->id() === $preSale->seller_id; @endphp
                                         <div style="display: flex; align-items: center; justify-content: center; gap: 0.375rem;">
-                                            @if(!auth()->user()->isAdmin() && $preSale->isPending())
+                                            @if(!auth()->user()->isAdmin() && !$isOwner && $preSale->isPending())
                                                 <form method="POST" action="{{ route('pre-sales.mark-ready', $preSale) }}" style="display: inline;">
                                                     @csrf
                                                     <button type="submit" title="Marcar como pronta"
@@ -224,7 +225,8 @@
                                     {{ $preSale->seller_name }} · {{ $preSale->created_at->format('d/m/Y H:i') }}
                                 </div>
                             </a>
-                            @if(!auth()->user()->isAdmin() && $preSale->isPending())
+                            @php $isOwnerMobile = auth()->id() === $preSale->seller_id; @endphp
+                            @if(!auth()->user()->isAdmin() && !$isOwnerMobile && $preSale->isPending())
                                 <div style="padding: 0 1rem 0.75rem;">
                                     <form method="POST" action="{{ route('pre-sales.mark-ready', $preSale) }}">
                                         @csrf

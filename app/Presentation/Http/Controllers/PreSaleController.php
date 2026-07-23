@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controllers;
 
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\CustomerService;
+use App\Domain\Payment\Services\CardFeeCalculatorService;
 use App\Domain\PreSale\Enums\PreSaleStatus;
 use App\Domain\PreSale\Models\PreSale;
 use App\Domain\PreSale\Services\PreSaleService;
@@ -23,6 +24,7 @@ class PreSaleController extends Controller
     public function __construct(
         private readonly PreSaleService $preSaleService,
         private readonly CustomerService $customerService,
+        private readonly CardFeeCalculatorService $cardFeeCalculator,
     ) {}
 
     public function index(Request $request): View
@@ -141,8 +143,20 @@ class PreSaleController extends Controller
             }
         }
 
+        // Simular parcelamento sobre o saldo restante
+        $installmentOptions = [];
+        $balanceForCard = (float) $preSale->final_balance;
+        if ($balanceForCard > 0) {
+            try {
+                $installmentOptions = $this->cardFeeCalculator->calculateAllOptions($balanceForCard);
+            } catch (\Throwable $e) {
+                // Ignora erros
+            }
+        }
+
         return view('pre-sales.show', [
             'preSale' => $preSale,
+            'installmentOptions' => $installmentOptions,
         ]);
     }
 
@@ -163,6 +177,14 @@ class PreSaleController extends Controller
 
     public function convert(PreSale $preSale): RedirectResponse
     {
+        $isOwnerOrAdmin = auth()->user()->isAdmin() || auth()->id() === $preSale->seller_id;
+
+        if (!$isOwnerOrAdmin) {
+            return redirect()
+                ->route('pre-sales.show', $preSale)
+                ->with('error', 'Apenas admins ou a vendedora responsável podem efetivar.');
+        }
+
         if (!$preSale->isActionable()) {
             return redirect()
                 ->route('pre-sales.show', $preSale)
@@ -176,6 +198,14 @@ class PreSaleController extends Controller
 
     public function cancel(Request $request, PreSale $preSale): RedirectResponse
     {
+        $isOwnerOrAdmin = auth()->user()->isAdmin() || auth()->id() === $preSale->seller_id;
+
+        if (!$isOwnerOrAdmin) {
+            return redirect()
+                ->route('pre-sales.show', $preSale)
+                ->with('error', 'Apenas admins ou a vendedora responsável podem cancelar.');
+        }
+
         if (!$preSale->isActionable()) {
             return redirect()
                 ->route('pre-sales.show', $preSale)
