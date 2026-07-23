@@ -9,7 +9,7 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\PreSale\Enums\PreSaleStatus;
 use App\Domain\Product\Models\Product;
 use App\Domain\Sale\Models\Sale;
-use App\Models\User;
+use App\Domain\User\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
