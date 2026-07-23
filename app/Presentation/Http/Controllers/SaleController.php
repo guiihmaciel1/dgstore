@@ -105,6 +105,12 @@ class SaleController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'role']);
 
+        $pendingPreSales = PreSale::with('customer')
+            ->whereIn('status', ['pending', 'ready'])
+            ->orderByRaw("FIELD(status, 'ready', 'pending')")
+            ->orderByDesc('created_at')
+            ->get();
+
         return view('sales.create', [
             'products' => $products,
             'sellers' => $sellers,
@@ -114,6 +120,7 @@ class SaleController extends Controller
             'reservation' => $reservation,
             'snapshot' => $snapshot,
             'preSale' => $preSale,
+            'pendingPreSales' => $pendingPreSales,
         ]);
     }
 

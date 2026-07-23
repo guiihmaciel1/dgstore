@@ -69,6 +69,56 @@
                 </div>
             @endif
 
+            {{-- Alerta de Pré-Vendas Pendentes / Prontas --}}
+            @if(isset($pendingPreSales) && $pendingPreSales->count() > 0 && !(isset($preSale) && $preSale))
+                <div x-data="{ expanded: false }" style="margin-bottom: 1.5rem; background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2); border-radius: 0.75rem; overflow: hidden;">
+                    <button type="button" @click="expanded = !expanded"
+                            style="width: 100%; padding: 0.875rem 1rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: none; border: none;">
+                        <div style="display: flex; align-items: center; gap: 0.625rem;">
+                            <svg style="width: 1.25rem; height: 1.25rem; color: #60a5fa; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <span style="font-weight: 600; color: #60a5fa; font-size: 0.875rem;">
+                                {{ $pendingPreSales->count() }} pré-venda{{ $pendingPreSales->count() > 1 ? 's' : '' }} aguardando efetivação
+                            </span>
+                            @php $readyCount = $pendingPreSales->where('status', \App\Domain\PreSale\Enums\PreSaleStatus::Ready)->count(); @endphp
+                            @if($readyCount > 0)
+                                <span style="padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.6875rem; font-weight: 700; background: rgba(59,130,246,0.2); color: #93c5fd;">
+                                    {{ $readyCount }} pronta{{ $readyCount > 1 ? 's' : '' }}
+                                </span>
+                            @endif
+                        </div>
+                        <svg :style="expanded ? 'transform: rotate(180deg);' : ''" style="width: 1rem; height: 1rem; color: #60a5fa; transition: transform 0.2s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div x-show="expanded" x-transition x-cloak style="border-top: 1px solid rgba(59,130,246,0.1);">
+                        @foreach($pendingPreSales as $ps)
+                            <div style="padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; {{ !$loop->last ? 'border-bottom: 1px solid rgba(255,255,255,0.04);' : '' }}">
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                        <span style="font-size: 0.75rem; font-weight: 600; color: #818181;">{{ $ps->pre_sale_number }}</span>
+                                        <span style="display: inline-block; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.625rem; font-weight: 600; {{ $ps->status->color() }}">
+                                            {{ $ps->status->label() }}
+                                        </span>
+                                    </div>
+                                    <div style="font-size: 0.8125rem; color: #a4a4a4; margin-top: 0.125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        {{ $ps->customer?->name ?? 'N/A' }} · {{ $ps->product_name }} · {{ $ps->formatted_unit_price }}
+                                    </div>
+                                    <div style="font-size: 0.6875rem; color: #515151; margin-top: 0.125rem;">
+                                        {{ $ps->seller_name }} · {{ $ps->created_at->format('d/m H:i') }}
+                                    </div>
+                                </div>
+                                <a href="{{ route('pre-sales.show', $ps) }}"
+                                   style="flex-shrink: 0; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 600; border-radius: 0.375rem; {{ $ps->isReady() ? 'background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3);' : 'background: rgba(255,255,255,0.04); color: #818181; border: 1px solid rgba(255,255,255,0.08);' }}">
+                                    {{ $ps->isReady() ? 'Efetivar' : 'Ver' }}
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <div x-data="saleForm()" @keydown.escape.window="if(!showCustomerModal && !showProductModal) window.location.href='{{ route('sales.index') }}'">
             <form method="POST" action="{{ route('sales.store') }}" @submit="handleSubmit($event)">
                 @csrf

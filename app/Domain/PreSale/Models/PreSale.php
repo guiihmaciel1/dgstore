@@ -136,6 +136,16 @@ class PreSale extends Model
         return $this->status === PreSaleStatus::Pending;
     }
 
+    public function isReady(): bool
+    {
+        return $this->status === PreSaleStatus::Ready;
+    }
+
+    public function isActionable(): bool
+    {
+        return $this->isPending() || $this->isReady();
+    }
+
     public function isConverted(): bool
     {
         return $this->status === PreSaleStatus::Converted;

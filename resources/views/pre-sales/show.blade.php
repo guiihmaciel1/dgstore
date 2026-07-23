@@ -36,8 +36,22 @@
                     </div>
                 </div>
 
+                <!-- Ação Vendedora: Marcar como Pronta -->
+                @if(!auth()->user()->isAdmin() && $preSale->isPending())
+                    <form method="POST" action="{{ route('pre-sales.mark-ready', $preSale) }}">
+                        @csrf
+                        <button type="submit"
+                                style="padding: 0.625rem 1.25rem; background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Concluída — Pronta p/ Lançar
+                        </button>
+                    </form>
+                @endif
+
                 <!-- Ações Admin -->
-                @if(auth()->user()->isAdmin() && $preSale->isPending())
+                @if(auth()->user()->isAdmin() && $preSale->isActionable())
                     <div class="flex gap-2" x-data="{ showCancelModal: false }">
                         <form method="POST" action="{{ route('pre-sales.convert', $preSale) }}">
                             @csrf

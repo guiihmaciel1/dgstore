@@ -258,6 +258,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pre-vendas/buscar-imei', [PreSaleController::class, 'searchByImei'])->name('pre-sales.search-imei');
         Route::get('/pre-vendas/buscar-clientes', [PreSaleController::class, 'searchCustomers'])->name('pre-sales.search-customers');
         Route::get('/pre-vendas/{preSale}', [PreSaleController::class, 'show'])->name('pre-sales.show');
+        Route::post('/pre-vendas/{preSale}/pronta', [PreSaleController::class, 'markReady'])->name('pre-sales.mark-ready');
         Route::post('/pre-vendas/{preSale}/converter', [PreSaleController::class, 'convert'])->name('pre-sales.convert');
         Route::post('/pre-vendas/{preSale}/cancelar', [PreSaleController::class, 'cancel'])->name('pre-sales.cancel');
 

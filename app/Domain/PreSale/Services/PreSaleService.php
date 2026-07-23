@@ -38,6 +38,13 @@ class PreSaleService
         });
     }
 
+    public function markReady(PreSale $preSale): void
+    {
+        $preSale->update([
+            'status' => PreSaleStatus::Ready,
+        ]);
+    }
+
     public function markConverted(PreSale $preSale, string $saleId): void
     {
         $preSale->update([

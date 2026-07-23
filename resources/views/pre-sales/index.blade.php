@@ -83,6 +83,7 @@
                         @php
                             $counts = [
                                 'pending' => $preSales->where('status', \App\Domain\PreSale\Enums\PreSaleStatus::Pending)->count(),
+                                'ready' => $preSales->where('status', \App\Domain\PreSale\Enums\PreSaleStatus::Ready)->count(),
                                 'converted' => $preSales->where('status', \App\Domain\PreSale\Enums\PreSaleStatus::Converted)->count(),
                                 'cancelled' => $preSales->where('status', \App\Domain\PreSale\Enums\PreSaleStatus::Cancelled)->count(),
                             ];
@@ -91,6 +92,12 @@
                             <span style="width: 6px; height: 6px; border-radius: 50%; background: #fbbf24;"></span>
                             {{ $counts['pending'] }} pendente{{ $counts['pending'] !== 1 ? 's' : '' }}
                         </span>
+                        @if($counts['ready'] > 0)
+                        <span style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: rgba(59,130,246,0.12); color: #60a5fa;">
+                            <span style="width: 6px; height: 6px; border-radius: 50%; background: #60a5fa;"></span>
+                            {{ $counts['ready'] }} pronta{{ $counts['ready'] !== 1 ? 's' : '' }}
+                        </span>
+                        @endif
                         <span style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: rgba(22,163,106,0.12); color: #4ade80;">
                             <span style="width: 6px; height: 6px; border-radius: 50%; background: #4ade80;"></span>
                             {{ $counts['converted'] }} efetivada{{ $counts['converted'] !== 1 ? 's' : '' }}
@@ -153,14 +160,28 @@
                                         {{ $preSale->created_at->format('d/m/Y') }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: center;">
-                                        <a href="{{ route('pre-sales.show', $preSale) }}"
-                                           style="display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.375rem; color: #818181; background: rgba(255,255,255,0.04);"
-                                           class="hover:bg-surface-elevated transition-colors" title="Ver detalhes">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                            </svg>
-                                        </a>
+                                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.375rem;">
+                                            @if(!auth()->user()->isAdmin() && $preSale->isPending())
+                                                <form method="POST" action="{{ route('pre-sales.mark-ready', $preSale) }}" style="display: inline;">
+                                                    @csrf
+                                                    <button type="submit" title="Marcar como pronta"
+                                                            style="display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.375rem; color: #60a5fa; background: rgba(59,130,246,0.1); border: none; cursor: pointer;"
+                                                            class="hover:bg-surface-elevated transition-colors">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                            <a href="{{ route('pre-sales.show', $preSale) }}"
+                                               style="display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.375rem; color: #818181; background: rgba(255,255,255,0.04);"
+                                               class="hover:bg-surface-elevated transition-colors" title="Ver detalhes">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -177,8 +198,8 @@
                 <!-- Cards Mobile -->
                 <div class="md:hidden">
                     @forelse($preSales as $preSale)
-                        <a href="{{ route('pre-sales.show', $preSale) }}" class="block border-b border-border hover:bg-surface-overlay transition-colors">
-                            <div style="padding: 1rem;">
+                        <div class="border-b border-border hover:bg-surface-overlay transition-colors">
+                            <a href="{{ route('pre-sales.show', $preSale) }}" class="block" style="padding: 1rem; {{ !auth()->user()->isAdmin() && $preSale->isPending() ? 'padding-bottom: 0.5rem;' : '' }}">
                                 <div class="flex justify-between items-start mb-2">
                                     <div>
                                         <div style="font-size: 0.75rem; font-weight: 600; color: #818181;">{{ $preSale->pre_sale_number }}</div>
@@ -202,8 +223,22 @@
                                 <div style="font-size: 0.6875rem; color: #515151; margin-top: 0.375rem;">
                                     {{ $preSale->seller_name }} · {{ $preSale->created_at->format('d/m/Y H:i') }}
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                            @if(!auth()->user()->isAdmin() && $preSale->isPending())
+                                <div style="padding: 0 1rem 0.75rem;">
+                                    <form method="POST" action="{{ route('pre-sales.mark-ready', $preSale) }}">
+                                        @csrf
+                                        <button type="submit"
+                                                style="width: 100%; padding: 0.5rem; font-size: 0.75rem; font-weight: 600; border-radius: 0.375rem; background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.375rem;">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            Concluída — Pronta p/ Lançar
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        </div>
                     @empty
                         <div style="padding: 3rem 1rem; text-align: center; color: #515151; font-size: 0.875rem;">
                             Nenhuma pré-venda encontrada.

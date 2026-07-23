@@ -146,12 +146,27 @@ class PreSaleController extends Controller
         ]);
     }
 
-    public function convert(PreSale $preSale): RedirectResponse
+    public function markReady(PreSale $preSale): RedirectResponse
     {
         if (!$preSale->isPending()) {
             return redirect()
                 ->route('pre-sales.show', $preSale)
-                ->with('error', 'Apenas pré-vendas pendentes podem ser efetivadas.');
+                ->with('error', 'Apenas pré-vendas pendentes podem ser marcadas como prontas.');
+        }
+
+        $this->preSaleService->markReady($preSale);
+
+        return redirect()
+            ->route('pre-sales.show', $preSale)
+            ->with('success', 'Pré-venda marcada como pronta para lançamento!');
+    }
+
+    public function convert(PreSale $preSale): RedirectResponse
+    {
+        if (!$preSale->isActionable()) {
+            return redirect()
+                ->route('pre-sales.show', $preSale)
+                ->with('error', 'Apenas pré-vendas pendentes ou prontas podem ser efetivadas.');
         }
 
         return redirect()->route('sales.create', [
@@ -161,10 +176,10 @@ class PreSaleController extends Controller
 
     public function cancel(Request $request, PreSale $preSale): RedirectResponse
     {
-        if (!$preSale->isPending()) {
+        if (!$preSale->isActionable()) {
             return redirect()
                 ->route('pre-sales.show', $preSale)
-                ->with('error', 'Apenas pré-vendas pendentes podem ser canceladas.');
+                ->with('error', 'Apenas pré-vendas pendentes ou prontas podem ser canceladas.');
         }
 
         try {
