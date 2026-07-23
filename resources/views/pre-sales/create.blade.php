@@ -465,7 +465,8 @@
                                                       :style="finalBalance >= 0 ? 'color: #4ade80;' : 'color: #f87171;'"
                                                       x-text="formatMoney(finalBalance)"></span>
                                             </div>
-                                            <!-- Comissão e Lucro estimados -->
+                                            @if(auth()->user()->isAdmin())
+                                            <!-- Comissão e Lucro estimados (somente admin) -->
                                             <div x-show="estimatedProfit !== 0" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem; display: flex; justify-content: space-between;">
                                                 <span style="color: #515151;">Lucro estimado:</span>
                                                 <span :style="estimatedProfit >= 0 ? 'color: #4ade80;' : 'color: #f87171;'" x-text="formatMoney(estimatedProfit)"></span>
@@ -479,6 +480,7 @@
                                                 </span>
                                                 <span style="color: #c4b5fd; font-weight: 600;" x-text="formatMoney(estimatedCommission)"></span>
                                             </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -580,7 +582,8 @@
                                         </div>
                                     </div>
 
-                                    <!-- Comissão e Lucro -->
+                                    @if(auth()->user()->isAdmin())
+                                    <!-- Comissão e Lucro (somente admin) -->
                                     <div x-show="estimatedProfit !== 0 || estimatedCommission > 0"
                                          style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem; margin-top: 0.25rem;">
                                         <div x-show="estimatedProfit !== 0" style="display: flex; justify-content: space-between; align-items: center;">
@@ -597,6 +600,7 @@
                                             <span style="font-size: 0.9375rem; font-weight: 700; color: #c4b5fd;" x-text="formatMoney(estimatedCommission)"></span>
                                         </div>
                                     </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -690,7 +694,10 @@
                     const price = parseFloat(this.unitPrice) || 0;
                     const cost = parseFloat(this.product.cost_price) || 0;
                     if (price <= 0 || cost <= 0) return 0;
-                    return Math.round((price - cost) * 100) / 100;
+                    const netReceived = (this.paymentMethod === 'credit_card' && this.cardNetAmount > 0)
+                        ? this.cardNetAmount
+                        : price;
+                    return Math.round((netReceived - cost) * 100) / 100;
                 },
 
                 get estimatedCommission() {
