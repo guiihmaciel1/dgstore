@@ -263,33 +263,9 @@
                             <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.375rem; margin-top: 0.5rem;">
-                        <p style="font-size: 0.7rem; color: #a4a4a4; margin: 0;">
-                            <strong style="color: #059669;">½ venda R$25</strong> · <strong style="color: #059669;">Completa R$50</strong>
-                        </p>
-                        <button @click="showInfo = !showInfo" style="width: 1.125rem; height: 1.125rem; border-radius: 9999px; background: #e5e7eb; border: none; cursor: pointer; font-size: 0.6rem; font-weight: 800; color: #818181; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">i</button>
-                    </div>
-                    <div x-show="showInfo" x-cloak @click.outside="showInfo = false"
-                         style="position: absolute; bottom: calc(100% + 0.5rem); left: 0.5rem; right: 0.5rem; background: #111827; color: white; border-radius: 0.75rem; padding: 0.875rem; font-size: 0.7rem; z-index: 20; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-                        <p style="font-weight: 700; margin: 0 0 0.5rem 0; font-size: 0.75rem;">💰 Como funciona a comissão?</p>
-                        <div style="display: flex; flex-direction: column; gap: 0.375rem;">
-                            <div style="display: flex; align-items: flex-start; gap: 0.375rem;">
-                                <span style="font-size: 0.8rem;">🤝</span>
-                                <div>
-                                    <strong style="color: #34d399;">Meia venda (R$25)</strong><br>
-                                    Atender o cliente e fechar a venda
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: flex-start; gap: 0.375rem;">
-                                <span style="font-size: 0.8rem;">⭐</span>
-                                <div>
-                                    <strong style="color: #fbbf24;">Venda completa (R$50)</strong><br>
-                                    Atender, fechar, receber, transferir e cadastrar no sistema
-                                </div>
-                            </div>
-                        </div>
-                        <div style="position: absolute; bottom: -0.375rem; left: 1.5rem; width: 0.75rem; height: 0.75rem; background: #111827; transform: rotate(45deg);"></div>
-                    </div>
+                    <p style="font-size: 0.7rem; color: #a4a4a4; margin-top: 0.5rem;">
+                        <strong style="color: #059669;">% sobre o lucro</strong> de cada venda
+                    </p>
                 </div>
 
                 {{-- Saldo de Comissão --}}
@@ -345,9 +321,7 @@
                     </div>
                     <div>
                         <span style="color: #818181;">Comissão:</span>
-                        <span style="font-weight: 600; color: #059669; margin-left: 0.25rem;">½ venda R$25</span>
-                        <span style="color: #666666; margin: 0 0.125rem;">·</span>
-                        <span style="font-weight: 600; color: #059669;">Completa R$50</span>
+                        <span style="font-weight: 600; color: #059669; margin-left: 0.25rem;">% sobre o lucro</span>
                     </div>
                 </div>
             </div>
