@@ -26,7 +26,7 @@
 
             <!-- Cards de Estatísticas -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-                <a href="{{ route('reservations.index', ['status' => 'active']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['active'] > 0 ? rgba(16,185,129,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['active'] > 0 ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
+                <a href="{{ route('reservations.index', ['status' => 'active']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['active'] > 0 ? 'rgba(16,185,129,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['active'] > 0 ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.625rem; background: {{ $stats['active'] > 0 ? '#dcfce7' : '#f3f4f6' }}; border-radius: 0.5rem;">
@@ -41,7 +41,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('reservations.index', ['status' => 'active', 'sort' => 'expires_at', 'direction' => 'asc']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['expiring_soon'] > 0 ? rgba(245,158,11,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
+                <a href="{{ route('reservations.index', ['status' => 'active', 'sort' => 'expires_at', 'direction' => 'asc']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.625rem; background: {{ $stats['expiring_soon'] > 0 ? '#fef3c7' : '#f3f4f6' }}; border-radius: 0.5rem;">
@@ -56,7 +56,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('reservations.index', ['status' => 'expired']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['overdue'] > 0 ? rgba(239,68,68,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['overdue'] > 0 ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
+                <a href="{{ route('reservations.index', ['status' => 'expired']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['overdue'] > 0 ? 'rgba(239,68,68,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['overdue'] > 0 ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.625rem; background: {{ $stats['overdue'] > 0 ? '#fee2e2' : '#f3f4f6' }}; border-radius: 0.5rem;">

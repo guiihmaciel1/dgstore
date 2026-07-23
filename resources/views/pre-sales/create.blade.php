@@ -465,6 +465,20 @@
                                                       :style="finalBalance >= 0 ? 'color: #4ade80;' : 'color: #f87171;'"
                                                       x-text="formatMoney(finalBalance)"></span>
                                             </div>
+                                            <!-- Comissão e Lucro estimados -->
+                                            <div x-show="estimatedProfit !== 0" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem; display: flex; justify-content: space-between;">
+                                                <span style="color: #515151;">Lucro estimado:</span>
+                                                <span :style="estimatedProfit >= 0 ? 'color: #4ade80;' : 'color: #f87171;'" x-text="formatMoney(estimatedProfit)"></span>
+                                            </div>
+                                            <div x-show="estimatedCommission > 0" style="display: flex; justify-content: space-between; align-items: center;">
+                                                <span style="color: #a78bfa; display: flex; align-items: center; gap: 0.25rem;">
+                                                    <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    Comissão aprox.:
+                                                </span>
+                                                <span style="color: #c4b5fd; font-weight: 600;" x-text="formatMoney(estimatedCommission)"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -565,6 +579,24 @@
                                             <span style="color: #fbbf24;" x-text="cardFeeRate + '%'"></span>
                                         </div>
                                     </div>
+
+                                    <!-- Comissão e Lucro -->
+                                    <div x-show="estimatedProfit !== 0 || estimatedCommission > 0"
+                                         style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.5rem; margin-top: 0.25rem;">
+                                        <div x-show="estimatedProfit !== 0" style="display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="color: #515151; font-size: 0.8125rem;">Lucro estimado:</span>
+                                            <span style="font-size: 0.875rem; font-weight: 600;" :style="estimatedProfit >= 0 ? 'color: #4ade80;' : 'color: #f87171;'" x-text="formatMoney(estimatedProfit)"></span>
+                                        </div>
+                                        <div x-show="estimatedCommission > 0" style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.375rem; padding: 0.5rem 0.625rem; background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.15); border-radius: 0.5rem;">
+                                            <span style="color: #a78bfa; font-size: 0.8125rem; display: flex; align-items: center; gap: 0.375rem;">
+                                                <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                Comissão aproximada
+                                            </span>
+                                            <span style="font-size: 0.9375rem; font-weight: 700; color: #c4b5fd;" x-text="formatMoney(estimatedCommission)"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -652,6 +684,19 @@
                         - parseFloat(this.downPayment || 0)
                         - (this.hasTradeIn ? parseFloat(this.tradeInValue || 0) : 0);
                     return Math.max(0, Math.round(balance * 100) / 100);
+                },
+
+                get estimatedProfit() {
+                    const price = parseFloat(this.unitPrice) || 0;
+                    const cost = parseFloat(this.product.cost_price) || 0;
+                    if (price <= 0 || cost <= 0) return 0;
+                    return Math.round((price - cost) * 100) / 100;
+                },
+
+                get estimatedCommission() {
+                    const profit = this.estimatedProfit;
+                    if (profit <= 0) return 0;
+                    return Math.round(profit * 0.10 * 100) / 100;
                 },
 
                 // Step navigation
