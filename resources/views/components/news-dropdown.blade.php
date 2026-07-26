@@ -28,7 +28,7 @@
          x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
          x-transition:leave-end="transform opacity-0 scale-95 -translate-y-1"
          @click.away="newsOpen = false"
-         class="absolute right-0 mt-2 w-96 max-h-[32rem] rounded-xl bg-surface-overlay border border-border z-50 shadow-2xl overflow-hidden flex flex-col"
+         class="absolute right-0 mt-2 w-[32rem] max-h-[36rem] rounded-xl bg-surface-overlay border border-border z-50 shadow-2xl overflow-hidden flex flex-col"
          x-cloak>
 
         {{-- Header --}}
@@ -47,9 +47,9 @@
             @if($newsCount > 0)
                 @foreach(array_slice($newsItems, 0, 10) as $item)
                     <a href="{{ $item['link'] }}" target="_blank" rel="noopener noreferrer"
-                       class="flex gap-3 px-4 py-3 hover:bg-surface-elevated/50 transition-colors border-b border-border/20 last:border-0 group">
+                       class="flex gap-3.5 px-4 py-3.5 hover:bg-surface-elevated/50 transition-colors border-b border-border/20 last:border-0 group">
                         @if(!empty($item['image_url']))
-                            <div class="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-surface-elevated">
+                            <div class="flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden bg-surface-elevated">
                                 <img src="{{ $item['image_url'] }}" alt=""
                                      class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                                      loading="lazy"
@@ -60,6 +60,11 @@
                             <p class="text-[13px] font-medium text-gray-200 group-hover:text-white transition-colors line-clamp-2 leading-snug">
                                 {{ $item['title'] }}
                             </p>
+                            @if(!empty($item['summary']))
+                                <p class="text-[11px] text-dg-400 line-clamp-2 leading-relaxed mt-1">
+                                    {{ \Illuminate\Support\Str::limit($item['summary'], 120) }}
+                                </p>
+                            @endif
                             <div class="flex items-center gap-2 mt-1.5">
                                 @php
                                     $sourceColors = [
