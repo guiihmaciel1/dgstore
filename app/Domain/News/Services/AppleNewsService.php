@@ -24,9 +24,14 @@ class AppleNewsService
         'https://macmagazine.com.br/feed/' => 'MacMagazine',
     ];
 
+    public function __construct(
+        private readonly NewsTranslationService $translationService,
+    ) {}
+
     public function fetchAndCache(): array
     {
         $items = $this->fetchFromAllFeeds();
+        $items = $this->translationService->translateNewsItems($items);
 
         Cache::put(self::CACHE_KEY, $items, now()->addMinutes(self::CACHE_TTL_MINUTES));
 
