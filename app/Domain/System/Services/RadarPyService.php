@@ -80,7 +80,7 @@ class RadarPyService
             return [];
         }
 
-        return $this->extractOffersWithGemini($html);
+        return $this->extractOffers($html);
     }
 
     private function fetchHtml(string $url): ?string
@@ -108,134 +108,164 @@ class RadarPyService
     }
 
     /**
-     * Pré-extrai ofertas do HTML usando DomCrawler para estruturar
-     * os dados antes de enviar ao Gemini (mais preciso e econômico em tokens).
+     * Extrai ofertas direto do HTML via DomCrawler.
+     *
+     * Estrutura do Compras Paraguai:
+     *  .promocao-produtos-item-box          → container de cada oferta
+     *    .promocao-item-nome a              → nome do produto
+     *    .promocao-item-preco-oferta strong → preço em USD (ex: "US$ 1.220,00")
+     *    .promocao-item-preco-text          → preço em BRL (ex: "R$ 6.344,00")
+     *    img.store-image[alt]               → nome da loja
+     *    gtag 'advertiser'                  → fallback nome da loja
      */
-    private function preExtractOffers(string $html): string
+    private function extractOffersDom(string $html): array
     {
         $crawler = new Crawler($html);
-        $rawOffers = [];
+        $offers = [];
 
-        // Cada oferta no Compras Paraguai é um bloco dentro da lista de resultados.
-        // Extraímos o texto completo de cada bloco de oferta.
-        $blocks = $crawler->filter('.product-list-item, .offer-item, [class*="product-card"], [class*="offer"]');
+        $boxes = $crawler->filter('.promocao-produtos-item-box');
 
-        if ($blocks->count() > 0) {
-            $blocks->each(function (Crawler $block) use (&$rawOffers) {
-                if (count($rawOffers) >= 15) {
-                    return;
-                }
-
-                $text = trim(preg_replace('/\s+/', ' ', $block->text('')) ?? '');
-                // Pegar alt de imagens (pode conter nome da loja)
-                $imgs = [];
-                $block->filter('img')->each(function (Crawler $img) use (&$imgs) {
-                    $alt = trim($img->attr('alt') ?? '');
-                    if ($alt !== '' && mb_strlen($alt) < 100) {
-                        $imgs[] = $alt;
-                    }
-                });
-
-                if ($text !== '' && mb_strlen($text) > 10) {
-                    $rawOffers[] = $text . (! empty($imgs) ? ' [imgs: ' . implode(', ', $imgs) . ']' : '');
-                }
-            });
+        if ($boxes->count() === 0) {
+            return [];
         }
 
-        // Fallback: extrair por regex com captura de alt das imagens de logo
-        if (empty($rawOffers)) {
-            // Lojas aparecem como img com alt dentro de links de loja ou próximas ao preço
-            $allImgAlts = [];
-            $crawler->filter('img[alt]')->each(function (Crawler $img) use (&$allImgAlts) {
-                $alt = trim($img->attr('alt') ?? '');
-                $src = strtolower($img->attr('src') ?? '');
-                // Filtrar: logos de loja geralmente têm "logo" no src ou são nomes curtos sem palavras de produto
-                $isProduct = preg_match('/iphone|apple|celular|smartphone|produto|banner/i', $alt);
-                $isLikely = str_contains($src, 'logo') || str_contains($src, 'loja') || str_contains($src, 'store');
+        $boxes->each(function (Crawler $box) use (&$offers) {
+            if (count($offers) >= self::MAX_OFFERS) {
+                return;
+            }
 
-                if ($alt !== '' && mb_strlen($alt) < 60 && (! $isProduct || $isLikely)) {
-                    $allImgAlts[] = $alt;
+            // Nome do produto
+            $productName = null;
+            try {
+                $nameNode = $box->filter('.promocao-item-nome a');
+                if ($nameNode->count() > 0) {
+                    $productName = trim($nameNode->first()->text(''));
                 }
-            });
+            } catch (\Throwable) {
+            }
 
-            $text = strip_tags($html);
-            $text = preg_replace('/\s+/', ' ', $text) ?? $text;
+            // Preço USD
+            $priceUsd = null;
+            try {
+                $usdNode = $box->filter('.promocao-item-preco-oferta strong');
+                if ($usdNode->count() > 0) {
+                    $usdText = trim($usdNode->first()->text(''));
+                    if (preg_match('/[\d.,]+/', $usdText, $m)) {
+                        $priceUsd = $this->parsePrice($m[0]);
+                    }
+                }
+            } catch (\Throwable) {
+            }
 
-            if (preg_match_all('/([^.]{10,100}?)\s+(?:Código:\s*\S+\s+)?US\$\s*([\d.,]+)\s+R\$\s*([\d.,]+)/u', $text, $matches, PREG_SET_ORDER)) {
-                foreach (array_slice($matches, 0, 15) as $i => $m) {
-                    $storeName = $allImgAlts[$i] ?? '';
-                    $rawOffers[] = trim($m[0]) . ($storeName ? " [loja: {$storeName}]" : '');
+            // Preço BRL
+            $priceBrl = null;
+            try {
+                $brlNode = $box->filter('.promocao-item-preco-text');
+                if ($brlNode->count() > 0) {
+                    $brlText = trim($brlNode->first()->text(''));
+                    if (preg_match('/[\d.,]+/', $brlText, $m)) {
+                        $priceBrl = $this->parsePrice($m[0]);
+                    }
+                }
+            } catch (\Throwable) {
+            }
+
+            // Nome da loja via img.store-image alt
+            $storeName = null;
+            try {
+                $storeImg = $box->filter('img.store-image');
+                if ($storeImg->count() > 0) {
+                    $storeName = trim($storeImg->first()->attr('alt') ?? '')
+                              ?: trim($storeImg->first()->attr('title') ?? '');
+                }
+            } catch (\Throwable) {
+            }
+
+            // Fallback: 'advertiser' nos eventos gtag() inline
+            if (! $storeName) {
+                $boxHtml = $box->outerHtml();
+                if (preg_match("/'advertiser':\s*'([^']+)'/", $boxHtml, $m)) {
+                    $storeName = html_entity_decode(trim($m[1]));
                 }
             }
-        }
 
-        if (empty($rawOffers)) {
-            // Último fallback: mandar HTML limpo truncado
-            $clean = preg_replace('/<script\b[^>]*>.*?<\/script>/is', '', $html) ?? $html;
-            $clean = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $clean) ?? $clean;
-            $clean = strip_tags($clean);
-            $clean = preg_replace('/\s+/', ' ', $clean) ?? $clean;
+            if ($priceUsd && $priceUsd > 0) {
+                $offers[] = [
+                    'product_name' => $productName ?: 'Produto',
+                    'price_usd'    => $priceUsd,
+                    'price_brl'    => $priceBrl ?? round($priceUsd * 5.20, 2),
+                    'store_name'   => $storeName ?: null,
+                ];
+            }
+        });
 
-            return mb_substr(trim($clean), 0, 15000);
-        }
-
-        return "OFERTAS ENCONTRADAS:\n\n" . implode("\n---\n", $rawOffers);
+        return $offers;
     }
 
-    private function extractOffersWithGemini(string $html): array
+    private function parsePrice(string $raw): float
+    {
+        // "1.220,00" → 1220.00 / "1220.00" → 1220.00
+        $clean = trim($raw);
+
+        if (str_contains($clean, ',')) {
+            $clean = str_replace('.', '', $clean);
+            $clean = str_replace(',', '.', $clean);
+        }
+
+        return round((float) $clean, 2);
+    }
+
+    /**
+     * Fallback: usa Gemini para extrair ofertas quando o DOM não encontra a classe esperada.
+     */
+    private function extractOffersGeminiFallback(string $html): array
     {
         if (! $this->geminiService->isAvailable()) {
-            Log::warning('RadarPY: Gemini não disponível');
-
             return [];
         }
 
-        $extractedData = $this->preExtractOffers($html);
+        $text = strip_tags($html);
+        $text = preg_replace('/\s+/', ' ', $text) ?? $text;
+        $text = mb_substr(trim($text), 0, 15000);
 
         $prompt = <<<PROMPT
-Analise estes dados extraídos de uma página de comparação de preços do Compras Paraguai.
-A página lista ofertas de um mesmo produto em diferentes lojas do Paraguai, ordenadas por menor preço.
+Extraia as 10 primeiras ofertas de produto desta página de comparação de preços do Compras Paraguai.
 
-Extraia as primeiras 10 ofertas DISTINTAS (de lojas diferentes, se possível).
-
-Para cada oferta, retorne:
-- "product_name": nome/descrição do anúncio (ex: "iPhone 17 Pro Max 256GB Orange")
-- "price_usd": preço em dólar americano como número (ex: 1220.00)  
-- "price_brl": preço em reais como número (ex: 6344.00)
-- "store_name": nome da loja que vende. Os nomes de loja geralmente aparecem nas tags [imgs:] ou próximos aos preços. Exemplos: "Mundo Celular", "Tele Con Cell", "Star Midia", "Prime", "Mega Eletronicos", etc.
-
-IMPORTANTE: Cada oferta deve ser DIFERENTE (preço ou loja diferente). Não repita a mesma oferta.
+Para cada oferta retorne:
+- "product_name": nome do anúncio
+- "price_usd": preço em dólar (número)
+- "price_brl": preço em reais (número)
+- "store_name": nome da loja
 
 Dados:
-{$extractedData}
+{$text}
 PROMPT;
 
-        $result = $this->geminiService->generateJson(
-            $prompt,
-            'Você é um parser de dados de e-commerce. Extraia ofertas distintas com preços e lojas. Retorne apenas array JSON.'
+        $result = $this->geminiService->generateJson($prompt, 'Parser de e-commerce. Retorne apenas array JSON.');
+
+        if (! is_array($result)) {
+            return [];
+        }
+
+        $offers = isset($result[0]) ? $result : ($result['offers'] ?? []);
+
+        return array_slice(
+            array_filter($offers, fn ($o) => isset($o['price_usd']) && $o['price_usd'] > 0),
+            0,
+            self::MAX_OFFERS
         );
+    }
 
-        if ($result === null) {
-            Log::warning('RadarPY: Gemini não retornou dados válidos');
+    private function extractOffers(string $html): array
+    {
+        $offers = $this->extractOffersDom($html);
 
-            return [];
+        if (! empty($offers)) {
+            return $offers;
         }
 
-        $offers = is_array($result) && isset($result[0]) ? $result : ($result['offers'] ?? $result);
+        Log::info('RadarPY: DOM extraction vazia, usando Gemini como fallback');
 
-        if (! is_array($offers)) {
-            return [];
-        }
-
-        $filtered = array_filter($offers, fn ($o) => isset($o['price_usd']) && $o['price_usd'] > 0);
-
-        return array_slice(array_map(function ($o) {
-            $store = $o['store_name'] ?? '';
-            if ($store === '' || strtolower($store) === 'unknown' || strtolower($store) === 'loja não identificada') {
-                $o['store_name'] = null;
-            }
-
-            return $o;
-        }, $filtered), 0, self::MAX_OFFERS);
+        return $this->extractOffersGeminiFallback($html);
     }
 }
