@@ -25,6 +25,9 @@
     <body class="font-sans antialiased bg-surface text-dg-100">
         <div class="min-h-screen">
             @include('layouts.navigation')
+            @auth
+                <x-radar-py-banner />
+            @endauth
 
             <!-- Page Heading -->
             @isset($header)

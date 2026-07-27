@@ -19,3 +19,4 @@ Schedule::command('db:backup')->dailyAt('03:00');
 Schedule::command('sessions:flush-all')->dailyAt('00:01');
 Schedule::command('dollar:reset')->dailyAt('00:01');
 Schedule::command('dollar:fetch-cp')->everyThirtyMinutes();
+Schedule::command('radar:fetch-prices')->hourly();
