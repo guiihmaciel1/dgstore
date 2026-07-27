@@ -29,16 +29,22 @@ class FetchComprasParaguaiDollarCommand extends Command
         if ($latest && (float) $latest->rate === $rate) {
             $latest->update(['fetched_at' => now()]);
             $this->info("Cotação inalterada: R$ {$rate}. Horário atualizado.");
+        } else {
+            DollarCpRate::create([
+                'rate'       => $rate,
+                'fetched_at' => now(),
+            ]);
 
-            return self::SUCCESS;
+            $this->info("Cotação salva: R$ {$rate}");
         }
 
-        DollarCpRate::create([
-            'rate'       => $rate,
-            'fetched_at' => now(),
-        ]);
+        $history = $service->fetchHistory();
 
-        $this->info("Cotação salva: R$ {$rate}");
+        if ($history !== null) {
+            $this->info('Histórico de cotações atualizado no cache (' . count($history['history'] ?? []) . ' registros).');
+        } else {
+            $this->warn('Não foi possível buscar o histórico de cotações.');
+        }
 
         return self::SUCCESS;
     }

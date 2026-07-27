@@ -43,6 +43,7 @@
         
         <!-- Botões Flutuantes + Modais -->
         @auth
+            <x-dollar-rate-modal />
             <x-import-calculator />
             @unless(request()->routeIs('products.index'))
                 @include('products.partials.create-modal')
