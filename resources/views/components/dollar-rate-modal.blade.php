@@ -5,15 +5,15 @@
 @if($isAdmin)
 @php
     $dollarRate = \App\Domain\System\Models\SystemSetting::get('dollar_rate');
-    $cpRates = \App\Domain\System\Models\DollarCpRate::lastThirty();
-    $cpLatest = $cpRates->first();
-    $cpPrevious = $cpRates->skip(1)->first();
+    $cpAllRates = \App\Domain\System\Models\DollarCpRate::orderByDesc('fetched_at')->limit(400)->get();
+    $cpLatest = $cpAllRates->first();
+    $cpPrevious = $cpAllRates->skip(1)->first();
     $cpHistory = app(\App\Domain\System\Services\ComprasParaguaiDollarService::class)->getCachedHistory();
     $currencies = $cpHistory['currencies'] ?? [];
     $historyTable = $cpHistory['history'] ?? [];
     $historyUpdatedAt = $cpHistory['updated_at'] ?? null;
 
-    $chartRates = $cpRates->reverse()->values();
+    $chartRates = $cpAllRates->reverse()->values();
 @endphp
 
 <div x-data="dollarRateModal()" @open-dollar-modal.window="open = true" @keydown.escape.window="open = false" x-cloak>
@@ -108,19 +108,15 @@
                         <button @click="setPeriod(7)" :class="period === 7 ? 'bg-emerald-500 text-white' : 'bg-surface-overlay text-dg-400 hover:text-white'" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition">7D</button>
                         <button @click="setPeriod(30)" :class="period === 30 ? 'bg-emerald-500 text-white' : 'bg-surface-overlay text-dg-400 hover:text-white'" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition">1M</button>
                         <button @click="setPeriod(90)" :class="period === 90 ? 'bg-emerald-500 text-white' : 'bg-surface-overlay text-dg-400 hover:text-white'" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition">3M</button>
+                        <button @click="setPeriod(365)" :class="period === 365 ? 'bg-emerald-500 text-white' : 'bg-surface-overlay text-dg-400 hover:text-white'" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold transition">1A</button>
                     </div>
                 </div>
                 <div class="relative" style="height: 200px;">
                     <canvas id="dollarChart" class="w-full h-full"></canvas>
                 </div>
-                {{-- Min/Max labels --}}
-                @php
-                    $minRate = $chartRates->min('rate');
-                    $maxRate = $chartRates->max('rate');
-                @endphp
                 <div class="flex items-center justify-between mt-2 text-[10px]">
-                    <span class="text-emerald-400 font-semibold">Mínima: R$ {{ number_format((float) $minRate, 2, ',', '.') }}</span>
-                    <span class="text-red-400 font-semibold">Máxima: R$ {{ number_format((float) $maxRate, 2, ',', '.') }}</span>
+                    <span class="text-emerald-400 font-semibold" x-text="'Mínima: R$ ' + chartMin"></span>
+                    <span class="text-red-400 font-semibold" x-text="'Máxima: R$ ' + chartMax"></span>
                 </div>
             </div>
             @endif
@@ -149,7 +145,7 @@
                     @endforeach
                 </div>
             </div>
-            @elseif($cpRates->count() > 0)
+            @elseif($cpAllRates->count() > 0)
             {{-- Fallback: tabela a partir dos dados internos --}}
             <div class="rounded-xl border border-border bg-surface-elevated/30 overflow-hidden">
                 <div class="flex items-center justify-between px-4 py-3 border-b border-border/50">
@@ -157,9 +153,9 @@
                     <span class="text-[10px] text-dg-500 bg-surface-overlay px-2 py-0.5 rounded-full">Dados internos</span>
                 </div>
                 <div class="divide-y divide-border/20">
-                    @foreach($cpRates->take(12) as $index => $rateItem)
+                    @foreach($cpAllRates->take(12) as $index => $rateItem)
                         @php
-                            $prev = $cpRates->get($index + 1);
+                            $prev = $cpAllRates->get($index + 1);
                             $itemDiff = $prev ? (float) $rateItem->rate - (float) $prev->rate : 0;
                             $itemPct = ($prev && (float) $prev->rate > 0) ? ($itemDiff / (float) $prev->rate) * 100 : 0;
                         @endphp
@@ -221,6 +217,8 @@ function dollarRateModal() {
         saving: false,
         period: 30,
         chart: null,
+        chartMin: '--',
+        chartMax: '--',
 
         allRates: @json($chartRates->map(fn($r) => ['rate' => (float) $r->rate, 'date' => $r->fetched_at->format('d/m')])->values()),
 
@@ -248,6 +246,9 @@ function dollarRateModal() {
             const minVal = Math.min(...rates);
             const maxVal = Math.max(...rates);
             const padding = (maxVal - minVal) * 0.2 || 0.02;
+
+            this.chartMin = minVal.toFixed(2).replace('.', ',');
+            this.chartMax = maxVal.toFixed(2).replace('.', ',');
 
             const isUp = rates[rates.length - 1] >= rates[0];
 
