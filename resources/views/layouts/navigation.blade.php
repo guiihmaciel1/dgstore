@@ -344,11 +344,15 @@
                             <span class="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold rounded-full bg-blue-500 text-white">{{ $openDealsCount }}</span>
                         @endif
                     </a>
-                    <a href="{{ route('tools.sales-training') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-surface-overlay rounded-lg' : 'text-dg-300 hover:text-white hover:bg-surface-overlay rounded-lg' }} transition">
+                    <a href="{{ route('tools.sales-training') }}" class="relative inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-surface-overlay rounded-lg' : 'text-dg-300 hover:text-white hover:bg-surface-overlay rounded-lg' }} transition">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 7l-9-5 9-5 9 5-9 5z"/>
                         </svg>
                         Treinamento
+                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                        </span>
                     </a>
                     @endif
 
@@ -369,10 +373,10 @@
 
                 {{-- Calculator Triggers --}}
                 <x-calculator-nav-buttons />
+                @endif
 
                 <!-- Novidades Apple (RSS) -->
                 <x-news-dropdown />
-                @endif
                 
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -532,8 +536,12 @@
             <!-- Mobile: Treinamento (destaque para intern) -->
             <div class="border-t border-border mt-2 pt-2">
                 <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">Treinamento</div>
-                <a href="{{ route('tools.sales-training') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
+                <a href="{{ route('tools.sales-training') }}" class="relative flex items-center px-6 py-2 text-base font-medium {{ request()->routeIs('tools.sales-training') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Treinamento de Vendas
+                    <span class="ml-2 flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                    </span>
                 </a>
             </div>
             @endif

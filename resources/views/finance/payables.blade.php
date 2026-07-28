@@ -212,7 +212,20 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $pageTotal = 0;
+                                $pagePending = 0;
+                                $pagePaid = 0;
+                            @endphp
                             @forelse($transactions as $tx)
+                                @php
+                                    $pageTotal += (float) $tx->amount;
+                                    if ($tx->status->value === 'paid') {
+                                        $pagePaid += (float) $tx->amount;
+                                    } else {
+                                        $pagePending += (float) $tx->amount;
+                                    }
+                                @endphp
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                                     <td style="padding: 0.625rem 1.25rem;">
                                         <div style="font-size: 0.8125rem; font-weight: 500; color: {{ $tx->status->value === 'overdue' ? '#f87171' : ($tx->status->value === 'paid' ? '#818181' : '#e3e3e3') }};">{{ $tx->due_date->format('d/m/Y') }}</div>
@@ -265,6 +278,40 @@
                                 </tr>
                             @endforelse
                         </tbody>
+                        @if($transactions->count() > 0)
+                            <tfoot>
+                                <tr style="border-top: 2px solid rgba(255,255,255,0.08); background: #1a1a1a;">
+                                    <td colspan="3" style="padding: 0.75rem 1.25rem;">
+                                        <div style="font-size: 0.6875rem; color: #818181; text-transform: uppercase; font-weight: 600;">Total da Página</div>
+                                        <div style="font-size: 0.625rem; color: #555555; margin-top: 0.125rem;">{{ $transactions->count() }} de {{ $transactions->total() }} registros</div>
+                                    </td>
+                                    <td style="padding: 0.75rem 1rem; text-align: center;">
+                                        @if($pagePending > 0)
+                                            <div style="font-size: 0.625rem; color: #d97706; font-weight: 600;">Pendente: R$ {{ number_format($pagePending, 2, ',', '.') }}</div>
+                                        @endif
+                                        @if($pagePaid > 0)
+                                            <div style="font-size: 0.625rem; color: #16a34a; font-weight: 600;">Pago: R$ {{ number_format($pagePaid, 2, ',', '.') }}</div>
+                                        @endif
+                                    </td>
+                                    <td style="padding: 0.75rem 1rem; text-align: right; font-size: 1rem; font-weight: 800; color: #e3e3e3;">
+                                        R$ {{ number_format($pageTotal, 2, ',', '.') }}
+                                    </td>
+                                    <td style="padding: 0.75rem 1.25rem;"></td>
+                                </tr>
+                                @if($transactions->lastPage() > 1)
+                                    @php $grandTotal = $summary['pending'] + $summary['paidInPeriod']; @endphp
+                                    <tr style="border-top: 1px solid rgba(255,255,255,0.04); background: #141414;">
+                                        <td colspan="4" style="padding: 0.5rem 1.25rem; text-align: right;">
+                                            <span style="font-size: 0.6875rem; color: #818181; font-weight: 600; text-transform: uppercase;">Total Geral ({{ $transactions->total() }} registros)</span>
+                                        </td>
+                                        <td style="padding: 0.5rem 1rem; text-align: right; font-size: 0.875rem; font-weight: 700; color: #d97706;">
+                                            R$ {{ number_format($grandTotal, 2, ',', '.') }}
+                                        </td>
+                                        <td style="padding: 0.5rem 1.25rem;"></td>
+                                    </tr>
+                                @endif
+                            </tfoot>
+                        @endif
                     </table>
                 </div>
                 @if($transactions->hasPages())
