@@ -7,15 +7,16 @@
 
 <div x-data="{ newsOpen: false }" class="relative">
     <button @click="newsOpen = !newsOpen"
-            class="relative flex items-center text-dg-300 hover:text-white transition p-1 rounded-lg"
+            class="relative flex items-center transition p-1 rounded-lg {{ $hasUnread ? 'text-blue-400 hover:text-blue-300' : 'text-dg-300 hover:text-white' }}"
             :class="newsOpen ? 'text-white bg-surface-overlay' : ''"
             title="Novidades Apple">
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
         </svg>
         @if($hasUnread)
-            <span class="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-dg-500 text-[9px] font-bold text-white ring-2 ring-surface-raised">
-                {{ min($newsCount, 9) }}{{ $newsCount > 9 ? '+' : '' }}
+            <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
             </span>
         @endif
     </button>
