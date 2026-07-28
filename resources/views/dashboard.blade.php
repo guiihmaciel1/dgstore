@@ -701,7 +701,7 @@
                     </div>
 
                     {{-- Lucro Líquido do Mês --}}
-                    <div class="group/card bg-surface-raised rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border relative overflow-hidden">
+                    <div class="group/card bg-surface-raised rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border relative">
                         <div class="absolute top-0 left-0 w-1 h-full {{ $profit['real_profit'] >= 0 ? 'bg-blue-500' : 'bg-red-500' }} rounded-l-xl"></div>
                         <div class="pl-2">
                             <div class="flex items-center justify-between mb-1">
@@ -762,9 +762,9 @@
                             </div>
                         </div>
                         {{-- Tooltip hover: composição do lucro líquido --}}
-                        <div class="absolute inset-0 bg-surface-raised/95 backdrop-blur-sm rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 flex items-center justify-center z-10 pointer-events-none group-hover/card:pointer-events-auto">
-                            <div class="text-center px-4 w-full" x-show="showValues">
-                                <p class="text-[0.6rem] uppercase tracking-wide text-dg-500 font-medium mb-2">Composição do Lucro Líquido</p>
+                        <div class="absolute left-0 top-0 w-full min-h-full bg-surface-raised/98 backdrop-blur-sm rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-200 z-10 pointer-events-none group-hover/card:pointer-events-auto p-5 pl-6">
+                            <div x-show="showValues">
+                                <p class="text-[0.6rem] uppercase tracking-wide text-dg-500 font-medium mb-3">Composição do Lucro Líquido</p>
                                 <div class="space-y-1.5">
                                     <div class="flex items-center justify-between text-xs">
                                         <span class="text-dg-500">Lucro bruto</span>
@@ -797,13 +797,13 @@
                                         <span class="font-bold text-purple-500">− R$ {{ number_format($profit['month_commissions'] ?? 0, 2, ',', '.') }}</span>
                                     </div>
                                     @endif
-                                    <div class="border-t border-border pt-1.5 flex items-center justify-between text-xs">
+                                    <div class="border-t border-border pt-1.5 mt-1 flex items-center justify-between text-xs">
                                         <span class="font-semibold text-dg-300">= Lucro Líquido</span>
                                         <span class="font-bold {{ $profit['real_profit'] >= 0 ? 'text-dg-100' : 'text-red-600' }}">R$ {{ number_format($profit['real_profit'], 2, ',', '.') }}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div x-show="!showValues" x-cloak class="text-sm text-dg-500">Valores ocultos</div>
+                            <div x-show="!showValues" x-cloak class="text-sm text-dg-500 pt-4">Valores ocultos</div>
                         </div>
                     </div>
 
