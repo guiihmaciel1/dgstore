@@ -240,8 +240,11 @@
                                                         <span x-show="product.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Trade-in</span>
                                                         <span x-show="product.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Consignado</span>
                                                     </div>
-                                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
+                                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap;">
                                                         <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #222222; color: #818181; border-radius: 0.25rem;" x-text="product.sku"></span>
+                                                        <template x-if="product.imei && !product.is_consignment">
+                                                            <span style="font-size: 0.7rem; padding: 0.125rem 0.5rem; background: rgba(59,130,246,0.1); color: #60a5fa; border-radius: 0.25rem; font-family: monospace;" x-text="'IMEI: ' + product.imei"></span>
+                                                        </template>
                                                         <span style="font-size: 0.75rem;" :style="{ color: product.stock > 0 ? '#6b7280' : '#ea580c', fontWeight: product.stock <= 0 ? '600' : '400' }" x-text="product.stock > 0 ? product.stock + ' em estoque' : 'Sem estoque'"></span>
                                                         @if(auth()->user()->canViewFinancials())
                                                         <span x-show="product.cost_price" style="font-size: 0.75rem; color: #059669; font-weight: 500;" x-text="product.cost_price ? 'Custo: R$ ' + product.cost_price.toFixed(2).replace('.', ',') : ''"></span>
