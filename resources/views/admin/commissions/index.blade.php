@@ -16,7 +16,7 @@
                 </div>
             </div>
 
-            {{-- Seletor de Estagiário --}}
+            {{-- Seletor de Vendedora --}}
             <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
                 <form method="GET" action="{{ route('admin.commissions.index') }}" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                     <label style="font-size: 0.875rem; font-weight: 600; color: #a4a4a4;">Vendedor:</label>

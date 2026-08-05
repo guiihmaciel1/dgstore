@@ -524,7 +524,7 @@ Usando enum `UserRole`:
 | `admin_perfumes` | Administrador Perfumes | Gestão do módulo Perfumes |
 | `seller` | Vendedor | Vendas, estoque, CRM (sem financeiro completo) |
 | `seller_b2b` | Vendedor B2B | Gestão de pedidos B2B |
-| `intern` | Estagiário | Dashboard limitado e ponto eletrônico |
+| `intern` | Vendedora | Dashboard limitado e ponto eletrônico |
 
 ### Middlewares de Segurança
 
@@ -571,7 +571,7 @@ flowchart TB
     
     CheckRole -->|admin_geral| AdminDash[Dashboard Admin]
     CheckRole -->|seller| SellerDash[Dashboard Vendedor]
-    CheckRole -->|intern| InternDash[Dashboard Estagiário]
+    CheckRole -->|intern| InternDash[Dashboard Vendedora]
     CheckRole -->|admin_b2b| B2BAdminDash[Admin B2B]
     CheckRole -->|admin_perfumes| PerfumesDash[Admin Perfumes]
     

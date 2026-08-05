@@ -435,7 +435,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Retorna metas configuradas para as estagiárias.
+     * Retorna metas configuradas para as vendedoras.
      */
     private function getInternGoals(): array
     {
@@ -454,7 +454,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Computa estatísticas das estagiárias para o dashboard.
+     * Computa estatísticas das vendedoras para o dashboard.
      */
     private function buildInternStats(Carbon $referenceDate): array
     {
@@ -607,7 +607,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Monta dados diários para o chart de evolução das estagiárias.
+     * Monta dados diários para o chart de evolução das vendedoras.
      */
     private function buildInternDailyChart($internSales, Carbon $start, Carbon $end, Carbon $referenceDate): array
     {

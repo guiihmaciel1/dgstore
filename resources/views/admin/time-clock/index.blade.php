@@ -6,7 +6,7 @@
             <div class="flex items-center justify-between mb-6">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-bold text-dg-100">Registro de Ponto</h1>
-                    <p class="text-sm text-dg-500">Acompanhe o ponto dos estagiários</p>
+                    <p class="text-sm text-dg-500">Acompanhe o ponto das vendedoras</p>
                 </div>
             </div>
 
@@ -52,7 +52,7 @@
             <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
                 <form method="GET" action="{{ route('admin.time-clock.index') }}" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                     <div>
-                        <label style="font-size: 0.75rem; color: #818181; display: block; margin-bottom: 0.25rem;">Estagiário</label>
+                        <label style="font-size: 0.75rem; color: #818181; display: block; margin-bottom: 0.25rem;">Vendedora</label>
                         <select name="user_id" style="padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; min-width: 180px;">
                             <option value="">Todos</option>
                             @foreach($interns as $intern)
@@ -82,7 +82,7 @@
                         <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
                             <thead>
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
-                                    <th style="padding: 0.5rem 1rem; text-align: left; font-weight: 600; color: #818181;">Estagiário</th>
+                                    <th style="padding: 0.5rem 1rem; text-align: left; font-weight: 600; color: #818181;">Vendedora</th>
                                     <th style="padding: 0.5rem 1rem; text-align: left; font-weight: 600; color: #818181;">Tipo</th>
                                     <th style="padding: 0.5rem 1rem; text-align: left; font-weight: 600; color: #818181;">Horário</th>
                                     <th style="padding: 0.5rem 1rem; text-align: left; font-weight: 600; color: #818181;">Obs</th>

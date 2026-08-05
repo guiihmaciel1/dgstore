@@ -1,4 +1,4 @@
-{{-- Ranking das Estagiárias --}}
+{{-- Ranking das Vendedoras --}}
 <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.5rem;">
     <h3 style="font-size: 0.8125rem; font-weight: 600; color: #e2e8f0; margin-bottom: 1.25rem;">Ranking do Mês</h3>
 
@@ -37,6 +37,6 @@
     @endforeach
 
     @if(empty($internStats['interns']))
-        <p style="text-align: center; color: #64748b; font-size: 0.8125rem; padding: 1rem;">Nenhuma estagiária com vendas no período.</p>
+        <p style="text-align: center; color: #64748b; font-size: 0.8125rem; padding: 1rem;">Nenhuma vendedora com vendas no período.</p>
     @endif
 </div>

@@ -21,7 +21,7 @@ enum UserRole: string
             self::AdminPerfumes => 'Admin Perfumes',
             self::Seller        => 'Vendedor',
             self::SellerB2B     => 'Vendedor B2B',
-            self::Intern        => 'Estagiária',
+            self::Intern        => 'Vendedora',
         };
     }
 

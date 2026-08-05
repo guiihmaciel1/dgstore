@@ -71,7 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // ----------------------------------------------------------------
-    // Estagiária — dashboard e ponto (role intern)
+    // Vendedora — dashboard e ponto (role intern)
     // ----------------------------------------------------------------
     Route::middleware('role:intern')->group(function () {
         Route::get('/intern/dashboard', [InternDashboardController::class, 'index'])->name('intern.dashboard');

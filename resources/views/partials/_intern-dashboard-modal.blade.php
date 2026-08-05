@@ -1,4 +1,4 @@
-{{-- Dashboard Inteligente de Estagiárias + Resumo Executivo --}}
+{{-- Dashboard Inteligente de Vendedoras + Resumo Executivo --}}
 <div x-data="{
         open: false,
         hideValues: false,
@@ -120,7 +120,7 @@
                                 :style="tab === 'overview' ? 'background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(99,102,241,0.1)); color: #a5b4fc; box-shadow: 0 0 12px rgba(99,102,241,0.1);' : 'color: #64748b;'"
                                 style="padding: 0.4rem 0.875rem; border-radius: 7px; font-size: 0.75rem; font-weight: 600; transition: all 0.2s; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
                             <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                            Estagiárias
+                            Vendedoras
                         </button>
                         <button @click="tab = 'individual'"
                                 :style="tab === 'individual' ? 'background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.1)); color: #c4b5fd; box-shadow: 0 0 12px rgba(139,92,246,0.1);' : 'color: #64748b;'"
@@ -160,7 +160,7 @@
 
                 @if(empty($internStats['interns']))
                     <div style="text-align: center; padding: 4rem 2rem;">
-                        <p style="color: #64748b; font-size: 1rem;">Nenhuma estagiária ativa encontrada.</p>
+                        <p style="color: #64748b; font-size: 1rem;">Nenhuma vendedora ativa encontrada.</p>
                     </div>
                 @else
                     {{-- KPI Cards Row --}}
@@ -219,7 +219,7 @@
 
                 @if(empty($internStats['interns']))
                     <div style="text-align: center; padding: 4rem 2rem;">
-                        <p style="color: #64748b; font-size: 1rem;">Nenhuma estagiária ativa encontrada.</p>
+                        <p style="color: #64748b; font-size: 1rem;">Nenhuma vendedora ativa encontrada.</p>
                     </div>
                 @else
                     {{-- Intern Selector --}}
@@ -238,7 +238,7 @@
                     {{-- No selection state --}}
                     <div x-show="!selectedIntern" style="text-align: center; padding: 3rem 2rem;">
                         <svg style="width: 48px; height: 48px; color: #334155; margin: 0 auto 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        <p style="color: #64748b; font-size: 0.875rem;">Selecione uma estagiária acima para ver os detalhes</p>
+                        <p style="color: #64748b; font-size: 0.875rem;">Selecione uma vendedora acima para ver os detalhes</p>
                     </div>
 
                     {{-- Individual Stats --}}

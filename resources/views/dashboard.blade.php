@@ -1855,7 +1855,7 @@
         </script>
     </div>
 
-    {{-- Resumo Executivo (Estagiárias + Gerencial + Detalhado) --}}
+    {{-- Resumo Executivo (Vendedoras + Gerencial + Detalhado) --}}
     @include('partials._intern-dashboard-modal')
 
     {{-- Modal Follow-Up Pós-Venda --}}

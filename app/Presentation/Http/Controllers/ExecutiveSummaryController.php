@@ -49,7 +49,7 @@ class ExecutiveSummaryController extends Controller
             'period' => $period,
             'period_label' => $periodLabel,
             'gerencial' => $this->buildGerencial($sales, $allItems),
-            'estagiarias' => $this->buildEstagiarias($sales, $start, $end, $period),
+            'vendedoras' => $this->buildVendedoras($sales, $start, $end, $period),
             'detalhado' => $this->buildDetalhado($sales),
         ];
     }
@@ -209,9 +209,9 @@ class ExecutiveSummaryController extends Controller
             ->toArray();
     }
 
-    // ─── Aba Estagiárias ─────────────────────────────────────
+    // ─── Aba Vendedoras ─────────────────────────────────────
 
-    private function buildEstagiarias(Collection $allSales, Carbon $start, Carbon $end, string $period): array
+    private function buildVendedoras(Collection $allSales, Carbon $start, Carbon $end, string $period): array
     {
         $interns = User::where('role', UserRole::Intern)->where('active', true)->get();
 
