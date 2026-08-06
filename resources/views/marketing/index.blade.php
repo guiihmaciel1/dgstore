@@ -523,7 +523,6 @@
                                         <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase;">Produto</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 55px;">Bat.</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 40px;">Cx</th>
-                                        <th style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 45px;">Cabo</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: left; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 120px;">Obs</th>
                                         @if(auth()->user()->role->isAdminGeral())
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 85px;">Custo</th>
@@ -561,9 +560,6 @@
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                                 <span :style="item._usedListing.has_box ? 'color:#059669;font-size:0.8rem;' : 'color:#d1d5db;font-size:0.8rem;'" x-text="item._usedListing.has_box ? '✓' : '—'"></span>
-                                            </td>
-                                            <td style="padding: 0.375rem 0.5rem; text-align: center;">
-                                                <span :style="item._usedListing.has_cable ? 'color:#059669;font-size:0.8rem;' : 'color:#d1d5db;font-size:0.8rem;'" x-text="item._usedListing.has_cable ? '✓' : '—'"></span>
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <span style="font-size: 0.75rem; color: #818181;" x-text="item._usedListing.notes || '—'"></span>
@@ -1936,18 +1932,8 @@
                 const bat = item.resale.battery_health || ul.battery_health;
                 const battery = bat ? `🔋${bat}%` : '';
                 const hasBox = item.resale.has_box || ul.has_box;
-                const hasCable = item.resale.has_cable || ul.has_cable;
 
-                let accessories = '';
-                if (hasBox && hasCable) {
-                    accessories = '📦 Caixa e cabo';
-                } else if (hasBox) {
-                    accessories = '📦 Caixa';
-                } else if (hasCable) {
-                    accessories = '✅Cabo';
-                } else {
-                    accessories = '❌Caixa ❌Cabo';
-                }
+                let accessories = hasBox ? '📦 Caixa' : '❌Caixa';
 
                 let warranty = '';
                 if (item.resale.warranty_until) {
@@ -2000,18 +1986,8 @@
                     const bat = u.resale.battery_health || ul.battery_health;
                     const battery = bat ? `🔋${bat}%` : '';
                     const hasBox = u.resale.has_box || ul.has_box;
-                    const hasCable = u.resale.has_cable || ul.has_cable;
 
-                    let accessories = '';
-                    if (hasBox && hasCable) {
-                        accessories = '📦 Caixa e cabo';
-                    } else if (hasBox) {
-                        accessories = '📦 Caixa';
-                    } else if (hasCable) {
-                        accessories = '✅Cabo';
-                    } else {
-                        accessories = '❌Caixa ❌Cabo';
-                    }
+                    let accessories = hasBox ? '📦 Caixa' : '❌Caixa';
 
                     let warranty = '';
                     if (u.resale.warranty_until) {
