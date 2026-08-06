@@ -530,6 +530,7 @@
                                         @endif
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 85px;">Final</th>
                                         <th style="padding: 0.5rem 0.75rem; text-align: right; font-size: 0.65rem; font-weight: 600; color: #d97706; text-transform: uppercase; width: 110px;">Repasse</th>
+                                        <th style="padding: 0.5rem 0.5rem; text-align: center; font-size: 0.65rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 40px;"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -579,6 +580,21 @@
                                                 <input type="number" step="0.01" x-model="item.resale.resale_price" placeholder="0,00"
                                                        style="width: 100%; padding: 0.3rem 0.375rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right; font-weight: 600;"
                                                        onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                            </td>
+                                            <td style="padding: 0.375rem 0.375rem; text-align: center;">
+                                                <button type="button"
+                                                        x-data="{ justCopied: false }"
+                                                        @click="if (!item.resale.resale_price) { alert('Defina o preço de repasse antes de copiar.'); return; } copySingleResale(item); justCopied = true; setTimeout(() => justCopied = false, 2000);"
+                                                        :title="justCopied ? 'Copiado!' : 'Copiar este item'"
+                                                        class="resale-copy-btn"
+                                                        :class="justCopied ? 'copied' : ''">
+                                                    <svg x-show="!justCopied" style="width: 0.8rem; height: 0.8rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <svg x-show="justCopied" x-cloak style="width: 0.8rem; height: 0.8rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </button>
                                             </td>
                                         </tr>
                                     </template>
@@ -1908,6 +1924,61 @@
                 });
             },
 
+            copySingleResale(item) {
+                if (!item.resale.resale_price) {
+                    alert('Defina o preço de repasse antes de copiar.');
+                    return;
+                }
+
+                const ul = item._usedListing || {};
+                const namePart = (item.name || '') + (item.storage ? ' ' + item.storage : '');
+                const color = item.color || '';
+                const bat = item.resale.battery_health || ul.battery_health;
+                const battery = bat ? `🔋${bat}%` : '';
+                const hasBox = item.resale.has_box || ul.has_box;
+                const hasCable = item.resale.has_cable || ul.has_cable;
+
+                let accessories = '';
+                if (hasBox && hasCable) {
+                    accessories = '📦 Caixa e cabo';
+                } else if (hasBox) {
+                    accessories = '📦 Caixa';
+                } else if (hasCable) {
+                    accessories = '✅Cabo';
+                } else {
+                    accessories = '❌Caixa ❌Cabo';
+                }
+
+                let warranty = '';
+                if (item.resale.warranty_until) {
+                    const d = new Date(item.resale.warranty_until);
+                    const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+                    warranty = `🛡️ Garantia até ${months[d.getMonth()]}/${d.getFullYear()}`;
+                }
+
+                const price = parseFloat(item.resale.resale_price).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                const notes = item.resale.notes || ul.notes || '';
+
+                let parts = [`${namePart} ${color}`.trim()];
+                if (battery) parts.push(battery);
+                if (accessories) parts.push(accessories);
+                if (warranty) parts.push(warranty);
+                if (notes) parts.push(notes);
+                parts.push(`💰R$ ${price}`);
+
+                const text = parts.join(' - ');
+
+                navigator.clipboard.writeText(text).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.cssText = 'position:fixed;left:-9999px;';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                });
+            },
+
             copyResaleSeminovos() {
                 const visibleUsed = this.resaleUsed.filter(u => u.resale.visible && u.resale.resale_price);
 
@@ -1969,6 +2040,27 @@
     </script>
 
     <style>
+        .resale-copy-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .resale-copy-btn:hover:not(.copied) {
+            background: rgba(217,119,6,0.15);
+            border-color: rgba(217,119,6,0.3);
+        }
+        .resale-copy-btn.copied {
+            background: #059669;
+            border-color: #059669;
+            cursor: default;
+        }
         @media (max-width: 640px) {
             div[style*="grid-template-columns: repeat(auto-fill"] {
                 grid-template-columns: 1fr !important;
