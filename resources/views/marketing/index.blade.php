@@ -609,7 +609,7 @@
                     <input type="text" x-model="usedSearch" placeholder="Buscar seminovo por nome..."
                            style="flex: 1; min-width: 200px; max-width: 360px; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
                            onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                    <div style="display: flex; gap: 0.5rem;">
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                         <button type="button" @click="saveAllUsedListings()"
                                 :style="usedAllSaving
                                     ? 'padding: 0.5rem 1rem; background: #059669; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: default; display: flex; align-items: center; gap: 0.375rem;'
@@ -621,7 +621,8 @@
                             <span x-text="usedAllSaving ? 'Salvo!' : 'Salvar Tudo'"></span>
                         </button>
                         <button type="button" @click="printUsedLabels()"
-                                style="padding: 0.5rem 1rem; background: #4b5563; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
+                                class="hidden sm:flex"
+                                style="padding: 0.5rem 1rem; background: #4b5563; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; align-items: center; gap: 0.375rem;">
                             <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                             </svg>
@@ -655,7 +656,65 @@
                     <p style="margin-top: 0.75rem; color: #818181; font-size: 0.875rem;">Nenhum seminovo disponivel em estoque</p>
                 </div>
 
-                <div x-show="filteredUsed.length > 0" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
+                {{-- ===== MOBILE: Cards ===== --}}
+                <div x-show="filteredUsed.length > 0" class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(37,211,102,0.08); border: 1px solid rgba(37,211,102,0.15); border-radius: 0.5rem;">
+                    <svg style="width: 0.875rem; height: 0.875rem; color: #25d366; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                    <span style="font-size: 0.75rem; color: #25d366; font-weight: 500;">Toque em um item para copiar para WhatsApp</span>
+                </div>
+                <div x-show="filteredUsed.length > 0" class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <template x-for="(item, idx) in filteredUsed" :key="'m_' + item.morph_type + '_' + item.id">
+                        <div x-data="{ tapped: false }"
+                             @click="if ($event.target.closest('input, button, label, a')) return; copyUsedToWhatsApp(item); tapped = true; setTimeout(() => tapped = false, 1500);"
+                             :class="tapped ? 'used-card-tapped' : ''"
+                             class="used-card-mobile"
+                             :style="(item.images || []).length === 0 ? 'border-left: 3px solid #dc2626; background: rgba(239,68,68,0.08);' : ''">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="font-size: 0.9rem; font-weight: 700; color: #e3e3e3;" x-text="item.name"></div>
+                                    <div style="display: flex; align-items: center; gap: 0.375rem; margin-top: 0.25rem; flex-wrap: wrap;">
+                                        <span x-show="item.storage" style="font-size: 0.7rem; padding: 1px 6px; background: #222; color: #a4a4a4; border-radius: 4px;" x-text="item.storage"></span>
+                                        <span x-show="item.color" style="font-size: 0.7rem; padding: 1px 6px; background: #222; color: #a4a4a4; border-radius: 4px;" x-text="item.color"></span>
+                                        <span :style="item.condition === 'used'
+                                            ? 'font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(245,158,11,0.15);color:#fbbf24;'
+                                            : 'font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(59,130,246,0.15);color:#93c5fd;'"
+                                              x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
+                                        <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
+                                            <span style="font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(139,92,246,0.15);color:#c4b5fd;">Consig.</span>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div style="text-align: right; flex-shrink: 0;">
+                                    <div style="font-size: 1rem; font-weight: 800; color: #e3e3e3;" x-text="item.listing.final_price ? 'R$ ' + parseFloat(item.listing.final_price).toLocaleString('pt-BR') : '—'"></div>
+                                    @if(auth()->user()->role->isAdminGeral())
+                                    <div style="font-size: 0.7rem; color: #666;" x-text="item.listing.cost_price ? 'Custo: ' + parseFloat(item.listing.cost_price).toLocaleString('pt-BR') : ''"></div>
+                                    @endif
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                <span x-show="item.listing.battery_health" style="font-size: 0.75rem; color: #059669; font-weight: 600;" x-text="'🔋 ' + item.listing.battery_health + '%'"></span>
+                                <span style="font-size: 0.7rem;" :style="item.listing.has_box ? 'color:#059669;' : 'color:#555;'" x-text="item.listing.has_box ? '📦 Caixa' : '❌ Caixa'"></span>
+                                <span style="font-size: 0.7rem;" :style="item.listing.has_cable ? 'color:#059669;' : 'color:#555;'" x-text="item.listing.has_cable ? '🔌 Cabo' : '❌ Cabo'"></span>
+                                <span x-show="(item.images || []).length > 0" style="font-size: 0.65rem; padding: 1px 5px; background: rgba(16,185,129,0.15); color: #6ee7b7; border-radius: 4px;" x-text="(item.images || []).length + ' foto(s)'"></span>
+                                <span x-show="(item.images || []).length === 0" style="font-size: 0.65rem; padding: 1px 5px; background: rgba(239,68,68,0.15); color: #fca5a5; border-radius: 4px;">Sem fotos</span>
+                            </div>
+                            <template x-if="item.listing.notes">
+                                <div style="font-size: 0.7rem; color: #818181; margin-top: 0.375rem;" x-text="'📝 ' + item.listing.notes"></div>
+                            </template>
+                            <template x-if="item.origin_customer">
+                                <div style="font-size: 0.65rem; color: #a78bfa; margin-top: 0.375rem;" x-text="'↩ ' + item.origin_customer + ' — ' + item.origin_date"></div>
+                            </template>
+                            <div x-show="tapped" x-transition.opacity style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(5,150,105,0.9); border-radius: 0.75rem; pointer-events: none;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; color: white; font-weight: 700; font-size: 0.875rem;">
+                                    <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    Copiado!
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- ===== DESKTOP: Tabela ===== --}}
+                <div x-show="filteredUsed.length > 0" class="hidden sm:block" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; min-width: 1350px; table-layout: fixed;">
                             <colgroup>
@@ -2029,6 +2088,24 @@
     </script>
 
     <style>
+        .used-card-mobile {
+            position: relative;
+            background: #141414;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 0.75rem;
+            padding: 0.875rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .used-card-mobile:active:not(.used-card-tapped) {
+            transform: scale(0.98);
+            background: #1a1a1a;
+        }
+        .used-card-tapped {
+            border-color: #059669 !important;
+        }
         .resale-copy-btn {
             display: inline-flex;
             align-items: center;
