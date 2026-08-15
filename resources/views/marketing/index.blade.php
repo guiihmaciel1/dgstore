@@ -598,14 +598,6 @@
                             </svg>
                             <span x-text="usedAllSaving ? 'Salvo!' : 'Salvar Tudo'"></span>
                         </button>
-                        <button type="button" @click="printUsedLabels()"
-                                :class="mobileEdit ? '' : 'hidden sm:flex'"
-                                style="padding: 0.5rem 1rem; background: #4b5563; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
-                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-                            </svg>
-                            Imprimir Etiquetas
-                        </button>
                         <button type="button" @click="copyUsedListToWhatsApp()"
                                 :style="usedListCopied
                                     ? 'padding: 0.5rem 1rem; background: #059669; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: default; display: flex; align-items: center; gap: 0.375rem;'
