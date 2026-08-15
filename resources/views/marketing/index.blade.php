@@ -75,7 +75,52 @@
                         </button>
                     </div>
 
-                    <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
+                    {{-- MOBILE: Cards Novos --}}
+                    <div class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(22,163,106,0.08); border: 1px solid rgba(22,163,106,0.15); border-radius: 0.5rem;">
+                        <svg style="width: 0.875rem; height: 0.875rem; color: #16a34a; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                        <span style="font-size: 0.75rem; color: #16a34a; font-weight: 500;">Toque em um item para copiar para WhatsApp</span>
+                    </div>
+                    <div class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+                        <template x-for="(row, idx) in filteredPrices" :key="'pm_' + row._key">
+                            <div x-data="{ tapped: false }"
+                                 x-show="row.active"
+                                 @click="if ($event.target.closest('input, button, label')) return; copySingleNewPrice(row); tapped = true; setTimeout(() => tapped = false, 1500);"
+                                 :class="tapped ? 'used-card-tapped' : ''"
+                                 class="used-card-mobile">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 0.9rem; font-weight: 700; color: #e3e3e3;" x-text="row.name"></div>
+                                        <div style="display: flex; align-items: center; gap: 0.375rem; margin-top: 0.25rem; flex-wrap: wrap;">
+                                            <span x-show="row.storage" style="font-size: 0.7rem; padding: 1px 6px; background: #222; color: #a4a4a4; border-radius: 4px;" x-text="row.storage"></span>
+                                            <span x-show="row.color" style="font-size: 0.7rem; padding: 1px 6px; background: #222; color: #a4a4a4; border-radius: 4px;" x-text="row.color"></span>
+                                            <span style="font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(16,163,106,0.15);color:#6ee7b7;">Novo</span>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right; flex-shrink: 0;">
+                                        <div style="font-size: 1rem; font-weight: 800; color: #e3e3e3;" x-text="row.price ? 'R$ ' + parseFloat(row.price).toLocaleString('pt-BR') : '—'"></div>
+                                        @if(auth()->user()->role->isAdminGeral())
+                                        <div style="font-size: 0.7rem; color: #666;" x-text="row.cost_price ? 'Custo: ' + parseFloat(row.cost_price).toLocaleString('pt-BR') : ''"></div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <template x-if="row.notes">
+                                    <div style="font-size: 0.7rem; color: #818181; margin-top: 0.375rem;" x-text="'📝 ' + row.notes"></div>
+                                </template>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.375rem;">
+                                    <span x-show="(row.images || []).length > 0" style="font-size: 0.65rem; padding: 1px 5px; background: rgba(16,185,129,0.15); color: #6ee7b7; border-radius: 4px;" x-text="(row.images || []).length + ' foto(s)'"></span>
+                                </div>
+                                <div x-show="tapped" x-transition.opacity style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(5,150,105,0.9); border-radius: 0.75rem; pointer-events: none;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; color: white; font-weight: 700; font-size: 0.875rem;">
+                                        <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                        Copiado!
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    {{-- DESKTOP: Tabela Novos --}}
+                    <div class="hidden sm:block" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse;">
                                 <thead>
@@ -194,7 +239,7 @@
                         </div>
                     </div>
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                    <div class="hidden sm:flex" style="justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 0.75rem;">
                         <button type="button" @click="addPrice()"
                                 style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.8rem; font-weight: 500; color: #a4a4a4; cursor: pointer;"
                                 onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
@@ -907,6 +952,7 @@
 
         return {
             tab: urlParams.get('tab') || 'prices',
+            mobileEdit: false,
             priceSearch: '',
             dragIdx: null,
             dragOverIdx: null,
@@ -1194,6 +1240,27 @@
                 const item = this.prices.splice(fromIdx, 1)[0];
                 this.prices.splice(toIdx, 0, item);
                 this.prices.forEach((p, i) => p._origIdx = i);
+            },
+
+            copySingleNewPrice(row) {
+                if (!row.price) return;
+                const name = (row.name || '').trim();
+                const storage = row.storage ? ` ${row.storage}` : '';
+                const color = row.color ? ` ${row.color}` : '';
+                const price = parseFloat(row.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const notes = row.notes ? ` - ${row.notes}` : '';
+
+                const text = `📱 *${name}${storage}${color}*\n💰 ${price}${notes}\n\n📲 DG Store - Consulte disponibilidade!`;
+
+                navigator.clipboard.writeText(text).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.cssText = 'position:fixed;left:-9999px;';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                });
             },
 
             copyPriceListToClipboard() {
