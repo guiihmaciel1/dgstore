@@ -20,6 +20,15 @@
                     <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Marketing</h1>
                     <p style="font-size: 0.875rem; color: #818181;">Precos, criativos e seminovos para o dia a dia</p>
                 </div>
+                <button type="button" @click="mobileEdit = !mobileEdit" class="sm:hidden"
+                        :style="mobileEdit
+                            ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.4rem 0.75rem;background:#d97706;color:white;border:none;border-radius:0.5rem;font-size:0.75rem;font-weight:600;cursor:pointer;'
+                            : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.4rem 0.75rem;background:#222;color:#a4a4a4;border:1px solid rgba(255,255,255,0.08);border-radius:0.5rem;font-size:0.75rem;font-weight:600;cursor:pointer;'">
+                    <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    <span x-text="mobileEdit ? 'Modo Visualização' : 'Modo Edição'"></span>
+                </button>
             </div>
 
             <!-- Tabs -->
@@ -76,11 +85,11 @@
                     </div>
 
                     {{-- MOBILE: Cards Novos --}}
-                    <div class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(22,163,106,0.08); border: 1px solid rgba(22,163,106,0.15); border-radius: 0.5rem;">
+                    <div x-show="!mobileEdit" class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(22,163,106,0.08); border: 1px solid rgba(22,163,106,0.15); border-radius: 0.5rem;">
                         <svg style="width: 0.875rem; height: 0.875rem; color: #16a34a; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
                         <span style="font-size: 0.75rem; color: #16a34a; font-weight: 500;">Toque em um item para copiar para WhatsApp</span>
                     </div>
-                    <div class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
+                    <div x-show="!mobileEdit" class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
                         <template x-for="(row, idx) in filteredPrices" :key="'pm_' + row._key">
                             <div x-data="{ tapped: false }"
                                  x-show="row.active"
@@ -119,8 +128,8 @@
                         </template>
                     </div>
 
-                    {{-- DESKTOP: Tabela Novos --}}
-                    <div class="hidden sm:block" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
+                    {{-- DESKTOP + Mobile Edit: Tabela Novos --}}
+                    <div :class="mobileEdit ? '' : 'hidden sm:block'" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse;">
                                 <thead>
@@ -239,7 +248,7 @@
                         </div>
                     </div>
 
-                    <div class="hidden sm:flex" style="justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+                    <div :class="mobileEdit ? '' : 'hidden sm:flex'" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: 0.75rem;">
                         <button type="button" @click="addPrice()"
                                 style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.8rem; font-weight: 500; color: #a4a4a4; cursor: pointer;"
                                 onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
@@ -435,11 +444,11 @@
                     </div>
 
                     {{-- MOBILE: Cards Repasse --}}
-                    <div x-show="resaleUsed.length > 0" class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.15); border-radius: 0.5rem;">
+                    <div x-show="resaleUsed.length > 0 && !mobileEdit" class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.15); border-radius: 0.5rem;">
                         <svg style="width: 0.875rem; height: 0.875rem; color: #d97706; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
                         <span style="font-size: 0.75rem; color: #d97706; font-weight: 500;">Toque em um item para copiar para WhatsApp</span>
                     </div>
-                    <div x-show="resaleUsed.length > 0" class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div x-show="resaleUsed.length > 0 && !mobileEdit" class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem;">
                         <template x-for="item in resaleUsed" :key="'rm_' + item.morph_type + '_' + item.id">
                             <div x-data="{ tapped: false }"
                                  @click="if ($event.target.closest('input, button, label')) return; if (!item.resale.resale_price) { alert('Defina o preço de repasse antes de copiar.'); return; } copySingleResale(item); tapped = true; setTimeout(() => tapped = false, 1500);"
@@ -482,8 +491,8 @@
                         </template>
                     </div>
 
-                    {{-- DESKTOP: Tabela Repasse --}}
-                    <div x-show="resaleUsed.length > 0" class="hidden sm:block" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
+                    {{-- DESKTOP + Mobile Edit: Tabela Repasse --}}
+                    <div x-show="resaleUsed.length > 0" :class="mobileEdit ? '' : 'hidden sm:block'" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; min-width: 850px;">
                                 <thead>
@@ -590,8 +599,8 @@
                             <span x-text="usedAllSaving ? 'Salvo!' : 'Salvar Tudo'"></span>
                         </button>
                         <button type="button" @click="printUsedLabels()"
-                                class="hidden sm:flex"
-                                style="padding: 0.5rem 1rem; background: #4b5563; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; align-items: center; gap: 0.375rem;">
+                                :class="mobileEdit ? '' : 'hidden sm:flex'"
+                                style="padding: 0.5rem 1rem; background: #4b5563; color: white; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.375rem;">
                             <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
                             </svg>
@@ -626,11 +635,11 @@
                 </div>
 
                 {{-- ===== MOBILE: Cards ===== --}}
-                <div x-show="filteredUsed.length > 0" class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(37,211,102,0.08); border: 1px solid rgba(37,211,102,0.15); border-radius: 0.5rem;">
+                <div x-show="filteredUsed.length > 0 && !mobileEdit" class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(37,211,102,0.08); border: 1px solid rgba(37,211,102,0.15); border-radius: 0.5rem;">
                     <svg style="width: 0.875rem; height: 0.875rem; color: #25d366; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
                     <span style="font-size: 0.75rem; color: #25d366; font-weight: 500;">Toque em um item para copiar para WhatsApp</span>
                 </div>
-                <div x-show="filteredUsed.length > 0" class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div x-show="filteredUsed.length > 0 && !mobileEdit" class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem;">
                     <template x-for="(item, idx) in filteredUsed" :key="'m_' + item.morph_type + '_' + item.id">
                         <div x-data="{ tapped: false }"
                              @click="if ($event.target.closest('input, button, label, a')) return; copyUsedToWhatsApp(item); tapped = true; setTimeout(() => tapped = false, 1500);"
@@ -682,8 +691,8 @@
                     </template>
                 </div>
 
-                {{-- ===== DESKTOP: Tabela ===== --}}
-                <div x-show="filteredUsed.length > 0" class="hidden sm:block" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
+                {{-- ===== DESKTOP + Mobile Edit: Tabela ===== --}}
+                <div x-show="filteredUsed.length > 0" :class="mobileEdit ? '' : 'hidden sm:block'" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; min-width: 1350px; table-layout: fixed;">
                             <colgroup>
