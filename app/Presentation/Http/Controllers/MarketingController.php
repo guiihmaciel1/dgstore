@@ -47,7 +47,8 @@ class MarketingController extends Controller
             }
         }
 
-        $usedProducts = Product::where('active', true)
+        $usedProducts = Product::with('tradeIn.sale.customer')
+            ->where('active', true)
             ->where('stock_quantity', '>', 0)
             ->whereIn('condition', ['used', 'refurbished'])
             ->orderBy('name')
@@ -100,6 +101,10 @@ class MarketingController extends Controller
         })->values();
 
         $usedProductsJson = $usedProducts->map(function ($p) {
+            $tradeIn = $p->tradeIn;
+            $originCustomer = $tradeIn?->sale?->customer?->name;
+            $originDate = $tradeIn?->created_at?->format('d/m/Y');
+
             return [
                 'id' => $p->id,
                 'morph_type' => Product::class,
@@ -110,6 +115,8 @@ class MarketingController extends Controller
                 'condition' => $p->condition->value,
                 'stock' => $p->stock_quantity,
                 'product_notes' => $p->notes,
+                'origin_customer' => $originCustomer,
+                'origin_date' => $originDate,
             ];
         })->values();
 
@@ -127,6 +134,8 @@ class MarketingController extends Controller
                 'battery_health' => $c->battery_health,
                 'has_box' => (bool) $c->has_box,
                 'has_cable' => (bool) $c->has_cable,
+                'origin_customer' => null,
+                'origin_date' => null,
             ];
 
             if ($isAdmin) {

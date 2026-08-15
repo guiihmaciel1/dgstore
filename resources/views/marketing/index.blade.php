@@ -657,7 +657,7 @@
 
                 <div x-show="filteredUsed.length > 0" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                     <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; min-width: 1200px; table-layout: fixed;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 1350px; table-layout: fixed;">
                             <colgroup>
                                 <col style="width: 46px;">
                                 <col style="width: auto;">
@@ -670,6 +670,7 @@
                                 <col style="width: 62px;">
                                 <col style="width: 40px;">
                                 <col style="width: 46px;">
+                                <col style="width: 150px;">
                                 <col style="width: 150px;">
                                 <col style="width: 36px;">
                                 <col style="width: 40px;">
@@ -688,6 +689,7 @@
                                     <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Cx</th>
                                     <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Cabo</th>
                                     <th style="padding: 0.625rem 0.375rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Obs</th>
+                                    <th style="padding: 0.625rem 0.375rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Origem</th>
                                     <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;"></th>
                                     <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Fotos</th>
                                 </tr>
@@ -755,6 +757,17 @@
                                                    @input="syncUsedToResale(item)"
                                                    style="width: 100%; padding: 0.25rem 0.3rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.75rem; outline: none; box-sizing: border-box;"
                                                    onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                        </td>
+                                        <td style="padding: 0.375rem 0.375rem;">
+                                            <template x-if="item.origin_customer">
+                                                <div>
+                                                    <div style="font-size: 0.7rem; font-weight: 600; color: #a78bfa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="item.origin_customer" :title="item.origin_customer"></div>
+                                                    <div style="font-size: 0.6rem; color: #666666;" x-text="item.origin_date"></div>
+                                                </div>
+                                            </template>
+                                            <template x-if="!item.origin_customer">
+                                                <span style="font-size: 0.7rem; color: #444;">—</span>
+                                            </template>
                                         </td>
                                         <td style="padding: 0.375rem 0.25rem; text-align: center;">
                                             <button type="button" @click="copyUsedToWhatsApp(item)"
