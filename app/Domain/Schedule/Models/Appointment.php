@@ -21,21 +21,18 @@ class Appointment extends Model
         'danilo'    => 'Danilo',
         'guilherme' => 'Guilherme',
         'sophia'    => 'Sophia',
-        'bia'       => 'Bia',
     ];
 
     public const ATTENDANT_COLORS = [
         'danilo'    => '#2563eb',
         'guilherme' => '#7c3aed',
         'sophia'    => '#db2777',
-        'bia'       => '#f59e0b',
     ];
 
     public const ATTENDANT_BG_COLORS = [
         'danilo'    => '#eff6ff',
         'guilherme' => '#f5f3ff',
         'sophia'    => '#fdf2f8',
-        'bia'       => '#fffbeb',
     ];
 
     public const MIN_HOUR = 8;

@@ -133,6 +133,75 @@ class PreSaleService
         return null;
     }
 
+    public function searchByName(string $query): array
+    {
+        $results = [];
+
+        $products = Product::where('active', true)
+            ->where('stock_quantity', '>', 0)
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('model', 'like', "%{$query}%")
+                  ->orWhere('sku', 'like', "%{$query}%");
+            })
+            ->limit(15)
+            ->get();
+
+        foreach ($products as $product) {
+            $marketingCost = $this->findMarketingCost($product->name, $product->storage);
+
+            $results[] = [
+                'source' => 'own_stock',
+                'product_id' => $product->id,
+                'consignment_item_id' => null,
+                'name' => $product->name,
+                'model' => $product->model,
+                'storage' => $product->storage,
+                'color' => $product->color,
+                'condition' => $product->condition?->value ?? 'new',
+                'imei' => $product->imei,
+                'cost_price' => $marketingCost ?? (float) $product->cost_price,
+                'sale_price' => (float) $product->sale_price,
+                'reserved' => (bool) $product->reserved,
+                'reserved_by' => $product->reserved_by,
+                'sku' => $product->sku,
+            ];
+        }
+
+        $consignmentItems = ConsignmentStockItem::where('status', 'available')
+            ->where('available_quantity', '>', 0)
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('model', 'like', "%{$query}%");
+            })
+            ->with('supplier')
+            ->limit(15)
+            ->get();
+
+        foreach ($consignmentItems as $item) {
+            $marketingCost = $this->findMarketingCost($item->name, $item->storage);
+
+            $results[] = [
+                'source' => 'consignment',
+                'product_id' => null,
+                'consignment_item_id' => $item->id,
+                'name' => $item->name,
+                'model' => $item->model,
+                'storage' => $item->storage,
+                'color' => $item->color,
+                'condition' => $item->condition?->value ?? 'new',
+                'imei' => $item->imei,
+                'cost_price' => $marketingCost ?? (float) $item->supplier_cost,
+                'sale_price' => (float) ($item->suggested_price ?? $item->supplier_cost),
+                'reserved' => (bool) ($item->reserved ?? false),
+                'reserved_by' => $item->reserved_by ?? null,
+                'supplier_name' => $item->supplier?->name,
+            ];
+        }
+
+        return $results;
+    }
+
     private function reserveProduct(PreSale $preSale): void
     {
         if ($preSale->product_id) {

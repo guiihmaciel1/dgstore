@@ -28,13 +28,7 @@
                         :style="tab === 'prices'
                             ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
                             : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
-                    Tabela de Precos
-                </button>
-                <button @click="tab = 'creatives'" type="button"
-                        :style="tab === 'creatives'
-                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
-                            : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
-                    Criativos do Dia
+                    Novos
                 </button>
                 <button @click="tab = 'used'" type="button"
                         :style="tab === 'used'
@@ -346,125 +340,6 @@
                 </div>
             </div>
 
-            {{-- ============================================================ --}}
-            {{-- ABA 2: CRIATIVOS DO DIA --}}
-            {{-- ============================================================ --}}
-            <div x-show="tab === 'creatives'" x-cloak>
-                <!-- Filtro de data + botao novo -->
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <label style="font-size: 0.8rem; font-weight: 500; color: #a4a4a4;">Data:</label>
-                        <input type="date" x-model="creativeDate" @change="loadCreativesByDate()"
-                               style="padding: 0.375rem 0.625rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                    </div>
-                    <button type="button" @click="showCreativeForm = !showCreativeForm"
-                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: white; color: #0d0d0d; border: none; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;"
-                            onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='#111827'">
-                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Novo Criativo
-                    </button>
-                </div>
-
-                <!-- Form novo criativo -->
-                <div x-show="showCreativeForm" x-transition style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
-                    <form method="POST" action="{{ route('marketing.creatives.store') }}" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="date" :value="creativeDate">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                            <div>
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #a4a4a4; display: block; margin-bottom: 0.25rem;">Titulo</label>
-                                <input type="text" name="title" required placeholder="Ex: Promo iPhone 16"
-                                       style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                            </div>
-                            <div>
-                                <label style="font-size: 0.75rem; font-weight: 600; color: #a4a4a4; display: block; margin-bottom: 0.25rem;">Imagem</label>
-                                <input type="file" name="image" accept="image/*"
-                                       style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="font-size: 0.75rem; font-weight: 600; color: #a4a4a4; display: block; margin-bottom: 0.25rem;">Texto para copiar</label>
-                            <textarea name="description" rows="4" placeholder="Cole aqui o texto pronto para WhatsApp..."
-                                      style="width: 100%; padding: 0.5rem 0.625rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem; outline: none; resize: vertical;"
-                                      onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"></textarea>
-                        </div>
-                        <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-                            <button type="button" @click="showCreativeForm = false"
-                                    style="padding: 0.5rem 1rem; background: #222222; color: #818181; border: none; border-radius: 0.375rem; font-size: 0.8rem; cursor: pointer;">
-                                Cancelar
-                            </button>
-                            <button type="submit"
-                                    style="padding: 0.5rem 1rem; background: white; color: #0d0d0d; border: none; border-radius: 0.375rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;"
-                                    onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='#111827'">
-                                Salvar Criativo
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Lista de criativos -->
-                @if($creatives->isEmpty())
-                    <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 3rem; text-align: center;">
-                        <svg style="margin: 0 auto; width: 3rem; height: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        <p style="margin-top: 0.75rem; color: #818181; font-size: 0.875rem;">Nenhum criativo para esta data</p>
-                    </div>
-                @else
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem;">
-                        @foreach($creatives as $creative)
-                            <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
-                                @if($creative->image_path)
-                                    <div style="position: relative; height: 200px; background: #222222;">
-                                        <img src="{{ route('marketing.creatives.image', $creative) }}" alt="{{ $creative->title }}"
-                                             style="width: 100%; height: 100%; object-fit: cover;">
-                                        <a href="{{ route('marketing.creatives.download', $creative) }}"
-                                           style="position: absolute; top: 0.5rem; right: 0.5rem; padding: 0.375rem; background: rgba(0,0,0,0.6); color: white; border-radius: 0.375rem; text-decoration: none;"
-                                           title="Baixar imagem">
-                                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                @endif
-                                <div style="padding: 1rem;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
-                                        <h3 style="font-size: 0.9375rem; font-weight: 600; color: #e3e3e3;">{{ $creative->title }}</h3>
-                                        <form method="POST" action="{{ route('marketing.creatives.destroy', $creative) }}"
-                                              onsubmit="return confirm('Remover este criativo?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" style="padding: 0.25rem; color: #fca5a5; background: none; border: none; cursor: pointer;" title="Remover">
-                                                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    @if($creative->description)
-                                        <div style="background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.8rem; color: #a4a4a4; white-space: pre-wrap; max-height: 150px; overflow-y: auto; line-height: 1.5;">{{ $creative->description }}</div>
-                                        <button type="button" onclick="copyText(this, {{ json_encode($creative->description) }})"
-                                                style="width: 100%; padding: 0.5rem; background: white; color: #0d0d0d; border: none; border-radius: 0.375rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.375rem;"
-                                                onmouseover="this.style.background='#1f2937'" onmouseout="this.style.background='#111827'">
-                                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
-                                            </svg>
-                                            <span>Copiar Texto</span>
-                                        </button>
-                                    @endif
-                                    <div style="margin-top: 0.5rem; font-size: 0.7rem; color: #666666;">
-                                        Por {{ $creative->user?->name ?? 'Sistema' }} em {{ $creative->created_at->format('d/m H:i') }}
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
 
             {{-- ============================================================ --}}
             {{-- ABA 4: REPASSES --}}
@@ -473,7 +348,7 @@
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
                     <div>
                         <h2 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;">Lista de Repasse</h2>
-                        <p style="font-size: 0.8rem; color: #818181;">Selecione os itens e copie a lista formatada para WhatsApp</p>
+                        <p class="hidden sm:block" style="font-size: 0.8rem; color: #818181;">Selecione os itens e copie a lista formatada para WhatsApp</p>
                     </div>
                     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                         <button type="button" @click="copyResaleSeminovos()"
@@ -514,7 +389,56 @@
                         Nenhum seminovo disponivel em estoque
                     </div>
 
-                    <div x-show="resaleUsed.length > 0" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
+                    {{-- MOBILE: Cards Repasse --}}
+                    <div x-show="resaleUsed.length > 0" class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(217,119,6,0.08); border: 1px solid rgba(217,119,6,0.15); border-radius: 0.5rem;">
+                        <svg style="width: 0.875rem; height: 0.875rem; color: #d97706; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                        <span style="font-size: 0.75rem; color: #d97706; font-weight: 500;">Toque em um item para copiar para WhatsApp</span>
+                    </div>
+                    <div x-show="resaleUsed.length > 0" class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <template x-for="item in resaleUsed" :key="'rm_' + item.morph_type + '_' + item.id">
+                            <div x-data="{ tapped: false }"
+                                 @click="if ($event.target.closest('input, button, label')) return; if (!item.resale.resale_price) { alert('Defina o preço de repasse antes de copiar.'); return; } copySingleResale(item); tapped = true; setTimeout(() => tapped = false, 1500);"
+                                 :class="tapped ? 'used-card-tapped' : ''"
+                                 class="used-card-mobile">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                                    <div style="flex: 1; min-width: 0;">
+                                        <div style="font-size: 0.9rem; font-weight: 700; color: #e3e3e3;" x-text="item.name"></div>
+                                        <div style="display: flex; align-items: center; gap: 0.375rem; margin-top: 0.25rem; flex-wrap: wrap;">
+                                            <span x-show="item.storage" style="font-size: 0.7rem; padding: 1px 6px; background: #222; color: #a4a4a4; border-radius: 4px;" x-text="item.storage"></span>
+                                            <span x-show="item.color" style="font-size: 0.7rem; padding: 1px 6px; background: #222; color: #a4a4a4; border-radius: 4px;" x-text="item.color"></span>
+                                            <span :style="item.condition === 'used'
+                                                ? 'font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(245,158,11,0.15);color:#fbbf24;'
+                                                : 'font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(59,130,246,0.15);color:#93c5fd;'"
+                                                  x-text="item.condition === 'used' ? 'Usado' : 'Recond.'"></span>
+                                            <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
+                                                <span style="font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(139,92,246,0.15);color:#c4b5fd;">Consig.</span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right; flex-shrink: 0;">
+                                        <div style="font-size: 1rem; font-weight: 800; color: #d97706;" x-text="item.resale.resale_price ? 'R$ ' + parseFloat(item.resale.resale_price).toLocaleString('pt-BR') : '—'"></div>
+                                        <div style="font-size: 0.7rem; color: #666;" x-text="item._usedListing.final_price ? 'Final: ' + parseFloat(item._usedListing.final_price).toLocaleString('pt-BR') : ''"></div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                    <span x-show="item._usedListing.battery_health" style="font-size: 0.75rem; color: #059669; font-weight: 600;" x-text="'🔋 ' + item._usedListing.battery_health + '%'"></span>
+                                    <span style="font-size: 0.7rem;" :style="item._usedListing.has_box ? 'color:#059669;' : 'color:#555;'" x-text="item._usedListing.has_box ? '📦 Caixa' : '❌ Caixa'"></span>
+                                </div>
+                                <template x-if="item._usedListing.notes">
+                                    <div style="font-size: 0.7rem; color: #818181; margin-top: 0.375rem;" x-text="'📝 ' + item._usedListing.notes"></div>
+                                </template>
+                                <div x-show="tapped" x-transition.opacity style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(5,150,105,0.9); border-radius: 0.75rem; pointer-events: none;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; color: white; font-weight: 700; font-size: 0.875rem;">
+                                        <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                        Copiado!
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    {{-- DESKTOP: Tabela Repasse --}}
+                    <div x-show="resaleUsed.length > 0" class="hidden sm:block" style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; overflow: hidden;">
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; min-width: 850px;">
                                 <thead>

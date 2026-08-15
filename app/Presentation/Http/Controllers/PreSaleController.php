@@ -251,6 +251,25 @@ class PreSaleController extends Controller
         ]);
     }
 
+    public function searchProducts(Request $request): JsonResponse
+    {
+        $query = trim($request->get('q', ''));
+
+        if (strlen($query) < 2) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Informe pelo menos 2 caracteres.',
+            ]);
+        }
+
+        $results = $this->preSaleService->searchByName($query);
+
+        return response()->json([
+            'success' => true,
+            'data' => $results,
+        ]);
+    }
+
     public function searchCustomers(Request $request): JsonResponse
     {
         $query = $request->get('q', '');

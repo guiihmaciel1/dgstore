@@ -256,6 +256,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pre-vendas/criar', [PreSaleController::class, 'create'])->name('pre-sales.create');
         Route::post('/pre-vendas', [PreSaleController::class, 'store'])->name('pre-sales.store');
         Route::get('/pre-vendas/buscar-imei', [PreSaleController::class, 'searchByImei'])->name('pre-sales.search-imei');
+        Route::get('/pre-vendas/buscar-produtos', [PreSaleController::class, 'searchProducts'])->name('pre-sales.search-products');
         Route::get('/pre-vendas/buscar-clientes', [PreSaleController::class, 'searchCustomers'])->name('pre-sales.search-customers');
         Route::get('/pre-vendas/{preSale}', [PreSaleController::class, 'show'])->name('pre-sales.show');
         Route::post('/pre-vendas/{preSale}/pronta', [PreSaleController::class, 'markReady'])->name('pre-sales.mark-ready');
