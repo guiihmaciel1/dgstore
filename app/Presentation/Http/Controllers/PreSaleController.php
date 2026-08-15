@@ -72,9 +72,21 @@ class PreSaleController extends Controller
             }
 
             // Buscar produto para montar snapshot
-            $productData = $this->preSaleService->searchByImei($validated['product_imei']);
+            $productData = null;
+            if (!empty($validated['product_imei'])) {
+                $productData = $this->preSaleService->searchByImei($validated['product_imei']);
+            }
+
+            if (!$productData && !empty($validated['product_id'])) {
+                $productData = $this->preSaleService->searchByProductId($validated['product_id']);
+            }
+
+            if (!$productData && !empty($validated['consignment_item_id'])) {
+                $productData = $this->preSaleService->searchByConsignmentItemId($validated['consignment_item_id']);
+            }
+
             if (!$productData) {
-                return redirect()->back()->withInput()->with('error', 'Produto não encontrado com o IMEI informado.');
+                return redirect()->back()->withInput()->with('error', 'Produto não encontrado.');
             }
 
             if ($productData['reserved']) {
@@ -98,7 +110,7 @@ class PreSaleController extends Controller
                 'product_id' => $productData['product_id'],
                 'consignment_item_id' => $productData['consignment_item_id'],
                 'product_snapshot' => $productData,
-                'product_imei' => $validated['product_imei'],
+                'product_imei' => $validated['product_imei'] ?? $productData['imei'] ?? null,
                 'unit_price' => $validated['unit_price'],
                 'cost_price' => $validated['cost_price'],
                 'condition' => $validated['condition'],

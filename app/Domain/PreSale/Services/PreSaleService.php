@@ -133,6 +133,69 @@ class PreSaleService
         return null;
     }
 
+    public function searchByProductId(string $productId): ?array
+    {
+        $product = Product::where('id', $productId)
+            ->where('active', true)
+            ->where('stock_quantity', '>', 0)
+            ->first();
+
+        if (!$product) {
+            return null;
+        }
+
+        $marketingCost = $this->findMarketingCost($product->name, $product->storage);
+
+        return [
+            'source' => 'own_stock',
+            'product_id' => $product->id,
+            'consignment_item_id' => null,
+            'name' => $product->name,
+            'model' => $product->model,
+            'storage' => $product->storage,
+            'color' => $product->color,
+            'condition' => $product->condition?->value ?? 'new',
+            'imei' => $product->imei,
+            'cost_price' => $marketingCost ?? (float) $product->cost_price,
+            'sale_price' => (float) $product->sale_price,
+            'reserved' => (bool) $product->reserved,
+            'reserved_by' => $product->reserved_by,
+            'sku' => $product->sku,
+        ];
+    }
+
+    public function searchByConsignmentItemId(string $consignmentItemId): ?array
+    {
+        $consignmentItem = ConsignmentStockItem::where('id', $consignmentItemId)
+            ->where('status', 'available')
+            ->where('available_quantity', '>', 0)
+            ->with('supplier')
+            ->first();
+
+        if (!$consignmentItem) {
+            return null;
+        }
+
+        $marketingCost = $this->findMarketingCost($consignmentItem->name, $consignmentItem->storage);
+
+        return [
+            'source' => 'consignment',
+            'product_id' => null,
+            'consignment_item_id' => $consignmentItem->id,
+            'name' => $consignmentItem->name,
+            'model' => $consignmentItem->model,
+            'storage' => $consignmentItem->storage,
+            'color' => $consignmentItem->color,
+            'condition' => $consignmentItem->condition?->value ?? 'new',
+            'imei' => $consignmentItem->imei,
+            'cost_price' => $marketingCost ?? (float) $consignmentItem->supplier_cost,
+            'sale_price' => (float) ($consignmentItem->suggested_price ?? $consignmentItem->supplier_cost),
+            'reserved' => (bool) ($consignmentItem->reserved ?? false),
+            'reserved_by' => $consignmentItem->reserved_by ?? null,
+            'supplier_name' => $consignmentItem->supplier?->name,
+        ];
+    }
+
     public function searchByName(string $query): array
     {
         $results = [];

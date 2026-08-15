@@ -32,7 +32,7 @@ class StorePreSaleRequest extends FormRequest
     {
         return [
             // Produto
-            'product_imei' => ['required', 'string', 'max:20'],
+            'product_imei' => ['nullable', 'string', 'max:20'],
             'product_id' => ['nullable', 'exists:products,id'],
             'consignment_item_id' => ['nullable', 'exists:consignment_stock_items,id'],
             'product_source' => ['required', 'in:own_stock,consignment'],
@@ -91,7 +91,7 @@ class StorePreSaleRequest extends FormRequest
             if (!$this->product_id && !$this->consignment_item_id) {
                 $validator->errors()->add(
                     'product_imei',
-                    'Produto não encontrado no sistema. Verifique o IMEI informado.'
+                    'Produto não encontrado no sistema. Selecione um produto válido.'
                 );
             }
 
@@ -127,7 +127,7 @@ class StorePreSaleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'product_imei.required' => 'O IMEI do produto é obrigatório na pré-venda.',
+            'product_imei.max' => 'O IMEI não pode ter mais de 20 caracteres.',
             'down_payment.min' => 'O sinal mínimo é de R$ 50,00.',
             'down_payment.required' => 'O sinal é obrigatório.',
             'installments.required_if' => 'Informe o número de parcelas para pagamento no cartão.',

@@ -72,15 +72,32 @@
                     <input type="hidden" name="card_fee_rate" :value="cardFeeRate">
 
                     <!-- ============================================================ -->
-                    <!-- PASSO 1 - PRODUTO (por IMEI) -->
+                    <!-- PASSO 1 - PRODUTO (por IMEI ou Nome) -->
                     <!-- ============================================================ -->
                     <div x-show="currentStep === 1" x-transition>
                         <div style="background: #141414; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.5rem;">
                             <h2 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3; margin-bottom: 1rem;">
-                                <span style="color: #60a5fa;">①</span> Buscar Produto por IMEI
+                                <span style="color: #60a5fa;">①</span> Buscar Produto
                             </h2>
 
-                            <div style="max-width: 28rem;">
+                            <!-- Toggle: IMEI / Nome -->
+                            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+                                <button type="button" @click="searchMode = 'imei'; clearProductSearch();"
+                                        :style="searchMode === 'imei'
+                                            ? 'padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 600; background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3);'
+                                            : 'padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 600; background: rgba(255,255,255,0.03); color: #818181; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;'">
+                                    Buscar por IMEI
+                                </button>
+                                <button type="button" @click="searchMode = 'name'; clearProductSearch();"
+                                        :style="searchMode === 'name'
+                                            ? 'padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 600; background: rgba(22,163,106,0.15); color: #4ade80; border: 1px solid rgba(22,163,106,0.3);'
+                                            : 'padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 600; background: rgba(255,255,255,0.03); color: #818181; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;'">
+                                    Buscar por Nome
+                                </button>
+                            </div>
+
+                            <!-- Busca por IMEI -->
+                            <div x-show="searchMode === 'imei'" style="max-width: 28rem;">
                                 <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.375rem;">IMEI do Produto *</label>
                                 <div style="display: flex; gap: 0.5rem;">
                                     <input type="text" x-model="imeiSearch" @input.debounce.600ms="searchImei()"
@@ -93,16 +110,69 @@
                                         <span x-show="searchingImei">...</span>
                                     </button>
                                 </div>
+                            </div>
 
-                                <!-- Mensagem de erro -->
-                                <div x-show="imeiError" x-transition
-                                     style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); border-radius: 0.5rem; color: #fca5a5; font-size: 0.8125rem;">
-                                    <span x-text="imeiError"></span>
+                            <!-- Busca por Nome -->
+                            <div x-show="searchMode === 'name'" style="max-width: 28rem;">
+                                <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.375rem;">Nome do Produto *</label>
+                                <div style="position: relative;">
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <input type="text" x-model="nameSearch" @input.debounce.400ms="searchByName()"
+                                               @focus="showProductResults = productResults.length > 0"
+                                               placeholder="Ex: iPhone 16 Pro Max, iPhone 15..."
+                                               style="flex: 1; padding: 0.75rem 1rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #e3e3e3; font-size: 0.9375rem;">
+                                        <button type="button" @click="searchByName()" :disabled="searchingName"
+                                                style="padding: 0.75rem 1.25rem; background: rgba(22,163,106,0.15); color: #4ade80; border: 1px solid rgba(22,163,106,0.3); border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer;">
+                                            <span x-show="!searchingName">Buscar</span>
+                                            <span x-show="searchingName">...</span>
+                                        </button>
+                                    </div>
+
+                                    <!-- Dropdown de resultados -->
+                                    <div x-show="showProductResults && productResults.length > 0"
+                                         @click.outside="showProductResults = false"
+                                         style="position: absolute; top: 100%; left: 0; right: 0; margin-top: 0.25rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; max-height: 20rem; overflow-y: auto; z-index: 50;">
+                                        <template x-for="(item, idx) in productResults" :key="idx">
+                                            <button type="button" @click="selectProduct(item)"
+                                                    :style="item.reserved
+                                                        ? 'display: block; width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: not-allowed; opacity: 0.5;'
+                                                        : 'display: block; width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer;'"
+                                                    class="hover:bg-surface-overlay transition-colors"
+                                                    :disabled="item.reserved">
+                                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                                    <div style="flex: 1; min-width: 0;">
+                                                        <div style="font-size: 0.875rem; font-weight: 600; color: #e3e3e3;" x-text="item.name"></div>
+                                                        <div style="font-size: 0.75rem; color: #818181; margin-top: 0.125rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                                            <span x-show="item.storage" x-text="item.storage"></span>
+                                                            <span x-show="item.color" x-text="item.color"></span>
+                                                            <span :style="item.condition === 'new' ? 'color: #60a5fa;' : 'color: #fbbf24;'"
+                                                                  x-text="item.condition === 'new' ? 'Novo' : 'Seminovo'"></span>
+                                                            <span :style="item.source === 'own_stock' ? 'color: #60a5fa;' : 'color: #c084fc;'"
+                                                                  x-text="item.source === 'own_stock' ? 'Estoque' : 'Consignado'"></span>
+                                                        </div>
+                                                        <div x-show="item.imei" style="font-size: 0.6875rem; color: #515151; margin-top: 0.125rem; font-family: monospace;">
+                                                            IMEI: <span x-text="item.imei"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align: right; flex-shrink: 0; margin-left: 0.75rem;">
+                                                        <div style="font-size: 0.875rem; font-weight: 600; color: #4ade80;" x-text="formatMoney(item.sale_price)"></div>
+                                                        <div x-show="item.reserved" style="font-size: 0.6875rem; color: #f87171; font-weight: 600; margin-top: 0.125rem;">RESERVADO</div>
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
 
+                            <!-- Mensagem de erro -->
+                            <div x-show="imeiError" x-transition
+                                 style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); border-radius: 0.5rem; color: #fca5a5; font-size: 0.8125rem; max-width: 28rem;">
+                                <span x-text="imeiError"></span>
+                            </div>
+
                             <!-- Card do produto encontrado -->
-                            <div x-show="product.imei" x-transition style="margin-top: 1.25rem;">
+                            <div x-show="product.imei || product.product_id || product.consignment_item_id" x-transition style="margin-top: 1.25rem;">
                                 <div :style="product.reserved
                                     ? 'background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: 0.75rem; padding: 1.25rem;'
                                     : 'background: rgba(22,163,106,0.06); border: 1px solid rgba(22,163,106,0.2); border-radius: 0.75rem; padding: 1.25rem;'">
@@ -114,6 +184,15 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                                         </svg>
                                         <span style="font-size: 0.8125rem; font-weight: 600; color: #f87171;">Este produto já está reservado! Não é possível criar uma pré-venda.</span>
+                                    </div>
+
+                                    <!-- Botão para limpar produto selecionado -->
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                        <span style="font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #4ade80;">Produto selecionado</span>
+                                        <button type="button" @click="clearProductSearch()"
+                                                style="padding: 0.25rem 0.5rem; color: #f87171; font-size: 0.75rem; cursor: pointer; border: 1px solid rgba(248,113,113,0.2); border-radius: 0.375rem; background: rgba(248,113,113,0.06);">
+                                            Trocar produto
+                                        </button>
                                     </div>
 
                                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 0.75rem;">
@@ -145,6 +224,10 @@
                                                  :style="product.source === 'own_stock' ? 'color: #60a5fa;' : 'color: #c084fc;'"
                                                  x-text="product.source === 'own_stock' ? 'Nosso Estoque' : 'Consignado (' + (product.supplier_name || '') + ')'"></div>
                                         </div>
+                                    </div>
+                                    <div x-show="product.imei" style="margin-top: 0.5rem;">
+                                        <span style="font-size: 0.6875rem; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">IMEI</span>
+                                        <div style="font-size: 0.875rem; color: #a4a4a4; margin-top: 0.125rem; font-family: monospace;" x-text="product.imei"></div>
                                     </div>
                                 </div>
                             </div>
@@ -623,9 +706,14 @@
                 submitting: false,
 
                 // Step 1 - Produto
+                searchMode: 'imei',
                 imeiSearch: '',
+                nameSearch: '',
                 searchingImei: false,
+                searchingName: false,
                 imeiError: '',
+                productResults: [],
+                showProductResults: false,
                 product: {
                     product_id: null,
                     consignment_item_id: null,
@@ -704,7 +792,8 @@
                 },
 
                 canAdvanceStep1() {
-                    return this.product.imei && !this.product.reserved;
+                    const hasProduct = this.product.imei || this.product.product_id || this.product.consignment_item_id;
+                    return hasProduct && !this.product.reserved;
                 },
 
                 canAdvanceStep2() {
@@ -771,6 +860,57 @@
                     } finally {
                         this.searchingImei = false;
                     }
+                },
+
+                // Name search
+                async searchByName() {
+                    if (this.nameSearch.length < 2) {
+                        this.productResults = [];
+                        this.showProductResults = false;
+                        return;
+                    }
+
+                    this.searchingName = true;
+                    this.imeiError = '';
+
+                    try {
+                        const response = await fetch(`{{ route('pre-sales.search-products') }}?q=${encodeURIComponent(this.nameSearch)}`, {
+                            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const data = await response.json();
+
+                        if (data.success && data.data && data.data.length > 0) {
+                            this.productResults = data.data;
+                            this.showProductResults = true;
+                            this.imeiError = '';
+                        } else {
+                            this.productResults = [];
+                            this.showProductResults = false;
+                            this.imeiError = 'Nenhum produto encontrado com esse nome.';
+                        }
+                    } catch (e) {
+                        this.imeiError = 'Erro ao buscar produto. Tente novamente.';
+                        this.productResults = [];
+                        this.showProductResults = false;
+                    } finally {
+                        this.searchingName = false;
+                    }
+                },
+
+                selectProduct(item) {
+                    if (item.reserved) return;
+                    this.product = { ...item };
+                    this.showProductResults = false;
+                    this.imeiError = '';
+                },
+
+                clearProductSearch() {
+                    this.product = { product_id: null, consignment_item_id: null, source: '', name: '', model: '', storage: '', color: '', condition: 'new', imei: '', cost_price: 0, sale_price: 0, reserved: false, reserved_by: null, supplier_name: '' };
+                    this.imeiSearch = '';
+                    this.nameSearch = '';
+                    this.imeiError = '';
+                    this.productResults = [];
+                    this.showProductResults = false;
                 },
 
                 // Customer search
