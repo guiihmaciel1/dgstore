@@ -2,372 +2,368 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Recibo Assinado #{{ $sale->sale_number }}</title>
+    <title>Recibo #{{ $sale->sale_number }}</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'DejaVu Sans', Arial, sans-serif;
-            font-size: 9px;
-            line-height: 1.4;
+            font-size: 8px;
+            line-height: 1.3;
             color: #000;
-            padding: 15px 20px;
+            padding: 10px 15px;
         }
 
-        table {
-            border-collapse: collapse;
-        }
+        table { border-collapse: collapse; width: 100%; }
 
-        .border-box {
-            border: 1px solid #000;
-        }
-
-        .border-box td,
-        .border-box th {
-            border: 1px solid #000;
-            padding: 4px 6px;
-            vertical-align: top;
-        }
-
-        .header-table {
-            width: 100%;
+        .outer-border {
+            border: 2px solid #000;
+            padding: 8px;
             margin-bottom: 0;
         }
 
-        .header-table td {
+        .header-row {
+            width: 100%;
             border: 1px solid #000;
+        }
+
+        .header-row td {
+            border: 1px solid #000;
+            vertical-align: top;
+            padding: 6px 8px;
+        }
+
+        .emitente-nome {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .emitente-detalhe {
+            font-size: 8px;
+            margin-top: 3px;
+            line-height: 1.5;
+        }
+
+        .danfe-box {
+            text-align: center;
             vertical-align: middle;
         }
 
-        .emitente-cell {
-            width: 60%;
-            padding: 10px 12px;
-        }
-
-        .emitente-razao {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-
-        .emitente-info {
+        .danfe-title {
             font-size: 9px;
-            color: #333;
+            font-weight: bold;
+            margin-bottom: 3px;
         }
 
-        .doc-type-cell {
-            width: 20%;
+        .danfe-subtitle {
+            font-size: 7px;
+            line-height: 1.4;
+        }
+
+        .danfe-entrada {
+            font-size: 10px;
+            font-weight: bold;
+            margin-top: 3px;
+        }
+
+        .numero-box {
             text-align: center;
-            padding: 8px;
+            vertical-align: middle;
         }
 
-        .doc-type-title {
+        .numero-value {
             font-size: 11px;
             font-weight: bold;
-            margin-bottom: 4px;
         }
 
-        .doc-type-subtitle {
+        .numero-serie {
             font-size: 8px;
-            color: #333;
+            margin-top: 3px;
         }
 
-        .doc-number-cell {
-            width: 20%;
-            text-align: center;
-            padding: 8px;
-        }
-
-        .doc-number {
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .doc-serie {
-            font-size: 9px;
-            color: #333;
-            margin-top: 2px;
-        }
-
-        .section-header {
-            background-color: #e8e8e8;
-            padding: 3px 6px;
-            font-size: 8px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .section-title {
+            background-color: #d9d9d9;
             border: 1px solid #000;
             border-top: none;
+            padding: 2px 6px;
+            font-size: 7px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
 
-        .data-table {
+        .fields-row {
             width: 100%;
         }
 
-        .data-table td {
+        .fields-row td {
             border: 1px solid #000;
-            padding: 2px 6px;
+            padding: 1px 5px 3px 5px;
             vertical-align: top;
         }
 
         .field-label {
-            font-size: 7px;
-            color: #555;
+            font-size: 6px;
+            color: #333;
             text-transform: uppercase;
-            display: block;
-            margin-bottom: 1px;
+            margin-bottom: 0;
         }
 
         .field-value {
+            font-size: 9px;
+            font-weight: normal;
+            color: #000;
+            min-height: 12px;
+        }
+
+        .field-value-bold {
             font-size: 9px;
             font-weight: bold;
             color: #000;
         }
 
+        .items-header {
+            background-color: #d9d9d9;
+            border: 1px solid #000;
+            border-top: none;
+            padding: 2px 6px;
+            font-size: 7px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
         .items-table {
             width: 100%;
-            margin-top: -1px;
         }
 
-        .items-table thead th {
-            background-color: #e8e8e8;
-            padding: 4px 5px;
-            font-size: 7px;
-            text-transform: uppercase;
+        .items-table th {
+            border: 1px solid #000;
+            padding: 3px 4px;
+            font-size: 6px;
             font-weight: bold;
+            text-transform: uppercase;
             text-align: center;
-            border: 1px solid #000;
+            background-color: #f0f0f0;
         }
 
-        .items-table thead th:first-child {
-            text-align: left;
-        }
-
-        .items-table tbody td {
-            padding: 4px 5px;
+        .items-table td {
             border: 1px solid #000;
-            font-size: 9px;
+            padding: 3px 4px;
+            font-size: 8px;
             vertical-align: top;
         }
 
-        .items-table .text-center {
+        .items-table .center { text-align: center; }
+        .items-table .right { text-align: right; }
+
+        .info-adicional {
+            border: 1px solid #000;
+            border-top: none;
+            padding: 6px 8px;
+            font-size: 8px;
+            min-height: 40px;
+        }
+
+        .info-adicional-header {
+            font-size: 6px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .footer-row {
+            width: 100%;
+            margin-top: 3px;
+        }
+
+        .footer-row td {
+            border: 1px solid #000;
+            padding: 2px 6px;
+            font-size: 7px;
             text-align: center;
         }
 
-        .items-table .text-right {
-            text-align: right;
-        }
-
-        .totals-row {
-            width: 100%;
-            margin-top: -1px;
-        }
-
-        .totals-row td {
+        .recibo-assinatura {
             border: 1px solid #000;
-            padding: 4px 8px;
+            border-top: none;
+            padding: 8px;
         }
 
-        .additional-info {
+        .assinatura-table {
             width: 100%;
-            margin-top: -1px;
+            margin-top: 15px;
         }
 
-        .additional-info td {
-            border: 1px solid #000;
-            padding: 6px 8px;
-            font-size: 9px;
-        }
-
-        .signature-area {
-            width: 100%;
-            margin-top: 30px;
-        }
-
-        .signature-area td {
+        .assinatura-table td {
             width: 50%;
             text-align: center;
-            padding: 0 30px;
+            padding: 0 20px;
             vertical-align: bottom;
         }
 
-        .signature-line {
+        .assinatura-line {
             border-bottom: 1px solid #000;
-            margin-bottom: 5px;
-            padding-bottom: 30px;
+            padding-bottom: 25px;
+            margin-bottom: 4px;
         }
 
-        .signature-label {
-            font-size: 9px;
-            color: #333;
-        }
-
-        .footer {
-            margin-top: 15px;
-            text-align: center;
+        .assinatura-nome {
             font-size: 8px;
-            color: #666;
-            border-top: 1px solid #ccc;
-            padding-top: 8px;
-        }
-
-        .condition-tag {
-            display: inline;
-            padding: 0 3px;
-            font-size: 7px;
-            font-weight: bold;
-            text-transform: uppercase;
-            border: 1px solid;
-        }
-
-        .product-specs {
-            font-size: 8px;
-            color: #444;
-            margin-top: 2px;
         }
     </style>
 </head>
 <body>
-    {{-- Cabeçalho estilo DANFE --}}
-    <table class="header-table">
+    {{-- CABEÇALHO - Estilo NF-e/DANFE --}}
+    <table class="header-row">
         <tr>
-            <td class="emitente-cell">
-                <div class="emitente-razao">DG STORE LTDA</div>
-                <div class="emitente-info">
-                    CNPJ: 18.047.139/0001-56<br>
+            {{-- Emitente --}}
+            <td style="width: 50%;">
+                <div class="emitente-nome">DG STORE LTDA</div>
+                <div class="emitente-detalhe">
                     São José do Rio Preto - SP<br>
-                    Loja de iPhones e Acessórios
+                    CNPJ: 18.047.139/0001-56
                 </div>
             </td>
-            <td class="doc-type-cell">
-                <div class="doc-type-title">RECIBO DE VENDA</div>
-                <div class="doc-type-subtitle">Documento não fiscal</div>
+            {{-- Tipo documento --}}
+            <td style="width: 25%;" class="danfe-box">
+                <div class="danfe-title">RECIBO DE VENDA</div>
+                <div class="danfe-subtitle">
+                    Documento Auxiliar<br>
+                    de Controle Interno
+                </div>
+                <div class="danfe-entrada">SAÍDA</div>
             </td>
-            <td class="doc-number-cell">
-                <div class="doc-number">Nº {{ $sale->sale_number }}</div>
-                <div class="doc-serie">
-                    Emissão: {{ $sale->sold_at->format('d/m/Y') }}<br>
-                    Hora: {{ $sale->sold_at->format('H:i') }}
+            {{-- Número --}}
+            <td style="width: 25%;" class="numero-box">
+                <div class="numero-value">Nº {{ $sale->sale_number }}</div>
+                <div class="numero-serie">
+                    Folha 1/1
                 </div>
             </td>
         </tr>
     </table>
 
-    {{-- Destinatário / Cliente --}}
-    <div class="section-header">Destinatário / Comprador</div>
-    <table class="data-table">
+    {{-- NATUREZA DA OPERAÇÃO --}}
+    <table class="fields-row">
         <tr>
-            <td style="width: 55%;">
-                <span class="field-label">Nome</span>
-                <span class="field-value">{{ $sale->customer?->name ?? 'Consumidor Final' }}</span>
-            </td>
-            <td style="width: 25%;">
-                <span class="field-label">CPF</span>
-                <span class="field-value">{{ $sale->customer?->formatted_cpf ?? '---' }}</span>
+            <td style="width: 60%;">
+                <div class="field-label">Natureza da Operação</div>
+                <div class="field-value">VENDA DE MERCADORIA</div>
             </td>
             <td style="width: 20%;">
-                <span class="field-label">Data da Compra</span>
-                <span class="field-value">{{ $sale->sold_at->format('d/m/Y') }}</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="field-label">Endereço</span>
-                <span class="field-value">{{ $sale->customer?->address ?? '---' }}</span>
-            </td>
-            <td>
-                <span class="field-label">Telefone</span>
-                <span class="field-value">{{ $sale->customer?->formatted_phone ?? '---' }}</span>
-            </td>
-            <td>
-                <span class="field-label">Instagram</span>
-                <span class="field-value">{{ $sale->customer?->formatted_instagram ?? '---' }}</span>
-            </td>
-        </tr>
-    </table>
-
-    {{-- Dados da Venda --}}
-    <div class="section-header">Dados da Venda</div>
-    <table class="data-table">
-        <tr>
-            <td style="width: 25%;">
-                <span class="field-label">Vendedor</span>
-                <span class="field-value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}</span>
+                <div class="field-label">Data de Emissão</div>
+                <div class="field-value">{{ $sale->sold_at->format('d/m/Y') }}</div>
             </td>
             <td style="width: 20%;">
-                <span class="field-label">Tipo de Venda</span>
-                <span class="field-value">{{ $sale->sale_type?->label() ?? 'Cliente Final' }}</span>
+                <div class="field-label">Hora de Emissão</div>
+                <div class="field-value">{{ $sale->sold_at->format('H:i:s') }}</div>
+            </td>
+        </tr>
+    </table>
+
+    {{-- DESTINATÁRIO / REMETENTE --}}
+    <div class="section-title">Destinatário / Remetente</div>
+    <table class="fields-row">
+        <tr>
+            <td style="width: 50%;">
+                <div class="field-label">Nome / Razão Social</div>
+                <div class="field-value-bold">{{ $sale->customer?->name ?? 'CONSUMIDOR FINAL' }}</div>
             </td>
             <td style="width: 25%;">
-                <span class="field-label">Forma de Pagamento</span>
-                <span class="field-value">
-                    {{ $sale->payment_method->label() }}@if($sale->installments > 1) ({{ $sale->installments }}x)@endif
-                </span>
+                <div class="field-label">CPF / CNPJ</div>
+                <div class="field-value">{{ $sale->customer?->formatted_cpf ?? '---' }}</div>
             </td>
-            <td style="width: 15%;">
-                <span class="field-label">Status Pagamento</span>
-                <span class="field-value">{{ $sale->payment_status->label() }}</span>
-            </td>
-            <td style="width: 15%;">
-                <span class="field-label">Entrega</span>
-                <span class="field-value">{{ $sale->delivery_type ?? 'Retirada' }}</span>
+            <td style="width: 25%;">
+                <div class="field-label">Data da Compra</div>
+                <div class="field-value">{{ $sale->sold_at->format('d/m/Y') }}</div>
             </td>
         </tr>
     </table>
-
-    {{-- Pagamento Detalhado (misto) --}}
-    @if($sale->hasMixedPayment())
-    <div class="section-header">Detalhamento do Pagamento</div>
-    <table class="data-table">
+    <table class="fields-row">
         <tr>
-            @if($sale->pix_payment > 0)
-            <td>
-                <span class="field-label">PIX</span>
-                <span class="field-value">{{ $sale->formatted_pix_payment }}</span>
+            <td style="width: 50%;">
+                <div class="field-label">Endereço</div>
+                <div class="field-value">{{ $sale->customer?->address ?? '---' }}</div>
             </td>
-            @endif
-            @if($sale->cash_payment > 0)
-            <td>
-                <span class="field-label">Dinheiro</span>
-                <span class="field-value">{{ $sale->formatted_cash_payment }}</span>
+            <td style="width: 25%;">
+                <div class="field-label">Telefone</div>
+                <div class="field-value">{{ $sale->customer?->formatted_phone ?? '---' }}</div>
             </td>
-            @endif
-            @if($sale->card_payment > 0)
-            <td>
-                <span class="field-label">Cartão{{ $sale->installments > 1 ? ' ('.$sale->installments.'x)' : '' }}</span>
-                <span class="field-value">{{ $sale->formatted_card_payment }}</span>
+            <td style="width: 25%;">
+                <div class="field-label">Instagram</div>
+                <div class="field-value">{{ $sale->customer?->formatted_instagram ?? '---' }}</div>
             </td>
-            @endif
-            @if($sale->trade_in_value > 0)
-            <td>
-                <span class="field-label">Trade-in</span>
-                <span class="field-value">{{ $sale->formatted_trade_in_value }}</span>
+        </tr>
+    </table>
+
+    {{-- PAGAMENTOS --}}
+    <div class="section-title">Pagamentos</div>
+    <table class="fields-row">
+        <tr>
+            <td style="width: 30%;">
+                <div class="field-label">Forma de Pagamento</div>
+                <div class="field-value">{{ $sale->payment_method->label() }}@if($sale->installments > 1) ({{ $sale->installments }}x)@endif</div>
             </td>
+            <td style="width: 20%;">
+                <div class="field-label">Valor Total</div>
+                <div class="field-value-bold">{{ $sale->formatted_total }}</div>
+            </td>
+            @if($sale->hasMixedPayment())
+                @if($sale->pix_payment > 0)
+                <td>
+                    <div class="field-label">PIX</div>
+                    <div class="field-value">{{ $sale->formatted_pix_payment }}</div>
+                </td>
+                @endif
+                @if($sale->cash_payment > 0)
+                <td>
+                    <div class="field-label">Dinheiro</div>
+                    <div class="field-value">{{ $sale->formatted_cash_payment }}</div>
+                </td>
+                @endif
+                @if($sale->card_payment > 0)
+                <td>
+                    <div class="field-label">Cartão{{ $sale->installments > 1 ? ' ('.$sale->installments.'x)' : '' }}</div>
+                    <div class="field-value">{{ $sale->formatted_card_payment }}</div>
+                </td>
+                @endif
+                @if($sale->trade_in_value > 0)
+                <td>
+                    <div class="field-label">Trade-in</div>
+                    <div class="field-value">{{ $sale->formatted_trade_in_value }}</div>
+                </td>
+                @endif
+            @else
+                <td style="width: 25%;">
+                    <div class="field-label">Vendedor</div>
+                    <div class="field-value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}</div>
+                </td>
+                <td style="width: 25%;">
+                    <div class="field-label">Tipo de Venda</div>
+                    <div class="field-value">{{ $sale->sale_type?->label() ?? 'Cliente Final' }}</div>
+                </td>
             @endif
         </tr>
     </table>
-    @endif
 
-    {{-- Tabela de Produtos --}}
-    <div class="section-header">Produtos / Serviços</div>
+    {{-- DADOS DOS PRODUTOS / SERVIÇOS --}}
+    <div class="section-title">Dados dos Produtos / Serviços</div>
     <table class="items-table">
         <thead>
             <tr>
-                <th style="width: 35%;">Produto</th>
-                <th style="width: 18%;">Descrição</th>
-                <th style="width: 7%;">Qtd</th>
-                <th style="width: 7%;">Cond.</th>
-                <th style="width: 16%;">IMEI</th>
-                <th style="width: 8%;">V. Unit.</th>
-                <th style="width: 9%;">V. Total</th>
+                <th style="width: 5%;">Item</th>
+                <th style="width: 28%;">Descrição do Produto / Serviço</th>
+                <th style="width: 14%;">IMEI</th>
+                <th style="width: 6%;">Qtd</th>
+                <th style="width: 6%;">Un</th>
+                <th style="width: 11%;">Valor Unit.</th>
+                <th style="width: 11%;">Valor Total</th>
+                <th style="width: 9%;">Bat.</th>
+                <th style="width: 10%;">Acessórios</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($sale->items as $item)
+            @foreach($sale->items as $index => $item)
             @php
                 $snapshot = $item->product_snapshot ?? [];
                 $product = $item->product;
@@ -379,116 +375,90 @@
                 $batteryHealth = $product?->battery_health ?? null;
                 $hasBox = $product?->has_box ?? null;
                 $hasCable = $product?->has_cable ?? null;
+
+                $descParts = [$item->product_name];
+                if ($itemStorage) $descParts[] = $itemStorage;
+                if ($itemColor) $descParts[] = $itemColor;
+                if ($itemCondition === 'new') $descParts[] = '(Novo)';
+                elseif ($itemCondition === 'used') $descParts[] = '(Seminovo)';
+                elseif ($itemCondition === 'refurbished') $descParts[] = '(Recondicionado)';
+
+                $accessories = [];
+                if ($hasBox !== null) $accessories[] = 'Cx:' . ($hasBox ? 'S' : 'N');
+                if ($hasCable !== null) $accessories[] = 'Cb:' . ($hasCable ? 'S' : 'N');
             @endphp
             <tr>
-                <td>
-                    <strong>{{ $item->product_name }}</strong>
-                    @if($batteryHealth !== null || $hasBox !== null || $hasCable !== null)
-                    <div class="product-specs">
-                        @if($batteryHealth !== null)Bat: {{ $batteryHealth }}%@endif
-                        @if($hasBox !== null) &bull; Caixa: {{ $hasBox ? 'Sim' : 'Não' }}@endif
-                        @if($hasCable !== null) &bull; Cabo: {{ $hasCable ? 'Sim' : 'Não' }}@endif
-                    </div>
-                    @endif
-                </td>
-                <td class="text-center">
-                    @if($itemModel){{ $itemModel }}@endif
-                    @if($itemStorage) {{ $itemStorage }}@endif
-                    @if($itemColor) {{ $itemColor }}@endif
-                </td>
-                <td class="text-center">{{ $item->quantity }}</td>
-                <td class="text-center">
-                    @if($itemCondition === 'new') Novo
-                    @elseif($itemCondition === 'used') Semi
-                    @elseif($itemCondition === 'refurbished') Recond.
-                    @else ---
-                    @endif
-                </td>
-                <td class="text-center">{{ $itemImei ?? '---' }}</td>
-                <td class="text-right">{{ $item->formatted_unit_price }}</td>
-                <td class="text-right">{{ $item->formatted_subtotal }}</td>
+                <td class="center">{{ $index + 1 }}</td>
+                <td>{{ implode(' ', $descParts) }}</td>
+                <td class="center" style="font-size: 7px;">{{ $itemImei ?? '---' }}</td>
+                <td class="center">{{ $item->quantity }}</td>
+                <td class="center">UN</td>
+                <td class="right">{{ $item->formatted_unit_price }}</td>
+                <td class="right">{{ $item->formatted_subtotal }}</td>
+                <td class="center">{{ $batteryHealth !== null ? $batteryHealth . '%' : '---' }}</td>
+                <td class="center" style="font-size: 7px;">{{ !empty($accessories) ? implode(' ', $accessories) : '---' }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
 
-    {{-- Totais --}}
-    <table class="totals-row">
+    {{-- CÁLCULO DO TOTAL --}}
+    <div class="section-title">Cálculo do Total</div>
+    <table class="fields-row">
         <tr>
-            @if($sale->discount > 0)
-            <td style="width: 25%;">
-                <span class="field-label">Desconto</span>
-                <span class="field-value" style="color: #c00;">- {{ $sale->formatted_discount }}</span>
+            <td style="width: 20%;">
+                <div class="field-label">Subtotal Produtos</div>
+                <div class="field-value">{{ $sale->formatted_subtotal }}</div>
             </td>
-            @endif
-            @if($sale->trade_in_value > 0)
-            <td style="width: 25%;">
-                <span class="field-label">Trade-in</span>
-                <span class="field-value" style="color: #060;">- {{ $sale->formatted_trade_in_value }}</span>
+            <td style="width: 15%;">
+                <div class="field-label">Desconto</div>
+                <div class="field-value">{{ $sale->discount > 0 ? $sale->formatted_discount : 'R$ 0,00' }}</div>
             </td>
-            @endif
-            <td style="width: {{ ($sale->discount > 0 || $sale->trade_in_value > 0) ? '25%' : '50%' }};">
-                <span class="field-label">Subtotal</span>
-                <span class="field-value">{{ $sale->formatted_subtotal }}</span>
+            <td style="width: 15%;">
+                <div class="field-label">Trade-in</div>
+                <div class="field-value">{{ $sale->trade_in_value > 0 ? $sale->formatted_trade_in_value : 'R$ 0,00' }}</div>
             </td>
-            <td style="width: {{ ($sale->discount > 0 || $sale->trade_in_value > 0) ? '25%' : '50%' }}; text-align: right;">
-                <span class="field-label">Valor Total</span>
-                <span class="field-value" style="font-size: 13px;">{{ $sale->formatted_total }}</span>
+            <td style="width: 15%;">
+                <div class="field-label">Vendedor</div>
+                <div class="field-value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}</div>
+            </td>
+            <td style="width: 35%; text-align: right;">
+                <div class="field-label">Valor Total da Venda</div>
+                <div class="field-value-bold" style="font-size: 12px;">{{ $sale->formatted_total }}</div>
             </td>
         </tr>
     </table>
 
-    {{-- Informações Adicionais --}}
-    <div class="section-header">Informações Adicionais</div>
-    <table class="additional-info">
+    {{-- INFORMAÇÕES ADICIONAIS --}}
+    <div class="section-title">Dados Adicionais</div>
+    <table class="fields-row">
         <tr>
-            <td>
-                @if($sale->notes)
-                    {{ $sale->notes }}
-                @else
-                    Venda realizada na DG Store - São José do Rio Preto/SP.
-                    Documento emitido em {{ now()->format('d/m/Y \à\s H:i') }}.
-                @endif
-            </td>
-        </tr>
-    </table>
-
-    {{-- Área de Assinaturas --}}
-    <table class="signature-area">
-        <tr>
-            <td>
-                <div class="signature-line">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="180" height="50" viewBox="0 0 220 60">
-                        <path d="M15,48 C13,42 12,35 14,28 C16,20 20,14 24,12 C30,9 38,12 42,18 C46,24 47,34 44,40 C41,46 36,50 30,50 C24,50 18,48 15,48 M15,48 C18,48 22,47 28,46" fill="none" stroke="#1a237e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M52,22 C56,18 62,16 66,18 C70,20 72,26 70,32 C68,38 62,42 56,42 C50,42 48,38 50,34 C52,30 58,28 64,30 C68,31 70,34 70,38 C70,44 66,50 60,52 C54,54 50,50 52,46" fill="none" stroke="#1a237e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M72,36 C78,32 84,30 90,32 C94,33 92,38 88,38" fill="none" stroke="#1a237e" stroke-width="1.8" stroke-linecap="round"/>
-                        <path d="M95,24 C100,20 106,20 108,24 C110,28 104,32 100,34 C96,36 94,38 96,42 C98,46 104,46 108,44" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M112,16 C112,22 112,28 112,36 C112,40 114,42 117,41 M108,28 L118,28" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M120,30 C120,26 124,24 128,26 C132,28 132,34 128,38 C124,40 120,38 120,34 C120,30 122,30 126,32" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M132,38 C132,32 134,26 136,24 C138,26 140,30 142,32 C144,34 146,34 148,32" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M148,30 C152,28 156,28 158,30 C160,32 158,36 154,38 C150,40 146,38 148,36" fill="none" stroke="#1a237e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M158,34 C164,30 172,28 180,30 C188,32 194,36 200,34" fill="none" stroke="#1a237e" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-                    </svg>
-                </div>
-                <div class="signature-label">
-                    <strong>DG STORE LTDA</strong><br>
-                    CNPJ: 18.047.139/0001-56<br>
-                    Vendedor: {{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}
+            <td style="width: 70%;">
+                <div class="field-label">Informações Complementares</div>
+                <div class="field-value" style="min-height: 30px;">
+                    @if($sale->notes)
+                        {{ $sale->notes }}
+                    @endif
+                    <br>Venda realizada na DG Store - SJRP/SP. Emissão: {{ now()->format('d/m/Y H:i') }}.
                 </div>
             </td>
-            <td>
-                <div class="signature-line">&nbsp;</div>
-                <div class="signature-label">
-                    <strong>{{ $sale->customer?->name ?? 'Comprador' }}</strong><br>
-                    CPF: {{ $sale->customer?->formatted_cpf ?? '___.___.___-__' }}
+            <td style="width: 30%;">
+                <div class="field-label">Reservado ao Emitente</div>
+                <div class="field-value" style="min-height: 30px;">
+                    DG STORE LTDA<br>
+                    CNPJ: 18.047.139/0001-56
                 </div>
             </td>
         </tr>
     </table>
 
-    {{-- Rodapé --}}
-    <div class="footer">
-        Documento emitido em {{ now()->format('d/m/Y \à\s H:i') }} &bull; DG Store - São José do Rio Preto/SP &bull; CNPJ: 18.047.139/0001-56
-    </div>
+    {{-- RODAPÉ --}}
+    <table class="footer-row">
+        <tr>
+            <td>
+                DATA E HORA DA IMPRESSÃO: {{ now()->format('d/m/Y H:i:s') }}
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
