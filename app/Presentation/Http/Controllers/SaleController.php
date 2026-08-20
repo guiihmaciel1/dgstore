@@ -324,6 +324,17 @@ class SaleController extends Controller
         return $pdf->stream("comprovante-{$sale->sale_number}.pdf");
     }
 
+    public function signedReceipt(Sale $sale)
+    {
+        $sale->load(['items.product', 'customer', 'user', 'seller']);
+
+        $pdf = Pdf::loadView('sales.signed-receipt', [
+            'sale' => $sale,
+        ]);
+
+        return $pdf->stream("recibo-assinado-{$sale->sale_number}.pdf");
+    }
+
     public function followup(Request $request, Sale $sale): JsonResponse
     {
         $request->validate([

@@ -175,6 +175,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
         Route::patch('/sales/{sale}/status', [SaleController::class, 'updateStatus'])->name('sales.update-status');
         Route::get('/sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
+        Route::get('/sales/{sale}/signed-receipt', [SaleController::class, 'signedReceipt'])->name('sales.signed-receipt');
         Route::post('/sales/{sale}/followup', [SaleController::class, 'followup'])->name('sales.followup');
         Route::post('/sales/item-images', [SaleController::class, 'storeSaleItemImage'])->name('sale-item-images.store');
         Route::delete('/sales/item-images/{image}', [SaleController::class, 'deleteSaleItemImage'])->name('sale-item-images.destroy');
