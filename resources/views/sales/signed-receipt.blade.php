@@ -220,7 +220,8 @@
             <td style="width: 50%;">
                 <div class="emitente-nome">DG STORE LTDA</div>
                 <div class="emitente-detalhe">
-                    São José do Rio Preto - SP
+                    Rua Rahme Trad Bechara Hage, 2061<br>
+                    Higienópolis - S.J. do Rio Preto - SP
                 </div>
             </td>
             {{-- Tipo documento --}}
