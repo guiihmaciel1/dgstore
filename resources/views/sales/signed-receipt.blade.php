@@ -220,8 +220,7 @@
             <td style="width: 50%;">
                 <div class="emitente-nome">DG STORE LTDA</div>
                 <div class="emitente-detalhe">
-                    São José do Rio Preto - SP<br>
-                    CNPJ: 18.047.139/0001-56
+                    São José do Rio Preto - SP
                 </div>
             </td>
             {{-- Tipo documento --}}
@@ -445,8 +444,7 @@
             <td style="width: 30%;">
                 <div class="field-label">Reservado ao Emitente</div>
                 <div class="field-value" style="min-height: 30px;">
-                    DG STORE LTDA<br>
-                    CNPJ: 18.047.139/0001-56
+                    DG STORE LTDA
                 </div>
             </td>
         </tr>
