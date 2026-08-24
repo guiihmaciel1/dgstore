@@ -54,6 +54,7 @@ class SaleController extends Controller
             'search' => $request->get('search'),
             'payment_status' => $request->get('payment_status'),
             'payment_method' => $request->get('payment_method'),
+            'sale_type' => $request->get('sale_type'),
             'date_from' => $request->get('date_from'),
             'date_to' => $request->get('date_to'),
             'sort' => $request->get('sort', 'sold_at'),
