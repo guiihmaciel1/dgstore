@@ -1061,12 +1061,14 @@ class DashboardController extends Controller
 
         $channelSummary = $this->buildChannelSummary($repasseSales, $cfSales);
         $topRepasseClients = $this->buildTopRepasseClients($repasseSales);
+        $inactiveClients = $this->buildInactiveRepasseClients($referenceDate);
         $accumulated = $this->buildAccumulatedRanking($referenceDate);
         $monthlyEvolution = $this->buildMonthlyEvolution($referenceDate);
 
         return [
             'channel_summary' => $channelSummary,
             'top_repasse_clients' => $topRepasseClients,
+            'inactive_clients' => $inactiveClients,
             'accumulated_ranking' => $accumulated,
             'monthly_evolution' => $monthlyEvolution,
         ];
@@ -1129,6 +1131,80 @@ class DashboardController extends Controller
             ->take(10)
             ->values()
             ->toArray();
+    }
+
+    /**
+     * Clientes de repasse que ja compraram mas estao inativos (sem compra nos ultimos 30 dias).
+     */
+    private function buildInactiveRepasseClients(Carbon $referenceDate): array
+    {
+        $cutoffDate = $referenceDate->copy()->endOfMonth()->subDays(30);
+
+        $allRepasseCustomerIds = Sale::where('sale_type', SaleType::Repasse)
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->whereNotNull('customer_id')
+            ->distinct()
+            ->pluck('customer_id');
+
+        if ($allRepasseCustomerIds->isEmpty()) {
+            return [];
+        }
+
+        $recentBuyerIds = Sale::where('sale_type', SaleType::Repasse)
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->whereNotNull('customer_id')
+            ->where('sold_at', '>=', $cutoffDate)
+            ->distinct()
+            ->pluck('customer_id');
+
+        $inactiveIds = $allRepasseCustomerIds->diff($recentBuyerIds);
+
+        if ($inactiveIds->isEmpty()) {
+            return [];
+        }
+
+        $lastSales = Sale::whereIn('customer_id', $inactiveIds)
+            ->where('sale_type', SaleType::Repasse)
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->selectRaw('customer_id, MAX(sold_at) as last_purchase, COUNT(*) as total_purchases, SUM(total) as total_spent')
+            ->groupBy('customer_id')
+            ->orderByDesc('total_spent')
+            ->limit(10)
+            ->get();
+
+        $customers = Customer::whereIn('id', $lastSales->pluck('customer_id'))->get()->keyBy('id');
+
+        return $lastSales->map(function ($row) use ($customers) {
+            $customer = $customers->get($row->customer_id);
+            $lastPurchase = Carbon::parse($row->last_purchase);
+            $daysSince = (int) $lastPurchase->diffInDays(now());
+
+            $phone = $customer?->phone;
+            $cleanPhone = $phone ? preg_replace('/\D/', '', $phone) : '';
+            $hasPhone = strlen($cleanPhone) >= 8;
+            if ($hasPhone && strlen($cleanPhone) <= 11) {
+                $cleanPhone = '55' . $cleanPhone;
+            }
+
+            $message = "Olá {$customer?->name}! Aqui é a DG Store.\n"
+                . "Faz um tempo que não fazemos negócio juntos! 📱\n"
+                . "Temos novidades em estoque com ótimas condições de repasse.\n"
+                . "Posso te enviar nossa tabela atualizada?";
+
+            return [
+                'customer_id' => $row->customer_id,
+                'name' => $customer?->name ?? 'Sem cliente',
+                'phone' => $phone,
+                'has_phone' => $hasPhone,
+                'last_purchase' => $lastPurchase->format('d/m/Y'),
+                'days_since' => $daysSince,
+                'total_purchases' => (int) $row->total_purchases,
+                'total_spent' => (float) $row->total_spent,
+                'whatsapp_url' => $hasPhone
+                    ? 'https://wa.me/' . $cleanPhone . '?text=' . urlencode($message)
+                    : null,
+            ];
+        })->values()->toArray();
     }
 
     /**
