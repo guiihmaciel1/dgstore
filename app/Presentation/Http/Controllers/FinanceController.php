@@ -54,11 +54,12 @@ class FinanceController extends Controller
 
         $transactions = $this->financeService->getPayables(20, $filters);
         $summary = $this->financeService->getPayablesSummary($filters);
+        $categoryTotals = $this->financeService->getExpensesByCategory($filters);
         $categories = $this->financeService->getCategoriesByType('expense')
             ->whereNotIn('name', ['Trade-in', 'Custo de Mercadoria', 'Compra Fornecedor']);
         $accounts = $this->financeService->getAccounts();
 
-        return view('finance.payables', compact('transactions', 'summary', 'categories', 'accounts', 'filters'));
+        return view('finance.payables', compact('transactions', 'summary', 'categoryTotals', 'categories', 'accounts', 'filters'));
     }
 
     // ─── Contas a Receber ───

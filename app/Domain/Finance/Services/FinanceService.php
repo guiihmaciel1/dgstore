@@ -299,6 +299,39 @@ class FinanceService
         return compact('pending', 'overdue', 'paidInPeriod');
     }
 
+    public function getExpensesByCategory(array $filters = []): array
+    {
+        $query = FinancialTransaction::expense()
+            ->whereIn('status', ['pending', 'overdue', 'paid']);
+
+        $this->excludeSystemExpenseCategories($query);
+
+        if (!empty($filters['start_date'])) {
+            $query->where('due_date', '>=', $filters['start_date']);
+        }
+
+        if (!empty($filters['end_date'])) {
+            $query->where('due_date', '<=', $filters['end_date']);
+        }
+
+        $categories = FinancialCategory::whereIn(
+            'id',
+            (clone $query)->distinct()->pluck('category_id')
+        )->get()->keyBy('id');
+
+        return $query->selectRaw('category_id, SUM(amount) as total')
+            ->groupBy('category_id')
+            ->get()
+            ->map(fn ($item) => [
+                'name' => $categories[$item->category_id]->name ?? 'Sem categoria',
+                'color' => $categories[$item->category_id]->color ?? '#6b7280',
+                'total' => (float) $item->total,
+            ])
+            ->sortByDesc('total')
+            ->values()
+            ->toArray();
+    }
+
     public function getReceivablesSummary(array $filters = []): array
     {
         $query = FinancialTransaction::income();

@@ -52,6 +52,18 @@
                 </div>
             </div>
 
+            <!-- Cards por Categoria -->
+            @if(count($categoryTotals) > 0)
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+                @foreach($categoryTotals as $cat)
+                <div style="background: #141414; border-radius: 0.625rem; padding: 0.875rem 1rem; border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid {{ $cat['color'] }};">
+                    <div style="font-size: 0.625rem; text-transform: uppercase; font-weight: 600; color: {{ $cat['color'] }}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $cat['name'] }}</div>
+                    <div style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3; margin-top: 0.25rem;">R$ {{ number_format($cat['total'], 2, ',', '.') }}</div>
+                </div>
+                @endforeach
+            </div>
+            @endif
+
             <!-- Formulário Nova Despesa -->
             <div x-show="showForm" x-cloak style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1.5rem;">
                 <h3 style="font-weight: 600; color: #e3e3e3; margin-bottom: 1rem;">Nova Despesa</h3>

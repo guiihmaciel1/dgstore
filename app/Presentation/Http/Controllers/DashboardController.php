@@ -20,6 +20,7 @@ use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Commission\Models\Commission;
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
+use App\Domain\Sale\Enums\SaleType;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Models\SaleItem;
 use App\Domain\Sale\Models\TradeIn;
@@ -61,6 +62,7 @@ class DashboardController extends Controller
         $todayPayables = $this->getTodayPayables();
 
         [$monthSummary, $salesAnalytics] = $this->getMonthSummaryAndAnalytics($referenceDate);
+        $wholesaleData = $this->buildWholesaleIntelligence($referenceDate);
         $internStats = $this->buildInternStats($referenceDate);
         $followupSales = $this->getFollowupSales();
         $appleNews = $this->appleNewsService->getCached();
@@ -88,6 +90,7 @@ class DashboardController extends Controller
             'todayPayables' => $todayPayables,
             'monthSummary' => $monthSummary,
             'salesAnalytics' => $salesAnalytics,
+            'wholesaleData' => $wholesaleData,
             'internStats' => $internStats,
             'followupSales' => $followupSales,
             'appleNews' => $appleNews,
@@ -1038,5 +1041,203 @@ class DashboardController extends Controller
         ];
 
         return $map[$lower] ?? ucfirst($color);
+    }
+
+    /**
+     * Inteligencia Atacado x Cliente Final: KPIs de repasse vs cliente final.
+     */
+    private function buildWholesaleIntelligence(Carbon $referenceDate): array
+    {
+        $start = $referenceDate->copy()->startOfMonth();
+        $end = $referenceDate->copy()->endOfMonth();
+
+        $sales = Sale::with(['items.product', 'customer'])
+            ->whereBetween('sold_at', [$start, $end])
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->get();
+
+        $repasseSales = $sales->where('sale_type', SaleType::Repasse);
+        $cfSales = $sales->where('sale_type', SaleType::ClienteFinal);
+
+        $channelSummary = $this->buildChannelSummary($repasseSales, $cfSales);
+        $topRepasseClients = $this->buildTopRepasseClients($repasseSales);
+        $accumulated = $this->buildAccumulatedRanking($referenceDate);
+        $monthlyEvolution = $this->buildMonthlyEvolution($referenceDate);
+
+        return [
+            'channel_summary' => $channelSummary,
+            'top_repasse_clients' => $topRepasseClients,
+            'accumulated_ranking' => $accumulated,
+            'monthly_evolution' => $monthlyEvolution,
+        ];
+    }
+
+    private function buildChannelSummary($repasseSales, $cfSales): array
+    {
+        $build = function ($sales, string $label) {
+            $count = $sales->count();
+            $revenue = (float) $sales->sum('total');
+            $profit = (float) $sales->sum(fn (Sale $s) => $s->profit);
+            $items = (int) $sales->flatMap->items->sum('quantity');
+            $margin = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
+            $ticket = $count > 0 ? $revenue / $count : 0;
+
+            return compact('label', 'count', 'revenue', 'profit', 'items', 'margin', 'ticket');
+        };
+
+        $repasse = $build($repasseSales, 'Repasse');
+        $cf = $build($cfSales, 'Cliente Final');
+
+        $totalRevenue = $repasse['revenue'] + $cf['revenue'];
+        $totalProfit = $repasse['profit'] + $cf['profit'];
+        $repasseRevenuePct = $totalRevenue > 0 ? ($repasse['revenue'] / $totalRevenue) * 100 : 0;
+        $repasseProfitPct = $totalProfit > 0 ? ($repasse['profit'] / $totalProfit) * 100 : 0;
+
+        return [
+            'repasse' => $repasse,
+            'cliente_final' => $cf,
+            'total_revenue' => $totalRevenue,
+            'total_profit' => $totalProfit,
+            'repasse_revenue_pct' => $repasseRevenuePct,
+            'repasse_profit_pct' => $repasseProfitPct,
+        ];
+    }
+
+    private function buildTopRepasseClients($repasseSales): array
+    {
+        return $repasseSales
+            ->filter(fn (Sale $s) => $s->customer_id !== null)
+            ->groupBy('customer_id')
+            ->map(function ($sales) {
+                $customer = $sales->first()->customer;
+                $count = $sales->count();
+                $revenue = (float) $sales->sum('total');
+                $profit = (float) $sales->sum(fn (Sale $s) => $s->profit);
+                $margin = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
+
+                return [
+                    'customer_id' => $customer?->id,
+                    'name' => $customer?->name ?? 'Sem cliente',
+                    'phone' => $customer?->phone,
+                    'count' => $count,
+                    'revenue' => $revenue,
+                    'profit' => $profit,
+                    'margin' => $margin,
+                ];
+            })
+            ->sortByDesc('revenue')
+            ->take(10)
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Ranking acumulado de clientes de repasse nos ultimos 6 meses.
+     */
+    private function buildAccumulatedRanking(Carbon $referenceDate): array
+    {
+        $endMonth = $referenceDate->copy()->endOfMonth();
+        $startMonth = $referenceDate->copy()->subMonths(5)->startOfMonth();
+
+        $sales = Sale::with('customer')
+            ->where('sale_type', SaleType::Repasse)
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->whereNotNull('customer_id')
+            ->whereBetween('sold_at', [$startMonth, $endMonth])
+            ->get();
+
+        $months = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $m = $referenceDate->copy()->subMonths($i);
+            $months[] = $m->format('Y-m');
+        }
+
+        $byCustomer = $sales->groupBy('customer_id');
+
+        $ranking = $byCustomer->map(function ($customerSales) use ($months) {
+            $customer = $customerSales->first()->customer;
+            $totalRevenue = (float) $customerSales->sum('total');
+            $totalProfit = (float) $customerSales->sum(fn (Sale $s) => $s->profit);
+            $totalCount = $customerSales->count();
+
+            $perMonth = [];
+            foreach ($months as $monthKey) {
+                $monthSales = $customerSales->filter(
+                    fn (Sale $s) => $s->sold_at->format('Y-m') === $monthKey
+                );
+                $perMonth[$monthKey] = [
+                    'revenue' => (float) $monthSales->sum('total'),
+                    'count' => $monthSales->count(),
+                ];
+            }
+
+            $monthValues = array_column($perMonth, 'revenue');
+            $firstHalf = array_sum(array_slice($monthValues, 0, 3));
+            $secondHalf = array_sum(array_slice($monthValues, 3, 3));
+            $trend = $firstHalf > 0
+                ? round((($secondHalf - $firstHalf) / $firstHalf) * 100, 1)
+                : ($secondHalf > 0 ? 100 : 0);
+
+            return [
+                'customer_id' => $customer?->id,
+                'name' => $customer?->name ?? 'Sem cliente',
+                'total_revenue' => $totalRevenue,
+                'total_profit' => $totalProfit,
+                'total_count' => $totalCount,
+                'per_month' => $perMonth,
+                'trend' => $trend,
+            ];
+        })
+            ->sortByDesc('total_revenue')
+            ->take(5)
+            ->values()
+            ->toArray();
+
+        return [
+            'months' => $months,
+            'month_labels' => array_map(fn ($m) => Carbon::createFromFormat('Y-m', $m)->translatedFormat('M'), $months),
+            'clients' => $ranking,
+        ];
+    }
+
+    /**
+     * Evolucao mensal: lucro repasse vs cliente final nos ultimos 6 meses.
+     */
+    private function buildMonthlyEvolution(Carbon $referenceDate): array
+    {
+        $endMonth = $referenceDate->copy()->endOfMonth();
+        $startMonth = $referenceDate->copy()->subMonths(5)->startOfMonth();
+
+        $sales = Sale::with('items')
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->whereBetween('sold_at', [$startMonth, $endMonth])
+            ->get();
+
+        $months = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $m = $referenceDate->copy()->subMonths($i);
+            $months[] = $m->format('Y-m');
+        }
+
+        $repasseData = [];
+        $cfData = [];
+        $labels = [];
+
+        foreach ($months as $monthKey) {
+            $monthSales = $sales->filter(fn (Sale $s) => $s->sold_at->format('Y-m') === $monthKey);
+            $labels[] = Carbon::createFromFormat('Y-m', $monthKey)->translatedFormat('M/y');
+
+            $repasseMonthSales = $monthSales->where('sale_type', SaleType::Repasse);
+            $cfMonthSales = $monthSales->where('sale_type', SaleType::ClienteFinal);
+
+            $repasseData[] = (float) $repasseMonthSales->sum(fn (Sale $s) => $s->profit);
+            $cfData[] = (float) $cfMonthSales->sum(fn (Sale $s) => $s->profit);
+        }
+
+        return [
+            'labels' => $labels,
+            'repasse' => $repasseData,
+            'cliente_final' => $cfData,
+        ];
     }
 }
