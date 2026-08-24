@@ -66,6 +66,7 @@
                         Foto IA
                     </button>
                     <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;" onchange="onPhotoSelected(this)">
+                    <span id="ai-usage-badge" style="font-size: 0.7rem; color: #818181; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 0.25rem; display: none;"></span>
                 </div>
 
                 {{-- Indicador de análise IA --}}
@@ -347,6 +348,7 @@
         document.getElementById('create-product-form').reset();
         hideAllFeedback();
         toggleModalSeminovoFields();
+        loadAiUsage();
     }
 
     function closeCreateModal() {
@@ -420,6 +422,20 @@
     }
 
     // --- Foto IA ---
+    function loadAiUsage() {
+        fetch('{{ route("admin.ai-status") }}')
+            .then(r => r.json())
+            .then(data => {
+                const badge = document.getElementById('ai-usage-badge');
+                if (badge && data.remaining !== undefined) {
+                    badge.textContent = `${data.used}/${data.limit} hoje`;
+                    badge.style.display = 'inline-block';
+                    badge.style.color = data.remaining <= 10 ? '#f87171' : '#818181';
+                }
+            })
+            .catch(() => {});
+    }
+
     function openCamera() {
         document.getElementById('camera-input').click();
     }

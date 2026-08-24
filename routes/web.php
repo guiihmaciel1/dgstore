@@ -348,6 +348,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::put('/{user}', [AdminUserController::class, 'update'])->name('admin.users.update');
             });
 
+            // Status IA (Gemini)
+            Route::get('/admin/ai-status', function () {
+                $gemini = app(\App\Domain\AI\Services\GeminiService::class);
+                return response()->json($gemini->getDailyUsage());
+            })->name('admin.ai-status');
+
             // Gestão de Comissões
             Route::prefix('admin/commissions')->group(function () {
                 Route::get('/', [CommissionController::class, 'index'])->name('admin.commissions.index');

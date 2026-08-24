@@ -53,6 +53,7 @@
                         Tirar Foto da Traseira
                     </button>
                     <input type="file" id="consignment-camera-input" accept="image/*" capture="environment" style="display: none;" onchange="onConsignmentPhotoSelected(this)">
+                    <span id="consignment-ai-usage-badge" style="font-size: 0.7rem; color: #818181; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.04); border-radius: 0.25rem; display: none;"></span>
                 </div>
 
                 {{-- Indicador de análise IA --}}
@@ -264,6 +265,7 @@
         document.body.style.overflow = 'hidden';
         document.getElementById('consignment-entry-form').reset();
         hideConsignmentFeedback();
+        loadConsignmentAiUsage();
     }
 
     function closeConsignmentEntry() {
@@ -278,6 +280,20 @@
     }
 
     // --- Foto IA ---
+    function loadConsignmentAiUsage() {
+        fetch('{{ route("admin.ai-status") }}')
+            .then(r => r.json())
+            .then(data => {
+                const badge = document.getElementById('consignment-ai-usage-badge');
+                if (badge && data.remaining !== undefined) {
+                    badge.textContent = `${data.used}/${data.limit} hoje`;
+                    badge.style.display = 'inline-block';
+                    badge.style.color = data.remaining <= 10 ? '#f87171' : '#818181';
+                }
+            })
+            .catch(() => {});
+    }
+
     function openConsignmentCamera() {
         document.getElementById('consignment-camera-input').click();
     }

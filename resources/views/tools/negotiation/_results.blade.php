@@ -19,7 +19,7 @@
         <button @click="copyPixValue()" type="button"
                 class="w-full mt-1.5 px-3 py-1.5 bg-surface-raised border border-border rounded-lg text-xs font-medium text-dg-400 hover:text-white hover:border-emerald-500 transition-colors flex items-center justify-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-            <span x-text="pixCopied ? 'Copiado!' : 'Copiar valor Pix'"></span>
+            <span x-text="pixCopied ? 'Copiado!' : 'Copiar simulação'"></span>
         </button>
     </div>
 

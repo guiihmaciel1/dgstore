@@ -539,9 +539,9 @@
 
             async copyPixValue() {
                 try {
-                    await navigator.clipboard.writeText('R$ ' + this.fmt(this.cardBalance));
+                    await navigator.clipboard.writeText(this.buildMessage());
                     this.pixCopied = true;
-                    this.showToast('Valor Pix copiado!');
+                    this.showToast('Simulação copiada!');
                     setTimeout(() => { this.pixCopied = false; }, 2000);
                 } catch (e) {}
             },
