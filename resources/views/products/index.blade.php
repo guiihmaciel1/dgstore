@@ -115,12 +115,10 @@
                                         <div style="font-weight: 500; color: #e3e3e3;">{{ $product->name }}</div>
                                         <div style="font-size: 0.75rem; color: #818181; margin-top: 0.125rem;">
                                             SKU: {{ $product->sku }}
+                                            @if($product->imei)
+                                                <span style="color: #60a5fa; font-family: monospace; margin-left: 0.5rem;">IMEI: {{ $product->imei }}</span>
+                                            @endif
                                         </div>
-                                        @if($product->imei)
-                                        <div style="font-size: 0.7rem; color: #60a5fa; margin-top: 0.125rem; font-family: monospace;">
-                                            IMEI: {{ $product->imei }}
-                                        </div>
-                                        @endif
                                         @if($product->model || $product->storage || $product->color || $product->battery_health)
                                         <div style="display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.375rem;">
                                             @if($product->model)

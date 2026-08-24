@@ -70,6 +70,7 @@
             tradeInModels: @json($tradeInModels ?? []),
             toast: '',
             copied: false,
+            pixCopied: false,
             cardLoading: false,
             activePreset: 'even',
             evalSearch: '',
@@ -533,6 +534,15 @@
                     this.copiedSummary = true;
                     this.showToast('Resumo da venda copiado!');
                     setTimeout(() => { this.copiedSummary = false; }, 2000);
+                } catch (e) {}
+            },
+
+            async copyPixValue() {
+                try {
+                    await navigator.clipboard.writeText('R$ ' + this.fmt(this.cardBalance));
+                    this.pixCopied = true;
+                    this.showToast('Valor Pix copiado!');
+                    setTimeout(() => { this.pixCopied = false; }, 2000);
                 } catch (e) {}
             },
 

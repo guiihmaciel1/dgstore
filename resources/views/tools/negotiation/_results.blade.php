@@ -6,14 +6,21 @@
 {{-- Resultados --}}
 <div x-show="!cardLoading && cardResults.length > 0" x-transition>
     {{-- Pix --}}
-    <div x-show="cardBalance > 0" class="bg-green-50 border border-green-200 rounded-xl px-4 py-3 sm:px-5 sm:py-4 flex items-center justify-between mb-3">
-        <div>
-            <div class="text-[15px] font-bold text-emerald-600">Pix / Dinheiro</div>
-            <div class="text-xs text-dg-500">Melhor preço - sem taxa</div>
+    <div x-show="cardBalance > 0" class="mb-3">
+        <div class="bg-green-50 border border-green-200 rounded-xl px-4 py-3 sm:px-5 sm:py-4 flex items-center justify-between">
+            <div>
+                <div class="text-[15px] font-bold text-emerald-600">Pix / Dinheiro</div>
+                <div class="text-xs text-dg-500">Melhor preço - sem taxa</div>
+            </div>
+            <div class="text-right">
+                <div class="text-[22px] font-extrabold text-emerald-600" x-text="'R$ ' + fmt(cardBalance)"></div>
+            </div>
         </div>
-        <div class="text-right">
-            <div class="text-[22px] font-extrabold text-emerald-600" x-text="'R$ ' + fmt(cardBalance)"></div>
-        </div>
+        <button @click="copyPixValue()" type="button"
+                class="w-full mt-1.5 px-3 py-1.5 bg-surface-raised border border-border rounded-lg text-xs font-medium text-dg-400 hover:text-white hover:border-emerald-500 transition-colors flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            <span x-text="pixCopied ? 'Copiado!' : 'Copiar valor Pix'"></span>
+        </button>
     </div>
 
     {{-- Presets --}}
