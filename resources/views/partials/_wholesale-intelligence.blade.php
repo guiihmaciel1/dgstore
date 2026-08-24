@@ -275,7 +275,7 @@
             <span class="text-xs text-dg-500 font-medium" style="text-transform: capitalize;">{{ $referenceDate->translatedFormat('M/Y') }}</span>
         </div>
 
-        @php $maxClientRevenue = collect($topClients)->max('revenue'); @endphp
+        @php $maxClientProfit = collect($topClients)->max('profit'); @endphp
 
         <div class="space-y-2">
             @foreach($topClients as $idx => $client)
@@ -316,9 +316,9 @@
                         </div>
                     </div>
                 </div>
-                @if($maxClientRevenue > 0)
+                @if($maxClientProfit > 0)
                 <div class="mt-2 ml-9 h-1.5 bg-surface-overlay rounded-full overflow-hidden">
-                    <div class="h-full rounded-full bg-purple-400 transition-all duration-700" style="width: {{ max(3, ($client['revenue'] / $maxClientRevenue) * 100) }}%"></div>
+                    <div class="h-full rounded-full bg-purple-400 transition-all duration-700" style="width: {{ max(3, ($client['profit'] / $maxClientProfit) * 100) }}%"></div>
                 </div>
                 @endif
             </div>

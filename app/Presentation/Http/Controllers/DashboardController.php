@@ -1125,7 +1125,7 @@ class DashboardController extends Controller
                     'margin' => $margin,
                 ];
             })
-            ->sortByDesc('revenue')
+            ->sortByDesc('profit')
             ->take(10)
             ->values()
             ->toArray();
