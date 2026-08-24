@@ -204,7 +204,7 @@
                             <div style="padding: 1.5rem;">
                                 <div style="position: relative;">
                                     <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">
-                                        Buscar produto por nome, SKU ou código
+                                        Buscar produto por nome, SKU ou IMEI
                                     </label>
                                     <div style="position: relative;">
                                         <input 
@@ -212,7 +212,7 @@
                                             x-model="searchTerm"
                                             @input.debounce.300ms="searchProducts"
                                             @keydown.enter.prevent="if(searchResults.length > 0) addItem(searchResults[0])"
-                                            placeholder="Digite para buscar... (Enter para adicionar o primeiro)"
+                                            placeholder="Buscar por nome, SKU ou IMEI... (Enter para adicionar)"
                                             style="width: 100%; padding: 1rem 1rem 1rem 3rem; font-size: 1.125rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.75rem; outline: none;"
                                             onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                             autofocus
