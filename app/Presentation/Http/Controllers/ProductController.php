@@ -20,6 +20,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -227,7 +228,7 @@ class ProductController extends Controller
         $request->validate(['image' => 'required|string']);
 
         if (! $gemini->isAvailable()) {
-            return response()->json(['success' => false, 'error' => 'Serviço de IA não disponível.']);
+            return response()->json(['success' => false, 'error' => 'Serviço de IA não disponível. Verifique a chave da API.']);
         }
 
         $imageData = $request->input('image');
@@ -238,26 +239,23 @@ class ProductController extends Controller
             $imageData = $matches[2];
         }
 
-        $prompt = <<<'PROMPT'
-Analise esta foto de uma etiqueta/caixa de produto Apple.
-Extraia as seguintes informações se visíveis:
-- IMEI ou IMEI/MEID (número de 15 dígitos)
-- IMEI2 (se houver)
-- Serial Number
-- Model number (ex: A3257)
-- Nome do produto (ex: iPhone 17 Pro Max)
-- Cor (ex: Deep Blue, Black Titanium)
-- Armazenamento/capacidade (ex: 256GB)
-- Part number (ex: MFXJ4LL/A)
+        $cacheKey = 'analyze_box:' . md5(substr($imageData, 0, 2000));
+        $cached = Cache::get($cacheKey);
 
-Retorne um JSON com as chaves: imei, imei2, serial, model_number, product_name, color, storage, part_number.
-Use null para campos não encontrados. Para IMEI, retorne apenas os dígitos numéricos.
+        if ($cached) {
+            return response()->json($cached);
+        }
+
+        $prompt = <<<'PROMPT'
+Extraia da etiqueta Apple: imei, imei2, serial, model_number, product_name, color, storage, part_number. JSON compacto, null se ausente, IMEI só dígitos.
 PROMPT;
 
         $result = $gemini->analyzeImage($imageData, $mimeType, $prompt);
 
         if ($result === null) {
-            return response()->json(['success' => false, 'error' => 'Não foi possível analisar a imagem.']);
+            $errorMsg = $gemini->getLastError() ?? 'Não foi possível analisar a imagem. Tente digitar o IMEI manualmente.';
+
+            return response()->json(['success' => false, 'error' => $errorMsg]);
         }
 
         $imei = $result['imei'] ?? null;
@@ -267,11 +265,15 @@ PROMPT;
             $tacResult = $imeiLookup->lookup($imei);
         }
 
-        return response()->json([
+        $responseData = [
             'success' => true,
             'extracted' => $result,
             'tac_lookup' => $tacResult,
-        ]);
+        ];
+
+        Cache::put($cacheKey, $responseData, now()->addHours(24));
+
+        return response()->json($responseData);
     }
 
     public function label(Product $product): Response

@@ -284,10 +284,36 @@
 
     function onConsignmentPhotoSelected(input) {
         if (!input.files || !input.files[0]) return;
-        const reader = new FileReader();
-        reader.onload = e => analyzeConsignmentPhoto(e.target.result);
-        reader.readAsDataURL(input.files[0]);
+        const file = input.files[0];
+        compressConsignmentImage(file).then(compressed => {
+            analyzeConsignmentPhoto(compressed);
+        }).catch(() => {
+            const reader = new FileReader();
+            reader.onload = e => analyzeConsignmentPhoto(e.target.result);
+            reader.readAsDataURL(file);
+        });
         input.value = '';
+    }
+
+    function compressConsignmentImage(file) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = function() {
+                const maxSize = 1024;
+                let w = img.width, h = img.height;
+                if (w > maxSize || h > maxSize) {
+                    if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+                    else { w = Math.round(w * maxSize / h); h = maxSize; }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+            img.onerror = reject;
+            img.src = URL.createObjectURL(file);
+        });
     }
 
     function analyzeConsignmentPhoto(base64DataUrl) {
@@ -308,7 +334,7 @@
             document.getElementById('cs-ai-analyzing').style.display = 'none';
 
             if (!data.success) {
-                alert(data.error || 'Erro ao analisar imagem.');
+                showCsAiError(data.error || 'Erro ao analisar imagem.');
                 return;
             }
 
@@ -333,13 +359,23 @@
         .catch(err => {
             document.getElementById('cs-ai-analyzing').style.display = 'none';
             console.error('Erro na análise IA:', err);
-            alert('Erro ao processar a imagem. Tente novamente.');
+            showCsAiError('Falha na conexão. Preencha os dados manualmente.');
         });
     }
 
     function csSetField(id, value) {
         const el = document.getElementById(id);
         if (el && value) el.value = value;
+    }
+
+    function showCsAiError(message) {
+        const el = document.getElementById('cs-ai-result');
+        el.style.display = 'block';
+        document.getElementById('cs-ai-result-details').innerHTML =
+            '<div style="padding:10px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;color:#991b1b;font-size:12px;">'
+            + '<strong>⚠ Erro na IA:</strong> ' + message
+            + '<br><small style="color:#6b7280;margin-top:4px;display:block;">💡 Preencha os campos manualmente.</small>'
+            + '</div>';
     }
 
     function showConsignmentAiResult(extracted) {

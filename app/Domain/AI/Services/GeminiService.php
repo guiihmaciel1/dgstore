@@ -16,10 +16,11 @@ class GeminiService
 
     private string $baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
 
-    /**
-     * Máximo de requests por minuto (margem sobre o limite de 15 RPM do free tier).
-     */
     private int $maxRequestsPerMinute = 12;
+
+    private int $maxRequestsPerDay = 80;
+
+    private ?string $lastError = null;
 
     public function __construct()
     {
@@ -27,33 +28,56 @@ class GeminiService
         $this->model = (string) config('services.gemini.model', 'gemini-2.0-flash');
     }
 
-    /**
-     * Verifica se o serviço está configurado e disponível.
-     */
     public function isAvailable(): bool
     {
         return $this->apiKey !== '';
     }
 
+    public function getLastError(): ?string
+    {
+        return $this->lastError;
+    }
+
     /**
-     * Gera conteúdo textual via Gemini.
+     * Retorna info de uso diário para feedback.
      */
+    public function getDailyUsage(): array
+    {
+        $key = 'gemini_daily_limit:' . now()->format('Y-m-d');
+        $count = (int) Cache::get($key, 0);
+
+        return [
+            'used' => $count,
+            'limit' => $this->maxRequestsPerDay,
+            'remaining' => max(0, $this->maxRequestsPerDay - $count),
+            'exhausted' => $count >= $this->maxRequestsPerDay,
+        ];
+    }
+
     public function generateContent(string $prompt, ?string $systemInstruction = null): ?string
     {
         if (! $this->isAvailable()) {
+            $this->lastError = 'API key não configurada.';
             Log::warning('GeminiService: API key não configurada.');
 
             return null;
         }
 
         if (! $this->checkRateLimit()) {
-            Log::warning('GeminiService: Rate limit atingido.');
+            $this->lastError = 'Limite de requisições por minuto atingido. Aguarde 1 minuto.';
+            Log::warning('GeminiService: Rate limit por minuto atingido.');
+
+            return null;
+        }
+
+        if (! $this->checkDailyLimit()) {
+            $this->lastError = 'Limite diário atingido. Tente novamente amanhã ou digite o IMEI manualmente.';
+            Log::warning('GeminiService: Rate limit diário atingido.');
 
             return null;
         }
 
         $body = $this->buildRequestBody($prompt, $systemInstruction);
-
         $response = $this->sendRequest($body);
 
         if ($response === null) {
@@ -63,24 +87,31 @@ class GeminiService
         return $this->extractText($response);
     }
 
-    /**
-     * Gera conteúdo a partir de uma imagem (visão) e parseia como JSON.
-     * Aceita imagem em base64 (sem o prefixo data:image/...).
-     */
     public function analyzeImage(string $base64Image, string $mimeType, string $prompt, ?string $systemInstruction = null): ?array
     {
         if (! $this->isAvailable()) {
+            $this->lastError = 'API key não configurada.';
             Log::warning('GeminiService: API key não configurada.');
+
             return null;
         }
 
         if (! $this->checkRateLimit()) {
-            Log::warning('GeminiService: Rate limit atingido.');
+            $this->lastError = 'Limite de requisições por minuto atingido. Aguarde 1 minuto.';
+            Log::warning('GeminiService: Rate limit por minuto atingido.');
+
+            return null;
+        }
+
+        if (! $this->checkDailyLimit()) {
+            $this->lastError = 'Limite diário de consultas atingido. Digite o IMEI manualmente.';
+            Log::warning('GeminiService: Rate limit diário atingido.');
+
             return null;
         }
 
         $jsonInstruction = ($systemInstruction ? $systemInstruction . "\n\n" : '')
-            . 'IMPORTANTE: Retorne APENAS um JSON válido, sem markdown, sem ```json, sem explicações. Apenas o JSON puro.';
+            . 'Retorne APENAS JSON válido, sem markdown, sem ```json. Apenas o JSON puro e compacto.';
 
         $body = [
             'contents' => [
@@ -93,7 +124,7 @@ class GeminiService
             ],
             'generationConfig' => [
                 'temperature' => 0.1,
-                'maxOutputTokens' => 2048,
+                'maxOutputTokens' => 1024,
                 'thinkingConfig' => ['thinkingBudget' => 0],
             ],
         ];
@@ -117,14 +148,10 @@ class GeminiService
         return $this->parseJsonResponse($text);
     }
 
-    /**
-     * Gera conteúdo e parseia como JSON.
-     * Envia instrução para retornar apenas JSON válido.
-     */
     public function generateJson(string $prompt, ?string $systemInstruction = null): ?array
     {
         $jsonInstruction = ($systemInstruction ? $systemInstruction . "\n\n" : '')
-            . 'IMPORTANTE: Retorne APENAS um JSON válido, sem markdown, sem ```json, sem explicações. Apenas o JSON puro.';
+            . 'Retorne APENAS JSON válido, sem markdown, sem ```json. Apenas o JSON puro e compacto.';
 
         $text = $this->generateContent($prompt, $jsonInstruction);
 
@@ -135,9 +162,6 @@ class GeminiService
         return $this->parseJsonResponse($text);
     }
 
-    /**
-     * Monta o body do request para a API Gemini.
-     */
     private function buildRequestBody(string $prompt, ?string $systemInstruction = null): array
     {
         $body = [
@@ -151,7 +175,6 @@ class GeminiService
             'generationConfig' => [
                 'temperature' => 0.1,
                 'maxOutputTokens' => 16384,
-                // Desabilita "thinking" do gemini-2.5+ para economia de tokens e menor latência
                 'thinkingConfig' => [
                     'thinkingBudget' => 0,
                 ],
@@ -169,13 +192,11 @@ class GeminiService
         return $body;
     }
 
-    /**
-     * Envia request para a API Gemini com retry inteligente.
-     */
     private function sendRequest(array $body): ?array
     {
         $url = "{$this->baseUrl}/{$this->model}:generateContent?key={$this->apiKey}";
-        $maxAttempts = 2;
+        $maxAttempts = 3;
+        $baseDelay = 5;
 
         for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
             try {
@@ -185,6 +206,7 @@ class GeminiService
 
                 if ($response->successful()) {
                     $this->incrementRateLimit();
+                    $this->incrementDailyLimit();
 
                     return $response->json();
                 }
@@ -197,13 +219,27 @@ class GeminiService
                     'body' => mb_substr($errorBody, 0, 500),
                 ]);
 
-                // Rate limit (429) ou erro de servidor (5xx): retry com backoff
+                if ($status === 429) {
+                    $this->lastError = 'API sobrecarregada (limite Google). Tente novamente em alguns minutos ou digite o IMEI manualmente.';
+                }
+
+                if ($status >= 500) {
+                    $this->lastError = 'Serviço do Google indisponível. Tente novamente em instantes.';
+                }
+
                 if ($attempt < $maxAttempts && ($status === 429 || $status >= 500)) {
-                    $waitSeconds = min($this->extractRetryDelay($errorBody), 30);
-                    Log::info("GeminiService: Aguardando {$waitSeconds}s antes do retry...");
+                    $delay = min($baseDelay * pow(2, $attempt - 1), 45);
+                    $retryFromHeader = $this->extractRetryDelay($errorBody);
+                    $waitSeconds = max($delay, $retryFromHeader);
+
+                    Log::info("GeminiService: Backoff {$waitSeconds}s antes do retry (tentativa {$attempt})...");
                     sleep($waitSeconds);
 
                     continue;
+                }
+
+                if ($status === 400 || $status === 403) {
+                    $this->lastError = 'Erro na requisição à API. Verifique a configuração.';
                 }
 
                 return null;
@@ -212,8 +248,10 @@ class GeminiService
                     'message' => $e->getMessage(),
                 ]);
 
+                $this->lastError = 'Erro de conexão com a API. Verifique sua internet.';
+
                 if ($attempt < $maxAttempts) {
-                    sleep(2);
+                    sleep($baseDelay * $attempt);
 
                     continue;
                 }
@@ -225,29 +263,19 @@ class GeminiService
         return null;
     }
 
-    /**
-     * Extrai o tempo de espera sugerido da resposta 429 do Gemini.
-     */
     private function extractRetryDelay(string $errorBody): int
     {
-        // Tenta extrair "Please retry in Xs" da mensagem
         if (preg_match('/retry in (\d+(?:\.\d+)?)s/i', $errorBody, $matches)) {
             return (int) ceil((float) $matches[1]);
         }
 
-        return 5; // Fallback: espera 5 segundos
+        return 5;
     }
 
-    /**
-     * Extrai o texto da resposta da API.
-     * Gemini 2.5+ pode retornar "thought" parts antes do texto real.
-     * Percorre todas as parts e retorna o texto da primeira part que NÃO é thought.
-     */
     private function extractText(array $response): ?string
     {
         $parts = $response['candidates'][0]['content']['parts'] ?? [];
 
-        // Percorre parts: pula "thought" e pega o primeiro texto real
         foreach ($parts as $part) {
             $isThought = isset($part['thought']) && $part['thought'] === true;
 
@@ -256,7 +284,6 @@ class GeminiService
             }
         }
 
-        // Fallback: tenta qualquer part com texto (caso a flag thought não exista)
         foreach ($parts as $part) {
             if (isset($part['text']) && $part['text'] !== '') {
                 return $part['text'];
@@ -268,24 +295,21 @@ class GeminiService
             'response_keys' => array_keys($response),
         ]);
 
+        $this->lastError = 'API retornou resposta vazia. Tente novamente.';
+
         return null;
     }
 
-    /**
-     * Parseia texto como JSON, removendo possíveis wrappers markdown e caracteres inválidos.
-     */
     private function parseJsonResponse(string $text): ?array
     {
         $cleaned = $this->sanitizeJsonText($text);
 
-        // Tentativa 1: JSON direto
         $decoded = json_decode($cleaned, true);
 
         if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
             return $decoded;
         }
 
-        // Tentativa 2: Extrair JSON entre [ ] ou { }
         if (preg_match('/(\[[\s\S]*\])\s*$/', $cleaned, $matches)) {
             $decoded = json_decode($matches[1], true);
 
@@ -307,40 +331,24 @@ class GeminiService
             'text' => mb_substr($text, 0, 500),
         ]);
 
+        $this->lastError = 'Resposta da IA não pôde ser processada. Tente novamente.';
+
         return null;
     }
 
-    /**
-     * Sanitiza o texto para parsing JSON seguro.
-     * Remove wrappers markdown, caracteres de controle e BOM.
-     */
     private function sanitizeJsonText(string $text): string
     {
         $cleaned = trim($text);
-
-        // Remove BOM (Byte Order Mark)
         $cleaned = preg_replace('/^\x{FEFF}/u', '', $cleaned) ?? $cleaned;
-
-        // Remove wrapper ```json ... ``` se presente
         $cleaned = preg_replace('/^```(?:json)?\s*/i', '', $cleaned);
         $cleaned = preg_replace('/\s*```\s*$/', '', $cleaned);
         $cleaned = trim($cleaned);
-
-        // Remove TODOS os caracteres de controle (0x00-0x1F, 0x7F).
-        // Whitespace entre tokens JSON é opcional, então remover \n\r\t não quebra a estrutura.
-        // Isso evita "Control character error" no json_decode quando a IA retorna
-        // newlines/tabs literais dentro de valores string.
         $cleaned = preg_replace('/[\x00-\x1F\x7F]/u', '', $cleaned) ?? $cleaned;
-
-        // Remove caracteres Unicode invisíveis problemáticos
         $cleaned = preg_replace('/[\x{200B}-\x{200F}\x{2028}-\x{202F}\x{2060}\x{FEFF}]/u', '', $cleaned) ?? $cleaned;
 
         return $cleaned;
     }
 
-    /**
-     * Verifica se o rate limit não foi atingido.
-     */
     private function checkRateLimit(): bool
     {
         $key = 'gemini_rate_limit:' . now()->format('Y-m-d-H-i');
@@ -349,13 +357,25 @@ class GeminiService
         return $count < $this->maxRequestsPerMinute;
     }
 
-    /**
-     * Incrementa o contador de rate limit.
-     */
     private function incrementRateLimit(): void
     {
         $key = 'gemini_rate_limit:' . now()->format('Y-m-d-H-i');
         $count = (int) Cache::get($key, 0);
         Cache::put($key, $count + 1, 120);
+    }
+
+    private function checkDailyLimit(): bool
+    {
+        $key = 'gemini_daily_limit:' . now()->format('Y-m-d');
+        $count = (int) Cache::get($key, 0);
+
+        return $count < $this->maxRequestsPerDay;
+    }
+
+    private function incrementDailyLimit(): void
+    {
+        $key = 'gemini_daily_limit:' . now()->format('Y-m-d');
+        $count = (int) Cache::get($key, 0);
+        Cache::put($key, $count + 1, now()->endOfDay()->diffInSeconds(now()));
     }
 }
