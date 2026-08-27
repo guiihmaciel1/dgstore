@@ -14,6 +14,8 @@ class GeminiService
 
     private string $model;
 
+    private string $visionModel;
+
     private string $baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
 
     private int $maxRequestsPerMinute = 12;
@@ -25,7 +27,8 @@ class GeminiService
     public function __construct()
     {
         $this->apiKey = (string) config('services.gemini.api_key');
-        $this->model = (string) config('services.gemini.model', 'gemini-2.0-flash');
+        $this->model = (string) config('services.gemini.model', 'gemini-2.5-flash-lite');
+        $this->visionModel = (string) config('services.gemini.vision_model', 'gemini-2.5-flash');
     }
 
     public function isAvailable(): bool
@@ -133,7 +136,7 @@ class GeminiService
             $body['systemInstruction'] = ['parts' => [['text' => $jsonInstruction]]];
         }
 
-        $response = $this->sendRequest($body);
+        $response = $this->sendRequest($body, $this->visionModel);
 
         if ($response === null) {
             return null;
@@ -192,9 +195,10 @@ class GeminiService
         return $body;
     }
 
-    private function sendRequest(array $body): ?array
+    private function sendRequest(array $body, ?string $modelOverride = null): ?array
     {
-        $url = "{$this->baseUrl}/{$this->model}:generateContent?key={$this->apiKey}";
+        $model = $modelOverride ?? $this->model;
+        $url = "{$this->baseUrl}/{$model}:generateContent?key={$this->apiKey}";
         $maxAttempts = 3;
         $baseDelay = 5;
 
@@ -246,9 +250,13 @@ class GeminiService
             } catch (\Exception $e) {
                 Log::error("GeminiService: Exceção na tentativa {$attempt}/{$maxAttempts}", [
                     'message' => $e->getMessage(),
+                    'model' => $model,
                 ]);
 
-                $this->lastError = 'Erro de conexão com a API. Verifique sua internet.';
+                $isTimeout = str_contains($e->getMessage(), 'timed out') || str_contains($e->getMessage(), 'cURL error 28');
+                $this->lastError = $isTimeout
+                    ? 'Timeout na conexão com a API. Tente novamente ou digite o IMEI manualmente.'
+                    : 'Erro de conexão com a API. Tente novamente em instantes.';
 
                 if ($attempt < $maxAttempts) {
                     sleep($baseDelay * $attempt);

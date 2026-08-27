@@ -521,7 +521,14 @@
                         @if($sale->hasTradeIn())
                         <tr>
                             <td>Trade-in:</td>
-                            <td class="text-right"><strong>{{ $sale->formatted_trade_in_value }}</strong></td>
+                            <td class="text-right"><strong>
+                                @foreach($sale->tradeIns as $ti)
+                                    {{ $ti->device_name }}@if($ti->storage) {{ $ti->storage }}@endif@if($ti->color) {{ $ti->color }}@endif
+                                    @if($ti->battery_health) · Bat. {{ $ti->battery_health }}%@endif
+                                    @if(!$loop->last)<br>@endif
+                                @endforeach
+                                @if($sale->tradeIns->isEmpty()) Aparelho recebido @endif
+                            </strong></td>
                         </tr>
                         @endif
                     </table>
@@ -543,7 +550,14 @@
                     @if($sale->trade_in_value > 0)
                     <tr>
                         <td class="label-col">Trade-in:</td>
-                        <td class="value-col" style="color: #2e7d32;">- {{ $sale->formatted_trade_in_value }}</td>
+                        <td class="value-col" style="color: #2e7d32;">
+                            @foreach($sale->tradeIns as $ti)
+                                {{ $ti->device_name }}@if($ti->storage) {{ $ti->storage }}@endif@if($ti->color) {{ $ti->color }}@endif
+                                @if($ti->battery_health) · {{ $ti->battery_health }}%@endif
+                                @if(!$loop->last)<br>@endif
+                            @endforeach
+                            @if($sale->tradeIns->isEmpty()) Aparelho recebido @endif
+                        </td>
                     </tr>
                     @endif
                     <tr class="total-final">

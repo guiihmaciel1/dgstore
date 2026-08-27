@@ -316,7 +316,7 @@ class SaleController extends Controller
 
     public function receipt(Sale $sale)
     {
-        $sale->load(['items.product', 'customer', 'user', 'seller']);
+        $sale->load(['items.product', 'customer', 'user', 'seller', 'tradeIns']);
 
         $pdf = Pdf::loadView('sales.receipt', [
             'sale' => $sale,
@@ -327,7 +327,7 @@ class SaleController extends Controller
 
     public function signedReceipt(Sale $sale)
     {
-        $sale->load(['items.product', 'customer', 'user', 'seller']);
+        $sale->load(['items.product', 'customer', 'user', 'seller', 'tradeIns']);
 
         $pdf = Pdf::loadView('sales.signed-receipt', [
             'sale' => $sale,

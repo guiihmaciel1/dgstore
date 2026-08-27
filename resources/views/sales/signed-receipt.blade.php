@@ -330,7 +330,16 @@
                 @if($sale->trade_in_value > 0)
                 <td>
                     <div class="field-label">Trade-in</div>
-                    <div class="field-value">{{ $sale->formatted_trade_in_value }}</div>
+                    <div class="field-value">
+                        @foreach($sale->tradeIns as $ti)
+                            {{ $ti->device_name }}@if($ti->storage) {{ $ti->storage }}@endif@if($ti->color) {{ $ti->color }}@endif
+                            @if($ti->battery_health) · Bat. {{ $ti->battery_health }}%@endif
+                            @if(!$loop->last)<br>@endif
+                        @endforeach
+                        @if($sale->tradeIns->isEmpty())
+                            Aparelho recebido
+                        @endif
+                    </div>
                 </td>
                 @endif
             @else
@@ -406,23 +415,35 @@
     <div class="section-title">Cálculo do Total</div>
     <table class="fields-row">
         <tr>
-            <td style="width: 20%;">
+            <td style="width: 15%;">
                 <div class="field-label">Subtotal Produtos</div>
                 <div class="field-value">{{ $sale->formatted_subtotal }}</div>
             </td>
-            <td style="width: 15%;">
+            <td style="width: 12%;">
                 <div class="field-label">Desconto</div>
                 <div class="field-value">{{ $sale->discount > 0 ? $sale->formatted_discount : 'R$ 0,00' }}</div>
             </td>
-            <td style="width: 15%;">
+            <td style="width: 33%;">
                 <div class="field-label">Trade-in</div>
-                <div class="field-value">{{ $sale->trade_in_value > 0 ? $sale->formatted_trade_in_value : 'R$ 0,00' }}</div>
+                <div class="field-value">
+                    @if($sale->trade_in_value > 0 && $sale->tradeIns->isNotEmpty())
+                        @foreach($sale->tradeIns as $ti)
+                            {{ $ti->device_name }}@if($ti->storage) {{ $ti->storage }}@endif@if($ti->color) {{ $ti->color }}@endif
+                            @if($ti->battery_health) · {{ $ti->battery_health }}%@endif
+                            @php $acc = []; if($ti->has_box) $acc[] = 'Cx:S'; if($ti->has_cable) $acc[] = 'Cb:S'; @endphp
+                            @if(!empty($acc)) · {{ implode(' ', $acc) }}@endif
+                            @if(!$loop->last)<br>@endif
+                        @endforeach
+                    @else
+                        ---
+                    @endif
+                </div>
             </td>
             <td style="width: 15%;">
                 <div class="field-label">Vendedor</div>
                 <div class="field-value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}</div>
             </td>
-            <td style="width: 35%; text-align: right;">
+            <td style="width: 25%; text-align: right;">
                 <div class="field-label">Valor Total da Venda</div>
                 <div class="field-value-bold" style="font-size: 12px;">{{ $sale->formatted_total }}</div>
             </td>
