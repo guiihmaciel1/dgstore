@@ -331,14 +331,18 @@
                 <td>
                     <div class="field-label">Trade-in</div>
                     <div class="field-value">
-                        @foreach($sale->tradeIns as $ti)
-                            {{ $ti->device_name }}@if($ti->storage) {{ $ti->storage }}@endif@if($ti->color) {{ $ti->color }}@endif
-                            @if($ti->battery_health) · Bat. {{ $ti->battery_health }}%@endif
-                            @if(!$loop->last)<br>@endif
-                        @endforeach
-                        @if($sale->tradeIns->isEmpty())
+                        @forelse($sale->tradeIns as $ti)
+                            @php
+                                $parts = [$ti->device_name];
+                                if ($ti->storage) $parts[] = $ti->storage;
+                                if ($ti->color) $parts[] = $ti->color;
+                                $desc = implode(' ', $parts);
+                                if ($ti->battery_health) $desc .= ' · Bat. ' . $ti->battery_health . '%';
+                            @endphp
+                            {{ $desc }}@if(!$loop->last)<br>@endif
+                        @empty
                             Aparelho recebido
-                        @endif
+                        @endforelse
                     </div>
                 </td>
                 @endif
@@ -428,11 +432,18 @@
                 <div class="field-value">
                     @if($sale->trade_in_value > 0 && $sale->tradeIns->isNotEmpty())
                         @foreach($sale->tradeIns as $ti)
-                            {{ $ti->device_name }}@if($ti->storage) {{ $ti->storage }}@endif@if($ti->color) {{ $ti->color }}@endif
-                            @if($ti->battery_health) · {{ $ti->battery_health }}%@endif
-                            @php $acc = []; if($ti->has_box) $acc[] = 'Cx:S'; if($ti->has_cable) $acc[] = 'Cb:S'; @endphp
-                            @if(!empty($acc)) · {{ implode(' ', $acc) }}@endif
-                            @if(!$loop->last)<br>@endif
+                            @php
+                                $parts = [$ti->device_name];
+                                if ($ti->storage) $parts[] = $ti->storage;
+                                if ($ti->color) $parts[] = $ti->color;
+                                $desc = implode(' ', $parts);
+                                if ($ti->battery_health) $desc .= ' · ' . $ti->battery_health . '%';
+                                $acc = [];
+                                if ($ti->has_box) $acc[] = 'Cx:S';
+                                if ($ti->has_cable) $acc[] = 'Cb:S';
+                                if (!empty($acc)) $desc .= ' · ' . implode(' ', $acc);
+                            @endphp
+                            {{ $desc }}@if(!$loop->last)<br>@endif
                         @endforeach
                     @else
                         ---

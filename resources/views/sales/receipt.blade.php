@@ -522,12 +522,18 @@
                         <tr>
                             <td>Trade-in:</td>
                             <td class="text-right"><strong>
-                                @foreach($sale->tradeIns as $ti)
-                                    {{ $ti->device_name }}@if($ti->storage) {{ $ti->storage }}@endif@if($ti->color) {{ $ti->color }}@endif
-                                    @if($ti->battery_health) · Bat. {{ $ti->battery_health }}%@endif
-                                    @if(!$loop->last)<br>@endif
-                                @endforeach
-                                @if($sale->tradeIns->isEmpty()) Aparelho recebido @endif
+                                @forelse($sale->tradeIns as $ti)
+                                    @php
+                                        $parts = [$ti->device_name];
+                                        if ($ti->storage) $parts[] = $ti->storage;
+                                        if ($ti->color) $parts[] = $ti->color;
+                                        $desc = implode(' ', $parts);
+                                        if ($ti->battery_health) $desc .= ' · Bat. ' . $ti->battery_health . '%';
+                                    @endphp
+                                    {{ $desc }}@if(!$loop->last)<br>@endif
+                                @empty
+                                    Aparelho recebido
+                                @endforelse
                             </strong></td>
                         </tr>
                         @endif
@@ -551,12 +557,18 @@
                     <tr>
                         <td class="label-col">Trade-in:</td>
                         <td class="value-col" style="color: #2e7d32;">
-                            @foreach($sale->tradeIns as $ti)
-                                {{ $ti->device_name }}@if($ti->storage) {{ $ti->storage }}@endif@if($ti->color) {{ $ti->color }}@endif
-                                @if($ti->battery_health) · {{ $ti->battery_health }}%@endif
-                                @if(!$loop->last)<br>@endif
-                            @endforeach
-                            @if($sale->tradeIns->isEmpty()) Aparelho recebido @endif
+                            @forelse($sale->tradeIns as $ti)
+                                @php
+                                    $parts = [$ti->device_name];
+                                    if ($ti->storage) $parts[] = $ti->storage;
+                                    if ($ti->color) $parts[] = $ti->color;
+                                    $desc = implode(' ', $parts);
+                                    if ($ti->battery_health) $desc .= ' · Bat. ' . $ti->battery_health . '%';
+                                @endphp
+                                {{ $desc }}@if(!$loop->last)<br>@endif
+                            @empty
+                                Aparelho recebido
+                            @endforelse
                         </td>
                     </tr>
                     @endif
