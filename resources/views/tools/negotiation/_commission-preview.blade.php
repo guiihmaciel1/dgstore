@@ -133,12 +133,12 @@
 
                 {{-- Carregador --}}
                 <div class="rounded-lg p-2.5 border transition-all duration-200"
-                     :class="chargerEnabled && accessoryChargerPrice > 50 ? 'bg-purple-50 border-purple-300' : 'bg-surface border-border'">
+                     :class="chargerEnabled && accessoryChargerPrice > 80 ? 'bg-purple-50 border-purple-300' : 'bg-surface border-border'">
                     <label class="flex items-center justify-between cursor-pointer"
                            :class="chargerEnabled ? 'mb-1.5' : ''">
                         <span class="text-[10px] font-semibold uppercase tracking-wider"
-                              :class="chargerEnabled && accessoryChargerPrice > 50 ? 'text-purple-600' : 'text-dg-500'">Carregador</span>
-                        <div class="relative" @click.prevent="chargerEnabled = !chargerEnabled; if(!chargerEnabled) { accessoryChargerPrice = 0; }">
+                              :class="chargerEnabled && accessoryChargerPrice > 80 ? 'text-purple-600' : 'text-dg-500'">Carregador</span>
+                        <div class="relative" @click.prevent="chargerEnabled = !chargerEnabled; if(!chargerEnabled) { accessoryChargerPrice = 0; } else { accessoryChargerPrice = 150; }">
                             <div class="w-8 h-[18px] rounded-full transition-colors duration-200"
                                  :class="chargerEnabled ? 'bg-purple-500' : 'bg-dg-700'"></div>
                             <div class="absolute top-[2px] left-[2px] w-[14px] h-[14px] bg-surface-raised rounded-full shadow transition-transform duration-200"
@@ -146,17 +146,34 @@
                         </div>
                     </label>
                     <div x-show="chargerEnabled" x-transition x-collapse>
-                        <div class="relative">
-                            <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-dg-500">R$</span>
-                            <input type="number" x-model.number="accessoryChargerPrice" min="0" step="10" placeholder="0"
-                                   class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center focus:outline-none focus:ring-1 transition-all"
-                                   :class="accessoryChargerPrice > 50 ? 'border-purple-300 bg-surface-raised focus:ring-purple-400 text-purple-800' : 'border-border bg-surface-raised focus:ring-gray-300 text-dg-300'">
+                        <div class="text-center mb-1">
+                            <span class="text-lg font-black" :class="accessoryChargerPrice >= 180 ? 'text-purple-600' : 'text-dg-200'">
+                                R$ <span x-text="accessoryChargerPrice"></span>
+                            </span>
                         </div>
-                        <div class="mt-1.5 text-center" x-show="accessoryChargerPrice > 50">
-                            <span class="text-[10px] text-dg-500">Lucro: R$ <span x-text="fmt(accessoryChargerPrice - 50)"></span></span>
-                            <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.chargerComm)"></span></p>
+                        <input type="range" x-model.number="accessoryChargerPrice" min="150" max="200" step="10"
+                               class="w-full h-1.5 rounded-full appearance-none cursor-pointer accent-purple-500"
+                               style="background: linear-gradient(to right, #7c3aed 0%, #a78bfa 100%);">
+                        <div class="flex justify-between mt-0.5">
+                            <span class="text-[9px] text-dg-500">R$ 150</span>
+                            <span class="text-[9px] text-dg-500">R$ 200</span>
                         </div>
-                        <p class="text-[9px] text-dg-500 mt-1 text-center" x-show="accessoryChargerPrice <= 50">Base R$ 50 · 50% do lucro</p>
+                        <div class="mt-1.5 bg-surface rounded-md px-2 py-1.5 border border-border">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[10px] text-dg-500">Lucro:</span>
+                                <span class="text-[10px] font-bold text-emerald-400">R$ <span x-text="fmt(accessoryChargerPrice - 80)"></span></span>
+                            </div>
+                            <div class="flex justify-between items-center mt-0.5">
+                                <span class="text-[10px] text-dg-500">Sua comissão:</span>
+                                <span class="text-xs font-black text-purple-500">+R$ <span x-text="fmt(commissionEstimate.chargerComm)"></span></span>
+                            </div>
+                        </div>
+                        <p class="text-[9px] text-purple-400 mt-1.5 text-center font-medium" x-show="accessoryChargerPrice < 200">
+                            ↑ Aumente o valor para ganhar mais comissão!
+                        </p>
+                        <p class="text-[9px] text-emerald-400 mt-1.5 text-center font-semibold" x-show="accessoryChargerPrice >= 200">
+                            🎉 Comissão máxima! +R$ <span x-text="fmt((200 - 80) * 0.50)"></span>
+                        </p>
                     </div>
                 </div>
 

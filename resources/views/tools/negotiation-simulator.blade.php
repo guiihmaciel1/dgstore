@@ -188,7 +188,7 @@
             get commissionEstimate() {
                 const RATE = 0.10;
                 const CASE_BASE = 10;
-                const CHARGER_BASE = 50;
+                const CHARGER_BASE = 80;
                 const ACC_RATE = 0.50;
                 let profit = 0;
                 let caseComm = 0;
