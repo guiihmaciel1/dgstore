@@ -2078,16 +2078,17 @@
                             }
                         } else {
                             const costPrice = parseFloat(product.cost_price) || 0;
-                            const price = isRepasse ? costPrice + 100 : (parseFloat(product.suggested_price) || 0);
+                            const price = isRepasse ? costPrice + 30 : (parseFloat(product.suggested_price) || 0);
                             
                             this.items.push({
                                 id: product.id,
                                 name: product.name,
                                 price: price,
                                 original_sale_price: parseFloat(product.suggested_price) || 0,
-                                cost_price: costPrice,
-                                financial_cost: costPrice,
-                                commission_cost: costPrice,
+                                original_cost_price: costPrice,
+                                cost_price: isRepasse ? 0 : costPrice,
+                                financial_cost: isRepasse ? 0 : costPrice,
+                                commission_cost: isRepasse ? 0 : costPrice,
                                 supplier_origin: '',
                                 freight_type: '',
                                 freight_value: 0,
@@ -2107,7 +2108,7 @@
                             }
                         } else {
                             const costPrice = parseFloat(product.cost_price) || 0;
-                            const price = isRepasse ? costPrice + 100 : (parseFloat(product.sale_price) || 0);
+                            const price = isRepasse ? costPrice + 30 : (parseFloat(product.sale_price) || 0);
                             
                             this.items.push({
                                 id: product.id,
@@ -2115,9 +2116,10 @@
                                 category: product.category || null,
                                 price: price,
                                 original_sale_price: parseFloat(product.sale_price) || 0,
-                                cost_price: costPrice,
-                                financial_cost: costPrice,
-                                commission_cost: costPrice,
+                                original_cost_price: costPrice,
+                                cost_price: isRepasse ? 0 : costPrice,
+                                financial_cost: isRepasse ? 0 : costPrice,
+                                commission_cost: isRepasse ? 0 : costPrice,
                                 supplier_origin: '',
                                 freight_type: '',
                                 freight_value: 0,
@@ -2251,16 +2253,26 @@
                         // Limpar pagamentos de cartão
                         this.cardPayments = [];
                         
-                        // Recalcular preços de todos os itens (custo + 100)
+                        // Recalcular preços (custo original + 30) e zerar custos
                         this.items.forEach(item => {
-                            const costPrice = parseFloat(item.cost_price) || 0;
-                            item.price = costPrice + 100;
+                            const originalCost = item.original_cost_price != null ? parseFloat(item.original_cost_price) : (parseFloat(item.cost_price) || 0);
+                            item.original_cost_price = originalCost;
+                            item.price = originalCost + 30;
+                            item.cost_price = 0;
+                            item.financial_cost = 0;
+                            item.commission_cost = 0;
                         });
                     } else if (newType === 'cliente_final') {
-                        // Restaurar preços originais (sale_price do produto)
+                        // Restaurar preços e custos originais
                         this.items.forEach(item => {
                             if (item.original_sale_price) {
                                 item.price = parseFloat(item.original_sale_price) || 0;
+                            }
+                            if (item.original_cost_price != null) {
+                                const oc = parseFloat(item.original_cost_price) || 0;
+                                item.cost_price = oc;
+                                item.financial_cost = oc;
+                                item.commission_cost = oc;
                             }
                         });
                     }
