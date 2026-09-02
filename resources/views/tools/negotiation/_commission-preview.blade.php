@@ -1,5 +1,5 @@
 @if(true)
-<div x-show="productPrice > 0 && productCost > 0" x-transition x-cloak>
+<div x-transition>
     <div class="rounded-xl border overflow-hidden"
          :class="commissionEstimate.total > 0 ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-teal-50' : 'border-amber-200 bg-gradient-to-br from-amber-50 via-white to-orange-50'">
 
@@ -17,10 +17,9 @@
 
         <div class="p-4 space-y-3">
 
-            <p class="text-[10px] text-dg-500 italic leading-tight">Pode alterar caso o preço de custo aumente até o ato da venda.</p>
-
-            {{-- Barra: Comissão do Aparelho --}}
-            <div>
+            {{-- Barra: Comissão do Aparelho (só aparece com aparelho selecionado) --}}
+            <div x-show="productPrice > 0 && productCost > 0" x-transition>
+                <p class="text-[10px] text-dg-500 italic leading-tight mb-2">Pode alterar caso o preço de custo aumente até o ato da venda.</p>
                 <div class="flex items-center justify-between mb-1">
                     <span class="text-xs font-semibold text-dg-300 flex items-center gap-1">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
@@ -43,7 +42,7 @@
             </div>
 
             {{-- Seção: Acessórios --}}
-            <div class="border-t border-dashed pt-3" :class="commissionEstimate.total > 0 ? 'border-emerald-200' : 'border-amber-200'">
+            <div :class="productPrice > 0 && productCost > 0 ? 'border-t border-dashed pt-3 ' + (commissionEstimate.total > 0 ? 'border-emerald-200' : 'border-amber-200') : ''">
                 <div class="flex items-center gap-1.5 mb-2">
                     <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
                     <span class="text-xs font-semibold text-dg-300">Acessórios</span>
@@ -190,15 +189,4 @@
     </div>
 </div>
 
-{{-- Estado vazio: sem custo informado --}}
-<div x-show="productPrice > 0 && productCost <= 0" x-cloak
-     class="rounded-xl border border-border bg-surface-raised p-4">
-    <div class="flex items-center gap-2 mb-2">
-        <svg class="w-4 h-4 text-dg-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <span class="text-xs font-semibold text-dg-500">Comissão</span>
-    </div>
-    <p class="text-xs text-dg-500">Selecione um <strong>seminovo do estoque</strong> ou preencha o campo <strong>Custo</strong> para ver sua comissão estimada.</p>
-</div>
 @endif
