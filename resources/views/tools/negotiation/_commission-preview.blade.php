@@ -19,6 +19,7 @@
 
             {{-- Barra: Comissão do Aparelho (só aparece com aparelho selecionado) --}}
             <div x-show="productPrice > 0 && productCost > 0" x-transition>
+                @if(auth()->user()->canViewFinancials())
                 <p class="text-[10px] text-dg-500 italic leading-tight mb-2">Pode alterar caso o preço de custo aumente até o ato da venda.</p>
                 <div class="flex items-center justify-between mb-1">
                     <span class="text-xs font-semibold text-dg-300 flex items-center gap-1">
@@ -39,6 +40,16 @@
                           :class="((productPrice - productCost) / productCost) >= 0.17 ? 'text-emerald-600' : 'text-red-500'"
                           x-text="productCost > 0 ? (((productPrice - productCost) / productCost * 100).toFixed(0) + '% margem') : ''"></span>
                 </div>
+                @else
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-dg-300 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                        Comissão do aparelho
+                    </span>
+                    <span class="text-xs font-bold" :class="commissionEstimate.profit > 0 ? 'text-emerald-700' : 'text-dg-500'"
+                          x-text="commissionEstimate.profit > 0 ? '+R$ ' + fmt(commissionEstimate.profit) : 'R$ 0'"></span>
+                </div>
+                @endif
             </div>
 
             {{-- Seção: Acessórios --}}
@@ -158,11 +169,13 @@
                             <span class="text-[9px] text-dg-500">R$ 200</span>
                         </div>
                         <div class="mt-1.5 bg-surface rounded-md px-2 py-1.5 border border-border">
+                            @if(auth()->user()->canViewFinancials())
                             <div class="flex justify-between items-center">
                                 <span class="text-[10px] text-dg-500">Lucro:</span>
                                 <span class="text-[10px] font-bold text-emerald-400">R$ <span x-text="fmt(accessoryChargerPrice - 80)"></span></span>
                             </div>
-                            <div class="flex justify-between items-center mt-0.5">
+                            @endif
+                            <div class="flex justify-between items-center @if(auth()->user()->canViewFinancials()) mt-0.5 @endif">
                                 <span class="text-[10px] text-dg-500">Sua comissão:</span>
                                 <span class="text-xs font-black text-purple-500">+R$ <span x-text="fmt(commissionEstimate.chargerComm)"></span></span>
                             </div>
