@@ -10,6 +10,7 @@ use App\Domain\ConsignmentStock\Enums\ConsignmentStatus;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockMovement;
 use App\Domain\Product\Models\Product;
+use App\Domain\Product\Services\ProductService;
 use App\Domain\Stock\Services\StockService;
 use Illuminate\Support\Facades\DB;
 use App\Domain\ConsignmentStock\Services\ConsignmentExchangeService;
@@ -777,8 +778,11 @@ class ConsignmentStockController extends Controller
         }
 
         DB::transaction(function () use ($item, $request) {
+            $sku = app(ProductService::class)->generateSku('smartphone', $item->model ?? '');
+
             $product = Product::create([
                 'name' => $item->name,
+                'sku' => $sku,
                 'model' => $item->model,
                 'storage' => $item->storage,
                 'color' => $item->color,
