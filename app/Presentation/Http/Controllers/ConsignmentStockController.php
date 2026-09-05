@@ -786,7 +786,7 @@ class ConsignmentStockController extends Controller
                 'model' => $item->model,
                 'storage' => $item->storage,
                 'color' => $item->color,
-                'condition' => $item->condition,
+                'condition' => 'new',
                 'battery_health' => $item->battery_health,
                 'has_box' => $item->has_box,
                 'has_cable' => $item->has_cable,
@@ -817,7 +817,7 @@ class ConsignmentStockController extends Controller
             ]);
 
             ConsignmentStockMovement::create([
-                'consignment_stock_item_id' => $item->id,
+                'consignment_item_id' => $item->id,
                 'type' => ConsignmentMovementType::Out,
                 'quantity' => 1,
                 'reason' => 'Compra para estoque DG Store',
