@@ -214,6 +214,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/stock/consignment/{item}/history', [ConsignmentStockController::class, 'history'])->name('stock.consignment.history');
         Route::put('/stock/consignment/{item}', [ConsignmentStockController::class, 'update'])->name('stock.consignment.update');
         Route::post('/stock/consignment/{item}/return', [ConsignmentStockController::class, 'returnItem'])->name('stock.consignment.return');
+        Route::post('/stock/consignment/{item}/buy-for-dg', [ConsignmentStockController::class, 'buyForDG'])->name('stock.consignment.buy-for-dg');
         Route::get('/api/consignment/search', [ConsignmentStockController::class, 'search'])->name('stock.consignment.search');
         Route::get('/api/consignment/product-catalog', [ConsignmentStockController::class, 'productCatalog'])->name('stock.consignment.catalog');
         Route::get('/api/consignment/validate-imei', [ConsignmentStockController::class, 'validateImei'])->name('stock.consignment.validate-imei');

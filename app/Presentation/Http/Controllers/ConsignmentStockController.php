@@ -6,8 +6,11 @@ namespace App\Presentation\Http\Controllers;
 
 use App\Domain\ConsignmentStock\Config\StandardColors;
 use App\Domain\ConsignmentStock\Enums\ConsignmentMovementType;
+use App\Domain\ConsignmentStock\Enums\ConsignmentStatus;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockMovement;
+use App\Domain\Product\Models\Product;
+use App\Domain\Stock\Services\StockService;
 use Illuminate\Support\Facades\DB;
 use App\Domain\ConsignmentStock\Services\ConsignmentExchangeService;
 use App\Domain\ConsignmentStock\Services\ConsignmentStockService;
@@ -759,5 +762,67 @@ class ConsignmentStockController extends Controller
         return redirect()
             ->route('stock.consignment.index')
             ->with('success', "Entrada registrada! {$validated['quantity']} unidade(s) adicionada(s) ao item '{$item->full_name}'.");
+    }
+
+    public function buyForDG(Request $request, ConsignmentStockItem $item): RedirectResponse
+    {
+        $request->validate([
+            'cost_price' => ['required', 'numeric', 'min:0.01'],
+        ]);
+
+        if (! $item->isAvailable()) {
+            return redirect()
+                ->route('stock.consignment.index')
+                ->with('error', 'Este item não está disponível para compra.');
+        }
+
+        DB::transaction(function () use ($item, $request) {
+            $product = Product::create([
+                'name' => $item->name,
+                'model' => $item->model,
+                'storage' => $item->storage,
+                'color' => $item->color,
+                'condition' => $item->condition,
+                'battery_health' => $item->battery_health,
+                'has_box' => $item->has_box,
+                'has_cable' => $item->has_cable,
+                'imei' => $item->imei,
+                'imei2' => $item->imei2,
+                'serial_number' => $item->serial_number,
+                'model_number' => $item->model_number,
+                'part_number' => $item->part_number,
+                'cost_price' => $request->input('cost_price'),
+                'stock_quantity' => 0,
+                'category' => 'smartphone',
+                'supplier' => $item->supplier?->name,
+                'active' => true,
+            ]);
+
+            app(StockService::class)->registerEntry(
+                product: $product,
+                quantity: 1,
+                userId: auth()->id(),
+                reason: 'Compra de item consignado para estoque DG'
+            );
+
+            $item->update([
+                'status' => ConsignmentStatus::Sold,
+                'available_quantity' => 0,
+                'sold_at' => now(),
+                'product_id' => $product->id,
+            ]);
+
+            ConsignmentStockMovement::create([
+                'consignment_stock_item_id' => $item->id,
+                'type' => ConsignmentMovementType::Out,
+                'quantity' => 1,
+                'reason' => 'Compra para estoque DG Store',
+                'user_id' => auth()->id(),
+            ]);
+        });
+
+        return redirect()
+            ->route('stock.consignment.index')
+            ->with('success', "Item '{$item->name}' comprado e adicionado ao estoque DG com sucesso!");
     }
 }

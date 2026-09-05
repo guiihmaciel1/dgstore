@@ -346,6 +346,14 @@
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                                                         </svg>
                                                     </a>
+                                                    <button type="button" title="Comprar p/ DG"
+                                                            onclick="openBuyForDG('{{ $item->id }}', '{{ addslashes($item->name) }}', '{{ $item->supplier->name ?? '' }}', '{{ $item->imei ?? '' }}', '{{ $item->supplier_cost }}')"
+                                                            style="padding: 0.375rem; color: #10b981; background: none; border: none; cursor: pointer; border-radius: 0.25rem; display: inline-flex;"
+                                                            onmouseover="this.style.background='rgba(16,185,129,0.1)'" onmouseout="this.style.background='transparent'">
+                                                        <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
+                                                        </svg>
+                                                    </button>
                                                 @endif
                                                 <a href="{{ route('stock.consignment.history', $item) }}" title="Historico do item"
                                                    style="padding: 0.375rem; color: #818181; background: none; border: none; cursor: pointer; border-radius: 0.25rem; display: inline-flex;"
@@ -392,6 +400,64 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal: Comprar p/ DG --}}
+    <div id="buyForDGModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+        <div style="background:#1a1a1a; border:1px solid rgba(255,255,255,0.1); border-radius:0.75rem; padding:1.5rem; width:100%; max-width:420px; margin:1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+                <h3 style="font-size:1.125rem; font-weight:700; color:#e3e3e3;">Comprar p/ DG</h3>
+                <button onclick="closeBuyForDG()" style="background:none; border:none; color:#818181; cursor:pointer; font-size:1.25rem; line-height:1;">✕</button>
+            </div>
+
+            <div id="buyForDGInfo" style="background:#141414; border:1px solid rgba(255,255,255,0.06); border-radius:0.5rem; padding:0.75rem; margin-bottom:1rem;">
+                <div style="font-size:0.875rem; font-weight:600; color:#e3e3e3;" id="buyForDGName"></div>
+                <div style="font-size:0.75rem; color:#818181; margin-top:0.25rem;" id="buyForDGSupplier"></div>
+                <div style="font-size:0.75rem; color:#818181; margin-top:0.125rem;" id="buyForDGImei"></div>
+            </div>
+
+            <form id="buyForDGForm" method="POST">
+                @csrf
+                <div style="margin-bottom:1rem;">
+                    <label for="buy_cost_price" style="display:block; font-size:0.8125rem; font-weight:500; color:#a4a4a4; margin-bottom:0.375rem;">Preço de custo *</label>
+                    <div style="position:relative;">
+                        <span style="position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); font-size:0.875rem; color:#818181;">R$</span>
+                        <input type="number" id="buy_cost_price" name="cost_price" step="0.01" min="0.01" required
+                               style="width:100%; padding:0.625rem 0.75rem 0.625rem 2.5rem; background:#141414; border:1px solid rgba(255,255,255,0.1); border-radius:0.5rem; font-size:0.9375rem; color:#e3e3e3;">
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.75rem; justify-content:flex-end;">
+                    <button type="button" onclick="closeBuyForDG()"
+                            style="padding:0.625rem 1.25rem; background:#222; color:#a4a4a4; border:1px solid rgba(255,255,255,0.08); border-radius:0.5rem; cursor:pointer; font-size:0.875rem;">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            style="padding:0.625rem 1.25rem; background:linear-gradient(to right,#10b981,#059669); color:white; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600; font-size:0.875rem;">
+                        Confirmar compra
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openBuyForDG(itemId, name, supplier, imei, supplierCost) {
+            document.getElementById('buyForDGForm').action = '/stock/consignment/' + itemId + '/buy-for-dg';
+            document.getElementById('buyForDGName').textContent = name;
+            document.getElementById('buyForDGSupplier').textContent = 'Fornecedor: ' + supplier;
+            document.getElementById('buyForDGImei').textContent = imei ? 'IMEI: ' + imei : '';
+            document.getElementById('buyForDGImei').style.display = imei ? 'block' : 'none';
+            document.getElementById('buy_cost_price').value = supplierCost > 0 ? supplierCost : '';
+            document.getElementById('buyForDGModal').style.display = 'flex';
+        }
+
+        function closeBuyForDG() {
+            document.getElementById('buyForDGModal').style.display = 'none';
+        }
+
+        document.getElementById('buyForDGModal').addEventListener('click', function(e) {
+            if (e.target === this) closeBuyForDG();
+        });
+    </script>
 
     @include('stock.consignment.partials.entry-modal')
 
