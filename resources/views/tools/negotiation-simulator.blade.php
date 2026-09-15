@@ -380,12 +380,14 @@
 
             setSelection(preset) {
                 this.activePreset = preset;
+                const maxInst = Math.max(...this.cardResults.map(r => r.installments));
                 this.cardResults.forEach(r => {
+                    const isLast = r.installments === maxInst;
                     if (preset === 'all') r.selected = true;
-                    else if (preset === 'even') r.selected = r.installments % 2 === 0;
-                    else if (preset === 'up_to_12') r.selected = r.installments >= 2 && r.installments <= 12 && r.installments % 2 === 0;
-                    else if (preset === 'above_6') r.selected = r.installments >= 6 && r.installments % 2 === 0;
-                    else if (preset === 'above_10') r.selected = r.installments >= 10 && r.installments % 2 === 0;
+                    else if (preset === 'even') r.selected = r.installments % 2 === 0 || isLast;
+                    else if (preset === 'up_to_12') r.selected = (r.installments >= 2 && r.installments <= 12 && r.installments % 2 === 0) || isLast;
+                    else if (preset === 'above_6') r.selected = (r.installments >= 6 && r.installments % 2 === 0) || isLast;
+                    else if (preset === 'above_10') r.selected = (r.installments >= 10 && r.installments % 2 === 0) || isLast;
                 });
             },
 

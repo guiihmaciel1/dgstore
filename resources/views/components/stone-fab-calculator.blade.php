@@ -547,12 +547,14 @@ function stoneFabCalc() {
         },
 
         get filteredResults() {
+            const maxInst = this.results.length ? Math.max(...this.results.map(r => r.installments)) : 0;
             return this.results.filter(r => {
+                const isLast = r.installments === maxInst;
                 if (this.filter === 'all') return true;
-                if (this.filter === 'even') return r.installments % 2 === 0;
-                if (this.filter === 'up_to_12') return r.installments <= 12;
-                if (this.filter === 'above_6') return r.installments >= 6;
-                if (this.filter === 'above_10') return r.installments >= 10;
+                if (this.filter === 'even') return r.installments % 2 === 0 || isLast;
+                if (this.filter === 'up_to_12') return r.installments <= 12 || isLast;
+                if (this.filter === 'above_6') return r.installments >= 6 || isLast;
+                if (this.filter === 'above_10') return r.installments >= 10 || isLast;
                 return true;
             });
         },
