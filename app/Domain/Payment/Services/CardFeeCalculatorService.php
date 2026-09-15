@@ -16,7 +16,7 @@ class CardFeeCalculatorService
      * Regra Stone: Taxa MDR é desconto sobre o bruto (cliente assume a taxa)
      * Fórmula: liquido = bruto * (1 - taxaDecimal)
      * Gross-up: bruto = liquido / (1 - taxaDecimal)
-     * Arredondamento: Math.round por parcela para evitar diferenças de centavos
+     * Truncamento: floor por parcela (padrão Stone) para bater com a maquininha
      * 
      * @param float $netDesired Valor líquido que o lojista deseja receber
      * @param string $type 'credit'
@@ -65,11 +65,11 @@ class CardFeeCalculatorService
         $divisor = bcsub('1', $taxaDecimal, 4); // (1 - taxa)
         $brutoBcmath = bcdiv($netStr, $divisor, 4);
 
-        // Calcula valor por parcela e arredonda
+        // Calcula valor por parcela e trunca (floor) — padrão Stone
         $parcelaBruta = bcdiv($brutoBcmath, (string) $installments, 4);
-        $parcelaArredondada = round((float) $parcelaBruta, 2);
+        $parcelaArredondada = floor((float) $parcelaBruta * 100) / 100;
 
-        // Valor bruto final = parcela arredondada * número de parcelas
+        // Valor bruto final = parcela truncada * número de parcelas
         $grossAmount = $parcelaArredondada * $installments;
         
         // Taxa cobrada

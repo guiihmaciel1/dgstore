@@ -49,9 +49,9 @@ class CardFeeCalculatorServiceTest extends TestCase
         $this->assertEquals(12, $result->installments);
         $this->assertEquals(11.05, $result->mdrRate);
         $this->assertEquals(1000.00, $result->netAmount);
-        $this->assertEquals(1124.28, $result->grossAmount);
-        $this->assertEquals(124.28, $result->feeAmount);
-        $this->assertEquals(93.69, $result->installmentValue);
+        $this->assertEquals(1124.16, $result->grossAmount);
+        $this->assertEquals(124.16, $result->feeAmount);
+        $this->assertEquals(93.68, $result->installmentValue);
     }
 
     public function test_credit_1x_calculation(): void
@@ -71,8 +71,8 @@ class CardFeeCalculatorServiceTest extends TestCase
 
         $this->assertEquals(6, $result->installments);
         $this->assertEquals(6.78, $result->mdrRate);
-        $this->assertEquals(1072.74, $result->grossAmount);
-        $this->assertEquals(178.79, $result->installmentValue);
+        $this->assertEquals(1072.68, $result->grossAmount);
+        $this->assertEquals(178.78, $result->installmentValue);
     }
 
     public function test_credit_18x_calculation(): void
