@@ -973,7 +973,7 @@
                                                             x-model.number="card.installments"
                                                             @change="calculateCardFee(cardIndex)"
                                                             style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; background: #141414;">
-                                                        @for($i = 1; $i <= 18; $i++)
+                                                        @for($i = 1; $i <= 21; $i++)
                                                             <option value="{{ $i }}">{{ $i }}x</option>
                                                         @endfor
                                                     </select>

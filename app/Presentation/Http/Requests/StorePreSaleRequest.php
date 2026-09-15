@@ -55,7 +55,7 @@ class StorePreSaleRequest extends FormRequest
 
             // Pagamento do saldo
             'payment_method' => ['required', 'in:pix,cash,credit_card'],
-            'installments' => ['nullable', 'required_if:payment_method,credit_card', 'integer', 'min:1', 'max:18'],
+            'installments' => ['nullable', 'required_if:payment_method,credit_card', 'integer', 'min:1', 'max:21'],
             'card_gross_amount' => ['nullable', 'numeric', 'min:0'],
             'card_net_amount' => ['nullable', 'numeric', 'min:0'],
             'card_fee_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -131,7 +131,7 @@ class StorePreSaleRequest extends FormRequest
             'down_payment.min' => 'O sinal mínimo é de R$ 50,00.',
             'down_payment.required' => 'O sinal é obrigatório.',
             'installments.required_if' => 'Informe o número de parcelas para pagamento no cartão.',
-            'installments.max' => 'O máximo de parcelas é 18x.',
+            'installments.max' => 'O máximo de parcelas é 21x.',
             'customer_name.required_without' => 'Informe o nome do cliente.',
             'customer_phone.required_without' => 'Informe o telefone do cliente.',
             'unit_price.required' => 'Informe o preço de venda.',

@@ -20,7 +20,7 @@ class CardFeeCalculatorService
      * 
      * @param float $netDesired Valor líquido que o lojista deseja receber
      * @param string $type 'credit'
-     * @param int $installments Número de parcelas (1-18)
+     * @param int $installments Número de parcelas (1-21)
      * @return CardFeeCalculationResult
      * @throws InvalidArgumentException
      */
@@ -34,8 +34,8 @@ class CardFeeCalculatorService
             throw new InvalidArgumentException('Tipo de pagamento inválido. Use "credit"');
         }
 
-        if ($installments < 1 || $installments > 18) {
-            throw new InvalidArgumentException('Número de parcelas deve estar entre 1 e 18');
+        if ($installments < 1 || $installments > 21) {
+            throw new InvalidArgumentException('Número de parcelas deve estar entre 1 e 21');
         }
 
         // Busca a taxa MDR (com fallback se banco não disponível)
@@ -87,7 +87,7 @@ class CardFeeCalculatorService
     }
 
     /**
-     * Calcula todas as opções de pagamento disponíveis (débito + crédito 1x-18x)
+     * Calcula todas as opções de pagamento disponíveis (crédito 1x-21x)
      * 
      * @param float $netDesired Valor líquido que o lojista deseja receber
      * @return array Array de CardFeeCalculationResult
@@ -96,7 +96,7 @@ class CardFeeCalculatorService
     {
         $results = [];
 
-        for ($i = 1; $i <= 18; $i++) {
+        for ($i = 1; $i <= 21; $i++) {
             try {
                 $results[] = $this->calculateGrossAmount($netDesired, 'credit', $i);
             } catch (InvalidArgumentException $e) {
@@ -155,9 +155,10 @@ class CardFeeCalculatorService
         }
 
         $creditRates = [
-            1 => 3.69, 2 => 4.99, 3 => 5.99, 4 => 6.89, 5 => 7.69, 6 => 8.09,
-            7 => 9.09, 8 => 9.19, 9 => 9.49, 10 => 9.49, 11 => 10.47, 12 => 10.49,
-            13 => 13.25, 14 => 13.97, 15 => 14.69, 16 => 15.41, 17 => 16.13, 18 => 16.85,
+            1  => 2.81,  2  => 3.88,  3  => 4.57,  4  => 5.26,  5  => 5.94,  6  => 6.63,
+            7  => 7.47,  8  => 8.16,  9  => 8.84,  10 => 9.53,  11 => 10.21, 12 => 10.90,
+            13 => 11.59, 14 => 12.27, 15 => 12.96, 16 => 13.64, 17 => 14.33, 18 => 15.02,
+            19 => 15.70, 20 => 16.39, 21 => 17.08,
         ];
 
         return $creditRates[$installments] ?? null;

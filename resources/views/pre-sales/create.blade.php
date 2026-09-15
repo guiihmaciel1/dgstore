@@ -489,7 +489,7 @@
                                         <select name="installments" x-model="installments" @change="calculateCardFee()"
                                                 style="width: 100%; padding: 0.75rem 1rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #e3e3e3; font-size: 0.875rem;">
                                             <option value="">Selecione</option>
-                                            <template x-for="i in 18" :key="i">
+                                            <template x-for="i in 21" :key="i">
                                                 <option :value="i" x-text="i + 'x'"></option>
                                             </template>
                                         </select>

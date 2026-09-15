@@ -27,7 +27,7 @@ class CardFeeController
         $validator = Validator::make($request->all(), [
             'net_amount' => 'required|numeric|min:0.01',
             'payment_type' => 'required|in:credit',
-            'installments' => 'required|integer|min:1|max:18',
+            'installments' => 'required|integer|min:1|max:21',
         ], [
             'net_amount.required' => 'O valor líquido é obrigatório',
             'net_amount.numeric' => 'O valor líquido deve ser numérico',
@@ -37,7 +37,7 @@ class CardFeeController
             'installments.required' => 'O número de parcelas é obrigatório',
             'installments.integer' => 'O número de parcelas deve ser um inteiro',
             'installments.min' => 'O número de parcelas deve ser no mínimo 1',
-            'installments.max' => 'O número de parcelas deve ser no máximo 18',
+            'installments.max' => 'O número de parcelas deve ser no máximo 21',
         ]);
 
         if ($validator->fails()) {

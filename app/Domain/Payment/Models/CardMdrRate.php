@@ -36,7 +36,7 @@ class CardMdrRate extends Model
      * Busca a taxa MDR para um tipo de pagamento e parcelas específicos
      * 
      * @param string $type 'debit' ou 'credit'
-     * @param int $installments Número de parcelas (1-18)
+     * @param int $installments Número de parcelas (1-21)
      * @return float|null Taxa MDR em percentual (ex: 9.99)
      */
     public static function getRateFor(string $type, int $installments): ?float
