@@ -95,8 +95,14 @@
                                     <th class="px-4 py-3 font-medium text-dg-500">Marca</th>
                                     <th class="px-4 py-3 font-medium text-dg-500 text-center">Gênero</th>
                                     <th class="px-4 py-3 font-medium text-dg-500 text-center">Nota</th>
-                                    <th class="px-4 py-3 font-medium text-dg-500 text-right">Preço</th>
-                                    <th class="px-4 py-3 font-medium text-dg-500 text-center">Estoque</th>
+                                    <th class="px-4 py-3 font-medium text-dg-500 text-right">De <span class="text-dg-600">(fake)</span></th>
+                                    <th class="px-4 py-3 font-medium text-dg-500 text-right">10x</th>
+                                    <th class="px-4 py-3 font-medium text-dg-500 text-right">PIX</th>
+                                    @if(auth()->user()->isAdmin())
+                                        <th class="px-4 py-3 font-medium text-dg-500 text-right">Custo</th>
+                                        <th class="px-4 py-3 font-medium text-dg-500 text-right">Lucro</th>
+                                    @endif
+                                    <th class="px-4 py-3 font-medium text-dg-500 text-center">Estq</th>
                                     <th class="px-4 py-3 font-medium text-dg-500 text-center">Status</th>
                                     <th class="px-4 py-3 font-medium text-dg-500 text-right">Ações</th>
                                 </tr>
@@ -137,13 +143,57 @@
                                                 <span class="text-dg-600">—</span>
                                             @endif
                                         </td>
+                                        {{-- De (fake) --}}
                                         <td class="px-4 py-3 text-right">
-                                            @if($f->sale_price)
-                                                <span class="text-emerald-400 font-medium">R$ {{ number_format($f->sale_price, 2, ',', '.') }}</span>
+                                            @if($f->original_price)
+                                                <span class="text-dg-500 line-through text-xs">R$ {{ number_format($f->original_price, 0, ',', '.') }}</span>
                                             @else
-                                                <span class="text-dg-600 text-xs">Não definido</span>
+                                                <span class="text-dg-700">—</span>
                                             @endif
                                         </td>
+                                        {{-- 10x --}}
+                                        <td class="px-4 py-3 text-right">
+                                            @if($f->sale_price)
+                                                <span class="text-dg-200 font-medium">R$ {{ number_format($f->sale_price, 0, ',', '.') }}</span>
+                                            @else
+                                                <span class="text-dg-700">—</span>
+                                            @endif
+                                        </td>
+                                        {{-- PIX --}}
+                                        <td class="px-4 py-3 text-right">
+                                            @if($f->pix_price)
+                                                <span class="text-emerald-400 font-medium">R$ {{ number_format($f->pix_price, 0, ',', '.') }}</span>
+                                            @else
+                                                <span class="text-dg-700">—</span>
+                                            @endif
+                                        </td>
+                                        @if(auth()->user()->isAdmin())
+                                            {{-- Custo --}}
+                                            <td class="px-4 py-3 text-right">
+                                                @if($f->cost_price)
+                                                    <span class="text-dg-400 text-xs">R$ {{ number_format($f->total_cost, 0, ',', '.') }}</span>
+                                                @else
+                                                    <span class="text-dg-700">—</span>
+                                                @endif
+                                            </td>
+                                            {{-- Lucro --}}
+                                            <td class="px-4 py-3 text-right">
+                                                @if($f->pix_price && $f->cost_price)
+                                                    @php $lucro = (float)$f->pix_price - $f->total_cost; @endphp
+                                                    <div>
+                                                        <span class="{{ $lucro >= 0 ? 'text-emerald-400' : 'text-red-400' }} font-medium text-xs">
+                                                            R$ {{ number_format($lucro, 0, ',', '.') }}
+                                                        </span>
+                                                    </div>
+                                                    @if($f->profit_margin !== null)
+                                                        <span class="text-dg-600 text-[10px]">{{ number_format($f->profit_margin, 0) }}%</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-dg-700">—</span>
+                                                @endif
+                                            </td>
+                                        @endif
+                                        {{-- Estoque --}}
                                         <td class="px-4 py-3 text-center">
                                             <span class="{{ $f->stock_quantity > 0 ? 'text-emerald-400' : 'text-dg-600' }}">{{ $f->stock_quantity }}</span>
                                         </td>

@@ -106,37 +106,39 @@
                     <form method="POST" action="{{ route('fragrances.update', $fragrance) }}">
                         @csrf @method('PUT')
 
-                        <div class="grid grid-cols-2 gap-4">
-                            {{-- Custo --}}
-                            <div>
-                                <label class="block text-xs font-medium text-dg-500 mb-1">Valor de Custo (R$)</label>
-                                <input type="number" name="cost_price" step="0.01" min="0"
-                                       x-model="costPrice" placeholder="0,00"
-                                       class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
-                                @error('cost_price') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                        @if(auth()->user()->isAdmin())
+                            <div class="grid grid-cols-2 gap-4">
+                                {{-- Custo --}}
+                                <div>
+                                    <label class="block text-xs font-medium text-dg-500 mb-1">Valor de Custo (R$)</label>
+                                    <input type="number" name="cost_price" step="0.01" min="0"
+                                           x-model="costPrice" placeholder="0,00"
+                                           class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
+                                    @error('cost_price') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                                </div>
+
+                                {{-- Frete % --}}
+                                <div>
+                                    <label class="block text-xs font-medium text-dg-500 mb-1">Taxa de Frete (%)</label>
+                                    <input type="number" name="shipping_rate_percent" step="0.01" min="0" max="100"
+                                           x-model="shippingRate" placeholder="0"
+                                           class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
+                                    @error('shipping_rate_percent') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                                </div>
                             </div>
 
-                            {{-- Frete % --}}
-                            <div>
-                                <label class="block text-xs font-medium text-dg-500 mb-1">Taxa de Frete (%)</label>
-                                <input type="number" name="shipping_rate_percent" step="0.01" min="0" max="100"
-                                       x-model="shippingRate" placeholder="0"
-                                       class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
-                                @error('shipping_rate_percent') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                            {{-- Custo total calculado --}}
+                            <div class="mt-3 p-3 rounded-lg bg-surface-overlay space-y-1">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-dg-500">Frete</span>
+                                    <span class="text-dg-400" x-text="'R$ ' + shippingValue.toFixed(2).replace('.', ',')"></span>
+                                </div>
+                                <div class="flex justify-between text-xs font-medium">
+                                    <span class="text-dg-400">Custo Total</span>
+                                    <span class="text-dg-200" x-text="'R$ ' + totalCost.toFixed(2).replace('.', ',')"></span>
+                                </div>
                             </div>
-                        </div>
-
-                        {{-- Custo total calculado --}}
-                        <div class="mt-3 p-3 rounded-lg bg-surface-overlay space-y-1">
-                            <div class="flex justify-between text-xs">
-                                <span class="text-dg-500">Frete</span>
-                                <span class="text-dg-400" x-text="'R$ ' + shippingValue.toFixed(2).replace('.', ',')"></span>
-                            </div>
-                            <div class="flex justify-between text-xs font-medium">
-                                <span class="text-dg-400">Custo Total</span>
-                                <span class="text-dg-200" x-text="'R$ ' + totalCost.toFixed(2).replace('.', ',')"></span>
-                            </div>
-                        </div>
+                        @endif
 
                         <div class="grid grid-cols-2 gap-4 mt-4">
                             {{-- Preço PIX --}}
@@ -260,7 +262,8 @@
                         </div>
                     </div>
 
-                    {{-- Resumo financeiro --}}
+                    {{-- Resumo financeiro (só admin) --}}
+                    @if(auth()->user()->isAdmin())
                     <div class="mt-5 pt-4 border-t border-white/10 grid grid-cols-2 md:grid-cols-4 gap-4" x-show="totalCost > 0">
                         <div class="text-center p-3 rounded-lg bg-white/5">
                             <span class="block text-xs text-dg-500">Custo Total</span>
@@ -279,6 +282,7 @@
                             <span class="block text-sm font-bold text-dg-300 mt-1" x-text="markup.toFixed(1).replace('.', ',') + 'x'"></span>
                         </div>
                     </div>
+                    @endif
                 </div>
             </div>
 
