@@ -102,7 +102,18 @@ class FragranceController extends Controller
 
     public function update(UpdateFragranceRequest $request, FragranceProduct $fragrance): RedirectResponse
     {
-        $fragrance->update($request->validated());
+        $data = $request->validated();
+
+        $pixPrice = (float) ($data['pix_price'] ?? 0);
+        $discountPercent = (int) ($data['pix_discount_percent'] ?? 10);
+
+        if ($pixPrice > 0) {
+            $data['sale_price'] = FragranceProduct::calculateInstallmentPrice($pixPrice, $discountPercent);
+        } else {
+            $data['sale_price'] = null;
+        }
+
+        $fragrance->update($data);
 
         return redirect()
             ->route('fragrances.edit', $fragrance)

@@ -69,8 +69,13 @@
                         @if($product->brand)
                             <p class="text-xs text-gray-500 mt-1">{{ $product->brand }}</p>
                         @endif
-                        @if($product->sale_price)
-                            <p class="mt-2 text-base font-bold text-pink-400">R$ {{ number_format($product->sale_price, 2, ',', '.') }}</p>
+                        @if($product->sale_price && $product->pix_price)
+                            <div class="mt-2">
+                                <p class="text-sm font-bold text-white">R$ {{ number_format($product->sale_price, 0, ',', '.') }} <span class="text-[10px] font-normal text-gray-400">10x s/ juros</span></p>
+                                <p class="text-xs text-green-400">R$ {{ number_format($product->pix_price, 2, ',', '.') }} <span class="text-green-500/70">no PIX</span></p>
+                            </div>
+                        @elseif($product->pix_price)
+                            <p class="mt-2 text-base font-bold text-green-400">R$ {{ number_format($product->pix_price, 2, ',', '.') }}</p>
                         @endif
 
                         {{-- Mini acordes --}}

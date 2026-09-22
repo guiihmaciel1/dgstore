@@ -127,36 +127,80 @@
                     @endif
                 </div>
 
-                {{-- Coluna direita: Form de preço/estoque --}}
-                <div class="space-y-6">
+                {{-- Coluna direita: Precificação --}}
+                <div class="space-y-6" x-data="pricingCalculator()">
+                    {{-- Card de Precificação --}}
                     <div style="background: #141414; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.06);" class="p-6">
-                        <h3 class="text-sm font-semibold text-dg-300 mb-4">Preço e Estoque</h3>
+                        <h3 class="text-sm font-semibold text-dg-300 mb-4">Precificação</h3>
 
                         <form method="POST" action="{{ route('fragrances.update', $fragrance) }}">
                             @csrf @method('PUT')
 
                             <div class="space-y-4">
+                                {{-- Custo --}}
                                 <div>
-                                    <label class="block text-xs font-medium text-dg-500 mb-1">Preço de Venda (R$)</label>
-                                    <input type="number" name="sale_price" step="0.01" min="0"
-                                           value="{{ old('sale_price', $fragrance->sale_price) }}"
+                                    <label class="block text-xs font-medium text-dg-500 mb-1">Valor de Custo (R$)</label>
+                                    <input type="number" name="cost_price" step="0.01" min="0"
+                                           x-model="costPrice"
                                            placeholder="0,00"
                                            class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
-                                    @error('sale_price')
-                                        <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
-                                    @enderror
+                                    @error('cost_price') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
                                 </div>
 
+                                {{-- Frete --}}
+                                <div>
+                                    <label class="block text-xs font-medium text-dg-500 mb-1">Taxa de Frete (R$)</label>
+                                    <input type="number" name="shipping_cost" step="0.01" min="0"
+                                           x-model="shippingCost"
+                                           placeholder="0,00"
+                                           class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
+                                    @error('shipping_cost') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                                </div>
+
+                                {{-- Custo total (auto) --}}
+                                <div class="pt-2 border-t border-white/5">
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-dg-500">Custo Total</span>
+                                        <span class="text-dg-300 font-medium" x-text="'R$ ' + totalCost.toFixed(2).replace('.', ',')"></span>
+                                    </div>
+                                </div>
+
+                                <div class="pt-2 border-t border-white/5"></div>
+
+                                {{-- Preço à vista PIX --}}
+                                <div>
+                                    <label class="block text-xs font-medium text-dg-500 mb-1">
+                                        Preço à Vista no PIX (R$)
+                                        <span class="text-dg-600">— valor final que você recebe</span>
+                                    </label>
+                                    <input type="number" name="pix_price" step="0.01" min="0"
+                                           x-model="pixPrice"
+                                           placeholder="0,00"
+                                           class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
+                                    @error('pix_price') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                                </div>
+
+                                {{-- Desconto PIX % --}}
+                                <div>
+                                    <label class="block text-xs font-medium text-dg-500 mb-1">Desconto PIX (%)</label>
+                                    <input type="number" name="pix_discount_percent" min="1" max="30"
+                                           x-model="pixDiscount"
+                                           class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
+                                    @error('pix_discount_percent') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                                </div>
+
+                                <div class="pt-2 border-t border-white/5"></div>
+
+                                {{-- Estoque --}}
                                 <div>
                                     <label class="block text-xs font-medium text-dg-500 mb-1">Quantidade em Estoque</label>
                                     <input type="number" name="stock_quantity" min="0"
                                            value="{{ old('stock_quantity', $fragrance->stock_quantity) }}"
                                            class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
-                                    @error('stock_quantity')
-                                        <p class="mt-1 text-xs text-red-400">{{ $message }}</p>
-                                    @enderror
+                                    @error('stock_quantity') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
                                 </div>
 
+                                {{-- Ordem --}}
                                 <div>
                                     <label class="block text-xs font-medium text-dg-500 mb-1">Ordem de exibição</label>
                                     <input type="number" name="sort_order" min="0"
@@ -164,6 +208,7 @@
                                            class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
                                 </div>
 
+                                {{-- Ativo --}}
                                 <div class="flex items-center gap-2">
                                     <input type="hidden" name="active" value="0">
                                     <input type="checkbox" name="active" value="1" id="active"
@@ -178,6 +223,61 @@
                                 </button>
                             </div>
                         </form>
+                    </div>
+
+                    {{-- Preview do preço para o catálogo --}}
+                    <div style="border-radius: 1rem; border: 2px solid rgba(236,72,153,0.3); background: linear-gradient(135deg, rgba(236,72,153,0.05), rgba(168,85,247,0.05));" class="p-6"
+                         x-show="pixPrice > 0" x-cloak>
+                        <h3 class="text-sm font-semibold text-pink-400 mb-4 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            Preview do Catálogo
+                        </h3>
+
+                        <div class="text-center space-y-2">
+                            <div>
+                                <span class="text-2xl font-bold text-white" x-text="'R$ ' + installmentPrice"></span>
+                                <span class="text-sm text-dg-400"> em até </span>
+                                <span class="text-lg font-bold text-white">10x</span>
+                                <span class="text-sm text-dg-400"> sem juros</span>
+                            </div>
+
+                            <div class="text-sm text-dg-500">
+                                <span class="text-xs">de </span>
+                                <span class="text-xs text-dg-600 line-through" x-text="'R$ ' + installmentPrice"></span>
+                            </div>
+
+                            <div class="text-sm text-dg-400">ou</div>
+
+                            <div>
+                                <span class="text-xl font-bold text-green-400" x-text="'R$ ' + pixFormatted"></span>
+                                <span class="text-sm text-dg-400"> à vista no </span>
+                                <span class="font-bold text-green-400">PIX</span>
+                            </div>
+                            <div class="text-xs text-green-500/80">
+                                com <span class="font-bold" x-text="pixDiscount + '%'"></span> de desconto
+                            </div>
+
+                            <div class="text-xs text-dg-600 mt-2" x-text="'Parcela: 10x de R$ ' + installmentValue"></div>
+                        </div>
+
+                        {{-- Margem --}}
+                        <div class="mt-4 pt-4 border-t border-white/5 space-y-1" x-show="totalCost > 0">
+                            <div class="flex justify-between text-xs">
+                                <span class="text-dg-500">Custo Total</span>
+                                <span class="text-dg-400" x-text="'R$ ' + totalCost.toFixed(2).replace('.', ',')"></span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-dg-500">Lucro (PIX)</span>
+                                <span :class="profit >= 0 ? 'text-green-400' : 'text-red-400'" x-text="'R$ ' + profit.toFixed(2).replace('.', ',')"></span>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span class="text-dg-500">Margem</span>
+                                <span :class="marginPercent >= 0 ? 'text-green-400' : 'text-red-400'" x-text="marginPercent.toFixed(1).replace('.', ',') + '%'"></span>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Info card --}}
@@ -245,4 +345,57 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function pricingCalculator() {
+            const MDR_10X = 0.0968;
+
+            return {
+                costPrice: {{ old('cost_price', $fragrance->cost_price ?? 0) }},
+                shippingCost: {{ old('shipping_cost', $fragrance->shipping_cost ?? 0) }},
+                pixPrice: {{ old('pix_price', $fragrance->pix_price ?? 0) }},
+                pixDiscount: {{ old('pix_discount_percent', $fragrance->pix_discount_percent ?? 10) }},
+
+                get totalCost() {
+                    return parseFloat(this.costPrice || 0) + parseFloat(this.shippingCost || 0);
+                },
+
+                get grossUp() {
+                    const pix = parseFloat(this.pixPrice || 0);
+                    if (pix <= 0) return 0;
+                    return pix / (1 - MDR_10X);
+                },
+
+                get installmentPriceRaw() {
+                    return Math.ceil(this.grossUp / 10) * 10;
+                },
+
+                get installmentPrice() {
+                    return this.installmentPriceRaw.toLocaleString('pt-BR');
+                },
+
+                get installmentValue() {
+                    const raw = this.installmentPriceRaw / 10;
+                    return raw.toFixed(2).replace('.', ',');
+                },
+
+                get pixFormatted() {
+                    const pix = parseFloat(this.pixPrice || 0);
+                    return pix.toFixed(2).replace('.', ',');
+                },
+
+                get profit() {
+                    return parseFloat(this.pixPrice || 0) - this.totalCost;
+                },
+
+                get marginPercent() {
+                    const pix = parseFloat(this.pixPrice || 0);
+                    if (pix <= 0 || this.totalCost <= 0) return 0;
+                    return ((pix - this.totalCost) / pix) * 100;
+                },
+            };
+        }
+    </script>
+    @endpush
 </x-app-layout>

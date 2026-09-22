@@ -16,21 +16,27 @@ class UpdateFragranceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'sale_price'     => ['nullable', 'numeric', 'min:0'],
-            'stock_quantity' => ['required', 'integer', 'min:0'],
-            'active'         => ['boolean'],
-            'sort_order'     => ['integer', 'min:0'],
+            'cost_price'           => ['nullable', 'numeric', 'min:0'],
+            'shipping_cost'        => ['nullable', 'numeric', 'min:0'],
+            'pix_price'            => ['nullable', 'numeric', 'min:0'],
+            'pix_discount_percent' => ['required', 'integer', 'min:1', 'max:30'],
+            'stock_quantity'       => ['required', 'integer', 'min:0'],
+            'active'               => ['boolean'],
+            'sort_order'           => ['integer', 'min:0'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'sale_price.numeric'      => 'O preço deve ser um número válido.',
-            'sale_price.min'          => 'O preço não pode ser negativo.',
-            'stock_quantity.required' => 'Informe a quantidade em estoque.',
-            'stock_quantity.integer'  => 'A quantidade deve ser um número inteiro.',
-            'stock_quantity.min'      => 'A quantidade não pode ser negativa.',
+            'cost_price.numeric'             => 'O custo deve ser um número válido.',
+            'shipping_cost.numeric'          => 'O frete deve ser um número válido.',
+            'pix_price.numeric'              => 'O preço PIX deve ser um número válido.',
+            'pix_discount_percent.required'  => 'Informe o percentual de desconto PIX.',
+            'pix_discount_percent.min'       => 'O desconto deve ser pelo menos 1%.',
+            'pix_discount_percent.max'       => 'O desconto não pode ultrapassar 30%.',
+            'stock_quantity.required'        => 'Informe a quantidade em estoque.',
+            'stock_quantity.integer'         => 'A quantidade deve ser um número inteiro.',
         ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Fragrance\Models;
 
 use App\Domain\Fragrance\Enums\FragranceGender;
+use App\Domain\Payment\Services\CardFeeCalculatorService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
@@ -31,7 +32,11 @@ class FragranceProduct extends Model
         'brand_logo_url',
         'rating',
         'votes_count',
+        'cost_price',
+        'shipping_cost',
         'sale_price',
+        'pix_price',
+        'pix_discount_percent',
         'stock_quantity',
         'seasons',
         'day_night',
@@ -43,17 +48,21 @@ class FragranceProduct extends Model
     protected function casts(): array
     {
         return [
-            'gender'         => FragranceGender::class,
-            'rating'         => 'decimal:2',
-            'sale_price'     => 'decimal:2',
-            'votes_count'    => 'integer',
-            'stock_quantity' => 'integer',
-            'seasons'        => 'array',
-            'day_night'      => 'array',
-            'active'         => 'boolean',
-            'sort_order'     => 'integer',
-            'scraped_at'     => 'datetime',
-            'year'           => 'integer',
+            'gender'               => FragranceGender::class,
+            'rating'               => 'decimal:2',
+            'cost_price'           => 'decimal:2',
+            'shipping_cost'        => 'decimal:2',
+            'sale_price'           => 'decimal:2',
+            'pix_price'            => 'decimal:2',
+            'pix_discount_percent' => 'integer',
+            'votes_count'          => 'integer',
+            'stock_quantity'       => 'integer',
+            'seasons'              => 'array',
+            'day_night'            => 'array',
+            'active'               => 'boolean',
+            'sort_order'           => 'integer',
+            'scraped_at'           => 'datetime',
+            'year'                 => 'integer',
         ];
     }
 
@@ -138,5 +147,59 @@ class FragranceProduct extends Model
         $empty = 5 - $full - $half;
 
         return str_repeat('★', $full) . str_repeat('½', $half) . str_repeat('☆', $empty);
+    }
+
+    /**
+     * Custo total = custo do produto + frete.
+     */
+    public function getTotalCostAttribute(): float
+    {
+        return (float) ($this->cost_price ?? 0) + (float) ($this->shipping_cost ?? 0);
+    }
+
+    /**
+     * Margem de lucro em % sobre o preço à vista PIX.
+     */
+    public function getProfitMarginAttribute(): ?float
+    {
+        $pix = (float) ($this->pix_price ?? 0);
+        $cost = $this->total_cost;
+
+        if ($pix <= 0 || $cost <= 0) {
+            return null;
+        }
+
+        return round((($pix - $cost) / $pix) * 100, 1);
+    }
+
+    /**
+     * Calcula o valor em 10x sem juros (valor redondo)
+     * usando a calculadora Stone para gross-up da taxa MDR.
+     */
+    public static function calculateInstallmentPrice(float $pixPrice, int $discountPercent = 10): ?int
+    {
+        if ($pixPrice <= 0) {
+            return null;
+        }
+
+        try {
+            $calculator = app(CardFeeCalculatorService::class);
+            $result = $calculator->calculateGrossAmount($pixPrice, 'credit', 10);
+            $gross = $result->grossAmount;
+        } catch (\Throwable) {
+            $gross = $pixPrice / (1 - 0.0968);
+        }
+
+        return (int) (ceil($gross / 10) * 10);
+    }
+
+    /**
+     * Parcela mensal no cartão (sale_price / 10).
+     */
+    public function getInstallmentValueAttribute(): ?float
+    {
+        $price = (float) ($this->sale_price ?? 0);
+
+        return $price > 0 ? round($price / 10, 2) : null;
     }
 }

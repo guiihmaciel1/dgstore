@@ -83,9 +83,28 @@
                     </div>
                 @endif
 
-                @if($fragrance->sale_price)
+                @if($fragrance->sale_price && $fragrance->pix_price)
+                    <div class="mt-5 space-y-1">
+                        <div>
+                            <span class="text-3xl font-bold text-white">R$ {{ number_format($fragrance->sale_price, 0, ',', '.') }}</span>
+                            <span class="text-sm text-gray-400"> em até </span>
+                            <span class="text-lg font-bold text-white">10x</span>
+                            <span class="text-sm text-gray-400"> sem juros</span>
+                        </div>
+                        <div class="text-sm text-gray-500">ou</div>
+                        <div>
+                            <span class="text-2xl font-bold text-green-400">R$ {{ number_format($fragrance->pix_price, 2, ',', '.') }}</span>
+                            <span class="text-sm text-gray-400"> à vista no </span>
+                            <span class="font-bold text-green-400">PIX</span>
+                        </div>
+                        <div class="text-xs text-green-500/70">
+                            com {{ $fragrance->pix_discount_percent }}% de desconto
+                        </div>
+                    </div>
+                @elseif($fragrance->pix_price)
                     <div class="mt-5">
-                        <span class="text-3xl font-bold text-pink-400">R$ {{ number_format($fragrance->sale_price, 2, ',', '.') }}</span>
+                        <span class="text-3xl font-bold text-green-400">R$ {{ number_format($fragrance->pix_price, 2, ',', '.') }}</span>
+                        <span class="text-sm text-gray-400"> à vista no PIX</span>
                     </div>
                 @endif
 
