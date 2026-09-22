@@ -56,6 +56,13 @@
 
                 <h1 class="text-2xl md:text-3xl font-bold perfume-text-cream">{{ $fragrance->name }}</h1>
 
+                @if($fragrance->inspired_by)
+                    <div class="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <span class="text-xs text-purple-400/70">Inspirado em</span>
+                        <span class="text-sm text-purple-300 font-medium">{{ $fragrance->inspired_by }}</span>
+                    </div>
+                @endif
+
                 @if($fragrance->brand)
                     <div class="flex items-center gap-2 mt-2">
                         @if($fragrance->brand_logo_url)
@@ -290,6 +297,12 @@
                         <div class="flex justify-between">
                             <dt class="perfume-text-muted">Avaliação</dt>
                             <dd class="text-amber-400 font-medium">{{ number_format($fragrance->rating, 2) }} / 5</dd>
+                        </div>
+                    @endif
+                    @if($fragrance->inspired_by)
+                        <div class="pt-3 mt-3 border-t border-white/5">
+                            <dt class="perfume-text-muted text-xs mb-1">Inspirado em</dt>
+                            <dd class="text-purple-300 font-medium">{{ $fragrance->inspired_by }}</dd>
                         </div>
                     @endif
                 </dl>

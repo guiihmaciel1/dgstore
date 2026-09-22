@@ -26,6 +26,7 @@ class FragranceProduct extends Model
         'slug',
         'gender',
         'description',
+        'inspired_by',
         'concentration',
         'year',
         'size_ml',

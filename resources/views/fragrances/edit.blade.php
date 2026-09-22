@@ -68,6 +68,13 @@
                                 </div>
                             @endif
 
+                            @if($fragrance->inspired_by)
+                                <div class="mt-3 p-2.5 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                                    <span class="text-[10px] uppercase tracking-wider text-purple-400/70 font-semibold">Dupe de</span>
+                                    <p class="text-sm text-purple-300 font-medium mt-0.5">{{ $fragrance->inspired_by }}</p>
+                                </div>
+                            @endif
+
                             {{-- Info resumida --}}
                             <div class="mt-4 pt-4 border-t border-white/5">
                                 <dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
@@ -177,6 +184,18 @@
                                        value="{{ old('sort_order', $fragrance->sort_order) }}"
                                        class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
                             </div>
+                        </div>
+
+                        {{-- Dupe de / Inspirado em --}}
+                        <div class="mt-4">
+                            <label class="block text-xs font-medium text-dg-500 mb-1">
+                                Inspirado em <span class="text-purple-400">(Dupe de)</span>
+                            </label>
+                            <input type="text" name="inspired_by"
+                                   value="{{ old('inspired_by', $fragrance->inspired_by) }}"
+                                   placeholder="Ex: Dior - Sauvage Elixir"
+                                   class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-purple-500 focus:outline-none">
+                            <p class="mt-1 text-[10px] text-dg-600">Preenchido automaticamente ao importar, ou edite manualmente.</p>
                         </div>
 
                         {{-- Tags --}}

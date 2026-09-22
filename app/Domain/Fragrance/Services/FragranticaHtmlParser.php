@@ -28,6 +28,7 @@ class FragranticaHtmlParser
             brand: $this->extractBrand($crawler),
             gender: $this->extractGender($crawler),
             description: $this->extractDescription($crawler),
+            inspiredBy: $this->extractInspiredBy($crawler),
             concentration: $this->extractConcentration($crawler),
             year: $this->extractYear($crawler),
             imageUrl: $this->extractImage($crawler),
@@ -145,6 +146,96 @@ class FragranticaHtmlParser
                 return trim(strip_tags($node->html()));
             }
         } catch (\Throwable) {}
+
+        return null;
+    }
+
+    /**
+     * Extrai o primeiro perfume da seção "Este Perfume me Lembra do:" (Reminds me of).
+     * Retorna algo como "Dior - Sauvage Elixir" ou null se não encontrado.
+     */
+    private function extractInspiredBy(Crawler $crawler): ?string
+    {
+        try {
+            // Procura o heading "Este Perfume me Lembra do" e o carrossel logo abaixo
+            $headings = $crawler->filter('h2, h3, .cell.small-12 b');
+            $found = false;
+
+            $headings->each(function (Crawler $node) use (&$found) {
+                $text = trim($node->text(''));
+                if (str_contains(mb_strtolower($text), 'lembra do') || str_contains(mb_strtolower($text), 'reminds me')) {
+                    $found = true;
+                }
+            });
+
+            if (! $found) {
+                return null;
+            }
+
+            // Tenta encontrar via a estrutura do carrossel de perfumes similares
+            // Cada item tem brand em tag menor e nome do perfume em tag maior
+            $items = $crawler->filter('.carousel-cell');
+            if ($items->count() === 0) {
+                $items = $crawler->filter('[class*="reminds"] .cell, [class*="lembra"] .cell');
+            }
+
+            if ($items->count() > 0) {
+                $firstItem = $items->first();
+
+                // Tenta extrair marca e nome separadamente
+                $brand = '';
+                $name = '';
+
+                // Padrão: primeiro texto pequeno é a marca, texto maior é o nome
+                $smallTexts = $firstItem->filter('small, .brand-name, [style*="font-size"]');
+                if ($smallTexts->count() > 0) {
+                    $brand = trim($smallTexts->first()->text(''));
+                }
+
+                // O nome geralmente está em negrito ou em tag de link
+                $nameNode = $firstItem->filter('b, strong, a > span, .perfume-name');
+                if ($nameNode->count() > 0) {
+                    $name = trim($nameNode->first()->text(''));
+                }
+
+                // Se não encontrou via seletores específicos, pega todo o texto do item
+                if (empty($name)) {
+                    $fullText = trim($firstItem->text(''));
+                    // Remove "Comparar" e contagens de votos
+                    $fullText = preg_replace('/\s*Comparar\s*/u', '', $fullText);
+                    $fullText = preg_replace('/\d+\s*$/u', '', $fullText);
+
+                    if (! empty($fullText)) {
+                        return trim($fullText);
+                    }
+                }
+
+                if (! empty($brand) && ! empty($name)) {
+                    return "{$brand} - {$name}";
+                }
+
+                if (! empty($name)) {
+                    return $name;
+                }
+            }
+
+            // Fallback: procura links dentro da seção
+            $remindsSection = $crawler->filterXPath(
+                '//h2[contains(translate(., "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "lembra")]'
+                . '/following-sibling::*[1]//a[@href]'
+            );
+
+            if ($remindsSection->count() > 0) {
+                $firstLink = $remindsSection->first();
+                $text = trim($firstLink->text(''));
+
+                if (! empty($text)) {
+                    return $text;
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Fragrantica: falha ao extrair inspired_by', ['error' => $e->getMessage()]);
+        }
 
         return null;
     }

@@ -20,6 +20,7 @@ class UpdateFragranceRequest extends FormRequest
             'shipping_rate_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'pix_price'            => ['nullable', 'numeric', 'min:0'],
             'pix_discount_percent' => ['required', 'integer', 'min:1', 'max:30'],
+            'inspired_by'          => ['nullable', 'string', 'max:255'],
             'stock_quantity'       => ['required', 'integer', 'min:0'],
             'active'               => ['boolean'],
             'sort_order'           => ['integer', 'min:0'],
