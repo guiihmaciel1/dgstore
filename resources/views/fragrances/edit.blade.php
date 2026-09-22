@@ -210,6 +210,9 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                         {{-- Preço parcelado --}}
                         <div class="text-center">
+                            <div class="text-sm text-dg-600 mb-1">
+                                <span class="line-through" x-text="'R$' + originalPrice"></span>
+                            </div>
                             <span class="text-3xl font-bold text-white" x-text="'R$ ' + installmentPrice"></span>
                             <div class="text-sm text-dg-400 mt-1">
                                 em até <span class="font-bold text-white">10x</span> sem juros
@@ -224,12 +227,15 @@
 
                         {{-- Preço PIX --}}
                         <div class="text-center">
+                            <div class="text-sm text-dg-600 mb-1">
+                                <span class="line-through" x-text="'R$' + originalPrice"></span>
+                            </div>
                             <span class="text-3xl font-bold text-green-400" x-text="'R$ ' + pixFormatted"></span>
                             <div class="text-sm text-dg-400 mt-1">
                                 à vista no <span class="font-bold text-green-400">PIX</span>
                             </div>
                             <div class="text-xs text-green-500/70 mt-1">
-                                com <span class="font-bold" x-text="pixDiscount + '%'"></span> de desconto
+                                com <span class="font-bold" x-text="realDiscountPercent + '%'"></span> de desconto
                             </div>
                         </div>
                     </div>
@@ -404,6 +410,20 @@
                 get markup() {
                     if (this.totalCost <= 0) return 0;
                     return parseFloat(this.pixPrice || 0) / this.totalCost;
+                },
+
+                get originalPriceRaw() {
+                    return Math.ceil((this.installmentPriceRaw * 1.2) / 10) * 10;
+                },
+
+                get originalPrice() {
+                    return this.originalPriceRaw.toLocaleString('pt-BR');
+                },
+
+                get realDiscountPercent() {
+                    if (this.originalPriceRaw <= 0) return 0;
+                    const pix = parseFloat(this.pixPrice || 0);
+                    return Math.round(((this.originalPriceRaw - pix) / this.originalPriceRaw) * 100);
                 },
             };
         }

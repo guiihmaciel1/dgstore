@@ -70,7 +70,9 @@
                             <p class="text-xs text-gray-500 mt-1">{{ $product->brand }}</p>
                         @endif
                         @if($product->sale_price && $product->pix_price)
+                            @php $origPrice = $product->original_price ?? (int)(ceil(((float)$product->sale_price * 1.2) / 10) * 10); @endphp
                             <div class="mt-2">
+                                <p class="text-[11px] text-gray-500 line-through">R${{ number_format($origPrice, 0, ',', '.') }}</p>
                                 <p class="text-sm font-bold text-white">R$ {{ number_format($product->sale_price, 0, ',', '.') }} <span class="text-[10px] font-normal text-gray-400">10x s/ juros</span></p>
                                 <p class="text-xs text-green-400">R$ {{ number_format($product->pix_price, 2, ',', '.') }} <span class="text-green-500/70">no PIX</span></p>
                             </div>

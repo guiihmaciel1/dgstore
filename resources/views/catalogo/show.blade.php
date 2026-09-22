@@ -84,21 +84,28 @@
                 @endif
 
                 @if($fragrance->sale_price && $fragrance->pix_price)
+                    @php
+                        $originalPrice = $fragrance->original_price ?? (int)(ceil(((float)$fragrance->sale_price * 1.2) / 10) * 10);
+                        $realDiscount = $originalPrice > 0 ? round((($originalPrice - (float)$fragrance->pix_price) / $originalPrice) * 100) : 0;
+                    @endphp
                     <div class="mt-5 space-y-1">
                         <div>
-                            <span class="text-3xl font-bold perfume-text-cream">R$ {{ number_format($fragrance->sale_price, 0, ',', '.') }}</span>
-                            <span class="text-sm perfume-text-muted"> em até </span>
-                            <span class="text-lg font-bold perfume-text-cream">10x</span>
-                            <span class="text-sm perfume-text-muted"> sem juros</span>
+                            <span class="text-sm perfume-text-muted line-through">R${{ number_format($originalPrice, 0, ',', '.') }}</span>
+                            <span class="text-3xl font-bold perfume-text-cream ml-2">R$ {{ number_format($fragrance->sale_price, 0, ',', '.') }}</span>
                         </div>
-                        <div class="text-sm perfume-text-muted">ou</div>
+                        <div class="text-sm perfume-text-muted">
+                            em até <span class="font-bold perfume-text-cream">10x</span> de
+                            <span class="font-bold perfume-text-cream">R$ {{ number_format((float)$fragrance->sale_price / 10, 2, ',', '.') }}</span>
+                            sem juros
+                        </div>
+                        <div class="text-sm perfume-text-muted mt-2">ou</div>
                         <div>
-                            <span class="text-2xl font-bold text-emerald-400">R$ {{ number_format($fragrance->pix_price, 2, ',', '.') }}</span>
-                            <span class="text-sm perfume-text-muted"> à vista no </span>
-                            <span class="font-bold text-emerald-400">PIX</span>
+                            <span class="text-sm perfume-text-muted line-through">R${{ number_format($originalPrice, 0, ',', '.') }}</span>
+                            <span class="text-2xl font-bold text-emerald-400 ml-2">R$ {{ number_format($fragrance->pix_price, 2, ',', '.') }}</span>
                         </div>
-                        <div class="text-xs text-emerald-500/70">
-                            com {{ $fragrance->pix_discount_percent }}% de desconto
+                        <div class="text-sm perfume-text-muted">
+                            à vista no <span class="font-bold text-emerald-400">PIX</span>
+                            <span class="text-emerald-500/70">com {{ $realDiscount }}% de desconto</span>
                         </div>
                     </div>
                 @elseif($fragrance->pix_price)
