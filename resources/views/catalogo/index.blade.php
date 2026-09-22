@@ -130,10 +130,16 @@
                                 </div>
                                 <p class="text-[10px] mt-0.5" style="color: var(--muted);">10x sem juros</p>
                                 <p class="text-[11px] font-semibold text-emerald-400 mt-1">R$ {{ number_format($product->pix_price, 0, ',', '.') }} <span class="font-normal text-emerald-500/60">no PIX</span></p>
+                                @if($product->stock_quantity <= 0)
+                                    <p class="text-[10px] mt-1.5 font-medium" style="color: var(--gold);">📦 Sob encomenda · 3 a 5 dias</p>
+                                @endif
                             </div>
                         @elseif($product->pix_price)
                             <div class="mt-3 pt-3 border-t border-white/[0.04]">
                                 <p class="text-sm font-bold text-emerald-400">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</p>
+                                @if($product->stock_quantity <= 0)
+                                    <p class="text-[10px] mt-1.5 font-medium" style="color: var(--gold);">📦 Sob encomenda · 3 a 5 dias</p>
+                                @endif
                             </div>
                         @endif
                     </div>

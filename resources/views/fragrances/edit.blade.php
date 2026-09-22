@@ -191,11 +191,21 @@
                             <label class="block text-xs font-medium text-dg-500 mb-1">
                                 Inspirado em <span class="text-purple-400">(Dupe de)</span>
                             </label>
-                            <input type="text" name="inspired_by"
-                                   value="{{ old('inspired_by', $fragrance->inspired_by) }}"
-                                   placeholder="Ex: Dior - Sauvage Elixir"
-                                   class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-purple-500 focus:outline-none">
-                            <p class="mt-1 text-[10px] text-dg-600">Preenchido automaticamente ao importar, ou edite manualmente.</p>
+                            <div class="flex gap-2">
+                                <input type="text" name="inspired_by"
+                                       value="{{ old('inspired_by', $fragrance->inspired_by) }}"
+                                       placeholder="Ex: Dior - Sauvage Elixir"
+                                       class="flex-1 px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-purple-500 focus:outline-none">
+                                <a href="{{ $fragrance->fragrantica_url }}" target="_blank"
+                                   class="shrink-0 px-3 py-2 border border-border-strong rounded-lg text-xs text-dg-400 hover:text-purple-300 hover:border-purple-500/30 transition flex items-center gap-1"
+                                   title="Abra o Fragrantica e veja 'Este Perfume me Lembra do'">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                    Consultar
+                                </a>
+                            </div>
+                            <p class="mt-1 text-[10px] text-dg-600">Veja no Fragrantica a seção "Este Perfume me Lembra do" e copie o primeiro nome aqui.</p>
                         </div>
 
                         {{-- Tags --}}

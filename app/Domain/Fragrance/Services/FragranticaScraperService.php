@@ -63,6 +63,11 @@ class FragranticaScraperService
         $updateData = $data->toProductArray();
         unset($updateData['fragrantica_id'], $updateData['fragrantica_url']);
 
+        // Não sobrescreve inspired_by com null se já foi preenchido manualmente
+        if ($data->inspiredBy === null && $product->inspired_by !== null) {
+            unset($updateData['inspired_by']);
+        }
+
         $product->update($updateData);
 
         $this->syncAccords($product, $data->accords);

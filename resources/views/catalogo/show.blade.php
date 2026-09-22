@@ -120,11 +120,30 @@
                             </div>
                             <p class="text-[11px] text-emerald-500/60 mt-0.5">{{ $realDiscount }}% de desconto</p>
                         </div>
+
+                        @if($fragrance->stock_quantity <= 0)
+                            <div class="mt-3 px-4 py-2.5 rounded-xl flex items-center gap-2" style="background: rgba(201, 169, 110, 0.06); border: 1px solid rgba(201, 169, 110, 0.12);">
+                                <span class="text-sm">📦</span>
+                                <div>
+                                    <p class="text-xs font-semibold" style="color: var(--gold);">Sob encomenda</p>
+                                    <p class="text-[11px]" style="color: var(--muted);">Prazo de entrega: 3 a 5 dias úteis</p>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 @elseif($fragrance->pix_price)
                     <div class="mt-6 pt-5 border-t border-white/[0.04]">
                         <span class="text-2xl font-bold text-emerald-400">R$ {{ number_format($fragrance->pix_price, 0, ',', '.') }}</span>
                         <span class="text-xs ml-1" style="color: var(--muted);">à vista no PIX</span>
+                        @if($fragrance->stock_quantity <= 0)
+                            <div class="mt-3 px-4 py-2.5 rounded-xl flex items-center gap-2" style="background: rgba(201, 169, 110, 0.06); border: 1px solid rgba(201, 169, 110, 0.12);">
+                                <span class="text-sm">📦</span>
+                                <div>
+                                    <p class="text-xs font-semibold" style="color: var(--gold);">Sob encomenda</p>
+                                    <p class="text-[11px]" style="color: var(--muted);">Prazo de entrega: 3 a 5 dias úteis</p>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 @endif
 

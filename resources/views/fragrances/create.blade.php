@@ -87,7 +87,12 @@
                     <li>• Avaliação dos usuários e número de votos</li>
                     <li>• Recomendação de estações e horário (dia/noite)</li>
                 </ul>
-                <p class="text-xs text-dg-600 mt-2">Após importar, defina o preço de venda e quantidade em estoque.</p>
+                <p class="text-xs text-dg-600 mt-3">Após importar, preencha na tela de edição:</p>
+                <ul class="text-xs text-dg-500 space-y-1 mt-1">
+                    <li>• <span class="text-dg-400">Preço e estoque</span></li>
+                    <li>• <span class="text-purple-400">Inspirado em (Dupe de)</span> — veja no Fragrantica "Este Perfume me Lembra do"</li>
+                    <li>• <span class="text-dg-400">Categorias (tags)</span></li>
+                </ul>
             </div>
         </div>
     </div>

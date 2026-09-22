@@ -80,7 +80,7 @@ class FragranceController extends Controller
 
             return redirect()
                 ->route('fragrances.edit', $product)
-                ->with('success', "Perfume \"{$product->name}\" importado com sucesso! Defina o preço e estoque.");
+                ->with('success', "Perfume \"{$product->name}\" importado! Defina preço, estoque e o campo \"Inspirado em\" (dupe).");
         } catch (\Throwable $e) {
             if ($request->wantsJson()) {
                 return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
