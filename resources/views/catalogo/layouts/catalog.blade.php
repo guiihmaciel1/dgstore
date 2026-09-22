@@ -23,8 +23,12 @@
     </style>
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
+    <!-- Background com blur (perfumaria) -->
+    <div class="catalog-bg" aria-hidden="true"></div>
+    <div class="catalog-overlay" aria-hidden="true"></div>
+
     <!-- Header -->
-    <header class="sticky top-0 z-30 border-b border-white/10" style="background: linear-gradient(135deg, #1a1025, #2d1a3e);">
+    <header class="sticky top-0 z-30 border-b border-white/10" style="background: linear-gradient(135deg, rgba(26,16,37,0.9), rgba(45,26,62,0.9)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="{{ route('catalogo.index') }}" class="flex items-center gap-3">
@@ -43,13 +47,13 @@
         </div>
     </header>
 
-    <main class="flex-1">
+    <main class="flex-1 relative z-10">
         @yield('content')
     </main>
 
-    <footer class="border-t border-white/10 mt-12" style="background: #111;">
+    <footer class="relative z-10 border-t border-white/10 mt-12" style="background: rgba(10, 5, 15, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center">
-            <p class="text-xs text-gray-500">&copy; {{ date('Y') }} DG Perfumes. Todos os direitos reservados.</p>
+            <p class="text-xs perfume-text-muted">&copy; {{ date('Y') }} DG Perfumes. Todos os direitos reservados.</p>
         </div>
     </footer>
 

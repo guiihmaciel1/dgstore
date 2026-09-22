@@ -53,25 +53,32 @@ class FragranceController extends Controller
     }
 
     /**
-     * Importa via HTML enviado pelo browser do usuário (contorna Cloudflare).
+     * Importa perfume. Aceita:
+     * - { url, html } → processa o HTML
+     * - { url, fetch_html: true } → tenta buscar server-side e retorna HTML bruto
      */
     public function store(Request $request): JsonResponse|RedirectResponse
     {
         $request->validate([
-            'url'  => ['required', 'url', 'regex:#^https?://(www\.)?fragrantica\.com(\.\w+)?/perfume/.+-\d+\.html#i'],
-            'html' => ['required', 'string', 'min:500'],
+            'url' => ['required', 'url', 'regex:#^https?://(www\.)?fragrantica\.com(\.\w+)?/perfume/.+-\d+\.html#i'],
         ], [
             'url.required' => 'Informe a URL do perfume no Fragrantica.',
             'url.regex'    => 'A URL deve ser do Fragrantica.',
-            'html.required' => 'Não foi possível obter o conteúdo da página.',
-            'html.min'      => 'O conteúdo da página parece incompleto.',
         ]);
 
+        if ($request->boolean('fetch_html')) {
+            return $this->tryFetchHtml($request->input('url'));
+        }
+
+        $html = $request->input('html', '');
+        if (mb_strlen($html) < 500) {
+            return $request->wantsJson()
+                ? response()->json(['success' => false, 'message' => 'HTML da página é obrigatório (mínimo 500 caracteres).'], 422)
+                : back()->withInput()->with('error', 'Conteúdo da página incompleto.');
+        }
+
         try {
-            $product = $this->scraper->importFromHtml(
-                $request->input('url'),
-                $request->input('html'),
-            );
+            $product = $this->scraper->importFromHtml($request->input('url'), $html);
 
             if ($request->wantsJson()) {
                 return response()->json([
@@ -91,6 +98,26 @@ class FragranceController extends Controller
 
             return back()->withInput()->with('error', "Erro ao importar: {$e->getMessage()}");
         }
+    }
+
+    /**
+     * Tenta buscar HTML do Fragrantica server-side (pode falhar por Cloudflare).
+     */
+    private function tryFetchHtml(string $url): JsonResponse
+    {
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language' => 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            ])->timeout(15)->get($url);
+
+            if ($response->successful() && mb_strlen($response->body()) > 1000) {
+                return response()->json(['success' => true, 'html' => $response->body()]);
+            }
+        } catch (\Throwable) {}
+
+        return response()->json(['success' => false, 'message' => 'Cloudflare bloqueou o acesso.'], 200);
     }
 
     public function edit(FragranceProduct $fragrance): View

@@ -8,22 +8,22 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Voltar -->
-    <a href="{{ route('catalogo.index') }}" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white transition mb-6">
+    {{-- Voltar --}}
+    <a href="{{ route('catalogo.index') }}" class="inline-flex items-center gap-1 text-sm perfume-text-muted hover:text-white transition mb-6">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
         Voltar ao catálogo
     </a>
 
-    <!-- Hero -->
-    <div class="rounded-2xl overflow-hidden border border-white/5 mb-8" style="background: #151515;">
+    {{-- Hero --}}
+    <div class="perfume-card rounded-2xl overflow-hidden mb-8">
         <div class="flex flex-col md:flex-row gap-8 p-6 md:p-8">
             {{-- Foto --}}
             <div class="flex-shrink-0 flex items-center justify-center">
                 @if($fragrance->image_url)
                     <img src="{{ $fragrance->image_url }}" alt="{{ $fragrance->name }}"
-                         class="w-48 md:w-56 h-auto object-contain rounded-lg">
+                         class="w-48 md:w-56 h-auto object-contain rounded-lg drop-shadow-2xl">
                 @else
                     <div class="w-48 h-64 bg-white/5 rounded-lg flex items-center justify-center">
                         <svg class="w-20 h-20 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,31 +37,31 @@
             <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-3 mb-2">
                     @php
-                        $catColor = match($fragrance->gender->value) {
-                            'masculino' => 'blue',
-                            'feminino' => 'pink',
-                            default => 'purple',
+                        $badgeClass = match($fragrance->gender->value) {
+                            'masculino' => 'perfume-badge-masc',
+                            'feminino' => 'perfume-badge-fem',
+                            default => 'perfume-badge-uni',
                         };
                     @endphp
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-{{ $catColor }}-500/20 text-{{ $catColor }}-400">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $badgeClass }}">
                         {{ $fragrance->gender->label() }}
                     </span>
                     @if($fragrance->year)
-                        <span class="text-xs text-gray-500">{{ $fragrance->year }}</span>
+                        <span class="text-xs perfume-text-muted">{{ $fragrance->year }}</span>
                     @endif
                     @if($fragrance->concentration)
-                        <span class="text-xs text-gray-500">{{ $fragrance->concentration }}</span>
+                        <span class="text-xs perfume-text-muted">{{ $fragrance->concentration }}</span>
                     @endif
                 </div>
 
-                <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $fragrance->name }}</h1>
+                <h1 class="text-2xl md:text-3xl font-bold perfume-text-cream">{{ $fragrance->name }}</h1>
 
                 @if($fragrance->brand)
                     <div class="flex items-center gap-2 mt-2">
                         @if($fragrance->brand_logo_url)
                             <img src="{{ $fragrance->brand_logo_url }}" alt="{{ $fragrance->brand }}" class="h-5 w-auto rounded">
                         @endif
-                        <span class="text-gray-400">{{ $fragrance->brand }}</span>
+                        <span class="perfume-text-gold">{{ $fragrance->brand }}</span>
                     </div>
                 @endif
 
@@ -79,36 +79,36 @@
                             @endfor
                         </div>
                         <span class="text-lg font-bold text-amber-400">{{ number_format($fragrance->rating, 2) }}</span>
-                        <span class="text-sm text-gray-500">({{ number_format($fragrance->votes_count, 0, ',', '.') }} votos)</span>
+                        <span class="text-sm perfume-text-muted">({{ number_format($fragrance->votes_count, 0, ',', '.') }} votos)</span>
                     </div>
                 @endif
 
                 @if($fragrance->sale_price && $fragrance->pix_price)
                     <div class="mt-5 space-y-1">
                         <div>
-                            <span class="text-3xl font-bold text-white">R$ {{ number_format($fragrance->sale_price, 0, ',', '.') }}</span>
-                            <span class="text-sm text-gray-400"> em até </span>
-                            <span class="text-lg font-bold text-white">10x</span>
-                            <span class="text-sm text-gray-400"> sem juros</span>
+                            <span class="text-3xl font-bold perfume-text-cream">R$ {{ number_format($fragrance->sale_price, 0, ',', '.') }}</span>
+                            <span class="text-sm perfume-text-muted"> em até </span>
+                            <span class="text-lg font-bold perfume-text-cream">10x</span>
+                            <span class="text-sm perfume-text-muted"> sem juros</span>
                         </div>
-                        <div class="text-sm text-gray-500">ou</div>
+                        <div class="text-sm perfume-text-muted">ou</div>
                         <div>
-                            <span class="text-2xl font-bold text-green-400">R$ {{ number_format($fragrance->pix_price, 2, ',', '.') }}</span>
-                            <span class="text-sm text-gray-400"> à vista no </span>
-                            <span class="font-bold text-green-400">PIX</span>
+                            <span class="text-2xl font-bold text-emerald-400">R$ {{ number_format($fragrance->pix_price, 2, ',', '.') }}</span>
+                            <span class="text-sm perfume-text-muted"> à vista no </span>
+                            <span class="font-bold text-emerald-400">PIX</span>
                         </div>
-                        <div class="text-xs text-green-500/70">
+                        <div class="text-xs text-emerald-500/70">
                             com {{ $fragrance->pix_discount_percent }}% de desconto
                         </div>
                     </div>
                 @elseif($fragrance->pix_price)
                     <div class="mt-5">
-                        <span class="text-3xl font-bold text-green-400">R$ {{ number_format($fragrance->pix_price, 2, ',', '.') }}</span>
-                        <span class="text-sm text-gray-400"> à vista no PIX</span>
+                        <span class="text-3xl font-bold text-emerald-400">R$ {{ number_format($fragrance->pix_price, 2, ',', '.') }}</span>
+                        <span class="text-sm perfume-text-muted"> à vista no PIX</span>
                     </div>
                 @endif
 
-                {{-- Botão WhatsApp --}}
+                {{-- Botao WhatsApp --}}
                 @if($whatsappNumber)
                     <div class="mt-6">
                         @php
@@ -116,7 +116,7 @@
                             $waText = urlencode("Olá! Tenho interesse no perfume *{$fragrance->name}*" . ($fragrance->brand ? " da *{$fragrance->brand}*" : '') . ". Ele está disponível?");
                         @endphp
                         <a href="https://wa.me/55{{ $waNumber }}?text={{ $waText }}" target="_blank"
-                           class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-600/20">
+                           class="perfume-btn-whatsapp inline-flex items-center gap-2 px-6 py-3 text-white font-semibold rounded-xl">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                             </svg>
@@ -133,8 +133,8 @@
         <div class="lg:col-span-2 space-y-6">
             {{-- Principais Acordes --}}
             @if($fragrance->accords->isNotEmpty())
-                <div class="rounded-2xl border border-white/5 p-6" style="background: #151515;">
-                    <h2 class="text-lg font-bold text-white mb-5">Principais Acordes</h2>
+                <div class="perfume-card rounded-2xl p-6">
+                    <h2 class="text-lg perfume-section-title mb-5">Principais Acordes</h2>
                     <div class="space-y-2.5">
                         @foreach($fragrance->accords as $accord)
                             <div class="flex items-center gap-3">
@@ -152,29 +152,29 @@
                 </div>
             @endif
 
-            {{-- Pirâmide Olfativa --}}
+            {{-- Piramide Olfativa --}}
             @if($fragrance->notes->isNotEmpty())
-                <div class="rounded-2xl border border-white/5 p-6" style="background: #151515;">
-                    <h2 class="text-lg font-bold text-white mb-5">Pirâmide Olfativa</h2>
+                <div class="perfume-card rounded-2xl p-6">
+                    <h2 class="text-lg perfume-section-title mb-5">Pirâmide Olfativa</h2>
                     @foreach([
-                        'top' => ['label' => 'Notas de Topo', 'icon' => '△', 'color' => 'pink'],
-                        'heart' => ['label' => 'Notas de Coração', 'icon' => '♡', 'color' => 'red'],
-                        'base' => ['label' => 'Notas de Base', 'icon' => '▽', 'color' => 'amber'],
+                        'top' => ['label' => 'Notas de Topo', 'icon' => '△', 'color' => '#c9a96e'],
+                        'heart' => ['label' => 'Notas de Coração', 'icon' => '♡', 'color' => '#e8a0bf'],
+                        'base' => ['label' => 'Notas de Base', 'icon' => '▽', 'color' => '#d4af37'],
                     ] as $layer => $meta)
                         @php $layerNotes = $fragrance->notes->where('layer', $layer); @endphp
                         @if($layerNotes->isNotEmpty())
                             <div class="mb-6 last:mb-0">
                                 <div class="flex items-center gap-2 mb-3">
-                                    <span class="text-{{ $meta['color'] }}-400">{{ $meta['icon'] }}</span>
-                                    <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">{{ $meta['label'] }}</h3>
+                                    <span style="color: {{ $meta['color'] }};">{{ $meta['icon'] }}</span>
+                                    <h3 class="text-sm font-semibold perfume-text-muted uppercase tracking-wider">{{ $meta['label'] }}</h3>
                                 </div>
                                 <div class="flex flex-wrap gap-3">
                                     @foreach($layerNotes as $note)
-                                        <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition">
+                                        <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 border border-white/5 hover:border-amber-500/20 transition">
                                             @if($note->image_url)
                                                 <img src="{{ $note->image_url }}" alt="{{ $note->name }}" class="w-8 h-8 rounded-full object-cover bg-white/10">
                                             @endif
-                                            <span class="text-sm text-gray-300">{{ $note->name }}</span>
+                                            <span class="text-sm perfume-text-cream">{{ $note->name }}</span>
                                         </div>
                                     @endforeach
                                 </div>
@@ -184,11 +184,11 @@
                 </div>
             @endif
 
-            {{-- Descrição --}}
+            {{-- Descricao --}}
             @if($fragrance->description)
-                <div class="rounded-2xl border border-white/5 p-6" style="background: #151515;">
-                    <h2 class="text-lg font-bold text-white mb-4">Sobre o Perfume</h2>
-                    <p class="text-gray-400 leading-relaxed">{{ $fragrance->description }}</p>
+                <div class="perfume-card rounded-2xl p-6">
+                    <h2 class="text-lg perfume-section-title mb-4">Sobre o Perfume</h2>
+                    <p class="perfume-text-muted leading-relaxed">{{ $fragrance->description }}</p>
                 </div>
             @endif
         </div>
@@ -197,12 +197,12 @@
         <div class="space-y-6">
             {{-- Quando Usar --}}
             @if($fragrance->seasons || $fragrance->day_night)
-                <div class="rounded-2xl border border-white/5 p-6" style="background: #151515;">
-                    <h2 class="text-sm font-bold text-white mb-4">Quando Usar</h2>
+                <div class="perfume-card rounded-2xl p-6">
+                    <h2 class="text-sm perfume-section-title mb-4">Quando Usar</h2>
 
                     @if($fragrance->seasons)
                         <div class="mb-4">
-                            <h3 class="text-xs text-gray-500 uppercase tracking-wider mb-3">Estações</h3>
+                            <h3 class="text-xs perfume-text-muted uppercase tracking-wider mb-3">Estações</h3>
                             @php
                                 $maxSeason = max($fragrance->seasons);
                                 $seasonIcons = [
@@ -216,11 +216,11 @@
                                 @foreach($fragrance->seasons as $season => $votes)
                                     <div>
                                         <div class="flex items-center justify-between text-xs mb-1">
-                                            <span class="text-gray-300 capitalize">{{ $seasonIcons[$season] ?? '' }} {{ $season }}</span>
-                                            <span class="text-gray-500">{{ number_format($votes, 0, ',', '.') }}</span>
+                                            <span class="perfume-text-cream capitalize">{{ $seasonIcons[$season] ?? '' }} {{ $season }}</span>
+                                            <span class="perfume-text-muted">{{ number_format($votes, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="h-2 rounded-full bg-white/5 overflow-hidden">
-                                            <div class="h-full rounded-full bg-pink-500/60 accord-bar" style="width: {{ $maxSeason > 0 ? ($votes / $maxSeason) * 100 : 0 }}%"></div>
+                                            <div class="h-full rounded-full accord-bar" style="width: {{ $maxSeason > 0 ? ($votes / $maxSeason) * 100 : 0 }}%; background: linear-gradient(90deg, #c9a96e, #d4af37);"></div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -230,7 +230,7 @@
 
                     @if($fragrance->day_night)
                         <div>
-                            <h3 class="text-xs text-gray-500 uppercase tracking-wider mb-3">Horário</h3>
+                            <h3 class="text-xs perfume-text-muted uppercase tracking-wider mb-3">Horário</h3>
                             @php
                                 $maxDayNight = max($fragrance->day_night);
                                 $periodIcons = ['dia' => '🌤️', 'noite' => '🌙'];
@@ -239,11 +239,11 @@
                                 @foreach($fragrance->day_night as $period => $votes)
                                     <div>
                                         <div class="flex items-center justify-between text-xs mb-1">
-                                            <span class="text-gray-300 capitalize">{{ $periodIcons[$period] ?? '' }} {{ $period }}</span>
-                                            <span class="text-gray-500">{{ number_format($votes, 0, ',', '.') }}</span>
+                                            <span class="perfume-text-cream capitalize">{{ $periodIcons[$period] ?? '' }} {{ $period }}</span>
+                                            <span class="perfume-text-muted">{{ number_format($votes, 0, ',', '.') }}</span>
                                         </div>
                                         <div class="h-2 rounded-full bg-white/5 overflow-hidden">
-                                            <div class="h-full rounded-full bg-indigo-500/60 accord-bar" style="width: {{ $maxDayNight > 0 ? ($votes / $maxDayNight) * 100 : 0 }}%"></div>
+                                            <div class="h-full rounded-full accord-bar" style="width: {{ $maxDayNight > 0 ? ($votes / $maxDayNight) * 100 : 0 }}%; background: linear-gradient(90deg, #2d1a3e, #8b2252);"></div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -253,49 +253,49 @@
                 </div>
             @endif
 
-            {{-- Ficha Técnica --}}
-            <div class="rounded-2xl border border-white/5 p-6" style="background: #151515;">
-                <h2 class="text-sm font-bold text-white mb-4">Ficha Técnica</h2>
+            {{-- Ficha Tecnica --}}
+            <div class="perfume-card rounded-2xl p-6">
+                <h2 class="text-sm perfume-section-title mb-4">Ficha Técnica</h2>
                 <dl class="space-y-3 text-sm">
                     @if($fragrance->brand)
                         <div class="flex justify-between">
-                            <dt class="text-gray-500">Marca</dt>
-                            <dd class="text-gray-300">{{ $fragrance->brand }}</dd>
+                            <dt class="perfume-text-muted">Marca</dt>
+                            <dd class="perfume-text-cream">{{ $fragrance->brand }}</dd>
                         </div>
                     @endif
                     <div class="flex justify-between">
-                        <dt class="text-gray-500">Gênero</dt>
-                        <dd class="text-gray-300">{{ $fragrance->gender->label() }}</dd>
+                        <dt class="perfume-text-muted">Gênero</dt>
+                        <dd class="perfume-text-cream">{{ $fragrance->gender->label() }}</dd>
                     </div>
                     @if($fragrance->concentration)
                         <div class="flex justify-between">
-                            <dt class="text-gray-500">Concentração</dt>
-                            <dd class="text-gray-300">{{ $fragrance->concentration }}</dd>
+                            <dt class="perfume-text-muted">Concentração</dt>
+                            <dd class="perfume-text-cream">{{ $fragrance->concentration }}</dd>
                         </div>
                     @endif
                     @if($fragrance->year)
                         <div class="flex justify-between">
-                            <dt class="text-gray-500">Ano</dt>
-                            <dd class="text-gray-300">{{ $fragrance->year }}</dd>
+                            <dt class="perfume-text-muted">Ano</dt>
+                            <dd class="perfume-text-cream">{{ $fragrance->year }}</dd>
                         </div>
                     @endif
                     @if($fragrance->rating)
                         <div class="flex justify-between">
-                            <dt class="text-gray-500">Avaliação</dt>
+                            <dt class="perfume-text-muted">Avaliação</dt>
                             <dd class="text-amber-400 font-medium">{{ number_format($fragrance->rating, 2) }} / 5</dd>
                         </div>
                     @endif
                 </dl>
             </div>
 
-            {{-- Botão WhatsApp (sidebar) --}}
+            {{-- Botao WhatsApp (sidebar) --}}
             @if($whatsappNumber)
                 @php
                     $waNumber = preg_replace('/\D/', '', $whatsappNumber);
                     $waText = urlencode("Olá! Tenho interesse no perfume *{$fragrance->name}*" . ($fragrance->brand ? " da *{$fragrance->brand}*" : '') . ". Ele está disponível?");
                 @endphp
                 <a href="https://wa.me/55{{ $waNumber }}?text={{ $waText }}" target="_blank"
-                   class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-green-600 text-white font-semibold rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-600/20">
+                   class="perfume-btn-whatsapp w-full flex items-center justify-center gap-2 px-6 py-3.5 text-white font-semibold rounded-xl">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                     </svg>
@@ -308,10 +308,10 @@
     {{-- Perfumes Relacionados --}}
     @if($related->isNotEmpty())
         <div class="mt-12">
-            <h2 class="text-lg font-bold text-white mb-6">Você pode gostar</h2>
+            <h2 class="text-lg perfume-section-title mb-6">Você pode gostar</h2>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 @foreach($related as $product)
-                    <a href="{{ route('catalogo.show', $product->slug) }}" class="card-hover block rounded-xl overflow-hidden border border-white/5" style="background: #151515;">
+                    <a href="{{ route('catalogo.show', $product->slug) }}" class="perfume-card-related block rounded-xl overflow-hidden">
                         <div class="aspect-[3/4] bg-white/5 overflow-hidden flex items-center justify-center">
                             @if($product->image_url)
                                 <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain p-3" loading="lazy">
@@ -322,9 +322,9 @@
                             @endif
                         </div>
                         <div class="p-3">
-                            <h3 class="text-xs font-semibold text-white line-clamp-2">{{ $product->name }}</h3>
+                            <h3 class="text-xs font-semibold perfume-text-cream line-clamp-2">{{ $product->name }}</h3>
                             @if($product->brand)
-                                <p class="text-[10px] text-gray-500 mt-0.5">{{ $product->brand }}</p>
+                                <p class="text-[10px] perfume-text-muted mt-0.5">{{ $product->brand }}</p>
                             @endif
                         </div>
                     </a>
