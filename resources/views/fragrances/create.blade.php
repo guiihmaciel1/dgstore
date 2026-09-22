@@ -31,21 +31,19 @@
                         </p>
                     </div>
 
-                    {{-- Step 2: HTML manual (aparece se falhar) --}}
-                    <div x-show="showHtmlField" x-cloak class="mb-6">
-                        <div class="p-4 mb-4 rounded-lg border border-amber-500/30 bg-amber-500/5">
-                            <h4 class="text-sm font-semibold text-amber-400 mb-2">Importação manual necessária</h4>
-                            <ol class="text-xs text-dg-400 space-y-1.5 list-decimal list-inside">
-                                <li>Abra a URL acima em outra aba do navegador</li>
-                                <li>Na página do perfume, pressione <kbd class="px-1.5 py-0.5 bg-surface-overlay rounded text-dg-300 font-mono">Ctrl+U</kbd> para ver o código-fonte</li>
-                                <li>Selecione tudo (<kbd class="px-1.5 py-0.5 bg-surface-overlay rounded text-dg-300 font-mono">Ctrl+A</kbd>) e copie (<kbd class="px-1.5 py-0.5 bg-surface-overlay rounded text-dg-300 font-mono">Ctrl+C</kbd>)</li>
-                                <li>Cole no campo abaixo</li>
-                            </ol>
-                        </div>
-
+                    {{-- Código-fonte da página --}}
+                    <div class="mb-6">
                         <label class="block text-sm font-medium text-dg-300 mb-2">Código-fonte da página</label>
+                        <p class="text-xs text-dg-500 mb-2">
+                            Abra a URL acima em outra aba, pressione
+                            <kbd class="px-1.5 py-0.5 bg-surface-overlay rounded text-dg-300 font-mono text-[11px]">Ctrl+U</kbd>,
+                            selecione tudo
+                            <kbd class="px-1.5 py-0.5 bg-surface-overlay rounded text-dg-300 font-mono text-[11px]">Ctrl+A</kbd>
+                            e cole aqui
+                            <kbd class="px-1.5 py-0.5 bg-surface-overlay rounded text-dg-300 font-mono text-[11px]">Ctrl+V</kbd>
+                        </p>
                         <textarea x-model="manualHtml" rows="6"
-                                  placeholder="Cole aqui o código-fonte da página (Ctrl+U → Ctrl+A → Ctrl+C)"
+                                  placeholder="Cole aqui o código-fonte da página do Fragrantica..."
                                   class="w-full px-4 py-3 border border-border-strong rounded-lg text-xs font-mono focus:border-pink-500 focus:ring-1 focus:ring-pink-500 focus:outline-none bg-surface-raised text-dg-100 placeholder-dg-600 resize-y"
                                   :disabled="loading"></textarea>
                         <p class="mt-1 text-xs text-dg-600">
@@ -72,7 +70,7 @@
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                             </svg>
-                            <span x-text="loading ? 'Importando...' : (showHtmlField ? 'Importar com HTML colado' : 'Importar do Fragrantica')"></span>
+                            <span x-text="loading ? 'Importando...' : 'Importar do Fragrantica'"></span>
                         </button>
                         <a href="{{ route('fragrances.index') }}" class="text-sm text-dg-500 hover:text-dg-300 transition">Cancelar</a>
                     </div>
@@ -102,7 +100,6 @@
             loading: false,
             status: '',
             errorMsg: '',
-            showHtmlField: false,
             manualHtml: '',
 
             async importFragrance() {
@@ -114,29 +111,16 @@
                     return;
                 }
 
+                if (this.manualHtml.length < 1000) {
+                    this.errorMsg = 'Cole o código-fonte da página do Fragrantica no campo acima.';
+                    return;
+                }
+
                 this.loading = true;
                 this.errorMsg = '';
+                this.status = 'Processando perfume...';
 
                 try {
-                    let html = null;
-
-                    if (this.manualHtml.length > 1000) {
-                        this.status = 'Processando HTML colado...';
-                        html = this.manualHtml;
-                    } else {
-                        html = await this.fetchViaBackend(this.url);
-                    }
-
-                    if (!html) {
-                        this.showHtmlField = true;
-                        this.loading = false;
-                        this.status = '';
-                        this.errorMsg = 'Não foi possível acessar a página do Fragrantica. Por favor, abra a URL em outra aba, copie o HTML da página (Ctrl+U) e cole no campo abaixo.';
-                        return;
-                    }
-
-                    this.status = 'Salvando perfume...';
-
                     const response = await fetch('{{ route("fragrances.store") }}', {
                         method: 'POST',
                         headers: {
@@ -144,7 +128,7 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             'Accept': 'application/json',
                         },
-                        body: JSON.stringify({ url: this.url, html: html }),
+                        body: JSON.stringify({ url: this.url, html: this.manualHtml }),
                     });
 
                     const data = await response.json();
@@ -162,29 +146,6 @@
                     this.loading = false;
                     this.status = '';
                 }
-            },
-
-            async fetchViaBackend(url) {
-                this.status = 'Acessando Fragrantica...';
-                try {
-                    const resp = await fetch('{{ route("fragrances.store") }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Accept': 'application/json',
-                            'X-Fetch-Only': '1',
-                        },
-                        body: JSON.stringify({ url: url, fetch_html: true }),
-                    });
-
-                    const data = await resp.json();
-                    if (data.success && data.html && data.html.length > 1000) {
-                        return data.html;
-                    }
-                } catch (e) { /* backend fetch failed */ }
-
-                return null;
             },
         };
     }

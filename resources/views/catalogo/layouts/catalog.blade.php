@@ -30,19 +30,13 @@
     <!-- Header -->
     <header class="sticky top-0 z-30 border-b border-white/10" style="background: linear-gradient(135deg, rgba(26,16,37,0.9), rgba(45,26,62,0.9)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center h-16">
                 <a href="{{ route('catalogo.index') }}" class="flex items-center gap-3">
-                    <img src="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}" alt="DG Store" class="h-8 w-auto brightness-0 invert">
                     <div>
-                        <span class="text-sm font-bold text-white">DG Perfumes</span>
+                        <span class="text-sm font-bold text-white">DG Imports</span>
                         <span class="block text-[10px] font-semibold text-pink-300 tracking-widest uppercase">Catálogo</span>
                     </div>
                 </a>
-                @auth
-                    <a href="{{ route('fragrances.index') }}" class="text-sm text-pink-300/70 hover:text-white font-medium transition">
-                        Área Admin
-                    </a>
-                @endauth
             </div>
         </div>
     </header>
