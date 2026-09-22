@@ -98,7 +98,7 @@
                             <p class="text-xs text-gray-500 mt-1">{{ $product->brand }}</p>
                         @endif
                         @if($product->inspired_by)
-                            <p class="text-[10px] text-purple-400 mt-0.5 truncate" title="Inspirado em {{ $product->inspired_by }}">🔗 {{ $product->inspired_by }}</p>
+                            <p class="text-[10px] text-purple-400 mt-0.5 truncate" title="Inspirado em {{ $product->inspired_by }}">💡 {{ $product->inspired_by }}</p>
                         @endif
                         @if($product->sale_price && $product->pix_price)
                             @php $origPrice = $product->original_price ?? (int)(ceil(((float)$product->sale_price * 1.2) / 10) * 10); @endphp

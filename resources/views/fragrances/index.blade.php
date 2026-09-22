@@ -129,7 +129,7 @@
                                                 </div>
                                             @endif
                                             @if($f->inspired_by)
-                                                <div class="text-xs text-purple-400 mt-0.5" title="Lembra do">🔗 {{ $f->inspired_by }}</div>
+                                                <div class="text-xs text-purple-400 mt-0.5" title="Inspirado em">💡 {{ $f->inspired_by }}</div>
                                             @endif
                                         </td>
                                         <td class="px-4 py-3 text-dg-300">{{ $f->brand ?? '—' }}</td>
