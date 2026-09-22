@@ -39,6 +39,8 @@ use App\Presentation\Http\Controllers\IdleModeController;
 use App\Presentation\Http\Controllers\InternDashboardController;
 use App\Presentation\Http\Controllers\TimeClockController;
 use App\Presentation\Http\Controllers\ExecutiveSummaryController;
+use App\Presentation\Http\Controllers\FragranceController;
+use App\Presentation\Http\Controllers\FragranceCatalogController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeDashboardController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeProductController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeRetailerController;
@@ -59,6 +61,10 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->get('/keepalive', fn () => response()->json(['ok' => true]))->name('keepalive');
+
+// Catálogo público de perfumes
+Route::get('/catalogo', [FragranceCatalogController::class, 'index'])->name('catalogo.index');
+Route::get('/catalogo/{slug}', [FragranceCatalogController::class, 'show'])->name('catalogo.show');
 
 // Rotas autenticadas
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -220,6 +226,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/api/consignment/validate-imei', [ConsignmentStockController::class, 'validateImei'])->name('stock.consignment.validate-imei');
         Route::get('/api/consignment/check-duplicate', [ConsignmentStockController::class, 'checkDuplicate'])->name('stock.consignment.check-duplicate');
         Route::post('/stock/consignment/smart-store', [ConsignmentStockController::class, 'smartStore'])->name('stock.consignment.smart-store');
+
+        // Perfumaria (Catálogo Fragrantica)
+        Route::get('/fragrances', [FragranceController::class, 'index'])->name('fragrances.index');
+        Route::get('/fragrances/create', [FragranceController::class, 'create'])->name('fragrances.create');
+        Route::post('/fragrances', [FragranceController::class, 'store'])->name('fragrances.store');
+        Route::get('/fragrances/{fragrance}/edit', [FragranceController::class, 'edit'])->name('fragrances.edit');
+        Route::put('/fragrances/{fragrance}', [FragranceController::class, 'update'])->name('fragrances.update');
+        Route::post('/fragrances/{fragrance}/rescrape', [FragranceController::class, 'rescrape'])->name('fragrances.rescrape');
+        Route::delete('/fragrances/{fragrance}', [FragranceController::class, 'destroy'])->name('fragrances.destroy');
 
         // Garantias
         Route::get('/warranties', [WarrantyController::class, 'index'])->name('warranties.index');
