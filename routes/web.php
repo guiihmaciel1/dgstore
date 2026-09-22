@@ -41,6 +41,7 @@ use App\Presentation\Http\Controllers\TimeClockController;
 use App\Presentation\Http\Controllers\ExecutiveSummaryController;
 use App\Presentation\Http\Controllers\FragranceController;
 use App\Presentation\Http\Controllers\FragranceCatalogController;
+use App\Presentation\Http\Controllers\FragranceTagController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeDashboardController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeProductController;
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeRetailerController;
@@ -235,6 +236,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/fragrances/{fragrance}', [FragranceController::class, 'update'])->name('fragrances.update');
         Route::post('/fragrances/{fragrance}/rescrape', [FragranceController::class, 'rescrape'])->name('fragrances.rescrape');
         Route::delete('/fragrances/{fragrance}', [FragranceController::class, 'destroy'])->name('fragrances.destroy');
+
+        // Tags de Perfumaria
+        Route::get('/fragrance-tags', [FragranceTagController::class, 'index'])->name('fragrance-tags.index');
+        Route::post('/fragrance-tags', [FragranceTagController::class, 'store'])->name('fragrance-tags.store');
+        Route::put('/fragrance-tags/{tag}', [FragranceTagController::class, 'update'])->name('fragrance-tags.update');
+        Route::delete('/fragrance-tags/{tag}', [FragranceTagController::class, 'destroy'])->name('fragrance-tags.destroy');
 
         // Garantias
         Route::get('/warranties', [WarrantyController::class, 'index'])->name('warranties.index');

@@ -5,23 +5,51 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Filtros -->
+    {{-- Tabs de categorias --}}
+    @if($tags->isNotEmpty())
+        <div class="mb-6 flex flex-wrap gap-2">
+            <a href="{{ route('catalogo.index', request()->only('search')) }}"
+               class="px-4 py-2 rounded-full text-sm font-medium transition
+                      {{ !request('tag') && !request('gender') ? 'bg-pink-600 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10' }}">
+                Todos
+            </a>
+            <a href="{{ route('catalogo.index', array_merge(request()->only('search'), ['gender' => 'masculino'])) }}"
+               class="px-4 py-2 rounded-full text-sm font-medium transition
+                      {{ request('gender') === 'masculino' ? 'bg-blue-600 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10' }}">
+                Masculino
+            </a>
+            <a href="{{ route('catalogo.index', array_merge(request()->only('search'), ['gender' => 'feminino'])) }}"
+               class="px-4 py-2 rounded-full text-sm font-medium transition
+                      {{ request('gender') === 'feminino' ? 'bg-pink-600 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10' }}">
+                Feminino
+            </a>
+            @foreach($tags as $tag)
+                <a href="{{ route('catalogo.index', array_merge(request()->only('search'), ['tag' => $tag->slug])) }}"
+                   class="px-4 py-2 rounded-full text-sm font-medium transition
+                          {{ request('tag') === $tag->slug ? 'text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10' }}"
+                   @if(request('tag') === $tag->slug) style="background: {{ $tag->color }};" @endif>
+                    @if($tag->icon) {{ $tag->icon }} @endif
+                    {{ $tag->name }}
+                    @if($tag->products_count > 0)
+                        <span class="text-xs opacity-70">({{ $tag->products_count }})</span>
+                    @endif
+                </a>
+            @endforeach
+        </div>
+    @endif
+
+    <!-- Busca -->
     <div class="mb-8">
         <form method="GET" class="flex flex-wrap items-center gap-3">
+            @if(request('tag')) <input type="hidden" name="tag" value="{{ request('tag') }}"> @endif
+            @if(request('gender')) <input type="hidden" name="gender" value="{{ request('gender') }}"> @endif
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar perfume ou marca..."
                    class="rounded-lg border border-white/10 bg-white/5 text-sm text-white placeholder-gray-500 focus:ring-pink-500 focus:border-pink-500 w-64 px-4 py-2.5">
-            <select name="gender" onchange="this.form.submit()"
-                    class="rounded-lg border border-white/10 bg-white/5 text-sm text-white focus:ring-pink-500 focus:border-pink-500 px-4 py-2.5">
-                <option value="" class="bg-gray-900">Todos os gêneros</option>
-                <option value="masculino" {{ request('gender') === 'masculino' ? 'selected' : '' }} class="bg-gray-900">Masculino</option>
-                <option value="feminino" {{ request('gender') === 'feminino' ? 'selected' : '' }} class="bg-gray-900">Feminino</option>
-                <option value="unissex" {{ request('gender') === 'unissex' ? 'selected' : '' }} class="bg-gray-900">Unissex</option>
-            </select>
             <button type="submit" class="px-5 py-2.5 bg-pink-600 text-white text-sm font-semibold rounded-lg hover:bg-pink-700 transition">
                 Buscar
             </button>
-            @if(request('search') || request('gender'))
-                <a href="{{ route('catalogo.index') }}" class="text-sm text-gray-400 hover:text-white transition">Limpar</a>
+            @if(request('search'))
+                <a href="{{ route('catalogo.index', request()->only('tag', 'gender')) }}" class="text-sm text-gray-400 hover:text-white transition">Limpar</a>
             @endif
         </form>
     </div>

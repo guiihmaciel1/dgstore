@@ -177,6 +177,26 @@
                             </div>
                         </div>
 
+                        {{-- Tags --}}
+                        @php $allTags = \App\Domain\Fragrance\Models\FragranceTag::active()->ordered()->get(); @endphp
+                        @if($allTags->isNotEmpty())
+                            <div class="mt-4 pt-4 border-t border-white/5">
+                                <label class="block text-xs font-medium text-dg-500 mb-2">Categorias</label>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($allTags as $tag)
+                                        <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border cursor-pointer transition text-xs
+                                                       {{ $fragrance->tags->contains($tag->id) ? 'border-pink-500/50 bg-pink-500/10 text-pink-300' : 'border-border-strong bg-surface-overlay text-dg-400 hover:border-dg-500' }}">
+                                            <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
+                                                   {{ $fragrance->tags->contains($tag->id) ? 'checked' : '' }}
+                                                   class="rounded border-border-strong text-pink-600 focus:ring-pink-500 w-3.5 h-3.5">
+                                            @if($tag->icon) {{ $tag->icon }} @endif
+                                            {{ $tag->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="flex items-center justify-between mt-4">
                             <div class="flex items-center gap-2">
                                 <input type="hidden" name="active" value="0">

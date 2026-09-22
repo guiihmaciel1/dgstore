@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers;
 
 use App\Domain\Fragrance\Models\FragranceProduct;
+use App\Domain\Fragrance\Models\FragranceTag;
 use App\Domain\Perfumes\Models\PerfumeSetting;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -27,15 +28,23 @@ class FragranceCatalogController extends Controller
             $query->byGender($gender);
         }
 
+        if ($tag = $request->get('tag')) {
+            $query->byTag($tag);
+        }
+
         $products = $query
             ->orderBy('sort_order')
             ->orderBy('name')
             ->paginate(24)
             ->withQueryString();
 
+        $tags = FragranceTag::active()->ordered()->withCount([
+            'products' => fn ($q) => $q->where('active', true),
+        ])->get();
+
         $whatsappNumber = PerfumeSetting::get('whatsapp_number', '');
 
-        return view('catalogo.index', compact('products', 'whatsappNumber'));
+        return view('catalogo.index', compact('products', 'tags', 'whatsappNumber'));
     }
 
     public function show(string $slug): View

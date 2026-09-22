@@ -92,7 +92,7 @@ class FragranceController extends Controller
 
     public function edit(FragranceProduct $fragrance): View
     {
-        $fragrance->load(['accords', 'notes']);
+        $fragrance->load(['accords', 'notes', 'tags']);
 
         return view('fragrances.edit', compact('fragrance'));
     }
@@ -113,7 +113,11 @@ class FragranceController extends Controller
             $data['original_price'] = null;
         }
 
+        $tags = $data['tags'] ?? [];
+        unset($data['tags']);
+
         $fragrance->update($data);
+        $fragrance->tags()->sync($tags);
 
         return redirect()
             ->route('fragrances.edit', $fragrance)

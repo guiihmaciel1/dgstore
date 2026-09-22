@@ -23,6 +23,8 @@ class UpdateFragranceRequest extends FormRequest
             'stock_quantity'       => ['required', 'integer', 'min:0'],
             'active'               => ['boolean'],
             'sort_order'           => ['integer', 'min:0'],
+            'tags'                 => ['nullable', 'array'],
+            'tags.*'               => ['integer', 'exists:fragrance_tags,id'],
         ];
     }
 

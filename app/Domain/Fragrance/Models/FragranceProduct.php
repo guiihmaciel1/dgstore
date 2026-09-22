@@ -9,6 +9,7 @@ use App\Domain\Payment\Services\CardFeeCalculatorService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -118,6 +119,16 @@ class FragranceProduct extends Model
         return $this->notes()->where('layer', 'base');
     }
 
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            FragranceTag::class,
+            'fragrance_product_tag',
+            'fragrance_product_id',
+            'fragrance_tag_id',
+        );
+    }
+
     // ---- Scopes ----
 
     public function scopeActive(Builder $query): void
@@ -128,6 +139,11 @@ class FragranceProduct extends Model
     public function scopeByGender(Builder $query, string $gender): void
     {
         $query->where('gender', $gender);
+    }
+
+    public function scopeByTag(Builder $query, string $slug): void
+    {
+        $query->whereHas('tags', fn ($q) => $q->where('slug', $slug));
     }
 
     // ---- Accessors ----
