@@ -16,8 +16,8 @@ class UpdateFragranceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cost_price'           => ['nullable', 'numeric', 'min:0'],
-            'shipping_cost'        => ['nullable', 'numeric', 'min:0'],
+            'cost_price'            => ['nullable', 'numeric', 'min:0'],
+            'shipping_rate_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'pix_price'            => ['nullable', 'numeric', 'min:0'],
             'pix_discount_percent' => ['required', 'integer', 'min:1', 'max:30'],
             'stock_quantity'       => ['required', 'integer', 'min:0'],
@@ -29,8 +29,9 @@ class UpdateFragranceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'cost_price.numeric'             => 'O custo deve ser um número válido.',
-            'shipping_cost.numeric'          => 'O frete deve ser um número válido.',
+            'cost_price.numeric'              => 'O custo deve ser um número válido.',
+            'shipping_rate_percent.numeric'  => 'A taxa de frete deve ser um número válido.',
+            'shipping_rate_percent.max'      => 'A taxa de frete não pode ultrapassar 100%.',
             'pix_price.numeric'              => 'O preço PIX deve ser um número válido.',
             'pix_discount_percent.required'  => 'Informe o percentual de desconto PIX.',
             'pix_discount_percent.min'       => 'O desconto deve ser pelo menos 1%.',

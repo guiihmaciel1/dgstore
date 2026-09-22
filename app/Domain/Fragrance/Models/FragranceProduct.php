@@ -33,7 +33,7 @@ class FragranceProduct extends Model
         'rating',
         'votes_count',
         'cost_price',
-        'shipping_cost',
+        'shipping_rate_percent',
         'sale_price',
         'pix_price',
         'pix_discount_percent',
@@ -51,7 +51,7 @@ class FragranceProduct extends Model
             'gender'               => FragranceGender::class,
             'rating'               => 'decimal:2',
             'cost_price'           => 'decimal:2',
-            'shipping_cost'        => 'decimal:2',
+            'shipping_rate_percent' => 'decimal:2',
             'sale_price'           => 'decimal:2',
             'pix_price'            => 'decimal:2',
             'pix_discount_percent' => 'integer',
@@ -150,11 +150,22 @@ class FragranceProduct extends Model
     }
 
     /**
-     * Custo total = custo do produto + frete.
+     * Valor do frete em R$ = custo * (taxa / 100).
+     */
+    public function getShippingCostValueAttribute(): float
+    {
+        $cost = (float) ($this->cost_price ?? 0);
+        $rate = (float) ($this->shipping_rate_percent ?? 0);
+
+        return round($cost * ($rate / 100), 2);
+    }
+
+    /**
+     * Custo total = custo do produto + frete calculado.
      */
     public function getTotalCostAttribute(): float
     {
-        return (float) ($this->cost_price ?? 0) + (float) ($this->shipping_cost ?? 0);
+        return (float) ($this->cost_price ?? 0) + $this->shipping_cost_value;
     }
 
     /**

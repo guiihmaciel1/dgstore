@@ -147,18 +147,22 @@
                                     @error('cost_price') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
                                 </div>
 
-                                {{-- Frete --}}
+                                {{-- Frete % --}}
                                 <div>
-                                    <label class="block text-xs font-medium text-dg-500 mb-1">Taxa de Frete (R$)</label>
-                                    <input type="number" name="shipping_cost" step="0.01" min="0"
-                                           x-model="shippingCost"
-                                           placeholder="0,00"
+                                    <label class="block text-xs font-medium text-dg-500 mb-1">Taxa de Frete (%)</label>
+                                    <input type="number" name="shipping_rate_percent" step="0.01" min="0" max="100"
+                                           x-model="shippingRate"
+                                           placeholder="0"
                                            class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
-                                    @error('shipping_cost') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                                    @error('shipping_rate_percent') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
                                 </div>
 
                                 {{-- Custo total (auto) --}}
-                                <div class="pt-2 border-t border-white/5">
+                                <div class="pt-2 border-t border-white/5 space-y-1">
+                                    <div class="flex justify-between text-xs">
+                                        <span class="text-dg-500">Frete</span>
+                                        <span class="text-dg-400" x-text="'R$ ' + shippingValue.toFixed(2).replace('.', ',')"></span>
+                                    </div>
                                     <div class="flex justify-between text-xs">
                                         <span class="text-dg-500">Custo Total</span>
                                         <span class="text-dg-300 font-medium" x-text="'R$ ' + totalCost.toFixed(2).replace('.', ',')"></span>
@@ -353,12 +357,18 @@
 
             return {
                 costPrice: {{ old('cost_price', $fragrance->cost_price ?? 0) }},
-                shippingCost: {{ old('shipping_cost', $fragrance->shipping_cost ?? 0) }},
+                shippingRate: {{ old('shipping_rate_percent', $fragrance->shipping_rate_percent ?? 0) }},
                 pixPrice: {{ old('pix_price', $fragrance->pix_price ?? 0) }},
                 pixDiscount: {{ old('pix_discount_percent', $fragrance->pix_discount_percent ?? 10) }},
 
+                get shippingValue() {
+                    const cost = parseFloat(this.costPrice || 0);
+                    const rate = parseFloat(this.shippingRate || 0);
+                    return cost * (rate / 100);
+                },
+
                 get totalCost() {
-                    return parseFloat(this.costPrice || 0) + parseFloat(this.shippingCost || 0);
+                    return parseFloat(this.costPrice || 0) + this.shippingValue;
                 },
 
                 get grossUp() {
