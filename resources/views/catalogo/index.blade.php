@@ -120,13 +120,13 @@
                     <div class="px-4 pt-4 pb-5">
                         {{-- Brand --}}
                         @if($product->brand)
-                            <p class="text-[11px] uppercase tracking-[0.15em] font-medium mb-1.5 truncate" style="color: var(--gold);">
+                            <p class="text-[11px] sm:text-xs uppercase tracking-[0.15em] font-medium mb-1.5 truncate" style="color: var(--gold);">
                                 {{ $product->brand }}
                             </p>
                         @endif
 
                         {{-- Name --}}
-                        <h3 class="text-sm sm:text-base font-semibold text-white line-clamp-2 leading-snug">
+                        <h3 class="text-base sm:text-lg font-semibold text-white line-clamp-2 leading-snug">
                             {{ $product->name }}
                         </h3>
 
@@ -140,7 +140,7 @@
 
                         {{-- Rating --}}
                         @if($product->rating)
-                            <div class="flex items-center gap-1.5 mt-2.5">
+                            <div class="flex items-center gap-1.5 mt-2">
                                 <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                                 <span class="text-xs text-amber-400 font-semibold">{{ number_format($product->rating, 1) }}</span>
                             </div>
@@ -149,37 +149,35 @@
                         {{-- Pricing --}}
                         @if($product->sale_price && $product->pix_price)
                             @php $origPrice = $product->original_price ?? (int)(ceil(((float)$product->sale_price * 1.2) / 10) * 10); @endphp
-                            <div class="mt-4 pt-3.5" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
+                            <div class="mt-3.5 pt-3" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
                                 <div class="flex items-baseline gap-2">
                                     <span class="text-[11px] line-through" style="color: var(--muted);">R$ {{ number_format($origPrice, 0, ',', '.') }}</span>
-                                    <span class="text-lg sm:text-xl font-bold text-white">R$ {{ number_format($product->sale_price, 0, ',', '.') }}</span>
+                                    <span class="text-xl sm:text-2xl font-bold text-white">R$ {{ number_format($product->sale_price, 0, ',', '.') }}</span>
                                 </div>
-                                <p class="text-[11px] mt-1 font-light" style="color: var(--muted);">
+                                <p class="text-[11px] mt-0.5" style="color: var(--muted);">
                                     10x de R$ {{ number_format((float)$product->sale_price / 10, 0, ',', '.') }} sem juros
                                 </p>
 
                                 {{-- PIX price --}}
-                                <div class="mt-2.5 px-3.5 py-2.5 rounded-xl pix-badge">
-                                    <div class="flex items-baseline gap-1.5">
-                                        <span class="text-[13px] font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
-                                        <span class="text-[10px] font-medium" style="color: var(--teal); opacity: 0.6;">PIX</span>
-                                    </div>
+                                <div class="mt-2 px-3 py-2 rounded-xl pix-badge">
+                                    <span class="text-sm sm:text-base font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
+                                    <span class="text-[10px] font-medium ml-1" style="color: var(--teal); opacity: 0.6;">PIX</span>
                                 </div>
 
                                 @if($product->stock_quantity <= 0)
-                                    <p class="text-[10px] mt-2.5 font-medium tracking-wide" style="color: var(--gold);">
+                                    <p class="text-[10px] mt-2 font-medium tracking-wide" style="color: var(--gold);">
                                         Sob encomenda · 3–5 dias
                                     </p>
                                 @endif
                             </div>
                         @elseif($product->pix_price)
-                            <div class="mt-4 pt-3.5" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
-                                <div class="px-3.5 py-2.5 rounded-xl pix-badge">
-                                    <span class="text-base font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
+                            <div class="mt-3.5 pt-3" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
+                                <div class="px-3 py-2 rounded-xl pix-badge">
+                                    <span class="text-base sm:text-lg font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
                                     <span class="text-[10px] ml-1 font-medium" style="color: var(--teal); opacity: 0.6;">PIX</span>
                                 </div>
                                 @if($product->stock_quantity <= 0)
-                                    <p class="text-[10px] mt-2.5 font-medium tracking-wide" style="color: var(--gold);">
+                                    <p class="text-[10px] mt-2 font-medium tracking-wide" style="color: var(--gold);">
                                         Sob encomenda · 3–5 dias
                                     </p>
                                 @endif

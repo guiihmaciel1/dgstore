@@ -1,10 +1,10 @@
 {{-- Single highlight card (used inside horizontal scroll) --}}
 <a href="{{ route('catalogo.show', $product->slug) }}"
-   class="snap-start shrink-0 w-[140px] sm:w-[160px] group"
+   class="snap-start shrink-0 w-[160px] sm:w-[185px] group"
    style="scroll-snap-align: start;">
     <div class="cat-card h-full flex flex-col">
         {{-- Image --}}
-        <div class="cat-card-img aspect-[3/4] flex items-center justify-center p-3 sm:p-4">
+        <div class="cat-card-img aspect-[4/5] flex items-center justify-center p-4 sm:p-5">
             @if($product->image_url)
                 <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                      class="w-full h-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
@@ -17,20 +17,62 @@
         </div>
 
         {{-- Info --}}
-        <div class="px-3 pt-2.5 pb-3.5 flex-1 flex flex-col">
+        <div class="px-3.5 pt-3 pb-4 flex-1 flex flex-col">
             @if($product->brand)
-                <p class="text-[9px] sm:text-[10px] uppercase tracking-[0.12em] font-medium truncate" style="color: var(--gold); opacity: 0.7;">
+                <p class="text-[10px] sm:text-[11px] uppercase tracking-[0.12em] font-medium mb-1 truncate" style="color: var(--gold);">
                     {{ $product->brand }}
                 </p>
             @endif
-            <h3 class="text-xs sm:text-[13px] font-semibold text-white leading-snug line-clamp-2 mt-0.5">
+
+            <h3 class="text-[13px] sm:text-sm font-semibold text-white leading-snug line-clamp-2">
                 {{ $product->name }}
             </h3>
 
-            @if($product->pix_price)
-                <div class="mt-auto pt-2">
-                    <span class="text-xs sm:text-sm font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
-                    <span class="text-[9px] font-medium ml-0.5" style="color: var(--teal); opacity: 0.5;">PIX</span>
+            @if($product->inspired_by)
+                <p class="text-[10px] mt-1 truncate" style="color: var(--muted);">
+                    Inspirado em {{ $product->inspired_by }}
+                </p>
+            @endif
+
+            @if($product->rating)
+                <div class="flex items-center gap-1 mt-2">
+                    <svg class="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    <span class="text-[11px] text-amber-400 font-semibold">{{ number_format($product->rating, 1) }}</span>
+                </div>
+            @endif
+
+            {{-- Pricing (same style as main grid) --}}
+            @if($product->sale_price && $product->pix_price)
+                @php $origPrice = $product->original_price ?? (int)(ceil(((float)$product->sale_price * 1.2) / 10) * 10); @endphp
+                <div class="mt-auto pt-3" style="border-top: 1px solid rgba(212, 165, 64, 0.06); margin-top: auto;">
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-[10px] line-through" style="color: var(--muted);">R$ {{ number_format($origPrice, 0, ',', '.') }}</span>
+                        <span class="text-base font-bold text-white">R$ {{ number_format($product->sale_price, 0, ',', '.') }}</span>
+                    </div>
+                    <p class="text-[10px] mt-0.5" style="color: var(--muted);">
+                        10x de R$ {{ number_format((float)$product->sale_price / 10, 0, ',', '.') }} s/ juros
+                    </p>
+                    <div class="mt-2 px-3 py-1.5 rounded-lg pix-badge">
+                        <span class="text-xs font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
+                        <span class="text-[9px] font-medium ml-0.5" style="color: var(--teal); opacity: 0.6;">PIX</span>
+                    </div>
+                    @if($product->stock_quantity <= 0)
+                        <p class="text-[9px] mt-1.5 font-medium tracking-wide" style="color: var(--gold);">
+                            Sob encomenda · 3–5 dias
+                        </p>
+                    @endif
+                </div>
+            @elseif($product->pix_price)
+                <div class="mt-auto pt-3" style="border-top: 1px solid rgba(212, 165, 64, 0.06); margin-top: auto;">
+                    <div class="px-3 py-1.5 rounded-lg pix-badge">
+                        <span class="text-sm font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
+                        <span class="text-[9px] font-medium ml-0.5" style="color: var(--teal); opacity: 0.6;">PIX</span>
+                    </div>
+                    @if($product->stock_quantity <= 0)
+                        <p class="text-[9px] mt-1.5 font-medium tracking-wide" style="color: var(--gold);">
+                            Sob encomenda · 3–5 dias
+                        </p>
+                    @endif
                 </div>
             @endif
         </div>
