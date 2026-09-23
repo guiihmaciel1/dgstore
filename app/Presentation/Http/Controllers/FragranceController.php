@@ -38,6 +38,10 @@ class FragranceController extends Controller
             $query->where('active', (bool) $request->get('active'));
         }
 
+        if ($request->get('in_stock')) {
+            $query->where('stock_quantity', '>', 0);
+        }
+
         if ($request->has('sort')) {
             $query->orderBy($request->get('sort'), $request->get('dir', 'desc'));
         } else {

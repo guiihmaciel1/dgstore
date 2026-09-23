@@ -68,9 +68,15 @@
                                 <option value="0" {{ request('active') === '0' ? 'selected' : '' }}>Inativo</option>
                             </select>
                         </div>
-                        <div class="flex items-end gap-2">
+                        <div class="flex items-end gap-3">
+                            <label class="inline-flex items-center gap-2 cursor-pointer select-none pb-2">
+                                <input type="checkbox" name="in_stock" value="1"
+                                       {{ request('in_stock') ? 'checked' : '' }}
+                                       class="w-4 h-4 rounded border-border-strong text-emerald-500 focus:ring-emerald-500/30 bg-surface-raised">
+                                <span class="text-sm text-dg-300">Em estoque</span>
+                            </label>
                             <button type="submit" class="px-4 py-2 bg-surface-overlay text-sm font-medium text-dg-200 rounded-lg hover:bg-surface-elevated transition">Filtrar</button>
-                            @if(request()->hasAny(['search', 'gender', 'active']))
+                            @if(request()->hasAny(['search', 'gender', 'active', 'in_stock']))
                                 <a href="{{ route('fragrances.index') }}" class="px-4 py-2 text-sm text-dg-500 hover:text-dg-300 transition">Limpar</a>
                             @endif
                         </div>
