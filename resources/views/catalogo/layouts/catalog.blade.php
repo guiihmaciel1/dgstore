@@ -163,6 +163,69 @@
             border: 1px solid rgba(46, 196, 182, 0.12);
         }
 
+        /* ─── Discount pin (corner badge on product images) ─── */
+        .discount-pin {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            min-width: 46px;
+            min-height: 46px;
+            padding: 6px 4px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00c9a7 0%, #0ea58a 100%);
+            box-shadow: 0 4px 14px rgba(0, 201, 167, 0.4), 0 0 0 2.5px rgba(0, 201, 167, 0.18);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            animation: pinPulse 2.5s ease-in-out infinite;
+        }
+        @keyframes pinPulse {
+            0%, 100% { box-shadow: 0 4px 14px rgba(0, 201, 167, 0.4), 0 0 0 2.5px rgba(0, 201, 167, 0.18); }
+            50% { box-shadow: 0 4px 20px rgba(0, 201, 167, 0.55), 0 0 0 4px rgba(0, 201, 167, 0.10); }
+        }
+        .discount-pin-value {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.02em;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .discount-pin-label {
+            font-size: 7px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 1px;
+        }
+        .discount-pin-sm {
+            min-width: 40px;
+            min-height: 40px;
+            padding: 5px 3px;
+            top: 8px;
+            right: 8px;
+        }
+        .discount-pin-sm .discount-pin-value {
+            font-size: 11px;
+        }
+        .discount-pin-sm .discount-pin-label {
+            font-size: 6px;
+        }
+        .discount-pin-lg {
+            min-width: 60px;
+            min-height: 60px;
+            padding: 8px 5px;
+        }
+        .discount-pin-lg .discount-pin-value {
+            font-size: 18px;
+        }
+        .discount-pin-lg .discount-pin-label {
+            font-size: 8px;
+        }
+
         /* ─── Search ─── */
         .search-input {
             background: rgba(10, 15, 24, 0.5);

@@ -25,11 +25,25 @@
     {{-- Product hero --}}
     <div class="info-card overflow-hidden mb-8 animate-fade-up">
 
-        {{-- Image — centered, with ambient glow --}}
+        {{-- Image — centered, with ambient glow + discount pin --}}
         <div class="relative flex items-center justify-center p-10 sm:p-14"
              style="min-height: 280px;">
             <div class="absolute inset-0 pointer-events-none"
                  style="background: radial-gradient(ellipse at 50% 60%, rgba(212, 165, 64, 0.05) 0%, transparent 60%);"></div>
+
+            @php
+                $showOrigPrice = $fragrance->original_price ?? ($fragrance->sale_price ? (int)(ceil(((float)$fragrance->sale_price * 1.2) / 10) * 10) : null);
+                $showDiscount = ($showOrigPrice && $fragrance->pix_price && $showOrigPrice > 0)
+                    ? round(($showOrigPrice - (float)$fragrance->pix_price) / $showOrigPrice * 100)
+                    : 0;
+            @endphp
+            @if($showDiscount >= 5)
+                <div class="discount-pin discount-pin-lg">
+                    <span class="discount-pin-value">{{ $showDiscount }}%</span>
+                    <span class="discount-pin-label">OFF</span>
+                </div>
+            @endif
+
             @if($fragrance->image_url)
                 <img src="{{ $fragrance->image_url }}" alt="{{ $fragrance->name }}"
                      class="w-56 sm:w-64 h-auto max-h-[320px] object-contain relative drop-shadow-2xl">
@@ -135,7 +149,14 @@
                             <span class="text-xl sm:text-2xl font-bold" style="color: var(--teal);">R$ {{ number_format($fragrance->pix_price, 0, ',', '.') }}</span>
                             <span class="text-[10px] font-semibold tracking-wide" style="color: var(--teal); opacity: 0.7;">à vista no PIX</span>
                         </div>
-                        <p class="text-[10px] mt-1 font-medium" style="color: var(--teal); opacity: 0.5;">Economia de {{ $realDiscount }}%</p>
+                        @if($realDiscount >= 5)
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold"
+                                      style="background: rgba(46, 196, 182, 0.15); color: var(--teal-light);">
+                                    🔥 Economia de {{ $realDiscount }}%
+                                </span>
+                            </div>
+                        @endif
                     </div>
 
                     @if($fragrance->stock_quantity <= 0)

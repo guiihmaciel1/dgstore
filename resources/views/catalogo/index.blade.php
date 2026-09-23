@@ -102,7 +102,19 @@
                    style="animation-delay: {{ min($loop->index * 0.05, 0.4) }}s;">
 
                     {{-- Product image --}}
-                    <div class="cat-card-img aspect-[4/5] flex items-center justify-center p-5 sm:p-6">
+                    <div class="cat-card-img aspect-[4/5] flex items-center justify-center p-5 sm:p-6 relative">
+                        @php
+                            $gridOrigPrice = $product->original_price ?? ($product->sale_price ? (int)(ceil(((float)$product->sale_price * 1.2) / 10) * 10) : null);
+                            $gridDiscount = ($gridOrigPrice && $product->pix_price && $gridOrigPrice > 0)
+                                ? round(($gridOrigPrice - (float)$product->pix_price) / $gridOrigPrice * 100)
+                                : 0;
+                        @endphp
+                        @if($gridDiscount >= 5)
+                            <div class="discount-pin">
+                                <span class="discount-pin-value">{{ $gridDiscount }}%</span>
+                                <span class="discount-pin-label">OFF</span>
+                            </div>
+                        @endif
                         @if($product->image_url)
                             <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
                                  class="w-full h-full object-contain drop-shadow-xl group-hover:scale-105 transition-transform duration-700 ease-out"
@@ -160,8 +172,13 @@
 
                                 {{-- PIX price --}}
                                 <div class="mt-2 px-3 py-2 rounded-xl pix-badge">
-                                    <span class="text-sm sm:text-base font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
-                                    <span class="text-[10px] font-medium ml-1" style="color: var(--teal); opacity: 0.6;">PIX</span>
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-sm sm:text-base font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
+                                        <span class="text-[10px] font-medium" style="color: var(--teal); opacity: 0.6;">PIX</span>
+                                    </div>
+                                    @if($gridDiscount >= 5)
+                                        <p class="text-[10px] font-bold mt-0.5" style="color: var(--teal-light);">Economia de {{ $gridDiscount }}%</p>
+                                    @endif
                                 </div>
 
                                 @if($product->stock_quantity <= 0)
