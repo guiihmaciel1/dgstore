@@ -147,6 +147,9 @@
                                                     @if($item->isConsignment())
                                                         <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #fbbf24; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Consignado</span>
                                                     @endif
+                                                    @if(!empty($snapshot['is_fragrance']))
+                                                        <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: rgba(201,169,110,0.15); color: #c9a96e; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Perfume</span>
+                                                    @endif
                                                     @if(!empty($exchanges))
                                                         <span title="Item ja foi trocado com outro lojista" style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #fce7f3; color: #9d174d; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trocado</span>
                                                     @endif

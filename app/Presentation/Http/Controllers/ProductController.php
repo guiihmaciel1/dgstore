@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers;
 
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
+use App\Domain\Fragrance\Models\FragranceProduct;
 use App\Domain\Product\DTOs\ProductData;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
@@ -188,7 +189,33 @@ class ProductController extends Controller
             'suggested_price' => $item->suggested_price ? (float) $item->suggested_price : null,
         ]);
 
-        return response()->json($results->concat($consignmentResults)->values());
+        $fragranceResults = FragranceProduct::where('active', true)
+            ->where('stock_quantity', '>', 0)
+            ->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                  ->orWhere('brand', 'like', "%{$term}%");
+            })
+            ->limit(10)
+            ->get()
+            ->map(fn(FragranceProduct $f) => [
+                'id' => $f->id,
+                'name' => '🧴 ' . ($f->brand ? $f->brand . ' - ' : '') . $f->name,
+                'sku' => 'PRF-' . $f->fragrantica_id,
+                'category' => 'perfume',
+                'stock' => $f->stock_quantity,
+                'cost_price' => $canViewFinancials && $f->cost_price ? (float) $f->cost_price : null,
+                'sale_price' => $f->pix_price ? (float) $f->pix_price : null,
+                'condition' => 'new',
+                'from_trade_in' => false,
+                'is_consignment' => false,
+                'consignment_item_id' => null,
+                'is_fragrance' => true,
+                'fragrance_id' => $f->id,
+            ]);
+
+        return response()->json(
+            $results->concat($fragranceResults)->concat($consignmentResults)->values()
+        );
     }
 
     /**

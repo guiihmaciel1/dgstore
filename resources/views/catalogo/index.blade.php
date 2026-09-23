@@ -8,7 +8,7 @@
 
     {{-- Hero / Branding --}}
     <div class="pt-10 pb-6 sm:pt-14 sm:pb-8 text-center">
-        <h1 class="font-serif text-2xl sm:text-3xl font-semibold text-gold-gradient tracking-tight">DG Imports</h1>
+        <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports" class="h-20 sm:h-28 w-auto mx-auto">
         <p class="text-xs sm:text-sm mt-2" style="color: var(--muted);">Perfumes importados originais</p>
     </div>
 

@@ -227,7 +227,7 @@
                                     <!-- Resultados da busca -->
                                     <div x-show="searchResults.length > 0 || (searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading)" x-cloak 
                                          style="position: absolute; z-index: 20; margin-top: 0.5rem; width: 100%; background: #141414; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); max-height: 20rem; overflow: auto;">
-                                        <template x-for="(product, pIdx) in searchResults" :key="(product.is_consignment ? 'c_' : 'p_') + product.id">
+                                        <template x-for="(product, pIdx) in searchResults" :key="(product.is_fragrance ? 'f_' : product.is_consignment ? 'c_' : 'p_') + product.id">
                                             <button 
                                                 type="button"
                                                 @click="addItem(product)"
@@ -239,6 +239,7 @@
                                                         <span style="font-weight: 600; color: #e3e3e3;" x-text="product.name"></span>
                                                         <span x-show="product.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Trade-in</span>
                                                         <span x-show="product.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Consignado</span>
+                                                        <span x-show="product.is_fragrance" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(201,169,110,0.15); color: #c9a96e; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Perfume</span>
                                                     </div>
                                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap;">
                                                         <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #222222; color: #818181; border-radius: 0.25rem;" x-text="product.sku"></span>
@@ -293,9 +294,11 @@
                                                             <p style="font-weight: 600; color: #e3e3e3; font-size: 0.9375rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" x-text="item.name"></p>
                                                             <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">TRADE-IN</span>
                                                             <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">CONSIGNADO</span>
+                                                            <span x-show="item.is_fragrance" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(201,169,110,0.15); color: #c9a96e; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">PERFUME</span>
                                                         </div>
-                                                        <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.is_consignment ? '' : (item.id || '')">
+                                                        <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.is_consignment || item.is_fragrance ? '' : (item.id || '')">
                                                         <input type="hidden" :name="'items['+index+'][consignment_item_id]'" :value="item.consignment_item_id || ''">
+                                                        <input type="hidden" :name="'items['+index+'][fragrance_id]'" :value="item.fragrance_id || ''">
                                                         <input type="hidden" :name="'items['+index+'][product_name]'" :value="item.name || ''">
                                                     </div>
                                                     <button type="button" @click="removeItem(index)" 
@@ -2100,6 +2103,39 @@
                                 consignment_item_id: product.consignment_item_id,
                             });
                         }
+                    } else if (product.is_fragrance) {
+                        const existingFrag = this.items.find(i => i.fragrance_id === product.fragrance_id);
+                        if (existingFrag) {
+                            if (existingFrag.quantity < existingFrag.stock) {
+                                existingFrag.quantity++;
+                            }
+                        } else {
+                            const costPrice = parseFloat(product.cost_price) || 0;
+                            const price = isRepasse ? costPrice + 30 : (parseFloat(product.sale_price) || 0);
+
+                            this.items.push({
+                                id: null,
+                                name: product.name,
+                                category: 'perfume',
+                                price: price,
+                                original_sale_price: parseFloat(product.sale_price) || 0,
+                                original_cost_price: costPrice,
+                                cost_price: isRepasse ? 0 : costPrice,
+                                financial_cost: isRepasse ? 0 : costPrice,
+                                commission_cost: isRepasse ? 0 : costPrice,
+                                supplier_origin: '',
+                                freight_type: '',
+                                freight_value: 0,
+                                quantity: 1,
+                                stock: product.stock,
+                                from_trade_in: false,
+                                condition: 'new',
+                                is_consignment: false,
+                                consignment_item_id: null,
+                                is_fragrance: true,
+                                fragrance_id: product.fragrance_id,
+                            });
+                        }
                     } else {
                         const existing = this.items.find(i => i.id === product.id && !i.is_consignment);
                         if (existing) {
@@ -2129,6 +2165,8 @@
                                 condition: product.condition || null,
                                 is_consignment: false,
                                 consignment_item_id: null,
+                                is_fragrance: false,
+                                fragrance_id: null,
                             });
                         }
                     }

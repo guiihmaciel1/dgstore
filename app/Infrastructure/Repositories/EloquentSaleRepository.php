@@ -6,6 +6,7 @@ namespace App\Infrastructure\Repositories;
 
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\ConsignmentStock\Services\ConsignmentStockService;
+use App\Domain\Fragrance\Models\FragranceProduct;
 use App\Domain\Product\Models\Product;
 use App\Domain\Sale\DTOs\SaleData;
 use App\Domain\Sale\Enums\PaymentStatus;
@@ -142,6 +143,41 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                         $data->userId,
                         $itemData->quantity,
                     );
+                } elseif ($itemData->isFragrance()) {
+                    $fragrance = FragranceProduct::findOrFail($itemData->fragranceId);
+
+                    $snapshot = [
+                        'id' => $fragrance->id,
+                        'name' => ($fragrance->brand ? $fragrance->brand . ' - ' : '') . $fragrance->name,
+                        'sku' => 'PRF-' . $fragrance->fragrantica_id,
+                        'category' => 'perfume',
+                        'condition' => 'new',
+                        'cost_price' => $fragrance->cost_price,
+                        'brand' => $fragrance->brand,
+                        'size_ml' => $fragrance->size_ml,
+                        'inspired_by' => $fragrance->inspired_by,
+                        'is_fragrance' => true,
+                        'fragrance_id' => $fragrance->id,
+                    ];
+
+                    SaleItem::create([
+                        'sale_id' => $sale->id,
+                        'product_id' => null,
+                        'product_snapshot' => $snapshot,
+                        'quantity' => $itemData->quantity,
+                        'unit_price' => $itemData->unitPrice,
+                        'cost_price' => $itemData->costPrice,
+                        'financial_cost' => $itemData->financialCost,
+                        'commission_cost' => $itemData->commissionCost,
+                        'supplier_origin' => $itemData->supplierOrigin,
+                        'freight_type' => $itemData->freightType,
+                        'freight_value' => $itemData->freightValue,
+                        'freight_amount' => $freightAmount,
+                        'total_cost' => $totalCost,
+                        'subtotal' => $itemData->subtotal(),
+                    ]);
+
+                    $fragrance->decrement('stock_quantity', $itemData->quantity);
                 } elseif ($itemData->productId) {
                     $product = Product::findOrFail($itemData->productId);
 
@@ -247,6 +283,14 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                             auth()->id(),
                             $item->quantity,
                         );
+                    }
+                } elseif ($this->isFragranceSaleItem($item)) {
+                    $fragranceId = $item->product_snapshot['fragrance_id'] ?? null;
+                    if ($fragranceId) {
+                        $fragrance = FragranceProduct::find($fragranceId);
+                        if ($fragrance) {
+                            $fragrance->increment('stock_quantity', $item->quantity);
+                        }
                     }
                 } elseif ($item->product_id && $item->product) {
                     StockMovement::create([
@@ -422,6 +466,13 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'total_commissions' => $totalCommissions,
             'total_net_profit' => $totalProfit - $totalCommissions,
         ];
+    }
+
+    private function isFragranceSaleItem(SaleItem $item): bool
+    {
+        $snapshot = $item->product_snapshot ?? [];
+
+        return !empty($snapshot['is_fragrance']) || !empty($snapshot['fragrance_id']);
     }
 
     private function applyFilters($query, array $filters): void

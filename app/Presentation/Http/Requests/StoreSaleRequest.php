@@ -35,6 +35,7 @@ class StoreSaleRequest extends FormRequest
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['nullable', 'exists:products,id'],
             'items.*.consignment_item_id' => ['nullable', 'exists:consignment_stock_items,id'],
+            'items.*.fragrance_id' => ['nullable', 'exists:fragrance_products,id'],
             'items.*.product_name' => ['nullable', 'string', 'max:255'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],

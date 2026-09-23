@@ -18,6 +18,7 @@ readonly class SaleItemData
         public float $freightValue = 0,
         public ?string $consignmentItemId = null,
         public ?string $productName = null,
+        public ?string $fragranceId = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -36,12 +37,18 @@ readonly class SaleItemData
             freightValue: (float) ($data['freight_value'] ?? 0),
             consignmentItemId: !empty($data['consignment_item_id']) ? $data['consignment_item_id'] : null,
             productName: $data['product_name'] ?? null,
+            fragranceId: !empty($data['fragrance_id']) ? $data['fragrance_id'] : null,
         );
     }
 
     public function isConsignment(): bool
     {
         return $this->consignmentItemId !== null;
+    }
+
+    public function isFragrance(): bool
+    {
+        return $this->fragranceId !== null;
     }
 
     public function subtotal(): float

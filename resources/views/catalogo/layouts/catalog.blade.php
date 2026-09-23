@@ -7,6 +7,8 @@
     <meta name="description" content="@yield('description', 'Catálogo de perfumes importados — DG Imports')">
     @hasSection('og_image')
         <meta property="og:image" content="@yield('og_image')">
+    @else
+        <meta property="og:image" content="{{ asset('images/logo-dg-imports.png') }}">
     @endif
     <meta property="og:title" content="@yield('title', 'DG Imports — Catálogo')">
     <meta property="og:description" content="@yield('description', 'Catálogo de perfumes importados — DG Imports')">
@@ -111,7 +113,7 @@
     <footer class="border-t border-white/5 mt-16">
         <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="text-center sm:text-left">
-                <span class="font-serif text-sm font-semibold text-gold-gradient">DG Imports</span>
+                <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports" class="h-10 w-auto">
                 <p class="text-[11px] mt-1" style="color: var(--muted);">Perfumes importados com os melhores preços</p>
             </div>
             <p class="text-[11px]" style="color: var(--muted);">&copy; {{ date('Y') }} DG Imports</p>

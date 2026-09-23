@@ -7,6 +7,7 @@ namespace App\Application\UseCases;
 use App\Domain\Commission\Models\Commission;
 use App\Domain\ConsignmentStock\Models\ConsignmentStockItem;
 use App\Domain\Finance\Services\FinanceService;
+use App\Domain\Fragrance\Models\FragranceProduct;
 use App\Domain\Product\Repositories\ProductRepositoryInterface;
 use App\Domain\Sale\DTOs\SaleData;
 use App\Domain\Sale\Enums\SaleType;
@@ -319,6 +320,30 @@ class CreateSaleUseCase
                 if ($consignmentItem->available_quantity < $item->quantity) {
                     $unavailableItems[] = [
                         'message' => "Item consignado '{$consignmentItem->name}': estoque insuficiente. Disponível: {$consignmentItem->available_quantity}",
+                    ];
+                }
+
+                continue;
+            }
+
+            if ($item->isFragrance()) {
+                $fragrance = FragranceProduct::find($item->fragranceId);
+
+                if (!$fragrance) {
+                    $unavailableItems[] = ['message' => 'Perfume não encontrado'];
+                    continue;
+                }
+
+                if (!$fragrance->active) {
+                    $unavailableItems[] = [
+                        'message' => "Perfume '{$fragrance->name}' está inativo",
+                    ];
+                    continue;
+                }
+
+                if ($fragrance->stock_quantity < $item->quantity) {
+                    $unavailableItems[] = [
+                        'message' => "Perfume '{$fragrance->name}': estoque insuficiente. Disponível: {$fragrance->stock_quantity}",
                     ];
                 }
 
