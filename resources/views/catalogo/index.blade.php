@@ -13,7 +13,7 @@
 
         <div class="relative">
             <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports"
-                 class="h-24 sm:h-36 w-auto mx-auto drop-shadow-2xl">
+                 class="h-32 sm:h-44 w-auto mx-auto drop-shadow-2xl">
             <div class="gold-line max-w-[100px] mx-auto mt-5"></div>
         </div>
     </div>
