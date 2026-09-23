@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0a0f18">
     <title>@yield('title', 'DG Imports — Catálogo')</title>
     <meta name="description" content="@yield('description', 'Catálogo de perfumes importados — DG Imports')">
     @hasSection('og_image')
@@ -13,7 +14,7 @@
     <meta property="og:title" content="@yield('title', 'DG Imports — Catálogo')">
     <meta property="og:description" content="@yield('description', 'Catálogo de perfumes importados — DG Imports')">
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&family=playfair-display:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&family=playfair-display:400,500,600,700,700i&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -25,40 +26,62 @@
             --gold-dark: #b08830;
             --cream: #f0ece4;
             --bg: #0a0f18;
-            --surface: #101822;
-            --surface-elevated: #182030;
-            --muted: #5a6578;
+            --surface: #0f1520;
+            --surface-elevated: #151d2c;
+            --muted: #6b7a90;
             --teal: #2ec4b6;
             --teal-light: #5cdbd3;
             --teal-glow: rgba(46, 196, 182, 0.08);
+            --gold-glow: rgba(212, 165, 64, 0.06);
         }
 
         body {
             background: var(--bg);
-            background-image: radial-gradient(ellipse at 50% 0%, rgba(46, 196, 182, 0.03) 0%, transparent 50%),
-                              radial-gradient(ellipse at 80% 20%, rgba(212, 165, 64, 0.02) 0%, transparent 40%);
             color: var(--cream);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-serif { font-family: 'Playfair Display', Georgia, serif; }
 
-        /* Cards */
+        /* ─── Product cards ─── */
         .cat-card {
-            background: var(--surface);
-            border: 1px solid rgba(212, 165, 64, 0.06);
-            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            background: linear-gradient(165deg, var(--surface) 0%, var(--surface-elevated) 100%);
+            border: 1px solid rgba(212, 165, 64, 0.04);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .cat-card:hover {
-            border-color: rgba(46, 196, 182, 0.18);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 30px rgba(46, 196, 182, 0.04);
-            transform: translateY(-2px);
+        .cat-card:hover, .cat-card:active {
+            border-color: rgba(212, 165, 64, 0.15);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                         0 0 40px rgba(212, 165, 64, 0.04),
+                         inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            transform: translateY(-3px);
+        }
+        @media (max-width: 639px) {
+            .cat-card:active { transform: scale(0.98); }
+            .cat-card:hover { transform: none; }
         }
 
-        /* Accord bars */
-        .accord-bar { transition: width 0.6s ease-out; }
+        .cat-card-img {
+            background: linear-gradient(180deg, rgba(21, 29, 44, 0.6) 0%, rgba(15, 21, 32, 0.9) 100%);
+            position: relative;
+        }
+        .cat-card-img::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 165, 64, 0.12), transparent);
+        }
 
-        /* Gold gradient text */
+        /* ─── Accord bars ─── */
+        .accord-bar { transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        /* ─── Gold gradient text ─── */
         .text-gold-gradient {
             background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
             -webkit-background-clip: text;
@@ -66,64 +89,103 @@
             background-clip: text;
         }
 
-        /* WhatsApp button */
+        /* ─── WhatsApp button ─── */
         .btn-whatsapp {
-            background: #25d366;
-            transition: all 0.25s;
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.15);
         }
         .btn-whatsapp:hover {
-            background: #22c55e;
-            box-shadow: 0 6px 24px rgba(37, 211, 102, 0.25);
+            box-shadow: 0 8px 32px rgba(37, 211, 102, 0.25);
             transform: translateY(-1px);
         }
 
-        /* Scrollbar */
+        /* ─── Scrollbar ─── */
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
 
-        /* Pill active */
+        /* ─── Filter pills ─── */
         .pill-active {
-            background: var(--gold);
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
             color: var(--bg);
-            box-shadow: 0 2px 12px rgba(212, 165, 64, 0.2);
+            font-weight: 600;
+            box-shadow: 0 2px 16px rgba(212, 165, 64, 0.25);
         }
         .pill-inactive {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             color: var(--muted);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
         }
         .pill-inactive:hover {
-            background: rgba(46, 196, 182, 0.06);
+            background: rgba(255, 255, 255, 0.05);
             color: var(--cream);
-            border-color: rgba(46, 196, 182, 0.12);
-        }
-
-        /* Teal accent utilities */
-        .text-teal { color: var(--teal); }
-        .text-teal-light { color: var(--teal-light); }
-        .bg-teal-glow { background: var(--teal-glow); }
-        .teal-accent { color: var(--teal); }
-
-        /* Info cards glow */
-        .info-card {
-            background: var(--surface);
-            border: 1px solid rgba(212, 165, 64, 0.05);
-            transition: border-color 0.3s;
-        }
-        .info-card:hover {
             border-color: rgba(212, 165, 64, 0.12);
         }
 
-        /* Perfume classes (keep for show page) */
+        /* ─── Glass surface ─── */
+        .glass {
+            background: rgba(15, 21, 32, 0.7);
+            backdrop-filter: blur(20px) saturate(1.2);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        /* ─── Info cards ─── */
+        .info-card {
+            background: linear-gradient(165deg, var(--surface) 0%, var(--surface-elevated) 100%);
+            border: 1px solid rgba(212, 165, 64, 0.04);
+            border-radius: 1.25rem;
+            transition: border-color 0.3s;
+        }
+        .info-card:hover {
+            border-color: rgba(212, 165, 64, 0.10);
+        }
+
+        /* ─── PIX badge ─── */
+        .pix-badge {
+            background: linear-gradient(135deg, rgba(46, 196, 182, 0.08) 0%, rgba(46, 196, 182, 0.03) 100%);
+            border: 1px solid rgba(46, 196, 182, 0.12);
+        }
+
+        /* ─── Search ─── */
+        .search-input {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 165, 64, 0.08), 0 4px 24px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }
+
+        /* ─── Decorative gold separator ─── */
+        .gold-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(212, 165, 64, 0.2) 50%, transparent 100%);
+        }
+
+        /* ─── Perfume badges ─── */
         .perfume-card { background: var(--surface); border: 1px solid rgba(212,165,64,0.06); }
         .perfume-card:hover { border-color: rgba(212,165,64,0.12); }
         .perfume-section-title { color: var(--gold); font-weight: 700; }
         .perfume-text-cream { color: var(--cream); }
         .perfume-text-muted { color: var(--muted); }
         .perfume-text-gold { color: var(--gold); }
-        .perfume-badge-masc { background: rgba(46,196,182,0.10); color: var(--teal-light); border: 1px solid rgba(46,196,182,0.15); }
-        .perfume-badge-fem { background: rgba(212,165,64,0.10); color: var(--gold-light); border: 1px solid rgba(212,165,64,0.15); }
-        .perfume-badge-uni { background: rgba(147,51,234,0.10); color: #c084fc; border: 1px solid rgba(147,51,234,0.15); }
+        .perfume-badge-masc { background: rgba(46,196,182,0.08); color: var(--teal-light); border: 1px solid rgba(46,196,182,0.12); }
+        .perfume-badge-fem { background: rgba(212,165,64,0.08); color: var(--gold-light); border: 1px solid rgba(212,165,64,0.12); }
+        .perfume-badge-uni { background: rgba(147,51,234,0.08); color: #c084fc; border: 1px solid rgba(147,51,234,0.12); }
+
+        /* ─── Smooth appearance ─── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
@@ -132,14 +194,13 @@
         @yield('content')
     </main>
 
-    {{-- Footer minimal --}}
-    <footer class="border-t border-white/5 mt-16">
-        <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="text-center sm:text-left">
-                <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports" class="h-10 w-auto">
-                <p class="text-[11px] mt-1" style="color: var(--muted);">Perfumes importados com os melhores preços</p>
-            </div>
-            <p class="text-[11px]" style="color: var(--muted);">&copy; {{ date('Y') }} DG Imports</p>
+    {{-- Footer --}}
+    <footer class="mt-20">
+        <div class="gold-line"></div>
+        <div class="max-w-6xl mx-auto px-5 py-10 flex flex-col items-center gap-4">
+            <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports" class="h-12 w-auto opacity-60">
+            <p class="text-[11px] tracking-wider uppercase" style="color: var(--muted);">Perfumes importados com os melhores preços</p>
+            <p class="text-[10px]" style="color: var(--muted); opacity: 0.5;">&copy; {{ date('Y') }} DG Imports — Todos os direitos reservados</p>
         </div>
     </footer>
 
