@@ -94,13 +94,14 @@
                                     <th class="px-4 py-3 font-medium text-dg-500">Perfume</th>
                                     <th class="px-4 py-3 font-medium text-dg-500">Marca</th>
                                     <th class="px-4 py-3 font-medium text-dg-500 text-center">Gênero</th>
-                                    <th class="px-4 py-3 font-medium text-dg-500 text-center">Nota</th>
                                     <th class="px-4 py-3 font-medium text-dg-500 text-right">De <span class="text-dg-600">(fake)</span></th>
                                     <th class="px-4 py-3 font-medium text-dg-500 text-right">10x</th>
                                     <th class="px-4 py-3 font-medium text-dg-500 text-right">PIX</th>
                                     @if(auth()->user()->isAdmin())
                                         <th class="px-4 py-3 font-medium text-dg-500 text-right">Custo</th>
-                                        <th class="px-4 py-3 font-medium text-dg-500 text-right">Lucro</th>
+                                        <th class="px-4 py-3 font-medium text-dg-500 text-right">Lucro Bruto</th>
+                                        <th class="px-4 py-3 font-medium text-dg-500 text-right">Comissão</th>
+                                        <th class="px-4 py-3 font-medium text-dg-500 text-right">Lucro Líq.</th>
                                     @endif
                                     <th class="px-4 py-3 font-medium text-dg-500 text-center">Estq</th>
                                     <th class="px-4 py-3 font-medium text-dg-500 text-center">Status</th>
@@ -138,14 +139,6 @@
                                                 {{ $f->gender->label() }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3 text-center">
-                                            @if($f->rating)
-                                                <span class="text-amber-400 font-medium">{{ number_format($f->rating, 1) }}</span>
-                                                <span class="text-dg-600 text-xs">/5</span>
-                                            @else
-                                                <span class="text-dg-600">—</span>
-                                            @endif
-                                        </td>
                                         {{-- De (fake) --}}
                                         <td class="px-4 py-3 text-right">
                                             @if($f->original_price)
@@ -179,22 +172,37 @@
                                                     <span class="text-dg-700">—</span>
                                                 @endif
                                             </td>
-                                            {{-- Lucro --}}
-                                            <td class="px-4 py-3 text-right">
-                                                @if($f->pix_price && $f->cost_price)
-                                                    @php $lucro = (float)$f->pix_price - $f->total_cost; @endphp
-                                                    <div>
-                                                        <span class="{{ $lucro >= 0 ? 'text-emerald-400' : 'text-red-400' }} font-medium text-xs">
-                                                            R$ {{ number_format($lucro, 0, ',', '.') }}
-                                                        </span>
-                                                    </div>
+                                            {{-- Lucro Bruto / Comissão / Lucro Líq. --}}
+                                            @if($f->pix_price && $f->cost_price)
+                                                @php
+                                                    $lucroBruto = (float)$f->pix_price - $f->total_cost;
+                                                    $comissao = $lucroBruto > 0 ? round($lucroBruto * 0.10, 2) : 0;
+                                                    $lucroLiq = $lucroBruto - $comissao;
+                                                @endphp
+                                                <td class="px-4 py-3 text-right">
+                                                    <span class="{{ $lucroBruto >= 0 ? 'text-emerald-400' : 'text-red-400' }} font-medium text-xs">
+                                                        R$ {{ number_format($lucroBruto, 0, ',', '.') }}
+                                                    </span>
                                                     @if($f->profit_margin !== null)
-                                                        <span class="text-dg-600 text-[10px]">{{ number_format($f->profit_margin, 0) }}%</span>
+                                                        <div class="text-dg-600 text-[10px]">{{ number_format($f->profit_margin, 0) }}%</div>
                                                     @endif
-                                                @else
-                                                    <span class="text-dg-700">—</span>
-                                                @endif
-                                            </td>
+                                                </td>
+                                                <td class="px-4 py-3 text-right">
+                                                    <span class="text-amber-400 font-medium text-xs">
+                                                        R$ {{ number_format($comissao, 0, ',', '.') }}
+                                                    </span>
+                                                    <div class="text-dg-600 text-[10px]">10%</div>
+                                                </td>
+                                                <td class="px-4 py-3 text-right">
+                                                    <span class="{{ $lucroLiq >= 0 ? 'text-emerald-400' : 'text-red-400' }} font-medium text-xs">
+                                                        R$ {{ number_format($lucroLiq, 0, ',', '.') }}
+                                                    </span>
+                                                </td>
+                                            @else
+                                                <td class="px-4 py-3 text-right"><span class="text-dg-700">—</span></td>
+                                                <td class="px-4 py-3 text-right"><span class="text-dg-700">—</span></td>
+                                                <td class="px-4 py-3 text-right"><span class="text-dg-700">—</span></td>
+                                            @endif
                                         @endif
                                         {{-- Estoque --}}
                                         <td class="px-4 py-3 text-center">

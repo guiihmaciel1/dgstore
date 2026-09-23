@@ -247,6 +247,17 @@ class CreateSaleUseCase
             $snapshot = $item->product_snapshot ?? [];
             $category = $snapshot['category'] ?? null;
 
+            if (isset($snapshot['fragrance_id'])) {
+                $commissionCost = $item->commission_cost_value;
+                $profit = ((float) $item->unit_price - $commissionCost) * $item->quantity;
+
+                if ($profit > 0) {
+                    $commission += $profit * self::COMMISSION_RATE;
+                }
+
+                continue;
+            }
+
             if (!in_array($category, ['smartphone', 'tablet', 'notebook', 'smartwatch'])) {
                 continue;
             }
