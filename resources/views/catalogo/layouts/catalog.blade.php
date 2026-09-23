@@ -42,6 +42,16 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* ─── Fixed background image ─── */
+        .catalog-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: url('{{ asset("images/catalog-bg.jpg") }}') center / cover no-repeat fixed;
+            filter: blur(6px) brightness(0.18);
+            transform: scale(1.05);
+        }
+
         .font-serif { font-family: 'Playfair Display', Georgia, serif; }
 
         /* ─── Product cards ─── */
@@ -189,6 +199,7 @@
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
+    <div class="catalog-bg" aria-hidden="true"></div>
 
     <main class="flex-1">
         @yield('content')
