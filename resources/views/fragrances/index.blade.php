@@ -185,13 +185,50 @@
                                                     $comissao = $lucroBruto > 0 ? round($lucroBruto * 0.10, 2) : 0;
                                                     $lucroLiq = $lucroBruto - $comissao;
                                                 @endphp
-                                                <td class="px-4 py-3 text-right">
-                                                    <span class="{{ $lucroBruto >= 0 ? 'text-emerald-400' : 'text-red-400' }} font-medium text-xs">
-                                                        R$ {{ number_format($lucroBruto, 0, ',', '.') }}
-                                                    </span>
-                                                    @if($f->profit_margin !== null)
-                                                        <div class="text-dg-600 text-[10px]">{{ number_format($f->profit_margin, 0) }}%</div>
-                                                    @endif
+                                                <td class="px-4 py-3 text-right relative"
+                                                    x-data="parcelaCalc({{ (float)$f->pix_price }}, {{ (float)$f->sale_price }}, {{ $f->total_cost }})"
+                                                    @click.away="open = false">
+                                                    <button @click="open = !open" class="text-left cursor-pointer hover:opacity-80 transition">
+                                                        <span class="{{ $lucroBruto >= 0 ? 'text-emerald-400' : 'text-red-400' }} font-medium text-xs">
+                                                            R$ {{ number_format($lucroBruto, 0, ',', '.') }}
+                                                        </span>
+                                                        @if($f->profit_margin !== null)
+                                                            <div class="text-dg-600 text-[10px]">{{ number_format($f->profit_margin, 0) }}%</div>
+                                                        @endif
+                                                    </button>
+                                                    {{-- Popover calculadora --}}
+                                                    <div x-show="open" x-cloak x-transition.opacity.duration.150ms
+                                                         class="absolute right-0 top-full mt-1 z-50 rounded-xl shadow-2xl border text-xs"
+                                                         style="background: #1a1a1a; border-color: rgba(255,255,255,0.08); min-width: 420px;"
+                                                         @click.stop>
+                                                        <div class="px-4 py-2.5 border-b" style="border-color: rgba(255,255,255,0.06);">
+                                                            <span class="text-dg-400 font-semibold text-[11px] uppercase tracking-wider">Simulador por parcela</span>
+                                                        </div>
+                                                        <table class="w-full text-[11px]">
+                                                            <thead>
+                                                                <tr class="text-dg-500" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                                                    <th class="px-3 py-2 text-left font-medium">Parcelas</th>
+                                                                    <th class="px-3 py-2 text-right font-medium">Recebe</th>
+                                                                    <th class="px-3 py-2 text-right font-medium">L. Bruto</th>
+                                                                    <th class="px-3 py-2 text-right font-medium">Comissão</th>
+                                                                    <th class="px-3 py-2 text-right font-medium">L. Líq.</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <template x-for="row in rows" :key="row.label">
+                                                                    <tr class="hover:bg-white/[0.03] transition"
+                                                                        :class="row.isPix ? 'bg-emerald-500/[0.05]' : ''"
+                                                                        style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                                                        <td class="px-3 py-1.5 font-medium" :class="row.isPix ? 'text-emerald-400' : 'text-dg-300'" x-text="row.label"></td>
+                                                                        <td class="px-3 py-1.5 text-right text-dg-300" x-text="row.recebe"></td>
+                                                                        <td class="px-3 py-1.5 text-right font-medium" :class="row.lucroNum >= 0 ? 'text-emerald-400' : 'text-red-400'" x-text="row.bruto"></td>
+                                                                        <td class="px-3 py-1.5 text-right text-amber-400" x-text="row.comissao"></td>
+                                                                        <td class="px-3 py-1.5 text-right font-medium" :class="row.liqNum >= 0 ? 'text-emerald-400' : 'text-red-400'" x-text="row.liq"></td>
+                                                                    </tr>
+                                                                </template>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </td>
                                                 <td class="px-4 py-3 text-right">
                                                     <span class="text-amber-400 font-medium text-xs">
@@ -256,4 +293,36 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        function parcelaCalc(pixPrice, salePrice, totalCost) {
+            const MDR = [0, 2.96, 4.03, 4.72, 5.41, 6.09, 6.78, 7.62, 8.31, 8.99, 9.68];
+            const fmt = (v) => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+
+            const buildRow = (label, recebe, isPix) => {
+                const lucro = recebe - totalCost;
+                const com = lucro > 0 ? lucro * 0.10 : 0;
+                const liq = lucro - com;
+                return {
+                    label, isPix,
+                    recebe: fmt(recebe),
+                    bruto: fmt(lucro),
+                    comissao: fmt(com),
+                    liq: fmt(liq),
+                    lucroNum: lucro,
+                    liqNum: liq,
+                };
+            };
+
+            const rows = [buildRow('PIX', pixPrice, true)];
+            for (let i = 1; i <= 10; i++) {
+                const recebe = salePrice * (1 - MDR[i] / 100);
+                rows.push(buildRow(i + 'x', recebe, false));
+            }
+
+            return { open: false, rows };
+        }
+    </script>
+    @endpush
 </x-app-layout>
