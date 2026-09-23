@@ -21,7 +21,7 @@
     </div>
 
     {{-- Hero --}}
-    <div class="rounded-2xl overflow-hidden mb-6" style="background: var(--surface);">
+    <div class="rounded-2xl overflow-hidden mb-6 info-card">
         <div class="flex flex-col sm:flex-row">
             {{-- Image --}}
             <div class="flex items-center justify-center sm:w-72 md:w-80 p-8 sm:p-10" style="background: var(--surface-elevated);">
@@ -113,16 +113,16 @@
                         </p>
 
                         {{-- PIX --}}
-                        <div class="mt-3 px-4 py-3 rounded-xl" style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.1);">
+                        <div class="mt-3 px-4 py-3 rounded-xl" style="background: var(--teal-glow); border: 1px solid rgba(46, 196, 182, 0.12);">
                             <div class="flex items-baseline gap-2">
-                                <span class="text-lg sm:text-xl font-bold text-emerald-400">R$ {{ number_format($fragrance->pix_price, 0, ',', '.') }}</span>
-                                <span class="text-xs text-emerald-400/70">à vista no PIX</span>
+                                <span class="text-lg sm:text-xl font-bold" style="color: var(--teal);">R$ {{ number_format($fragrance->pix_price, 0, ',', '.') }}</span>
+                                <span class="text-xs" style="color: var(--teal); opacity: 0.7;">à vista no PIX</span>
                             </div>
-                            <p class="text-[11px] text-emerald-500/60 mt-0.5">{{ $realDiscount }}% de desconto</p>
+                            <p class="text-[11px] mt-0.5" style="color: var(--teal); opacity: 0.5;">{{ $realDiscount }}% de desconto</p>
                         </div>
 
                         @if($fragrance->stock_quantity <= 0)
-                            <div class="mt-3 px-4 py-2.5 rounded-xl flex items-center gap-2" style="background: rgba(201, 169, 110, 0.06); border: 1px solid rgba(201, 169, 110, 0.12);">
+                            <div class="mt-3 px-4 py-2.5 rounded-xl flex items-center gap-2" style="background: rgba(212, 165, 64, 0.06); border: 1px solid rgba(212, 165, 64, 0.12);">
                                 <span class="text-sm">📦</span>
                                 <div>
                                     <p class="text-xs font-semibold" style="color: var(--gold);">Sob encomenda</p>
@@ -133,10 +133,10 @@
                     </div>
                 @elseif($fragrance->pix_price)
                     <div class="mt-6 pt-5 border-t border-white/[0.04]">
-                        <span class="text-2xl font-bold text-emerald-400">R$ {{ number_format($fragrance->pix_price, 0, ',', '.') }}</span>
+                        <span class="text-2xl font-bold" style="color: var(--teal);">R$ {{ number_format($fragrance->pix_price, 0, ',', '.') }}</span>
                         <span class="text-xs ml-1" style="color: var(--muted);">à vista no PIX</span>
                         @if($fragrance->stock_quantity <= 0)
-                            <div class="mt-3 px-4 py-2.5 rounded-xl flex items-center gap-2" style="background: rgba(201, 169, 110, 0.06); border: 1px solid rgba(201, 169, 110, 0.12);">
+                            <div class="mt-3 px-4 py-2.5 rounded-xl flex items-center gap-2" style="background: rgba(212, 165, 64, 0.06); border: 1px solid rgba(212, 165, 64, 0.12);">
                                 <span class="text-sm">📦</span>
                                 <div>
                                     <p class="text-xs font-semibold" style="color: var(--gold);">Sob encomenda</p>
@@ -171,7 +171,7 @@
         <div class="lg:col-span-2 space-y-5">
             {{-- Acordes --}}
             @if($fragrance->accords->isNotEmpty())
-                <div class="rounded-2xl p-5 sm:p-6" style="background: var(--surface);">
+                <div class="rounded-2xl p-5 sm:p-6 info-card">
                     <h2 class="text-sm font-semibold mb-4" style="color: var(--gold);">Principais Acordes</h2>
                     <div class="space-y-2">
                         @foreach($fragrance->accords as $accord)
@@ -192,7 +192,7 @@
 
             {{-- Pirâmide Olfativa --}}
             @if($fragrance->notes->isNotEmpty())
-                <div class="rounded-2xl p-5 sm:p-6" style="background: var(--surface);">
+                <div class="rounded-2xl p-5 sm:p-6 info-card">
                     <h2 class="text-sm font-semibold mb-5" style="color: var(--gold);">Pirâmide Olfativa</h2>
                     @foreach([
                         'top' => ['label' => 'Notas de Topo', 'icon' => '△'],
@@ -224,7 +224,7 @@
 
             {{-- Descrição --}}
             @if($fragrance->description)
-                <div class="rounded-2xl p-5 sm:p-6" style="background: var(--surface);">
+                <div class="rounded-2xl p-5 sm:p-6 info-card">
                     <h2 class="text-sm font-semibold mb-3" style="color: var(--gold);">Sobre</h2>
                     <p class="text-sm leading-relaxed" style="color: var(--muted);">{{ $fragrance->description }}</p>
                 </div>
@@ -235,7 +235,7 @@
         <div class="space-y-5">
             {{-- Quando Usar --}}
             @if($fragrance->seasons || $fragrance->day_night)
-                <div class="rounded-2xl p-5 sm:p-6" style="background: var(--surface);">
+                <div class="rounded-2xl p-5 sm:p-6 info-card">
                     <h2 class="text-sm font-semibold mb-4" style="color: var(--gold);">Quando Usar</h2>
 
                     @if($fragrance->seasons)
@@ -284,7 +284,7 @@
             @endif
 
             {{-- Ficha Técnica --}}
-            <div class="rounded-2xl p-5 sm:p-6" style="background: var(--surface);">
+            <div class="rounded-2xl p-5 sm:p-6 info-card">
                 <h2 class="text-sm font-semibold mb-4" style="color: var(--gold);">Ficha Técnica</h2>
                 <dl class="space-y-3 text-[13px]">
                     @if($fragrance->brand)

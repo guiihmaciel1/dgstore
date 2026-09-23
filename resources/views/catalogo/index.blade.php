@@ -7,9 +7,10 @@
 <div class="max-w-6xl mx-auto px-4 sm:px-5">
 
     {{-- Hero / Branding --}}
-    <div class="pt-10 pb-6 sm:pt-14 sm:pb-8 text-center">
-        <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports" class="h-20 sm:h-28 w-auto mx-auto">
-        <p class="text-xs sm:text-sm mt-2" style="color: var(--muted);">Perfumes importados originais</p>
+    <div class="pt-10 pb-6 sm:pt-14 sm:pb-8 text-center relative">
+        <div class="absolute inset-0 -top-10" style="background: radial-gradient(ellipse at 50% 30%, rgba(212, 165, 64, 0.06) 0%, transparent 60%); pointer-events: none;"></div>
+        <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports" class="h-20 sm:h-28 w-auto mx-auto relative">
+        <p class="text-xs sm:text-sm mt-2 relative" style="color: var(--muted);">Perfumes importados originais</p>
     </div>
 
     {{-- Search --}}
@@ -19,7 +20,7 @@
             @if(request('gender')) <input type="hidden" name="gender" value="{{ request('gender') }}"> @endif
             <input type="text" name="search" value="{{ request('search') }}"
                    placeholder="Buscar perfume ou marca..."
-                   class="w-full pl-10 pr-4 py-3 rounded-xl text-sm bg-white/[0.03] border border-white/[0.06] text-white placeholder-gray-600 focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold)] focus:outline-none transition">
+                   class="w-full pl-10 pr-4 py-3 rounded-xl text-sm bg-white/[0.03] border border-white/[0.06] text-white placeholder-gray-600 focus:border-[var(--teal)] focus:ring-1 focus:ring-[var(--teal)] focus:outline-none transition">
             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style="color: var(--muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
@@ -129,14 +130,14 @@
                                     <span class="text-sm sm:text-base font-bold text-white">R$ {{ number_format($product->sale_price, 0, ',', '.') }}</span>
                                 </div>
                                 <p class="text-[10px] mt-0.5" style="color: var(--muted);">10x sem juros</p>
-                                <p class="text-[11px] font-semibold text-emerald-400 mt-1">R$ {{ number_format($product->pix_price, 0, ',', '.') }} <span class="font-normal text-emerald-500/60">no PIX</span></p>
+                                <p class="text-[11px] font-semibold mt-1" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }} <span class="font-normal" style="color: var(--teal); opacity: 0.6;">no PIX</span></p>
                                 @if($product->stock_quantity <= 0)
                                     <p class="text-[10px] mt-1.5 font-medium" style="color: var(--gold);">📦 Sob encomenda · 3 a 5 dias</p>
                                 @endif
                             </div>
                         @elseif($product->pix_price)
                             <div class="mt-3 pt-3 border-t border-white/[0.04]">
-                                <p class="text-sm font-bold text-emerald-400">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</p>
+                                <p class="text-sm font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</p>
                                 @if($product->stock_quantity <= 0)
                                     <p class="text-[10px] mt-1.5 font-medium" style="color: var(--gold);">📦 Sob encomenda · 3 a 5 dias</p>
                                 @endif

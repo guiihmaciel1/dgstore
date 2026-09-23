@@ -20,18 +20,23 @@
         [x-cloak] { display: none !important; }
 
         :root {
-            --gold: #c9a96e;
-            --gold-light: #dcc189;
-            --gold-dark: #a88b4a;
-            --cream: #f5f0e8;
-            --bg: #080808;
-            --surface: #111111;
-            --surface-elevated: #181818;
-            --muted: #6b6560;
+            --gold: #d4a540;
+            --gold-light: #e8c060;
+            --gold-dark: #b08830;
+            --cream: #f0ece4;
+            --bg: #0a0f18;
+            --surface: #101822;
+            --surface-elevated: #182030;
+            --muted: #5a6578;
+            --teal: #2ec4b6;
+            --teal-light: #5cdbd3;
+            --teal-glow: rgba(46, 196, 182, 0.08);
         }
 
         body {
             background: var(--bg);
+            background-image: radial-gradient(ellipse at 50% 0%, rgba(46, 196, 182, 0.03) 0%, transparent 50%),
+                              radial-gradient(ellipse at 80% 20%, rgba(212, 165, 64, 0.02) 0%, transparent 40%);
             color: var(--cream);
             font-family: 'Inter', sans-serif;
         }
@@ -41,12 +46,12 @@
         /* Cards */
         .cat-card {
             background: var(--surface);
-            border: 1px solid rgba(201, 169, 110, 0.06);
+            border: 1px solid rgba(212, 165, 64, 0.06);
             transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
         }
         .cat-card:hover {
-            border-color: rgba(201, 169, 110, 0.15);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+            border-color: rgba(46, 196, 182, 0.18);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), 0 0 30px rgba(46, 196, 182, 0.04);
             transform: translateY(-2px);
         }
 
@@ -79,27 +84,45 @@
         /* Pill active */
         .pill-active {
             background: var(--gold);
-            color: #080808;
+            color: var(--bg);
+            box-shadow: 0 2px 12px rgba(212, 165, 64, 0.2);
         }
         .pill-inactive {
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.03);
             color: var(--muted);
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
         .pill-inactive:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(46, 196, 182, 0.06);
             color: var(--cream);
+            border-color: rgba(46, 196, 182, 0.12);
+        }
+
+        /* Teal accent utilities */
+        .text-teal { color: var(--teal); }
+        .text-teal-light { color: var(--teal-light); }
+        .bg-teal-glow { background: var(--teal-glow); }
+        .teal-accent { color: var(--teal); }
+
+        /* Info cards glow */
+        .info-card {
+            background: var(--surface);
+            border: 1px solid rgba(212, 165, 64, 0.05);
+            transition: border-color 0.3s;
+        }
+        .info-card:hover {
+            border-color: rgba(212, 165, 64, 0.12);
         }
 
         /* Perfume classes (keep for show page) */
-        .perfume-card { background: var(--surface); border: 1px solid rgba(201,169,110,0.06); }
-        .perfume-card:hover { border-color: rgba(201,169,110,0.12); }
+        .perfume-card { background: var(--surface); border: 1px solid rgba(212,165,64,0.06); }
+        .perfume-card:hover { border-color: rgba(212,165,64,0.12); }
         .perfume-section-title { color: var(--gold); font-weight: 700; }
         .perfume-text-cream { color: var(--cream); }
         .perfume-text-muted { color: var(--muted); }
         .perfume-text-gold { color: var(--gold); }
-        .perfume-badge-masc { background: rgba(59,130,246,0.10); color: #93bbfd; border: 1px solid rgba(59,130,246,0.15); }
-        .perfume-badge-fem { background: rgba(201,169,110,0.10); color: var(--gold-light); border: 1px solid rgba(201,169,110,0.15); }
+        .perfume-badge-masc { background: rgba(46,196,182,0.10); color: var(--teal-light); border: 1px solid rgba(46,196,182,0.15); }
+        .perfume-badge-fem { background: rgba(212,165,64,0.10); color: var(--gold-light); border: 1px solid rgba(212,165,64,0.15); }
         .perfume-badge-uni { background: rgba(147,51,234,0.10); color: #c084fc; border: 1px solid rgba(147,51,234,0.15); }
     </style>
 </head>
