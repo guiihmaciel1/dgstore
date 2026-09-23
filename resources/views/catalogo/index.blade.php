@@ -11,11 +11,14 @@
         {{-- Ambient glow --}}
         <div class="absolute inset-0 -top-20 pointer-events-none" style="background: radial-gradient(ellipse at 50% 20%, rgba(212, 165, 64, 0.08) 0%, transparent 55%);"></div>
 
-        <div class="relative">
+        <div class="relative inline-block">
+            <div class="absolute inset-0 -inset-x-8 -inset-y-4 rounded-3xl pointer-events-none"
+                 style="background: radial-gradient(ellipse at 50% 50%, rgba(10, 15, 24, 0.65) 0%, transparent 70%);
+                        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
             <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports"
-                 class="h-32 sm:h-44 w-auto mx-auto drop-shadow-2xl">
-            <div class="gold-line max-w-[100px] mx-auto mt-5"></div>
+                 class="h-32 sm:h-44 w-auto mx-auto drop-shadow-2xl relative">
         </div>
+        <div class="gold-line max-w-[100px] mx-auto mt-5"></div>
     </div>
 
     {{-- Search --}}
