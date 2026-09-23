@@ -38,9 +38,13 @@ class FragranceController extends Controller
             $query->where('active', (bool) $request->get('active'));
         }
 
-        $sort = $request->get('sort', 'created_at');
-        $dir = $request->get('dir', 'desc');
-        $query->orderBy($sort, $dir);
+        if ($request->has('sort')) {
+            $query->orderBy($request->get('sort'), $request->get('dir', 'desc'));
+        } else {
+            $query->orderByDesc('active')
+                  ->orderBy('brand')
+                  ->orderBy('name');
+        }
 
         $fragrances = $query->paginate(20)->withQueryString();
 
