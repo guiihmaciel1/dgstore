@@ -7,20 +7,14 @@
 <div class="max-w-6xl mx-auto px-5 sm:px-6">
 
     {{-- Hero --}}
-    <div class="pt-12 pb-8 sm:pt-16 sm:pb-10 text-center relative">
+    <div class="pt-10 pb-6 sm:pt-14 sm:pb-8 text-center relative">
         {{-- Ambient glow --}}
-        <div class="absolute inset-0 -top-20 pointer-events-none" style="background: radial-gradient(ellipse at 50% 20%, rgba(212, 165, 64, 0.07) 0%, transparent 55%);"></div>
-        <div class="absolute inset-0 -top-20 pointer-events-none" style="background: radial-gradient(ellipse at 50% 40%, rgba(46, 196, 182, 0.02) 0%, transparent 45%);"></div>
+        <div class="absolute inset-0 -top-20 pointer-events-none" style="background: radial-gradient(ellipse at 50% 20%, rgba(212, 165, 64, 0.08) 0%, transparent 55%);"></div>
 
         <div class="relative">
             <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports"
-                 class="h-16 sm:h-24 w-auto mx-auto drop-shadow-lg">
-
-            <p class="text-[11px] sm:text-xs tracking-[0.2em] uppercase mt-4 font-light" style="color: var(--gold);">
-                Perfumes Importados Originais
-            </p>
-
-            <div class="gold-line max-w-[120px] mx-auto mt-5"></div>
+                 class="h-24 sm:h-36 w-auto mx-auto drop-shadow-2xl">
+            <div class="gold-line max-w-[100px] mx-auto mt-5"></div>
         </div>
     </div>
 
@@ -52,23 +46,23 @@
         <div class="mb-8 -mx-5 px-5 sm:mx-0 sm:px-0 animate-fade-up" style="animation-delay: 0.15s;">
             <div class="flex gap-2.5 overflow-x-auto hide-scrollbar pb-1 sm:flex-wrap sm:justify-center">
                 <a href="{{ route('catalogo.index', request()->only('search')) }}"
-                   class="shrink-0 px-5 py-2.5 rounded-full text-[11px] tracking-wide font-medium transition-all duration-300
+                   class="shrink-0 px-5 py-2.5 rounded-full text-xs tracking-wide font-medium transition-all duration-300
                           {{ !request('tag') && !request('gender') ? 'pill-active' : 'pill-inactive' }}">
                     Todos
                 </a>
                 <a href="{{ route('catalogo.index', array_merge(request()->only('search'), ['gender' => 'masculino'])) }}"
-                   class="shrink-0 px-5 py-2.5 rounded-full text-[11px] tracking-wide font-medium transition-all duration-300
+                   class="shrink-0 px-5 py-2.5 rounded-full text-xs tracking-wide font-medium transition-all duration-300
                           {{ request('gender') === 'masculino' ? 'pill-active' : 'pill-inactive' }}">
                     Masculino
                 </a>
                 <a href="{{ route('catalogo.index', array_merge(request()->only('search'), ['gender' => 'feminino'])) }}"
-                   class="shrink-0 px-5 py-2.5 rounded-full text-[11px] tracking-wide font-medium transition-all duration-300
+                   class="shrink-0 px-5 py-2.5 rounded-full text-xs tracking-wide font-medium transition-all duration-300
                           {{ request('gender') === 'feminino' ? 'pill-active' : 'pill-inactive' }}">
                     Feminino
                 </a>
                 @foreach($tags as $tag)
                     <a href="{{ route('catalogo.index', array_merge(request()->only('search'), ['tag' => $tag->slug])) }}"
-                       class="shrink-0 px-5 py-2.5 rounded-full text-[11px] tracking-wide font-medium transition-all duration-300
+                       class="shrink-0 px-5 py-2.5 rounded-full text-xs tracking-wide font-medium transition-all duration-300
                               {{ request('tag') === $tag->slug ? 'pill-active' : 'pill-inactive' }}">
                         @if($tag->icon) {{ $tag->icon }} @endif
                         {{ $tag->name }}
@@ -120,19 +114,19 @@
                     <div class="px-4 pt-4 pb-5">
                         {{-- Brand --}}
                         @if($product->brand)
-                            <p class="text-[10px] uppercase tracking-[0.15em] font-medium mb-1.5 truncate" style="color: var(--gold);">
+                            <p class="text-[11px] uppercase tracking-[0.15em] font-medium mb-1.5 truncate" style="color: var(--gold);">
                                 {{ $product->brand }}
                             </p>
                         @endif
 
                         {{-- Name --}}
-                        <h3 class="text-[13px] sm:text-sm font-semibold text-white line-clamp-2 leading-snug">
+                        <h3 class="text-sm sm:text-base font-semibold text-white line-clamp-2 leading-snug">
                             {{ $product->name }}
                         </h3>
 
                         {{-- Inspired by --}}
                         @if($product->inspired_by)
-                            <p class="text-[10px] mt-1.5 truncate" style="color: var(--muted);"
+                            <p class="text-[11px] mt-1.5 truncate" style="color: var(--muted);"
                                title="Inspirado em {{ $product->inspired_by }}">
                                 Inspirado em {{ $product->inspired_by }}
                             </p>
@@ -140,9 +134,9 @@
 
                         {{-- Rating --}}
                         @if($product->rating)
-                            <div class="flex items-center gap-1.5 mt-2">
-                                <svg class="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                                <span class="text-[11px] text-amber-400 font-semibold">{{ number_format($product->rating, 1) }}</span>
+                            <div class="flex items-center gap-1.5 mt-2.5">
+                                <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <span class="text-xs text-amber-400 font-semibold">{{ number_format($product->rating, 1) }}</span>
                             </div>
                         @endif
 
@@ -151,35 +145,35 @@
                             @php $origPrice = $product->original_price ?? (int)(ceil(((float)$product->sale_price * 1.2) / 10) * 10); @endphp
                             <div class="mt-4 pt-3.5" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
                                 <div class="flex items-baseline gap-2">
-                                    <span class="text-[10px] line-through" style="color: var(--muted);">R$ {{ number_format($origPrice, 0, ',', '.') }}</span>
-                                    <span class="text-base sm:text-lg font-bold text-white">R$ {{ number_format($product->sale_price, 0, ',', '.') }}</span>
+                                    <span class="text-[11px] line-through" style="color: var(--muted);">R$ {{ number_format($origPrice, 0, ',', '.') }}</span>
+                                    <span class="text-lg sm:text-xl font-bold text-white">R$ {{ number_format($product->sale_price, 0, ',', '.') }}</span>
                                 </div>
-                                <p class="text-[10px] mt-1 font-light" style="color: var(--muted);">
+                                <p class="text-[11px] mt-1 font-light" style="color: var(--muted);">
                                     10x de R$ {{ number_format((float)$product->sale_price / 10, 0, ',', '.') }} sem juros
                                 </p>
 
                                 {{-- PIX price --}}
-                                <div class="mt-2 px-3 py-2 rounded-xl pix-badge">
+                                <div class="mt-2.5 px-3.5 py-2.5 rounded-xl pix-badge">
                                     <div class="flex items-baseline gap-1.5">
-                                        <span class="text-[12px] font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
-                                        <span class="text-[9px] font-medium" style="color: var(--teal); opacity: 0.6;">PIX</span>
+                                        <span class="text-[13px] font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
+                                        <span class="text-[10px] font-medium" style="color: var(--teal); opacity: 0.6;">PIX</span>
                                     </div>
                                 </div>
 
                                 @if($product->stock_quantity <= 0)
-                                    <p class="text-[9px] mt-2 font-medium tracking-wide" style="color: var(--gold);">
+                                    <p class="text-[10px] mt-2.5 font-medium tracking-wide" style="color: var(--gold);">
                                         Sob encomenda · 3–5 dias
                                     </p>
                                 @endif
                             </div>
                         @elseif($product->pix_price)
                             <div class="mt-4 pt-3.5" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
-                                <div class="px-3 py-2 rounded-xl pix-badge">
-                                    <span class="text-sm font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
-                                    <span class="text-[9px] ml-1 font-medium" style="color: var(--teal); opacity: 0.6;">PIX</span>
+                                <div class="px-3.5 py-2.5 rounded-xl pix-badge">
+                                    <span class="text-base font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
+                                    <span class="text-[10px] ml-1 font-medium" style="color: var(--teal); opacity: 0.6;">PIX</span>
                                 </div>
                                 @if($product->stock_quantity <= 0)
-                                    <p class="text-[9px] mt-2 font-medium tracking-wide" style="color: var(--gold);">
+                                    <p class="text-[10px] mt-2.5 font-medium tracking-wide" style="color: var(--gold);">
                                         Sob encomenda · 3–5 dias
                                     </p>
                                 @endif

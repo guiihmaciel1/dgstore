@@ -56,17 +56,20 @@
 
         /* ─── Product cards ─── */
         .cat-card {
-            background: linear-gradient(165deg, var(--surface) 0%, var(--surface-elevated) 100%);
-            border: 1px solid rgba(212, 165, 64, 0.04);
+            background: rgba(10, 15, 24, 0.55);
+            backdrop-filter: blur(24px) saturate(1.3);
+            -webkit-backdrop-filter: blur(24px) saturate(1.3);
+            border: 1px solid rgba(212, 165, 64, 0.06);
             border-radius: 1.25rem;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .cat-card:hover, .cat-card:active {
-            border-color: rgba(212, 165, 64, 0.15);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
-                         0 0 40px rgba(212, 165, 64, 0.04),
-                         inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            background: rgba(10, 15, 24, 0.7);
+            border-color: rgba(212, 165, 64, 0.18);
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4),
+                         0 0 48px rgba(212, 165, 64, 0.05),
+                         inset 0 1px 0 rgba(255, 255, 255, 0.04);
             transform: translateY(-3px);
         }
         @media (max-width: 639px) {
@@ -75,17 +78,17 @@
         }
 
         .cat-card-img {
-            background: linear-gradient(180deg, rgba(21, 29, 44, 0.6) 0%, rgba(15, 21, 32, 0.9) 100%);
+            background: rgba(255, 255, 255, 0.02);
             position: relative;
         }
         .cat-card-img::after {
             content: '';
             position: absolute;
             bottom: 0;
-            left: 10%;
-            right: 10%;
+            left: 8%;
+            right: 8%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212, 165, 64, 0.12), transparent);
+            background: linear-gradient(90deg, transparent, rgba(212, 165, 64, 0.10), transparent);
         }
 
         /* ─── Accord bars ─── */
@@ -122,10 +125,11 @@
             box-shadow: 0 2px 16px rgba(212, 165, 64, 0.25);
         }
         .pill-inactive {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(10, 15, 24, 0.45);
             color: var(--muted);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px) saturate(1.2);
+            -webkit-backdrop-filter: blur(16px) saturate(1.2);
         }
         .pill-inactive:hover {
             background: rgba(255, 255, 255, 0.05);
@@ -142,13 +146,15 @@
 
         /* ─── Info cards ─── */
         .info-card {
-            background: linear-gradient(165deg, var(--surface) 0%, var(--surface-elevated) 100%);
-            border: 1px solid rgba(212, 165, 64, 0.04);
+            background: rgba(10, 15, 24, 0.55);
+            backdrop-filter: blur(24px) saturate(1.3);
+            -webkit-backdrop-filter: blur(24px) saturate(1.3);
+            border: 1px solid rgba(212, 165, 64, 0.05);
             border-radius: 1.25rem;
             transition: border-color 0.3s;
         }
         .info-card:hover {
-            border-color: rgba(212, 165, 64, 0.10);
+            border-color: rgba(212, 165, 64, 0.12);
         }
 
         /* ─── PIX badge ─── */
@@ -159,15 +165,16 @@
 
         /* ─── Search ─── */
         .search-input {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(10, 15, 24, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px) saturate(1.2);
+            -webkit-backdrop-filter: blur(20px) saturate(1.2);
             transition: all 0.3s;
         }
         .search-input:focus {
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(10, 15, 24, 0.7);
             border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212, 165, 64, 0.08), 0 4px 24px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 0 3px rgba(212, 165, 64, 0.08), 0 8px 32px rgba(0, 0, 0, 0.3);
             outline: none;
         }
 
