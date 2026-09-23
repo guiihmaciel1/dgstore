@@ -167,13 +167,23 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div class="grid grid-cols-3 gap-4 mt-4">
+                            {{-- Tamanho ML --}}
+                            <div>
+                                <label class="block text-xs font-medium text-dg-500 mb-1">Tamanho (ml)</label>
+                                <input type="number" name="size_ml" min="1" max="500"
+                                       value="{{ old('size_ml', $fragrance->size_ml) }}" placeholder="100"
+                                       class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
+                                @error('size_ml') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
+                            </div>
+
                             {{-- Estoque --}}
                             <div>
                                 <label class="block text-xs font-medium text-dg-500 mb-1">Qtd. em Estoque</label>
                                 <input type="number" name="stock_quantity" min="0"
-                                       value="{{ old('stock_quantity', $fragrance->stock_quantity) }}"
-                                       class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
+                                       x-model="stockQuantity"
+                                       class="w-full px-3 py-2 border rounded-lg text-sm bg-surface-raised focus:outline-none"
+                                       :class="stockCostBlocked ? 'border-amber-500 focus:border-amber-500' : 'border-border-strong focus:border-pink-500'">
                                 @error('stock_quantity') <p class="mt-1 text-xs text-red-400">{{ $message }}</p> @enderror
                             </div>
 
@@ -184,6 +194,16 @@
                                        value="{{ old('sort_order', $fragrance->sort_order) }}"
                                        class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-pink-500 focus:outline-none">
                             </div>
+                        </div>
+
+                        {{-- Alerta: custo obrigatorio ao incrementar estoque --}}
+                        <div x-show="stockCostBlocked" x-cloak
+                             class="mt-3 p-3 rounded-lg flex items-center gap-2"
+                             style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25);">
+                            <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                            </svg>
+                            <p class="text-xs text-amber-400">Ao incrementar o estoque, atualize o <strong>Valor de Custo</strong> com o custo real do produto recebido.</p>
                         </div>
 
                         {{-- Dupe de / Inspirado em --}}
@@ -238,7 +258,9 @@
                             </div>
 
                             <button type="submit"
-                                    class="px-6 py-2.5 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 transition text-sm">
+                                    :disabled="stockCostBlocked"
+                                    :class="stockCostBlocked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-pink-700'"
+                                    class="px-6 py-2.5 bg-pink-600 text-white font-semibold rounded-lg transition text-sm">
                                 Salvar Alterações
                             </button>
                         </div>
@@ -414,9 +436,15 @@
 
             return {
                 costPrice: {{ old('cost_price', $fragrance->cost_price ?? 0) }},
-                shippingRate: {{ old('shipping_rate_percent', $fragrance->shipping_rate_percent ?? 0) }},
+                shippingRate: {{ old('shipping_rate_percent', $fragrance->shipping_rate_percent ?? 20) }},
                 pixPrice: {{ old('pix_price', $fragrance->pix_price ?? 0) }},
                 pixDiscount: {{ old('pix_discount_percent', $fragrance->pix_discount_percent ?? 10) }},
+                stockQuantity: {{ old('stock_quantity', $fragrance->stock_quantity ?? 0) }},
+                originalStock: {{ (int) $fragrance->stock_quantity }},
+
+                get stockCostBlocked() {
+                    return parseInt(this.stockQuantity || 0) > this.originalStock && parseFloat(this.costPrice || 0) <= 0;
+                },
 
                 get shippingValue() {
                     return parseFloat(this.costPrice || 0) * (parseFloat(this.shippingRate || 0) / 100);
