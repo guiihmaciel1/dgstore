@@ -195,6 +195,35 @@
         .perfume-badge-fem { background: rgba(212,165,64,0.08); color: var(--gold-light); border: 1px solid rgba(212,165,64,0.12); }
         .perfume-badge-uni { background: rgba(147,51,234,0.08); color: #c084fc; border: 1px solid rgba(147,51,234,0.12); }
 
+        /* ─── Carousel arrows ─── */
+        .carousel-arrow {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(10, 15, 24, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(12px);
+        }
+        .carousel-arrow:hover {
+            background: rgba(212, 165, 64, 0.12);
+            border-color: rgba(212, 165, 64, 0.25);
+            color: var(--gold);
+        }
+
+        .carousel-track {
+            cursor: grab;
+            scroll-behavior: smooth;
+        }
+        .carousel-track:active {
+            cursor: grabbing;
+        }
+
         /* ─── Smooth appearance ─── */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(12px); }
