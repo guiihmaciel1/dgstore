@@ -78,6 +78,9 @@
         </div>
     @endif
 
+    {{-- Highlighted sections (first page only, no filters) --}}
+    @include('catalogo.partials.highlights')
+
     {{-- Grid --}}
     @if($products->isEmpty())
         <div class="text-center py-28">
