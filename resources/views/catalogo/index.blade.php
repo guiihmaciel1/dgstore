@@ -7,7 +7,7 @@
 <div class="max-w-6xl mx-auto px-5 sm:px-6">
 
     {{-- Hero --}}
-    <div class="pt-10 pb-6 sm:pt-14 sm:pb-8 text-center relative">
+    <div class="pt-5 pb-3 sm:pt-10 sm:pb-6 text-center relative">
         {{-- Ambient glow --}}
         <div class="absolute inset-0 -top-20 pointer-events-none" style="background: radial-gradient(ellipse at 50% 20%, rgba(212, 165, 64, 0.08) 0%, transparent 55%);"></div>
 
@@ -16,13 +16,13 @@
                  style="background: radial-gradient(ellipse at 50% 50%, rgba(10, 15, 24, 0.65) 0%, transparent 70%);
                         backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
             <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports"
-                 class="h-32 sm:h-44 w-auto mx-auto drop-shadow-2xl relative">
+                 class="h-44 sm:h-48 w-auto mx-auto drop-shadow-2xl relative">
         </div>
-        <div class="gold-line max-w-[100px] mx-auto mt-5"></div>
+        <div class="gold-line max-w-[100px] mx-auto mt-3"></div>
     </div>
 
     {{-- Search --}}
-    <div class="mb-7 max-w-sm mx-auto animate-fade-up" style="animation-delay: 0.1s;">
+    <div class="mb-5 max-w-sm mx-auto animate-fade-up" style="animation-delay: 0.1s;">
         <form method="GET" class="relative">
             @if(request('tag')) <input type="hidden" name="tag" value="{{ request('tag') }}"> @endif
             @if(request('gender')) <input type="hidden" name="gender" value="{{ request('gender') }}"> @endif

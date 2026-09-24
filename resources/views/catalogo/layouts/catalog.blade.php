@@ -48,7 +48,7 @@
             inset: 0;
             z-index: -1;
             background: url('{{ asset("images/catalog-bg.jpg") }}') center / cover no-repeat fixed;
-            filter: blur(3px) brightness(0.22);
+            filter: blur(3px) brightness(0.15);
             transform: scale(1.05);
         }
 
