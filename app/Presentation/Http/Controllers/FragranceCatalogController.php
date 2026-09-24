@@ -44,72 +44,98 @@ class FragranceCatalogController extends Controller
 
         $whatsappNumber = PerfumeSetting::get('whatsapp_number', '');
 
+        $featured = collect();
         $bestSellers = collect();
         $mostWanted = collect();
         $isFirstPageNoFilters = !$request->hasAny(['search', 'gender', 'tag'])
             && $products->currentPage() === 1;
 
         if ($isFirstPageNoFilters) {
-            [$bestSellers, $mostWanted] = $this->loadHighlightedProducts();
+            [$featured, $mostWanted, $bestSellers] = $this->loadHighlightedProducts();
         }
 
         return view('catalogo.index', compact(
-            'products', 'tags', 'whatsappNumber', 'bestSellers', 'mostWanted'
+            'products', 'tags', 'whatsappNumber', 'featured', 'bestSellers', 'mostWanted'
         ));
     }
 
     /**
-     * Carrega os perfumes destacados (mais vendidos e mais procurados)
-     * usando fragrantica_id para manter a lista estável.
+     * Carrega os perfumes destacados em 3 seções:
+     * 1. Destaques — todos em estoque (dinâmico)
+     * 2. Mais Procurados — curadoria manual
+     * 3. Mais Vendidos — curadoria manual
      *
-     * @return array{0: \Illuminate\Support\Collection, 1: \Illuminate\Support\Collection}
+     * @return array{0: \Illuminate\Support\Collection, 1: \Illuminate\Support\Collection, 2: \Illuminate\Support\Collection}
      */
     private function loadHighlightedProducts(): array
     {
-        $bestSellerIds = [
-            '76880',  // Yara
-            '65414',  // 9pm
-            '72821',  // Asad
-            '34696',  // Club de Nuit Intense Man
-            '64579',  // Sabah Al Ward
-            '98689',  // Supremacy Collector's Edition
-            '95752',  // Yara Candy
-            '94713',  // Liquid Brun
-            '117616', // Asad Elixir
-            '96817',  // Hawas Black
-        ];
-
         $mostWantedIds = [
-            '70839',  // Turathi Blue
-            '78475',  // Club de Nuit Blue Iconic
-            '81376',  // Ameerat Al Arab
-            '93628',  // Eclaire
-            '70466',  // Fakhar Rose
-            '117615', // Yara Elixir
-            '109599', // Delilah Blanc
-            '69362',  // Royal Amber
-            '109709', // Pacific Aura
+            '76880',  // Yara
+            '34696',  // Club de Nuit Intense Man
+            '75805',  // Khamrah
+            '72821',  // Asad
+            '31861',  // Sauvage
+            '65414',  // 9pm
+            '46890',  // Hawas for Him
+            '88175',  // Khamrah Qahwa
+            '9828',   // Aventus
+            '39681',  // Good Girl
+            '56077',  // Libre
+            '25967',  // Bleu de Chanel EDP
             '55157',  // Erba Pura
             '52802',  // Stronger With You Intensely
-            '81642',  // Le Male Elixir
+            '95752',  // Yara Candy
+            '101124', // Asad Bourbon
+            '96817',  // Hawas Black
+            '94713',  // Liquid Brun
+            '94697',  // Spectre Ghost
+            '98689',  // Supremacy Collector's Edition
         ];
 
-        $allIds = array_merge($bestSellerIds, $mostWantedIds);
+        $bestSellerIds = [
+            '34696',  // Club de Nuit Intense Man
+            '72821',  // Asad
+            '76880',  // Yara
+            '75805',  // Khamrah
+            '65414',  // 9pm
+            '88175',  // Khamrah Qahwa
+            '46890',  // Hawas for Him
+            '39681',  // Good Girl
+            '14982',  // La Vie Est Belle
+            '31861',  // Sauvage
+            '56077',  // Libre
+            '25967',  // Bleu de Chanel EDP
+            '70465',  // Fakhar Black
+            '70839',  // Turathi Blue
+            '46093',  // 212 VIP Black
+            '16657',  // Eros
+            '78576',  // Good Girl Blush
+            '95752',  // Yara Candy
+            '27655',  // Club de Nuit Woman
+            '52802',  // Stronger With You Intensely
+        ];
 
-        $products = FragranceProduct::active()
-            ->whereIn('fragrantica_id', $allIds)
+        $allCuratedIds = array_unique(array_merge($mostWantedIds, $bestSellerIds));
+
+        $curatedProducts = FragranceProduct::active()
+            ->whereIn('fragrantica_id', $allCuratedIds)
             ->get()
             ->keyBy('fragrantica_id');
 
-        $bestSellers = collect($bestSellerIds)
-            ->map(fn (string $id) => $products->get($id))
-            ->filter();
+        $featured = FragranceProduct::active()
+            ->where('stock_quantity', '>', 0)
+            ->orderBy('name')
+            ->get();
 
         $mostWanted = collect($mostWantedIds)
-            ->map(fn (string $id) => $products->get($id))
+            ->map(fn (string $id) => $curatedProducts->get($id))
             ->filter();
 
-        return [$bestSellers, $mostWanted];
+        $bestSellers = collect($bestSellerIds)
+            ->map(fn (string $id) => $curatedProducts->get($id))
+            ->filter();
+
+        return [$featured, $mostWanted, $bestSellers];
     }
 
     public function show(string $slug): View

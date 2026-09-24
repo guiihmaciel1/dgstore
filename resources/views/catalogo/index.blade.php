@@ -12,9 +12,8 @@
         <div class="absolute inset-0 -top-20 pointer-events-none" style="background: radial-gradient(ellipse at 50% 20%, rgba(212, 165, 64, 0.08) 0%, transparent 55%);"></div>
 
         <div class="relative inline-block">
-            <div class="absolute inset-0 -inset-x-8 -inset-y-4 rounded-3xl pointer-events-none"
-                 style="background: radial-gradient(ellipse at 50% 50%, rgba(10, 15, 24, 0.65) 0%, transparent 70%);
-                        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"></div>
+            <div class="absolute -inset-x-16 -inset-y-10 pointer-events-none"
+                 style="background: radial-gradient(ellipse at 50% 50%, rgba(10, 15, 24, 0.55) 0%, rgba(10, 15, 24, 0.25) 40%, transparent 75%);"></div>
             <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports"
                  class="h-44 sm:h-48 w-auto mx-auto drop-shadow-2xl relative">
         </div>
