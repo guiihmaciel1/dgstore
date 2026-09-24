@@ -228,20 +228,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/api/consignment/check-duplicate', [ConsignmentStockController::class, 'checkDuplicate'])->name('stock.consignment.check-duplicate');
         Route::post('/stock/consignment/smart-store', [ConsignmentStockController::class, 'smartStore'])->name('stock.consignment.smart-store');
 
-        // Perfumaria (Catálogo Fragrantica)
+        // Perfumaria — listagem acessível por todos (admin, seller, intern)
         Route::get('/fragrances', [FragranceController::class, 'index'])->name('fragrances.index');
-        Route::get('/fragrances/create', [FragranceController::class, 'create'])->name('fragrances.create');
-        Route::post('/fragrances', [FragranceController::class, 'store'])->name('fragrances.store');
-        Route::get('/fragrances/{fragrance}/edit', [FragranceController::class, 'edit'])->name('fragrances.edit');
-        Route::put('/fragrances/{fragrance}', [FragranceController::class, 'update'])->name('fragrances.update');
-        Route::post('/fragrances/{fragrance}/rescrape', [FragranceController::class, 'rescrape'])->name('fragrances.rescrape');
-        Route::delete('/fragrances/{fragrance}', [FragranceController::class, 'destroy'])->name('fragrances.destroy');
 
-        // Tags de Perfumaria
-        Route::get('/fragrance-tags', [FragranceTagController::class, 'index'])->name('fragrance-tags.index');
-        Route::post('/fragrance-tags', [FragranceTagController::class, 'store'])->name('fragrance-tags.store');
-        Route::put('/fragrance-tags/{tag}', [FragranceTagController::class, 'update'])->name('fragrance-tags.update');
-        Route::delete('/fragrance-tags/{tag}', [FragranceTagController::class, 'destroy'])->name('fragrance-tags.destroy');
+        // Perfumaria — CRUD restrito a admin
+        Route::middleware('role:admin_geral')->group(function () {
+            Route::get('/fragrances/create', [FragranceController::class, 'create'])->name('fragrances.create');
+            Route::post('/fragrances', [FragranceController::class, 'store'])->name('fragrances.store');
+            Route::get('/fragrances/{fragrance}/edit', [FragranceController::class, 'edit'])->name('fragrances.edit');
+            Route::put('/fragrances/{fragrance}', [FragranceController::class, 'update'])->name('fragrances.update');
+            Route::post('/fragrances/{fragrance}/rescrape', [FragranceController::class, 'rescrape'])->name('fragrances.rescrape');
+            Route::delete('/fragrances/{fragrance}', [FragranceController::class, 'destroy'])->name('fragrances.destroy');
+        });
+
+        // Tags de Perfumaria — admin only
+        Route::middleware('role:admin_geral')->group(function () {
+            Route::get('/fragrance-tags', [FragranceTagController::class, 'index'])->name('fragrance-tags.index');
+            Route::post('/fragrance-tags', [FragranceTagController::class, 'store'])->name('fragrance-tags.store');
+            Route::put('/fragrance-tags/{tag}', [FragranceTagController::class, 'update'])->name('fragrance-tags.update');
+            Route::delete('/fragrance-tags/{tag}', [FragranceTagController::class, 'destroy'])->name('fragrance-tags.destroy');
+        });
 
         // Garantias
         Route::get('/warranties', [WarrantyController::class, 'index'])->name('warranties.index');

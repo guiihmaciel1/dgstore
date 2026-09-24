@@ -11,6 +11,34 @@ function specsModels() {
     return [
 
         // ═══════════════════════════════════════
+        //  iPHONE 18 SERIES (2026)
+        // ═══════════════════════════════════════
+        {
+            name: 'iPhone 18 Pro Max', cat: 'iPhone', year: '2026',
+            screen: '6.9" Super Retina XDR OLED', brightness: '2500 nits', refresh: '120Hz ProMotion',
+            chip: 'A20 Pro', ram: '12GB', storage: '256GB, 512GB, 1TB, 2TB',
+            mainCam: '48MP f/1.78 + 48MP UW f/2.2 + 48MP Tele 5x f/2.8', frontCam: '24MP f/1.9 TrueDepth',
+            video: '4K 120fps Dolby Vision, ProRes, Vídeo Espacial',
+            batteryCap: '4850 mAh', battery: 'Até 36h vídeo', charging: 'USB-C, MagSafe 30W, Qi2 15W',
+            sim: 'eSIM + nano-SIM', connectivity: '5G-A, Wi-Fi 7, BT 5.4, UWB 2, NFC',
+            water: 'IP69', dimensions: '163.0 × 77.6 × 7.9 mm', weight: '220g',
+            material: 'Titânio', biometrics: 'Face ID',
+            highlight: 'Tela sempre ativa, Dynamic Island, Action Button, Camera Control, Apple Intelligence 2.0, IP69'
+        },
+        {
+            name: 'iPhone 18 Pro', cat: 'iPhone', year: '2026',
+            screen: '6.3" Super Retina XDR OLED', brightness: '2500 nits', refresh: '120Hz ProMotion',
+            chip: 'A20 Pro', ram: '12GB', storage: '256GB, 512GB, 1TB',
+            mainCam: '48MP f/1.78 + 48MP UW f/2.2 + 48MP Tele 5x f/2.8', frontCam: '24MP f/1.9 TrueDepth',
+            video: '4K 120fps Dolby Vision, ProRes, Vídeo Espacial',
+            batteryCap: '3800 mAh', battery: 'Até 30h vídeo', charging: 'USB-C, MagSafe 30W, Qi2 15W',
+            sim: 'eSIM + nano-SIM', connectivity: '5G-A, Wi-Fi 7, BT 5.4, UWB 2, NFC',
+            water: 'IP69', dimensions: '149.6 × 71.5 × 7.9 mm', weight: '194g',
+            material: 'Titânio', biometrics: 'Face ID',
+            highlight: 'Tela sempre ativa, Dynamic Island, Action Button, Camera Control, Apple Intelligence 2.0, IP69'
+        },
+
+        // ═══════════════════════════════════════
         //  iPHONE 17 SERIES (2025)
         // ═══════════════════════════════════════
         {

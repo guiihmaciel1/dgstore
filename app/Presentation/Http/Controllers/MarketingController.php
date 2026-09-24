@@ -187,28 +187,6 @@ class MarketingController extends Controller
             'stock' => $p->stock_quantity,
         ])->values();
 
-        $contentsJson = MarketingContent::with('user')
-            ->latest()
-            ->get()
-            ->map(fn ($c) => [
-                'id' => $c->id,
-                'title' => $c->title,
-                'description' => $c->description,
-                'type' => $c->type,
-                'type_label' => $c->getTypeLabel(),
-                'platform' => $c->platform,
-                'platform_label' => $c->getPlatformLabel(),
-                'status' => $c->status,
-                'status_label' => $c->getStatusLabel(),
-                'scheduled_at' => $c->scheduled_at?->format('Y-m-d'),
-                'scheduled_at_formatted' => $c->scheduled_at?->format('d/m/Y'),
-                'image_url' => $c->image_url,
-                'ai_generated' => $c->ai_generated,
-                'user_name' => $c->user?->name ?? 'Sistema',
-                'created_at' => $c->created_at->format('d/m/Y H:i'),
-            ])
-            ->values();
-
         return view('marketing.index', [
             'prices' => $prices,
             'pricesJson' => $pricesJson,
@@ -221,7 +199,6 @@ class MarketingController extends Controller
             'usedResaleJson' => $usedResaleJson,
             'newProductsResaleJson' => $newProductsResaleJson,
             'resaleItems' => $resaleItems,
-            'contentsJson' => $contentsJson,
         ]);
     }
 

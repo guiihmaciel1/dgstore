@@ -311,6 +311,7 @@
 
             chipRank(chip) {
                 const ranks = {
+                    'A20 Pro': 110, 'A20': 105,
                     'A19 Pro': 100, 'A19': 95,
                     'A18 Pro': 90, 'A18 + Apple C1': 86, 'A18': 85,
                     'A17 Pro': 80, 'A16 Bionic': 75, 'A15 Bionic': 70, 'A14 Bionic': 65, 'A13 Bionic': 60,
@@ -327,6 +328,7 @@
             waterRank(val) {
                 if (!val || val === '-') return 0;
                 const u = val.toUpperCase();
+                if (u.includes('IP69')) return 69;
                 if (u.includes('IP68') && u.includes('6M')) return 68.6;
                 if (u.includes('IP68')) return 68;
                 if (u.includes('IP54')) return 54;
