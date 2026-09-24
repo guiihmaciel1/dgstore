@@ -76,6 +76,10 @@
                         <p class="text-[9px] mt-1.5 font-medium tracking-wide" style="color: var(--gold);">
                             Sob encomenda · 3–5 dias
                         </p>
+                    @else
+                        <p class="text-[9px] mt-1.5 font-medium tracking-wide text-emerald-400">
+                            ✅ Pronta entrega
+                        </p>
                     @endif
                 </div>
             @elseif($product->pix_price)
@@ -87,6 +91,10 @@
                     @if($product->stock_quantity <= 0)
                         <p class="text-[9px] mt-1.5 font-medium tracking-wide" style="color: var(--gold);">
                             Sob encomenda · 3–5 dias
+                        </p>
+                    @else
+                        <p class="text-[9px] mt-1.5 font-medium tracking-wide text-emerald-400">
+                            ✅ Pronta entrega
                         </p>
                     @endif
                 </div>

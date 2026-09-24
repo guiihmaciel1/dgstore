@@ -167,6 +167,14 @@
                                 <p class="text-[10px]" style="color: var(--muted);">Prazo: 3 a 5 dias úteis</p>
                             </div>
                         </div>
+                    @else
+                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.1);">
+                            <span class="text-base">✅</span>
+                            <div>
+                                <p class="text-[11px] font-semibold text-emerald-400">Pronta entrega</p>
+                                <p class="text-[10px]" style="color: var(--muted);">Envio imediato</p>
+                            </div>
+                        </div>
                     @endif
                 </div>
             @elseif($fragrance->pix_price)
@@ -181,6 +189,14 @@
                             <div>
                                 <p class="text-[11px] font-semibold" style="color: var(--gold);">Sob encomenda</p>
                                 <p class="text-[10px]" style="color: var(--muted);">Prazo: 3 a 5 dias úteis</p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.1);">
+                            <span class="text-base">✅</span>
+                            <div>
+                                <p class="text-[11px] font-semibold text-emerald-400">Pronta entrega</p>
+                                <p class="text-[10px]" style="color: var(--muted);">Envio imediato</p>
                             </div>
                         </div>
                     @endif
