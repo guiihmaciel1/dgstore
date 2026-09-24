@@ -102,6 +102,12 @@
                         {{ $fragrance->year }}
                     </span>
                 @endif
+                @if($fragrance->size_ml)
+                    <span class="text-[10px] tracking-wide px-3 py-1.5 rounded-full font-medium"
+                          style="background: rgba(255,255,255,0.03); color: var(--muted); border: 1px solid rgba(255,255,255,0.04);">
+                        {{ $fragrance->size_ml }}ml
+                    </span>
+                @endif
             </div>
 
             {{-- Inspired by --}}

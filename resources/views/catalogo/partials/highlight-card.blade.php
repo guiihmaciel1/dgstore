@@ -38,6 +38,9 @@
 
             <h3 class="text-[13px] sm:text-sm font-semibold text-white leading-snug line-clamp-2">
                 {{ $product->name }}
+                @if($product->size_ml)
+                    <span class="text-[9px] font-normal ml-0.5" style="color: var(--muted);">{{ $product->size_ml }}ml</span>
+                @endif
             </h3>
 
             @if($product->inspired_by)

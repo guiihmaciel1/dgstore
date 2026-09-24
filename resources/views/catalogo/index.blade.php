@@ -139,6 +139,9 @@
                         {{-- Name --}}
                         <h3 class="text-base sm:text-lg font-semibold text-white line-clamp-2 leading-snug">
                             {{ $product->name }}
+                            @if($product->size_ml)
+                                <span class="text-[10px] font-normal align-middle ml-1" style="color: var(--muted);">{{ $product->size_ml }}ml</span>
+                            @endif
                         </h3>
 
                         {{-- Inspired by --}}
