@@ -164,6 +164,7 @@ class CreateSaleUseCase
     }
 
     private const COMMISSION_RATE = 0.10;
+    private const FRAGRANCE_COMMISSION_RATE = 0.15;
     private const PROFIT_FLOOR_PERCENT = 0.0;
     private const ACCESSORY_MIN_PRICES = [
         'case' => 10.00,
@@ -252,7 +253,7 @@ class CreateSaleUseCase
                 $profit = ((float) $item->unit_price - $commissionCost) * $item->quantity;
 
                 if ($profit > 0) {
-                    $commission += $profit * self::COMMISSION_RATE;
+                    $commission += $profit * self::FRAGRANCE_COMMISSION_RATE;
                 }
 
                 continue;

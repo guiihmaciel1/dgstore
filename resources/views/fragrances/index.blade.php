@@ -188,7 +188,7 @@
                                             @if($f->pix_price && $f->cost_price)
                                                 @php
                                                     $lucroBruto = (float)$f->pix_price - $f->total_cost;
-                                                    $comissao = $lucroBruto > 0 ? round($lucroBruto * 0.10, 2) : 0;
+                                                    $comissao = $lucroBruto > 0 ? round($lucroBruto * 0.15, 2) : 0;
                                                     $lucroLiq = $lucroBruto - $comissao;
                                                 @endphp
                                                 <td class="px-4 py-3 text-right relative"
@@ -240,12 +240,14 @@
                                                     <span class="text-amber-400 font-medium text-xs">
                                                         R$ {{ number_format($comissao, 0, ',', '.') }}
                                                     </span>
-                                                    <div class="text-dg-600 text-[10px]">10%</div>
+                                                    <div class="text-dg-600 text-[10px]">15%</div>
                                                 </td>
                                                 <td class="px-4 py-3 text-right">
                                                     <span class="{{ $lucroLiq >= 0 ? 'text-emerald-400' : 'text-red-400' }} font-medium text-xs">
                                                         R$ {{ number_format($lucroLiq, 0, ',', '.') }}
                                                     </span>
+                                                    @php $margemLiq = $f->total_cost > 0 ? ($lucroLiq / $f->total_cost) * 100 : 0; @endphp
+                                                    <div class="text-dg-600 text-[10px]">{{ number_format($margemLiq, 0) }}%</div>
                                                 </td>
                                             @else
                                                 <td class="px-4 py-3 text-right"><span class="text-dg-700">—</span></td>
@@ -257,7 +259,7 @@
                                             @if($f->pix_price && $f->cost_price)
                                                 @php
                                                     $sellerLucroPix = (float)$f->pix_price - $f->total_cost;
-                                                    $sellerComissao = $sellerLucroPix > 0 ? round($sellerLucroPix * 0.10, 2) : 0;
+                                                    $sellerComissao = $sellerLucroPix > 0 ? round($sellerLucroPix * 0.15, 2) : 0;
                                                 @endphp
                                                 <td class="px-4 py-3 text-right relative"
                                                     x-data="comissaoCalc({{ (float)$f->pix_price }}, {{ (float)$f->sale_price }}, {{ $f->total_cost }})"
@@ -266,7 +268,7 @@
                                                         <span class="text-amber-400 font-medium text-xs">
                                                             R$ {{ number_format($sellerComissao, 0, ',', '.') }}
                                                         </span>
-                                                        <div class="text-dg-600 text-[10px]">10%</div>
+                                                        <div class="text-dg-600 text-[10px]">15%</div>
                                                     </button>
                                                     {{-- Popover calculadora de comissão --}}
                                                     <div x-show="open" x-cloak x-transition.opacity.duration.150ms
@@ -363,12 +365,13 @@
     @push('scripts')
     <script>
         const MDR_RATES = [0, 2.96, 4.03, 4.72, 5.41, 6.09, 6.78, 7.62, 8.31, 8.99, 9.68];
+        const FRAGRANCE_COMMISSION = 0.15;
         const fmtBRL = (v) => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
 
         function parcelaCalc(pixPrice, salePrice, totalCost) {
             const buildRow = (label, recebe, isPix) => {
                 const lucro = recebe - totalCost;
-                const com = lucro > 0 ? lucro * 0.10 : 0;
+                const com = lucro > 0 ? lucro * FRAGRANCE_COMMISSION : 0;
                 const liq = lucro - com;
                 return {
                     label, isPix,
@@ -392,7 +395,7 @@
         function comissaoCalc(pixPrice, salePrice, totalCost) {
             const calcComissao = (recebe) => {
                 const lucro = recebe - totalCost;
-                return lucro > 0 ? lucro * 0.10 : 0;
+                return lucro > 0 ? lucro * FRAGRANCE_COMMISSION : 0;
             };
 
             const rows = [{ label: 'PIX', isPix: true, comissao: fmtBRL(calcComissao(pixPrice)) }];
