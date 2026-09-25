@@ -164,7 +164,7 @@ class CreateSaleUseCase
     }
 
     private const COMMISSION_RATE = 0.10;
-    private const FRAGRANCE_COMMISSION_RATE = 0.15;
+    private const FRAGRANCE_COMMISSION_RATE = 0.12;
     private const PROFIT_FLOOR_PERCENT = 0.0;
     private const ACCESSORY_MIN_PRICES = [
         'case' => 10.00,
