@@ -172,9 +172,36 @@
                         </div>
                     </div>
                 </div>
+                {{-- Aviso gerência --}}
+                <div x-show="needsManagerApproval" x-transition
+                     class="p-3 rounded-[10px] bg-amber-500/10 border border-amber-500/20 text-[13px] text-amber-400 mb-3 flex items-start gap-2.5">
+                    <svg class="w-5 h-5 shrink-0 mt-0.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                    <span><strong>Atenção:</strong> este modelo/configuração requer verificação com a gerência antes de prosseguir com a avaliação.</span>
+                </div>
+
                 <button @click="tradeIn.offeredInput = fmt(tradeIn.result?.suggested_price); recalculate()" type="button"
                         class="w-full py-2.5 rounded-[10px] text-sm font-semibold cursor-pointer border-none bg-amber-600 text-white hover:bg-amber-700 transition-colors">
                     Usar valor sugerido
+                </button>
+                <button @click="navigator.clipboard.writeText(evalWhatsappText); evalCopied = true; setTimeout(() => evalCopied = false, 2000)" type="button"
+                        class="w-full py-2.5 mt-2 rounded-[10px] text-sm font-semibold cursor-pointer border transition-all"
+                        :class="evalCopied
+                            ? 'bg-emerald-600 text-white border-emerald-600'
+                            : 'bg-surface-raised text-dg-300 border-border hover:bg-surface-overlay hover:text-dg-100'">
+                    <span x-show="!evalCopied" class="flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                        </svg>
+                        Copiar para WhatsApp
+                    </span>
+                    <span x-show="evalCopied" class="flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Copiado!
+                    </span>
                 </button>
             </div>
 

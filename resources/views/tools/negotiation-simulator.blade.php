@@ -75,6 +75,7 @@
             activePreset: 'even',
             evalSearch: '',
             evalDropdownOpen: false,
+            evalCopied: false,
 
             productCost: 0,
             usedMeta: { battery: null, hasBox: false, hasCable: false, notes: '', isUsed: false },
@@ -168,6 +169,23 @@
             },
             get tradeInStorages() {
                 return this.tradeInModels[this.tradeIn.model] || [];
+            },
+            get needsManagerApproval() {
+                const m = this.tradeIn.model;
+                const s = this.tradeIn.storage;
+                if (!m) return false;
+                if (/\d+e$/i.test(m)) return true;
+                if (/plus$/i.test(m)) return true;
+                const baseMatch = m.match(/iPhone (\d+)$/);
+                if (baseMatch) {
+                    const gen = parseInt(baseMatch[1]);
+                    if (gen >= 11 && gen <= 16 && ['256GB', '512GB', '1TB'].includes(s)) return true;
+                }
+                return false;
+            },
+            get evalWhatsappText() {
+                if (!this.tradeIn.result) return '';
+                return `Pessoal, ${this.tradeIn.model}, saúde bateria ${this.tradeIn.battery}%, ${this.tradeIn.storage} avaliado em R$ ${this.fmt(this.tradeIn.result.suggested_price)}, posso prosseguir?`;
             },
 
             get selectedCardRow() {

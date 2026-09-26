@@ -44,12 +44,10 @@ return [
         'iPhone 11 Pro'     => ['64GB', '256GB', '512GB'],
         'iPhone 11 Pro Max' => ['64GB', '256GB', '512GB'],
 
-        'iPhone 12 mini'    => ['64GB', '128GB', '256GB'],
         'iPhone 12'         => ['64GB', '128GB', '256GB'],
         'iPhone 12 Pro'     => ['128GB', '256GB', '512GB'],
         'iPhone 12 Pro Max' => ['128GB', '256GB', '512GB'],
 
-        'iPhone 13 mini'    => ['128GB', '256GB', '512GB'],
         'iPhone 13'         => ['128GB', '256GB', '512GB'],
         'iPhone 13 Pro'     => ['128GB', '256GB', '512GB', '1TB'],
         'iPhone 13 Pro Max' => ['128GB', '256GB', '512GB', '1TB'],
@@ -68,11 +66,10 @@ return [
         'iPhone 16 Plus'    => ['128GB', '256GB', '512GB'],
         'iPhone 16 Pro'     => ['128GB', '256GB', '512GB', '1TB'],
         'iPhone 16 Pro Max' => ['256GB', '512GB', '1TB'],
-        'iPhone 16e'        => ['128GB', '256GB', '512GB'],
 
-        'iPhone 17'         => ['128GB', '256GB', '512GB'],
-        'iPhone 17 Air'     => ['128GB', '256GB', '512GB'],
-        'iPhone 17 Pro'     => ['128GB', '256GB', '512GB', '1TB'],
+        'iPhone 17'         => ['256GB', '512GB'],
+        'iPhone 17 Air'     => ['256GB', '512GB'],
+        'iPhone 17 Pro'     => ['256GB', '512GB', '1TB'],
         'iPhone 17 Pro Max' => ['256GB', '512GB', '1TB'],
     ],
 
