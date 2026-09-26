@@ -124,13 +124,9 @@
                 </div>
             @endif
 
-            @if(auth()->user()->role->isIntern())
-            {{-- MODO OCIOSO — SUGESTÕES INTELIGENTES --}}
-            @include('intern._idle-mode')
-
-            {{-- CHECKLIST DIÁRIO --}}
-            @include('intern._daily-checklist')
-            @endif
+            {{-- MODO OCIOSO — SUGESTÕES INTELIGENTES (apenas admin) --}}
+            {{-- CHECKLIST DIÁRIO (apenas admin) --}}
+            {{-- Removido para perfis vendedor/intern --}}
 
             {{-- ANIVERSARIANTES DO MÊS --}}
             @if($birthdayCustomers->count() > 0)
