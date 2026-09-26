@@ -22,6 +22,7 @@ use App\Presentation\Http\Controllers\ScheduleController;
 use App\Presentation\Http\Controllers\CardFeeController;
 use App\Presentation\Http\Controllers\ConsignmentStockController;
 use App\Presentation\Http\Controllers\PreSaleController;
+use App\Presentation\Http\Controllers\PurchaseRequestController;
 use App\Presentation\Http\Controllers\NegotiationController;
 use App\Presentation\Http\Controllers\NegotiationSnapshotController;
 use App\Presentation\Http\Controllers\DeviceChecklistController;
@@ -292,6 +293,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/pre-vendas/{preSale}/pronta', [PreSaleController::class, 'markReady'])->name('pre-sales.mark-ready');
         Route::post('/pre-vendas/{preSale}/converter', [PreSaleController::class, 'convert'])->name('pre-sales.convert');
         Route::post('/pre-vendas/{preSale}/cancelar', [PreSaleController::class, 'cancel'])->name('pre-sales.cancel');
+
+        // Solicitações de Compra
+        Route::get('/solicitacoes-compra', [PurchaseRequestController::class, 'index'])->name('purchase-requests.index');
+        Route::get('/solicitacoes-compra/criar', [PurchaseRequestController::class, 'create'])->name('purchase-requests.create');
+        Route::post('/solicitacoes-compra', [PurchaseRequestController::class, 'store'])->name('purchase-requests.store');
+        Route::get('/solicitacoes-compra/buscar-clientes', [PurchaseRequestController::class, 'searchCustomers'])->name('purchase-requests.search-customers');
+        Route::get('/solicitacoes-compra/{purchaseRequest}', [PurchaseRequestController::class, 'show'])->name('purchase-requests.show');
+        Route::post('/solicitacoes-compra/{purchaseRequest}/aprovar', [PurchaseRequestController::class, 'approve'])->name('purchase-requests.approve');
+        Route::post('/solicitacoes-compra/{purchaseRequest}/rejeitar', [PurchaseRequestController::class, 'reject'])->name('purchase-requests.reject');
+        Route::post('/solicitacoes-compra/{purchaseRequest}/comprada', [PurchaseRequestController::class, 'markPurchased'])->name('purchase-requests.mark-purchased');
+        Route::post('/solicitacoes-compra/{purchaseRequest}/entregue', [PurchaseRequestController::class, 'markDelivered'])->name('purchase-requests.mark-delivered');
+        Route::post('/solicitacoes-compra/{purchaseRequest}/converter', [PurchaseRequestController::class, 'convert'])->name('purchase-requests.convert');
+        Route::post('/solicitacoes-compra/{purchaseRequest}/cancelar', [PurchaseRequestController::class, 'cancel'])->name('purchase-requests.cancel');
 
         // Financeiro
         Route::get('/finance', [FinanceController::class, 'index'])->name('finance.index');

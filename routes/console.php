@@ -20,3 +20,4 @@ Schedule::command('sessions:flush-all')->dailyAt('00:01');
 Schedule::command('dollar:reset')->dailyAt('00:01');
 Schedule::command('dollar:fetch-cp')->everyThirtyMinutes();
 Schedule::command('radar:fetch-prices')->hourly();
+Schedule::command('purchase-requests:expire')->hourly();

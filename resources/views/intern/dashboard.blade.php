@@ -301,28 +301,7 @@
                 </a>
             </div>
 
-            {{-- MEUS DADOS --}}
-            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1.5rem;">
-                <h3 style="font-size: 0.875rem; font-weight: 700; color: #e3e3e3; margin-bottom: 0.75rem;">Meus Dados</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; font-size: 0.8rem;">
-                    <div>
-                        <span style="color: #818181;">Nome:</span>
-                        <span style="font-weight: 600; color: #e3e3e3; margin-left: 0.25rem;">{{ $user->name }}</span>
-                    </div>
-                    <div>
-                        <span style="color: #818181;">E-mail:</span>
-                        <span style="font-weight: 600; color: #e3e3e3; margin-left: 0.25rem;">{{ $user->email }}</span>
-                    </div>
-                    <div>
-                        <span style="color: #818181;">Cargo:</span>
-                        <span style="font-weight: 600; color: #0d9488; margin-left: 0.25rem;">{{ $user->role->label() }}</span>
-                    </div>
-                    <div>
-                        <span style="color: #818181;">Comissão:</span>
-                        <span style="font-weight: 600; color: #059669; margin-left: 0.25rem;">% sobre o lucro</span>
-                    </div>
-                </div>
-            </div>
+            {{-- MEUS DADOS removido --}}
 
             {{-- AGENDA DO DIA --}}
             @if($todayAppointments->count() > 0)
