@@ -367,7 +367,7 @@
                                 {{ $purchaseRequest->desired_condition_label }}
                             </div>
                         </div>
-                        @if($purchaseRequest->estimated_cost)
+                        @if($purchaseRequest->estimated_cost && auth()->user()->isAdmin())
                         <div>
                             <span style="font-size: 0.6875rem; color: #515151;">Custo estimado</span>
                             <div style="font-size: 0.8125rem; color: #fbbf24;">{{ $purchaseRequest->formatted_estimated_cost }}</div>

@@ -235,6 +235,8 @@
                                     </div>
                                 </div>
 
+                                {{-- Custo estimado visível apenas para admin --}}
+                                @if(auth()->user()->isAdmin())
                                 <div>
                                     <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.375rem;">Custo estimado no fornecedor</label>
                                     <div style="position: relative;">
@@ -244,6 +246,7 @@
                                                placeholder="0,00">
                                     </div>
                                 </div>
+                                @endif
                             </div>
                         </div>
 
@@ -496,9 +499,11 @@
                                         <span x-show="product.color" x-text="product.color + ' · '"></span>
                                         <span x-text="product.condition === 'new' ? 'Novo' : 'Seminovo'"></span>
                                     </div>
+                                    @if(auth()->user()->isAdmin())
                                     <div x-show="product.estimatedCost > 0" style="font-size: 0.8125rem; color: #818181; margin-top: 0.25rem;">
                                         Custo estimado: <span style="color: #fbbf24;" x-text="'R$ ' + formatMoney(product.estimatedCost)"></span>
                                     </div>
+                                    @endif
                                 </div>
 
                                 <!-- Venda -->
