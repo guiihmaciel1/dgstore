@@ -76,6 +76,7 @@
             evalSearch: '',
             evalDropdownOpen: false,
             evalCopied: false,
+            evalSent: false,
 
             productCost: 0,
             usedMeta: { battery: null, hasBox: false, hasCable: false, notes: '', isUsed: false },
@@ -174,6 +175,7 @@
                 const m = this.tradeIn.model;
                 const s = this.tradeIn.storage;
                 if (!m) return false;
+                if (this.tradeIn.result?.confidence === 'low') return true;
                 if (/\d+e$/i.test(m)) return true;
                 if (/plus$/i.test(m)) return true;
                 const baseMatch = m.match(/iPhone (\d+)$/);
@@ -284,6 +286,7 @@
             },
             selectTradeInModel(name) {
                 this.tradeIn.model = name;
+                this.evalSent = false;
                 const storages = this.tradeInModels[name] || [];
                 if (!storages.includes(this.tradeIn.storage)) {
                     this.tradeIn.storage = storages[0] || '';

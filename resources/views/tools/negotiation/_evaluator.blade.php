@@ -181,12 +181,9 @@
                     <span><strong>Atenção:</strong> este modelo/configuração requer verificação com a gerência antes de prosseguir com a avaliação.</span>
                 </div>
 
-                <button @click="tradeIn.offeredInput = fmt(tradeIn.result?.suggested_price); recalculate()" type="button"
-                        class="w-full py-2.5 rounded-[10px] text-sm font-semibold cursor-pointer border-none bg-amber-600 text-white hover:bg-amber-700 transition-colors">
-                    Usar valor sugerido
-                </button>
-                <button @click="navigator.clipboard.writeText(evalWhatsappText); evalCopied = true; setTimeout(() => evalCopied = false, 2000)" type="button"
-                        class="w-full py-2.5 mt-2 rounded-[10px] text-sm font-semibold cursor-pointer border transition-all"
+                {{-- Copiar para WhatsApp (sempre visível primeiro) --}}
+                <button @click="navigator.clipboard.writeText(evalWhatsappText); evalCopied = true; evalSent = true; setTimeout(() => evalCopied = false, 2000)" type="button"
+                        class="w-full py-2.5 rounded-[10px] text-sm font-semibold cursor-pointer border transition-all"
                         :class="evalCopied
                             ? 'bg-emerald-600 text-white border-emerald-600'
                             : 'bg-surface-raised text-dg-300 border-border hover:bg-surface-overlay hover:text-dg-100'">
@@ -202,6 +199,17 @@
                         </svg>
                         Copiado!
                     </span>
+                </button>
+
+                {{-- Usar valor sugerido (bloqueado até copiar quando precisa de aprovação) --}}
+                <button @click="tradeIn.offeredInput = fmt(tradeIn.result?.suggested_price); recalculate()" type="button"
+                        class="w-full py-2.5 mt-2 rounded-[10px] text-sm font-semibold border-none transition-all"
+                        :class="(needsManagerApproval && !evalSent)
+                            ? 'bg-dg-700 text-dg-500 cursor-not-allowed opacity-50'
+                            : 'bg-amber-600 text-white cursor-pointer hover:bg-amber-700'"
+                        :disabled="needsManagerApproval && !evalSent">
+                    <span x-show="needsManagerApproval && !evalSent">Copie a avaliação primeiro</span>
+                    <span x-show="!needsManagerApproval || evalSent">Usar valor sugerido</span>
                 </button>
             </div>
 
