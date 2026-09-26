@@ -137,6 +137,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/crm/deals/{deal}', [CrmController::class, 'update'])->name('crm.deals.update');
         Route::delete('/crm/deals/{deal}', [CrmController::class, 'destroy'])->name('crm.deals.destroy');
         Route::post('/crm/deals/{deal}/move', [CrmController::class, 'moveStage'])->name('crm.deals.move');
+        Route::patch('/crm/deals/{deal}/followup', [CrmController::class, 'updateFollowup'])->name('crm.deals.followup');
         Route::post('/crm/deals/{deal}/win', [CrmController::class, 'win'])->name('crm.deals.win');
         Route::post('/crm/deals/{deal}/lose', [CrmController::class, 'lose'])->name('crm.deals.lose');
         Route::post('/crm/deals/{deal}/reopen', [CrmController::class, 'reopen'])->name('crm.deals.reopen');

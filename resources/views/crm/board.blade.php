@@ -147,103 +147,164 @@
                                         'red' => '#dc2626',
                                     ];
                                 @endphp
-                                <a href="{{ route('crm.show', $deal) }}" class="deal-card" data-deal-id="{{ $deal->id }}"
-                                   style="display: block; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid {{ $borderColor }}; border-radius: 0.5rem; padding: 0.75rem; cursor: grab; text-decoration: none; transition: box-shadow 0.15s;"
-                                   onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+                                <div class="deal-card" data-deal-id="{{ $deal->id }}"
+                                     x-data="{ editingFollowup: false, followupText: {{ json_encode($deal->next_action ?? '') }}, followupDate: '{{ $deal->next_action_at?->format('Y-m-d\TH:i') ?? '' }}', saving: false }"
+                                     style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid {{ $borderColor }}; border-radius: 0.5rem; cursor: grab; transition: box-shadow 0.15s; position: relative;"
+                                     onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
 
-                                    {{-- Badges: origem + temperatura + condição --}}
-                                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 0.375rem; align-items: center;">
-                                        @if($deal->lead_source)
-                                            <span style="font-size: 0.6rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; display: inline-flex; align-items: center; gap: 2px; color: white; background: {{ $deal->lead_source->color() }};">
-                                                <svg style="width: 10px; height: 10px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $deal->lead_source->icon() }}"/>
-                                                </svg>
-                                                {{ $deal->lead_source->label() }}
-                                            </span>
-                                        @endif
-                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $tempColors[$deal->temperature] ?? '#f59e0b' }}; flex-shrink: 0;"
-                                              title="{{ $tempLabels[$deal->temperature] ?? 'Morno' }}"></span>
-                                        @if($deal->product_interest)
-                                            <span style="font-size: 0.6rem; font-weight: 600; color: #a4a4a4; background: #222222; padding: 1px 5px; border-radius: 4px;">
-                                                {{ $deal->product_interest }}
-                                            </span>
-                                        @endif
-                                        @if($interest && $interest->condition)
-                                            <span style="font-size: 0.55rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.15); color: #93c5fd;' : 'background: #fef3c7; color: #fbbf24;' }}">
-                                                {{ $interest->condition === 'novo' ? 'Novo' : 'Seminovo' }}
-                                            </span>
-                                        @endif
-                                    </div>
+                                    <a href="{{ route('crm.show', $deal) }}"
+                                       style="display: block; padding: 0.75rem; text-decoration: none;"
+                                       @click="if (editingFollowup) $event.preventDefault()">
 
-                                    <div style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3; line-height: 1.3;">{{ $deal->title }}</div>
-
-                                    @if($deal->customer)
-                                        <div style="font-size: 0.7rem; color: #818181; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">
-                                            <svg style="width: 12px; height: 12px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                            </svg>
-                                            {{ $deal->customer->name }}
-                                        </div>
-                                    @endif
-
-                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem;">
-                                        @if($deal->value)
-                                            <span style="font-size: 0.75rem; font-weight: 700; color: #059669;">
-                                                R$ {{ number_format((float)$deal->value, 2, ',', '.') }}
-                                            </span>
-                                        @else
-                                            <span></span>
-                                        @endif
-
-                                        <div style="display: flex; align-items: center; gap: 0.375rem;">
-                                            @if($deal->isOverdue())
-                                                <span style="font-size: 0.6rem; font-weight: 700; color: #fca5a5;" title="Atrasado">
-                                                    {{ $deal->expected_close_date->format('d/m') }}
-                                                </span>
-                                            @elseif($deal->expected_close_date)
-                                                <span style="font-size: 0.6rem; color: #666666;">
-                                                    {{ $deal->expected_close_date->format('d/m') }}
-                                                </span>
-                                            @endif
-
-                                            @if($deal->whatsapp_link)
-                                                <span style="width: 14px; height: 14px; color: #16a34a;" title="Tem WhatsApp">
-                                                    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 14px; height: 14px;">
-                                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                        {{-- Badges: origem + temperatura + condição --}}
+                                        <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 0.375rem; align-items: center;">
+                                            @if($deal->lead_source)
+                                                <span style="font-size: 0.6rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; display: inline-flex; align-items: center; gap: 2px; color: white; background: {{ $deal->lead_source->color() }};">
+                                                    <svg style="width: 10px; height: 10px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ $deal->lead_source->icon() }}"/>
                                                     </svg>
+                                                    {{ $deal->lead_source->label() }}
+                                                </span>
+                                            @endif
+                                            <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $tempColors[$deal->temperature] ?? '#f59e0b' }}; flex-shrink: 0;"
+                                                  title="{{ $tempLabels[$deal->temperature] ?? 'Morno' }}"></span>
+                                            @if($deal->product_interest)
+                                                <span style="font-size: 0.6rem; font-weight: 600; color: #a4a4a4; background: #222222; padding: 1px 5px; border-radius: 4px;">
+                                                    {{ $deal->product_interest }}
+                                                </span>
+                                            @endif
+                                            @if($interest && $interest->condition)
+                                                <span style="font-size: 0.55rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.15); color: #93c5fd;' : 'background: #fef3c7; color: #fbbf24;' }}">
+                                                    {{ $interest->condition === 'novo' ? 'Novo' : 'Seminovo' }}
                                                 </span>
                                             @endif
                                         </div>
-                                    </div>
 
-                                    {{-- Tempo de espera + próxima ação --}}
-                                    <div style="margin-top: 0.375rem; display: flex; align-items: center; justify-content: space-between;">
-                                        <span style="font-size: 0.6rem; font-weight: 600; color: {{ $waitingColors[$urgency] ?? '#6b7280' }};"
-                                              title="Tempo desde última interação">
-                                            <svg style="width: 10px; height: 10px; display: inline; vertical-align: -1px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            {{ $deal->waiting_time_label }}
-                                        </span>
-                                        @if($deal->user)
-                                            <span style="font-size: 0.6rem; color: #666666;">
-                                                {{ $deal->user->name }}
+                                        <div style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3; line-height: 1.3; display: flex; align-items: baseline; gap: 0.375rem;">
+                                            <span>{{ $deal->title }}</span>
+                                            @if($deal->phone)
+                                                <span style="font-size: 0.6rem; font-weight: 500; color: #666666; flex-shrink: 0;">{{ substr(preg_replace('/\D/', '', $deal->phone), -4) }}</span>
+                                            @endif
+                                        </div>
+
+                                        @if($deal->customer)
+                                            <div style="font-size: 0.7rem; color: #818181; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">
+                                                <svg style="width: 12px; height: 12px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                </svg>
+                                                {{ $deal->customer->name }}
+                                            </div>
+                                        @endif
+
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem;">
+                                            @if($deal->value)
+                                                <span style="font-size: 0.75rem; font-weight: 700; color: #059669;">
+                                                    R$ {{ number_format((float)$deal->value, 2, ',', '.') }}
+                                                </span>
+                                            @else
+                                                <span></span>
+                                            @endif
+
+                                            <div style="display: flex; align-items: center; gap: 0.375rem;">
+                                                @if($deal->isOverdue())
+                                                    <span style="font-size: 0.6rem; font-weight: 700; color: #fca5a5;" title="Atrasado">
+                                                        {{ $deal->expected_close_date->format('d/m') }}
+                                                    </span>
+                                                @elseif($deal->expected_close_date)
+                                                    <span style="font-size: 0.6rem; color: #666666;">
+                                                        {{ $deal->expected_close_date->format('d/m') }}
+                                                    </span>
+                                                @endif
+
+                                                @if($deal->whatsapp_link)
+                                                    <span style="width: 14px; height: 14px; color: #16a34a;" title="Tem WhatsApp">
+                                                        <svg viewBox="0 0 24 24" fill="currentColor" style="width: 14px; height: 14px;">
+                                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                                        </svg>
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        {{-- Tempo de espera + vendedor --}}
+                                        <div style="margin-top: 0.375rem; display: flex; align-items: center; justify-content: space-between;">
+                                            <span style="font-size: 0.6rem; font-weight: 600; color: {{ $waitingColors[$urgency] ?? '#6b7280' }};"
+                                                  title="Tempo desde última interação">
+                                                <svg style="width: 10px; height: 10px; display: inline; vertical-align: -1px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                {{ $deal->waiting_time_label }}
                                             </span>
+                                            @if($deal->user)
+                                                <span style="font-size: 0.6rem; color: #666666;">
+                                                    {{ $deal->user->name }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </a>
+
+                                    {{-- Follow-up section (fora do <a> para permitir interação) --}}
+                                    <div style="padding: 0 0.75rem 0.75rem 0.75rem;" x-show="!editingFollowup">
+                                        @if($deal->next_action)
+                                            <div style="padding: 0.375rem 0.5rem; border-radius: 0.375rem; font-size: 0.7rem; line-height: 1.4; position: relative; {{ $deal->is_followup_overdue ? 'background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5;' : 'background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15); color: #93c5fd;' }}">
+                                                <div style="display: flex; align-items: flex-start; gap: 0.25rem;">
+                                                    <svg style="width: 10px; height: 10px; flex-shrink: 0; margin-top: 2px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                                                    </svg>
+                                                    <span class="followup-text" style="word-break: break-word; flex: 1;">{{ $deal->next_action }}</span>
+                                                    <button @click.stop="editingFollowup = true" type="button" title="Editar follow-up"
+                                                            style="flex-shrink: 0; background: none; border: none; cursor: pointer; padding: 0; color: inherit; opacity: 0.5; transition: opacity 0.15s;"
+                                                            onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
+                                                        <svg style="width: 10px; height: 10px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                @if($deal->next_action_at)
+                                                    <div style="font-size: 0.6rem; font-weight: 600; margin-top: 0.125rem; opacity: 0.8;">
+                                                        {{ $deal->next_action_at->format('d/m H:i') }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <button @click.stop="editingFollowup = true" type="button"
+                                                    style="width: 100%; padding: 0.25rem; border-radius: 0.375rem; font-size: 0.625rem; color: #666666; background: none; border: 1px dashed rgba(255,255,255,0.08); cursor: pointer; transition: all 0.15s;"
+                                                    onmouseover="this.style.borderColor='rgba(59,130,246,0.3)'; this.style.color='#93c5fd'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.color='#666666'">
+                                                + Adicionar follow-up
+                                            </button>
+                                        @endif
+
+                                        @if($deal->description)
+                                            <div class="followup-text" style="margin-top: 0.25rem; font-size: 0.625rem; color: #666666; line-height: 1.3; word-break: break-word; font-style: italic; padding-left: 0.25rem; border-left: 2px solid rgba(255,255,255,0.06);">
+                                                {{ Str::limit($deal->description, 80) }}
+                                            </div>
                                         @endif
                                     </div>
 
-                                    @if($deal->next_action)
-                                        <div style="margin-top: 0.25rem; font-size: 0.6rem; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#6b7280' }}; display: flex; align-items: center; gap: 0.25rem;">
-                                            <svg style="width: 10px; height: 10px; flex-shrink: 0;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                                            </svg>
-                                            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $deal->next_action }}</span>
-                                            @if($deal->next_action_at)
-                                                <span style="flex-shrink: 0; font-weight: 600;">{{ $deal->next_action_at->format('d/m H:i') }}</span>
-                                            @endif
+                                    {{-- Inline follow-up edit form --}}
+                                    <div x-show="editingFollowup" x-transition @click.stop style="padding: 0 0.75rem 0.75rem 0.75rem;">
+                                        <div style="background: #1a1a1a; border: 1px solid rgba(59,130,246,0.3); border-radius: 0.375rem; padding: 0.5rem;">
+                                            <textarea x-model="followupText" rows="2" placeholder="Ex: esperando resposta sobre parcelamento..."
+                                                      x-ref="followupInput"
+                                                      @keydown.escape="editingFollowup = false"
+                                                      @keydown.ctrl.enter="$dispatch('save-followup')"
+                                                      style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; font-size: 0.75rem; resize: vertical; background: #141414; color: #e3e3e3; min-height: 40px;"></textarea>
+                                            <div style="display: flex; align-items: center; gap: 0.375rem; margin-top: 0.375rem;">
+                                                <input type="datetime-local" x-model="followupDate"
+                                                       style="flex: 1; padding: 0.25rem 0.375rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; font-size: 0.65rem; background: #141414; color: #e3e3e3;">
+                                                <button @click="editingFollowup = false" type="button"
+                                                        style="padding: 0.25rem 0.5rem; font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; background: #141414; color: #a4a4a4; cursor: pointer;">
+                                                    Cancelar
+                                                </button>
+                                                <button @click="saveFollowup('{{ $deal->id }}', $el)" :disabled="saving" type="button"
+                                                        style="padding: 0.25rem 0.5rem; font-size: 0.65rem; border: none; border-radius: 0.25rem; background: #3b82f6; color: white; cursor: pointer; font-weight: 600;">
+                                                    <span x-show="!saving">Salvar</span>
+                                                    <span x-show="saving">...</span>
+                                                </button>
+                                            </div>
                                         </div>
-                                    @endif
-                                </a>
+                                    </div>
+                                </div>
                             @endforeach
                         </div>
                     </div>
@@ -358,6 +419,43 @@
                 this.scheduleCustomerResults = [];
             },
         };
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.followup-text').forEach(function(el) {
+            el.innerHTML = el.textContent.replace(/~([^~]+)~/g, '<s style="opacity: 0.5;">$1</s>');
+        });
+    });
+
+    window.saveFollowup = async function(dealId, el) {
+        const card = el.closest('[x-data]');
+        const component = Alpine.$data(card);
+        component.saving = true;
+
+        try {
+            const res = await fetch(`/crm/deals/${dealId}/followup`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    next_action: component.followupText || null,
+                    next_action_at: component.followupDate || null,
+                }),
+            });
+
+            if (res.ok) {
+                window.location.reload();
+            } else {
+                alert('Erro ao salvar follow-up.');
+            }
+        } catch (e) {
+            alert('Erro de conexão.');
+        } finally {
+            component.saving = false;
+        }
     }
     </script>
 </x-app-layout>

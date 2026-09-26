@@ -322,6 +322,28 @@ class CrmController extends Controller
             ->with('success', 'Atividade registrada!');
     }
 
+    // ─── Follow-up rápido (AJAX) ────────────────────────────
+
+    public function updateFollowup(Request $request, Deal $deal): JsonResponse
+    {
+        $validated = $request->validate([
+            'next_action' => 'nullable|string|max:500',
+            'next_action_at' => 'nullable|date',
+        ]);
+
+        $deal->update($validated);
+        $deal->updateLastInteraction();
+
+        if (! empty($validated['next_action'])) {
+            $deal->logActivity(
+                DealActivityType::Note,
+                "Follow-up atualizado: {$validated['next_action']}"
+            );
+        }
+
+        return response()->json(['success' => true]);
+    }
+
     // ─── IA - Gemini ─────────────────────────────────────────
 
     public function aiSuggestMessage(Request $request, Deal $deal): JsonResponse

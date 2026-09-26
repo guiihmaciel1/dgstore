@@ -145,7 +145,7 @@
                                     </span>
                                     <div style="display: flex; align-items: center; justify-content: space-between;">
                                         @if($deal->next_action)
-                                            <span style="font-size: 0.8rem; color: #e3e3e3; font-weight: 500;">{{ $deal->next_action }}</span>
+                                            <span class="followup-text" style="font-size: 0.8rem; color: #e3e3e3; font-weight: 500;">{{ $deal->next_action }}</span>
                                         @endif
                                         @if($deal->next_action_at)
                                             <span style="font-size: 0.75rem; font-weight: 600; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#6b7280' }};">
@@ -159,7 +159,7 @@
                             @if($deal->description)
                                 <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6;">
                                     <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block; margin-bottom: 0.25rem;">Observações</span>
-                                    <p style="font-size: 0.8rem; color: #a4a4a4; line-height: 1.5;">{{ $deal->description }}</p>
+                                    <p class="followup-text" style="font-size: 0.8rem; color: #a4a4a4; line-height: 1.5;">{{ $deal->description }}</p>
                                 </div>
                             @endif
 
@@ -510,5 +510,11 @@
             },
         };
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.followup-text').forEach(function(el) {
+            el.innerHTML = el.textContent.replace(/~([^~]+)~/g, '<s style="opacity: 0.5;">$1</s>');
+        });
+    });
     </script>
 </x-app-layout>

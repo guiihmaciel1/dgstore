@@ -48,7 +48,10 @@ class InternDashboardController extends Controller
         $monthStart = now()->startOfMonth();
         $monthEnd = now()->endOfMonth();
 
-        $mySales = Sale::where('user_id', $user->id)
+        $mySales = Sale::where(function ($q) use ($user) {
+                $q->where('seller_id', $user->id)
+                  ->orWhere('user_id', $user->id);
+            })
             ->whereBetween('sold_at', [$monthStart, $monthEnd])
             ->where('payment_status', '!=', PaymentStatus::Cancelled)
             ->get();
