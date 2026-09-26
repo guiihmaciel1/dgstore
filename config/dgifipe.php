@@ -63,11 +63,13 @@ return [
         'iPhone 15 Pro Max' => ['256GB', '512GB', '1TB'],
 
         'iPhone 16'         => ['128GB', '256GB', '512GB'],
+        'iPhone 16e'        => ['128GB', '256GB', '512GB'],
         'iPhone 16 Plus'    => ['128GB', '256GB', '512GB'],
         'iPhone 16 Pro'     => ['128GB', '256GB', '512GB', '1TB'],
         'iPhone 16 Pro Max' => ['256GB', '512GB', '1TB'],
 
         'iPhone 17'         => ['256GB', '512GB'],
+        'iPhone 17e'        => ['256GB', '512GB'],
         'iPhone 17 Air'     => ['256GB', '512GB'],
         'iPhone 17 Pro'     => ['256GB', '512GB', '1TB'],
         'iPhone 17 Pro Max' => ['256GB', '512GB', '1TB'],
