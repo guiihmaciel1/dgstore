@@ -1426,8 +1426,7 @@
                 }
 
                 let lines = [];
-                lines.push('📱 *SEMINOVOS DG STORE*');
-                lines.push('━━━━━━━━━━━━━━━━━━━');
+                lines.push('*SEMINOVOS DG STORE*');
                 lines.push('');
 
                 visibleItems.forEach(item => {
@@ -1453,12 +1452,10 @@
                     parts.push(`💰R$ ${price}`);
 
                     lines.push(parts.join(' - '));
+                    lines.push('');
                 });
 
-                lines.push('');
-                lines.push('📲 Consulte disponibilidade!');
-
-                const text = lines.join('\n');
+                const text = lines.join('\n').trimEnd();
 
                 navigator.clipboard.writeText(text).then(() => {
                     this.usedListCopied = true;
