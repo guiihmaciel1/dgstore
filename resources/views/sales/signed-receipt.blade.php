@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Recibo nº #{{ $sale->sale_number }}</title>
     <style>
-        @page { size: A4 portrait; margin: 8mm 10mm 12mm 10mm; }
+        @page { size: A4 portrait; margin: 10mm 14mm; }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -13,6 +13,8 @@
             font-size: 8px;
             line-height: 1.3;
             color: #000;
+            border: 2px solid #000;
+            padding: 0;
         }
 
         table { border-collapse: collapse; width: 100%; }
@@ -20,18 +22,18 @@
         .header-row td {
             border: 1px solid #000;
             vertical-align: top;
-            padding: 6px 8px;
+            padding: 8px 10px;
         }
 
         .emitente-nome {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
         }
 
         .emitente-detalhe {
             font-size: 7.5px;
-            margin-top: 2px;
-            line-height: 1.4;
+            margin-top: 3px;
+            line-height: 1.5;
         }
 
         .danfe-box {
@@ -42,7 +44,7 @@
         .danfe-title {
             font-size: 9px;
             font-weight: bold;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .danfe-subtitle {
@@ -53,7 +55,7 @@
         .danfe-entrada {
             font-size: 9px;
             font-weight: bold;
-            margin-top: 2px;
+            margin-top: 3px;
         }
 
         .numero-box {
@@ -68,14 +70,15 @@
 
         .numero-serie {
             font-size: 7px;
-            margin-top: 2px;
+            margin-top: 3px;
         }
 
         .section-title {
             background-color: #d9d9d9;
-            border: 1px solid #000;
-            border-top: none;
-            padding: 2px 6px;
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 2px 8px;
             font-size: 7px;
             font-weight: bold;
             text-transform: uppercase;
@@ -83,7 +86,7 @@
 
         .fields-row td {
             border: 1px solid #000;
-            padding: 1px 5px 3px 5px;
+            padding: 2px 6px 4px 6px;
             vertical-align: top;
         }
 
@@ -91,25 +94,25 @@
             font-size: 5.5px;
             color: #333;
             text-transform: uppercase;
-            margin-bottom: 0;
+            margin-bottom: 1px;
         }
 
         .field-value {
-            font-size: 8px;
+            font-size: 8.5px;
             font-weight: normal;
             color: #000;
-            min-height: 11px;
+            min-height: 12px;
         }
 
         .field-value-bold {
-            font-size: 8px;
+            font-size: 8.5px;
             font-weight: bold;
             color: #000;
         }
 
         .items-table th {
             border: 1px solid #000;
-            padding: 2px 3px;
+            padding: 3px 4px;
             font-size: 5.5px;
             font-weight: bold;
             text-transform: uppercase;
@@ -119,7 +122,7 @@
 
         .items-table td {
             border: 1px solid #000;
-            padding: 2px 3px;
+            padding: 3px 4px;
             font-size: 7.5px;
             vertical-align: top;
         }
@@ -129,16 +132,32 @@
 
         .footer-fixed {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            bottom: -1px;
+            left: -1px;
+            right: -1px;
         }
 
-        .footer-cell {
+        .footer-bar {
             border: 1px solid #000;
-            padding: 3px 6px;
+            padding: 4px 8px;
             font-size: 7px;
             text-align: center;
+            background: #fff;
+        }
+
+        .dados-adicionais-row td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            font-size: 8px;
+            vertical-align: top;
+        }
+
+        .info-label {
+            font-size: 5.5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #333;
+            margin-bottom: 3px;
         }
     </style>
 </head>
@@ -227,11 +246,11 @@
     <div class="section-title">Pagamentos</div>
     <table class="fields-row">
         <tr>
-            <td style="width: 30%;">
+            <td style="width: 25%;">
                 <div class="field-label">Forma de Pagamento</div>
                 <div class="field-value">{{ $sale->payment_method->label() }}@if($sale->installments > 1) ({{ $sale->installments }}x)@endif</div>
             </td>
-            <td style="width: 20%;">
+            <td style="width: 18%;">
                 <div class="field-label">Valor Total</div>
                 <div class="field-value-bold">{{ $sale->formatted_total }}</div>
             </td>
@@ -274,13 +293,28 @@
                 </td>
                 @endif
             @else
+                <td style="width: 32%;">
+                    <div class="field-label">Trade-in</div>
+                    <div class="field-value">
+                        @if($sale->trade_in_value > 0 && $sale->tradeIns->isNotEmpty())
+                            @foreach($sale->tradeIns as $ti)
+                                @php
+                                    $parts = [$ti->device_name];
+                                    if ($ti->storage) $parts[] = $ti->storage;
+                                    if ($ti->color) $parts[] = $ti->color;
+                                    $desc = implode(' ', $parts);
+                                    if ($ti->battery_health) $desc .= ' · Bat. ' . $ti->battery_health . '%';
+                                @endphp
+                                {{ $desc }}@if(!$loop->last)<br>@endif
+                            @endforeach
+                        @else
+                            ---
+                        @endif
+                    </div>
+                </td>
                 <td style="width: 25%;">
                     <div class="field-label">Vendedor</div>
                     <div class="field-value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}</div>
-                </td>
-                <td style="width: 25%;">
-                    <div class="field-label">Tipo de Venda</div>
-                    <div class="field-value">{{ $sale->sale_type?->label() ?? 'Cliente Final' }}</div>
                 </td>
             @endif
         </tr>
@@ -382,7 +416,7 @@
             </td>
             <td style="width: 25%; text-align: right;">
                 <div class="field-label">Valor Total da Venda</div>
-                <div class="field-value-bold" style="font-size: 11px;">{{ $sale->formatted_total }}</div>
+                <div class="field-value-bold" style="font-size: 12px;">{{ $sale->formatted_total }}</div>
             </td>
         </tr>
     </table>
@@ -424,10 +458,10 @@
 
     {{-- DADOS ADICIONAIS --}}
     <div class="section-title">Dados Adicionais</div>
-    <table class="fields-row">
+    <table class="dados-adicionais-row">
         <tr>
             <td style="width: 70%;">
-                <div class="field-label">Informações Complementares</div>
+                <div class="info-label">Informações Complementares</div>
                 <div class="field-value">
                     @if($sale->notes)
                         {{ $sale->notes }}
@@ -436,15 +470,15 @@
                 </div>
             </td>
             <td style="width: 30%;">
-                <div class="field-label">Reservado ao Emitente</div>
+                <div class="info-label">Reservado ao Emitente</div>
                 <div class="field-value">DG STORE LTDA</div>
             </td>
         </tr>
     </table>
 
-    {{-- RODAPE FIXO NO FUNDO DA PAGINA --}}
+    {{-- RODAPE FIXO NO FUNDO --}}
     <div class="footer-fixed">
-        <div class="footer-cell">
+        <div class="footer-bar">
             DATA E HORA DA IMPRESSÃO: {{ now()->format('d/m/Y H:i:s') }}
         </div>
     </div>
