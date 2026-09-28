@@ -331,7 +331,7 @@ class SaleController extends Controller
 
         $pdf = Pdf::loadView('sales.signed-receipt', [
             'sale' => $sale,
-        ]);
+        ])->setPaper('a4', 'portrait');
 
         return $pdf->stream("recibo-assinado-{$sale->sale_number}.pdf");
     }

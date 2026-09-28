@@ -2,30 +2,44 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Recibo #{{ $sale->sale_number }}</title>
+    <title>Recibo nº #{{ $sale->sale_number }}</title>
     <style>
+        @page { size: A4 portrait; margin: 10mm 12mm; }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
+        html, body {
+            height: 100%;
             font-family: 'DejaVu Sans', Arial, sans-serif;
             font-size: 8px;
             line-height: 1.3;
             color: #000;
-            padding: 10px 15px;
         }
 
         table { border-collapse: collapse; width: 100%; }
 
-        .outer-border {
+        /* Tabela wrapper que ocupa 100% da pagina */
+        .page-wrapper {
+            width: 100%;
+            height: 100%;
             border: 2px solid #000;
-            padding: 8px;
-            margin-bottom: 0;
         }
 
-        .header-row {
-            width: 100%;
-            border: 1px solid #000;
+        .page-wrapper > tr > td {
+            vertical-align: top;
+            padding: 0;
         }
+
+        .page-wrapper > tr.spacer-row > td {
+            height: 100%;
+            vertical-align: top;
+        }
+
+        .page-wrapper > tr.footer-row > td {
+            vertical-align: bottom;
+        }
+
+        .header-row { width: 100%; }
 
         .header-row td {
             border: 1px solid #000;
@@ -91,9 +105,7 @@
             text-transform: uppercase;
         }
 
-        .fields-row {
-            width: 100%;
-        }
+        .fields-row { width: 100%; }
 
         .fields-row td {
             border: 1px solid #000;
@@ -121,19 +133,7 @@
             color: #000;
         }
 
-        .items-header {
-            background-color: #d9d9d9;
-            border: 1px solid #000;
-            border-top: none;
-            padding: 2px 6px;
-            font-size: 7px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .items-table {
-            width: 100%;
-        }
+        .items-table { width: 100%; }
 
         .items-table th {
             border: 1px solid #000;
@@ -155,15 +155,16 @@
         .items-table .center { text-align: center; }
         .items-table .right { text-align: right; }
 
-        .info-adicional {
+        .info-table { width: 100%; height: 100%; }
+
+        .info-table td {
             border: 1px solid #000;
-            border-top: none;
             padding: 6px 8px;
             font-size: 8px;
-            min-height: 40px;
+            vertical-align: top;
         }
 
-        .info-adicional-header {
+        .info-label {
             font-size: 6px;
             font-weight: bold;
             text-transform: uppercase;
@@ -171,323 +172,357 @@
             margin-bottom: 3px;
         }
 
-        .footer-row {
-            width: 100%;
-            margin-top: 3px;
-        }
-
-        .footer-row td {
-            border: 1px solid #000;
-            padding: 2px 6px;
-            font-size: 7px;
-            text-align: center;
-        }
-
-        .recibo-assinatura {
+        .footer-cell {
             border: 1px solid #000;
             border-top: none;
-            padding: 8px;
-        }
-
-        .assinatura-table {
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .assinatura-table td {
-            width: 50%;
+            padding: 3px 6px;
+            font-size: 7px;
             text-align: center;
-            padding: 0 20px;
-            vertical-align: bottom;
-        }
-
-        .assinatura-line {
-            border-bottom: 1px solid #000;
-            padding-bottom: 25px;
-            margin-bottom: 4px;
-        }
-
-        .assinatura-nome {
-            font-size: 8px;
         }
     </style>
 </head>
 <body>
-    {{-- CABEÇALHO - Estilo NF-e/DANFE --}}
-    <table class="header-row">
-        <tr>
-            {{-- Emitente --}}
-            <td style="width: 50%;">
-                <div class="emitente-nome">DG STORE LTDA</div>
-                <div class="emitente-detalhe">
-                    Rua Rahme Trad Bechara Hage, 2061<br>
-                    Higienópolis - S.J. do Rio Preto - SP
-                </div>
-            </td>
-            {{-- Tipo documento --}}
-            <td style="width: 25%;" class="danfe-box">
-                <div class="danfe-title">RECIBO DE VENDA</div>
-                <div class="danfe-subtitle">
-                    Documento Auxiliar<br>
-                    de Controle Interno
-                </div>
-                <div class="danfe-entrada">SAÍDA</div>
-            </td>
-            {{-- Número --}}
-            <td style="width: 25%;" class="numero-box">
-                <div class="numero-value">Nº {{ $sale->sale_number }}</div>
-                <div class="numero-serie">
-                    Folha 1/1
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    {{-- NATUREZA DA OPERAÇÃO --}}
-    <table class="fields-row">
-        <tr>
-            <td style="width: 60%;">
-                <div class="field-label">Natureza da Operação</div>
-                <div class="field-value">VENDA DE MERCADORIA</div>
-            </td>
-            <td style="width: 20%;">
-                <div class="field-label">Data de Emissão</div>
-                <div class="field-value">{{ $sale->sold_at->format('d/m/Y') }}</div>
-            </td>
-            <td style="width: 20%;">
-                <div class="field-label">Hora de Emissão</div>
-                <div class="field-value">{{ $sale->sold_at->format('H:i:s') }}</div>
-            </td>
-        </tr>
-    </table>
-
-    {{-- DESTINATÁRIO / REMETENTE --}}
-    <div class="section-title">Destinatário / Remetente</div>
-    <table class="fields-row">
-        <tr>
-            <td style="width: 50%;">
-                <div class="field-label">Nome / Razão Social</div>
-                <div class="field-value-bold">{{ $sale->customer?->name ?? 'CONSUMIDOR FINAL' }}</div>
-            </td>
-            <td style="width: 25%;">
-                <div class="field-label">CPF / CNPJ</div>
-                <div class="field-value">{{ $sale->customer?->formatted_cpf ?? '---' }}</div>
-            </td>
-            <td style="width: 25%;">
-                <div class="field-label">Data da Compra</div>
-                <div class="field-value">{{ $sale->sold_at->format('d/m/Y') }}</div>
-            </td>
-        </tr>
-    </table>
-    <table class="fields-row">
-        <tr>
-            <td style="width: 50%;">
-                <div class="field-label">Endereço</div>
-                <div class="field-value">{{ $sale->customer?->address ?? '---' }}</div>
-            </td>
-            <td style="width: 25%;">
-                <div class="field-label">Telefone</div>
-                <div class="field-value">{{ $sale->customer?->formatted_phone ?? '---' }}</div>
-            </td>
-            <td style="width: 25%;">
-                <div class="field-label">Instagram</div>
-                <div class="field-value">{{ $sale->customer?->formatted_instagram ?? '---' }}</div>
-            </td>
-        </tr>
-    </table>
-
-    {{-- PAGAMENTOS --}}
-    <div class="section-title">Pagamentos</div>
-    <table class="fields-row">
-        <tr>
-            <td style="width: 30%;">
-                <div class="field-label">Forma de Pagamento</div>
-                <div class="field-value">{{ $sale->payment_method->label() }}@if($sale->installments > 1) ({{ $sale->installments }}x)@endif</div>
-            </td>
-            <td style="width: 20%;">
-                <div class="field-label">Valor Total</div>
-                <div class="field-value-bold">{{ $sale->formatted_total }}</div>
-            </td>
-            @if($sale->hasMixedPayment())
-                @if($sale->pix_payment > 0)
-                <td>
-                    <div class="field-label">PIX</div>
-                    <div class="field-value">{{ $sale->formatted_pix_payment }}</div>
-                </td>
-                @endif
-                @if($sale->cash_payment > 0)
-                <td>
-                    <div class="field-label">Dinheiro</div>
-                    <div class="field-value">{{ $sale->formatted_cash_payment }}</div>
-                </td>
-                @endif
-                @if($sale->card_payment > 0)
-                <td>
-                    <div class="field-label">Cartão{{ $sale->installments > 1 ? ' ('.$sale->installments.'x)' : '' }}</div>
-                    <div class="field-value">{{ $sale->formatted_card_payment }}</div>
-                </td>
-                @endif
-                @if($sale->trade_in_value > 0)
-                <td>
-                    <div class="field-label">Trade-in</div>
-                    <div class="field-value">
-                        @forelse($sale->tradeIns as $ti)
-                            @php
-                                $parts = [$ti->device_name];
-                                if ($ti->storage) $parts[] = $ti->storage;
-                                if ($ti->color) $parts[] = $ti->color;
-                                $desc = implode(' ', $parts);
-                                if ($ti->battery_health) $desc .= ' · Bat. ' . $ti->battery_health . '%';
-                            @endphp
-                            {{ $desc }}@if(!$loop->last)<br>@endif
-                        @empty
-                            Aparelho recebido
-                        @endforelse
-                    </div>
-                </td>
-                @endif
-            @else
-                <td style="width: 25%;">
-                    <div class="field-label">Vendedor</div>
-                    <div class="field-value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}</div>
-                </td>
-                <td style="width: 25%;">
-                    <div class="field-label">Tipo de Venda</div>
-                    <div class="field-value">{{ $sale->sale_type?->label() ?? 'Cliente Final' }}</div>
-                </td>
-            @endif
-        </tr>
-    </table>
-
-    {{-- DADOS DOS PRODUTOS / SERVIÇOS --}}
-    <div class="section-title">Dados dos Produtos / Serviços</div>
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th style="width: 5%;">Item</th>
-                <th style="width: 28%;">Descrição do Produto / Serviço</th>
-                <th style="width: 14%;">IMEI</th>
-                <th style="width: 6%;">Qtd</th>
-                <th style="width: 6%;">Un</th>
-                <th style="width: 11%;">Valor Unit.</th>
-                <th style="width: 11%;">Valor Total</th>
-                <th style="width: 9%;">Bat.</th>
-                <th style="width: 10%;">Acessórios</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($sale->items as $index => $item)
-            @php
-                $snapshot = $item->product_snapshot ?? [];
-                $product = $item->product;
-                $itemModel = $snapshot['model'] ?? $product?->model ?? null;
-                $itemStorage = $snapshot['storage'] ?? $product?->storage ?? null;
-                $itemColor = $snapshot['color'] ?? $product?->color ?? null;
-                $itemCondition = $snapshot['condition'] ?? $product?->condition?->value ?? null;
-                $itemImei = $snapshot['imei'] ?? $product?->imei ?? null;
-                $batteryHealth = $product?->battery_health ?? null;
-                $hasBox = $product?->has_box ?? null;
-                $hasCable = $product?->has_cable ?? null;
-
-                $descParts = [$item->product_name];
-                if ($itemStorage) $descParts[] = $itemStorage;
-                if ($itemColor) $descParts[] = $itemColor;
-                if ($itemCondition === 'new') $descParts[] = '(Novo)';
-                elseif ($itemCondition === 'used') $descParts[] = '(Seminovo)';
-                elseif ($itemCondition === 'refurbished') $descParts[] = '(Recondicionado)';
-
-                $accessories = [];
-                if ($hasBox !== null) $accessories[] = 'Cx:' . ($hasBox ? 'S' : 'N');
-                if ($hasCable !== null) $accessories[] = 'Cb:' . ($hasCable ? 'S' : 'N');
-            @endphp
-            <tr>
-                <td class="center">{{ $index + 1 }}</td>
-                <td>{{ implode(' ', $descParts) }}</td>
-                <td class="center" style="font-size: 7px;">{{ $itemImei ?? '---' }}</td>
-                <td class="center">{{ $item->quantity }}</td>
-                <td class="center">UN</td>
-                <td class="right">{{ $item->formatted_unit_price }}</td>
-                <td class="right">{{ $item->formatted_subtotal }}</td>
-                <td class="center">{{ $batteryHealth !== null ? $batteryHealth . '%' : '---' }}</td>
-                <td class="center" style="font-size: 7px;">{{ !empty($accessories) ? implode(' ', $accessories) : '---' }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    {{-- CÁLCULO DO TOTAL --}}
-    <div class="section-title">Cálculo do Total</div>
-    <table class="fields-row">
-        <tr>
-            <td style="width: 15%;">
-                <div class="field-label">Subtotal Produtos</div>
-                <div class="field-value">{{ $sale->formatted_subtotal }}</div>
-            </td>
-            <td style="width: 12%;">
-                <div class="field-label">Desconto</div>
-                <div class="field-value">{{ $sale->discount > 0 ? $sale->formatted_discount : 'R$ 0,00' }}</div>
-            </td>
-            <td style="width: 33%;">
-                <div class="field-label">Trade-in</div>
-                <div class="field-value">
-                    @if($sale->trade_in_value > 0 && $sale->tradeIns->isNotEmpty())
-                        @foreach($sale->tradeIns as $ti)
-                            @php
-                                $parts = [$ti->device_name];
-                                if ($ti->storage) $parts[] = $ti->storage;
-                                if ($ti->color) $parts[] = $ti->color;
-                                $desc = implode(' ', $parts);
-                                if ($ti->battery_health) $desc .= ' · ' . $ti->battery_health . '%';
-                                $acc = [];
-                                if ($ti->has_box) $acc[] = 'Cx:S';
-                                if ($ti->has_cable) $acc[] = 'Cb:S';
-                                if (!empty($acc)) $desc .= ' · ' . implode(' ', $acc);
-                            @endphp
-                            {{ $desc }}@if(!$loop->last)<br>@endif
-                        @endforeach
-                    @else
-                        ---
-                    @endif
-                </div>
-            </td>
-            <td style="width: 15%;">
-                <div class="field-label">Vendedor</div>
-                <div class="field-value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}</div>
-            </td>
-            <td style="width: 25%; text-align: right;">
-                <div class="field-label">Valor Total da Venda</div>
-                <div class="field-value-bold" style="font-size: 12px;">{{ $sale->formatted_total }}</div>
-            </td>
-        </tr>
-    </table>
-
-    {{-- INFORMAÇÕES ADICIONAIS --}}
-    <div class="section-title">Dados Adicionais</div>
-    <table class="fields-row">
-        <tr>
-            <td style="width: 70%;">
-                <div class="field-label">Informações Complementares</div>
-                <div class="field-value" style="min-height: 30px;">
-                    @if($sale->notes)
-                        {{ $sale->notes }}
-                    @endif
-                    <br>Venda realizada na DG Store - SJRP/SP. Emissão: {{ now()->format('d/m/Y H:i') }}.
-                </div>
-            </td>
-            <td style="width: 30%;">
-                <div class="field-label">Reservado ao Emitente</div>
-                <div class="field-value" style="min-height: 30px;">
-                    DG STORE LTDA
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    {{-- RODAPÉ --}}
-    <table class="footer-row">
+    <table class="page-wrapper">
+        {{-- CABECALHO --}}
         <tr>
             <td>
-                DATA E HORA DA IMPRESSÃO: {{ now()->format('d/m/Y H:i:s') }}
+                <table class="header-row">
+                    <tr>
+                        <td style="width: 50%;">
+                            <div class="emitente-nome">DG STORE LTDA</div>
+                            <div class="emitente-detalhe">
+                                Rua Rahme Trad Bechara Hage, 2061<br>
+                                Sala 45, 4º andar — Centro Empresarial Anthurium<br>
+                                Higienópolis - S.J. do Rio Preto - SP — CEP 15085-430<br>
+                                WhatsApp: (17) 99649-8338
+                            </div>
+                        </td>
+                        <td style="width: 25%;" class="danfe-box">
+                            <div class="danfe-title">RECIBO DE VENDA</div>
+                            <div class="danfe-subtitle">
+                                Documento Auxiliar<br>
+                                de Controle Interno
+                            </div>
+                            <div class="danfe-entrada">SAÍDA</div>
+                        </td>
+                        <td style="width: 25%;" class="numero-box">
+                            <div class="numero-value">Recibo nº #{{ $sale->sale_number }}</div>
+                            <div class="numero-serie">Folha 1/1</div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        {{-- NATUREZA DA OPERACAO --}}
+        <tr>
+            <td>
+                <table class="fields-row">
+                    <tr>
+                        <td style="width: 60%;">
+                            <div class="field-label">Natureza da Operação</div>
+                            <div class="field-value">VENDA DE MERCADORIA</div>
+                        </td>
+                        <td style="width: 20%;">
+                            <div class="field-label">Data de Emissão</div>
+                            <div class="field-value">{{ $sale->sold_at->format('d/m/Y') }}</div>
+                        </td>
+                        <td style="width: 20%;">
+                            <div class="field-label">Hora de Emissão</div>
+                            <div class="field-value">{{ $sale->sold_at->format('H:i:s') }}</div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        {{-- DESTINATARIO --}}
+        <tr>
+            <td>
+                <div class="section-title">Destinatário / Remetente</div>
+                <table class="fields-row">
+                    <tr>
+                        <td style="width: 50%;">
+                            <div class="field-label">Nome / Razão Social</div>
+                            <div class="field-value-bold">{{ $sale->customer?->name ?? 'CONSUMIDOR FINAL' }}</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="field-label">CPF / CNPJ</div>
+                            <div class="field-value">{{ $sale->customer?->formatted_cpf ?? '---' }}</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="field-label">Data da Compra</div>
+                            <div class="field-value">{{ $sale->sold_at->format('d/m/Y') }}</div>
+                        </td>
+                    </tr>
+                </table>
+                <table class="fields-row">
+                    <tr>
+                        <td style="width: 50%;">
+                            <div class="field-label">Endereço</div>
+                            <div class="field-value">{{ $sale->customer?->address ?? '---' }}</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="field-label">Telefone</div>
+                            <div class="field-value">{{ $sale->customer?->formatted_phone ?? '---' }}</div>
+                        </td>
+                        <td style="width: 25%;">
+                            <div class="field-label">Instagram</div>
+                            <div class="field-value">{{ $sale->customer?->formatted_instagram ?? '---' }}</div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        {{-- PAGAMENTOS --}}
+        <tr>
+            <td>
+                <div class="section-title">Pagamentos</div>
+                <table class="fields-row">
+                    <tr>
+                        <td style="width: 30%;">
+                            <div class="field-label">Forma de Pagamento</div>
+                            <div class="field-value">{{ $sale->payment_method->label() }}@if($sale->installments > 1) ({{ $sale->installments }}x)@endif</div>
+                        </td>
+                        <td style="width: 20%;">
+                            <div class="field-label">Valor Total</div>
+                            <div class="field-value-bold">{{ $sale->formatted_total }}</div>
+                        </td>
+                        @if($sale->hasMixedPayment())
+                            @if($sale->pix_payment > 0)
+                            <td>
+                                <div class="field-label">PIX</div>
+                                <div class="field-value">{{ $sale->formatted_pix_payment }}</div>
+                            </td>
+                            @endif
+                            @if($sale->cash_payment > 0)
+                            <td>
+                                <div class="field-label">Dinheiro</div>
+                                <div class="field-value">{{ $sale->formatted_cash_payment }}</div>
+                            </td>
+                            @endif
+                            @if($sale->card_payment > 0)
+                            <td>
+                                <div class="field-label">Cartão{{ $sale->installments > 1 ? ' ('.$sale->installments.'x)' : '' }}</div>
+                                <div class="field-value">{{ $sale->formatted_card_payment }}</div>
+                            </td>
+                            @endif
+                            @if($sale->trade_in_value > 0)
+                            <td>
+                                <div class="field-label">Trade-in</div>
+                                <div class="field-value">
+                                    @forelse($sale->tradeIns as $ti)
+                                        @php
+                                            $parts = [$ti->device_name];
+                                            if ($ti->storage) $parts[] = $ti->storage;
+                                            if ($ti->color) $parts[] = $ti->color;
+                                            $desc = implode(' ', $parts);
+                                            if ($ti->battery_health) $desc .= ' · Bat. ' . $ti->battery_health . '%';
+                                        @endphp
+                                        {{ $desc }}@if(!$loop->last)<br>@endif
+                                    @empty
+                                        Aparelho recebido
+                                    @endforelse
+                                </div>
+                            </td>
+                            @endif
+                        @else
+                            <td style="width: 25%;">
+                                <div class="field-label">Vendedor</div>
+                                <div class="field-value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}</div>
+                            </td>
+                            <td style="width: 25%;">
+                                <div class="field-label">Tipo de Venda</div>
+                                <div class="field-value">{{ $sale->sale_type?->label() ?? 'Cliente Final' }}</div>
+                            </td>
+                        @endif
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        {{-- PRODUTOS / SERVICOS --}}
+        <tr>
+            <td>
+                <div class="section-title">Dados dos Produtos / Serviços</div>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">Item</th>
+                            <th style="width: 28%;">Descrição do Produto / Serviço</th>
+                            <th style="width: 14%;">IMEI</th>
+                            <th style="width: 6%;">Qtd</th>
+                            <th style="width: 6%;">Un</th>
+                            <th style="width: 11%;">Valor Unit.</th>
+                            <th style="width: 11%;">Valor Total</th>
+                            <th style="width: 9%;">Bat.</th>
+                            <th style="width: 10%;">Acessórios</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($sale->items as $index => $item)
+                        @php
+                            $snapshot = $item->product_snapshot ?? [];
+                            $product = $item->product;
+                            $itemModel = $snapshot['model'] ?? $product?->model ?? null;
+                            $itemStorage = $snapshot['storage'] ?? $product?->storage ?? null;
+                            $itemColor = $snapshot['color'] ?? $product?->color ?? null;
+                            $itemCondition = $snapshot['condition'] ?? $product?->condition?->value ?? null;
+                            $itemImei = $snapshot['imei'] ?? $product?->imei ?? null;
+                            $batteryHealth = $product?->battery_health ?? null;
+                            $hasBox = $product?->has_box ?? null;
+                            $hasCable = $product?->has_cable ?? null;
+
+                            $descParts = [$item->product_name];
+                            if ($itemStorage) $descParts[] = $itemStorage;
+                            if ($itemColor) $descParts[] = $itemColor;
+                            if ($itemCondition === 'new') $descParts[] = '(Novo)';
+                            elseif ($itemCondition === 'used') $descParts[] = '(Seminovo)';
+                            elseif ($itemCondition === 'refurbished') $descParts[] = '(Recondicionado)';
+
+                            $accessories = [];
+                            if ($hasBox !== null) $accessories[] = 'Cx:' . ($hasBox ? 'S' : 'N');
+                            if ($hasCable !== null) $accessories[] = 'Cb:' . ($hasCable ? 'S' : 'N');
+                        @endphp
+                        <tr>
+                            <td class="center">{{ $index + 1 }}</td>
+                            <td>{{ implode(' ', $descParts) }}</td>
+                            <td class="center" style="font-size: 7px;">{{ $itemImei ?? '---' }}</td>
+                            <td class="center">{{ $item->quantity }}</td>
+                            <td class="center">UN</td>
+                            <td class="right">{{ $item->formatted_unit_price }}</td>
+                            <td class="right">{{ $item->formatted_subtotal }}</td>
+                            <td class="center">{{ $batteryHealth !== null ? $batteryHealth . '%' : '---' }}</td>
+                            <td class="center" style="font-size: 7px;">{{ !empty($accessories) ? implode(' ', $accessories) : '---' }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+
+        {{-- CALCULO DO TOTAL --}}
+        <tr>
+            <td>
+                <div class="section-title">Cálculo do Total</div>
+                <table class="fields-row">
+                    <tr>
+                        <td style="width: 15%;">
+                            <div class="field-label">Subtotal Produtos</div>
+                            <div class="field-value">{{ $sale->formatted_subtotal }}</div>
+                        </td>
+                        <td style="width: 12%;">
+                            <div class="field-label">Desconto</div>
+                            <div class="field-value">{{ $sale->discount > 0 ? $sale->formatted_discount : 'R$ 0,00' }}</div>
+                        </td>
+                        <td style="width: 33%;">
+                            <div class="field-label">Trade-in</div>
+                            <div class="field-value">
+                                @if($sale->trade_in_value > 0 && $sale->tradeIns->isNotEmpty())
+                                    @foreach($sale->tradeIns as $ti)
+                                        @php
+                                            $parts = [$ti->device_name];
+                                            if ($ti->storage) $parts[] = $ti->storage;
+                                            if ($ti->color) $parts[] = $ti->color;
+                                            $desc = implode(' ', $parts);
+                                            if ($ti->battery_health) $desc .= ' · ' . $ti->battery_health . '%';
+                                            $acc = [];
+                                            if ($ti->has_box) $acc[] = 'Cx:S';
+                                            if ($ti->has_cable) $acc[] = 'Cb:S';
+                                            if (!empty($acc)) $desc .= ' · ' . implode(' ', $acc);
+                                        @endphp
+                                        {{ $desc }}@if(!$loop->last)<br>@endif
+                                    @endforeach
+                                @else
+                                    ---
+                                @endif
+                            </div>
+                        </td>
+                        <td style="width: 15%;">
+                            <div class="field-label">Vendedor</div>
+                            <div class="field-value">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name ?? '---' }}</div>
+                        </td>
+                        <td style="width: 25%; text-align: right;">
+                            <div class="field-label">Valor Total da Venda</div>
+                            <div class="field-value-bold" style="font-size: 12px;">{{ $sale->formatted_total }}</div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        {{-- GARANTIA --}}
+        <tr>
+            <td>
+                <div class="section-title">Garantia</div>
+                <table class="fields-row">
+                    <tr>
+                        <td>
+                            @php
+                                $hasNew = $sale->items->contains(function ($item) {
+                                    $condition = ($item->product_snapshot ?? [])['condition']
+                                        ?? $item->product?->condition?->value
+                                        ?? null;
+                                    return $condition === 'new';
+                                });
+                                $hasUsed = $sale->items->contains(function ($item) {
+                                    $condition = ($item->product_snapshot ?? [])['condition']
+                                        ?? $item->product?->condition?->value
+                                        ?? null;
+                                    return in_array($condition, ['used', 'refurbished']);
+                                });
+                            @endphp
+                            <div class="field-value">
+                                @if($hasNew)
+                                    <strong>Produtos Apple Novos:</strong> 1 (um) ano de garantia diretamente com o fabricante (Apple).
+                                @endif
+                                @if($hasNew && $hasUsed)
+                                    <br>
+                                @endif
+                                @if($hasUsed)
+                                    <strong>Produtos Seminovos:</strong> Garantia de 90 (noventa) dias. Produto conferido na presença do comprador.
+                                @endif
+                                @if(!$hasNew && !$hasUsed)
+                                    Consulte as condições de garantia do produto adquirido.
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        {{-- DADOS ADICIONAIS — linha espacadora que preenche o restante da pagina --}}
+        <tr class="spacer-row">
+            <td>
+                <div class="section-title">Dados Adicionais</div>
+                <table class="info-table">
+                    <tr>
+                        <td style="width: 70%;">
+                            <div class="info-label">Informações Complementares</div>
+                            <div class="field-value">
+                                @if($sale->notes)
+                                    {{ $sale->notes }}
+                                @endif
+                                <br>Venda realizada na DG Store - SJRP/SP. Emissão: {{ now()->format('d/m/Y H:i') }}.
+                            </div>
+                        </td>
+                        <td style="width: 30%;">
+                            <div class="info-label">Reservado ao Emitente</div>
+                            <div class="field-value">DG STORE LTDA</div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        {{-- RODAPE — fixo no fundo da pagina --}}
+        <tr class="footer-row">
+            <td>
+                <div class="footer-cell">
+                    DATA E HORA DA IMPRESSÃO: {{ now()->format('d/m/Y H:i:s') }}
+                </div>
             </td>
         </tr>
     </table>
