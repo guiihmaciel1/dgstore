@@ -46,6 +46,7 @@ class FragranceController extends Controller
             $query->orderBy($request->get('sort'), $request->get('dir', 'desc'));
         } else {
             $query->orderByDesc('active')
+                  ->orderByRaw('CASE WHEN stock_quantity > 0 THEN 0 ELSE 1 END')
                   ->orderBy('brand')
                   ->orderBy('name');
         }
