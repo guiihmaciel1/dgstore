@@ -57,10 +57,15 @@ use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeReservationCont
 use App\Presentation\Http\Controllers\Admin\Perfumes\AdminPerfumeSaleController;
 use Illuminate\Support\Facades\Route;
 
-// Redireciona a raiz para o dashboard ou login
+// Raiz pública redireciona para o catálogo
 Route::get('/', function () {
-    return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
+    return redirect()->route('catalogo.index');
 });
+
+// Atalho interno: /interno leva ao dashboard (ou login se não autenticado)
+Route::get('/interno', function () {
+    return auth()->check() ? redirect()->route('dashboard') : redirect()->route('login');
+})->name('interno');
 
 Route::middleware('auth')->get('/keepalive', fn () => response()->json(['ok' => true]))->name('keepalive');
 
