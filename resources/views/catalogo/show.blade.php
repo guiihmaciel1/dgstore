@@ -25,34 +25,70 @@
     {{-- Product hero --}}
     <div class="overflow-hidden mb-8 animate-fade-up" style="background: #fff; border-radius: 1.25rem;">
 
-        {{-- Image — centered, white bg + discount pin --}}
-        <div class="relative flex items-center justify-center p-10 sm:p-14"
-             style="min-height: 280px; background: #fff;">
+        {{-- Image — centered, white bg + zoom on hover + discount pin --}}
+        @php
+            $showOrigPrice = $fragrance->original_price ?? ($fragrance->sale_price ? (int)(ceil(((float)$fragrance->sale_price * 1.2) / 10) * 10) : null);
+            $showDiscount = ($showOrigPrice && $fragrance->pix_price && $showOrigPrice > 0)
+                ? round(($showOrigPrice - (float)$fragrance->pix_price) / $showOrigPrice * 100)
+                : 0;
+        @endphp
 
-            @php
-                $showOrigPrice = $fragrance->original_price ?? ($fragrance->sale_price ? (int)(ceil(((float)$fragrance->sale_price * 1.2) / 10) * 10) : null);
-                $showDiscount = ($showOrigPrice && $fragrance->pix_price && $showOrigPrice > 0)
-                    ? round(($showOrigPrice - (float)$fragrance->pix_price) / $showOrigPrice * 100)
-                    : 0;
-            @endphp
-            @if($showDiscount >= 5)
-                <div class="discount-pin discount-pin-lg">
-                    <span class="discount-pin-value">{{ $showDiscount }}%</span>
-                    <span class="discount-pin-label">OFF</span>
+        @if($fragrance->image_url)
+            <div class="relative" style="min-height: 280px; background: #fff;"
+                 x-data="{ zooming: false, x: 50, y: 50 }"
+                 x-on:mouseenter="zooming = true"
+                 x-on:mouseleave="zooming = false"
+                 x-on:mousemove="
+                    const rect = $el.getBoundingClientRect();
+                    x = ((event.clientX - rect.left) / rect.width) * 100;
+                    y = ((event.clientY - rect.top) / rect.height) * 100;
+                 "
+                 style="min-height: 280px; background: #fff; cursor: zoom-in; overflow: hidden;">
+
+                @if($showDiscount >= 5)
+                    <div class="discount-pin discount-pin-lg" style="z-index: 20;">
+                        <span class="discount-pin-value">{{ $showDiscount }}%</span>
+                        <span class="discount-pin-label">OFF</span>
+                    </div>
+                @endif
+
+                <div class="flex items-center justify-center p-10 sm:p-14 w-full h-full"
+                     style="min-height: 280px;"
+                     :style="zooming
+                        ? 'transform: scale(1.5); transform-origin: ' + x + '% ' + y + '%; transition: transform 0.15s ease-out;'
+                        : 'transform: scale(1); transform-origin: center center; transition: transform 0.3s ease-out;'">
+                    <img src="{{ $fragrance->image_url }}" alt="{{ $fragrance->name }}"
+                         class="w-56 sm:w-64 h-auto max-h-[320px] object-contain"
+                         draggable="false"
+                         style="pointer-events: none;">
                 </div>
-            @endif
 
-            @if($fragrance->image_url)
-                <img src="{{ $fragrance->image_url }}" alt="{{ $fragrance->name }}"
-                     class="w-56 sm:w-64 h-auto max-h-[320px] object-contain relative">
-            @else
+                {{-- Zoom hint --}}
+                <div class="absolute bottom-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-opacity duration-300"
+                     style="background: rgba(0,0,0,0.05); z-index: 15;"
+                     :class="zooming ? 'opacity-0' : 'opacity-100'">
+                    <svg class="w-3.5 h-3.5" style="color: var(--muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
+                    </svg>
+                    <span class="text-[10px] font-medium" style="color: var(--muted);">Passe o mouse para zoom</span>
+                </div>
+            </div>
+        @else
+            <div class="relative flex items-center justify-center p-10 sm:p-14"
+                 style="min-height: 280px; background: #fff;">
+                @if($showDiscount >= 5)
+                    <div class="discount-pin discount-pin-lg">
+                        <span class="discount-pin-value">{{ $showDiscount }}%</span>
+                        <span class="discount-pin-label">OFF</span>
+                    </div>
+                @endif
                 <div class="w-40 h-56 rounded-2xl flex items-center justify-center" style="background: #f5f5f5;">
                     <svg class="w-14 h-14" style="color: var(--muted); opacity: 0.15;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
                     </svg>
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
 
         {{-- Separator --}}
         <div class="mx-8">
