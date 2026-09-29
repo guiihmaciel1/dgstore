@@ -23,7 +23,7 @@
     </div>
 
     {{-- Product hero --}}
-    <div class="info-card overflow-hidden mb-8 animate-fade-up">
+    <div class="overflow-hidden mb-8 animate-fade-up" style="background: #fff; border-radius: 1.25rem;">
 
         {{-- Image — centered, white bg + discount pin --}}
         <div class="relative flex items-center justify-center p-10 sm:p-14"
@@ -44,7 +44,7 @@
 
             @if($fragrance->image_url)
                 <img src="{{ $fragrance->image_url }}" alt="{{ $fragrance->name }}"
-                     class="w-56 sm:w-64 h-auto max-h-[320px] object-contain relative drop-shadow-2xl">
+                     class="w-56 sm:w-64 h-auto max-h-[320px] object-contain relative">
             @else
                 <div class="w-40 h-56 rounded-2xl flex items-center justify-center" style="background: #f5f5f5;">
                     <svg class="w-14 h-14" style="color: var(--muted); opacity: 0.15;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,9 +54,9 @@
             @endif
         </div>
 
-        {{-- Gold separator --}}
+        {{-- Separator --}}
         <div class="mx-8">
-            <div class="gold-line"></div>
+            <div style="height: 1px; background: #eee;"></div>
         </div>
 
         {{-- Info — inside the same card --}}

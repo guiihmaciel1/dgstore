@@ -20,7 +20,8 @@
             @if(request('gender')) <input type="hidden" name="gender" value="{{ request('gender') }}"> @endif
             <input type="text" name="search" value="{{ request('search') }}"
                    placeholder="Buscar perfume ou marca..."
-                   class="search-input w-full pl-11 pr-10 py-3.5 rounded-2xl text-sm">
+                   class="search-input w-full pl-11 pr-10 py-3.5 rounded-2xl text-sm"
+                   style="background: #fff !important; color: #1a1a1a !important; border: 1px solid #ddd !important;">
             <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style="color: var(--gold);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
