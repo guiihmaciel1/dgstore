@@ -63,7 +63,7 @@
                                 const sortedGenders = Object.keys(grouped).sort((a, b) => (genderOrder[a] ?? 9) - (genderOrder[b] ?? 9));
 
                                 let lines = [];
-                                lines.push('*PERFUMES DG STORE — PRONTA ENTREGA*');
+                                lines.push('*LISTA REPASSE PERFUMES DG STORE — PRONTA ENTREGA*');
                                 lines.push('');
 
                                 sortedGenders.forEach((gk, gi) => {
