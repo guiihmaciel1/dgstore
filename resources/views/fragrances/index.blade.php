@@ -83,7 +83,8 @@
                                             let line = p.name + ' - ' + p.brand + ' (' + p.gender + ')';
                                             if (p.inspired_by) line += ' - dupe of ' + p.inspired_by;
                                             if (p.size_ml) line += ' ' + p.size_ml + 'ml';
-                                            line += ' R$ ' + p.sale_price.toLocaleString('pt-BR') + ' (PIX R$ ' + p.pix_price.toLocaleString('pt-BR') + ')';
+                                            const repasse = Math.ceil(p.pix_price * 0.80);
+                                            line += ' - R$' + repasse.toLocaleString('pt-BR');
                                             lines.push(line);
                                         });
                                     });
