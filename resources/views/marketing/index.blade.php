@@ -1118,7 +1118,7 @@
                 });
 
                 let lines = [];
-                lines.push('📱 *TABELA DE PREÇOS*');
+                lines.push('📱 *TABELA DE PREÇOS NOVOS LACRADOS COM 1 ANO DE GARANTIA APPLE*');
                 lines.push('━━━━━━━━━━━━━━━━━━━');
                 lines.push('');
 
