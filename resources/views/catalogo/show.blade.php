@@ -25,11 +25,9 @@
     {{-- Product hero --}}
     <div class="info-card overflow-hidden mb-8 animate-fade-up">
 
-        {{-- Image — centered, with ambient glow + discount pin --}}
+        {{-- Image — centered, white bg + discount pin --}}
         <div class="relative flex items-center justify-center p-10 sm:p-14"
-             style="min-height: 280px;">
-            <div class="absolute inset-0 pointer-events-none"
-                 style="background: radial-gradient(ellipse at 50% 60%, rgba(212, 165, 64, 0.05) 0%, transparent 60%);"></div>
+             style="min-height: 280px; background: #fff;">
 
             @php
                 $showOrigPrice = $fragrance->original_price ?? ($fragrance->sale_price ? (int)(ceil(((float)$fragrance->sale_price * 1.2) / 10) * 10) : null);
@@ -48,7 +46,7 @@
                 <img src="{{ $fragrance->image_url }}" alt="{{ $fragrance->name }}"
                      class="w-56 sm:w-64 h-auto max-h-[320px] object-contain relative drop-shadow-2xl">
             @else
-                <div class="w-40 h-56 rounded-2xl flex items-center justify-center" style="background: rgba(255,255,255,0.02);">
+                <div class="w-40 h-56 rounded-2xl flex items-center justify-center" style="background: #f5f5f5;">
                     <svg class="w-14 h-14" style="color: var(--muted); opacity: 0.15;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
                     </svg>
@@ -92,19 +90,19 @@
                 </span>
                 @if($fragrance->concentration)
                     <span class="text-[10px] tracking-wide px-3 py-1.5 rounded-full font-medium"
-                          style="background: rgba(255,255,255,0.03); color: var(--muted); border: 1px solid rgba(255,255,255,0.04);">
+                          style="background: #f5f5f5; color: var(--muted); border: 1px solid #eee;">
                         {{ $fragrance->concentration }}
                     </span>
                 @endif
                 @if($fragrance->year)
                     <span class="text-[10px] tracking-wide px-3 py-1.5 rounded-full font-medium"
-                          style="background: rgba(255,255,255,0.03); color: var(--muted); border: 1px solid rgba(255,255,255,0.04);">
+                          style="background: #f5f5f5; color: var(--muted); border: 1px solid #eee;">
                         {{ $fragrance->year }}
                     </span>
                 @endif
                 @if($fragrance->size_ml)
                     <span class="text-[10px] tracking-wide px-3 py-1.5 rounded-full font-medium"
-                          style="background: rgba(255,255,255,0.03); color: var(--muted); border: 1px solid rgba(255,255,255,0.04);">
+                          style="background: #f5f5f5; color: var(--muted); border: 1px solid #eee;">
                         {{ $fragrance->size_ml }}ml
                     </span>
                 @endif
@@ -123,7 +121,7 @@
                 <div class="flex items-center gap-2.5 mt-5">
                     <div class="flex items-center gap-0.5">
                         @for($i = 1; $i <= 5; $i++)
-                            <svg class="w-4 h-4 {{ $i <= floor($fragrance->rating) ? 'text-amber-400' : ($i - $fragrance->rating < 0.5 ? 'text-amber-400' : 'text-white/[0.06]') }}" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 {{ $i <= floor($fragrance->rating) ? 'text-amber-400' : ($i - $fragrance->rating < 0.5 ? 'text-amber-400' : 'text-gray-200') }}" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
                         @endfor
@@ -139,14 +137,14 @@
                     $originalPrice = $fragrance->original_price ?? (int)(ceil(((float)$fragrance->sale_price * 1.2) / 10) * 10);
                     $realDiscount = $originalPrice > 0 ? round((($originalPrice - (float)$fragrance->pix_price) / $originalPrice) * 100) : 0;
                 @endphp
-                <div class="mt-6 pt-5" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
+                <div class="mt-6 pt-5" style="border-top: 1px solid #eee;">
                     <div class="flex items-baseline gap-2.5">
                         <span class="text-xs line-through font-light" style="color: var(--muted);">R$ {{ number_format($originalPrice, 0, ',', '.') }}</span>
-                        <span class="text-2xl sm:text-3xl font-bold text-white tracking-tight">R$ {{ number_format($fragrance->sale_price, 0, ',', '.') }}</span>
+                        <span class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">R$ {{ number_format($fragrance->sale_price, 0, ',', '.') }}</span>
                     </div>
                     <p class="text-[11px] mt-1.5 font-light" style="color: var(--muted);">
-                        em até <span class="font-semibold text-white/90">10x</span> de
-                        <span class="font-semibold text-white/90">R$ {{ number_format((float)$fragrance->sale_price / 10, 2, ',', '.') }}</span> sem juros
+                        em até <span class="font-semibold text-gray-800">10x</span> de
+                        <span class="font-semibold text-gray-800">R$ {{ number_format((float)$fragrance->sale_price / 10, 2, ',', '.') }}</span> sem juros
                     </p>
 
                     {{-- PIX --}}
@@ -166,7 +164,7 @@
                     </div>
 
                     @if($fragrance->stock_quantity <= 0)
-                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: var(--gold-glow); border: 1px solid rgba(212, 165, 64, 0.08);">
+                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: rgba(212, 165, 64, 0.05); border: 1px solid rgba(212, 165, 64, 0.12);">
                             <span class="text-base">📦</span>
                             <div>
                                 <p class="text-[11px] font-semibold" style="color: var(--gold);">Sob encomenda</p>
@@ -174,23 +172,23 @@
                             </div>
                         </div>
                     @else
-                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.1);">
+                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.12);">
                             <span class="text-base">✅</span>
                             <div>
-                                <p class="text-[11px] font-semibold text-emerald-400">Pronta entrega</p>
+                                <p class="text-[11px] font-semibold text-emerald-600">Pronta entrega</p>
                                 <p class="text-[10px]" style="color: var(--muted);">Envio imediato</p>
                             </div>
                         </div>
                     @endif
                 </div>
             @elseif($fragrance->pix_price)
-                <div class="mt-6 pt-5" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
+                <div class="mt-6 pt-5" style="border-top: 1px solid #eee;">
                     <div class="px-5 py-4 rounded-2xl pix-badge">
                         <span class="text-2xl font-bold" style="color: var(--teal);">R$ {{ number_format($fragrance->pix_price, 0, ',', '.') }}</span>
                         <span class="text-[11px] ml-1.5 font-medium" style="color: var(--muted);">à vista no PIX</span>
                     </div>
                     @if($fragrance->stock_quantity <= 0)
-                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: var(--gold-glow); border: 1px solid rgba(212, 165, 64, 0.08);">
+                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: rgba(212, 165, 64, 0.05); border: 1px solid rgba(212, 165, 64, 0.12);">
                             <span class="text-base">📦</span>
                             <div>
                                 <p class="text-[11px] font-semibold" style="color: var(--gold);">Sob encomenda</p>
@@ -198,10 +196,10 @@
                             </div>
                         </div>
                     @else
-                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: rgba(16, 185, 129, 0.06); border: 1px solid rgba(16, 185, 129, 0.1);">
+                        <div class="mt-3 px-5 py-3 rounded-2xl flex items-center gap-3" style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.12);">
                             <span class="text-base">✅</span>
                             <div>
-                                <p class="text-[11px] font-semibold text-emerald-400">Pronta entrega</p>
+                                <p class="text-[11px] font-semibold text-emerald-600">Pronta entrega</p>
                                 <p class="text-[10px]" style="color: var(--muted);">Envio imediato</p>
                             </div>
                         </div>
@@ -238,7 +236,7 @@
                     <div class="space-y-3">
                         @foreach($fragrance->accords as $accord)
                             <div class="flex items-center gap-3">
-                                <div class="flex-1 h-8 rounded-xl overflow-hidden" style="background: rgba(255,255,255,0.02);">
+                                <div class="flex-1 h-8 rounded-xl overflow-hidden" style="background: #f0f0f0;">
                                     <div class="h-full rounded-xl flex items-center px-3.5 accord-bar"
                                          style="width: {{ $accord->percentage }}%; background: {{ $accord->color }};">
                                         <span class="text-[10px] font-semibold text-white truncate tracking-wide" style="text-shadow: 0 1px 3px rgba(0,0,0,0.6);">
@@ -271,9 +269,9 @@
                                 <div class="flex flex-wrap gap-2">
                                     @foreach($layerNotes as $note)
                                         <div class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl transition-colors"
-                                             style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);">
+                                             style="background: #f7f7f7; border: 1px solid #eee;">
                                             @if($note->image_url)
-                                                <img src="{{ $note->image_url }}" alt="{{ $note->name }}" class="w-7 h-7 rounded-full object-cover" style="background: rgba(255,255,255,0.03);">
+                                                <img src="{{ $note->image_url }}" alt="{{ $note->name }}" class="w-7 h-7 rounded-full object-cover" style="background: #f0f0f0;">
                                             @endif
                                             <span class="text-[11px] font-medium" style="color: var(--cream);">{{ $note->name }}</span>
                                         </div>
@@ -320,7 +318,7 @@
                                             <span class="capitalize font-medium" style="color: var(--cream);">{{ $seasonIcons[$season] ?? '' }} {{ $season }}</span>
                                             <span class="text-[10px]" style="color: var(--muted);">{{ number_format($votes, 0, ',', '.') }}</span>
                                         </div>
-                                        <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.03);">
+                                        <div class="h-1.5 rounded-full overflow-hidden" style="background: #eee;">
                                             <div class="h-full rounded-full accord-bar" style="width: {{ $maxSeason > 0 ? ($votes / $maxSeason) * 100 : 0 }}%; background: linear-gradient(90deg, var(--gold-dark), var(--gold));"></div>
                                         </div>
                                     </div>
@@ -340,7 +338,7 @@
                                             <span class="capitalize font-medium" style="color: var(--cream);">{{ $period === 'dia' ? '🌤️' : '🌙' }} {{ $period }}</span>
                                             <span class="text-[10px]" style="color: var(--muted);">{{ number_format($votes, 0, ',', '.') }}</span>
                                         </div>
-                                        <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.03);">
+                                        <div class="h-1.5 rounded-full overflow-hidden" style="background: #eee;">
                                             <div class="h-full rounded-full accord-bar" style="width: {{ $maxDayNight > 0 ? ($votes / $maxDayNight) * 100 : 0 }}%; background: linear-gradient(90deg, var(--gold-dark), var(--gold));"></div>
                                         </div>
                                     </div>
@@ -384,7 +382,7 @@
                         </div>
                     @endif
                     @if($fragrance->inspired_by)
-                        <div class="pt-4 mt-1" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
+                        <div class="pt-4 mt-1" style="border-top: 1px solid #eee;">
                             <dt class="text-[10px] mb-1 tracking-wide uppercase" style="color: var(--muted);">Inspirado em</dt>
                             <dd class="font-semibold" style="color: var(--gold-light);">{{ $fragrance->inspired_by }}</dd>
                         </div>

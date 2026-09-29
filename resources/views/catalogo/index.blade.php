@@ -7,16 +7,9 @@
 <div class="max-w-6xl mx-auto px-5 sm:px-6">
 
     {{-- Hero --}}
-    <div class="pt-5 pb-3 sm:pt-10 sm:pb-6 text-center relative">
-        {{-- Ambient glow --}}
-        <div class="absolute inset-0 -top-20 pointer-events-none" style="background: radial-gradient(ellipse at 50% 20%, rgba(212, 165, 64, 0.08) 0%, transparent 55%);"></div>
-
-        <div class="relative inline-block">
-            <div class="absolute -inset-x-16 -inset-y-10 pointer-events-none"
-                 style="background: radial-gradient(ellipse at 50% 50%, rgba(10, 15, 24, 0.55) 0%, rgba(10, 15, 24, 0.25) 40%, transparent 75%);"></div>
-            <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports"
-                 class="h-44 sm:h-48 w-auto mx-auto drop-shadow-2xl relative">
-        </div>
+    <div class="pt-5 pb-3 sm:pt-10 sm:pb-6 text-center">
+        <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports"
+             class="h-44 sm:h-48 w-auto mx-auto">
         <div class="gold-line max-w-[100px] mx-auto mt-3"></div>
     </div>
 
@@ -27,14 +20,14 @@
             @if(request('gender')) <input type="hidden" name="gender" value="{{ request('gender') }}"> @endif
             <input type="text" name="search" value="{{ request('search') }}"
                    placeholder="Buscar perfume ou marca..."
-                   class="search-input w-full pl-11 pr-10 py-3.5 rounded-2xl text-sm text-white placeholder-gray-500">
-            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style="color: var(--gold); opacity: 0.6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="search-input w-full pl-11 pr-10 py-3.5 rounded-2xl text-sm">
+            <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style="color: var(--gold);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
             @if(request('search'))
                 <a href="{{ route('catalogo.index', request()->only('tag', 'gender')) }}"
                    class="absolute right-3.5 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full transition"
-                   style="background: rgba(255,255,255,0.06); color: var(--muted);">
+                   style="background: #eee; color: #666;">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -137,7 +130,7 @@
                         @endif
 
                         {{-- Name --}}
-                        <h3 class="text-base sm:text-lg font-semibold text-white line-clamp-2 leading-snug">
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 line-clamp-2 leading-snug">
                             {{ $product->name }}
                             @if($product->size_ml)
                                 <span class="text-[10px] font-normal align-middle ml-1" style="color: var(--muted);">{{ $product->size_ml }}ml</span>
@@ -163,10 +156,10 @@
                         {{-- Pricing --}}
                         @if($product->sale_price && $product->pix_price)
                             @php $origPrice = $product->original_price ?? (int)(ceil(((float)$product->sale_price * 1.2) / 10) * 10); @endphp
-                            <div class="mt-3.5 pt-3" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
+                            <div class="mt-3.5 pt-3" style="border-top: 1px solid #eee;">
                                 <div class="flex items-baseline gap-2">
                                     <span class="text-[11px] line-through" style="color: var(--muted);">R$ {{ number_format($origPrice, 0, ',', '.') }}</span>
-                                    <span class="text-xl sm:text-2xl font-bold text-white">R$ {{ number_format($product->sale_price, 0, ',', '.') }}</span>
+                                    <span class="text-xl sm:text-2xl font-bold text-gray-900">R$ {{ number_format($product->sale_price, 0, ',', '.') }}</span>
                                 </div>
                                 <p class="text-[11px] mt-0.5" style="color: var(--muted);">
                                     10x de R$ {{ number_format((float)$product->sale_price / 10, 0, ',', '.') }} sem juros
@@ -188,13 +181,13 @@
                                         Sob encomenda · 3–5 dias
                                     </p>
                                 @else
-                                    <p class="text-[10px] mt-2 font-medium tracking-wide text-emerald-400">
+                                    <p class="text-[10px] mt-2 font-medium tracking-wide text-emerald-500">
                                         ✅ Pronta entrega
                                     </p>
                                 @endif
                             </div>
                         @elseif($product->pix_price)
-                            <div class="mt-3.5 pt-3" style="border-top: 1px solid rgba(212, 165, 64, 0.06);">
+                            <div class="mt-3.5 pt-3" style="border-top: 1px solid #eee;">
                                 <div class="px-3 py-2 rounded-xl pix-badge">
                                     <span class="text-base sm:text-lg font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
                                     <span class="text-[10px] ml-1 font-medium" style="color: var(--teal); opacity: 0.6;">PIX</span>
@@ -204,7 +197,7 @@
                                         Sob encomenda · 3–5 dias
                                     </p>
                                 @else
-                                    <p class="text-[10px] mt-2 font-medium tracking-wide text-emerald-400">
+                                    <p class="text-[10px] mt-2 font-medium tracking-wide text-emerald-500">
                                         ✅ Pronta entrega
                                     </p>
                                 @endif

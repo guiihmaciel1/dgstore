@@ -7,13 +7,13 @@
         <section class="animate-fade-up" style="animation-delay: 0.05s;">
             <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center w-8 h-8 rounded-lg" style="background: rgba(16, 185, 129, 0.10);">
-                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="flex items-center justify-center w-8 h-8 rounded-lg" style="background: rgba(16, 185, 129, 0.08);">
+                        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
                         </svg>
                     </div>
                     <h2 class="text-lg sm:text-xl font-bold font-serif" style="background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Destaques</h2>
-                    <span class="text-[10px] font-medium tracking-wider uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/15">Pronta entrega</span>
+                    <span class="text-[10px] font-medium tracking-wider uppercase px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/15">Pronta entrega</span>
                 </div>
                 <div class="hidden sm:flex items-center gap-1.5">
                     <button onclick="scrollCarousel('featured', -1)" class="carousel-arrow" aria-label="Anterior">

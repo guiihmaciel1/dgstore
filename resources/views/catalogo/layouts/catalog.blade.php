@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0a0f18">
+    <meta name="theme-color" content="#ffffff">
     <title>@yield('title', 'DG Imports — Catálogo')</title>
     <meta name="description" content="@yield('description', 'Catálogo de perfumes importados — DG Imports')">
     @hasSection('og_image')
@@ -22,16 +22,16 @@
 
         :root {
             --gold: #d4a540;
-            --gold-light: #e8c060;
+            --gold-light: #c49a30;
             --gold-dark: #b08830;
-            --cream: #f0ece4;
-            --bg: #0a0f18;
-            --surface: #0f1520;
-            --surface-elevated: #151d2c;
-            --muted: #6b7a90;
-            --teal: #2ec4b6;
-            --teal-light: #5cdbd3;
-            --teal-glow: rgba(46, 196, 182, 0.08);
+            --cream: #1a1a1a;
+            --bg: #ffffff;
+            --surface: #f7f7f7;
+            --surface-elevated: #f0f0f0;
+            --muted: #888888;
+            --teal: #0ea58a;
+            --teal-light: #10b981;
+            --teal-glow: rgba(14, 165, 138, 0.06);
             --gold-glow: rgba(212, 165, 64, 0.06);
         }
 
@@ -42,43 +42,29 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ─── Fixed background image ─── */
-        .catalog-bg {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background: url('{{ asset("images/catalog-bg.jpg") }}') center / cover no-repeat fixed;
-            filter: blur(3px) brightness(0.15);
-            transform: scale(1.05);
-        }
-
         .font-serif { font-family: 'Playfair Display', Georgia, serif; }
 
         /* ─── Product cards ─── */
         .cat-card {
-            background: rgba(10, 15, 24, 0.55);
-            backdrop-filter: blur(24px) saturate(1.3);
-            -webkit-backdrop-filter: blur(24px) saturate(1.3);
-            border: 1px solid rgba(212, 165, 64, 0.06);
+            background: #ffffff;
+            border: 1px solid #eee;
             border-radius: 1.25rem;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
         }
         .cat-card:hover, .cat-card:active {
-            background: rgba(10, 15, 24, 0.7);
-            border-color: rgba(212, 165, 64, 0.18);
-            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4),
-                         0 0 48px rgba(212, 165, 64, 0.05),
-                         inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            border-color: #ddd;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             transform: translateY(-3px);
         }
         @media (max-width: 639px) {
             .cat-card:active { transform: scale(0.98); }
-            .cat-card:hover { transform: none; }
+            .cat-card:hover { transform: none; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
         }
 
         .cat-card-img {
-            background: rgba(255, 255, 255, 0.02);
+            background: #ffffff;
             position: relative;
         }
         .cat-card-img::after {
@@ -88,7 +74,7 @@
             left: 8%;
             right: 8%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212, 165, 64, 0.10), transparent);
+            background: linear-gradient(90deg, transparent, #eee, transparent);
         }
 
         /* ─── Accord bars ─── */
@@ -96,7 +82,7 @@
 
         /* ─── Gold gradient text ─── */
         .text-gold-gradient {
-            background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -120,47 +106,43 @@
         /* ─── Filter pills ─── */
         .pill-active {
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-            color: var(--bg);
+            color: #fff;
             font-weight: 600;
-            box-shadow: 0 2px 16px rgba(212, 165, 64, 0.25);
+            box-shadow: 0 2px 12px rgba(212, 165, 64, 0.25);
         }
         .pill-inactive {
-            background: rgba(10, 15, 24, 0.45);
-            color: var(--muted);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(16px) saturate(1.2);
-            -webkit-backdrop-filter: blur(16px) saturate(1.2);
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #e0e0e0;
         }
         .pill-inactive:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--cream);
-            border-color: rgba(212, 165, 64, 0.12);
+            background: #eee;
+            color: #333;
+            border-color: #ccc;
         }
 
         /* ─── Glass surface ─── */
         .glass {
-            background: rgba(15, 21, 32, 0.7);
-            backdrop-filter: blur(20px) saturate(1.2);
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: var(--surface);
+            border: 1px solid #eee;
         }
 
         /* ─── Info cards ─── */
         .info-card {
-            background: rgba(10, 15, 24, 0.55);
-            backdrop-filter: blur(24px) saturate(1.3);
-            -webkit-backdrop-filter: blur(24px) saturate(1.3);
-            border: 1px solid rgba(212, 165, 64, 0.05);
+            background: #ffffff;
+            border: 1px solid #eee;
             border-radius: 1.25rem;
             transition: border-color 0.3s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
         }
         .info-card:hover {
-            border-color: rgba(212, 165, 64, 0.12);
+            border-color: #ddd;
         }
 
         /* ─── PIX badge ─── */
         .pix-badge {
-            background: linear-gradient(135deg, rgba(46, 196, 182, 0.08) 0%, rgba(46, 196, 182, 0.03) 100%);
-            border: 1px solid rgba(46, 196, 182, 0.12);
+            background: rgba(14, 165, 138, 0.06);
+            border: 1px solid rgba(14, 165, 138, 0.15);
         }
 
         /* ─── Discount pin (corner badge on product images) ─── */
@@ -174,7 +156,7 @@
             padding: 6px 4px;
             border-radius: 50%;
             background: linear-gradient(135deg, #00c9a7 0%, #0ea58a 100%);
-            box-shadow: 0 4px 14px rgba(0, 201, 167, 0.4), 0 0 0 2.5px rgba(0, 201, 167, 0.18);
+            box-shadow: 0 4px 14px rgba(0, 201, 167, 0.35), 0 0 0 2.5px rgba(0, 201, 167, 0.15);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -183,8 +165,8 @@
             animation: pinPulse 2.5s ease-in-out infinite;
         }
         @keyframes pinPulse {
-            0%, 100% { box-shadow: 0 4px 14px rgba(0, 201, 167, 0.4), 0 0 0 2.5px rgba(0, 201, 167, 0.18); }
-            50% { box-shadow: 0 4px 20px rgba(0, 201, 167, 0.55), 0 0 0 4px rgba(0, 201, 167, 0.10); }
+            0%, 100% { box-shadow: 0 4px 14px rgba(0, 201, 167, 0.35), 0 0 0 2.5px rgba(0, 201, 167, 0.15); }
+            50% { box-shadow: 0 4px 20px rgba(0, 201, 167, 0.45), 0 0 0 4px rgba(0, 201, 167, 0.08); }
         }
         .discount-pin-value {
             font-size: 14px;
@@ -228,35 +210,37 @@
 
         /* ─── Search ─── */
         .search-input {
-            background: rgba(10, 15, 24, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(20px) saturate(1.2);
-            -webkit-backdrop-filter: blur(20px) saturate(1.2);
+            background: #f5f5f5;
+            border: 1px solid #ddd;
             transition: all 0.3s;
+            color: #1a1a1a;
+        }
+        .search-input::placeholder {
+            color: #999;
         }
         .search-input:focus {
-            background: rgba(10, 15, 24, 0.7);
+            background: #fff;
             border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(212, 165, 64, 0.08), 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 0 3px rgba(212, 165, 64, 0.10);
             outline: none;
         }
 
         /* ─── Decorative gold separator ─── */
         .gold-line {
             height: 1px;
-            background: linear-gradient(90deg, transparent 0%, rgba(212, 165, 64, 0.2) 50%, transparent 100%);
+            background: linear-gradient(90deg, transparent 0%, rgba(212, 165, 64, 0.3) 50%, transparent 100%);
         }
 
         /* ─── Perfume badges ─── */
-        .perfume-card { background: var(--surface); border: 1px solid rgba(212,165,64,0.06); }
-        .perfume-card:hover { border-color: rgba(212,165,64,0.12); }
+        .perfume-card { background: #fff; border: 1px solid #eee; }
+        .perfume-card:hover { border-color: #ddd; }
         .perfume-section-title { color: var(--gold); font-weight: 700; }
         .perfume-text-cream { color: var(--cream); }
         .perfume-text-muted { color: var(--muted); }
         .perfume-text-gold { color: var(--gold); }
-        .perfume-badge-masc { background: rgba(46,196,182,0.08); color: var(--teal-light); border: 1px solid rgba(46,196,182,0.12); }
-        .perfume-badge-fem { background: rgba(212,165,64,0.08); color: var(--gold-light); border: 1px solid rgba(212,165,64,0.12); }
-        .perfume-badge-uni { background: rgba(147,51,234,0.08); color: #c084fc; border: 1px solid rgba(147,51,234,0.12); }
+        .perfume-badge-masc { background: rgba(14,165,138,0.08); color: var(--teal); border: 1px solid rgba(14,165,138,0.15); }
+        .perfume-badge-fem { background: rgba(212,165,64,0.08); color: var(--gold); border: 1px solid rgba(212,165,64,0.15); }
+        .perfume-badge-uni { background: rgba(147,51,234,0.08); color: #9333ea; border: 1px solid rgba(147,51,234,0.15); }
 
         /* ─── Carousel arrows ─── */
         .carousel-arrow {
@@ -266,16 +250,15 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background: rgba(10, 15, 24, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: var(--muted);
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            color: #666;
             cursor: pointer;
             transition: all 0.2s;
-            backdrop-filter: blur(12px);
         }
         .carousel-arrow:hover {
-            background: rgba(212, 165, 64, 0.12);
-            border-color: rgba(212, 165, 64, 0.25);
+            background: rgba(212, 165, 64, 0.10);
+            border-color: rgba(212, 165, 64, 0.3);
             color: var(--gold);
         }
 
@@ -298,17 +281,16 @@
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
-    <div class="catalog-bg" aria-hidden="true"></div>
 
     <main class="flex-1">
         @yield('content')
     </main>
 
     {{-- Footer --}}
-    <footer class="mt-20">
+    <footer class="mt-20" style="background: var(--surface);">
         <div class="gold-line"></div>
         <div class="max-w-6xl mx-auto px-5 py-10 flex flex-col items-center gap-4">
-            <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports" class="h-12 w-auto opacity-60">
+            <img src="{{ asset('images/logo-dg-imports.png') }}" alt="DG Imports" class="h-12 w-auto opacity-70">
             <p class="text-[11px] tracking-wider uppercase" style="color: var(--muted);">Perfumes importados com os melhores preços</p>
             <p class="text-[10px]" style="color: var(--muted); opacity: 0.5;">&copy; {{ date('Y') }} DG Imports — Todos os direitos reservados</p>
         </div>
