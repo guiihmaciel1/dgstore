@@ -47,15 +47,14 @@
         /* ─── Product cards ─── */
         .cat-card {
             background: #ffffff;
-            border: 1px solid #eee;
+            border: none;
             border-radius: 1.25rem;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
         }
         .cat-card:hover, .cat-card:active {
-            border-color: #ddd;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
             transform: translateY(-3px);
         }
         @media (max-width: 639px) {
@@ -68,13 +67,7 @@
             position: relative;
         }
         .cat-card-img::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 8%;
-            right: 8%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #eee, transparent);
+            display: none;
         }
 
         /* ─── Accord bars ─── */
@@ -130,10 +123,10 @@
         /* ─── Info cards ─── */
         .info-card {
             background: #ffffff;
-            border: 1px solid #eee;
+            border: none;
             border-radius: 1.25rem;
             transition: border-color 0.3s;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
         }
         .info-card:hover {
             border-color: #ddd;
@@ -210,13 +203,13 @@
 
         /* ─── Search ─── */
         .search-input {
-            background: #f5f5f5;
+            background: #ffffff;
             border: 1px solid #ddd;
             transition: all 0.3s;
             color: #1a1a1a;
         }
         .search-input::placeholder {
-            color: #999;
+            color: #aaa;
         }
         .search-input:focus {
             background: #fff;
