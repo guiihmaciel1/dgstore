@@ -47,19 +47,18 @@
         /* ─── Product cards ─── */
         .cat-card {
             background: #ffffff;
-            border: none;
+            border: 1px solid #e5e5e5;
             border-radius: 1.25rem;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: none;
         }
         .cat-card:hover, .cat-card:active {
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border-color: #ccc;
             transform: translateY(-3px);
         }
         @media (max-width: 639px) {
             .cat-card:active { transform: scale(0.98); }
-            .cat-card:hover { transform: none; box-shadow: none; }
+            .cat-card:hover { transform: none; }
         }
 
         .cat-card-img {
