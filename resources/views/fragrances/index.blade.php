@@ -18,7 +18,7 @@
                     <h1 class="text-xl sm:text-2xl font-bold text-dg-100">Perfumaria</h1>
                     <p class="text-sm text-dg-500">Catálogo de perfumes importados do Fragrantica</p>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2" x-data="{ repasseCopied: false }">
                     <a href="{{ route('catalogo.index') }}" target="_blank"
                        class="inline-flex items-center gap-2 px-4 py-2.5 border border-border-strong text-dg-300 rounded-lg hover:bg-surface-overlay transition text-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,6 +26,85 @@
                         </svg>
                         Ver Catálogo
                     </a>
+                    <button type="button"
+                            @click="
+                                const items = @js(
+                                    \App\Domain\Fragrance\Models\FragranceProduct::active()
+                                        ->where('stock_quantity', '>', 0)
+                                        ->orderBy('gender')
+                                        ->orderBy('brand')
+                                        ->orderBy('name')
+                                        ->get(['name', 'brand', 'gender', 'inspired_by', 'sale_price', 'pix_price', 'size_ml'])
+                                        ->map(fn ($p) => [
+                                            'name' => $p->name,
+                                            'brand' => $p->brand,
+                                            'gender' => $p->gender->label(),
+                                            'gender_key' => $p->gender->value,
+                                            'inspired_by' => $p->inspired_by,
+                                            'sale_price' => (int) $p->sale_price,
+                                            'pix_price' => (int) $p->pix_price,
+                                            'size_ml' => $p->size_ml,
+                                        ])
+                                );
+
+                                if (!items.length) {
+                                    alert('Nenhum perfume em estoque no momento.');
+                                    return;
+                                }
+
+                                const genderOrder = { 'feminino': 0, 'masculino': 1, 'unissex': 2 };
+                                const genderLabels = { 'feminino': 'FEMININO', 'masculino': 'MASCULINO', 'unissex': 'UNISSEX' };
+                                const grouped = {};
+                                items.forEach(i => {
+                                    if (!grouped[i.gender_key]) grouped[i.gender_key] = [];
+                                    grouped[i.gender_key].push(i);
+                                });
+
+                                const sortedGenders = Object.keys(grouped).sort((a, b) => (genderOrder[a] ?? 9) - (genderOrder[b] ?? 9));
+
+                                let lines = [];
+                                lines.push('*PERFUMES DG STORE — PRONTA ENTREGA*');
+                                lines.push('');
+
+                                sortedGenders.forEach((gk, gi) => {
+                                    lines.push('*' + (genderLabels[gk] || gk.toUpperCase()) + '*');
+                                    lines.push('');
+
+                                    const byBrand = {};
+                                    grouped[gk].forEach(i => {
+                                        if (!byBrand[i.brand]) byBrand[i.brand] = [];
+                                        byBrand[i.brand].push(i);
+                                    });
+
+                                    const brands = Object.keys(byBrand).sort();
+                                    brands.forEach(brand => {
+                                        byBrand[brand].sort((a, b) => a.name.localeCompare(b.name));
+                                        byBrand[brand].forEach(p => {
+                                            let line = p.name + ' - ' + p.brand + ' (' + p.gender + ')';
+                                            if (p.inspired_by) line += ' - dupe of ' + p.inspired_by;
+                                            if (p.size_ml) line += ' ' + p.size_ml + 'ml';
+                                            line += ' R$ ' + p.sale_price.toLocaleString('pt-BR') + ' (PIX R$ ' + p.pix_price.toLocaleString('pt-BR') + ')';
+                                            lines.push(line);
+                                        });
+                                    });
+
+                                    if (gi < sortedGenders.length - 1) lines.push('');
+                                });
+
+                                const text = lines.join('\n');
+                                navigator.clipboard.writeText(text).then(() => {
+                                    repasseCopied = true;
+                                    setTimeout(() => repasseCopied = false, 2500);
+                                });
+                            "
+                            :class="repasseCopied
+                                ? 'inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold cursor-default'
+                                : 'inline-flex items-center gap-2 px-4 py-2.5 border border-amber-500/40 text-amber-400 rounded-lg hover:bg-amber-500/10 transition text-sm font-semibold'">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                        </svg>
+                        <span x-text="repasseCopied ? 'Copiado!' : 'Repasse'"></span>
+                    </button>
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('fragrance-tags.index') }}"
                            class="inline-flex items-center gap-2 px-4 py-2.5 border border-border-strong text-dg-400 rounded-lg hover:bg-surface-overlay transition text-sm">
