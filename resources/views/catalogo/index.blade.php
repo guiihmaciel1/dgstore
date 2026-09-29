@@ -110,7 +110,7 @@
                         @endif
                         @if($product->image_url)
                             <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                                 class="w-full h-full object-contain drop-shadow-xl group-hover:scale-105 transition-transform duration-700 ease-out"
+                                 class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
                                  loading="lazy">
                         @else
                             <div class="flex flex-col items-center gap-2">

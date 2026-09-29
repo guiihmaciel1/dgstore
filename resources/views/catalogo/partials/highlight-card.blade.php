@@ -19,7 +19,7 @@
             @endif
             @if($product->image_url)
                 <img src="{{ $product->image_url }}" alt="{{ $product->name }}"
-                     class="w-full h-full object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
+                     class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                      loading="lazy">
             @else
                 <svg class="w-8 h-8 opacity-15" style="color: var(--muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
