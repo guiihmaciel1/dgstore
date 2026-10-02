@@ -15,7 +15,10 @@ class FragranceCatalogController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = FragranceProduct::with('accords')->active();
+        $query = FragranceProduct::with('accords')->active()
+            ->where(function ($q) {
+                $q->whereNotNull('sale_price')->orWhereNotNull('pix_price');
+            });
 
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
@@ -39,7 +42,8 @@ class FragranceCatalogController extends Controller
             ->withQueryString();
 
         $tags = FragranceTag::active()->ordered()->withCount([
-            'products' => fn ($q) => $q->where('active', true),
+            'products' => fn ($q) => $q->where('active', true)
+                ->where(fn ($sq) => $sq->whereNotNull('sale_price')->orWhereNotNull('pix_price')),
         ])->get();
 
         $whatsappNumber = PerfumeSetting::get('whatsapp_number', '');
@@ -124,6 +128,9 @@ class FragranceCatalogController extends Controller
 
         $featured = FragranceProduct::active()
             ->where('stock_quantity', '>', 0)
+            ->where(function ($q) {
+                $q->whereNotNull('sale_price')->orWhereNotNull('pix_price');
+            })
             ->orderBy('name')
             ->get();
 
@@ -149,6 +156,9 @@ class FragranceCatalogController extends Controller
 
         $related = FragranceProduct::active()
             ->where('id', '!=', $fragrance->id)
+            ->where(function ($q) {
+                $q->whereNotNull('sale_price')->orWhereNotNull('pix_price');
+            })
             ->where(function ($q) use ($fragrance) {
                 $q->where('brand', $fragrance->brand)
                   ->orWhere('gender', $fragrance->gender->value);
