@@ -60,14 +60,23 @@
             Trocar
         </button>
     </div>
-    <div class="mt-2 pt-2 border-t border-emerald-200">
+    <div class="mt-2 pt-2 border-t border-emerald-200 flex gap-2">
+        {{-- Botão principal: Salvar Simulação --}}
+        <button @click="openSaveModal()" type="button"
+                class="flex-1 px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5 transition-colors bg-indigo-600 text-white hover:bg-indigo-700">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+            </svg>
+            Salvar Simulação
+        </button>
+        {{-- Botão secundário: Resumo da Venda --}}
         <button @click="copySaleSummary()" type="button"
-                class="w-full px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5 transition-colors"
+                class="px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5 transition-colors"
                 :class="copiedSummary ? 'bg-emerald-600 text-white' : 'bg-surface text-white hover:bg-surface-overlay'">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
             </svg>
-            <span x-text="copiedSummary ? 'Copiado!' : 'Resumo da Venda'"></span>
+            <span x-text="copiedSummary ? 'Copiado!' : 'Resumo'"></span>
         </button>
     </div>
 </div>
