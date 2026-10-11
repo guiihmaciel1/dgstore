@@ -49,6 +49,12 @@ return [
         'app_secret' => env('WHATSAPP_APP_SECRET'),
     ],
 
+    'uazapi' => [
+        'base_url' => env('UAZAPI_BASE_URL', 'https://dgstore.uazapi.com'),
+        'instance_token' => env('UAZAPI_INSTANCE_TOKEN'),
+        'admin_token' => env('UAZAPI_ADMIN_TOKEN'),
+    ],
+
     'dgifipe' => [
         'base_url' => env('DGIFIPE_API_URL', 'https://ifipe.dgstorerp.com.br'),
         'token' => env('DGIFIPE_API_TOKEN'),
