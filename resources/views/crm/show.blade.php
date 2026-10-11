@@ -148,24 +148,106 @@
                             </div>
                         </div>
 
-                        {{-- Próxima Ação --}}
-                        @if($deal->next_action || $deal->next_action_at)
-                            <div style="margin-top: 0.75rem; padding: 0.5rem 0.625rem; border-radius: 0.5rem; {{ $deal->is_followup_overdue ? 'background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);' : 'background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.15);' }}">
-                                <span style="font-size: 0.65rem; font-weight: 600; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#3b82f6' }}; display: block; margin-bottom: 0.125rem;">
-                                    {{ $deal->is_followup_overdue ? '⚠ Follow-up atrasado!' : '📌 Próximo Passo' }}
-                                </span>
-                                <div style="display: flex; align-items: center; justify-content: space-between;">
-                                    @if($deal->next_action)
-                                        <span class="followup-text" style="font-size: 0.8rem; color: #e3e3e3; font-weight: 500;">{{ $deal->next_action }}</span>
+                        {{-- Próxima Ação (editável inline) --}}
+                        <div x-data="{
+                            editingFollowup: false,
+                            followupText: {{ json_encode($deal->next_action ?? '') }},
+                            followupDate: '{{ $deal->next_action_at?->format('Y-m-d\TH:i') ?? '' }}',
+                            saving: false,
+                            async save() {
+                                this.saving = true;
+                                try {
+                                    const res = await fetch('{{ route('crm.deals.followup', $deal) }}', {
+                                        method: 'PATCH',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                            'Accept': 'application/json',
+                                        },
+                                        body: JSON.stringify({ next_action: this.followupText || null, next_action_at: this.followupDate || null }),
+                                    });
+                                    if (res.ok) { window.location.reload(); }
+                                    else { alert('Erro ao salvar.'); }
+                                } catch(e) { alert('Erro de conexão.'); }
+                                finally { this.saving = false; }
+                            }
+                        }" style="margin-top: 0.75rem;">
+                            {{-- Modo visualização --}}
+                            <div x-show="!editingFollowup">
+                                @if($deal->next_action || $deal->next_action_at)
+                                    <div style="padding: 0.5rem 0.625rem; border-radius: 0.5rem; {{ $deal->is_followup_overdue ? 'background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);' : 'background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.15);' }}">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.125rem;">
+                                            <span style="font-size: 0.65rem; font-weight: 600; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#3b82f6' }}; display: flex; align-items: center; gap: 0.25rem;">
+                                                @if($deal->is_followup_overdue)
+                                                    <svg style="width: 12px; height: 12px; animation: pulse-followup 1.5s infinite;" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                    Follow-up atrasado!
+                                                @else
+                                                    Próximo Passo
+                                                @endif
+                                            </span>
+                                            @if($deal->isOpen())
+                                                <button @click="editingFollowup = true" type="button" title="Editar follow-up"
+                                                        style="background: none; border: none; cursor: pointer; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#3b82f6' }}; opacity: 0.6; transition: opacity 0.15s; padding: 0;"
+                                                        onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'">
+                                                    <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                        </div>
+                                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                                            @if($deal->next_action)
+                                                <span class="followup-text" style="font-size: 0.8rem; color: #e3e3e3; font-weight: 500;">{{ $deal->next_action }}</span>
+                                            @endif
+                                            @if($deal->next_action_at)
+                                                <span style="font-size: 0.7rem; font-weight: 600; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#666' }};">
+                                                    {{ $deal->next_action_at->format('d/m/Y H:i') }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @else
+                                    @if($deal->isOpen())
+                                        <button @click="editingFollowup = true" type="button"
+                                                style="width: 100%; padding: 0.375rem 0.625rem; border-radius: 0.5rem; font-size: 0.7rem; color: #555; background: none; border: 1px dashed rgba(255,255,255,0.08); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 0.25rem; justify-content: center;"
+                                                onmouseover="this.style.borderColor='rgba(59,130,246,0.3)'; this.style.color='#93c5fd'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.color='#555'">
+                                            <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                                            </svg>
+                                            Adicionar próximo passo / retorno
+                                        </button>
                                     @endif
-                                    @if($deal->next_action_at)
-                                        <span style="font-size: 0.7rem; font-weight: 600; color: {{ $deal->is_followup_overdue ? '#dc2626' : '#666' }};">
-                                            {{ $deal->next_action_at->format('d/m/Y H:i') }}
-                                        </span>
-                                    @endif
+                                @endif
+                            </div>
+
+                            {{-- Modo edição --}}
+                            <div x-show="editingFollowup" x-transition style="padding: 0.5rem 0.625rem; border-radius: 0.5rem; background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2);">
+                                <span style="font-size: 0.65rem; font-weight: 600; color: #3b82f6; display: block; margin-bottom: 0.375rem;">Editar Próximo Passo</span>
+                                <textarea x-model="followupText" rows="2" placeholder="Ex: Ligar para confirmar interesse, enviar orçamento..."
+                                          @keydown.escape="editingFollowup = false"
+                                          style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; font-size: 0.8rem; resize: vertical; background: #0d0d0d; color: #e3e3e3; min-height: 40px;"></textarea>
+                                <div style="display: flex; align-items: center; gap: 0.375rem; margin-top: 0.375rem;">
+                                    <div style="flex: 1;">
+                                        <label style="font-size: 0.6rem; font-weight: 600; color: #555; display: block; margin-bottom: 2px;">Data do retorno</label>
+                                        <input type="datetime-local" x-model="followupDate"
+                                               style="width: 100%; padding: 0.3rem 0.375rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; font-size: 0.75rem; background: #0d0d0d; color: #e3e3e3;">
+                                    </div>
+                                    <div style="display: flex; gap: 0.375rem; align-self: flex-end;">
+                                        <button @click="editingFollowup = false" type="button"
+                                                style="padding: 0.3rem 0.5rem; font-size: 0.7rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; background: #141414; color: #a4a4a4; cursor: pointer;">
+                                            Cancelar
+                                        </button>
+                                        <button @click="save()" :disabled="saving" type="button"
+                                                style="padding: 0.3rem 0.5rem; font-size: 0.7rem; border: none; border-radius: 0.25rem; background: #3b82f6; color: white; cursor: pointer; font-weight: 600;">
+                                            <span x-show="!saving">Salvar</span>
+                                            <span x-show="saving">Salvando...</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        @endif
+                        </div>
 
                         @if($deal->description)
                             <div style="margin-top: 0.75rem; padding-top: 0.625rem; border-top: 1px solid rgba(255,255,255,0.04);">
@@ -175,41 +257,11 @@
                         @endif
                     </div>
 
-                    {{-- Interesses de Produto --}}
-                    @if($deal->productInterests->isNotEmpty())
-                        <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1rem;">
-                            <span style="color: #555; font-weight: 600; font-size: 0.65rem; display: block; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Interesse de Produto</span>
-                            @foreach($deal->productInterests as $interest)
-                                @php $inStock = $interest->hasMatchInStock(); @endphp
-                                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: {{ $inStock ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)' }}; border: 1px solid {{ $inStock ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; border-radius: 0.375rem; margin-bottom: 0.375rem;">
-                                    <div style="flex: 1;">
-                                        <div style="font-size: 0.8rem; font-weight: 600; color: #e3e3e3;">
-                                            {{ $interest->model }}
-                                            @if($interest->storage)
-                                                <span style="font-weight: 400; color: #666;">{{ $interest->storage }}</span>
-                                            @endif
-                                        </div>
-                                        <div style="display: flex; gap: 0.5rem; margin-top: 0.125rem; flex-wrap: wrap;">
-                                            @if($interest->color)
-                                                <span style="font-size: 0.7rem; color: #666;">{{ $interest->color }}</span>
-                                            @endif
-                                            @if($interest->condition)
-                                                <span style="font-size: 0.6rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.12); color: #93c5fd;' : 'background: rgba(251,191,36,0.12); color: #fbbf24;' }}">
-                                                    {{ $interest->condition === 'novo' ? 'Novo' : 'Seminovo' }}
-                                                </span>
-                                            @endif
-                                            @if($interest->max_budget)
-                                                <span style="font-size: 0.7rem; color: #666;">Até R$ {{ number_format((float)$interest->max_budget, 2, ',', '.') }}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    <span style="font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; {{ $inStock ? 'background: rgba(16,185,129,0.12); color: #6ee7b7;' : 'background: rgba(239,68,68,0.12); color: #fca5a5;' }}">
-                                        {{ $inStock ? 'Em estoque' : 'Sem estoque' }}
-                                    </span>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
+                    {{-- Interesses de Produto (CRUD) --}}
+                    @include('crm.partials.product-interests', ['deal' => $deal])
+
+                    {{-- Agendamentos vinculados --}}
+                    @include('crm.partials.deal-appointments', ['deal' => $deal])
 
                     {{-- Ações Rápidas --}}
                     @if($deal->isOpen())
@@ -506,6 +558,7 @@
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #555; }
+        @keyframes pulse-followup { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     </style>
 
     <script>

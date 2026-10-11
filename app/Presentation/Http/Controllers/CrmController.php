@@ -238,7 +238,7 @@ class CrmController extends Controller
 
     public function show(Deal $deal): View
     {
-        $deal->load(['customer.tags', 'user', 'stage', 'activities.user', 'productInterests', 'whatsappMessages']);
+        $deal->load(['customer.tags', 'user', 'stage', 'activities.user', 'productInterests', 'whatsappMessages', 'appointments']);
 
         $allSnapshots = $deal->allNegotiationSnapshots()->get();
 
@@ -380,6 +380,107 @@ class CrmController extends Controller
 
         return redirect()->route('crm.show', $deal)
             ->with('success', 'Atividade registrada!');
+    }
+
+    // ─── Interesses de Produto ─────────────────────────────
+
+    public function storeInterest(Request $request, Deal $deal): RedirectResponse
+    {
+        $validated = $request->validate([
+            'model' => 'required|string|max:255',
+            'storage' => 'nullable|string|max:50',
+            'color' => 'nullable|string|max:50',
+            'condition' => 'nullable|string|in:novo,seminovo',
+            'max_budget' => 'nullable|numeric|min:0',
+        ]);
+
+        $deal->productInterests()->create([
+            'customer_id' => $deal->customer_id,
+            ...$validated,
+        ]);
+
+        $parts = array_filter([
+            $validated['model'],
+            $validated['storage'] ?? null,
+            $validated['color'] ?? null,
+        ]);
+        $deal->update(['product_interest' => implode(' - ', $parts)]);
+
+        $deal->logActivity(DealActivityType::Note, "Interesse adicionado: {$validated['model']}");
+
+        return redirect()->route('crm.show', $deal)
+            ->with('success', 'Interesse de produto adicionado!');
+    }
+
+    public function destroyInterest(Deal $deal, ProductInterest $interest): RedirectResponse
+    {
+        if ($interest->deal_id !== $deal->id) {
+            abort(403);
+        }
+
+        $model = $interest->model;
+        $interest->delete();
+
+        $remaining = $deal->productInterests()->first();
+        $deal->update([
+            'product_interest' => $remaining
+                ? implode(' - ', array_filter([$remaining->model, $remaining->storage, $remaining->color]))
+                : null,
+        ]);
+
+        $deal->logActivity(DealActivityType::Note, "Interesse removido: {$model}");
+
+        return redirect()->route('crm.show', $deal)
+            ->with('success', 'Interesse removido!');
+    }
+
+    // ─── Agendamentos vinculados ao Deal ────────────────────
+
+    public function storeAppointment(Request $request, Deal $deal): RedirectResponse
+    {
+        $validated = $request->validate([
+            'date' => 'required|date',
+            'attendant' => 'required|string|in:' . implode(',', array_keys(Appointment::ATTENDANTS)),
+            'start_time' => 'required|date_format:H:i',
+            'duration_minutes' => 'required|integer|in:' . implode(',', array_keys(Appointment::DURATION_OPTIONS)),
+            'service_description' => 'nullable|string|max:500',
+        ]);
+
+        $startTime = $validated['start_time'];
+        $endTime = \Carbon\Carbon::createFromFormat('H:i', $startTime)
+            ->addMinutes($validated['duration_minutes'])
+            ->format('H:i');
+
+        if (Appointment::hasConflict($validated['attendant'], $validated['date'], $startTime, $endTime)) {
+            return redirect()->route('crm.show', $deal)
+                ->withErrors(['appointment' => 'Conflito de horário! Já existe um agendamento nesse período.']);
+        }
+
+        $customerName = $deal->customer?->name ?? $deal->title;
+        $customerPhone = $deal->phone ?? $deal->customer?->phone;
+
+        Appointment::create([
+            'deal_id' => $deal->id,
+            'customer_id' => $deal->customer_id,
+            'customer_name' => $customerName,
+            'customer_phone' => $customerPhone,
+            'attendant' => $validated['attendant'],
+            'date' => $validated['date'],
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'duration_minutes' => $validated['duration_minutes'],
+            'service_description' => $validated['service_description'],
+            'status' => 'scheduled',
+        ]);
+
+        $dateFormatted = \Carbon\Carbon::parse($validated['date'])->format('d/m/Y');
+        $deal->logActivity(
+            DealActivityType::Note,
+            "Agendamento criado: {$dateFormatted} às {$startTime} com {$validated['attendant']}"
+        );
+
+        return redirect()->route('crm.show', $deal)
+            ->with('success', 'Agendamento criado e vinculado ao lead!');
     }
 
     // ─── Follow-up rápido (AJAX) ────────────────────────────
