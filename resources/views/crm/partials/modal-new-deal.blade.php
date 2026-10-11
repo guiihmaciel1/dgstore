@@ -20,8 +20,11 @@
                             <select name="interest_model" style="width: 100%; padding: 0.4rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem;">
                                 <option value="">Selecione...</option>
                                 <optgroup label="iPhone">
+                                    <option {{ old('interest_model') === 'iPhone 18 Pro Max' ? 'selected' : '' }}>iPhone 18 Pro Max</option>
+                                    <option {{ old('interest_model') === 'iPhone 18 Pro' ? 'selected' : '' }}>iPhone 18 Pro</option>
                                     <option {{ old('interest_model') === 'iPhone 17 Pro Max' ? 'selected' : '' }}>iPhone 17 Pro Max</option>
                                     <option {{ old('interest_model') === 'iPhone 17 Pro' ? 'selected' : '' }}>iPhone 17 Pro</option>
+                                    <option {{ old('interest_model') === 'iPhone 17 Air' ? 'selected' : '' }}>iPhone 17 Air</option>
                                     <option {{ old('interest_model') === 'iPhone 17' ? 'selected' : '' }}>iPhone 17</option>
                                     <option {{ old('interest_model') === 'iPhone 16 Pro Max' ? 'selected' : '' }}>iPhone 16 Pro Max</option>
                                     <option {{ old('interest_model') === 'iPhone 16 Pro' ? 'selected' : '' }}>iPhone 16 Pro</option>

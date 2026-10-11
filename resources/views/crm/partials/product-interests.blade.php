@@ -72,8 +72,11 @@
                     <select name="model" required style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; background: #0d0d0d; color: #e3e3e3;">
                         <option value="">Selecione...</option>
                         <optgroup label="iPhone">
+                            <option>iPhone 18 Pro Max</option>
+                            <option>iPhone 18 Pro</option>
                             <option>iPhone 17 Pro Max</option>
                             <option>iPhone 17 Pro</option>
+                            <option>iPhone 17 Air</option>
                             <option>iPhone 17</option>
                             <option>iPhone 16 Pro Max</option>
                             <option>iPhone 16 Pro</option>

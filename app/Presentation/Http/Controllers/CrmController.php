@@ -448,7 +448,7 @@ class CrmController extends Controller
 
         $startTime = $validated['start_time'];
         $endTime = \Carbon\Carbon::createFromFormat('H:i', $startTime)
-            ->addMinutes($validated['duration_minutes'])
+            ->addMinutes((int) $validated['duration_minutes'])
             ->format('H:i');
 
         if (Appointment::hasConflict($validated['attendant'], $validated['date'], $startTime, $endTime)) {
