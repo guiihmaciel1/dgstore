@@ -105,7 +105,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/api/negotiation/evaluate', [NegotiationController::class, 'evaluate'])->name('negotiation.evaluate');
     Route::post('/api/negotiation/save-snapshot', [NegotiationSnapshotController::class, 'store'])->name('negotiation.save-snapshot');
     Route::get('/api/simulations/customer/{customer}', [NegotiationSnapshotController::class, 'forCustomer'])->name('simulations.for-customer');
-    Route::get('/api/simulations/search', [NegotiationSnapshotController::class, 'search'])->name('simulations.search');
+        Route::get('/api/simulations/search', [NegotiationSnapshotController::class, 'search'])->name('simulations.search');
+        Route::get('/api/simulations/deal/{deal}', [NegotiationSnapshotController::class, 'forDeal'])->name('simulations.for-deal');
     Route::delete('/api/simulations/{snapshot}', [NegotiationSnapshotController::class, 'destroy'])->name('simulations.destroy');
     Route::get('/api/customers/search', [CustomerController::class, 'search'])->name('customers.search');
     Route::get('/api/customer-tags', [CustomerTagController::class, 'apiIndex'])->name('customer-tags.api.index');

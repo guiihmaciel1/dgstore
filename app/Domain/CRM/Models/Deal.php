@@ -7,6 +7,7 @@ namespace App\Domain\CRM\Models;
 use App\Domain\CRM\Enums\DealActivityType;
 use App\Domain\CRM\Enums\LeadSource;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Negotiation\Models\NegotiationSnapshot;
 use App\Domain\User\Models\User;
 use App\Domain\WhatsApp\Models\WhatsAppMessage;
 use Illuminate\Database\Eloquent\Builder;
@@ -85,6 +86,11 @@ class Deal extends Model
     public function whatsappMessages(): HasMany
     {
         return $this->hasMany(WhatsAppMessage::class);
+    }
+
+    public function negotiationSnapshots(): HasMany
+    {
+        return $this->hasMany(NegotiationSnapshot::class);
     }
 
     public function productInterests(): HasMany

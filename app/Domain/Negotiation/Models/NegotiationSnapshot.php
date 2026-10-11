@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Negotiation\Models;
 
+use App\Domain\CRM\Models\Deal;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\User\Models\User;
@@ -36,6 +37,7 @@ class NegotiationSnapshot extends Model
         'expires_at',
         'status',
         'sale_id',
+        'deal_id',
     ];
 
     protected function casts(): array
@@ -65,6 +67,16 @@ class NegotiationSnapshot extends Model
     public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
+    }
+
+    public function deal(): BelongsTo
+    {
+        return $this->belongsTo(Deal::class);
+    }
+
+    public function scopeForDeal(Builder $query, string $dealId): Builder
+    {
+        return $query->where('deal_id', $dealId);
     }
 
     public function scopeActive(Builder $query): Builder

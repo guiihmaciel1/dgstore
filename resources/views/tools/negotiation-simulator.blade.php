@@ -131,6 +131,14 @@
                 this.$watch('tradeIn.offeredInput', debouncedRecalc);
 
                 const params = new URLSearchParams(window.location.search);
+
+                if (params.get('deal_id') && params.get('customer_id')) {
+                    this.loadCustomerForDeal(params.get('customer_id'));
+                }
+                if (params.get('product') && !params.get('snap_product')) {
+                    this.product.description = params.get('product');
+                }
+
                 if (params.get('snap_product')) {
                     this.product.description = params.get('snap_product');
                     this.product.priceInput = this.fmt(parseFloat(params.get('snap_price')) || 0);
@@ -650,8 +658,10 @@
                 if (!this.saveModal.selectedCustomer || this.saveModal.saving) return;
                 this.saveModal.saving = true;
 
+                const urlParams = new URLSearchParams(window.location.search);
                 const payload = {
                     customer_id: this.saveModal.selectedCustomer.id,
+                    deal_id: urlParams.get('deal_id') || null,
                     product_description: this.product.description,
                     product_price: this.productPrice,
                     product_cost: this.productCost || null,

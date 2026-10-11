@@ -30,6 +30,7 @@ class NegotiationSnapshotController extends Controller
             'commission_estimate' => ['nullable', 'numeric', 'min:0'],
             'message_text' => ['nullable', 'string'],
             'notes' => ['nullable', 'string', 'max:500'],
+            'deal_id' => ['nullable', 'string', 'exists:deals,id'],
         ]);
 
         $snapshot = NegotiationSnapshot::create([
@@ -49,6 +50,18 @@ class NegotiationSnapshotController extends Controller
     {
         $snapshots = NegotiationSnapshot::active()
             ->forCustomer($customerId)
+            ->orderByDesc('created_at')
+            ->limit(10)
+            ->get();
+
+        return response()->json($snapshots);
+    }
+
+    public function forDeal(string $dealId): JsonResponse
+    {
+        $snapshots = NegotiationSnapshot::active()
+            ->forDeal($dealId)
+            ->with('user:id,name')
             ->orderByDesc('created_at')
             ->limit(10)
             ->get();
