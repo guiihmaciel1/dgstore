@@ -104,6 +104,6 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         return Customer::with(['sales' => function ($query) {
             $query->with('items.product')
                 ->orderBy('sold_at', 'desc');
-        }])->find($id);
+        }, 'tags'])->find($id);
     }
 }

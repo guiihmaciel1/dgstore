@@ -9,6 +9,7 @@ use App\Domain\Sale\Models\Sale;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -46,6 +47,12 @@ class Customer extends Model
     public function negotiationSnapshots(): HasMany
     {
         return $this->hasMany(NegotiationSnapshot::class);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(CustomerTag::class, 'customer_customer_tag')
+            ->withPivot('tagged_by', 'created_at');
     }
 
     // Métodos auxiliares

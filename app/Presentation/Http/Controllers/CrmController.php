@@ -10,6 +10,7 @@ use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\DealActivity;
 use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\CRM\Models\ProductInterest;
+use App\Domain\Customer\Models\CustomerTag;
 use App\Domain\AI\Services\GeminiService;
 use App\Domain\Schedule\Models\Appointment;
 use App\Http\Controllers\Controller;
@@ -35,7 +36,7 @@ class CrmController extends Controller
             ->ordered()
             ->get();
 
-        $dealsQuery = Deal::with(['customer', 'user', 'stage', 'productInterests'])
+        $dealsQuery = Deal::with(['customer.tags', 'user', 'stage', 'productInterests'])
             ->open();
 
         if ($filterUserId) {
@@ -81,6 +82,7 @@ class CrmController extends Controller
         ];
 
         $sellers = \App\Domain\User\Models\User::where('active', true)->orderBy('name')->get(['id', 'name', 'role']);
+        $allTags = CustomerTag::active()->ordered()->get(['id', 'name', 'slug', 'color']);
 
         return view('crm.board', [
             'stages' => $allStages,
@@ -93,6 +95,7 @@ class CrmController extends Controller
             'attendants' => Appointment::ATTENDANTS,
             'durationOptions' => Appointment::DURATION_OPTIONS,
             'leadSources' => LeadSource::cases(),
+            'allTags' => $allTags,
         ]);
     }
 
@@ -188,7 +191,7 @@ class CrmController extends Controller
 
     public function show(Deal $deal): View
     {
-        $deal->load(['customer', 'user', 'stage', 'activities.user', 'productInterests']);
+        $deal->load(['customer.tags', 'user', 'stage', 'activities.user', 'productInterests']);
 
         $allStages = PipelineStage::ordered()->get();
         $activeStages = PipelineStage::where('is_won', false)

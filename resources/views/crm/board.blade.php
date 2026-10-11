@@ -194,6 +194,15 @@
                                                 </svg>
                                                 {{ $deal->customer->name }}
                                             </div>
+                                            @if($deal->customer->tags->isNotEmpty())
+                                                <div style="display: flex; gap: 0.2rem; flex-wrap: wrap; margin-top: 0.25rem;">
+                                                    @foreach($deal->customer->tags as $ctag)
+                                                        <span style="font-size: 0.55rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; background: {{ $ctag->color }}20; color: {{ $ctag->color }}; border: 1px solid {{ $ctag->color }}40;">
+                                                            {{ $ctag->name }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
                                         @endif
 
                                         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem;">
@@ -242,6 +251,38 @@
                                             @endif
                                         </div>
                                     </a>
+
+                                    {{-- Tag section (fora do <a> para permitir interação) --}}
+                                    @if($deal->customer)
+                                    <div style="padding: 0 0.75rem 0.375rem 0.75rem;" x-data="{ showTagMenu: false }">
+                                        <button @click.stop="showTagMenu = !showTagMenu" type="button"
+                                                style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.375rem; border-radius: 0.25rem; font-size: 0.575rem; color: #666; background: none; border: 1px dashed rgba(255,255,255,0.08); cursor: pointer; transition: all 0.15s;"
+                                                onmouseover="this.style.borderColor='rgba(59,130,246,0.3)'; this.style.color='#93c5fd'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.color='#666'">
+                                            <svg style="width: 10px; height: 10px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                            </svg>
+                                            Tags
+                                        </button>
+                                        <div x-show="showTagMenu" x-transition @click.away="showTagMenu = false" @click.stop
+                                             style="position: absolute; z-index: 50; margin-top: 0.25rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.375rem; padding: 0.375rem; min-width: 160px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                                            @foreach($allTags as $atag)
+                                                @php $hasTag = $deal->customer->tags->contains('id', $atag->id); @endphp
+                                                <button @click.stop="toggleTag('{{ $deal->customer->id }}', '{{ $atag->id }}', {{ $hasTag ? 'true' : 'false' }})"
+                                                        type="button"
+                                                        style="display: flex; align-items: center; gap: 0.375rem; width: 100%; padding: 0.3rem 0.5rem; border-radius: 0.25rem; font-size: 0.7rem; color: {{ $hasTag ? $atag->color : '#a4a4a4' }}; background: {{ $hasTag ? $atag->color . '15' : 'transparent' }}; border: none; cursor: pointer; text-align: left; transition: background 0.15s;"
+                                                        onmouseover="this.style.background='{{ $atag->color }}20'" onmouseout="this.style.background='{{ $hasTag ? $atag->color . '15' : 'transparent' }}'">
+                                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $atag->color }}; flex-shrink: 0;"></span>
+                                                    {{ $atag->name }}
+                                                    @if($hasTag)
+                                                        <svg style="width: 12px; height: 12px; margin-left: auto; color: {{ $atag->color }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                        </svg>
+                                                    @endif
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @endif
 
                                     {{-- Follow-up section (fora do <a> para permitir interação) --}}
                                     <div style="padding: 0 0.75rem 0.75rem 0.75rem;" x-show="!editingFollowup">
@@ -437,6 +478,25 @@
             }
         }, 15000);
     });
+
+    window.toggleTag = async function(customerId, tagId, hasTag) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        if (hasTag) {
+            await fetch(`/api/customers/${customerId}/tags/${tagId}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+            });
+        } else {
+            await fetch(`/api/customers/${customerId}/tags/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                body: JSON.stringify({ tag_id: tagId }),
+            });
+        }
+
+        window.location.reload();
+    }
 
     window.saveFollowup = async function(dealId, el) {
         const card = el.closest('[x-data]');

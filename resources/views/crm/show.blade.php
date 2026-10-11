@@ -85,6 +85,15 @@
                                         <a href="{{ route('customers.show', $deal->customer) }}" style="color: #3b82f6; text-decoration: none; margin-top: 2px; display: block;">
                                             {{ $deal->customer->name }}
                                         </a>
+                                        @if($deal->customer->tags->isNotEmpty())
+                                            <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.375rem;">
+                                                @foreach($deal->customer->tags as $ctag)
+                                                    <span style="font-size: 0.65rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: {{ $ctag->color }}20; color: {{ $ctag->color }}; border: 1px solid {{ $ctag->color }}40;">
+                                                        {{ $ctag->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
                                 @if($deal->expected_close_date)

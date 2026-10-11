@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Presentation\Http\Controllers\CustomerController;
+use App\Presentation\Http\Controllers\CustomerTagController;
 use App\Presentation\Http\Controllers\DashboardController;
 use App\Presentation\Http\Controllers\ImportOrderController;
 use App\Presentation\Http\Controllers\ProductController;
@@ -106,6 +107,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/api/simulations/search', [NegotiationSnapshotController::class, 'search'])->name('simulations.search');
     Route::delete('/api/simulations/{snapshot}', [NegotiationSnapshotController::class, 'destroy'])->name('simulations.destroy');
     Route::get('/api/customers/search', [CustomerController::class, 'search'])->name('customers.search');
+    Route::get('/api/customer-tags', [CustomerTagController::class, 'apiIndex'])->name('customer-tags.api.index');
+    Route::get('/api/customers/{customer}/tags', [CustomerTagController::class, 'customerTags'])->name('customer-tags.api.customer');
+    Route::post('/api/customers/{customer}/tags/sync', [CustomerTagController::class, 'syncTags'])->name('customer-tags.api.sync');
+    Route::post('/api/customers/{customer}/tags/add', [CustomerTagController::class, 'addTag'])->name('customer-tags.api.add');
+    Route::delete('/api/customers/{customer}/tags/{tag}', [CustomerTagController::class, 'removeTag'])->name('customer-tags.api.remove');
 
     // ----------------------------------------------------------------
     // DG Store — admin_geral, seller e intern

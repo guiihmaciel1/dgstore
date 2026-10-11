@@ -277,6 +277,7 @@ class UazapiWebhookService
             ->first();
 
         if ($customer) {
+            $this->enrichCustomerData($customer, $contactName);
             return $customer;
         }
 
@@ -292,6 +293,31 @@ class UazapiWebhookService
         ]);
 
         return $customer;
+    }
+
+    /**
+     * Enriquece dados do cliente com info do WhatsApp.
+     * Se o nome do cliente é genérico (ex: "WhatsApp ...") e temos um nome real, atualiza.
+     */
+    private function enrichCustomerData(Customer $customer, ?string $contactName): void
+    {
+        if (!$contactName) {
+            return;
+        }
+
+        $isGenericName = str_starts_with($customer->name, 'WhatsApp ')
+            || str_starts_with($customer->name, 'Cliente ')
+            || $customer->name === $customer->phone;
+
+        if ($isGenericName) {
+            $customer->update(['name' => $contactName]);
+
+            Log::info('UazAPI: nome do cliente atualizado via WhatsApp', [
+                'customer_id' => $customer->id,
+                'old_name' => $customer->getOriginal('name'),
+                'new_name' => $contactName,
+            ]);
+        }
     }
 
     private function getDefaultAssignee(): User

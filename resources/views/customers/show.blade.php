@@ -27,6 +27,15 @@
                                 @endif
                             </div>
                             <p class="text-sm text-dg-500">Cliente desde {{ $customer->created_at->format('d/m/Y') }}</p>
+                            @if($customer->tags->isNotEmpty())
+                                <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.375rem;">
+                                    @foreach($customer->tags as $ctag)
+                                        <span style="font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 9999px; background: {{ $ctag->color }}20; color: {{ $ctag->color }}; border: 1px solid {{ $ctag->color }}40;">
+                                            {{ $ctag->name }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
