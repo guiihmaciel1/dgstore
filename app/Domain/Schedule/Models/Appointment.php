@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Schedule\Models;
 
+use App\Domain\CRM\Models\Deal;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Schedule\Enums\AppointmentStatus;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,6 +50,7 @@ class Appointment extends Model
 
     protected $fillable = [
         'customer_id',
+        'deal_id',
         'customer_name',
         'customer_phone',
         'attendant',
@@ -78,6 +80,11 @@ class Appointment extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function deal(): BelongsTo
+    {
+        return $this->belongsTo(Deal::class);
     }
 
     // Scopes

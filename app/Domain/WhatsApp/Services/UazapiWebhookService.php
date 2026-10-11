@@ -11,6 +11,7 @@ use App\Domain\Customer\Models\Customer;
 use App\Domain\System\Models\SystemSetting;
 use App\Domain\User\Models\User;
 use App\Domain\WhatsApp\Models\WhatsAppMessage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class UazapiWebhookService
@@ -27,6 +28,8 @@ class UazapiWebhookService
             'messages' => $this->processMessage($payload),
             'messages_update' => $this->processMessageUpdate($payload),
             'connection' => $this->processConnectionEvent($payload),
+            'presence' => $this->processPresence($payload),
+            'call' => $this->processCall($payload),
             default => Log::debug('UazAPI webhook: evento ignorado', ['type' => $eventType]),
         };
     }
@@ -94,14 +97,30 @@ class UazapiWebhookService
             return;
         }
 
-        $whatsappMessage = WhatsAppMessage::create([
+        $msgData = [
             'wa_message_id' => $waMessageId,
             'from_phone' => $fromPhone,
             'from_name' => $senderName,
             'message_type' => $messageType,
             'message_body' => $messageBody,
             'raw_payload' => $message,
-        ]);
+        ];
+
+        $quotedId = $message['contextInfo']['stanzaId']
+            ?? $message['quotedMsg']['id']
+            ?? $message['quotedMessage']['id']
+            ?? null;
+
+        if ($quotedId) {
+            $msgData['reply_to_id'] = $quotedId;
+            $quotedBody = $message['contextInfo']['quotedMessage']['conversation']
+                ?? $message['quotedMsg']['body']
+                ?? $message['quotedMsg']['text']
+                ?? null;
+            $msgData['reply_to_body'] = $quotedBody ? mb_substr($quotedBody, 0, 200) : null;
+        }
+
+        $whatsappMessage = WhatsAppMessage::create($msgData);
 
         $deal = $this->findOrCreateDeal($fromPhone, $senderName);
         $whatsappMessage->update(['deal_id' => $deal->id, 'direction' => 'inbound']);
@@ -486,5 +505,100 @@ class UazapiWebhookService
         }
 
         return $phone;
+    }
+
+    // ─── Presence (digitando/gravando) ──────────────────────
+
+    private function processPresence(array $payload): void
+    {
+        try {
+            $chatId = $payload['chatId'] ?? $payload['id'] ?? $payload['jid'] ?? null;
+            $type = $payload['type'] ?? $payload['presences'] ?? null;
+
+            if (!$chatId) {
+                if (isset($payload['presences']) && is_array($payload['presences'])) {
+                    foreach ($payload['presences'] as $jid => $presenceData) {
+                        $phone = preg_replace('/\D/', '', explode('@', $jid)[0] ?? '');
+                        $phone = $this->normalizePhoneForSearch($phone);
+                        $lastKnown = $presenceData['lastKnownPresence'] ?? $presenceData['type'] ?? 'paused';
+                        Cache::put("wa_presence:{$phone}", $lastKnown, 15);
+                    }
+                    return;
+                }
+                return;
+            }
+
+            $phone = preg_replace('/\D/', '', explode('@', $chatId)[0] ?? '');
+            $phone = $this->normalizePhoneForSearch($phone);
+
+            if (is_string($type)) {
+                Cache::put("wa_presence:{$phone}", $type, 15);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Erro ao processar presença WhatsApp', ['error' => $e->getMessage()]);
+        }
+    }
+
+    // ─── Chamadas WhatsApp ──────────────────────────────────
+
+    private function processCall(array $payload): void
+    {
+        try {
+            $callData = $payload['call'] ?? $payload['event'] ?? $payload;
+
+            $chatId = $callData['from'] ?? $callData['chatId'] ?? $callData['id'] ?? null;
+            if (!$chatId) {
+                Log::debug('UazAPI call webhook: sem chatId', ['payload' => array_keys($payload)]);
+                return;
+            }
+
+            $phone = preg_replace('/\D/', '', explode('@', $chatId)[0] ?? '');
+            if (strlen($phone) < 10) {
+                return;
+            }
+
+            $callStatus = $callData['status'] ?? $callData['type'] ?? 'unknown';
+            $isOfferer = $callData['isOfferer'] ?? $callData['fromMe'] ?? false;
+            $duration = $callData['duration'] ?? null;
+
+            if ($isOfferer) {
+                return;
+            }
+
+            $normalizedPhone = $this->normalizePhoneForSearch($phone);
+            $deal = Deal::where('is_open', true)
+                ->where(function ($q) use ($normalizedPhone, $phone) {
+                    $q->where('phone', 'like', "%{$normalizedPhone}%")
+                      ->orWhere('phone', 'like', "%{$phone}%");
+                })
+                ->first();
+
+            if (!$deal) {
+                Log::debug('UazAPI call: nenhum deal encontrado', ['phone' => $phone]);
+                return;
+            }
+
+            $description = match (true) {
+                in_array($callStatus, ['accepted', 'answered', 'accept']) =>
+                    $duration
+                        ? "📞 Chamada WhatsApp recebida (atendida, " . gmdate('i\m s\s', (int) $duration) . ")"
+                        : "📞 Chamada WhatsApp recebida (atendida)",
+                in_array($callStatus, ['rejected', 'reject']) =>
+                    "📞 Chamada WhatsApp rejeitada",
+                in_array($callStatus, ['timeout', 'missed', 'unanswered']) =>
+                    "📞 Chamada WhatsApp perdida",
+                in_array($callStatus, ['offer', 'ringing']) =>
+                    null,
+                default =>
+                    "📞 Chamada WhatsApp ({$callStatus})",
+            };
+
+            if ($description) {
+                $deal->logActivity(DealActivityType::Call, $description);
+                $deal->updateLastInteraction();
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Erro ao processar chamada WhatsApp', ['error' => $e->getMessage()]);
+        }
     }
 }

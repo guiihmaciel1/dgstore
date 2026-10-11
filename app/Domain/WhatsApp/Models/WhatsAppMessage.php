@@ -30,6 +30,8 @@ class WhatsAppMessage extends Model
         'direction',
         'local_media_path',
         'media_mime_type',
+        'reply_to_id',
+        'reply_to_body',
     ];
 
     protected function casts(): array

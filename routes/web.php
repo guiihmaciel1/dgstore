@@ -145,6 +145,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // CRM - Pipeline de Vendas
         Route::get('/crm', [CrmController::class, 'board'])->name('crm.board');
         Route::get('/crm/history', [CrmController::class, 'history'])->name('crm.history');
+        Route::get('/crm/deals/create', [CrmController::class, 'create'])->name('crm.deals.create');
         Route::post('/crm/deals', [CrmController::class, 'store'])->name('crm.deals.store');
         Route::get('/crm/deals/{deal}', [CrmController::class, 'show'])->name('crm.show');
         Route::put('/crm/deals/{deal}', [CrmController::class, 'update'])->name('crm.deals.update');
@@ -155,6 +156,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/crm/deals/{deal}/lose', [CrmController::class, 'lose'])->name('crm.deals.lose');
         Route::post('/crm/deals/{deal}/reopen', [CrmController::class, 'reopen'])->name('crm.deals.reopen');
         Route::post('/crm/deals/{deal}/activities', [CrmController::class, 'storeActivity'])->name('crm.deals.activities.store');
+        Route::post('/crm/deals/{deal}/interests', [CrmController::class, 'storeInterest'])->name('crm.deals.interests.store');
+        Route::delete('/crm/deals/{deal}/interests/{interest}', [CrmController::class, 'destroyInterest'])->name('crm.deals.interests.destroy');
+        Route::post('/crm/deals/{deal}/appointments', [CrmController::class, 'storeAppointment'])->name('crm.deals.appointments.store');
         Route::post('/api/crm/deals/{deal}/ai-message', [CrmController::class, 'aiSuggestMessage'])->name('crm.deals.ai-message');
         Route::post('/api/crm/deals/{deal}/ai-analysis', [CrmController::class, 'aiAnalyzeDeal'])->name('crm.deals.ai-analysis');
         Route::get('/api/crm/new-deals-check', [CrmController::class, 'newDealsCheck'])->name('crm.deals.check');
@@ -164,6 +168,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/crm/deals/{deal}/whatsapp/media/{messageId}', [CrmController::class, 'downloadWhatsAppMedia'])->name('crm.deals.wa.media');
         Route::get('/api/crm/check-number', [CrmController::class, 'checkWhatsAppNumber'])->name('crm.check-number');
         Route::post('/crm/deals/{deal}/whatsapp/send-menu', [CrmController::class, 'sendWhatsAppMenu'])->name('crm.deals.wa.send-menu');
+        Route::get('/api/crm/deals/{deal}/wa/poll', [CrmController::class, 'pollWhatsAppMessages'])->name('crm.deals.wa.poll');
+        Route::get('/api/crm/deals/{deal}/wa/presence', [CrmController::class, 'getWhatsAppPresence'])->name('crm.deals.wa.presence');
 
         // Campanhas WhatsApp
         Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');

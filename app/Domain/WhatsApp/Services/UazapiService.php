@@ -35,14 +35,20 @@ class UazapiService
     }
 
     /**
-     * Envia mensagem de texto.
+     * Envia mensagem de texto, opcionalmente citando uma mensagem (quote reply).
      */
-    public function sendText(string $number, string $text): array
+    public function sendText(string $number, string $text, ?string $replyId = null): array
     {
-        return $this->post('/send/text', [
+        $payload = [
             'number' => $this->normalizeNumber($number),
             'text' => $text,
-        ]);
+        ];
+
+        if ($replyId) {
+            $payload['replyid'] = $replyId;
+        }
+
+        return $this->post('/send/text', $payload);
     }
 
     /**
@@ -82,7 +88,7 @@ class UazapiService
     /**
      * Configura o webhook da instância.
      */
-    public function setWebhook(string $url, array $events = ['messages', 'messages_update', 'connection']): array
+    public function setWebhook(string $url, array $events = ['messages', 'messages_update', 'connection', 'presence', 'call']): array
     {
         return $this->post('/webhook', [
             'enabled' => true,
@@ -259,6 +265,26 @@ class UazapiService
         }
 
         return $this->post('/sender/simple', $payload);
+    }
+
+    /**
+     * Atualiza dados de lead no chat do WhatsApp.
+     */
+    public function editLead(string $number, string $name, ?string $responsible = null, ?string $notes = null): array
+    {
+        $payload = [
+            'number' => $this->normalizeNumber($number),
+            'name' => $name,
+        ];
+
+        if ($responsible) {
+            $payload['responsible'] = $responsible;
+        }
+        if ($notes) {
+            $payload['notes'] = $notes;
+        }
+
+        return $this->post('/chat/editLead', $payload);
     }
 
     /**

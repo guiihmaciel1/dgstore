@@ -16,6 +16,8 @@ use App\Domain\Schedule\Models\Appointment;
 use App\Domain\WhatsApp\Models\WhatsAppMessage;
 use App\Domain\WhatsApp\Services\UazapiService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -132,6 +134,18 @@ class CrmController extends Controller
 
     // ─── CRUD Deals ──────────────────────────────────────────
 
+    public function create(): View
+    {
+        $activeStages = PipelineStage::where('is_won', false)
+            ->where('is_lost', false)
+            ->ordered()
+            ->get();
+
+        return view('crm.create', [
+            'activeStages' => $activeStages,
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $leadSourceValues = implode(',', array_column(LeadSource::cases(), 'value'));
@@ -216,8 +230,10 @@ class CrmController extends Controller
 
         $deal->logActivity(DealActivityType::Created, "Negócio criado: {$deal->title}");
 
-        return redirect()->route('crm.board')
-            ->with('success', 'Negócio criado com sucesso!');
+        $this->syncLeadToWhatsApp($deal);
+
+        return redirect()->route('crm.show', $deal)
+            ->with('success', 'Lead criado! Adicione interesses, agendamentos e mais detalhes.');
     }
 
     public function show(Deal $deal): View
@@ -228,6 +244,7 @@ class CrmController extends Controller
 
         if ($deal->unread_wa_count > 0) {
             $deal->update(['unread_wa_count' => 0]);
+            $this->markMessagesAsRead($deal);
         }
 
         $allStages = PipelineStage::ordered()->get();
@@ -268,6 +285,8 @@ class CrmController extends Controller
         ]);
 
         $deal->update($validated);
+
+        $this->syncLeadToWhatsApp($deal);
 
         return redirect()->route('crm.show', $deal)
             ->with('success', 'Negócio atualizado!');
@@ -550,7 +569,10 @@ class CrmController extends Controller
 
     public function sendWhatsApp(Request $request, Deal $deal): JsonResponse
     {
-        $request->validate(['message' => 'required|string|max:4096']);
+        $request->validate([
+            'message' => 'required|string|max:4096',
+            'reply_to' => 'nullable|string',
+        ]);
 
         $uazapi = app(UazapiService::class);
         if (!$uazapi->isConfigured()) {
@@ -562,13 +584,14 @@ class CrmController extends Controller
             return response()->json(['success' => false, 'error' => 'Deal sem telefone'], 422);
         }
 
-        $result = $uazapi->sendText($phone, $request->message);
+        $replyTo = $request->input('reply_to');
+        $result = $uazapi->sendText($phone, $request->message, $replyTo);
 
         if (isset($result['error'])) {
             return response()->json(['success' => false, 'error' => $result['error']], 500);
         }
 
-        WhatsAppMessage::create([
+        $msgData = [
             'wa_message_id' => $result['key']['id'] ?? ('sent_' . uniqid()),
             'from_phone' => $phone,
             'from_name' => auth()->user()->name,
@@ -578,7 +601,15 @@ class CrmController extends Controller
             'deal_id' => $deal->id,
             'direction' => 'outbound',
             'delivery_status' => 'sent',
-        ]);
+        ];
+
+        if ($replyTo) {
+            $quoted = $deal->whatsappMessages()->where('wa_message_id', $replyTo)->first();
+            $msgData['reply_to_id'] = $replyTo;
+            $msgData['reply_to_body'] = $quoted?->message_body ? mb_substr($quoted->message_body, 0, 200) : null;
+        }
+
+        WhatsAppMessage::create($msgData);
 
         $deal->logActivity(DealActivityType::WhatsApp, "📤 Mensagem enviada: {$request->message}");
         $deal->updateLastInteraction();
@@ -739,5 +770,110 @@ class CrmController extends Controller
             'exists' => $result['exists'] ?? false,
             'jid' => $result['jid'] ?? null,
         ]);
+    }
+
+    // ─── Real-time: Poll, Presence, Mark Read ────────────────
+
+    public function pollWhatsAppMessages(Request $request, Deal $deal): JsonResponse
+    {
+        $since = $request->get('since');
+        $sinceDate = $since ? \Carbon\Carbon::parse($since) : now()->subSeconds(5);
+
+        $messages = $deal->whatsappMessages()
+            ->where('created_at', '>', $sinceDate)
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(fn ($m) => [
+                'id' => $m->id,
+                'wa_message_id' => $m->wa_message_id,
+                'from_name' => $m->from_name,
+                'message_type' => $m->message_type,
+                'message_body' => $m->message_body,
+                'transcription' => $m->transcription,
+                'direction' => $m->direction,
+                'delivery_status' => $m->delivery_status,
+                'local_media_path' => $m->local_media_path,
+                'reply_to_id' => $m->reply_to_id,
+                'reply_to_body' => $m->reply_to_body,
+                'created_at' => $m->created_at->toISOString(),
+                'time' => $m->created_at->setTimezone('America/Sao_Paulo')->format('H:i'),
+            ]);
+
+        $statusUpdates = $deal->whatsappMessages()
+            ->where('direction', 'outbound')
+            ->where('updated_at', '>', $sinceDate)
+            ->whereColumn('updated_at', '!=', 'created_at')
+            ->get()
+            ->map(fn ($m) => [
+                'wa_message_id' => $m->wa_message_id,
+                'delivery_status' => $m->delivery_status,
+            ]);
+
+        $presenceKey = "wa_presence:" . preg_replace('/\D/', '', $deal->phone ?? '');
+        $presence = Cache::get($presenceKey);
+
+        return response()->json([
+            'messages' => $messages,
+            'status_updates' => $statusUpdates,
+            'presence' => $presence,
+            'server_time' => now()->toISOString(),
+        ]);
+    }
+
+    public function getWhatsAppPresence(Deal $deal): JsonResponse
+    {
+        $phone = preg_replace('/\D/', '', $deal->phone ?? '');
+        $presence = Cache::get("wa_presence:{$phone}");
+
+        return response()->json(['presence' => $presence]);
+    }
+
+    private function syncLeadToWhatsApp(Deal $deal): void
+    {
+        try {
+            $uazapi = app(UazapiService::class);
+            if (!$uazapi->isConfigured() || !$deal->phone) {
+                return;
+            }
+
+            $name = $deal->customer?->name ?? $deal->title;
+            $responsible = $deal->user?->name;
+
+            $notes = collect([
+                "Deal: {$deal->title}",
+                $deal->product_interest ? "Interesse: {$deal->product_interest}" : null,
+                $deal->value ? "Valor: R$ " . number_format($deal->value, 2, ',', '.') : null,
+                $deal->temperature ? "Temp: {$deal->temperature}" : null,
+            ])->filter()->implode(' | ');
+
+            $uazapi->editLead($deal->phone, $name, $responsible, $notes);
+        } catch (\Throwable $e) {
+            Log::warning('Erro ao sincronizar lead WhatsApp', ['error' => $e->getMessage()]);
+        }
+    }
+
+    private function markMessagesAsRead(Deal $deal): void
+    {
+        try {
+            $uazapi = app(UazapiService::class);
+            if (!$uazapi->isConfigured() || !$deal->phone) {
+                return;
+            }
+
+            $unreadMessages = $deal->whatsappMessages()
+                ->where('direction', 'inbound')
+                ->whereNotIn('delivery_status', ['read'])
+                ->orderByDesc('created_at')
+                ->limit(5)
+                ->get();
+
+            foreach ($unreadMessages as $msg) {
+                if ($msg->wa_message_id) {
+                    $uazapi->markRead($msg->wa_message_id);
+                }
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Erro ao marcar mensagens como lidas', ['error' => $e->getMessage()]);
+        }
     }
 }

@@ -61,13 +61,13 @@
                         </svg>
                         + Agendamento
                     </button>
-                    <button @click="showNewDealForm = true" type="button"
-                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; font-size: 0.8rem; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer;">
+                    <a href="{{ route('crm.deals.create') }}"
+                       style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; font-size: 0.8rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; cursor: pointer;">
                         <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        Novo Negócio
-                    </button>
+                        + Novo Lead
+                    </a>
                 </div>
             </div>
 
@@ -101,7 +101,6 @@
                 </div>
             @endif
 
-            @include('crm.partials.modal-new-deal')
             @include('crm.partials.modal-new-customer')
             @include('crm.partials.modal-new-schedule')
 
@@ -344,7 +343,6 @@
     <script>
     function crmBoard() {
         return {
-            showNewDealForm: {{ $errors->any() ? 'true' : 'false' }},
             showCustomerForm: false,
             showScheduleForm: false,
             customerSearch: '',
@@ -458,8 +456,7 @@
         let notifContainer = document.getElementById('wa-notifications');
 
         function canReload() {
-            const hasModal = document.querySelector('[x-data]')?.__x?.$data?.showNewDealForm
-                || document.querySelector('[x-data]')?.__x?.$data?.showCustomerForm
+            const hasModal = document.querySelector('[x-data]')?.__x?.$data?.showCustomerForm
                 || document.querySelector('[x-data]')?.__x?.$data?.showScheduleForm;
             const hasEditing = document.querySelector('[x-show="editingFollowup"]:not([style*="display: none"])');
             return !hasModal && !hasEditing && !document.querySelector('.sortable-ghost');

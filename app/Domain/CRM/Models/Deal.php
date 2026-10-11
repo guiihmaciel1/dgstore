@@ -8,6 +8,7 @@ use App\Domain\CRM\Enums\DealActivityType;
 use App\Domain\CRM\Enums\LeadSource;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Negotiation\Models\NegotiationSnapshot;
+use App\Domain\Schedule\Models\Appointment;
 use App\Domain\User\Models\User;
 use App\Domain\WhatsApp\Models\WhatsAppMessage;
 use Illuminate\Database\Eloquent\Builder;
@@ -115,6 +116,11 @@ class Deal extends Model
     public function productInterests(): HasMany
     {
         return $this->hasMany(ProductInterest::class);
+    }
+
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class)->orderBy('date', 'desc')->orderBy('start_time', 'desc');
     }
 
     // Scopes
