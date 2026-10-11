@@ -13,7 +13,10 @@ use App\Domain\CRM\Models\ProductInterest;
 use App\Domain\Customer\Models\CustomerTag;
 use App\Domain\AI\Services\GeminiService;
 use App\Domain\Schedule\Models\Appointment;
+use App\Domain\WhatsApp\Models\WhatsAppMessage;
+use App\Domain\WhatsApp\Services\UazapiService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -96,6 +99,33 @@ class CrmController extends Controller
             'durationOptions' => Appointment::DURATION_OPTIONS,
             'leadSources' => LeadSource::cases(),
             'allTags' => $allTags,
+        ]);
+    }
+
+    // ─── Poll API (notificacao de novos leads) ─────────────────
+
+    public function newDealsCheck(Request $request): JsonResponse
+    {
+        $since = $request->get('since');
+        $sinceDate = $since ? \Carbon\Carbon::parse($since) : now()->subSeconds(30);
+
+        $newDeals = Deal::where('source', 'whatsapp')
+            ->where('created_at', '>', $sinceDate)
+            ->with('customer:id,name')
+            ->select('id', 'title', 'phone', 'customer_id', 'created_at')
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+
+        return response()->json([
+            'count' => $newDeals->count(),
+            'deals' => $newDeals->map(fn ($d) => [
+                'id' => $d->id,
+                'title' => $d->title,
+                'customer_name' => $d->customer?->name,
+                'created_at' => $d->created_at->toISOString(),
+            ]),
+            'server_time' => now()->toISOString(),
         ]);
     }
 
@@ -191,7 +221,11 @@ class CrmController extends Controller
 
     public function show(Deal $deal): View
     {
-        $deal->load(['customer.tags', 'user', 'stage', 'activities.user', 'productInterests']);
+        $deal->load(['customer.tags', 'user', 'stage', 'activities.user', 'productInterests', 'whatsappMessages']);
+
+        if ($deal->unread_wa_count > 0) {
+            $deal->update(['unread_wa_count' => 0]);
+        }
 
         $allStages = PipelineStage::ordered()->get();
         $activeStages = PipelineStage::where('is_won', false)
@@ -506,5 +540,192 @@ class CrmController extends Controller
         }
 
         return implode("\n", $lines);
+    }
+
+    // ─── WhatsApp Messaging ──────────────────────────────────
+
+    public function sendWhatsApp(Request $request, Deal $deal): JsonResponse
+    {
+        $request->validate(['message' => 'required|string|max:4096']);
+
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $phone = $deal->phone;
+        if (!$phone) {
+            return response()->json(['success' => false, 'error' => 'Deal sem telefone'], 422);
+        }
+
+        $result = $uazapi->sendText($phone, $request->message);
+
+        if (isset($result['error'])) {
+            return response()->json(['success' => false, 'error' => $result['error']], 500);
+        }
+
+        WhatsAppMessage::create([
+            'wa_message_id' => $result['key']['id'] ?? ('sent_' . uniqid()),
+            'from_phone' => $phone,
+            'from_name' => auth()->user()->name,
+            'message_type' => 'text',
+            'message_body' => $request->message,
+            'raw_payload' => $result,
+            'deal_id' => $deal->id,
+            'direction' => 'outbound',
+            'delivery_status' => 'sent',
+        ]);
+
+        $deal->logActivity(DealActivityType::WhatsApp, "📤 Mensagem enviada: {$request->message}");
+        $deal->updateLastInteraction();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function sendWhatsAppMedia(Request $request, Deal $deal): JsonResponse
+    {
+        $request->validate([
+            'media' => 'required|file|max:16384',
+            'caption' => 'nullable|string|max:1024',
+        ]);
+
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $phone = $deal->phone;
+        if (!$phone) {
+            return response()->json(['success' => false, 'error' => 'Deal sem telefone'], 422);
+        }
+
+        $file = $request->file('media');
+        $path = $file->store("whatsapp/sent/{$deal->id}", 'public');
+        $publicUrl = url("storage/{$path}");
+
+        $isImage = str_starts_with($file->getMimeType(), 'image/');
+        $result = $isImage
+            ? $uazapi->sendImage($phone, $publicUrl, $request->caption)
+            : $uazapi->sendDocument($phone, $publicUrl, $file->getClientOriginalName());
+
+        if (isset($result['error'])) {
+            return response()->json(['success' => false, 'error' => $result['error']], 500);
+        }
+
+        WhatsAppMessage::create([
+            'wa_message_id' => $result['key']['id'] ?? ('sent_media_' . uniqid()),
+            'from_phone' => $phone,
+            'from_name' => auth()->user()->name,
+            'message_type' => $isImage ? 'image' : 'document',
+            'message_body' => $request->caption ?? "📎 {$file->getClientOriginalName()}",
+            'raw_payload' => $result,
+            'deal_id' => $deal->id,
+            'direction' => 'outbound',
+            'delivery_status' => 'sent',
+        ]);
+
+        $deal->logActivity(DealActivityType::WhatsApp, "📤 Mídia enviada: {$file->getClientOriginalName()}");
+        $deal->updateLastInteraction();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function getWhatsAppMessages(Deal $deal): JsonResponse
+    {
+        $messages = $deal->whatsappMessages()
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->map(fn ($m) => [
+                'id' => $m->id,
+                'wa_message_id' => $m->wa_message_id,
+                'from_name' => $m->from_name,
+                'message_type' => $m->message_type,
+                'message_body' => $m->message_body,
+                'transcription' => $m->transcription,
+                'direction' => $m->direction,
+                'delivery_status' => $m->delivery_status,
+                'created_at' => $m->created_at->toISOString(),
+            ]);
+
+        return response()->json(['messages' => $messages]);
+    }
+
+    public function downloadWhatsAppMedia(Deal $deal, string $messageId): JsonResponse
+    {
+        $message = $deal->whatsappMessages()->where('id', $messageId)->firstOrFail();
+        $waId = $message->wa_message_id;
+
+        $uazapi = app(UazapiService::class);
+        $result = $uazapi->downloadMedia($waId);
+
+        if (isset($result['error'])) {
+            return response()->json(['success' => false, 'error' => $result['error']], 500);
+        }
+
+        return response()->json(['success' => true, 'data' => $result]);
+    }
+
+    public function sendWhatsAppMenu(Request $request, Deal $deal): JsonResponse
+    {
+        $request->validate([
+            'title' => 'required|string|max:60',
+            'body' => 'required|string|max:1024',
+            'type' => 'required|in:buttons,list',
+            'buttons' => 'required_if:type,buttons|array|min:1|max:3',
+            'buttons.*.text' => 'required_if:type,buttons|string|max:20',
+            'sections' => 'required_if:type,list|array|min:1',
+            'button_text' => 'required_if:type,list|string|max:20',
+        ]);
+
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured() || !$deal->phone) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada ou deal sem telefone'], 500);
+        }
+
+        $result = $request->type === 'buttons'
+            ? $uazapi->sendMenu($deal->phone, $request->title, $request->body, $request->buttons)
+            : $uazapi->sendList($deal->phone, $request->title, $request->body, $request->button_text, $request->sections);
+
+        if (isset($result['error'])) {
+            return response()->json(['success' => false, 'error' => $result['error']], 500);
+        }
+
+        $desc = $request->type === 'buttons'
+            ? "📋 Menu com botões: {$request->title}"
+            : "📋 Lista interativa: {$request->title}";
+
+        WhatsAppMessage::create([
+            'wa_message_id' => $result['key']['id'] ?? ('menu_' . uniqid()),
+            'from_phone' => $deal->phone,
+            'from_name' => auth()->user()->name,
+            'message_type' => 'interactive',
+            'message_body' => "{$request->title}\n{$request->body}",
+            'raw_payload' => $result,
+            'deal_id' => $deal->id,
+            'direction' => 'outbound',
+            'delivery_status' => 'sent',
+        ]);
+
+        $deal->logActivity(DealActivityType::WhatsApp, "📤 {$desc}");
+
+        return response()->json(['success' => true]);
+    }
+
+    public function checkWhatsAppNumber(Request $request): JsonResponse
+    {
+        $request->validate(['phone' => 'required|string']);
+
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $result = $uazapi->checkNumber($request->phone);
+
+        return response()->json([
+            'success' => true,
+            'exists' => $result['exists'] ?? false,
+            'jid' => $result['jid'] ?? null,
+        ]);
     }
 }

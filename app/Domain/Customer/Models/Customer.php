@@ -25,12 +25,18 @@ class Customer extends Model
         'notes',
         'birth_date',
         'instagram',
+        'wa_avatar_url',
+        'wa_avatar_cached_at',
+        'wa_is_business',
+        'wa_business_name',
     ];
 
     protected function casts(): array
     {
         return [
             'birth_date' => 'date',
+            'wa_avatar_cached_at' => 'datetime',
+            'wa_is_business' => 'boolean',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',

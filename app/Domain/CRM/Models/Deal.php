@@ -40,6 +40,7 @@ class Deal extends Model
         'next_action',
         'next_action_at',
         'last_interaction_at',
+        'unread_wa_count',
     ];
 
     protected function casts(): array

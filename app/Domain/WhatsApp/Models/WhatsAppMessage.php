@@ -21,10 +21,15 @@ class WhatsAppMessage extends Model
         'from_name',
         'message_type',
         'message_body',
+        'transcription',
         'referral_source',
         'referral_headline',
         'raw_payload',
         'deal_id',
+        'delivery_status',
+        'direction',
+        'local_media_path',
+        'media_mime_type',
     ];
 
     protected function casts(): array

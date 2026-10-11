@@ -16,6 +16,7 @@ use App\Presentation\Http\Controllers\ValuationController;
 use App\Presentation\Http\Controllers\ImeiLookupController;
 use App\Presentation\Http\Controllers\ToolController;
 use App\Presentation\Http\Controllers\WarrantyController;
+use App\Presentation\Http\Controllers\CampaignController;
 use App\Presentation\Http\Controllers\CrmController;
 use App\Presentation\Http\Controllers\FinanceController;
 use App\Presentation\Http\Controllers\MarketingController;
@@ -155,6 +156,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/crm/deals/{deal}/activities', [CrmController::class, 'storeActivity'])->name('crm.deals.activities.store');
         Route::post('/api/crm/deals/{deal}/ai-message', [CrmController::class, 'aiSuggestMessage'])->name('crm.deals.ai-message');
         Route::post('/api/crm/deals/{deal}/ai-analysis', [CrmController::class, 'aiAnalyzeDeal'])->name('crm.deals.ai-analysis');
+        Route::get('/api/crm/new-deals-check', [CrmController::class, 'newDealsCheck'])->name('crm.deals.check');
+        Route::post('/crm/deals/{deal}/whatsapp/send', [CrmController::class, 'sendWhatsApp'])->name('crm.deals.wa.send');
+        Route::post('/crm/deals/{deal}/whatsapp/send-media', [CrmController::class, 'sendWhatsAppMedia'])->name('crm.deals.wa.send-media');
+        Route::get('/crm/deals/{deal}/whatsapp/messages', [CrmController::class, 'getWhatsAppMessages'])->name('crm.deals.wa.messages');
+        Route::get('/crm/deals/{deal}/whatsapp/media/{messageId}', [CrmController::class, 'downloadWhatsAppMedia'])->name('crm.deals.wa.media');
+        Route::get('/api/crm/check-number', [CrmController::class, 'checkWhatsAppNumber'])->name('crm.check-number');
+        Route::post('/crm/deals/{deal}/whatsapp/send-menu', [CrmController::class, 'sendWhatsAppMenu'])->name('crm.deals.wa.send-menu');
+
+        // Campanhas WhatsApp
+        Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
+        Route::get('/campaigns/create', [CampaignController::class, 'create'])->name('campaigns.create');
+        Route::post('/campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
+        Route::get('/campaigns/{campaign}', [CampaignController::class, 'show'])->name('campaigns.show');
+        Route::post('/campaigns/{campaign}/send', [CampaignController::class, 'send'])->name('campaigns.send');
+        Route::delete('/campaigns/{campaign}', [CampaignController::class, 'destroy'])->name('campaigns.destroy');
 
         // Produtos
         Route::get('/products/labels/batch', [ProductController::class, 'labelBatch'])->name('products.label-batch');

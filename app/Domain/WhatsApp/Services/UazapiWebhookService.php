@@ -8,6 +8,7 @@ use App\Domain\CRM\Enums\DealActivityType;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\System\Models\SystemSetting;
 use App\Domain\User\Models\User;
 use App\Domain\WhatsApp\Models\WhatsAppMessage;
 use Illuminate\Support\Facades\Log;
@@ -103,22 +104,67 @@ class UazapiWebhookService
         ]);
 
         $deal = $this->findOrCreateDeal($fromPhone, $senderName);
-        $whatsappMessage->update(['deal_id' => $deal->id]);
+        $whatsappMessage->update(['deal_id' => $deal->id, 'direction' => 'inbound']);
         $this->logMessageActivity($deal, $messageBody, $messageType, $senderName);
+
+        $this->downloadMediaIfNeeded($whatsappMessage, $messageType);
+
+        $deal->increment('unread_wa_count');
+        $deal->updateLastInteraction();
+
+        $this->sendAwayMessageIfNeeded($deal, $fromPhone);
 
         Log::info('UazAPI: mensagem processada com sucesso', [
             'wa_message_id' => $waMessageId,
             'from' => $fromPhone,
             'name' => $senderName,
             'deal_id' => $deal->id,
+            'unread' => $deal->unread_wa_count,
         ]);
     }
 
     private function processMessageUpdate(array $payload): void
     {
-        Log::debug('UazAPI: message status update', [
-            'event' => $payload['event'] ?? null,
-        ]);
+        $update = $payload['message'] ?? $payload['event'] ?? null;
+
+        if (!$update) {
+            return;
+        }
+
+        $messageId = $update['id'] ?? $update['key']['id'] ?? null;
+        $status = $update['status'] ?? $update['ack'] ?? null;
+
+        if (!$messageId || !$status) {
+            Log::debug('UazAPI: message_update sem id/status', ['payload' => $update]);
+            return;
+        }
+
+        $statusMap = [
+            'PENDING' => 'pending',
+            'SENT' => 'sent',
+            'SERVER_ACK' => 'sent',
+            'DELIVERY_ACK' => 'delivered',
+            'READ' => 'read',
+            'PLAYED' => 'read',
+            0 => 'pending',
+            1 => 'sent',
+            2 => 'delivered',
+            3 => 'read',
+            4 => 'read',
+        ];
+
+        $normalizedStatus = $statusMap[$status] ?? (is_string($status) ? strtolower($status) : 'sent');
+
+        $message = WhatsAppMessage::where('wa_message_id', $messageId)->first();
+
+        if ($message) {
+            $message->update(['delivery_status' => $normalizedStatus]);
+
+            Log::debug('UazAPI: status atualizado', [
+                'wa_message_id' => $messageId,
+                'status' => $normalizedStatus,
+            ]);
+        }
     }
 
     private function processConnectionEvent(array $payload): void
@@ -278,6 +324,7 @@ class UazapiWebhookService
 
         if ($customer) {
             $this->enrichCustomerData($customer, $contactName);
+            $this->enrichWhatsAppProfile($customer);
             return $customer;
         }
 
@@ -292,7 +339,18 @@ class UazapiWebhookService
             'phone' => $normalized,
         ]);
 
+        $this->enrichWhatsAppProfile($customer);
+
         return $customer;
+    }
+
+    private function enrichWhatsAppProfile(Customer $customer): void
+    {
+        try {
+            app(CustomerEnrichmentService::class)->enrich($customer);
+        } catch (\Throwable $e) {
+            Log::warning('UazAPI: falha ao enriquecer perfil WhatsApp', ['customer_id' => $customer->id]);
+        }
     }
 
     /**
@@ -318,6 +376,85 @@ class UazapiWebhookService
                 'new_name' => $contactName,
             ]);
         }
+    }
+
+    /**
+     * Tenta baixar e armazenar mídia recebida.
+     */
+    private function downloadMediaIfNeeded(WhatsAppMessage $message, string $messageType): void
+    {
+        $mediaTypes = ['image', 'imageMessage', 'video', 'videoMessage', 'audio', 'audioMessage', 'ptt', 'pttMessage', 'document', 'documentMessage'];
+
+        if (!in_array($messageType, $mediaTypes)) {
+            return;
+        }
+
+        try {
+            $mediaService = app(MediaDownloadService::class);
+            $mediaService->downloadAndStore($message);
+        } catch (\Throwable $e) {
+            Log::warning('UazAPI: falha ao baixar mídia (será tentado depois)', ['msg_id' => $message->id, 'error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Envia mensagem de ausência fora do horário comercial.
+     * Durante horário comercial: apenas notifica no CRM (sem mensagem automática).
+     */
+    private function sendAwayMessageIfNeeded(Deal $deal, string $phone): void
+    {
+        $awayEnabled = SystemSetting::get('wa_away_enabled', 'false');
+        if ($awayEnabled !== 'true') {
+            return;
+        }
+
+        if ($this->isWithinBusinessHours()) {
+            return;
+        }
+
+        $lastAway = $deal->source_metadata['last_away_sent'] ?? null;
+        if ($lastAway && now()->diffInMinutes(\Carbon\Carbon::parse($lastAway)) < 30) {
+            return;
+        }
+
+        $awayMessage = SystemSetting::get(
+            'wa_away_message',
+            'Olá! No momento estamos fora do horário de atendimento. Responderemos assim que possível. Obrigado!'
+        );
+
+        try {
+            $uazapi = app(UazapiService::class);
+            $jid = str_contains($phone, '@') ? $phone : $phone . '@s.whatsapp.net';
+            $uazapi->sendText($jid, $awayMessage);
+
+            $metadata = $deal->source_metadata ?? [];
+            $metadata['last_away_sent'] = now()->toISOString();
+            $deal->update(['source_metadata' => $metadata]);
+
+            Log::info('UazAPI: mensagem de ausência enviada', ['deal_id' => $deal->id, 'phone' => $phone]);
+        } catch (\Throwable $e) {
+            Log::error('UazAPI: falha ao enviar mensagem de ausência', ['error' => $e->getMessage()]);
+        }
+    }
+
+    private function isWithinBusinessHours(): bool
+    {
+        $now = now()->setTimezone('America/Sao_Paulo');
+        $dayOfWeek = $now->dayOfWeek;
+
+        if ($dayOfWeek === 0) {
+            return false;
+        }
+
+        $startHour = (int) SystemSetting::get('wa_business_start', '9');
+        $endHour = (int) SystemSetting::get('wa_business_end', '18');
+
+        if ($dayOfWeek === 6) {
+            $endHour = min($endHour, 13);
+        }
+
+        $hour = $now->hour;
+        return $hour >= $startHour && $hour < $endHour;
     }
 
     private function getDefaultAssignee(): User

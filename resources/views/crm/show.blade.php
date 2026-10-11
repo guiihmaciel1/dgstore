@@ -82,9 +82,21 @@
                                 @if($deal->customer)
                                     <div>
                                         <span style="color: #818181; font-weight: 600; font-size: 0.7rem; display: block;">Cliente</span>
-                                        <a href="{{ route('customers.show', $deal->customer) }}" style="color: #3b82f6; text-decoration: none; margin-top: 2px; display: block;">
-                                            {{ $deal->customer->name }}
-                                        </a>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 2px;">
+                                            @if($deal->customer->wa_avatar_url)
+                                                <img src="{{ $deal->customer->wa_avatar_url }}" alt="" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid #333;">
+                                            @endif
+                                            <div>
+                                                <a href="{{ route('customers.show', $deal->customer) }}" style="color: #3b82f6; text-decoration: none; display: block;">
+                                                    {{ $deal->customer->name }}
+                                                </a>
+                                                @if($deal->customer->wa_is_business)
+                                                    <span style="font-size: 0.6rem; font-weight: 600; padding: 1px 5px; border-radius: 4px; background: rgba(37,211,102,0.15); color: #25D366;">
+                                                        {{ $deal->customer->wa_business_name ?: 'WhatsApp Business' }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
                                         @if($deal->customer->tags->isNotEmpty())
                                             <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.375rem;">
                                                 @foreach($deal->customer->tags as $ctag)
@@ -421,6 +433,11 @@
                                 Etapa atual: <strong style="color: {{ $deal->stage->color }};">{{ $deal->stage->name }}</strong>
                             </div>
                         </div>
+
+                        {{-- WhatsApp Chat --}}
+                        @if($deal->phone)
+                            @include('crm.partials.whatsapp-chat', ['deal' => $deal])
+                        @endif
 
                         {{-- Timeline de Atividades --}}
                         <div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1rem;">

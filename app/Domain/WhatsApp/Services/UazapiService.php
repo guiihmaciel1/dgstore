@@ -134,6 +134,123 @@ class UazapiService
     }
 
     /**
+     * Download de mídia de uma mensagem. Com transcribe=true, transcreve áudios.
+     */
+    public function downloadMedia(string $messageId, bool $transcribe = false): array
+    {
+        $payload = ['id' => $messageId];
+        if ($transcribe) {
+            $payload['transcribe'] = true;
+        }
+
+        return $this->post('/message/download', $payload);
+    }
+
+    /**
+     * Busca avatar (foto de perfil) de um chat.
+     */
+    public function getChatAvatar(string $number): array
+    {
+        return $this->post('/chat/avatar', [
+            'number' => $this->normalizeNumber($number),
+        ]);
+    }
+
+    /**
+     * Busca detalhes do chat (nome business, etc).
+     */
+    public function getChatDetails(string $number): array
+    {
+        return $this->post('/chat/details', [
+            'number' => $this->normalizeNumber($number),
+        ]);
+    }
+
+    /**
+     * Verifica se um número existe no WhatsApp.
+     */
+    public function checkNumber(string $number): array
+    {
+        return $this->post('/contacts', [
+            'number' => $this->normalizeNumber($number),
+        ]);
+    }
+
+    /**
+     * Busca etiquetas (labels) do WhatsApp.
+     */
+    public function getLabels(): array
+    {
+        return $this->get('/chat/labels');
+    }
+
+    /**
+     * Aplica etiqueta a um chat.
+     */
+    public function setLabel(string $number, string $labelId): array
+    {
+        return $this->post('/chat/labels', [
+            'number' => $this->normalizeNumber($number),
+            'labelId' => $labelId,
+        ]);
+    }
+
+    /**
+     * Envia menu interativo com botões.
+     */
+    public function sendMenu(string $number, string $title, string $body, array $buttons): array
+    {
+        return $this->post('/send/menu', [
+            'number' => $this->normalizeNumber($number),
+            'title' => $title,
+            'text' => $body,
+            'buttons' => $buttons,
+        ]);
+    }
+
+    /**
+     * Envia mensagem de lista.
+     */
+    public function sendList(string $number, string $title, string $body, string $buttonText, array $sections): array
+    {
+        return $this->post('/send/menu', [
+            'number' => $this->normalizeNumber($number),
+            'title' => $title,
+            'text' => $body,
+            'buttonText' => $buttonText,
+            'sections' => $sections,
+        ]);
+    }
+
+    /**
+     * Envio simples para campanhas (sender/simple).
+     */
+    public function senderSimple(array $numbers, string $text, ?string $mediaUrl = null): array
+    {
+        $payload = [
+            'numbers' => array_map(fn ($n) => $this->normalizeNumber($n), $numbers),
+            'text' => $text,
+        ];
+
+        if ($mediaUrl) {
+            $payload['file'] = $mediaUrl;
+        }
+
+        return $this->post('/sender/simple', $payload);
+    }
+
+    /**
+     * Envia mensagem assíncrona (para filas).
+     */
+    public function sendAsync(string $number, string $text): array
+    {
+        return $this->post('/message/async', [
+            'number' => $this->normalizeNumber($number),
+            'text' => $text,
+        ]);
+    }
+
+    /**
      * Normaliza número para formato internacional sem +.
      */
     private function normalizeNumber(string $number): string

@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controllers;
 
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Models\CustomerTag;
+use App\Domain\WhatsApp\Services\LabelSyncService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -69,6 +70,12 @@ class CustomerTagController extends Controller
             $customer->tags()->attach($validated['tag_id'], [
                 'tagged_by' => auth()->id(),
             ]);
+
+            try {
+                app(LabelSyncService::class)->syncToWhatsApp($customer->fresh()->load('tags'));
+            } catch (\Throwable $e) {
+                // Falha no sync WhatsApp não deve impedir a operação
+            }
         }
 
         return response()->json([

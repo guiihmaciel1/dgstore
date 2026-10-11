@@ -21,3 +21,5 @@ Schedule::command('dollar:reset')->dailyAt('00:01');
 Schedule::command('dollar:fetch-cp')->everyThirtyMinutes();
 Schedule::command('radar:fetch-prices')->hourly();
 Schedule::command('purchase-requests:expire')->hourly();
+Schedule::command('whatsapp:process-media --limit=20')->everyFiveMinutes();
+Schedule::command('whatsapp:enrich-customers --limit=10')->everyThirtyMinutes();

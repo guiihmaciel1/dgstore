@@ -1,5 +1,9 @@
 <x-app-layout>
     <x-slot name="title">CRM - Pipeline</x-slot>
+    <style>
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes pulse-badge { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+    </style>
     @php
         $activeStages = \App\Domain\CRM\Models\PipelineStage::where('is_won', false)->where('is_lost', false)->orderBy('position')->get();
     @endphp
@@ -180,19 +184,31 @@
                                             @endif
                                         </div>
 
-                                        <div style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3; line-height: 1.3; display: flex; align-items: baseline; gap: 0.375rem;">
-                                            <span>{{ $deal->title }}</span>
+                                        <div style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3; line-height: 1.3; display: flex; align-items: center; gap: 0.375rem;">
+                                            <span style="flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $deal->title }}</span>
                                             @if($deal->phone)
                                                 <span style="font-size: 0.6rem; font-weight: 500; color: #666666; flex-shrink: 0;">{{ substr(preg_replace('/\D/', '', $deal->phone), -4) }}</span>
+                                            @endif
+                                            @if($deal->unread_wa_count > 0)
+                                                <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: #25D366; color: #000; font-size: 0.65rem; font-weight: 700; flex-shrink: 0; animation: pulse-badge 2s infinite;" title="{{ $deal->unread_wa_count }} mensagens não lidas">
+                                                    {{ $deal->unread_wa_count }}
+                                                </span>
                                             @endif
                                         </div>
 
                                         @if($deal->customer)
-                                            <div style="font-size: 0.7rem; color: #818181; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.25rem;">
-                                                <svg style="width: 12px; height: 12px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                                </svg>
-                                                {{ $deal->customer->name }}
+                                            <div style="font-size: 0.7rem; color: #818181; margin-top: 0.25rem; display: flex; align-items: center; gap: 0.35rem;">
+                                                @if($deal->customer->wa_avatar_url)
+                                                    <img src="{{ $deal->customer->wa_avatar_url }}" alt="" style="width: 16px; height: 16px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid #333;">
+                                                @else
+                                                    <svg style="width: 12px; height: 12px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                                    </svg>
+                                                @endif
+                                                <span>{{ $deal->customer->name }}</span>
+                                                @if($deal->customer->wa_is_business)
+                                                    <span style="font-size: 0.5rem; font-weight: 700; padding: 0px 3px; border-radius: 3px; background: rgba(37,211,102,0.15); color: #25D366; flex-shrink: 0;" title="{{ $deal->customer->wa_business_name }}">BIZ</span>
+                                                @endif
                                             </div>
                                             @if($deal->customer->tags->isNotEmpty())
                                                 <div style="display: flex; gap: 0.2rem; flex-wrap: wrap; margin-top: 0.25rem;">
@@ -467,16 +483,59 @@
             el.innerHTML = el.textContent.replace(/~([^~]+)~/g, '<s style="opacity: 0.5;">$1</s>');
         });
 
-        // Auto-refresh a cada 15 segundos (não recarrega se modal aberto ou drag em andamento)
-        setInterval(function() {
+        const notifSound = new Audio('/sounds/notification.mp3');
+        let lastCheck = new Date().toISOString();
+        let notifContainer = document.getElementById('wa-notifications');
+
+        function canReload() {
             const hasModal = document.querySelector('[x-data]')?.__x?.$data?.showNewDealForm
                 || document.querySelector('[x-data]')?.__x?.$data?.showCustomerForm
                 || document.querySelector('[x-data]')?.__x?.$data?.showScheduleForm;
             const hasEditing = document.querySelector('[x-show="editingFollowup"]:not([style*="display: none"])');
-            if (!hasModal && !hasEditing && !document.querySelector('.sortable-ghost')) {
-                window.location.reload();
-            }
-        }, 15000);
+            return !hasModal && !hasEditing && !document.querySelector('.sortable-ghost');
+        }
+
+        async function pollNewDeals() {
+            try {
+                const res = await fetch(`/api/crm/new-deals-check?since=${encodeURIComponent(lastCheck)}`);
+                const data = await res.json();
+                lastCheck = data.server_time;
+
+                if (data.count > 0) {
+                    data.deals.forEach(d => {
+                        showNotification(d);
+                    });
+                    try { notifSound.play(); } catch(e) {}
+                    if (canReload()) {
+                        setTimeout(() => window.location.reload(), 2000);
+                    }
+                }
+            } catch(e) {}
+        }
+
+        function showNotification(deal) {
+            const toast = document.createElement('div');
+            toast.innerHTML = `
+                <a href="/crm/deals/${deal.id}" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: inherit;">
+                    <svg style="width: 20px; height: 20px; color: #25D366; flex-shrink: 0;" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                    </svg>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.8rem;">Novo lead via WhatsApp</div>
+                        <div style="font-size: 0.75rem; color: #a4a4a4;">${deal.customer_name || deal.title}</div>
+                    </div>
+                </a>
+            `;
+            toast.style.cssText = 'position: fixed; top: 1rem; right: 1rem; z-index: 9999; padding: 0.75rem 1rem; background: #1a1a1a; border: 1px solid #25D366; border-radius: 0.75rem; box-shadow: 0 4px 20px rgba(37,211,102,0.2); animation: slideIn 0.3s ease-out; min-width: 250px;';
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; setTimeout(() => toast.remove(), 500); }, 8000);
+        }
+
+        setInterval(pollNewDeals, 5000);
+
+        setInterval(function() {
+            if (canReload()) window.location.reload();
+        }, 30000);
     });
 
     window.toggleTag = async function(customerId, tagId, hasTag) {
