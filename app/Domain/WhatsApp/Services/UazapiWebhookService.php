@@ -54,15 +54,20 @@ class UazapiWebhookService
             return;
         }
 
-        $waMessageId = $message['id'] ?? $message['key']['id'] ?? null;
-        $fromMe = $message['key']['fromMe'] ?? $message['fromMe'] ?? false;
+        $waMessageId = $message['id'] ?? $message['messageid'] ?? $message['key']['id'] ?? null;
+        $fromMe = $message['fromMe'] ?? $message['key']['fromMe'] ?? false;
+        $chatId = $message['chatid'] ?? $message['key']['remoteJid'] ?? null;
+        $senderName = $message['senderName'] ?? $message['pushName'] ?? null;
+        $messageType = $message['messageType'] ?? $message['type'] ?? 'text';
+        $isGroup = $message['isGroup'] ?? false;
 
         Log::info('UazAPI processMessage: analisando', [
             'wa_message_id' => $waMessageId,
             'fromMe' => $fromMe,
-            'remoteJid' => $message['key']['remoteJid'] ?? $message['remoteJid'] ?? 'N/A',
-            'pushName' => $message['pushName'] ?? 'N/A',
-            'messageType' => $message['messageType'] ?? 'N/A',
+            'chatid' => $chatId,
+            'senderName' => $senderName,
+            'messageType' => $messageType,
+            'isGroup' => $isGroup,
         ]);
 
         if ($fromMe) {
@@ -70,41 +75,41 @@ class UazapiWebhookService
             return;
         }
 
-        $remoteJid = $message['key']['remoteJid'] ?? $message['remoteJid'] ?? null;
-        if (!$remoteJid || str_ends_with($remoteJid, '@g.us') || str_ends_with($remoteJid, '@newsletter')) {
-            Log::debug('UazAPI processMessage: ignorado (grupo/newsletter/sem jid)', ['jid' => $remoteJid]);
+        if (!$chatId || $isGroup || str_ends_with($chatId, '@g.us') || str_ends_with($chatId, '@newsletter')) {
+            Log::debug('UazAPI processMessage: ignorado (grupo/newsletter/sem jid)', ['jid' => $chatId]);
             return;
         }
 
-        $fromPhone = preg_replace('/@.*$/', '', $remoteJid);
-        $pushName = $message['pushName'] ?? $message['verifiedBizName'] ?? null;
-        $messageType = $message['messageType'] ?? 'text';
-        $messageBody = $this->extractBody($message);
+        $fromPhone = preg_replace('/@.*$/', '', $chatId);
+        $messageBody = $message['text'] ?? $this->extractBody($message);
 
         if (!$waMessageId || !$fromPhone) {
+            Log::warning('UazAPI processMessage: sem ID ou telefone', ['id' => $waMessageId, 'phone' => $fromPhone]);
             return;
         }
 
         if (WhatsAppMessage::where('wa_message_id', $waMessageId)->exists()) {
+            Log::debug('UazAPI processMessage: mensagem duplicada', ['id' => $waMessageId]);
             return;
         }
 
         $whatsappMessage = WhatsAppMessage::create([
             'wa_message_id' => $waMessageId,
             'from_phone' => $fromPhone,
-            'from_name' => $pushName,
+            'from_name' => $senderName,
             'message_type' => $messageType,
             'message_body' => $messageBody,
             'raw_payload' => $message,
         ]);
 
-        $deal = $this->findOrCreateDeal($fromPhone, $pushName);
+        $deal = $this->findOrCreateDeal($fromPhone, $senderName);
         $whatsappMessage->update(['deal_id' => $deal->id]);
-        $this->logMessageActivity($deal, $messageBody, $messageType, $pushName);
+        $this->logMessageActivity($deal, $messageBody, $messageType, $senderName);
 
-        Log::info('UazAPI: mensagem processada', [
+        Log::info('UazAPI: mensagem processada com sucesso', [
             'wa_message_id' => $waMessageId,
             'from' => $fromPhone,
+            'name' => $senderName,
             'deal_id' => $deal->id,
         ]);
     }
