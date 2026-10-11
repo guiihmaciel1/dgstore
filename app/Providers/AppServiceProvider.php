@@ -43,15 +43,17 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Sale::class, SalePolicy::class);
         Gate::policy(Customer::class, CustomerPolicy::class);
 
-        // Compartilha contagem de deals abertos com a navigation
+        // Compartilha contagem de deals aguardando resposta com a navigation
         View::composer('layouts.navigation', function ($view) {
-            $openDealsCount = 0;
+            $pendingReplyCount = 0;
 
             if (auth()->check()) {
-                $openDealsCount = Deal::open()->count();
+                $pendingReplyCount = Deal::open()
+                    ->where('unread_wa_count', '>', 0)
+                    ->count();
             }
 
-            $view->with('openDealsCount', $openDealsCount);
+            $view->with('openDealsCount', $pendingReplyCount);
         });
     }
 }
