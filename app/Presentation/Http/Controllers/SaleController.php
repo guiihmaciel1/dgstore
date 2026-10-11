@@ -336,6 +336,73 @@ class SaleController extends Controller
         return $pdf->stream("recibo-assinado-{$sale->sale_number}.pdf");
     }
 
+    public function sendReceiptWhatsApp(Sale $sale): JsonResponse
+    {
+        $sale->load(['items.product', 'customer', 'user', 'seller', 'tradeIns']);
+
+        if (!$sale->customer?->phone) {
+            return response()->json(['success' => false, 'error' => 'Cliente sem telefone cadastrado.'], 422);
+        }
+
+        $uazapi = app(\App\Domain\WhatsApp\Services\UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'WhatsApp não configurado.'], 500);
+        }
+
+        $phone = preg_replace('/\D/', '', $sale->customer->phone);
+
+        $items = $sale->items->map(function ($item) {
+            $line = "• {$item->product_name}";
+            $snapshot = $item->product_snapshot ?? [];
+            $storage = $snapshot['storage'] ?? $item->product?->storage ?? null;
+            if ($storage) {
+                $line .= " {$storage}";
+            }
+            $line .= " — {$item->formatted_unit_price}";
+            return $line;
+        })->implode("\n");
+
+        $paymentInfo = $sale->payment_method->label();
+        if ($sale->installments > 1) {
+            $paymentInfo .= " ({$sale->installments}x de {$sale->formatted_installment_value})";
+        }
+
+        $message = "📋 *COMPROVANTE DE VENDA*\n";
+        $message .= "━━━━━━━━━━━━━━━\n\n";
+        $message .= "🔢 *Venda:* {$sale->sale_number}\n";
+        $message .= "📅 *Data:* {$sale->sold_at->format('d/m/Y H:i')}\n\n";
+        $message .= "👤 *Cliente:* {$sale->customer->name}\n\n";
+        $message .= "📦 *Itens:*\n{$items}\n\n";
+
+        if ($sale->discount > 0) {
+            $message .= "🏷️ *Desconto:* -{$sale->formatted_discount}\n";
+        }
+        if ($sale->trade_in_value > 0) {
+            $tradeInDesc = $sale->tradeIns->map(function ($ti) {
+                $parts = [$ti->device_name];
+                if ($ti->storage) {
+                    $parts[] = $ti->storage;
+                }
+                return implode(' ', $parts);
+            })->implode(', ') ?: 'Aparelho recebido';
+            $message .= "🔄 *Trade-in:* {$tradeInDesc} (-R$ " . number_format((float)$sale->trade_in_value, 2, ',', '.') . ")\n";
+        }
+
+        $message .= "\n💰 *TOTAL: {$sale->formatted_total}*\n";
+        $message .= "💳 *Pagamento:* {$paymentInfo}\n\n";
+        $message .= "━━━━━━━━━━━━━━━\n";
+        $message .= "✅ *DG Store*\n";
+        $message .= "_Obrigado pela preferência!_";
+
+        $result = $uazapi->sendText($phone, $message);
+
+        if (isset($result['error'])) {
+            return response()->json(['success' => false, 'error' => $result['error']], 500);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Recibo enviado via WhatsApp!']);
+    }
+
     public function followup(Request $request, Sale $sale): JsonResponse
     {
         $request->validate([

@@ -237,18 +237,10 @@
                         @endif
                     </a>
 
-                    <!-- Link: Campanhas -->
-                    <a href="{{ route('campaigns.index') }}" class="inline-flex items-center px-3 py-2 text-sm font-medium {{ request()->routeIs('campaigns.*') ? 'text-white bg-surface-overlay rounded-lg' : 'text-dg-300 hover:text-white hover:bg-surface-overlay rounded-lg' }} transition">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
-                        </svg>
-                        Campanhas
-                    </a>
-
                     <!-- Dropdown: Ferramentas -->
                     <div class="relative">
                         <button @click="toolsOpen = !toolsOpen; commercialOpen = false; financeOpen = false; stockOpen = false" 
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || (request()->routeIs('tools.*') && !request()->routeIs('tools.negotiation-simulator')) || request()->routeIs('crm.*') || request()->routeIs('reports.*') ? 'text-white bg-surface-overlay' : 'text-dg-300 hover:text-white hover:bg-surface-overlay' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition {{ request()->routeIs('valuations.*') || request()->routeIs('imei-lookup') || (request()->routeIs('tools.*') && !request()->routeIs('tools.negotiation-simulator')) || request()->routeIs('crm.*') || request()->routeIs('reports.*') || request()->routeIs('campaigns.*') ? 'text-white bg-surface-overlay' : 'text-dg-300 hover:text-white hover:bg-surface-overlay' }}">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -327,6 +319,12 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     Histórico CRM
+                                </a>
+                                <a href="{{ route('campaigns.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('campaigns.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                                    </svg>
+                                    Campanhas WhatsApp
                                 </a>
                                 @if(auth()->user()->isAdminGeral())
                                     <div class="border-t border-border my-1"></div>
@@ -581,6 +579,9 @@
                 </a>
                 <a href="{{ route('crm.history') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('crm.history') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Histórico CRM
+                </a>
+                <a href="{{ route('campaigns.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('campaigns.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
+                    Campanhas WhatsApp
                 </a>
                 @endif
             </div>

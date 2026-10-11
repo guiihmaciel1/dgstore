@@ -214,6 +214,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/sales/{sale}/receipt', [SaleController::class, 'receipt'])->name('sales.receipt');
         Route::get('/sales/{sale}/signed-receipt', [SaleController::class, 'signedReceipt'])->name('sales.signed-receipt');
         Route::post('/sales/{sale}/followup', [SaleController::class, 'followup'])->name('sales.followup');
+        Route::post('/sales/{sale}/send-receipt-wa', [SaleController::class, 'sendReceiptWhatsApp'])->name('sales.send-receipt-wa');
         Route::post('/sales/item-images', [SaleController::class, 'storeSaleItemImage'])->name('sale-item-images.store');
         Route::delete('/sales/item-images/{image}', [SaleController::class, 'deleteSaleItemImage'])->name('sale-item-images.destroy');
         Route::get('/sales/item-images/{image}/show', [SaleController::class, 'showSaleItemImage'])->name('sale-item-images.show');
