@@ -93,6 +93,25 @@ class Deal extends Model
         return $this->hasMany(NegotiationSnapshot::class);
     }
 
+    /**
+     * Todas as simulações relevantes: vinculadas ao deal OU ao customer do deal.
+     */
+    public function allNegotiationSnapshots()
+    {
+        return NegotiationSnapshot::where('status', 'active')
+            ->where(function ($q) {
+                $q->where('deal_id', $this->id);
+                if ($this->customer_id) {
+                    $q->orWhere(function ($sub) {
+                        $sub->where('customer_id', $this->customer_id)
+                            ->whereNull('deal_id');
+                    });
+                }
+            })
+            ->with('user:id,name')
+            ->orderByDesc('created_at');
+    }
+
     public function productInterests(): HasMany
     {
         return $this->hasMany(ProductInterest::class);

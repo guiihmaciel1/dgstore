@@ -2,13 +2,13 @@
 <div style="display: flex; flex-direction: column; height: 100%; background: #0a0a0a;">
 
     {{-- Simulações Salvas --}}
-    @if($deal->negotiationSnapshots->isNotEmpty())
+    @if($allSnapshots->isNotEmpty())
         <div style="flex: 1; overflow-y: auto; padding: 0.75rem;" class="custom-scroll">
             <div style="font-size: 0.65rem; font-weight: 700; color: #555; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                Simulações Salvas ({{ $deal->negotiationSnapshots->count() }})
+                Simulações Salvas ({{ $allSnapshots->count() }})
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                @foreach($deal->negotiationSnapshots->sortByDesc('created_at') as $snap)
+                @foreach($allSnapshots->sortByDesc('created_at') as $snap)
                     <div style="padding: 0.625rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; transition: border-color 0.15s;"
                          onmouseover="this.style.borderColor='rgba(139,92,246,0.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'">
                         <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.375rem;">

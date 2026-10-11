@@ -222,7 +222,9 @@ class CrmController extends Controller
 
     public function show(Deal $deal): View
     {
-        $deal->load(['customer.tags', 'user', 'stage', 'activities.user', 'productInterests', 'whatsappMessages', 'negotiationSnapshots.user']);
+        $deal->load(['customer.tags', 'user', 'stage', 'activities.user', 'productInterests', 'whatsappMessages']);
+
+        $allSnapshots = $deal->allNegotiationSnapshots()->get();
 
         if ($deal->unread_wa_count > 0) {
             $deal->update(['unread_wa_count' => 0]);
@@ -236,6 +238,7 @@ class CrmController extends Controller
 
         return view('crm.show', [
             'deal' => $deal,
+            'allSnapshots' => $allSnapshots,
             'stages' => $allStages,
             'activeStages' => $activeStages,
             'activityTypes' => [

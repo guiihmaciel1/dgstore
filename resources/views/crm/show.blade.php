@@ -433,8 +433,8 @@
                                     style="flex: 1; padding: 0.5rem; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.3rem; transition: all 0.15s;">
                                 <svg style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                                 Simulador
-                                @if($deal->negotiationSnapshots->count() > 0)
-                                    <span style="font-size: 0.55rem; background: rgba(139,92,246,0.15); color: #8b5cf6; padding: 0 4px; border-radius: 6px; font-weight: 700;">{{ $deal->negotiationSnapshots->count() }}</span>
+                                @if($allSnapshots->count() > 0)
+                                    <span style="font-size: 0.55rem; background: rgba(139,92,246,0.15); color: #8b5cf6; padding: 0 4px; border-radius: 6px; font-weight: 700;">{{ $allSnapshots->count() }}</span>
                                 @endif
                             </button>
                             <button @click="rightTab = 'timeline'" :style="rightTab === 'timeline' ? 'color: #3b82f6; border-bottom: 2px solid #3b82f6; background: #0d0d0d;' : 'color: #555; border-bottom: 2px solid transparent;'"
@@ -466,7 +466,7 @@
 
                         {{-- Tab: Simulador --}}
                         <div x-show="rightTab === 'simulator'" x-cloak style="height: 100%;">
-                            @include('crm.partials.deal-simulator', ['deal' => $deal])
+                            @include('crm.partials.deal-simulator', ['deal' => $deal, 'allSnapshots' => $allSnapshots])
                         </div>
 
                         {{-- Tab: Timeline --}}
