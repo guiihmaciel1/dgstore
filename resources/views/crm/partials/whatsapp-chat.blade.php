@@ -68,18 +68,24 @@
                     @endif
 
                     @if(in_array($msg->message_type, ['audio', 'audioMessage', 'ptt', 'pttMessage']))
-                        <div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.15rem 0; min-width: 150px;">
-                            <svg style="width: 14px; height: 14px; color: #25D366; flex-shrink: 0;" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/>
-                                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-                            </svg>
-                            <div style="flex: 1; height: 3px; background: #333; border-radius: 2px;">
-                                <div style="width: 60%; height: 100%; background: #25D366; border-radius: 2px;"></div>
-                            </div>
+                        <div style="min-width: 200px; max-width: 280px;">
+                            @if($msg->local_media_path)
+                                <audio controls preload="none" style="width: 100%; height: 36px; border-radius: 18px;">
+                                    <source src="{{ asset('storage/' . $msg->local_media_path) }}" type="{{ $msg->media_mime_type ?? 'audio/ogg' }}">
+                                </audio>
+                            @else
+                                <div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0;">
+                                    <svg style="width: 14px; height: 14px; color: #25D366; flex-shrink: 0;" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/>
+                                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                                    </svg>
+                                    <span style="font-size: 0.7rem; color: #555;">Audio indisponivel</span>
+                                </div>
+                            @endif
                         </div>
                         @if($msg->transcription)
                             <div style="margin-top: 0.2rem; padding: 0.25rem 0.375rem; background: {{ $isOutbound ? '#004a3d' : '#111' }}; border-radius: 4px; font-size: 0.65rem; color: #888; font-style: italic;">
-                                <span style="color: #555; font-size: 0.55rem;">🎙️ Transcrição:</span><br>
+                                <span style="color: #555; font-size: 0.55rem;">🎙 Transcrição:</span><br>
                                 {{ $msg->transcription }}
                             </div>
                         @endif
@@ -129,61 +135,73 @@
 
     {{-- Input Area --}}
     @if($deal->phone && !$deal->stage?->is_won && !$deal->stage?->is_lost)
-        <div style="flex-shrink: 0; padding: 0.5rem 0.625rem; background: #111; border-top: 1px solid #1a1a1a;">
-            <form id="wa-send-form" style="display: flex; gap: 0.375rem; align-items: flex-end;">
+        <div style="flex-shrink: 0; padding: 0.5rem 0.75rem; background: #111; border-top: 1px solid rgba(255,255,255,0.06);">
+            <form id="wa-send-form" style="display: flex; gap: 0.5rem; align-items: flex-end;">
                 @csrf
-                {{-- Menu Interativo --}}
-                <div x-data="{ showMenuForm: false }" style="position: relative;">
-                    <button type="button" @click="showMenuForm = !showMenuForm" style="padding: 0.4rem; border-radius: 6px; background: #1a1a1a; border: 1px solid #252525; cursor: pointer; display: flex; align-items: center;" title="Menu interativo">
-                        <svg style="width: 16px; height: 16px; color: #555;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
-                    </button>
-                    <div x-show="showMenuForm" x-cloak @click.away="showMenuForm = false"
-                         style="position: absolute; bottom: 100%; left: 0; margin-bottom: 0.375rem; background: #141414; border: 1px solid #252525; border-radius: 8px; padding: 0.625rem; width: 280px; z-index: 20; box-shadow: 0 -4px 16px rgba(0,0,0,0.4);">
-                        <div style="font-size: 0.7rem; font-weight: 600; color: #e3e3e3; margin-bottom: 0.375rem;">Menu Interativo</div>
-                        <input type="text" id="menu-title" placeholder="Título" style="width: 100%; padding: 0.3rem 0.5rem; background: #0a0a0a; border: 1px solid #252525; border-radius: 6px; color: #e3e3e3; font-size: 0.7rem; margin-bottom: 0.25rem;">
-                        <textarea id="menu-body" placeholder="Mensagem" rows="2" style="width: 100%; padding: 0.3rem 0.5rem; background: #0a0a0a; border: 1px solid #252525; border-radius: 6px; color: #e3e3e3; font-size: 0.7rem; resize: none; margin-bottom: 0.25rem;"></textarea>
-                        <div style="display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 0.375rem;">
-                            <input type="text" id="menu-btn-1" placeholder="Botão 1" style="width: 100%; padding: 0.25rem 0.5rem; background: #0a0a0a; border: 1px solid #252525; border-radius: 4px; color: #e3e3e3; font-size: 0.65rem;">
-                            <input type="text" id="menu-btn-2" placeholder="Botão 2 (opcional)" style="width: 100%; padding: 0.25rem 0.5rem; background: #0a0a0a; border: 1px solid #252525; border-radius: 4px; color: #e3e3e3; font-size: 0.65rem;">
-                            <input type="text" id="menu-btn-3" placeholder="Botão 3 (opcional)" style="width: 100%; padding: 0.25rem 0.5rem; background: #0a0a0a; border: 1px solid #252525; border-radius: 4px; color: #e3e3e3; font-size: 0.65rem;">
-                        </div>
-                        <button type="button" onclick="sendInteractiveMenu()" style="width: 100%; padding: 0.3rem; background: #25D366; color: #000; font-weight: 600; font-size: 0.65rem; border: none; border-radius: 6px; cursor: pointer;">
-                            Enviar Menu
+
+                {{-- Botões de ação (menu + anexo) --}}
+                <div style="display: flex; gap: 0.25rem; flex-shrink: 0; padding-bottom: 1px;">
+                    {{-- Menu Interativo --}}
+                    <div x-data="{ showMenuForm: false }" style="position: relative;">
+                        <button type="button" @click="showMenuForm = !showMenuForm"
+                                style="width: 34px; height: 34px; border-radius: 0.375rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s;"
+                                onmouseover="this.style.borderColor='rgba(255,255,255,0.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'"
+                                title="Menu interativo">
+                            <svg style="width: 16px; height: 16px; color: #666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
                         </button>
+                        <div x-show="showMenuForm" x-cloak @click.away="showMenuForm = false"
+                             style="position: absolute; bottom: 100%; left: 0; margin-bottom: 0.5rem; background: #141414; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; padding: 0.75rem; width: 280px; z-index: 20; box-shadow: 0 -4px 16px rgba(0,0,0,0.4);">
+                            <div style="font-size: 0.7rem; font-weight: 600; color: #e3e3e3; margin-bottom: 0.375rem;">Menu Interativo</div>
+                            <input type="text" id="menu-title" placeholder="Titulo" style="width: 100%; padding: 0.3rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; color: #e3e3e3; font-size: 0.7rem; margin-bottom: 0.25rem;">
+                            <textarea id="menu-body" placeholder="Mensagem" rows="2" style="width: 100%; padding: 0.3rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; color: #e3e3e3; font-size: 0.7rem; resize: none; margin-bottom: 0.25rem;"></textarea>
+                            <div style="display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 0.375rem;">
+                                <input type="text" id="menu-btn-1" placeholder="Botao 1" style="width: 100%; padding: 0.25rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem;">
+                                <input type="text" id="menu-btn-2" placeholder="Botao 2 (opcional)" style="width: 100%; padding: 0.25rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem;">
+                                <input type="text" id="menu-btn-3" placeholder="Botao 3 (opcional)" style="width: 100%; padding: 0.25rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem;">
+                            </div>
+                            <button type="button" onclick="sendInteractiveMenu()" style="width: 100%; padding: 0.3rem; background: #25D366; color: #000; font-weight: 600; font-size: 0.65rem; border: none; border-radius: 0.375rem; cursor: pointer;">
+                                Enviar Menu
+                            </button>
+                        </div>
                     </div>
+
+                    {{-- Anexar Arquivo --}}
+                    <label style="cursor: pointer; width: 34px; height: 34px; border-radius: 0.375rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; transition: border-color 0.15s;"
+                           onmouseover="this.style.borderColor='rgba(255,255,255,0.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'"
+                           title="Enviar arquivo">
+                        <input type="file" id="wa-media-input" accept="image/*,audio/*,video/*,application/pdf,.doc,.docx,.xls,.xlsx" style="display: none;" onchange="handleMediaSelect(this)">
+                        <svg style="width: 16px; height: 16px; color: #666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                        </svg>
+                    </label>
                 </div>
 
-                {{-- Anexar Arquivo --}}
-                <label style="cursor: pointer; padding: 0.4rem; border-radius: 6px; background: #1a1a1a; border: 1px solid #252525; display: flex; align-items: center;" title="Enviar arquivo">
-                    <input type="file" id="wa-media-input" accept="image/*,audio/*,video/*,application/pdf,.doc,.docx,.xls,.xlsx" style="display: none;" onchange="handleMediaSelect(this)">
-                    <svg style="width: 16px; height: 16px; color: #555;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
-                    </svg>
-                </label>
-
                 {{-- Input de Mensagem --}}
-                <div style="flex: 1; position: relative;">
-                    <div id="wa-media-preview" style="display: none; padding: 0.375rem 0.5rem; background: #1a1a1a; border: 1px solid #252525; border-radius: 6px 6px 0 0; margin-bottom: -1px;">
+                <div style="flex: 1; min-width: 0;">
+                    <div id="wa-media-preview" style="display: none; padding: 0.3rem 0.5rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem 0.375rem 0 0; border-bottom: none;">
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <span id="wa-media-name" style="font-size: 0.65rem; color: #888;"></span>
-                            <button type="button" onclick="clearMediaPreview()" style="background: none; border: none; color: #555; cursor: pointer; font-size: 0.75rem;">✕</button>
+                            <button type="button" onclick="clearMediaPreview()" style="background: none; border: none; color: #555; cursor: pointer; font-size: 0.75rem; line-height: 1; padding: 0;">✕</button>
                         </div>
                     </div>
                     <textarea id="wa-message-input" rows="1" placeholder="Digite uma mensagem..."
-                        style="width: 100%; resize: none; background: #1a1a1a; border: 1px solid #252525; border-radius: 6px; padding: 0.4rem 0.625rem; color: #e3e3e3; font-size: 0.8rem; outline: none; font-family: inherit; max-height: 80px; overflow-y: auto;"
+                        style="width: 100%; resize: none; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; padding: 0.5rem 0.75rem; color: #e3e3e3; font-size: 0.8rem; outline: none; font-family: inherit; max-height: 80px; overflow-y: auto; line-height: 1.4; box-sizing: border-box;"
                         onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendWaMessage();}"></textarea>
                 </div>
 
-                {{-- Botão Enviar --}}
-                <button type="button" onclick="sendWaMessage()" id="wa-send-btn"
-                    style="padding: 0.4rem 0.625rem; border-radius: 6px; background: #25D366; color: #000; font-weight: 600; font-size: 0.75rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.2rem; white-space: nowrap;">
-                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
-                    Enviar
-                </button>
+                {{-- Botao Enviar --}}
+                <div style="flex-shrink: 0; padding-bottom: 1px;">
+                    <button type="button" onclick="sendWaMessage()" id="wa-send-btn"
+                        style="height: 34px; padding: 0 0.75rem; border-radius: 0.375rem; background: #25D366; color: #000; font-weight: 600; font-size: 0.75rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; white-space: nowrap; transition: opacity 0.15s;"
+                        onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                        Enviar
+                    </button>
+                </div>
             </form>
         </div>
     @endif
@@ -430,10 +448,14 @@
         }
 
         if (['audio', 'audioMessage', 'ptt', 'pttMessage'].includes(mType)) {
-            bodyHtml += `<div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.15rem 0; min-width: 150px;"><svg style="width: 14px; height: 14px; color: #25D366; flex-shrink: 0;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg><div style="flex: 1; height: 3px; background: #333; border-radius: 2px;"><div style="width: 60%; height: 100%; background: #25D366; border-radius: 2px;"></div></div></div>`;
+            if (msg.local_media_path) {
+                bodyHtml += `<div style="min-width: 200px; max-width: 280px;"><audio controls preload="none" style="width: 100%; height: 36px; border-radius: 18px;"><source src="/storage/${msg.local_media_path}" type="audio/ogg"></audio></div>`;
+            } else {
+                bodyHtml += `<div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0; min-width: 150px;"><svg style="width: 14px; height: 14px; color: #25D366; flex-shrink: 0;" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg><span style="font-size: 0.7rem; color: #555;">Audio indisponivel</span></div>`;
+            }
             if (msg.transcription) {
                 const tBg = isOutbound ? '#004a3d' : '#111';
-                bodyHtml += `<div style="margin-top: 0.2rem; padding: 0.25rem 0.375rem; background: ${tBg}; border-radius: 4px; font-size: 0.65rem; color: #888; font-style: italic;"><span style="color: #555; font-size: 0.55rem;">🎙️ Transcrição:</span><br>${escHtml(msg.transcription)}</div>`;
+                bodyHtml += `<div style="margin-top: 0.2rem; padding: 0.25rem 0.375rem; background: ${tBg}; border-radius: 4px; font-size: 0.65rem; color: #888; font-style: italic;"><span style="color: #555; font-size: 0.55rem;">🎙 Transcrição:</span><br>${escHtml(msg.transcription)}</div>`;
             }
         } else if (bodyText) {
             bodyHtml += `<div style="font-size: 0.8rem; color: #e3e3e3; white-space: pre-wrap; word-break: break-word; line-height: 1.4;">${escHtml(bodyText)}</div>`;
@@ -552,4 +574,11 @@
 </script>
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
+#wa-chat-panel audio {
+    filter: invert(1) hue-rotate(180deg);
+    opacity: 0.85;
+}
+#wa-chat-panel audio::-webkit-media-controls-panel {
+    background: transparent;
+}
 </style>
