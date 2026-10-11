@@ -50,18 +50,29 @@ class UazapiWebhookService
         $message = $payload['message'] ?? null;
 
         if (!$message) {
+            Log::warning('UazAPI processMessage: payload sem campo message');
             return;
         }
 
         $waMessageId = $message['id'] ?? $message['key']['id'] ?? null;
         $fromMe = $message['key']['fromMe'] ?? $message['fromMe'] ?? false;
 
+        Log::info('UazAPI processMessage: analisando', [
+            'wa_message_id' => $waMessageId,
+            'fromMe' => $fromMe,
+            'remoteJid' => $message['key']['remoteJid'] ?? $message['remoteJid'] ?? 'N/A',
+            'pushName' => $message['pushName'] ?? 'N/A',
+            'messageType' => $message['messageType'] ?? 'N/A',
+        ]);
+
         if ($fromMe) {
+            Log::debug('UazAPI processMessage: ignorado (fromMe=true)');
             return;
         }
 
         $remoteJid = $message['key']['remoteJid'] ?? $message['remoteJid'] ?? null;
         if (!$remoteJid || str_ends_with($remoteJid, '@g.us') || str_ends_with($remoteJid, '@newsletter')) {
+            Log::debug('UazAPI processMessage: ignorado (grupo/newsletter/sem jid)', ['jid' => $remoteJid]);
             return;
         }
 
