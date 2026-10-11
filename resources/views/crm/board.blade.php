@@ -425,6 +425,17 @@
         document.querySelectorAll('.followup-text').forEach(function(el) {
             el.innerHTML = el.textContent.replace(/~([^~]+)~/g, '<s style="opacity: 0.5;">$1</s>');
         });
+
+        // Auto-refresh a cada 15 segundos (não recarrega se modal aberto ou drag em andamento)
+        setInterval(function() {
+            const hasModal = document.querySelector('[x-data]')?.__x?.$data?.showNewDealForm
+                || document.querySelector('[x-data]')?.__x?.$data?.showCustomerForm
+                || document.querySelector('[x-data]')?.__x?.$data?.showScheduleForm;
+            const hasEditing = document.querySelector('[x-show="editingFollowup"]:not([style*="display: none"])');
+            if (!hasModal && !hasEditing && !document.querySelector('.sortable-ghost')) {
+                window.location.reload();
+            }
+        }, 15000);
     });
 
     window.saveFollowup = async function(dealId, el) {
