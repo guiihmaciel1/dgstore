@@ -182,7 +182,7 @@ class UazapiWebhookService
             return $existingDeal;
         }
 
-        $customer = $this->findCustomerByPhone($phone);
+        $customer = $this->findOrCreateCustomer($phone, $contactName);
         $assignedUser = $this->getDefaultAssignee();
         $defaultStage = PipelineStage::where('is_default', true)->first()
             ?? PipelineStage::active()->ordered()->first();
@@ -192,32 +192,40 @@ class UazapiWebhookService
             throw new \RuntimeException('Nenhum pipeline stage configurado.');
         }
 
-        $title = $contactName
-            ? "WhatsApp - {$contactName}"
-            : "WhatsApp - {$this->formatPhone($phone)}";
+        $displayName = $contactName ?: $this->formatPhone($phone);
+        $title = "WhatsApp - {$displayName}";
 
         $maxPosition = Deal::where('pipeline_stage_id', $defaultStage->id)->max('position') ?? 0;
 
+        $isNewCustomer = $customer->wasRecentlyCreated;
+
         $deal = Deal::create([
             'user_id' => $assignedUser->id,
-            'customer_id' => $customer?->id,
+            'customer_id' => $customer->id,
             'pipeline_stage_id' => $defaultStage->id,
             'title' => $title,
             'phone' => $phone,
-            'description' => 'Lead captado via WhatsApp (UazAPI)',
+            'description' => $isNewCustomer
+                ? "Novo cliente captado via WhatsApp"
+                : "Contato de cliente existente via WhatsApp",
             'position' => $maxPosition + 1,
             'source' => 'whatsapp',
         ]);
 
+        $activityDesc = $isNewCustomer
+            ? "📲 Novo cliente cadastrado automaticamente via WhatsApp: {$displayName}"
+            : "📲 Cliente existente iniciou contato via WhatsApp";
+
         $deal->activities()->create([
             'user_id' => $assignedUser->id,
             'type' => DealActivityType::Created->value,
-            'description' => 'Lead criado automaticamente via WhatsApp',
+            'description' => $activityDesc,
         ]);
 
         Log::info('UazAPI: novo deal criado', [
             'deal_id' => $deal->id,
             'phone' => $phone,
+            'new_customer' => $isNewCustomer,
         ]);
 
         return $deal;
@@ -240,20 +248,40 @@ class UazapiWebhookService
         ]);
     }
 
-    private function findCustomerByPhone(string $phone): ?Customer
+    /**
+     * Busca cliente pelo telefone. Se não existir, cria com nome e telefone.
+     */
+    private function findOrCreateCustomer(string $phone, ?string $contactName): Customer
     {
         $normalized = $this->normalizePhoneForSearch($phone);
 
-        return Customer::where('phone', $phone)
+        $customer = Customer::where('phone', $phone)
             ->orWhere('phone', $normalized)
             ->orWhere('phone', 'LIKE', "%{$normalized}")
             ->first();
+
+        if ($customer) {
+            return $customer;
+        }
+
+        $customer = Customer::create([
+            'name' => $contactName ?: "WhatsApp {$this->formatPhone($phone)}",
+            'phone' => $normalized,
+        ]);
+
+        Log::info('UazAPI: cliente criado automaticamente', [
+            'customer_id' => $customer->id,
+            'name' => $customer->name,
+            'phone' => $normalized,
+        ]);
+
+        return $customer;
     }
 
     private function getDefaultAssignee(): User
     {
         return User::where('active', true)
-            ->where('role', 'admin')
+            ->where('role', 'admin_geral')
             ->first()
             ?? User::where('active', true)->first()
             ?? User::first();

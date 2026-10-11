@@ -269,7 +269,7 @@ class WhatsAppWebhookService
     private function getDefaultAssignee(): User
     {
         return User::where('active', true)
-            ->where('role', 'admin')
+            ->where('role', 'admin_geral')
             ->first()
             ?? User::where('active', true)->first()
             ?? User::first();
