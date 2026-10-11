@@ -110,6 +110,19 @@ class CustomerController extends Controller
     public function search(Request $request)
     {
         $term = $request->get('q', '');
+
+        if (str_starts_with($term, 'id:')) {
+            $id = substr($term, 3);
+            $customer = \App\Domain\Customer\Models\Customer::find($id);
+            if ($customer) {
+                return response()->json([[
+                    'id' => $customer->id,
+                    'name' => $customer->name,
+                    'phone' => $customer->phone,
+                ]]);
+            }
+            return response()->json([]);
+        }
         
         if (strlen($term) < 2) {
             return response()->json([]);

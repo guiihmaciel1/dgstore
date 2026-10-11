@@ -36,6 +36,7 @@ class CrmController extends Controller
         $allStages = PipelineStage::ordered()->get();
         $activeStages = PipelineStage::where('is_won', false)
             ->where('is_lost', false)
+            ->where('position', '<', 90)
             ->ordered()
             ->get();
 
@@ -682,12 +683,20 @@ class CrmController extends Controller
             return response()->json(['success' => false, 'error' => 'UazAPI não configurada ou deal sem telefone'], 500);
         }
 
-        $result = $request->type === 'buttons'
-            ? $uazapi->sendMenu($deal->phone, $request->title, $request->body, $request->buttons)
-            : $uazapi->sendList($deal->phone, $request->title, $request->body, $request->button_text, $request->sections);
+        try {
+            $result = $request->type === 'buttons'
+                ? $uazapi->sendMenu($deal->phone, $request->title, $request->body, $request->buttons)
+                : $uazapi->sendList($deal->phone, $request->title, $request->body, $request->button_text, $request->sections);
+        } catch (\Throwable $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+        }
 
         if (isset($result['error'])) {
-            return response()->json(['success' => false, 'error' => $result['error']], 500);
+            return response()->json(['success' => false, 'error' => is_string($result['error']) ? $result['error'] : json_encode($result['error'])], 500);
+        }
+
+        if (isset($result['success']) && $result['success'] === false) {
+            return response()->json(['success' => false, 'error' => $result['message'] ?? 'Erro da API'], 500);
         }
 
         $desc = $request->type === 'buttons'

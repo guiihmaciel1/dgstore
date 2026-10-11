@@ -197,29 +197,51 @@ class UazapiService
 
     /**
      * Envia menu interativo com botões.
+     * UazAPI espera: number, title, text, footer (opcional), buttons [{buttonId, buttonText}]
      */
-    public function sendMenu(string $number, string $title, string $body, array $buttons): array
+    public function sendMenu(string $number, string $title, string $body, array $buttons, ?string $footer = null): array
     {
-        return $this->post('/send/menu', [
+        $formattedButtons = array_map(function ($btn, $index) {
+            return [
+                'buttonId' => $btn['id'] ?? $btn['buttonId'] ?? 'btn_' . ($index + 1),
+                'buttonText' => ['displayText' => $btn['text'] ?? $btn['buttonText'] ?? $btn['displayText'] ?? ''],
+                'type' => 1,
+            ];
+        }, $buttons, array_keys($buttons));
+
+        $payload = [
             'number' => $this->normalizeNumber($number),
             'title' => $title,
             'text' => $body,
-            'buttons' => $buttons,
-        ]);
+            'buttons' => $formattedButtons,
+        ];
+
+        if ($footer) {
+            $payload['footer'] = $footer;
+        }
+
+        return $this->post('/send/menu', $payload);
     }
 
     /**
      * Envia mensagem de lista.
+     * UazAPI espera: number, title, text, buttonText, sections [{title, rows [{rowId, title, description}]}]
      */
-    public function sendList(string $number, string $title, string $body, string $buttonText, array $sections): array
+    public function sendList(string $number, string $title, string $body, string $buttonText, array $sections, ?string $footer = null): array
     {
-        return $this->post('/send/menu', [
+        $payload = [
             'number' => $this->normalizeNumber($number),
             'title' => $title,
             'text' => $body,
             'buttonText' => $buttonText,
             'sections' => $sections,
-        ]);
+        ];
+
+        if ($footer) {
+            $payload['footer'] = $footer;
+        }
+
+        return $this->post('/send/menu', $payload);
     }
 
     /**

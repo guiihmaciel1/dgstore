@@ -44,7 +44,7 @@
                 @endif
 
                 {{-- Layout em 2 colunas --}}
-                <div style="display: grid; grid-template-columns: 1fr 380px; gap: 1rem;">
+                <div style="display: grid; grid-template-columns: 1fr 420px; gap: 1rem;">
 
                     {{-- Coluna Esquerda: Info + Ações --}}
                     <div style="display: flex; flex-direction: column; gap: 1rem;">

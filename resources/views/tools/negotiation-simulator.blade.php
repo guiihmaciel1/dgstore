@@ -6,6 +6,13 @@
             {{-- Header --}}
             <div class="flex items-center justify-between mb-4 sm:mb-6 flex-wrap gap-3">
                 <div>
+                    @php $dealIdParam = request()->get('deal_id'); @endphp
+                    @if($dealIdParam)
+                        <a href="{{ route('crm.show', $dealIdParam) }}" style="font-size: 0.75rem; color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; margin-bottom: 0.25rem;">
+                            <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            Voltar ao negócio
+                        </a>
+                    @endif
                     <h1 class="text-lg sm:text-2xl font-bold text-dg-100">Simulador de Negociação</h1>
                     <p class="text-sm text-dg-500">Monte propostas completas com trade-in e parcelamento</p>
                 </div>
@@ -690,6 +697,10 @@
                     if (data.success) {
                         this.saveModal.open = false;
                         this.showToast('Simulação salva para ' + this.saveModal.selectedCustomer.name);
+                        const dealId = urlParams.get('deal_id');
+                        if (dealId) {
+                            setTimeout(() => window.location.href = `/crm/deals/${dealId}`, 1200);
+                        }
                     } else {
                         this.showToast('Erro ao salvar simulação');
                     }
@@ -698,6 +709,16 @@
                 } finally {
                     this.saveModal.saving = false;
                 }
+            },
+
+            async loadCustomerForDeal(customerId) {
+                try {
+                    const res = await fetch(`/api/customers/search?q=id:${customerId}`);
+                    const customers = await res.json();
+                    if (customers.length > 0) {
+                        this.saveModal.selectedCustomer = customers[0];
+                    }
+                } catch(e) {}
             },
 
             clearAll() {
