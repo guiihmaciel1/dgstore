@@ -482,8 +482,8 @@ class UazapiWebhookService
     }
 
     /**
-     * Envia mensagem de ausência fora do horário comercial.
-     * Durante horário comercial: apenas notifica no CRM (sem mensagem automática).
+     * Envia mensagem de ausência apenas entre 00:00 e 06:00 (madrugada).
+     * Fora desse horário, não envia resposta automática.
      */
     private function sendAwayMessageIfNeeded(Deal $deal, string $phone): void
     {
@@ -492,7 +492,8 @@ class UazapiWebhookService
             return;
         }
 
-        if ($this->isWithinBusinessHours()) {
+        $hour = now()->setTimezone('America/Sao_Paulo')->hour;
+        if ($hour >= 6) {
             return;
         }
 
