@@ -259,6 +259,38 @@
             </div>
             @endif
 
+            <!-- COTAÇÃO FORNECEDOR (WhatsApp) -->
+            @if(!empty($supplierQuoteInfo))
+            <div style="margin-bottom: 1rem;">
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    @foreach($supplierQuoteInfo as $quote)
+                    <a href="{{ route('quotations.index', ['supplier_id' => $quote['supplier_id']]) }}"
+                       style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; background: #141414; border: 1px solid rgba(37,211,102,0.2); border-radius: 0.5rem; text-decoration: none; transition: all 0.15s; flex: 1; min-width: 200px;"
+                       onmouseover="this.style.borderColor='rgba(37,211,102,0.4)'" onmouseout="this.style.borderColor='rgba(37,211,102,0.2)'">
+                        <div style="width: 2rem; height: 2rem; background: rgba(37,211,102,0.1); border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg style="width: 1rem; height: 1rem; color: #25D366;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                            </svg>
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #25D366;">Cotação {{ $quote['supplier_name'] }}</div>
+                            <div style="font-size: 0.7rem; color: #818181; margin-top: 0.0625rem;">
+                                Atualizado {{ $quote['last_update']->setTimezone('America/Sao_Paulo')->format('d/m') }}
+                                <span style="color: #555;">·</span>
+                                {{ $quote['items_count'] }} {{ $quote['items_count'] === 1 ? 'item' : 'itens' }}
+                                <span style="color: #555;">·</span>
+                                {{ $quote['last_update']->setTimezone('America/Sao_Paulo')->diffForHumans() }}
+                            </div>
+                        </div>
+                        <svg style="width: 0.875rem; height: 0.875rem; color: #555;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
             <!-- CONTAS A PAGAR HOJE -->
             @if($todayPayables->count() > 0)
             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.875rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">

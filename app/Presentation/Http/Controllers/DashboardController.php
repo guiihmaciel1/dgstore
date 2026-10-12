@@ -30,6 +30,8 @@ use App\Domain\User\Enums\UserRole;
 use App\Domain\User\Models\User;
 use App\Domain\Warranty\Services\WarrantyService;
 use App\Domain\News\Services\AppleNewsService;
+use App\Domain\Supplier\Models\Supplier;
+use App\Domain\System\Models\SystemSetting;
 use App\Domain\WhatsApp\Services\UazapiService;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -73,6 +75,8 @@ class DashboardController extends Controller
             $executiveSummary = app(ExecutiveSummaryController::class)->buildExecutiveData('month');
         }
 
+        $supplierQuoteInfo = $this->getSupplierQuoteInfo();
+
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
             'todayCount' => $data['today']['count'],
@@ -97,7 +101,36 @@ class DashboardController extends Controller
             'referenceDate' => $referenceDate,
             'isCurrentMonth' => $isCurrentMonth,
             'executiveSummary' => $executiveSummary,
+            'supplierQuoteInfo' => $supplierQuoteInfo,
         ]);
+    }
+
+    /**
+     * Informações da última cotação de fornecedor recebida via WhatsApp.
+     */
+    private function getSupplierQuoteInfo(): array
+    {
+        $suppliers = Supplier::active()->get();
+        $quotes = [];
+
+        foreach ($suppliers as $supplier) {
+            $lastUpdate = SystemSetting::get('supplier_quote_last_update_' . $supplier->id);
+            if ($lastUpdate) {
+                $lastDate = \Carbon\Carbon::parse($lastUpdate);
+                $latestQuote = $supplier->quotations()
+                    ->whereDate('quoted_at', $lastDate->toDateString())
+                    ->count();
+
+                $quotes[] = [
+                    'supplier_name' => $supplier->name,
+                    'last_update' => $lastDate,
+                    'items_count' => $latestQuote,
+                    'supplier_id' => $supplier->id,
+                ];
+            }
+        }
+
+        return $quotes;
     }
 
     private function getNewLeadsWaiting(): \Illuminate\Support\Collection

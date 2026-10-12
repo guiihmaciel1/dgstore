@@ -9,6 +9,7 @@ use App\Domain\CRM\Enums\LeadSource;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Supplier\Services\WhatsAppQuotationService;
 use App\Domain\System\Models\SystemSetting;
 use App\Domain\User\Models\User;
 use App\Domain\WhatsApp\Models\WhatsAppMessage;
@@ -133,6 +134,7 @@ class UazapiWebhookService
         $deal->updateLastInteraction();
 
         $this->sendAwayMessageIfNeeded($deal, $fromPhone);
+        $this->processSupplierQuotation($fromPhone, $messageBody);
 
         Log::info('UazAPI: mensagem processada com sucesso', [
             'wa_message_id' => $waMessageId,
@@ -510,7 +512,19 @@ class UazapiWebhookService
         try {
             $uazapi = app(UazapiService::class);
             $jid = str_contains($phone, '@') ? $phone : $phone . '@s.whatsapp.net';
-            $uazapi->sendText($jid, $awayMessage);
+            $result = $uazapi->sendText($jid, $awayMessage);
+
+            WhatsAppMessage::create([
+                'wa_message_id' => $result['key']['id'] ?? ('away_' . uniqid()),
+                'from_phone'    => $phone,
+                'from_name'     => 'DG Store',
+                'message_type'  => 'text',
+                'message_body'  => $awayMessage,
+                'raw_payload'   => $result,
+                'deal_id'       => $deal->id,
+                'direction'     => 'outbound',
+                'delivery_status' => 'sent',
+            ]);
 
             $metadata = $deal->source_metadata ?? [];
             $metadata['last_away_sent'] = now()->toISOString();
@@ -540,6 +554,23 @@ class UazapiWebhookService
 
         $hour = $now->hour;
         return $hour >= $startHour && $hour < $endHour;
+    }
+
+    /**
+     * Detecta e processa cotações de fornecedores recebidas via WhatsApp.
+     */
+    private function processSupplierQuotation(string $fromPhone, ?string $messageBody): void
+    {
+        if (!$messageBody || mb_strlen($messageBody) < 50) {
+            return;
+        }
+
+        try {
+            $service = app(WhatsAppQuotationService::class);
+            $service->processIfQuotation($fromPhone, $messageBody);
+        } catch (\Throwable $e) {
+            Log::warning('Erro ao processar cotação de fornecedor', ['error' => $e->getMessage()]);
+        }
     }
 
     private function getDefaultAssignee(): User
