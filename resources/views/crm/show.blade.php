@@ -541,38 +541,50 @@
                         </div>
 
                         {{-- Tabs --}}
-                        <div style="display: flex; background: #111; border-bottom: 1px solid rgba(255,255,255,0.06);">
-                            <button @click="rightTab = 'chat'" :style="rightTab === 'chat' ? 'color: #25D366; border-bottom-color: #25D366; background: #0d0d0d;' : 'color: #666; border-bottom-color: transparent;'"
-                                    style="flex: 1; padding: 0.625rem 0.5rem; font-size: 0.75rem; font-weight: 600; border: none; border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.375rem; transition: all 0.15s; background: #111; line-height: 1;">
+                        <div style="display: flex; padding: 0 0.5rem; gap: 0.25rem; background: #0f0f0f; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <button @click="rightTab = 'chat'"
+                                    :style="rightTab === 'chat'
+                                        ? 'color: #25D366; border-bottom: 2px solid #25D366; background: transparent;'
+                                        : 'color: #555; border-bottom: 2px solid transparent; background: transparent;'"
+                                    style="padding: 0.5rem 0.75rem; font-size: 0.75rem; font-weight: 600; border: none; border-bottom: 2px solid transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; line-height: 1;"
+                                    onmouseover="if(this.style.color==='rgb(85, 85, 85)')this.style.color='#999'" onmouseout="if(this.style.color==='rgb(153, 153, 153)')this.style.color='#555'">
                                 <svg style="width: 14px; height: 14px; flex-shrink: 0;" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                                <span>Chat</span>
+                                Chat
                                 @if($deal->whatsappMessages->count() > 0)
-                                    <span style="font-size: 0.6rem; background: rgba(37,211,102,0.15); color: #25D366; padding: 1px 5px; border-radius: 6px; font-weight: 700; line-height: 1.3;">{{ $deal->whatsappMessages->count() }}</span>
+                                    <span style="font-size: 0.55rem; min-width: 16px; text-align: center; background: rgba(37,211,102,0.15); color: #25D366; padding: 1px 4px; border-radius: 8px; font-weight: 700; line-height: 1.4;">{{ $deal->whatsappMessages->count() }}</span>
                                 @endif
                             </button>
-                            <button @click="rightTab = 'simulator'" :style="rightTab === 'simulator' ? 'color: #8b5cf6; border-bottom-color: #8b5cf6; background: #0d0d0d;' : 'color: #666; border-bottom-color: transparent;'"
-                                    style="flex: 1; padding: 0.625rem 0.5rem; font-size: 0.75rem; font-weight: 600; border: none; border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.375rem; transition: all 0.15s; background: #111; line-height: 1;">
+                            <button @click="rightTab = 'simulator'"
+                                    :style="rightTab === 'simulator'
+                                        ? 'color: #8b5cf6; border-bottom: 2px solid #8b5cf6; background: transparent;'
+                                        : 'color: #555; border-bottom: 2px solid transparent; background: transparent;'"
+                                    style="padding: 0.5rem 0.75rem; font-size: 0.75rem; font-weight: 600; border: none; border-bottom: 2px solid transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; line-height: 1;"
+                                    onmouseover="if(this.style.color==='rgb(85, 85, 85)')this.style.color='#999'" onmouseout="if(this.style.color==='rgb(153, 153, 153)')this.style.color='#555'">
                                 <svg style="width: 14px; height: 14px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-                                <span>Simulador</span>
+                                Simulador
                                 @if($allSnapshots->count() > 0)
-                                    <span style="font-size: 0.6rem; background: rgba(139,92,246,0.15); color: #8b5cf6; padding: 1px 5px; border-radius: 6px; font-weight: 700; line-height: 1.3;">{{ $allSnapshots->count() }}</span>
+                                    <span style="font-size: 0.55rem; min-width: 16px; text-align: center; background: rgba(139,92,246,0.15); color: #8b5cf6; padding: 1px 4px; border-radius: 8px; font-weight: 700; line-height: 1.4;">{{ $allSnapshots->count() }}</span>
                                 @endif
                             </button>
-                            <button @click="rightTab = 'timeline'" :style="rightTab === 'timeline' ? 'color: #3b82f6; border-bottom-color: #3b82f6; background: #0d0d0d;' : 'color: #666; border-bottom-color: transparent;'"
-                                    style="flex: 1; padding: 0.625rem 0.5rem; font-size: 0.75rem; font-weight: 600; border: none; border-bottom: 2px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.375rem; transition: all 0.15s; background: #111; line-height: 1;">
+                            <button @click="rightTab = 'timeline'"
+                                    :style="rightTab === 'timeline'
+                                        ? 'color: #3b82f6; border-bottom: 2px solid #3b82f6; background: transparent;'
+                                        : 'color: #555; border-bottom: 2px solid transparent; background: transparent;'"
+                                    style="padding: 0.5rem 0.75rem; font-size: 0.75rem; font-weight: 600; border: none; border-bottom: 2px solid transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 0.375rem; transition: all 0.15s; line-height: 1;"
+                                    onmouseover="if(this.style.color==='rgb(85, 85, 85)')this.style.color='#999'" onmouseout="if(this.style.color==='rgb(153, 153, 153)')this.style.color='#555'">
                                 <svg style="width: 14px; height: 14px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span>Timeline</span>
+                                Timeline
                                 @if($deal->activities->count() > 0)
-                                    <span style="font-size: 0.6rem; background: rgba(59,130,246,0.15); color: #3b82f6; padding: 1px 5px; border-radius: 6px; font-weight: 700; line-height: 1.3;">{{ $deal->activities->count() }}</span>
+                                    <span style="font-size: 0.55rem; min-width: 16px; text-align: center; background: rgba(59,130,246,0.15); color: #3b82f6; padding: 1px 4px; border-radius: 8px; font-weight: 700; line-height: 1.4;">{{ $deal->activities->count() }}</span>
                                 @endif
                             </button>
                         </div>
                     </div>
 
                     {{-- Tab Content (flex-grow fills remaining height) --}}
-                    <div style="flex: 1; min-height: 0; overflow-y: auto;" class="custom-scroll">
+                    <div style="flex: 1; min-height: 0; display: flex; flex-direction: column;">
                         {{-- Tab: Chat --}}
-                        <div x-show="rightTab === 'chat'" x-cloak style="display: flex; flex-direction: column; height: 100%;">
+                        <div x-show="rightTab === 'chat'" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
                             @if($deal->phone)
                                 @include('crm.partials.whatsapp-chat', ['deal' => $deal])
                             @else
@@ -586,12 +598,12 @@
                         </div>
 
                         {{-- Tab: Simulador --}}
-                        <div x-show="rightTab === 'simulator'" x-cloak style="height: 100%;">
+                        <div x-show="rightTab === 'simulator'" x-cloak style="flex: 1; overflow-y: auto; min-height: 0;" class="custom-scroll">
                             @include('crm.partials.deal-simulator', ['deal' => $deal, 'allSnapshots' => $allSnapshots])
                         </div>
 
                         {{-- Tab: Timeline --}}
-                        <div x-show="rightTab === 'timeline'" x-cloak style="height: 100%;">
+                        <div x-show="rightTab === 'timeline'" x-cloak style="flex: 1; overflow-y: auto; min-height: 0;" class="custom-scroll">
                             <div style="padding: 0.75rem;">
                                 @forelse($deal->activities as $activity)
                                     <div style="display: flex; gap: 0.75rem; padding-bottom: 0.625rem; {{ !$loop->last ? 'border-left: 2px solid #222; margin-left: 6px; padding-left: 1rem;' : 'margin-left: 6px; padding-left: 1rem;' }}; position: relative;">

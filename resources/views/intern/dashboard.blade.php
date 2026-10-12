@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="title">Painel da Vendedora</x-slot>
-    <div class="py-6" x-data="{ simSearch: '', simResults: [], simSearching: false, async searchSimulations() { if (this.simSearch.length < 2) { this.simResults = []; return; } this.simSearching = true; try { const res = await fetch(`{{ route('simulations.search') }}?q=${encodeURIComponent(this.simSearch)}`); this.simResults = await res.json(); } catch(e) { this.simResults = []; } this.simSearching = false; } }">
+    <div class="py-6" x-data="{}">
         <div class="px-6 lg:px-8">
 
             @if(session('success'))
