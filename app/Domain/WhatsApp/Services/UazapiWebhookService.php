@@ -9,6 +9,8 @@ use App\Domain\CRM\Enums\LeadSource;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Sale\Enums\SaleType;
+use App\Domain\Sale\Models\Sale;
 use App\Domain\Supplier\Models\Supplier;
 use App\Domain\Supplier\Services\WhatsAppQuotationService;
 use App\Domain\System\Models\SystemSetting;
@@ -214,6 +216,14 @@ class UazapiWebhookService
             return;
         }
 
+        if ($this->isWholesaleCustomerPhone($fromPhone)) {
+            WhatsAppMessage::create($msgData);
+            Log::info('UazAPI: mensagem de lojista ignorada (sem deal)', [
+                'wa_message_id' => $waMessageId, 'from' => $fromPhone, 'name' => $senderName,
+            ]);
+            return;
+        }
+
         $whatsappMessage = WhatsAppMessage::create($msgData);
 
         $deal = $this->findOrCreateDeal($fromPhone, $senderName, $messageBody);
@@ -253,6 +263,35 @@ class UazapiWebhookService
                   ->orWhere('phone', 'LIKE', "%{$phone}%");
             })
             ->exists();
+    }
+
+    /**
+     * Verifica se o telefone pertence a um cliente lojista.
+     * Lojista = pelo menos 3 vendas e ≥70% do tipo repasse.
+     */
+    private function isWholesaleCustomerPhone(string $phone): bool
+    {
+        $normalized = $this->normalizePhoneForSearch($phone);
+
+        $customer = Customer::where('phone', $phone)
+            ->orWhere('phone', $normalized)
+            ->orWhere('phone', 'LIKE', "%{$normalized}")
+            ->first();
+
+        if (!$customer) {
+            return false;
+        }
+
+        $totalSales = Sale::where('customer_id', $customer->id)->count();
+        if ($totalSales < 2) {
+            return false;
+        }
+
+        $repasseSales = Sale::where('customer_id', $customer->id)
+            ->where('sale_type', SaleType::Repasse)
+            ->count();
+
+        return ($repasseSales / $totalSales) >= 0.7;
     }
 
     /**
