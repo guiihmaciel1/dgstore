@@ -25,40 +25,44 @@
                 $time = $msg->created_at->setTimezone('America/Sao_Paulo')->format('H:i');
             @endphp
             <div class="wa-msg-row" data-wa-id="{{ $msg->wa_message_id }}" data-direction="{{ $isOutbound ? 'outbound' : 'inbound' }}"
-                 style="display: flex; justify-content: {{ $isOutbound ? 'flex-end' : 'flex-start' }}; max-width: 100%; position: relative;"
-                 onmouseenter="this.querySelector('.wa-hover-actions')?.style.setProperty('opacity','1')"
-                 onmouseleave="this.querySelector('.wa-hover-actions')?.style.setProperty('opacity','0')">
+                 style="display: flex; justify-content: {{ $isOutbound ? 'flex-end' : 'flex-start' }}; max-width: 100%;"
+                 onmouseenter="this.querySelector('.wa-hover-actions')?.style.setProperty('display','flex')"
+                 onmouseleave="this.querySelector('.wa-hover-actions')?.style.setProperty('display','none')">
 
-                {{-- Hover action buttons --}}
-                <div class="wa-hover-actions" style="position: absolute; {{ $isOutbound ? 'left: -4px; transform: translateX(-100%)' : 'right: -4px; transform: translateX(100%)' }}; top: 50%; margin-top: -14px; opacity: 0; transition: opacity 0.15s; display: flex; gap: 2px; z-index: 5;">
-                    @if(!$isOutbound)
-                    <button class="wa-reply-btn" type="button"
-                        onclick="setReply('{{ $msg->wa_message_id }}', '{{ addslashes($msg->from_name ?? 'Cliente') }}', `{{ addslashes(mb_substr($msg->message_body ?? '', 0, 100)) }}`)"
-                        style="background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
-                        title="Responder">
-                        <svg style="width: 12px; height: 12px; color: #888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                    </button>
-                    @endif
-                    <button type="button" onclick="showEmojiPicker('{{ $msg->wa_message_id }}', this)"
-                        style="background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
-                        title="Reagir">
-                        <span style="font-size: 11px;">😊</span>
-                    </button>
-                    @if($isOutbound && $msg->message_type === 'text')
-                    <button type="button" onclick="startEditMessage('{{ $msg->wa_message_id }}')"
-                        style="background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
-                        title="Editar">
-                        <svg style="width: 11px; height: 11px; color: #888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                    </button>
-                    <button type="button" onclick="confirmDeleteMessage('{{ $msg->wa_message_id }}')"
-                        style="background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
-                        title="Apagar para todos">
-                        <svg style="width: 11px; height: 11px; color: #888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                    </button>
-                    @endif
-                </div>
+                <div style="max-width: 80%; position: relative;">
+                    {{-- Hover action buttons — inside bubble, top-right --}}
+                    <div class="wa-hover-actions" style="display: none; position: absolute; top: -10px; {{ $isOutbound ? 'left: -2px' : 'right: -2px' }}; gap: 2px; z-index: 5;">
+                        @if(!$isOutbound)
+                        <button class="wa-reply-btn" type="button"
+                            data-wa-id="{{ $msg->wa_message_id }}"
+                            data-name="{{ e($msg->from_name ?? 'Cliente') }}"
+                            data-text="{{ e(mb_substr($msg->message_body ?? '', 0, 100)) }}"
+                            onclick="setReply(this.dataset.waId, this.dataset.name, this.dataset.text)"
+                            style="background: #252525; border: 1px solid #333; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                            title="Responder">
+                            <svg style="width: 11px; height: 11px; color: #999;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                        </button>
+                        @endif
+                        <button type="button" onclick="showEmojiPicker('{{ $msg->wa_message_id }}', this)"
+                            style="background: #252525; border: 1px solid #333; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                            title="Reagir">
+                            <span style="font-size: 10px;">😊</span>
+                        </button>
+                        @if($isOutbound && $msg->message_type === 'text')
+                        <button type="button" onclick="startEditMessage('{{ $msg->wa_message_id }}')"
+                            style="background: #252525; border: 1px solid #333; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                            title="Editar">
+                            <svg style="width: 10px; height: 10px; color: #999;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </button>
+                        <button type="button" onclick="confirmDeleteMessage('{{ $msg->wa_message_id }}')"
+                            style="background: #252525; border: 1px solid #333; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                            title="Apagar para todos">
+                            <svg style="width: 10px; height: 10px; color: #999;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                        @endif
+                    </div>
 
-                <div style="max-width: 80%; padding: 0.4rem 0.625rem; border-radius: {{ $isOutbound ? '10px 10px 0 10px' : '10px 10px 10px 0' }};
+                    <div style="padding: 0.4rem 0.625rem; border-radius: {{ $isOutbound ? '10px 10px 0 10px' : '10px 10px 10px 0' }};
                     background: {{ $isOutbound ? '#005c4b' : '#1a1a1a' }};
                     border: 1px solid {{ $isOutbound ? '#00694d' : '#252525' }};">
 
@@ -138,8 +142,9 @@
                             </span>
                         @endif
                     </div>
-                </div>
-            </div>
+                    </div>{{-- /bubble --}}
+                </div>{{-- /position:relative wrapper --}}
+            </div>{{-- /msg-row --}}
         @empty
             <div id="wa-empty-state" style="flex: 1; display: flex; align-items: center; justify-content: center; color: #333;">
                 <div style="text-align: center;">
@@ -527,25 +532,24 @@
         row.className = 'wa-msg-row';
         row.dataset.waId = msg.wa_message_id;
         row.dataset.direction = msg.direction;
-        row.style.cssText = `display: flex; justify-content: ${isOutbound ? 'flex-end' : 'flex-start'}; max-width: 100%; position: relative;`;
+        row.style.cssText = `display: flex; justify-content: ${isOutbound ? 'flex-end' : 'flex-start'}; max-width: 100%;`;
 
-        row.onmouseenter = function() { this.querySelector('.wa-hover-actions')?.style.setProperty('opacity','1'); };
-        row.onmouseleave = function() { this.querySelector('.wa-hover-actions')?.style.setProperty('opacity','0'); };
+        row.onmouseenter = function() { this.querySelector('.wa-hover-actions')?.style.setProperty('display','flex'); };
+        row.onmouseleave = function() { this.querySelector('.wa-hover-actions')?.style.setProperty('display','none'); };
 
-        const safeName = (msg.from_name || 'Cliente').replace(/'/g, "\\'");
-        const safeBody = (msg.message_body || '').substring(0, 100).replace(/'/g, "\\'").replace(/`/g, '');
-        const hoverSide = isOutbound ? 'left: -4px; transform: translateX(-100%)' : 'right: -4px; transform: translateX(100%)';
+        const hoverPos = isOutbound ? 'left: -2px' : 'right: -2px';
+        const btnStyle = 'background:#252525;border:1px solid #333;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;';
 
         let hoverBtns = '';
         if (!isOutbound) {
-            hoverBtns += `<button class="wa-reply-btn" type="button" onclick="setReply('${msg.wa_message_id}', '${safeName}', '${safeBody}')" style="background:#1a1a1a;border:1px solid #252525;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Responder"><svg style="width:12px;height:12px;color:#888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg></button>`;
+            hoverBtns += `<button class="wa-reply-btn" type="button" data-wa-id="${msg.wa_message_id}" data-name="${escHtml(msg.from_name || 'Cliente')}" data-text="${escHtml((msg.message_body || '').substring(0, 100))}" onclick="setReply(this.dataset.waId, this.dataset.name, this.dataset.text)" style="${btnStyle}" title="Responder"><svg style="width:11px;height:11px;color:#999;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg></button>`;
         }
-        hoverBtns += `<button type="button" onclick="showEmojiPicker('${msg.wa_message_id}', this)" style="background:#1a1a1a;border:1px solid #252525;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Reagir"><span style="font-size:11px;">😊</span></button>`;
+        hoverBtns += `<button type="button" onclick="showEmojiPicker('${msg.wa_message_id}', this)" style="${btnStyle}" title="Reagir"><span style="font-size:10px;">😊</span></button>`;
         if (isOutbound && (msg.message_type === 'text' || !msg.message_type)) {
-            hoverBtns += `<button type="button" onclick="startEditMessage('${msg.wa_message_id}')" style="background:#1a1a1a;border:1px solid #252525;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Editar"><svg style="width:11px;height:11px;color:#888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`;
-            hoverBtns += `<button type="button" onclick="confirmDeleteMessage('${msg.wa_message_id}')" style="background:#1a1a1a;border:1px solid #252525;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Apagar"><svg style="width:11px;height:11px;color:#888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`;
+            hoverBtns += `<button type="button" onclick="startEditMessage('${msg.wa_message_id}')" style="${btnStyle}" title="Editar"><svg style="width:10px;height:10px;color:#999;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`;
+            hoverBtns += `<button type="button" onclick="confirmDeleteMessage('${msg.wa_message_id}')" style="${btnStyle}" title="Apagar"><svg style="width:10px;height:10px;color:#999;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`;
         }
-        const actionsHtml = `<div class="wa-hover-actions" style="position:absolute;${hoverSide};top:50%;margin-top:-14px;opacity:0;transition:opacity 0.15s;display:flex;gap:2px;z-index:5;">${hoverBtns}</div>`;
+        const actionsHtml = `<div class="wa-hover-actions" style="display:none;position:absolute;top:-10px;${hoverPos};gap:2px;z-index:5;">${hoverBtns}</div>`;
 
         let quoteHtml = '';
         if (msg.reply_to_body) {
@@ -582,16 +586,18 @@
             : '';
 
         row.innerHTML = `
-            ${actionsHtml}
-            <div style="max-width: 80%; padding: 0.4rem 0.625rem; border-radius: ${isOutbound ? '10px 10px 0 10px' : '10px 10px 10px 0'};
-                background: ${isOutbound ? '#005c4b' : '#1a1a1a'};
-                border: 1px solid ${isOutbound ? '#00694d' : '#252525'};">`;
-                ${senderHtml}
-                ${quoteHtml}
-                ${bodyHtml}
-                <div class="wa-status-row" style="display: flex; align-items: center; justify-content: flex-end; gap: 0.2rem; margin-top: 0.1rem;">
-                    <span style="font-size: 0.55rem; color: #555;">${time}</span>
-                    ${deliveryIcon ? `<span class="wa-delivery-icon" data-status="${msg.delivery_status || 'sent'}">${deliveryIcon}</span>` : ''}
+            <div style="max-width: 80%; position: relative;">
+                ${actionsHtml}
+                <div style="padding: 0.4rem 0.625rem; border-radius: ${isOutbound ? '10px 10px 0 10px' : '10px 10px 10px 0'};
+                    background: ${isOutbound ? '#005c4b' : '#1a1a1a'};
+                    border: 1px solid ${isOutbound ? '#00694d' : '#252525'};">
+                    ${senderHtml}
+                    ${quoteHtml}
+                    ${bodyHtml}
+                    <div class="wa-status-row" style="display: flex; align-items: center; justify-content: flex-end; gap: 0.2rem; margin-top: 0.1rem;">
+                        <span style="font-size: 0.55rem; color: #555;">${time}</span>
+                        ${deliveryIcon ? `<span class="wa-delivery-icon" data-status="${msg.delivery_status || 'sent'}">${deliveryIcon}</span>` : ''}
+                    </div>
                 </div>
             </div>`;
 
@@ -1081,6 +1087,8 @@
 </script>
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
+#wa-messages { scrollbar-width: none; -ms-overflow-style: none; }
+#wa-messages::-webkit-scrollbar { display: none; }
 #wa-chat-panel audio {
     filter: invert(1) hue-rotate(180deg);
     opacity: 0.85;
