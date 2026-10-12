@@ -30,6 +30,7 @@ use App\Domain\User\Enums\UserRole;
 use App\Domain\User\Models\User;
 use App\Domain\Warranty\Services\WarrantyService;
 use App\Domain\News\Services\AppleNewsService;
+use App\Domain\WhatsApp\Services\UazapiService;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -259,6 +260,22 @@ class DashboardController extends Controller
                 'label' => 'Reservas vencendo',
                 'route' => route('reservations.index'),
             ];
+        }
+
+        try {
+            $uazapi = app(UazapiService::class);
+            if ($uazapi->isConfigured()) {
+                $chatCount = $uazapi->countChats();
+                $total = $chatCount['total'] ?? 0;
+                if ($total > 0) {
+                    $notifications[] = [
+                        'type' => 'info', 'icon' => 'whatsapp', 'count' => $total,
+                        'label' => 'Conversas WhatsApp',
+                        'route' => route('crm.board'),
+                    ];
+                }
+            }
+        } catch (\Throwable) {
         }
 
         return $notifications;

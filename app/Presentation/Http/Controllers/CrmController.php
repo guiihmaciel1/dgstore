@@ -978,8 +978,44 @@ class CrmController extends Controller
             ])->filter()->implode(' | ');
 
             $uazapi->editLead($deal->phone, $name, $responsible, $notes);
+
+            $this->syncCustomerTagsToWhatsApp($deal, $uazapi);
         } catch (\Throwable $e) {
             Log::warning('Erro ao sincronizar lead WhatsApp', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Sincroniza tags do Customer com lead tags do WhatsApp.
+     */
+    private function syncCustomerTagsToWhatsApp(Deal $deal, UazapiService $uazapi): void
+    {
+        $customer = $deal->customer;
+        if (!$customer) {
+            return;
+        }
+
+        $customer->load('tags');
+        $customerTags = $customer->tags;
+
+        if ($customerTags->isEmpty()) {
+            return;
+        }
+
+        try {
+            $existingTags = $uazapi->getLeadTags();
+            $existingTagNames = collect($existingTags)->pluck('name')->map(fn ($n) => mb_strtolower($n))->toArray();
+
+            foreach ($customerTags as $tag) {
+                $tagNameLower = mb_strtolower($tag->name);
+                if (!in_array($tagNameLower, $existingTagNames)) {
+                    $uazapi->editLeadTag([
+                        'name' => $tag->name,
+                    ]);
+                }
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Erro ao sincronizar tags WhatsApp', ['error' => $e->getMessage()]);
         }
     }
 

@@ -26,18 +26,37 @@
             @endphp
             <div class="wa-msg-row" data-wa-id="{{ $msg->wa_message_id }}" data-direction="{{ $isOutbound ? 'outbound' : 'inbound' }}"
                  style="display: flex; justify-content: {{ $isOutbound ? 'flex-end' : 'flex-start' }}; max-width: 100%; position: relative;"
-                 onmouseenter="this.querySelector('.wa-reply-btn')?.style.setProperty('opacity','1')"
-                 onmouseleave="this.querySelector('.wa-reply-btn')?.style.setProperty('opacity','0')">
+                 onmouseenter="this.querySelector('.wa-hover-actions')?.style.setProperty('opacity','1')"
+                 onmouseleave="this.querySelector('.wa-hover-actions')?.style.setProperty('opacity','0')">
 
-                {{-- Reply button (hover) --}}
-                @if(!$isOutbound)
-                <button class="wa-reply-btn" type="button"
-                    onclick="setReply('{{ $msg->wa_message_id }}', '{{ addslashes($msg->from_name ?? 'Cliente') }}', `{{ addslashes(mb_substr($msg->message_body ?? '', 0, 100)) }}`)"
-                    style="position: absolute; {{ $isOutbound ? 'left: 0' : 'right: 0' }}; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.15s; background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5;"
-                    title="Responder">
-                    <svg style="width: 12px; height: 12px; color: #888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                </button>
-                @endif
+                {{-- Hover action buttons --}}
+                <div class="wa-hover-actions" style="position: absolute; {{ $isOutbound ? 'left: -4px; transform: translateX(-100%)' : 'right: -4px; transform: translateX(100%)' }}; top: 50%; margin-top: -14px; opacity: 0; transition: opacity 0.15s; display: flex; gap: 2px; z-index: 5;">
+                    @if(!$isOutbound)
+                    <button class="wa-reply-btn" type="button"
+                        onclick="setReply('{{ $msg->wa_message_id }}', '{{ addslashes($msg->from_name ?? 'Cliente') }}', `{{ addslashes(mb_substr($msg->message_body ?? '', 0, 100)) }}`)"
+                        style="background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                        title="Responder">
+                        <svg style="width: 12px; height: 12px; color: #888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                    </button>
+                    @endif
+                    <button type="button" onclick="showEmojiPicker('{{ $msg->wa_message_id }}', this)"
+                        style="background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                        title="Reagir">
+                        <span style="font-size: 11px;">😊</span>
+                    </button>
+                    @if($isOutbound && $msg->message_type === 'text')
+                    <button type="button" onclick="startEditMessage('{{ $msg->wa_message_id }}')"
+                        style="background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                        title="Editar">
+                        <svg style="width: 11px; height: 11px; color: #888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    </button>
+                    <button type="button" onclick="confirmDeleteMessage('{{ $msg->wa_message_id }}')"
+                        style="background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;"
+                        title="Apagar para todos">
+                        <svg style="width: 11px; height: 11px; color: #888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                    @endif
+                </div>
 
                 <div style="max-width: 80%; padding: 0.4rem 0.625rem; border-radius: {{ $isOutbound ? '10px 10px 0 10px' : '10px 10px 10px 0' }};
                     background: {{ $isOutbound ? '#005c4b' : '#1a1a1a' }};
@@ -176,6 +195,57 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
                         </svg>
                     </label>
+
+                    {{-- Enviar Localização --}}
+                    <button type="button" onclick="sendStoreLocation()"
+                        style="width: 34px; height: 34px; border-radius: 0.375rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s;"
+                        onmouseover="this.style.borderColor='rgba(255,255,255,0.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'"
+                        title="Enviar localização da loja">
+                        <svg style="width: 16px; height: 16px; color: #666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </button>
+
+                    {{-- Enviar PIX --}}
+                    <button type="button" onclick="sendPixButton()"
+                        style="width: 34px; height: 34px; border-radius: 0.375rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s;"
+                        onmouseover="this.style.borderColor='rgba(255,255,255,0.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'"
+                        title="Enviar chave PIX">
+                        <span style="font-size: 14px; color: #666; font-weight: 700;">₱</span>
+                    </button>
+
+                    {{-- Respostas Rápidas --}}
+                    <div x-data="{ showQuickReplies: false }" style="position: relative;">
+                        <button type="button" @click="showQuickReplies = !showQuickReplies"
+                            style="width: 34px; height: 34px; border-radius: 0.375rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s;"
+                            onmouseover="this.style.borderColor='rgba(255,255,255,0.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'"
+                            title="Respostas rápidas">
+                            <svg style="width: 16px; height: 16px; color: #666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </button>
+                        <div x-show="showQuickReplies" x-cloak @click.away="showQuickReplies = false"
+                             style="position: absolute; bottom: 100%; left: 0; margin-bottom: 0.5rem; background: #141414; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; padding: 0.5rem; width: 300px; max-height: 320px; z-index: 20; box-shadow: 0 -4px 16px rgba(0,0,0,0.4); display: flex; flex-direction: column;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.375rem;">
+                                <span style="font-size: 0.7rem; font-weight: 600; color: #e3e3e3;">Respostas Rápidas</span>
+                                <button type="button" onclick="toggleQuickReplyForm()" style="background: #25D366; border: none; border-radius: 4px; color: #000; font-size: 0.6rem; font-weight: 600; padding: 0.15rem 0.4rem; cursor: pointer;">+ Nova</button>
+                            </div>
+                            <input type="text" id="qr-search" placeholder="Buscar atalho..." oninput="filterQuickReplies(this.value)"
+                                style="width: 100%; padding: 0.25rem 0.4rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.7rem; margin-bottom: 0.375rem; box-sizing: border-box;">
+                            <div id="qr-list" style="flex: 1; overflow-y: auto; max-height: 200px;">
+                                <div style="text-align: center; padding: 1rem; color: #555; font-size: 0.7rem;">Carregando...</div>
+                            </div>
+                            <div id="qr-form" style="display: none; border-top: 1px solid #252525; padding-top: 0.375rem; margin-top: 0.375rem;">
+                                <input type="text" id="qr-new-shortcut" placeholder="Atalho (ex: endereco)" style="width: 100%; padding: 0.25rem 0.4rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem; margin-bottom: 0.2rem; box-sizing: border-box;">
+                                <textarea id="qr-new-text" placeholder="Texto da resposta" rows="2" style="width: 100%; padding: 0.25rem 0.4rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem; resize: none; margin-bottom: 0.2rem; box-sizing: border-box;"></textarea>
+                                <div style="display: flex; gap: 0.25rem;">
+                                    <button type="button" onclick="saveQuickReply()" style="flex: 1; padding: 0.2rem; background: #25D366; color: #000; font-weight: 600; font-size: 0.6rem; border: none; border-radius: 0.25rem; cursor: pointer;">Salvar</button>
+                                    <button type="button" onclick="toggleQuickReplyForm()" style="padding: 0.2rem 0.4rem; background: #1a1a1a; color: #888; font-size: 0.6rem; border: 1px solid #252525; border-radius: 0.25rem; cursor: pointer;">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- Input de Mensagem --}}
@@ -459,17 +529,23 @@
         row.dataset.direction = msg.direction;
         row.style.cssText = `display: flex; justify-content: ${isOutbound ? 'flex-end' : 'flex-start'}; max-width: 100%; position: relative;`;
 
-        if (!isOutbound) {
-            row.onmouseenter = function() { this.querySelector('.wa-reply-btn')?.style.setProperty('opacity','1'); };
-            row.onmouseleave = function() { this.querySelector('.wa-reply-btn')?.style.setProperty('opacity','0'); };
-        }
+        row.onmouseenter = function() { this.querySelector('.wa-hover-actions')?.style.setProperty('opacity','1'); };
+        row.onmouseleave = function() { this.querySelector('.wa-hover-actions')?.style.setProperty('opacity','0'); };
 
-        let replyBtn = '';
+        const safeName = (msg.from_name || 'Cliente').replace(/'/g, "\\'");
+        const safeBody = (msg.message_body || '').substring(0, 100).replace(/'/g, "\\'").replace(/`/g, '');
+        const hoverSide = isOutbound ? 'left: -4px; transform: translateX(-100%)' : 'right: -4px; transform: translateX(100%)';
+
+        let hoverBtns = '';
         if (!isOutbound) {
-            const safeName = (msg.from_name || 'Cliente').replace(/'/g, "\\'");
-            const safeBody = (msg.message_body || '').substring(0, 100).replace(/'/g, "\\'").replace(/`/g, '');
-            replyBtn = `<button class="wa-reply-btn" type="button" onclick="setReply('${msg.wa_message_id}', '${safeName}', '${safeBody}')" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); opacity: 0; transition: opacity 0.15s; background: #1a1a1a; border: 1px solid #252525; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5;" title="Responder"><svg style="width: 12px; height: 12px; color: #888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg></button>`;
+            hoverBtns += `<button class="wa-reply-btn" type="button" onclick="setReply('${msg.wa_message_id}', '${safeName}', '${safeBody}')" style="background:#1a1a1a;border:1px solid #252525;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Responder"><svg style="width:12px;height:12px;color:#888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg></button>`;
         }
+        hoverBtns += `<button type="button" onclick="showEmojiPicker('${msg.wa_message_id}', this)" style="background:#1a1a1a;border:1px solid #252525;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Reagir"><span style="font-size:11px;">😊</span></button>`;
+        if (isOutbound && (msg.message_type === 'text' || !msg.message_type)) {
+            hoverBtns += `<button type="button" onclick="startEditMessage('${msg.wa_message_id}')" style="background:#1a1a1a;border:1px solid #252525;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Editar"><svg style="width:11px;height:11px;color:#888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>`;
+            hoverBtns += `<button type="button" onclick="confirmDeleteMessage('${msg.wa_message_id}')" style="background:#1a1a1a;border:1px solid #252525;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;" title="Apagar"><svg style="width:11px;height:11px;color:#888;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>`;
+        }
+        const actionsHtml = `<div class="wa-hover-actions" style="position:absolute;${hoverSide};top:50%;margin-top:-14px;opacity:0;transition:opacity 0.15s;display:flex;gap:2px;z-index:5;">${hoverBtns}</div>`;
 
         let quoteHtml = '';
         if (msg.reply_to_body) {
@@ -506,10 +582,10 @@
             : '';
 
         row.innerHTML = `
-            ${replyBtn}
+            ${actionsHtml}
             <div style="max-width: 80%; padding: 0.4rem 0.625rem; border-radius: ${isOutbound ? '10px 10px 0 10px' : '10px 10px 10px 0'};
                 background: ${isOutbound ? '#005c4b' : '#1a1a1a'};
-                border: 1px solid ${isOutbound ? '#00694d' : '#252525'};">
+                border: 1px solid ${isOutbound ? '#00694d' : '#252525'};">`;
                 ${senderHtml}
                 ${quoteHtml}
                 ${bodyHtml}
@@ -703,6 +779,303 @@
             setTimeout(() => { btn.textContent = 'Salvar'; btn.disabled = false; }, 2000);
         }
     };
+
+    // ─── Emoji Reactions ────────────────────────────────────
+
+    const QUICK_EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
+
+    window.showEmojiPicker = function(waMessageId, btnEl) {
+        document.querySelectorAll('.wa-emoji-picker').forEach(el => el.remove());
+
+        const picker = document.createElement('div');
+        picker.className = 'wa-emoji-picker';
+        picker.style.cssText = 'position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:4px; background:#1a1a1a; border:1px solid #333; border-radius:20px; padding:4px 6px; display:flex; gap:2px; z-index:30; box-shadow:0 4px 12px rgba(0,0,0,0.5);';
+
+        QUICK_EMOJIS.forEach(emoji => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = emoji;
+            btn.style.cssText = 'background:none; border:none; font-size:18px; cursor:pointer; padding:2px 4px; border-radius:6px; transition:background 0.1s;';
+            btn.onmouseenter = () => btn.style.background = '#333';
+            btn.onmouseleave = () => btn.style.background = 'none';
+            btn.onclick = () => { sendReaction(waMessageId, emoji); picker.remove(); };
+            picker.appendChild(btn);
+        });
+
+        btnEl.parentElement.style.position = 'relative';
+        btnEl.parentElement.appendChild(picker);
+
+        const autoClose = (e) => {
+            if (!picker.contains(e.target)) { picker.remove(); document.removeEventListener('click', autoClose); }
+        };
+        setTimeout(() => document.addEventListener('click', autoClose), 50);
+    };
+
+    async function sendReaction(waMessageId, emoji) {
+        try {
+            const res = await fetch('{{ route("crm.deals.wa.react", $deal) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('#wa-send-form input[name=_token]')?.value || document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ message_id: waMessageId, emoji }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                const row = document.querySelector(`.wa-msg-row[data-wa-id="${waMessageId}"]`);
+                if (row) {
+                    let reactEl = row.querySelector('.wa-reaction');
+                    if (!reactEl) {
+                        reactEl = document.createElement('div');
+                        reactEl.className = 'wa-reaction';
+                        reactEl.style.cssText = 'position:absolute; bottom:-8px; left:8px; background:#1a1a1a; border:1px solid #333; border-radius:10px; padding:1px 5px; font-size:14px; z-index:2;';
+                        const bubble = row.querySelector('div[style*="max-width: 80%"]');
+                        if (bubble) { bubble.style.position = 'relative'; bubble.appendChild(reactEl); }
+                    }
+                    reactEl.textContent = emoji;
+                }
+            }
+        } catch(e) {}
+    }
+
+    // ─── Edit Message ───────────────────────────────────────
+
+    window.startEditMessage = function(waMessageId) {
+        const row = document.querySelector(`.wa-msg-row[data-wa-id="${waMessageId}"]`);
+        if (!row) return;
+
+        const textEl = row.querySelector('div[style*="white-space: pre-wrap"]');
+        if (!textEl) return;
+
+        const currentText = textEl.textContent.trim();
+        const originalHtml = textEl.innerHTML;
+
+        textEl.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:4px;">
+                <textarea class="wa-edit-input" style="width:100%; min-height:40px; background:#003d33; border:1px solid #25D366; border-radius:4px; color:#e3e3e3; font-size:0.8rem; padding:4px 6px; resize:none; font-family:inherit;">${escHtml(currentText)}</textarea>
+                <div style="display:flex; gap:4px; justify-content:flex-end;">
+                    <button type="button" class="wa-edit-cancel" style="padding:2px 8px; background:#333; color:#888; border:none; border-radius:4px; font-size:0.65rem; cursor:pointer;">Cancelar</button>
+                    <button type="button" class="wa-edit-save" style="padding:2px 8px; background:#25D366; color:#000; border:none; border-radius:4px; font-size:0.65rem; font-weight:600; cursor:pointer;">Salvar</button>
+                </div>
+            </div>`;
+
+        const input = textEl.querySelector('.wa-edit-input');
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+
+        textEl.querySelector('.wa-edit-cancel').onclick = () => { textEl.innerHTML = originalHtml; };
+        textEl.querySelector('.wa-edit-save').onclick = async () => {
+            const newText = input.value.trim();
+            if (!newText || newText === currentText) { textEl.innerHTML = originalHtml; return; }
+
+            try {
+                const res = await fetch('{{ route("crm.deals.wa.edit", $deal) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('#wa-send-form input[name=_token]')?.value || document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ message_id: waMessageId, text: newText }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    textEl.innerHTML = '';
+                    textEl.textContent = newText;
+                } else {
+                    showWaError(data.error || 'Erro ao editar mensagem');
+                    textEl.innerHTML = originalHtml;
+                }
+            } catch(e) {
+                showWaError('Erro de conexão');
+                textEl.innerHTML = originalHtml;
+            }
+        };
+    };
+
+    // ─── Delete Message ─────────────────────────────────────
+
+    window.confirmDeleteMessage = function(waMessageId) {
+        if (!confirm('Apagar esta mensagem para todos?')) return;
+
+        fetch('{{ route("crm.deals.wa.delete", $deal) }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('#wa-send-form input[name=_token]')?.value || document.querySelector('meta[name="csrf-token"]').content,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({ message_id: waMessageId }),
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const row = document.querySelector(`.wa-msg-row[data-wa-id="${waMessageId}"]`);
+                if (row) {
+                    const textEl = row.querySelector('div[style*="white-space: pre-wrap"]');
+                    if (textEl) {
+                        textEl.textContent = '🚫 Mensagem apagada';
+                        textEl.style.fontStyle = 'italic';
+                        textEl.style.color = '#666';
+                    }
+                    row.querySelector('.wa-hover-actions')?.remove();
+                }
+            } else {
+                showWaError(data.error || 'Erro ao apagar');
+            }
+        })
+        .catch(() => showWaError('Erro de conexão'));
+    };
+
+    // ─── Send Location ──────────────────────────────────────
+
+    window.sendStoreLocation = async function() {
+        try {
+            const res = await fetch('{{ route("crm.deals.wa.send-location", $deal) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('#wa-send-form input[name=_token]')?.value || document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: '{}',
+            });
+            const data = await res.json();
+            if (data.success) {
+                setTimeout(pollMessages, 1500);
+            } else {
+                showWaError(data.error || 'Erro ao enviar localização');
+            }
+        } catch(e) {
+            showWaError('Erro de conexão');
+        }
+    };
+
+    // ─── Send PIX ───────────────────────────────────────────
+
+    window.sendPixButton = async function() {
+        try {
+            const res = await fetch('{{ route("crm.deals.wa.send-pix", $deal) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('#wa-send-form input[name=_token]')?.value || document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: '{}',
+            });
+            const data = await res.json();
+            if (data.success) {
+                setTimeout(pollMessages, 1500);
+            } else {
+                showWaError(data.error || 'Erro ao enviar PIX');
+            }
+        } catch(e) {
+            showWaError('Erro de conexão');
+        }
+    };
+
+    // ─── Quick Replies ──────────────────────────────────────
+
+    let quickRepliesData = [];
+    let quickRepliesLoaded = false;
+
+    window.toggleQuickReplyForm = function() {
+        const form = document.getElementById('qr-form');
+        if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    };
+
+    window.filterQuickReplies = function(query) {
+        if (!quickRepliesLoaded) { loadQuickReplies(); return; }
+        const q = query.toLowerCase();
+        renderQuickReplies(quickRepliesData.filter(r =>
+            r.shortCut?.toLowerCase().includes(q) ||
+            r.message?.text?.toLowerCase().includes(q)
+        ));
+    };
+
+    async function loadQuickReplies() {
+        try {
+            const res = await fetch('{{ route("crm.quick-replies.list") }}', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+            });
+            const data = await res.json();
+            quickRepliesData = data.data || data.quickReplies || data || [];
+            if (!Array.isArray(quickRepliesData)) quickRepliesData = [];
+            quickRepliesLoaded = true;
+            renderQuickReplies(quickRepliesData);
+        } catch(e) {
+            document.getElementById('qr-list').innerHTML = '<div style="text-align:center;padding:0.5rem;color:#f87171;font-size:0.7rem;">Erro ao carregar</div>';
+        }
+    }
+
+    function renderQuickReplies(items) {
+        const list = document.getElementById('qr-list');
+        if (!items.length) {
+            list.innerHTML = '<div style="text-align:center;padding:0.75rem;color:#555;font-size:0.7rem;">Nenhuma resposta rápida</div>';
+            return;
+        }
+        list.innerHTML = items.map(r => {
+            const text = r.message?.text || r.message?.name || '(sem texto)';
+            const preview = text.length > 60 ? text.substring(0, 60) + '...' : text;
+            return `<div class="qr-item" onclick="useQuickReply('${escHtml(text.replace(/'/g, "\\'"))}')" style="padding:0.35rem 0.4rem;border-radius:0.25rem;cursor:pointer;transition:background 0.1s;border-bottom:1px solid #1a1a1a;" onmouseenter="this.style.background='#1a1a1a'" onmouseleave="this.style.background='none'">
+                <div style="font-size:0.65rem;color:#25D366;font-weight:600;">/${escHtml(r.shortCut || '')}</div>
+                <div style="font-size:0.7rem;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(preview)}</div>
+            </div>`;
+        }).join('');
+    }
+
+    window.useQuickReply = function(text) {
+        const input = document.getElementById('wa-message-input');
+        if (input) {
+            input.value = text;
+            input.focus();
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 80) + 'px';
+        }
+    };
+
+    window.saveQuickReply = async function() {
+        const shortcut = document.getElementById('qr-new-shortcut')?.value?.trim();
+        const text = document.getElementById('qr-new-text')?.value?.trim();
+        if (!shortcut || !text) { alert('Preencha atalho e texto'); return; }
+
+        try {
+            const res = await fetch('{{ route("crm.quick-replies.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('#wa-send-form input[name=_token]')?.value || document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({ shortcut, text }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById('qr-new-shortcut').value = '';
+                document.getElementById('qr-new-text').value = '';
+                toggleQuickReplyForm();
+                quickRepliesLoaded = false;
+                loadQuickReplies();
+            } else {
+                alert('Erro ao salvar: ' + (data.error || 'desconhecido'));
+            }
+        } catch(e) {
+            alert('Erro de conexão');
+        }
+    };
+
+    // Load quick replies on first open
+    const qrObserver = new MutationObserver(() => {
+        const qrPanel = document.querySelector('[x-show="showQuickReplies"]');
+        if (qrPanel && qrPanel.style.display !== 'none' && !quickRepliesLoaded) {
+            loadQuickReplies();
+        }
+    });
+    const qrContainer = document.querySelector('[x-data*="showQuickReplies"]');
+    if (qrContainer) qrObserver.observe(qrContainer, { attributes: true, subtree: true });
 
 })();
 </script>
