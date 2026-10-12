@@ -688,7 +688,9 @@ class CrmController extends Controller
         }
 
         $replyTo = $request->input('reply_to');
-        $result = $uazapi->sendText($phone, $request->message, $replyTo);
+        $senderName = auth()->user()->name;
+        $whatsappText = "*{$senderName}:*\n{$request->message}";
+        $result = $uazapi->sendText($phone, $whatsappText, $replyTo);
 
         if (isset($result['error'])) {
             return response()->json(['success' => false, 'error' => $result['error']], 500);
@@ -742,8 +744,12 @@ class CrmController extends Controller
         $publicUrl = url("storage/{$path}");
 
         $isImage = str_starts_with($file->getMimeType(), 'image/');
+        $senderName = auth()->user()->name;
+        $caption = $request->caption
+            ? "*{$senderName}:*\n{$request->caption}"
+            : "*{$senderName}:*\n📎 {$file->getClientOriginalName()}";
         $result = $isImage
-            ? $uazapi->sendImage($phone, $publicUrl, $request->caption)
+            ? $uazapi->sendImage($phone, $publicUrl, $caption)
             : $uazapi->sendDocument($phone, $publicUrl, $file->getClientOriginalName());
 
         if (isset($result['error'])) {
