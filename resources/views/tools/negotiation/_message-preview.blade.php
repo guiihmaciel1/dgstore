@@ -2,6 +2,13 @@
     <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
         <label class="apple-section-title">Preview da mensagem</label>
         <div class="flex gap-2 flex-wrap">
+            <button @click="openSaveModal()" type="button" x-show="productPrice > 0"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-none flex items-center gap-1 transition-colors bg-indigo-600 text-white hover:bg-indigo-700">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                </svg>
+                Salvar no Lead
+            </button>
             <button @click="copyMessage()" type="button"
                     class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-none flex items-center gap-1 transition-colors"
                     :class="copied ? 'bg-emerald-600 text-white' : 'bg-surface text-white hover:bg-surface-overlay'">
