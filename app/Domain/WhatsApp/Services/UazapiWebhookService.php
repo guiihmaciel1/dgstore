@@ -44,14 +44,14 @@ class UazapiWebhookService
      */
     public function isValidToken(array $payload): bool
     {
-        $payloadToken = $payload['token'] ?? null;
-        $expectedToken = config('services.uazapi.instance_token');
+        $payloadToken = $payload['token'] ?? '';
+        $expectedToken = config('services.uazapi.instance_token', '');
 
         if (empty($expectedToken)) {
             return true;
         }
 
-        return $payloadToken === $expectedToken;
+        return hash_equals($expectedToken, (string) $payloadToken);
     }
 
     private function processMessage(array $payload): void
@@ -86,6 +86,9 @@ class UazapiWebhookService
 
         $remotePhone = preg_replace('/@.*$/', '', $chatId);
         $messageBody = $message['text'] ?? $this->extractBody($message);
+
+        $senderName = $senderName ? mb_substr(strip_tags($senderName), 0, 100) : null;
+        $messageBody = $messageBody ? mb_substr($messageBody, 0, 10000) : null;
 
         if (!$waMessageId || !$remotePhone) {
             Log::warning('UazAPI processMessage: sem ID ou telefone', ['id' => $waMessageId, 'phone' => $remotePhone]);

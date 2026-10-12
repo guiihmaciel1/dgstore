@@ -1062,9 +1062,17 @@ class CrmController extends Controller
     public function reactWhatsApp(Request $request, Deal $deal): JsonResponse
     {
         $validated = $request->validate([
-            'message_id' => 'required|string',
+            'message_id' => 'required|string|max:200',
             'emoji' => 'required|string|max:10',
         ]);
+
+        $exists = WhatsAppMessage::where('deal_id', $deal->id)
+            ->where('wa_message_id', $validated['message_id'])
+            ->exists();
+
+        if (!$exists) {
+            return response()->json(['success' => false, 'error' => 'Mensagem não encontrada'], 404);
+        }
 
         $uazapi = app(UazapiService::class);
         if (!$uazapi->isConfigured()) {
@@ -1159,9 +1167,18 @@ class CrmController extends Controller
     public function editWhatsAppMessage(Request $request, Deal $deal): JsonResponse
     {
         $validated = $request->validate([
-            'message_id' => 'required|string',
-            'text' => 'required|string|min:1',
+            'message_id' => 'required|string|max:200',
+            'text' => 'required|string|min:1|max:4096',
         ]);
+
+        $msg = WhatsAppMessage::where('deal_id', $deal->id)
+            ->where('wa_message_id', $validated['message_id'])
+            ->where('direction', 'outbound')
+            ->first();
+
+        if (!$msg) {
+            return response()->json(['success' => false, 'error' => 'Mensagem não encontrada'], 404);
+        }
 
         $uazapi = app(UazapiService::class);
         if (!$uazapi->isConfigured()) {
@@ -1171,9 +1188,7 @@ class CrmController extends Controller
         $result = $uazapi->editMessage($validated['message_id'], $validated['text']);
 
         if (!isset($result['error'])) {
-            WhatsAppMessage::where('deal_id', $deal->id)
-                ->where('wa_message_id', $validated['message_id'])
-                ->update(['message_body' => $validated['text']]);
+            $msg->update(['message_body' => $validated['text']]);
         }
 
         return response()->json([
@@ -1187,8 +1202,17 @@ class CrmController extends Controller
     public function deleteWhatsAppMessage(Request $request, Deal $deal): JsonResponse
     {
         $validated = $request->validate([
-            'message_id' => 'required|string',
+            'message_id' => 'required|string|max:200',
         ]);
+
+        $msg = WhatsAppMessage::where('deal_id', $deal->id)
+            ->where('wa_message_id', $validated['message_id'])
+            ->where('direction', 'outbound')
+            ->first();
+
+        if (!$msg) {
+            return response()->json(['success' => false, 'error' => 'Mensagem não encontrada'], 404);
+        }
 
         $uazapi = app(UazapiService::class);
         if (!$uazapi->isConfigured()) {
@@ -1198,12 +1222,10 @@ class CrmController extends Controller
         $result = $uazapi->deleteMessage($validated['message_id']);
 
         if (!isset($result['error'])) {
-            WhatsAppMessage::where('deal_id', $deal->id)
-                ->where('wa_message_id', $validated['message_id'])
-                ->update([
-                    'message_body' => '🚫 Mensagem apagada',
-                    'message_type' => 'text',
-                ]);
+            $msg->update([
+                'message_body' => '🚫 Mensagem apagada',
+                'message_type' => 'text',
+            ]);
         }
 
         return response()->json([

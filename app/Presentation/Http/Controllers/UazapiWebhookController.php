@@ -22,32 +22,29 @@ class UazapiWebhookController extends Controller
      */
     public function handle(Request $request): JsonResponse
     {
+        if ($request->header('Content-Length', 0) > 512000) {
+            return response()->json(['error' => 'Payload too large'], 413);
+        }
+
         $payload = $request->all();
 
         Log::info('UazAPI webhook: RECEBIDO', [
             'event_type' => $payload['EventType'] ?? 'NENHUM',
-            'owner' => $payload['owner'] ?? 'N/A',
             'has_message' => isset($payload['message']),
             'ip' => $request->ip(),
-            'payload_keys' => array_keys($payload),
         ]);
 
         if (!$this->webhookService->isValidToken($payload)) {
-            Log::warning('UazAPI webhook: token inválido', [
-                'payload_token' => substr($payload['token'] ?? '', 0, 10) . '...',
-                'expected_token' => substr(config('services.uazapi.instance_token', ''), 0, 10) . '...',
-            ]);
+            Log::warning('UazAPI webhook: token inválido', ['ip' => $request->ip()]);
             return response()->json(['error' => 'Invalid token'], 403);
         }
 
         try {
             $this->webhookService->processWebhook($payload);
-            Log::info('UazAPI webhook: processado com sucesso');
         } catch (\Throwable $e) {
             Log::error('UazAPI webhook: erro ao processar', [
                 'error' => $e->getMessage(),
-                'file' => $e->getFile() . ':' . $e->getLine(),
-                'trace' => $e->getTraceAsString(),
+                'file' => basename($e->getFile()) . ':' . $e->getLine(),
             ]);
         }
 

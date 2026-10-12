@@ -483,87 +483,64 @@ class UazapiService
         return $digits;
     }
 
-    /**
-     * GET request.
-     */
+    private function httpClient(): \Illuminate\Http\Client\PendingRequest
+    {
+        return Http::withHeaders(['token' => $this->token])
+            ->timeout(15)
+            ->connectTimeout(5);
+    }
+
     private function get(string $endpoint): array
     {
         try {
-            $response = Http::withHeaders([
-                'token' => $this->token,
-            ])->get("{$this->baseUrl}{$endpoint}");
+            $response = $this->httpClient()->get("{$this->baseUrl}{$endpoint}");
 
             return $response->json() ?? [];
         } catch (\Throwable $e) {
-            Log::error('UazAPI GET error', [
-                'endpoint' => $endpoint,
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('UazAPI GET error', ['endpoint' => $endpoint, 'error' => $e->getMessage()]);
 
             return ['error' => $e->getMessage()];
         }
     }
 
-    /**
-     * POST request.
-     */
     private function post(string $endpoint, array $data = []): array
     {
         try {
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'token' => $this->token,
-            ])->post("{$this->baseUrl}{$endpoint}", $data);
+            $response = $this->httpClient()
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->post("{$this->baseUrl}{$endpoint}", $data);
 
             return $response->json() ?? [];
         } catch (\Throwable $e) {
-            Log::error('UazAPI POST error', [
-                'endpoint' => $endpoint,
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('UazAPI POST error', ['endpoint' => $endpoint, 'error' => $e->getMessage()]);
 
             return ['error' => $e->getMessage()];
         }
     }
 
-    /**
-     * PATCH request.
-     */
     private function patch(string $endpoint, array $data = []): array
     {
         try {
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'token' => $this->token,
-            ])->patch("{$this->baseUrl}{$endpoint}", $data);
+            $response = $this->httpClient()
+                ->withHeaders(['Content-Type' => 'application/json'])
+                ->patch("{$this->baseUrl}{$endpoint}", $data);
 
             return $response->json() ?? [];
         } catch (\Throwable $e) {
-            Log::error('UazAPI PATCH error', [
-                'endpoint' => $endpoint,
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('UazAPI PATCH error', ['endpoint' => $endpoint, 'error' => $e->getMessage()]);
 
             return ['error' => $e->getMessage()];
         }
     }
 
-    /**
-     * DELETE request.
-     */
     private function httpDelete(string $endpoint): array
     {
         try {
-            $response = Http::withHeaders([
-                'token' => $this->token,
-            ])->delete("{$this->baseUrl}{$endpoint}");
+            $response = $this->httpClient()->delete("{$this->baseUrl}{$endpoint}");
 
             return $response->json() ?? [];
         } catch (\Throwable $e) {
-            Log::error('UazAPI DELETE error', [
-                'endpoint' => $endpoint,
-                'error' => $e->getMessage(),
-            ]);
+            Log::error('UazAPI DELETE error', ['endpoint' => $endpoint, 'error' => $e->getMessage()]);
 
             return ['error' => $e->getMessage()];
         }

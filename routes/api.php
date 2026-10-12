@@ -15,4 +15,5 @@ Route::prefix('whatsapp')->group(function () {
     Route::post('/webhook', [WhatsAppWebhookController::class, 'handle']);
 });
 
-Route::post('/uazapi/webhook', [UazapiWebhookController::class, 'handle']);
+Route::post('/uazapi/webhook', [UazapiWebhookController::class, 'handle'])
+    ->middleware('throttle:120,1');
