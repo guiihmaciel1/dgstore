@@ -509,7 +509,6 @@
                                             onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                                             <td style="padding: 0.375rem 0.75rem; text-align: center;">
                                                 <input type="checkbox" x-model="item.resale.visible"
-                                                       @change="saveResaleVisibility(item)"
                                                        style="width: 0.9rem; height: 0.9rem; accent-color: #e3e3e3; cursor: pointer;">
                                             </td>
                                             <td style="padding: 0.5rem 0.75rem;">
@@ -726,7 +725,6 @@
                                         onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background=this.dataset.bg">
                                         <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                             <input type="checkbox" x-model="item.listing.visible"
-                                                   @change="saveUsedVisibility(item)"
                                                    style="width: 0.9rem; height: 0.9rem; accent-color: #e3e3e3; cursor: pointer;">
                                         </td>
                                         <td style="padding: 0.375rem 0.5rem; overflow: hidden;">

@@ -24,24 +24,7 @@
          x-text="productPrice > 0 ? buildMessage() : 'Preencha o valor do produto para visualizar a mensagem...'"></div>
 </div>
 
-{{-- Warning: Cadastre o cliente --}}
-<div x-show="productPrice > 0 && !saveModal.selectedCustomer" x-cloak x-transition
-     class="bg-amber-50 border border-amber-300 rounded-xl p-3 flex items-start gap-2.5 mt-3">
-    <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-    </svg>
-    <div class="flex-1 min-w-0">
-        <p class="text-[0.8rem] font-bold text-amber-800 leading-tight">Fechou a venda?</p>
-        <p class="text-[0.725rem] text-amber-700 mt-0.5">Cadastre o cliente e vincule esta proposta para manter o historico.</p>
-        <button @click="openSaveModal()" type="button"
-                class="mt-1.5 px-3 py-1 rounded-md text-[0.7rem] font-bold bg-amber-600 text-white border-none cursor-pointer hover:bg-amber-700 transition-colors inline-flex items-center gap-1">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-            </svg>
-            Cadastrar / Vincular cliente
-        </button>
-    </div>
-</div>
+{{-- Warning removido: simulações agora são sempre vinculadas via CRM/deal --}}
 
 {{-- Confirmação de vínculo --}}
 <div x-show="productPrice > 0 && saveModal.selectedCustomer" x-cloak x-transition
