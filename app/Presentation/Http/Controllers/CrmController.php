@@ -699,7 +699,7 @@ class CrmController extends Controller
         $msgData = [
             'wa_message_id' => $result['key']['id'] ?? ('sent_' . uniqid()),
             'from_phone' => $phone,
-            'from_name' => auth()->user()->name,
+            'from_name' => auth()->user()->name . ' DG Store',
             'message_type' => 'text',
             'message_body' => $request->message,
             'raw_payload' => $result,
@@ -759,7 +759,7 @@ class CrmController extends Controller
         WhatsAppMessage::create([
             'wa_message_id' => $result['key']['id'] ?? ('sent_media_' . uniqid()),
             'from_phone' => $phone,
-            'from_name' => auth()->user()->name,
+            'from_name' => auth()->user()->name . ' DG Store',
             'message_type' => $isImage ? 'image' : 'document',
             'message_body' => $request->caption ?? "📎 {$file->getClientOriginalName()}",
             'raw_payload' => $result,
@@ -849,7 +849,7 @@ class CrmController extends Controller
         WhatsAppMessage::create([
             'wa_message_id' => $result['key']['id'] ?? ('menu_' . uniqid()),
             'from_phone' => $deal->phone,
-            'from_name' => auth()->user()->name,
+            'from_name' => auth()->user()->name . ' DG Store',
             'message_type' => 'interactive',
             'message_body' => "{$request->title}\n{$request->body}",
             'raw_payload' => $result,
