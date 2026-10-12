@@ -257,6 +257,75 @@
                         @endif
                     </div>
 
+                    {{-- Sinal / Reserva --}}
+                    @if($deal->deposit_amount || $deal->stage->name === 'Reservado')
+                        <div style="background: #141414; border: 1px solid rgba(245,158,11,0.15); border-radius: 0.75rem; padding: 1rem;"
+                             x-data="{ editingDeposit: false, depositAmount: '{{ $deal->deposit_amount ?? '' }}', saving: false,
+                                async save() {
+                                    this.saving = true;
+                                    try {
+                                        const res = await fetch('{{ route('crm.deals.update', $deal) }}', {
+                                            method: 'PUT',
+                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content, 'Accept': 'application/json' },
+                                            body: JSON.stringify({ title: '{{ addslashes($deal->title) }}', deposit_amount: this.depositAmount || null, deposit_paid_at: this.depositAmount ? new Date().toISOString() : null }),
+                                        });
+                                        if (res.ok) window.location.reload();
+                                        else alert('Erro ao salvar.');
+                                    } catch(e) { alert('Erro de conexão.'); }
+                                    finally { this.saving = false; }
+                                }
+                             }">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.375rem;">
+                                <span style="color: #f59e0b; font-weight: 600; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.25rem;">
+                                    <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Sinal / Reserva
+                                </span>
+                                @if($deal->isOpen())
+                                    <button @click="editingDeposit = !editingDeposit" type="button"
+                                            style="font-size: 0.65rem; font-weight: 600; color: #f59e0b; background: none; border: none; cursor: pointer; padding: 0.15rem 0.375rem; border-radius: 0.25rem;"
+                                            onmouseover="this.style.background='rgba(245,158,11,0.08)'" onmouseout="this.style.background='none'">
+                                        <span x-show="!editingDeposit">Editar</span>
+                                        <span x-show="editingDeposit">Cancelar</span>
+                                    </button>
+                                @endif
+                            </div>
+
+                            <div x-show="!editingDeposit">
+                                @if($deal->deposit_amount)
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span style="font-size: 1rem; font-weight: 700; color: #f59e0b;">
+                                            R$ {{ number_format((float)$deal->deposit_amount, 2, ',', '.') }}
+                                        </span>
+                                        @if($deal->deposit_paid_at)
+                                            <span style="font-size: 0.6rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: rgba(16,185,129,0.12); color: #6ee7b7;">
+                                                Pago em {{ $deal->deposit_paid_at->format('d/m/Y') }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                @else
+                                    <span style="font-size: 0.75rem; color: #555;">Nenhum sinal registrado</span>
+                                @endif
+                            </div>
+
+                            <div x-show="editingDeposit" x-transition style="margin-top: 0.25rem;">
+                                <div style="display: flex; align-items: flex-end; gap: 0.375rem;">
+                                    <div style="flex: 1;">
+                                        <label style="font-size: 0.6rem; font-weight: 600; color: #555; display: block; margin-bottom: 2px;">Valor do sinal (R$)</label>
+                                        <input type="number" x-model="depositAmount" step="0.01" placeholder="0,00"
+                                               style="width: 100%; padding: 0.375rem; border: 1px solid rgba(245,158,11,0.2); border-radius: 0.25rem; font-size: 0.8rem; background: #0d0d0d; color: #e3e3e3;">
+                                    </div>
+                                    <button @click="save()" :disabled="saving" type="button"
+                                            style="padding: 0.375rem 0.625rem; font-size: 0.7rem; border: none; border-radius: 0.25rem; background: #f59e0b; color: #000; cursor: pointer; font-weight: 600; white-space: nowrap;">
+                                        <span x-show="!saving">Salvar</span>
+                                        <span x-show="saving">...</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- Interesses de Produto (CRUD) --}}
                     @include('crm.partials.product-interests', ['deal' => $deal])
 

@@ -29,6 +29,8 @@ class Deal extends Model
         'description',
         'product_interest',
         'value',
+        'deposit_amount',
+        'deposit_paid_at',
         'phone',
         'expected_close_date',
         'position',
@@ -49,6 +51,8 @@ class Deal extends Model
     {
         return [
             'value' => 'decimal:2',
+            'deposit_amount' => 'decimal:2',
+            'deposit_paid_at' => 'datetime',
             'expected_close_date' => 'date',
             'position' => 'integer',
             'won_at' => 'datetime',

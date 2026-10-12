@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Domain\System\Models\DollarCpRate;
+use App\Domain\System\Models\SystemSetting;
 use App\Domain\System\Services\ComprasParaguaiDollarService;
 use Illuminate\Console\Command;
 
@@ -12,7 +13,7 @@ class FetchComprasParaguaiDollarCommand extends Command
 {
     protected $signature = 'dollar:fetch-cp';
 
-    protected $description = 'Busca a cotação do dólar no Compras Paraguai e salva no histórico';
+    protected $description = 'Busca a cotação do dólar no Compras Paraguai e sincroniza com o sistema';
 
     public function handle(ComprasParaguaiDollarService $service): int
     {
@@ -35,17 +36,36 @@ class FetchComprasParaguaiDollarCommand extends Command
                 'fetched_at' => now(),
             ]);
 
-            $this->info("Cotação salva: R$ {$rate}");
+            $this->info("Nova cotação salva: R$ {$rate}");
         }
+
+        $this->syncDollarRate($rate);
 
         $history = $service->fetchHistory();
 
         if ($history !== null) {
-            $this->info('Histórico de cotações atualizado no cache (' . count($history['history'] ?? []) . ' registros).');
+            $this->info('Histórico atualizado (' . count($history['history'] ?? []) . ' registros).');
         } else {
             $this->warn('Não foi possível buscar o histórico de cotações.');
         }
 
         return self::SUCCESS;
+    }
+
+    private function syncDollarRate(float $rate): void
+    {
+        $source = SystemSetting::get('dollar_rate_source');
+
+        if ($source === 'manual') {
+            $this->line('Cotação DG definida manualmente hoje — não sobrescrita.');
+
+            return;
+        }
+
+        SystemSetting::set('dollar_rate', (string) $rate);
+        SystemSetting::set('dollar_rate_updated_at', now()->toIso8601String());
+        SystemSetting::set('dollar_rate_source', 'compras_paraguai');
+
+        $this->info("Cotação DG sincronizada: R$ {$rate} (automático via CP)");
     }
 }

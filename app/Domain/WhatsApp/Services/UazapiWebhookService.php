@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\WhatsApp\Services;
 
 use App\Domain\CRM\Enums\DealActivityType;
+use App\Domain\CRM\Enums\LeadSource;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\Customer\Models\Customer;
@@ -122,7 +123,7 @@ class UazapiWebhookService
 
         $whatsappMessage = WhatsAppMessage::create($msgData);
 
-        $deal = $this->findOrCreateDeal($fromPhone, $senderName);
+        $deal = $this->findOrCreateDeal($fromPhone, $senderName, $messageBody);
         $whatsappMessage->update(['deal_id' => $deal->id, 'direction' => 'inbound']);
         $this->logMessageActivity($deal, $messageBody, $messageType, $senderName);
 
@@ -246,7 +247,7 @@ class UazapiWebhookService
         return "[{$type}]";
     }
 
-    private function findOrCreateDeal(string $phone, ?string $contactName): Deal
+    private function findOrCreateDeal(string $phone, ?string $contactName, ?string $messageBody = null): Deal
     {
         $normalizedPhone = $this->normalizePhoneForSearch($phone);
 
@@ -279,6 +280,7 @@ class UazapiWebhookService
         $maxPosition = Deal::where('pipeline_stage_id', $defaultStage->id)->max('position') ?? 0;
 
         $isNewCustomer = $customer->wasRecentlyCreated;
+        $detectedSource = $this->detectLeadSource($messageBody);
 
         $deal = Deal::create([
             'user_id' => $assignedUser->id,
@@ -291,6 +293,7 @@ class UazapiWebhookService
                 : "Contato de cliente existente via WhatsApp",
             'position' => $maxPosition + 1,
             'source' => 'whatsapp',
+            'lead_source' => $detectedSource,
         ]);
 
         $activityDesc = $isNewCustomer
@@ -310,6 +313,68 @@ class UazapiWebhookService
         ]);
 
         return $deal;
+    }
+
+    /**
+     * Detecta a origem do lead com base no conteúdo da primeira mensagem.
+     */
+    private function detectLeadSource(?string $messageBody): ?string
+    {
+        if (!$messageBody) {
+            return LeadSource::WhatsApp->value;
+        }
+
+        $text = mb_strtolower($messageBody);
+
+        $adPatterns = [
+            'vi no anuncio', 'vi o anuncio', 'vi pelo anuncio',
+            'vim pelo anuncio', 'vim do anuncio',
+            'vi na propaganda', 'vi a propaganda',
+            'vi no ad', 'vi pelo ad',
+            'vi no instagram', 'vi pelo instagram', 'achei no instagram',
+            'vi no facebook', 'vi pelo facebook',
+            'vi no face', 'vi pelo face',
+            'vi na internet', 'vi no google',
+            'vi no site', 'achei no site',
+            'vi no olx', 'vi no mercado livre',
+            'cliquei no link', 'link do anuncio',
+            'anuncio do iphone', 'anuncio do celular',
+        ];
+
+        foreach ($adPatterns as $pattern) {
+            if (str_contains($text, $pattern)) {
+                if (str_contains($text, 'instagram') || str_contains($text, 'insta')) {
+                    return LeadSource::Instagram->value;
+                }
+                return LeadSource::TrafegoPago->value;
+            }
+        }
+
+        $igPatterns = ['instagram', 'insta', 'direct', 'story', 'stories', 'reels'];
+        foreach ($igPatterns as $pattern) {
+            if (str_contains($text, $pattern)) {
+                return LeadSource::Instagram->value;
+            }
+        }
+
+        $referralPatterns = [
+            'indicacao', 'indicação', 'indicou', 'amigo indicou',
+            'fulano indicou', 'me indicaram', 'recomendou', 'recomendaram',
+        ];
+        foreach ($referralPatterns as $pattern) {
+            if (str_contains($text, $pattern)) {
+                return LeadSource::Indicacao->value;
+            }
+        }
+
+        $sitePatterns = ['site', 'www', '.com', 'loja online'];
+        foreach ($sitePatterns as $pattern) {
+            if (str_contains($text, $pattern)) {
+                return LeadSource::Site->value;
+            }
+        }
+
+        return LeadSource::WhatsApp->value;
     }
 
     private function logMessageActivity(Deal $deal, ?string $body, string $type, ?string $fromName): void

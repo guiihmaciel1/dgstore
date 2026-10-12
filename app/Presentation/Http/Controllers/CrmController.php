@@ -274,6 +274,8 @@ class CrmController extends Controller
             'title' => 'required|string|max:255',
             'product_interest' => 'nullable|string|max:255',
             'value' => 'nullable|numeric|min:0',
+            'deposit_amount' => 'nullable|numeric|min:0',
+            'deposit_paid_at' => 'nullable|date',
             'phone' => 'nullable|string|max:20',
             'description' => 'nullable|string|max:2000',
             'expected_close_date' => 'nullable|date',

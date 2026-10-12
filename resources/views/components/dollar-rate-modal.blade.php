@@ -5,6 +5,7 @@
 @if($isAdmin)
 @php
     $dollarRate = \App\Domain\System\Models\SystemSetting::get('dollar_rate');
+    $dollarSource = \App\Domain\System\Models\SystemSetting::get('dollar_rate_source', 'manual');
     $cpAllRates = \App\Domain\System\Models\DollarCpRate::orderByDesc('fetched_at')->limit(400)->get();
     $cpLatest = $cpAllRates->first();
     $cpPrevious = $cpAllRates->skip(1)->first();
@@ -176,10 +177,23 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-sm font-semibold text-white">Cotação DG Store</h3>
-                        <p class="text-[11px] text-dg-400 mt-0.5">Cotação manual usada nos cálculos de importação</p>
+                        <p class="text-[11px] text-dg-400 mt-0.5">
+                            @if($dollarSource === 'compras_paraguai')
+                                Automática via Compras Paraguai &middot; Sobrescreva para definir manualmente
+                            @else
+                                Cotação manual usada nos cálculos de importação
+                            @endif
+                        </p>
                     </div>
                     @if($dollarRate)
-                        <span class="text-lg font-bold text-emerald-400">R$ {{ number_format((float) $dollarRate, 2, ',', '.') }}</span>
+                        <div class="text-right">
+                            <span class="text-lg font-bold text-emerald-400">R$ {{ number_format((float) $dollarRate, 2, ',', '.') }}</span>
+                            @if($dollarSource === 'compras_paraguai')
+                                <span class="block text-[10px] text-emerald-500/70 font-medium">automático</span>
+                            @else
+                                <span class="block text-[10px] text-blue-400/70 font-medium">manual</span>
+                            @endif
+                        </div>
                     @else
                         <span class="text-sm font-semibold text-amber-400">Não informada</span>
                     @endif

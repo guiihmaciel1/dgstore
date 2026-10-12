@@ -1,5 +1,6 @@
 @php
     $dollarRate = \App\Domain\System\Models\SystemSetting::get('dollar_rate');
+    $dollarSource = \App\Domain\System\Models\SystemSetting::get('dollar_rate_source', 'manual');
     $isAdmin = auth()->user()->isAdminGeral();
     $cpRates = \App\Domain\System\Models\DollarCpRate::lastTen();
     $cpLatest = $cpRates->first();
@@ -23,17 +24,17 @@
                 </svg>
                 <span>R$ {{ number_format((float) $dollarRate, 2, ',', '.') }}</span>
             </button>
-            @if($cpLatest)
-                <span class="text-[10px] text-dg-500 hidden lg:inline" title="Compras Paraguai">CP R$ {{ number_format((float) $cpLatest->rate, 2, ',', '.') }}</span>
-                @if($cpPrevious)
-                    @php
-                        $cpDiff = (float) $cpLatest->rate - (float) $cpPrevious->rate;
-                        $cpPct = (float) $cpPrevious->rate > 0 ? ($cpDiff / (float) $cpPrevious->rate) * 100 : 0;
-                    @endphp
-                    <span class="text-[10px] font-semibold hidden lg:inline {{ $cpDiff > 0 ? 'text-red-400' : ($cpDiff < 0 ? 'text-emerald-400' : 'text-dg-500') }}">
-                        {{ ($cpDiff > 0 ? '▲' : ($cpDiff < 0 ? '▼' : '–')) }}{{ number_format(abs($cpPct), 1, ',', '.') }}%
-                    </span>
-                @endif
+            @if($dollarSource === 'compras_paraguai')
+                <span class="text-[10px] text-dg-500 hidden lg:inline" title="Automático via Compras Paraguai">CP</span>
+            @endif
+            @if($cpLatest && $cpPrevious)
+                @php
+                    $cpDiff = (float) $cpLatest->rate - (float) $cpPrevious->rate;
+                    $cpPct = (float) $cpPrevious->rate > 0 ? ($cpDiff / (float) $cpPrevious->rate) * 100 : 0;
+                @endphp
+                <span class="text-[10px] font-semibold hidden lg:inline {{ $cpDiff > 0 ? 'text-red-400' : ($cpDiff < 0 ? 'text-emerald-400' : 'text-dg-500') }}">
+                    {{ ($cpDiff > 0 ? '▲' : ($cpDiff < 0 ? '▼' : '–')) }}{{ number_format(abs($cpPct), 1, ',', '.') }}%
+                </span>
             @endif
         </div>
     @endif

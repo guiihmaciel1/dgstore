@@ -19,6 +19,7 @@ class DollarRateController extends Controller
 
         SystemSetting::set('dollar_rate', $request->input('dollar_rate'));
         SystemSetting::set('dollar_rate_updated_at', now()->toIso8601String());
+        SystemSetting::set('dollar_rate_source', 'manual');
 
         return response()->json([
             'success' => true,

@@ -1,5 +1,6 @@
 @php
     $dollarRate = \App\Domain\System\Models\SystemSetting::get('dollar_rate');
+    $dollarSource = \App\Domain\System\Models\SystemSetting::get('dollar_rate_source', 'manual');
     $isAdmin = auth()->user()->isAdminGeral();
 
     $cpRates = \App\Domain\System\Models\DollarCpRate::lastTen();
