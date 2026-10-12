@@ -3,6 +3,14 @@
     <style>
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes pulse-badge { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 4px rgba(37,211,102,0.3), inset 0 0 0 1px rgba(37,211,102,0.25); }
+            50% { box-shadow: 0 0 12px rgba(37,211,102,0.5), inset 0 0 0 1px rgba(37,211,102,0.5); }
+        }
+        .deal-card-unread {
+            border-color: rgba(37,211,102,0.4) !important;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
     </style>
     @php
         $activeStages = \App\Domain\CRM\Models\PipelineStage::where('is_won', false)->where('is_lost', false)->orderBy('position')->get();
@@ -136,10 +144,10 @@
                                         'red' => '#dc2626',
                                     ];
                                 @endphp
-                                <div class="deal-card" data-deal-id="{{ $deal->id }}"
+                                <div class="deal-card {{ $deal->unread_wa_count > 0 ? 'deal-card-unread' : '' }}" data-deal-id="{{ $deal->id }}"
                                      x-data="{ editingFollowup: false, followupText: {{ json_encode($deal->next_action ?? '') }}, followupDate: '{{ $deal->next_action_at?->format('Y-m-d\TH:i') ?? '' }}', saving: false }"
-                                     style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid {{ $borderColor }}; border-radius: 0.375rem; cursor: grab; transition: box-shadow 0.15s; position: relative;"
-                                     onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
+                                     style="background: {{ $deal->unread_wa_count > 0 ? '#0d1f13' : '#141414' }}; border: 1px solid {{ $deal->unread_wa_count > 0 ? 'rgba(37,211,102,0.3)' : 'rgba(255,255,255,0.06)' }}; border-left: 3px solid {{ $deal->unread_wa_count > 0 ? '#25D366' : $borderColor }}; border-radius: 0.375rem; cursor: grab; transition: box-shadow 0.15s; position: relative;"
+                                     onmouseover="this.style.boxShadow='0 2px 8px {{ $deal->unread_wa_count > 0 ? 'rgba(37,211,102,0.15)' : 'rgba(0,0,0,0.08)' }}'" onmouseout="this.style.boxShadow='none'">
 
                                     <a href="{{ route('crm.show', $deal) }}"
                                        style="display: block; padding: 0.5rem 0.625rem; text-decoration: none;"
