@@ -307,6 +307,7 @@
                 input.value = '';
                 window.clearMediaPreview();
                 window.cancelReply();
+                setTimeout(pollMessages, 500);
             } else {
                 alert(data.error || 'Erro ao enviar mensagem');
             }
@@ -354,6 +355,7 @@
                 document.getElementById('menu-btn-1').value = '';
                 document.getElementById('menu-btn-2').value = '';
                 document.getElementById('menu-btn-3').value = '';
+                setTimeout(pollMessages, 500);
             } else {
                 alert(data.error || 'Erro ao enviar menu');
             }
@@ -365,7 +367,8 @@
     // ─── Polling (Real-time) ────────────────────────────────
 
     function startPolling() {
-        pollInterval = setInterval(pollMessages, 3000);
+        pollMessages();
+        pollInterval = setInterval(pollMessages, 5000);
     }
 
     async function pollMessages() {
