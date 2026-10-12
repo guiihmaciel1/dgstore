@@ -80,6 +80,9 @@ class WhatsAppQuotationService
 
         $today = today();
         $savedCount = 0;
+        $adminUserId = \App\Domain\User\Models\User::where('active', true)
+            ->where('role', 'admin_geral')
+            ->value('id');
 
         foreach ($items as $item) {
             if (!$item['available'] || $item['unit_price'] <= 0) {
@@ -98,6 +101,7 @@ class WhatsAppQuotationService
                     'unit' => 'un',
                     'category' => $item['category'] ?: null,
                     'notes' => 'Importado via WhatsApp REPASSE',
+                    'user_id' => $adminUserId,
                 ]
             );
 

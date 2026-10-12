@@ -242,23 +242,6 @@
             </style>
             @endif
 
-            <!-- PRÓXIMOS ANIVERSARIANTES DO MÊS -->
-            @if($birthdayCustomers->count() > 0)
-            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
-                <span style="font-size: 0.9rem;">&#127874;</span>
-                <span style="color: #818181; font-weight: 500;">Próximos aniversariantes do mês:</span>
-                @foreach($birthdayCustomers as $customer)
-                    <a href="{{ route('customers.show', $customer) }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; {{ $customer->birth_date->day === now()->day ? 'background: #fef3c7; color: #fbbf24;' : 'background: #222222; color: #a4a4a4;' }}" title="{{ $customer->phone }}">
-                        <span style="color: #ec4899; font-weight: 800;">{{ $customer->birth_date->format('d') }}</span>
-                        {{ $customer->name }}
-                        @if($customer->birth_date->day === now()->day)
-                            <span style="font-size: 0.625rem; font-weight: 800; color: #d97706;">HOJE!</span>
-                        @endif
-                    </a>
-                @endforeach
-            </div>
-            @endif
-
             <!-- COTAÇÃO FORNECEDOR (WhatsApp) -->
             @if(!empty($supplierQuoteInfo))
             <div style="margin-bottom: 1rem;">
@@ -288,6 +271,23 @@
                     </a>
                     @endforeach
                 </div>
+            </div>
+            @endif
+
+            <!-- PRÓXIMOS ANIVERSARIANTES DO MÊS -->
+            @if($birthdayCustomers->count() > 0)
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
+                <span style="font-size: 0.9rem;">&#127874;</span>
+                <span style="color: #818181; font-weight: 500;">Próximos aniversariantes do mês:</span>
+                @foreach($birthdayCustomers as $customer)
+                    <a href="{{ route('customers.show', $customer) }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; {{ $customer->birth_date->day === now()->day ? 'background: #fef3c7; color: #fbbf24;' : 'background: #222222; color: #a4a4a4;' }}" title="{{ $customer->phone }}">
+                        <span style="color: #ec4899; font-weight: 800;">{{ $customer->birth_date->format('d') }}</span>
+                        {{ $customer->name }}
+                        @if($customer->birth_date->day === now()->day)
+                            <span style="font-size: 0.625rem; font-weight: 800; color: #d97706;">HOJE!</span>
+                        @endif
+                    </a>
+                @endforeach
             </div>
             @endif
 

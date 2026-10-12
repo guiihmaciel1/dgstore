@@ -94,6 +94,11 @@ class UazapiWebhookService
             return;
         }
 
+        if (!$this->isBrazilianPhone($fromPhone)) {
+            Log::debug('UazAPI processMessage: ignorado (número não-brasileiro)', ['phone' => $fromPhone]);
+            return;
+        }
+
         if (WhatsAppMessage::where('wa_message_id', $waMessageId)->exists()) {
             Log::debug('UazAPI processMessage: mensagem duplicada', ['id' => $waMessageId]);
             return;
@@ -580,6 +585,26 @@ class UazapiWebhookService
             ->first()
             ?? User::where('active', true)->first()
             ?? User::first();
+    }
+
+    /**
+     * Verifica se o telefone é brasileiro.
+     * Aceita: 55XXXXXXXXXXX (com código do país) ou XXXXXXXXXXX (DDD + número sem 55).
+     * Rejeita: qualquer outro código de país (ex: 595 = Paraguai).
+     */
+    private function isBrazilianPhone(string $phone): bool
+    {
+        $digits = preg_replace('/\D/', '', $phone);
+
+        if (str_starts_with($digits, '55') && strlen($digits) >= 12) {
+            return true;
+        }
+
+        if (!str_starts_with($digits, '55') && strlen($digits) <= 11) {
+            return true;
+        }
+
+        return false;
     }
 
     private function normalizePhoneForSearch(string $phone): string
