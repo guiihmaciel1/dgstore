@@ -35,10 +35,13 @@
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    @php
+                        $crmSellers = $sellers->filter(fn($s) => in_array($s->name, ['Guilherme', 'Danilo', 'Sophia']));
+                    @endphp
                     <select onchange="window.location.href='{{ route('crm.board') }}?user_id=' + this.value"
                             style="padding: 0.4rem 0.75rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.8rem; background: #141414;">
                         <option value="">Todos os vendedores</option>
-                        @foreach($sellers as $seller)
+                        @foreach($crmSellers as $seller)
                             <option value="{{ $seller->id }}" {{ $filterUserId === $seller->id ? 'selected' : '' }}>
                                 {{ $seller->name }}
                             </option>
@@ -47,26 +50,9 @@
                     <a href="{{ route('crm.history') }}" style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; color: #a4a4a4; text-decoration: none; background: #141414; font-weight: 500;">
                         Histórico
                     </a>
-                    <button @click="showCustomerForm = true" type="button"
-                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #141414; color: #a4a4a4; font-size: 0.8rem; font-weight: 500; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;">
-                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                        + Cliente
-                    </button>
-                    <button @click="showScheduleForm = true" type="button"
-                            style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #141414; color: #a4a4a4; font-size: 0.8rem; font-weight: 500; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;">
-                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        + Agendamento
-                    </button>
                     <a href="{{ route('crm.deals.create') }}"
                        style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; font-size: 0.8rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; cursor: pointer;">
-                        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        + Novo Lead
+                        Novo Lead
                     </a>
                 </div>
             </div>
