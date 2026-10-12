@@ -937,50 +937,12 @@
 
     // ─── Send Location ──────────────────────────────────────
 
-    window.sendStoreLocation = async function() {
-        try {
-            const res = await fetch('{{ route("crm.deals.wa.send-location", $deal) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('#wa-send-form input[name=_token]')?.value || document.querySelector('meta[name="csrf-token"]').content,
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: '{}',
-            });
-            const data = await res.json();
-            if (data.success) {
-                setTimeout(pollMessages, 1500);
-            } else {
-                showWaError(data.error || 'Erro ao enviar localização');
-            }
-        } catch(e) {
-            showWaError('Erro de conexão');
-        }
+    window.sendStoreLocation = function() {
+        useQuickReply("📍 Endereço:\nRua Rahme Trad Bechara Hage, 2061\nSala 45, 4º andar\nCentro Empresarial Anthurium\nHigienopolis - S.J. do Rio Preto\n(Atendimento com horário marcado)");
     };
 
-    // ─── Send PIX ───────────────────────────────────────────
-
-    window.sendPixButton = async function() {
-        try {
-            const res = await fetch('{{ route("crm.deals.wa.send-pix", $deal) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('#wa-send-form input[name=_token]')?.value || document.querySelector('meta[name="csrf-token"]').content,
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: '{}',
-            });
-            const data = await res.json();
-            if (data.success) {
-                setTimeout(pollMessages, 1500);
-            } else {
-                showWaError(data.error || 'Erro ao enviar PIX');
-            }
-        } catch(e) {
-            showWaError('Erro de conexão');
-        }
+    window.sendPixButton = function() {
+        useQuickReply("💳 FORMA DE PAGAMENTO – DG STORE\n\n🚨ATENÇÃO SEGUE CHAVE PIX 👇🏽\nBanco: Stone\nNome: Valdinei Vinha\n\nChave pix telefone\n17996498338\n\n⚠️ IMPORTANTE:\n• Após o pagamento, enviar o comprovante neste número\n• Pedido só é reservado mediante pagamento\n\n🤝 Qualquer dúvida, só chamar!");
     };
 
     // ─── Quick Replies ──────────────────────────────────────
