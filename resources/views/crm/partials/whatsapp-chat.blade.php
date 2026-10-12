@@ -330,10 +330,10 @@
                 window.cancelReply();
                 setTimeout(pollMessages, 1500);
             } else {
-                alert(data.error || 'Erro ao enviar mensagem');
+                showWaError(data.error || 'Erro ao enviar mensagem');
             }
         } catch(e) {
-            alert('Erro de conexão ao enviar mensagem');
+            showWaError('Erro de conexão ao enviar mensagem');
         } finally {
             btn.disabled = false;
             btn.style.opacity = '1';
@@ -392,10 +392,10 @@
                 document.getElementById('menu-btn-3').value = '';
                 setTimeout(pollMessages, 1500);
             } else {
-                alert(data.error || 'Erro ao enviar menu');
+                showWaError(data.error || 'Erro ao enviar menu');
             }
         } catch(e) {
-            alert('Erro de conexão');
+            showWaError('Erro de conexão ao enviar menu');
         }
     };
 
@@ -608,6 +608,106 @@
             if (!pollInterval) startPolling();
         }
     });
+    // ─── Error Modal ────────────────────────────────────────
+
+    window.showWaError = function(errorMsg) {
+        const isPhoneError = /not on whatsapp|número.*inválido|invalid.*number|not.*registered/i.test(errorMsg);
+        const phone = '{{ $deal->phone }}';
+
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;';
+
+        const title = isPhoneError ? 'Número não encontrado no WhatsApp' : 'Erro ao enviar mensagem';
+        const desc = isPhoneError
+            ? `O número <strong>${phone}</strong> não está registrado no WhatsApp. Verifique se o telefone do cliente está correto.`
+            : errorMsg;
+
+        let editBtn = '';
+        if (isPhoneError) {
+            editBtn = `
+                <div style="margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid rgba(255,255,255,0.06);">
+                    <label style="font-size:0.7rem; color:#818181; display:block; margin-bottom:4px;">Corrigir telefone:</label>
+                    <div style="display:flex; gap:0.375rem;">
+                        <input type="text" id="wa-fix-phone" value="${phone}" maxlength="15"
+                               oninput="this.value=this.value.replace(/\\D/g,'').replace(/^(\\d{2})(\\d)/,'($1) $2').replace(/(\\d{5})(\\d)/,'$1-$2').substring(0,15)"
+                               style="flex:1; padding:0.5rem; background:#0d0d0d; border:1px solid rgba(255,255,255,0.1); border-radius:0.375rem; color:#e3e3e3; font-size:0.85rem;">
+                        <button type="button" onclick="saveFixedPhone()" id="wa-fix-btn"
+                                style="padding:0.5rem 1rem; background:#059669; color:white; border:none; border-radius:0.375rem; font-size:0.8rem; font-weight:600; cursor:pointer;">
+                            Salvar
+                        </button>
+                    </div>
+                </div>`;
+        }
+
+        overlay.innerHTML = `
+            <div style="background:#141414; border:1px solid rgba(255,255,255,0.08); border-radius:0.75rem; padding:1.5rem; max-width:380px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+                <div style="display:flex; align-items:center; gap:0.625rem; margin-bottom:0.75rem;">
+                    <div style="width:2.25rem; height:2.25rem; border-radius:50%; background:${isPhoneError ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)'}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                        ${isPhoneError
+                            ? '<svg style="width:1.125rem;height:1.125rem;color:#f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>'
+                            : '<svg style="width:1.125rem;height:1.125rem;color:#ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+                        }
+                    </div>
+                    <h3 style="font-size:0.9rem; font-weight:700; color:#e3e3e3; margin:0;">${title}</h3>
+                </div>
+                <p style="font-size:0.8rem; color:#a4a4a4; margin:0; line-height:1.5;">${desc}</p>
+                ${editBtn}
+                <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+                    <button type="button" onclick="this.closest('[style*=position]').remove()"
+                            style="padding:0.4rem 1rem; background:#222; color:#a4a4a4; border:none; border-radius:0.375rem; font-size:0.8rem; font-weight:600; cursor:pointer;">
+                        Fechar
+                    </button>
+                </div>
+            </div>`;
+
+        document.body.appendChild(overlay);
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+
+        const fixInput = overlay.querySelector('#wa-fix-phone');
+        if (fixInput) fixInput.focus();
+    };
+
+    window.saveFixedPhone = async function() {
+        const input = document.getElementById('wa-fix-phone');
+        const btn = document.getElementById('wa-fix-btn');
+        const raw = input.value.replace(/\D/g, '');
+
+        if (raw.length < 10) {
+            input.style.borderColor = '#fca5a5';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = '...';
+
+        try {
+            const formatted = raw.length === 11
+                ? raw.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
+                : raw.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+
+            const res = await fetch('{{ route("crm.deals.update", $deal) }}', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ phone: formatted }),
+            });
+
+            if (res.ok || res.status === 302) {
+                window.location.reload();
+            } else {
+                btn.textContent = 'Erro';
+                setTimeout(() => { btn.textContent = 'Salvar'; btn.disabled = false; }, 2000);
+            }
+        } catch(e) {
+            btn.textContent = 'Erro';
+            setTimeout(() => { btn.textContent = 'Salvar'; btn.disabled = false; }, 2000);
+        }
+    };
+
 })();
 </script>
 <style>
