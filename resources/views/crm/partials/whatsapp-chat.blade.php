@@ -681,19 +681,15 @@
         btn.textContent = '...';
 
         try {
-            const formatted = raw.length === 11
-                ? raw.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
-                : raw.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
-
-            const res = await fetch('{{ route("crm.deals.update", $deal) }}', {
-                method: 'PUT',
+            const res = await fetch('{{ route("crm.deals.phone", $deal) }}', {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
                 },
-                body: JSON.stringify({ phone: formatted }),
+                body: JSON.stringify({ phone: input.value }),
             });
 
             if (res.ok || res.status === 302) {

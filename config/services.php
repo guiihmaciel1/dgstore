@@ -53,6 +53,13 @@ return [
         'base_url' => env('UAZAPI_BASE_URL', 'https://dgstore.uazapi.com'),
         'instance_token' => env('UAZAPI_INSTANCE_TOKEN'),
         'admin_token' => env('UAZAPI_ADMIN_TOKEN'),
+        'store_pix_type' => env('STORE_PIX_TYPE', 'PHONE'),
+        'store_pix_key' => env('STORE_PIX_KEY'),
+        'store_pix_name' => env('STORE_PIX_NAME', 'DG Store'),
+        'store_latitude' => env('STORE_LATITUDE'),
+        'store_longitude' => env('STORE_LONGITUDE'),
+        'store_name' => env('STORE_NAME', 'DG Store'),
+        'store_address' => env('STORE_ADDRESS'),
     ],
 
     'dgifipe' => [

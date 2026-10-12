@@ -152,6 +152,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/crm/deals/{deal}', [CrmController::class, 'destroy'])->name('crm.deals.destroy');
         Route::post('/crm/deals/{deal}/move', [CrmController::class, 'moveStage'])->name('crm.deals.move');
         Route::patch('/crm/deals/{deal}/followup', [CrmController::class, 'updateFollowup'])->name('crm.deals.followup');
+        Route::patch('/crm/deals/{deal}/phone', [CrmController::class, 'updatePhone'])->name('crm.deals.phone');
         Route::post('/crm/deals/{deal}/win', [CrmController::class, 'win'])->name('crm.deals.win');
         Route::post('/crm/deals/{deal}/lose', [CrmController::class, 'lose'])->name('crm.deals.lose');
         Route::post('/crm/deals/{deal}/reopen', [CrmController::class, 'reopen'])->name('crm.deals.reopen');
@@ -170,6 +171,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/crm/deals/{deal}/whatsapp/send-menu', [CrmController::class, 'sendWhatsAppMenu'])->name('crm.deals.wa.send-menu');
         Route::get('/api/crm/deals/{deal}/wa/poll', [CrmController::class, 'pollWhatsAppMessages'])->name('crm.deals.wa.poll');
         Route::get('/api/crm/deals/{deal}/wa/presence', [CrmController::class, 'getWhatsAppPresence'])->name('crm.deals.wa.presence');
+        Route::post('/crm/deals/{deal}/whatsapp/react', [CrmController::class, 'reactWhatsApp'])->name('crm.deals.wa.react');
+        Route::post('/crm/deals/{deal}/whatsapp/send-location', [CrmController::class, 'sendWhatsAppLocation'])->name('crm.deals.wa.send-location');
+        Route::post('/crm/deals/{deal}/whatsapp/send-pix', [CrmController::class, 'sendWhatsAppPix'])->name('crm.deals.wa.send-pix');
+        Route::post('/crm/deals/{deal}/whatsapp/edit', [CrmController::class, 'editWhatsAppMessage'])->name('crm.deals.wa.edit');
+        Route::post('/crm/deals/{deal}/whatsapp/delete', [CrmController::class, 'deleteWhatsAppMessage'])->name('crm.deals.wa.delete');
+        Route::get('/api/crm/quick-replies', [CrmController::class, 'listQuickReplies'])->name('crm.quick-replies.list');
+        Route::post('/api/crm/quick-replies', [CrmController::class, 'createQuickReply'])->name('crm.quick-replies.store');
+        Route::patch('/api/crm/quick-replies/{id}', [CrmController::class, 'updateQuickReply'])->name('crm.quick-replies.update');
+        Route::delete('/api/crm/quick-replies/{id}', [CrmController::class, 'deleteQuickReply'])->name('crm.quick-replies.destroy');
 
         // Campanhas WhatsApp
         Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');

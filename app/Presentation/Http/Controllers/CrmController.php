@@ -294,6 +294,21 @@ class CrmController extends Controller
             ->with('success', 'Negócio atualizado!');
     }
 
+    public function updatePhone(Request $request, Deal $deal): JsonResponse
+    {
+        $validated = $request->validate([
+            'phone' => 'required|string|max:20',
+        ]);
+
+        $deal->update(['phone' => $validated['phone']]);
+
+        if ($deal->customer_id && $deal->customer) {
+            $deal->customer->update(['phone' => $validated['phone']]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
     public function destroy(Deal $deal): RedirectResponse
     {
         $this->authorizeDealOwnership($deal);
@@ -332,8 +347,8 @@ class CrmController extends Controller
 
     public function win(Deal $deal): RedirectResponse
     {
-
         $deal->markAsWon();
+        $this->resolveWhatsAppLead($deal);
 
         return redirect()->back()->with('success', 'Negócio marcado como ganho!');
     }
@@ -348,6 +363,7 @@ class CrmController extends Controller
         ]);
 
         $deal->markAsLost($request->input('lost_reason'));
+        $this->resolveWhatsAppLead($deal);
 
         return redirect()->back()->with('success', 'Negócio marcado como perdido.');
     }
@@ -690,6 +706,12 @@ class CrmController extends Controller
         $replyTo = $request->input('reply_to');
         $senderName = auth()->user()->name;
         $whatsappText = "*{$senderName}:*\n{$request->message}";
+
+        try {
+            $uazapi->sendPresence($phone, 'composing', 3000);
+        } catch (\Throwable) {
+        }
+
         $result = $uazapi->sendText($phone, $whatsappText, $replyTo);
 
         if (isset($result['error'])) {
@@ -982,7 +1004,249 @@ class CrmController extends Controller
                 }
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Erro ao marcar mensagens como lidas', ['error' => $e->getMessage()]);
+            Log::warning('Erro ao marcar mensagens como lidas', ['error' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Resolve (conclui) a conversa WhatsApp ao finalizar um deal.
+     */
+    private function resolveWhatsAppLead(Deal $deal): void
+    {
+        try {
+            if (!$deal->phone) {
+                return;
+            }
+            $uazapi = app(UazapiService::class);
+            if ($uazapi->isConfigured()) {
+                $uazapi->resolveLeads([$deal->phone]);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Erro ao resolver lead WhatsApp', ['error' => $e->getMessage()]);
+        }
+    }
+
+    // ─── Reação a Mensagem ──────────────────────────────────
+
+    public function reactWhatsApp(Request $request, Deal $deal): JsonResponse
+    {
+        $validated = $request->validate([
+            'message_id' => 'required|string',
+            'emoji' => 'required|string|max:10',
+        ]);
+
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $result = $uazapi->reactToMessage($validated['message_id'], $validated['emoji']);
+
+        return response()->json([
+            'success' => !isset($result['error']),
+            'error' => $result['error'] ?? null,
+        ]);
+    }
+
+    // ─── Enviar Localização da Loja ─────────────────────────
+
+    public function sendWhatsAppLocation(Request $request, Deal $deal): JsonResponse
+    {
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured() || !$deal->phone) {
+            return response()->json(['success' => false, 'error' => 'Sem telefone ou UazAPI não configurada'], 400);
+        }
+
+        $lat = (float) config('services.uazapi.store_latitude');
+        $lng = (float) config('services.uazapi.store_longitude');
+        $name = config('services.uazapi.store_name', 'DG Store');
+        $address = config('services.uazapi.store_address', '');
+
+        if (!$lat || !$lng) {
+            return response()->json(['success' => false, 'error' => 'Coordenadas da loja não configuradas'], 500);
+        }
+
+        $result = $uazapi->sendLocation($deal->phone, $lat, $lng, $name, $address);
+
+        if (!isset($result['error'])) {
+            WhatsAppMessage::create([
+                'deal_id' => $deal->id,
+                'wa_message_id' => $result['key']['id'] ?? ('loc_' . now()->timestamp),
+                'direction' => 'outbound',
+                'message_type' => 'location',
+                'message_body' => "📍 {$name}\n{$address}",
+                'from_name' => auth()->user()->name . ' DG Store',
+                'delivery_status' => 'sent',
+            ]);
+        }
+
+        return response()->json([
+            'success' => !isset($result['error']),
+            'error' => $result['error'] ?? null,
+        ]);
+    }
+
+    // ─── Enviar Botão PIX ───────────────────────────────────
+
+    public function sendWhatsAppPix(Request $request, Deal $deal): JsonResponse
+    {
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured() || !$deal->phone) {
+            return response()->json(['success' => false, 'error' => 'Sem telefone ou UazAPI não configurada'], 400);
+        }
+
+        $pixType = config('services.uazapi.store_pix_type', 'PHONE');
+        $pixKey = config('services.uazapi.store_pix_key');
+        $pixName = config('services.uazapi.store_pix_name', 'DG Store');
+
+        if (!$pixKey) {
+            return response()->json(['success' => false, 'error' => 'Chave PIX não configurada'], 500);
+        }
+
+        $result = $uazapi->sendPixButton($deal->phone, $pixType, $pixKey, $pixName);
+
+        if (!isset($result['error'])) {
+            WhatsAppMessage::create([
+                'deal_id' => $deal->id,
+                'wa_message_id' => $result['key']['id'] ?? ('pix_' . now()->timestamp),
+                'direction' => 'outbound',
+                'message_type' => 'text',
+                'message_body' => "💰 PIX enviado — {$pixName}",
+                'from_name' => auth()->user()->name . ' DG Store',
+                'delivery_status' => 'sent',
+            ]);
+        }
+
+        return response()->json([
+            'success' => !isset($result['error']),
+            'error' => $result['error'] ?? null,
+        ]);
+    }
+
+    // ─── Editar Mensagem ────────────────────────────────────
+
+    public function editWhatsAppMessage(Request $request, Deal $deal): JsonResponse
+    {
+        $validated = $request->validate([
+            'message_id' => 'required|string',
+            'text' => 'required|string|min:1',
+        ]);
+
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $result = $uazapi->editMessage($validated['message_id'], $validated['text']);
+
+        if (!isset($result['error'])) {
+            WhatsAppMessage::where('deal_id', $deal->id)
+                ->where('wa_message_id', $validated['message_id'])
+                ->update(['message_body' => $validated['text']]);
+        }
+
+        return response()->json([
+            'success' => !isset($result['error']),
+            'error' => $result['error'] ?? null,
+        ]);
+    }
+
+    // ─── Apagar Mensagem ────────────────────────────────────
+
+    public function deleteWhatsAppMessage(Request $request, Deal $deal): JsonResponse
+    {
+        $validated = $request->validate([
+            'message_id' => 'required|string',
+        ]);
+
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $result = $uazapi->deleteMessage($validated['message_id']);
+
+        if (!isset($result['error'])) {
+            WhatsAppMessage::where('deal_id', $deal->id)
+                ->where('wa_message_id', $validated['message_id'])
+                ->update([
+                    'message_body' => '🚫 Mensagem apagada',
+                    'message_type' => 'text',
+                ]);
+        }
+
+        return response()->json([
+            'success' => !isset($result['error']),
+            'error' => $result['error'] ?? null,
+        ]);
+    }
+
+    // ─── Respostas Rápidas (CRUD proxy) ─────────────────────
+
+    public function listQuickReplies(Request $request): JsonResponse
+    {
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $limit = (int) $request->get('limit', 100);
+        $offset = (int) $request->get('offset', 0);
+        $result = $uazapi->listQuickReplies($limit, $offset);
+
+        return response()->json($result);
+    }
+
+    public function createQuickReply(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'shortcut' => 'required|string|max:50',
+            'text' => 'required|string',
+        ]);
+
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $result = $uazapi->createQuickReply($validated['shortcut'], [
+            'kind' => 'text',
+            'text' => $validated['text'],
+        ]);
+
+        return response()->json([
+            'success' => !isset($result['error']),
+            'data' => $result,
+        ]);
+    }
+
+    public function updateQuickReply(Request $request, string $id): JsonResponse
+    {
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $data = $request->only(['shortCut', 'message']);
+        $result = $uazapi->updateQuickReply($id, $data);
+
+        return response()->json([
+            'success' => !isset($result['error']),
+            'data' => $result,
+        ]);
+    }
+
+    public function deleteQuickReply(string $id): JsonResponse
+    {
+        $uazapi = app(UazapiService::class);
+        if (!$uazapi->isConfigured()) {
+            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        }
+
+        $result = $uazapi->deleteQuickReply($id);
+
+        return response()->json([
+            'success' => !isset($result['error']),
+        ]);
     }
 }

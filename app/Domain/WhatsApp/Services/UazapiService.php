@@ -298,6 +298,166 @@ class UazapiService
         ]);
     }
 
+    // ─── Reações ────────────────────────────────────────────
+
+    /**
+     * Reage a uma mensagem com emoji. Texto vazio remove a reação.
+     */
+    public function reactToMessage(string $messageId, string $emoji): array
+    {
+        return $this->post('/message/react', [
+            'id' => $messageId,
+            'text' => $emoji,
+        ]);
+    }
+
+    // ─── Localização ────────────────────────────────────────
+
+    /**
+     * Envia localização geográfica.
+     */
+    public function sendLocation(string $number, float $lat, float $lng, string $name, string $address): array
+    {
+        return $this->post('/send/location', [
+            'number' => $this->normalizeNumber($number),
+            'latitude' => $lat,
+            'longitude' => $lng,
+            'name' => $name,
+            'address' => $address,
+        ]);
+    }
+
+    // ─── PIX ────────────────────────────────────────────────
+
+    /**
+     * Envia botão PIX. pixType: CPF, CNPJ, PHONE, EMAIL, EVP.
+     */
+    public function sendPixButton(string $number, string $pixType, string $pixKey, string $pixName = 'Pix'): array
+    {
+        return $this->post('/send/pix-button', [
+            'number' => $this->normalizeNumber($number),
+            'pixType' => strtoupper($pixType),
+            'pixKey' => $pixKey,
+            'pixName' => $pixName,
+        ]);
+    }
+
+    // ─── Editar / Apagar Mensagem ───────────────────────────
+
+    /**
+     * Edita o texto de uma mensagem já enviada.
+     */
+    public function editMessage(string $messageId, string $newText): array
+    {
+        return $this->post('/message/edit', [
+            'id' => $messageId,
+            'text' => $newText,
+        ]);
+    }
+
+    /**
+     * Apaga mensagem para todos.
+     */
+    public function deleteMessage(string $messageId): array
+    {
+        return $this->post('/message/delete', [
+            'id' => $messageId,
+        ]);
+    }
+
+    // ─── Presença ───────────────────────────────────────────
+
+    /**
+     * Envia indicador de presença (composing/recording/paused).
+     */
+    public function sendPresence(string $number, string $presence = 'composing', int $delay = 5000): array
+    {
+        return $this->post('/message/presence', [
+            'number' => $this->normalizeNumber($number),
+            'presence' => $presence,
+            'delay' => min($delay, 300000),
+        ]);
+    }
+
+    // ─── Contagem de Chats ──────────────────────────────────
+
+    /**
+     * Retorna contadores de chats ativos.
+     */
+    public function countChats(): array
+    {
+        return $this->get('/chat/totalcount');
+    }
+
+    // ─── Resolver Leads (concluir conversas) ────────────────
+
+    /**
+     * Marca conversas como resolvidas.
+     */
+    public function resolveLeads(array $numbers): array
+    {
+        $chats = array_map(fn (string $n) => [
+            'number' => $this->normalizeNumber($n) . '@s.whatsapp.net',
+        ], $numbers);
+
+        return $this->post('/lead/resolve', ['chats' => $chats]);
+    }
+
+    // ─── Tags de Lead ───────────────────────────────────────
+
+    /**
+     * Lista todas as tags de lead do WhatsApp.
+     */
+    public function getLeadTags(): array
+    {
+        return $this->get('/lead/tags');
+    }
+
+    /**
+     * Cria, edita ou apaga uma tag de lead.
+     */
+    public function editLeadTag(array $data): array
+    {
+        return $this->post('/lead/tags/edit', $data);
+    }
+
+    // ─── Respostas Rápidas ──────────────────────────────────
+
+    /**
+     * Lista respostas rápidas com paginação.
+     */
+    public function listQuickReplies(int $limit = 100, int $offset = 0): array
+    {
+        return $this->get("/quick-replies?limit={$limit}&offset={$offset}");
+    }
+
+    /**
+     * Cria uma resposta rápida.
+     */
+    public function createQuickReply(string $shortcut, array $message): array
+    {
+        return $this->post('/quick-replies', [
+            'shortCut' => $shortcut,
+            'message' => $message,
+        ]);
+    }
+
+    /**
+     * Atualiza uma resposta rápida.
+     */
+    public function updateQuickReply(string $id, array $data): array
+    {
+        return $this->patch("/quick-replies/{$id}", $data);
+    }
+
+    /**
+     * Deleta uma resposta rápida.
+     */
+    public function deleteQuickReply(string $id): array
+    {
+        return $this->httpDelete("/quick-replies/{$id}");
+    }
+
     /**
      * Normaliza número para formato internacional sem +.
      */
@@ -347,6 +507,49 @@ class UazapiService
             return $response->json() ?? [];
         } catch (\Throwable $e) {
             Log::error('UazAPI POST error', [
+                'endpoint' => $endpoint,
+                'error' => $e->getMessage(),
+            ]);
+
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * PATCH request.
+     */
+    private function patch(string $endpoint, array $data = []): array
+    {
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'token' => $this->token,
+            ])->patch("{$this->baseUrl}{$endpoint}", $data);
+
+            return $response->json() ?? [];
+        } catch (\Throwable $e) {
+            Log::error('UazAPI PATCH error', [
+                'endpoint' => $endpoint,
+                'error' => $e->getMessage(),
+            ]);
+
+            return ['error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * DELETE request.
+     */
+    private function httpDelete(string $endpoint): array
+    {
+        try {
+            $response = Http::withHeaders([
+                'token' => $this->token,
+            ])->delete("{$this->baseUrl}{$endpoint}");
+
+            return $response->json() ?? [];
+        } catch (\Throwable $e) {
+            Log::error('UazAPI DELETE error', [
                 'endpoint' => $endpoint,
                 'error' => $e->getMessage(),
             ]);
