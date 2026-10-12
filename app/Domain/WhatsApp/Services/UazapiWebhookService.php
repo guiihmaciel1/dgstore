@@ -9,6 +9,7 @@ use App\Domain\CRM\Enums\LeadSource;
 use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Supplier\Models\Supplier;
 use App\Domain\Supplier\Services\WhatsAppQuotationService;
 use App\Domain\System\Models\SystemSetting;
 use App\Domain\User\Models\User;
@@ -76,26 +77,21 @@ class UazapiWebhookService
             'isGroup' => $isGroup,
         ]);
 
-        if ($fromMe) {
-            Log::debug('UazAPI processMessage: ignorado (fromMe=true)');
-            return;
-        }
-
         if (!$chatId || $isGroup || str_ends_with($chatId, '@g.us') || str_ends_with($chatId, '@newsletter')) {
             Log::debug('UazAPI processMessage: ignorado (grupo/newsletter/sem jid)', ['jid' => $chatId]);
             return;
         }
 
-        $fromPhone = preg_replace('/@.*$/', '', $chatId);
+        $remotePhone = preg_replace('/@.*$/', '', $chatId);
         $messageBody = $message['text'] ?? $this->extractBody($message);
 
-        if (!$waMessageId || !$fromPhone) {
-            Log::warning('UazAPI processMessage: sem ID ou telefone', ['id' => $waMessageId, 'phone' => $fromPhone]);
+        if (!$waMessageId || !$remotePhone) {
+            Log::warning('UazAPI processMessage: sem ID ou telefone', ['id' => $waMessageId, 'phone' => $remotePhone]);
             return;
         }
 
-        if (!$this->isBrazilianPhone($fromPhone)) {
-            Log::debug('UazAPI processMessage: ignorado (número não-brasileiro)', ['phone' => $fromPhone]);
+        if (!$this->isBrazilianPhone($remotePhone)) {
+            Log::debug('UazAPI processMessage: ignorado (número não-brasileiro)', ['phone' => $remotePhone]);
             return;
         }
 
@@ -104,33 +100,124 @@ class UazapiWebhookService
             return;
         }
 
+        if ($fromMe) {
+            $this->processOutboundFromPhone($waMessageId, $remotePhone, $messageBody, $messageType, $message);
+            return;
+        }
+
+        $this->processInboundMessage($waMessageId, $remotePhone, $senderName, $messageBody, $messageType, $message);
+    }
+
+    /**
+     * Processa mensagem enviada pelo celular (fromMe=true).
+     * Salva como outbound vinculada ao deal existente, sem criar deal/customer.
+     */
+    private function processOutboundFromPhone(
+        string $waMessageId,
+        string $remotePhone,
+        ?string $messageBody,
+        string $messageType,
+        array $rawMessage,
+    ): void {
+        $normalizedPhone = $this->normalizePhoneForSearch($remotePhone);
+
+        $deal = Deal::open()
+            ->where(function ($query) use ($remotePhone, $normalizedPhone) {
+                $query->where('phone', $remotePhone)
+                    ->orWhere('phone', $normalizedPhone)
+                    ->orWhere('phone', 'LIKE', "%{$normalizedPhone}");
+            })
+            ->latest()
+            ->first();
+
+        if (!$deal) {
+            Log::debug('UazAPI outbound: nenhum deal aberto para este número', ['phone' => $remotePhone]);
+            return;
+        }
+
         $msgData = [
             'wa_message_id' => $waMessageId,
-            'from_phone' => $fromPhone,
-            'from_name' => $senderName,
-            'message_type' => $messageType,
-            'message_body' => $messageBody,
-            'raw_payload' => $message,
+            'from_phone'    => $remotePhone,
+            'from_name'     => 'DG Store',
+            'message_type'  => $messageType,
+            'message_body'  => $messageBody,
+            'raw_payload'   => $rawMessage,
+            'deal_id'       => $deal->id,
+            'direction'     => 'outbound',
+            'delivery_status' => 'sent',
         ];
 
-        $quotedId = $message['contextInfo']['stanzaId']
-            ?? $message['quotedMsg']['id']
-            ?? $message['quotedMessage']['id']
+        $quotedId = $rawMessage['contextInfo']['stanzaId']
+            ?? $rawMessage['quotedMsg']['id']
+            ?? $rawMessage['quotedMessage']['id']
             ?? null;
 
         if ($quotedId) {
             $msgData['reply_to_id'] = $quotedId;
-            $quotedBody = $message['contextInfo']['quotedMessage']['conversation']
-                ?? $message['quotedMsg']['body']
-                ?? $message['quotedMsg']['text']
+            $quotedBody = $rawMessage['contextInfo']['quotedMessage']['conversation']
+                ?? $rawMessage['quotedMsg']['body']
+                ?? $rawMessage['quotedMsg']['text']
                 ?? null;
             $msgData['reply_to_body'] = $quotedBody ? mb_substr($quotedBody, 0, 200) : null;
         }
 
         $whatsappMessage = WhatsAppMessage::create($msgData);
 
+        $this->downloadMediaIfNeeded($whatsappMessage, $messageType);
+        $deal->updateLastInteraction();
+
+        Log::info('UazAPI: mensagem outbound (celular) salva', [
+            'wa_message_id' => $waMessageId,
+            'phone' => $remotePhone,
+            'deal_id' => $deal->id,
+        ]);
+    }
+
+    /**
+     * Processa mensagem recebida (inbound).
+     * Fornecedores cadastrados NÃO geram lead/deal — apenas salvam cotação.
+     */
+    private function processInboundMessage(
+        string $waMessageId,
+        string $fromPhone,
+        ?string $senderName,
+        ?string $messageBody,
+        string $messageType,
+        array $rawMessage,
+    ): void {
+        $msgData = [
+            'wa_message_id' => $waMessageId,
+            'from_phone' => $fromPhone,
+            'from_name' => $senderName,
+            'message_type' => $messageType,
+            'message_body' => $messageBody,
+            'raw_payload' => $rawMessage,
+            'direction' => 'inbound',
+        ];
+
+        $quotedId = $rawMessage['contextInfo']['stanzaId']
+            ?? $rawMessage['quotedMsg']['id']
+            ?? $rawMessage['quotedMessage']['id']
+            ?? null;
+
+        if ($quotedId) {
+            $msgData['reply_to_id'] = $quotedId;
+            $quotedBody = $rawMessage['contextInfo']['quotedMessage']['conversation']
+                ?? $rawMessage['quotedMsg']['body']
+                ?? $rawMessage['quotedMsg']['text']
+                ?? null;
+            $msgData['reply_to_body'] = $quotedBody ? mb_substr($quotedBody, 0, 200) : null;
+        }
+
+        if ($this->isSupplierPhone($fromPhone)) {
+            $this->processSupplierInbound($msgData, $fromPhone, $messageBody);
+            return;
+        }
+
+        $whatsappMessage = WhatsAppMessage::create($msgData);
+
         $deal = $this->findOrCreateDeal($fromPhone, $senderName, $messageBody);
-        $whatsappMessage->update(['deal_id' => $deal->id, 'direction' => 'inbound']);
+        $whatsappMessage->update(['deal_id' => $deal->id]);
         $this->logMessageActivity($deal, $messageBody, $messageType, $senderName);
 
         $this->downloadMediaIfNeeded($whatsappMessage, $messageType);
@@ -139,14 +226,49 @@ class UazapiWebhookService
         $deal->updateLastInteraction();
 
         $this->sendAwayMessageIfNeeded($deal, $fromPhone);
-        $this->processSupplierQuotation($fromPhone, $messageBody);
 
-        Log::info('UazAPI: mensagem processada com sucesso', [
+        Log::info('UazAPI: mensagem inbound processada', [
             'wa_message_id' => $waMessageId,
             'from' => $fromPhone,
             'name' => $senderName,
             'deal_id' => $deal->id,
             'unread' => $deal->unread_wa_count,
+        ]);
+    }
+
+    /**
+     * Verifica se o telefone pertence a um fornecedor ativo.
+     */
+    private function isSupplierPhone(string $phone): bool
+    {
+        $digits = preg_replace('/\D/', '', $phone);
+
+        if (strlen($digits) > 11) {
+            $digits = substr($digits, 2);
+        }
+
+        return Supplier::active()
+            ->where(function ($q) use ($digits, $phone) {
+                $q->where('phone', 'LIKE', "%{$digits}%")
+                  ->orWhere('phone', 'LIKE', "%{$phone}%");
+            })
+            ->exists();
+    }
+
+    /**
+     * Processa mensagem de fornecedor: salva a mensagem sem criar deal/lead,
+     * e tenta extrair cotação se houver.
+     */
+    private function processSupplierInbound(array $msgData, string $fromPhone, ?string $messageBody): void
+    {
+        WhatsAppMessage::create($msgData);
+
+        $this->processSupplierQuotation($fromPhone, $messageBody);
+
+        Log::info('UazAPI: mensagem de fornecedor processada (sem deal)', [
+            'wa_message_id' => $msgData['wa_message_id'],
+            'from' => $fromPhone,
+            'name' => $msgData['from_name'],
         ]);
     }
 
