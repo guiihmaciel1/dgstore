@@ -1906,7 +1906,12 @@
                     parts.push(`💰R$ ${price}`);
 
                     lines.push(parts.join(' - '));
+                    lines.push('');
                 });
+
+                if (lines.length > 0 && lines[lines.length - 1] === '') {
+                    lines.pop();
+                }
 
                 this._copyToClipboard(lines.join('\n'), 'resaleSeminovosCopied');
             },
