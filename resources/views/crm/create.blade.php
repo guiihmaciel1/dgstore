@@ -137,6 +137,16 @@
                 this.selectedCustomerName = customer.name;
                 this.customerSearch = '';
                 this.customerResults = [];
+
+                if (customer.phone) {
+                    const phoneField = document.querySelector('input[name="phone"]');
+                    if (phoneField && !phoneField.value) {
+                        let p = customer.phone.replace(/\D/g, '');
+                        if (p.length === 11) p = p.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+                        else if (p.length === 10) p = p.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+                        phoneField.value = p || customer.phone;
+                    }
+                }
             },
 
             clearCustomer() {
