@@ -163,34 +163,8 @@
             <form id="wa-send-form" style="display: flex; gap: 0.5rem; align-items: flex-end;">
                 @csrf
 
-                {{-- Botões de ação (menu + anexo) --}}
+                {{-- Botões de ação --}}
                 <div style="display: flex; gap: 0.25rem; flex-shrink: 0; padding-bottom: 1px;">
-                    {{-- Menu Interativo --}}
-                    <div x-data="{ showMenuForm: false }" style="position: relative;">
-                        <button type="button" @click="showMenuForm = !showMenuForm"
-                                style="width: 34px; height: 34px; border-radius: 0.375rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s;"
-                                onmouseover="this.style.borderColor='rgba(255,255,255,0.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'"
-                                title="Menu interativo">
-                            <svg style="width: 16px; height: 16px; color: #666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                            </svg>
-                        </button>
-                        <div x-show="showMenuForm" x-cloak @click.away="showMenuForm = false"
-                             style="position: absolute; bottom: 100%; left: 0; margin-bottom: 0.5rem; background: #141414; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; padding: 0.75rem; width: 280px; z-index: 20; box-shadow: 0 -4px 16px rgba(0,0,0,0.4);">
-                            <div style="font-size: 0.7rem; font-weight: 600; color: #e3e3e3; margin-bottom: 0.375rem;">Menu Interativo</div>
-                            <input type="text" id="menu-title" placeholder="Titulo" style="width: 100%; padding: 0.3rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; color: #e3e3e3; font-size: 0.7rem; margin-bottom: 0.25rem;">
-                            <textarea id="menu-body" placeholder="Mensagem" rows="2" style="width: 100%; padding: 0.3rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; color: #e3e3e3; font-size: 0.7rem; resize: none; margin-bottom: 0.25rem;"></textarea>
-                            <div style="display: flex; flex-direction: column; gap: 0.2rem; margin-bottom: 0.375rem;">
-                                <input type="text" id="menu-btn-1" placeholder="Botao 1" style="width: 100%; padding: 0.25rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem;">
-                                <input type="text" id="menu-btn-2" placeholder="Botao 2 (opcional)" style="width: 100%; padding: 0.25rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem;">
-                                <input type="text" id="menu-btn-3" placeholder="Botao 3 (opcional)" style="width: 100%; padding: 0.25rem 0.5rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem;">
-                            </div>
-                            <button type="button" onclick="sendInteractiveMenu()" style="width: 100%; padding: 0.3rem; background: #25D366; color: #000; font-weight: 600; font-size: 0.65rem; border: none; border-radius: 0.375rem; cursor: pointer;">
-                                Enviar Menu
-                            </button>
-                        </div>
-                    </div>
-
                     {{-- Anexar Arquivo --}}
                     <label style="cursor: pointer; width: 34px; height: 34px; border-radius: 0.375rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; transition: border-color 0.15s;"
                            onmouseover="this.style.borderColor='rgba(255,255,255,0.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'"
@@ -416,63 +390,6 @@
         }
     };
 
-    // ─── Interactive Menu ───────────────────────────────────
-
-    window.sendInteractiveMenu = async function() {
-        const title = document.getElementById('menu-title')?.value?.trim();
-        const body = document.getElementById('menu-body')?.value?.trim();
-        const btn1 = document.getElementById('menu-btn-1')?.value?.trim();
-        const btn2 = document.getElementById('menu-btn-2')?.value?.trim();
-        const btn3 = document.getElementById('menu-btn-3')?.value?.trim();
-
-        if (!title || !body || !btn1) {
-            alert('Preencha título, mensagem e pelo menos 1 botão');
-            return;
-        }
-
-        const buttons = [{ text: btn1 }];
-        if (btn2) buttons.push({ text: btn2 });
-        if (btn3) buttons.push({ text: btn3 });
-
-        try {
-            const res = await fetch('{{ route("crm.deals.wa.send-menu", $deal) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('#wa-send-form input[name=_token]').value,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify({ title, body, type: 'buttons', buttons })
-            });
-            const data = await res.json();
-            if (data.success) {
-                const menuText = title + '\n' + body;
-                const tempId = 'menu_' + Date.now();
-                const now = new Date();
-                appendPollMessage({
-                    wa_message_id: tempId,
-                    direction: 'outbound',
-                    from_name: '{{ addslashes(auth()->user()->name) }} DG Store',
-                    message_type: 'text',
-                    message_body: menuText,
-                    delivery_status: 'sent',
-                    time: now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-                });
-                knownMessageIds.add(tempId);
-
-                document.getElementById('menu-title').value = '';
-                document.getElementById('menu-body').value = '';
-                document.getElementById('menu-btn-1').value = '';
-                document.getElementById('menu-btn-2').value = '';
-                document.getElementById('menu-btn-3').value = '';
-                setTimeout(pollMessages, 1500);
-            } else {
-                showWaError(data.error || 'Erro ao enviar menu');
-            }
-        } catch(e) {
-            showWaError('Erro de conexão ao enviar menu');
-        }
-    };
 
     // ─── Polling (Real-time) ────────────────────────────────
 

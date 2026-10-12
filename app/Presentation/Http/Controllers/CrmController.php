@@ -1028,18 +1028,12 @@ class CrmController extends Controller
                 return;
             }
 
-            $unreadMessages = $deal->whatsappMessages()
+            $uazapi->markChatRead($deal->phone);
+
+            $deal->whatsappMessages()
                 ->where('direction', 'inbound')
                 ->whereNotIn('delivery_status', ['read'])
-                ->orderByDesc('created_at')
-                ->limit(5)
-                ->get();
-
-            foreach ($unreadMessages as $msg) {
-                if ($msg->wa_message_id) {
-                    $uazapi->markRead($msg->wa_message_id);
-                }
-            }
+                ->update(['delivery_status' => 'read']);
         } catch (\Throwable $e) {
             Log::warning('Erro ao marcar mensagens como lidas', ['error' => $e->getMessage()]);
         }

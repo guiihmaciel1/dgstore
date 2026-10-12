@@ -140,6 +140,17 @@ class UazapiService
     }
 
     /**
+     * Marca todo o chat como lido no WhatsApp.
+     */
+    public function markChatRead(string $number): array
+    {
+        return $this->post('/chat/read', [
+            'number' => $this->normalizeNumber($number) . '@s.whatsapp.net',
+            'read' => true,
+        ]);
+    }
+
+    /**
      * Download de mídia de uma mensagem. Com transcribe=true, transcreve áudios.
      */
     public function downloadMedia(string $messageId, bool $transcribe = false): array
