@@ -304,10 +304,31 @@
 
             const data = await res.json();
             if (data.success) {
+                const sentBody = message || '';
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                const tempId = 'local_' + Date.now();
+
+                if (sentBody && !selectedFile) {
+                    appendPollMessage({
+                        wa_message_id: tempId,
+                        direction: 'outbound',
+                        from_name: '{{ addslashes(auth()->user()->name) }} DG Store',
+                        message_type: 'text',
+                        message_body: sentBody,
+                        delivery_status: 'sent',
+                        time: timeStr,
+                        reply_to_body: replyToId ? (document.querySelector('.reply-preview-text')?.textContent || null) : null,
+                    });
+                    knownMessageIds.add(tempId);
+                    const mc = document.getElementById('wa-messages');
+                    if (mc) mc.scrollTop = mc.scrollHeight;
+                }
+
                 input.value = '';
                 window.clearMediaPreview();
                 window.cancelReply();
-                setTimeout(pollMessages, 500);
+                setTimeout(pollMessages, 1500);
             } else {
                 alert(data.error || 'Erro ao enviar mensagem');
             }
@@ -350,12 +371,26 @@
             });
             const data = await res.json();
             if (data.success) {
+                const menuText = title + '\n' + body;
+                const tempId = 'menu_' + Date.now();
+                const now = new Date();
+                appendPollMessage({
+                    wa_message_id: tempId,
+                    direction: 'outbound',
+                    from_name: '{{ addslashes(auth()->user()->name) }} DG Store',
+                    message_type: 'text',
+                    message_body: menuText,
+                    delivery_status: 'sent',
+                    time: now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                });
+                knownMessageIds.add(tempId);
+
                 document.getElementById('menu-title').value = '';
                 document.getElementById('menu-body').value = '';
                 document.getElementById('menu-btn-1').value = '';
                 document.getElementById('menu-btn-2').value = '';
                 document.getElementById('menu-btn-3').value = '';
-                setTimeout(pollMessages, 500);
+                setTimeout(pollMessages, 1500);
             } else {
                 alert(data.error || 'Erro ao enviar menu');
             }
