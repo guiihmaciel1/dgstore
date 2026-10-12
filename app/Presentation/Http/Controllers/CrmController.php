@@ -14,6 +14,7 @@ use App\Domain\Customer\Models\CustomerTag;
 use App\Domain\AI\Services\GeminiService;
 use App\Domain\Schedule\Models\Appointment;
 use App\Domain\WhatsApp\Models\WhatsAppMessage;
+use App\Domain\System\Models\SystemSetting;
 use App\Domain\WhatsApp\Services\UazapiService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
@@ -1219,18 +1220,28 @@ class CrmController extends Controller
 
     // ─── Respostas Rápidas (CRUD proxy) ─────────────────────
 
+    // ─── Respostas Rápidas (armazenadas localmente via SystemSetting) ───
+
+    private function getQuickRepliesData(): array
+    {
+        $json = SystemSetting::get('quick_replies', '[]');
+        return json_decode($json, true) ?: [];
+    }
+
+    private function saveQuickRepliesData(array $data): void
+    {
+        SystemSetting::set('quick_replies', json_encode($data, JSON_UNESCAPED_UNICODE));
+    }
+
     public function listQuickReplies(Request $request): JsonResponse
     {
-        $uazapi = app(UazapiService::class);
-        if (!$uazapi->isConfigured()) {
-            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
-        }
+        $replies = $this->getQuickRepliesData();
 
-        $limit = (int) $request->get('limit', 100);
-        $offset = (int) $request->get('offset', 0);
-        $result = $uazapi->listQuickReplies($limit, $offset);
-
-        return response()->json($result);
+        return response()->json(array_map(fn (array $r) => [
+            'id' => $r['id'],
+            'shortCut' => $r['shortcut'],
+            'message' => ['text' => $r['text']],
+        ], $replies));
     }
 
     public function createQuickReply(Request $request): JsonResponse
@@ -1240,49 +1251,55 @@ class CrmController extends Controller
             'text' => 'required|string',
         ]);
 
-        $uazapi = app(UazapiService::class);
-        if (!$uazapi->isConfigured()) {
-            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
-        }
+        $replies = $this->getQuickRepliesData();
 
-        $result = $uazapi->createQuickReply($validated['shortcut'], [
-            'kind' => 'text',
+        $newReply = [
+            'id' => (string) \Illuminate\Support\Str::ulid(),
+            'shortcut' => $validated['shortcut'],
             'text' => $validated['text'],
-        ]);
+        ];
 
-        return response()->json([
-            'success' => !isset($result['error']),
-            'data' => $result,
-        ]);
+        $replies[] = $newReply;
+        $this->saveQuickRepliesData($replies);
+
+        return response()->json(['success' => true, 'data' => $newReply]);
     }
 
     public function updateQuickReply(Request $request, string $id): JsonResponse
     {
-        $uazapi = app(UazapiService::class);
-        if (!$uazapi->isConfigured()) {
-            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
+        $replies = $this->getQuickRepliesData();
+        $found = false;
+
+        foreach ($replies as &$reply) {
+            if ($reply['id'] === $id) {
+                if ($request->has('shortCut')) {
+                    $reply['shortcut'] = $request->input('shortCut');
+                }
+                if ($request->has('message')) {
+                    $reply['text'] = $request->input('message.text', $reply['text']);
+                }
+                $found = true;
+                break;
+            }
+        }
+        unset($reply);
+
+        if (!$found) {
+            return response()->json(['success' => false, 'error' => 'Resposta rápida não encontrada'], 404);
         }
 
-        $data = $request->only(['shortCut', 'message']);
-        $result = $uazapi->updateQuickReply($id, $data);
+        $this->saveQuickRepliesData($replies);
 
-        return response()->json([
-            'success' => !isset($result['error']),
-            'data' => $result,
-        ]);
+        return response()->json(['success' => true]);
     }
 
     public function deleteQuickReply(string $id): JsonResponse
     {
-        $uazapi = app(UazapiService::class);
-        if (!$uazapi->isConfigured()) {
-            return response()->json(['success' => false, 'error' => 'UazAPI não configurada'], 500);
-        }
+        $replies = $this->getQuickRepliesData();
+        $replies = array_values(array_filter($replies, fn ($r) => $r['id'] !== $id));
 
-        $result = $uazapi->deleteQuickReply($id);
+        $this->saveQuickRepliesData($replies);
 
-        return response()->json([
-            'success' => !isset($result['error']),
-        ]);
+        return response()->json(['success' => true]);
     }
 }
