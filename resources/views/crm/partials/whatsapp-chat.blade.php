@@ -1017,20 +1017,28 @@
         }
     }
 
+    const _qrTexts = {};
+
     function renderQuickReplies(items) {
         const list = document.getElementById('qr-list');
         if (!items.length) {
             list.innerHTML = '<div style="text-align:center;padding:0.75rem;color:#555;font-size:0.7rem;">Nenhuma resposta rápida</div>';
             return;
         }
-        list.innerHTML = items.map(r => {
+        list.innerHTML = items.map((r, i) => {
             const text = r.message?.text || r.message?.name || '(sem texto)';
             const preview = text.length > 60 ? text.substring(0, 60) + '...' : text;
-            return `<div class="qr-item" onclick="useQuickReply('${escHtml(text.replace(/'/g, "\\'"))}')" style="padding:0.35rem 0.4rem;border-radius:0.25rem;cursor:pointer;transition:background 0.1s;border-bottom:1px solid #1a1a1a;" onmouseenter="this.style.background='#1a1a1a'" onmouseleave="this.style.background='none'">
+            const key = 'qr_' + i;
+            _qrTexts[key] = text;
+            return `<div class="qr-item" data-qr-key="${key}" style="padding:0.35rem 0.4rem;border-radius:0.25rem;cursor:pointer;transition:background 0.1s;border-bottom:1px solid #1a1a1a;" onmouseenter="this.style.background='#1a1a1a'" onmouseleave="this.style.background='none'">
                 <div style="font-size:0.65rem;color:#25D366;font-weight:600;">/${escHtml(r.shortCut || '')}</div>
                 <div style="font-size:0.7rem;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(preview)}</div>
             </div>`;
         }).join('');
+
+        list.querySelectorAll('.qr-item[data-qr-key]').forEach(el => {
+            el.onclick = () => useQuickReply(_qrTexts[el.dataset.qrKey]);
+        });
     }
 
     window.useQuickReply = function(text) {
