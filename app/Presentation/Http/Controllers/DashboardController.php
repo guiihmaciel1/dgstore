@@ -30,6 +30,7 @@ use App\Domain\User\Enums\UserRole;
 use App\Domain\User\Models\User;
 use App\Domain\Warranty\Services\WarrantyService;
 use App\Domain\News\Services\AppleNewsService;
+use App\Domain\Supplier\Models\Quotation;
 use App\Domain\Supplier\Models\Supplier;
 use App\Domain\System\Models\SystemSetting;
 use App\Domain\WhatsApp\Services\UazapiService;
@@ -75,7 +76,9 @@ class DashboardController extends Controller
             $executiveSummary = app(ExecutiveSummaryController::class)->buildExecutiveData('month');
         }
 
-        $supplierQuoteInfo = $this->getSupplierQuoteInfo();
+        $supplierQuoteInfo = auth()->user()->isAdmin()
+            ? $this->getSupplierQuoteInfo()
+            : [];
 
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
@@ -106,7 +109,8 @@ class DashboardController extends Controller
     }
 
     /**
-     * Informações da última cotação de fornecedor recebida via WhatsApp.
+     * Informações da última cotação de fornecedor recebida via WhatsApp,
+     * incluindo modelos monitorados com variação dia-a-dia.
      */
     private function getSupplierQuoteInfo(): array
     {
@@ -115,22 +119,97 @@ class DashboardController extends Controller
 
         foreach ($suppliers as $supplier) {
             $lastUpdate = SystemSetting::get('supplier_quote_last_update_' . $supplier->id);
-            if ($lastUpdate) {
-                $lastDate = \Carbon\Carbon::parse($lastUpdate);
-                $latestQuote = $supplier->quotations()
-                    ->whereDate('quoted_at', $lastDate->toDateString())
-                    ->count();
-
-                $quotes[] = [
-                    'supplier_name' => $supplier->name,
-                    'last_update' => $lastDate,
-                    'items_count' => $latestQuote,
-                    'supplier_id' => $supplier->id,
-                ];
+            if (!$lastUpdate) {
+                continue;
             }
+
+            $lastDate = Carbon::parse($lastUpdate);
+            $latestQuote = $supplier->quotations()
+                ->whereDate('quoted_at', $lastDate->toDateString())
+                ->count();
+
+            $trackedModels = $this->getTrackedModelPrices($supplier->id);
+
+            $quotes[] = [
+                'supplier_name' => $supplier->name,
+                'last_update' => $lastDate,
+                'items_count' => $latestQuote,
+                'supplier_id' => $supplier->id,
+                'tracked_models' => $trackedModels,
+            ];
         }
 
         return $quotes;
+    }
+
+    /**
+     * Busca preço mínimo (a partir de) dos modelos monitorados nos últimos 7 dias.
+     * Retorna array com label, preço atual, preço anterior e variação.
+     */
+    private function getTrackedModelPrices(string $supplierId): array
+    {
+        $patterns = [
+            '18 Pro 256'     => '18 pro 256gb',
+            '18 Pro Max 256' => '18 pro max 256gb',
+            '18 Pro Max 512' => '18 pro max 512gb',
+            '17 Pro 256'     => ['iPhone 17 Pro 256gb', '17 pro 256gb'],
+            '17 Pro Max 256' => ['iPhone 17 Pro Max 256gb', '17 pro max 256gb'],
+            '17 Pro Max 512' => ['iPhone 17 Pro Max 512gb', '17 pro max 512gb'],
+        ];
+
+        $today = today();
+        $sevenDaysAgo = $today->copy()->subDays(7);
+
+        $allQuotations = Quotation::where('supplier_id', $supplierId)
+            ->where('notes', 'Importado via WhatsApp REPASSE')
+            ->whereDate('quoted_at', '>=', $sevenDaysAgo)
+            ->get(['product_name', 'unit_price', 'quoted_at']);
+
+        $result = [];
+
+        foreach ($patterns as $label => $prefixes) {
+            $prefixList = is_array($prefixes) ? $prefixes : [$prefixes];
+
+            $matching = $allQuotations->filter(function ($q) use ($prefixList) {
+                foreach ($prefixList as $prefix) {
+                    if (str_starts_with(mb_strtolower($q->product_name), mb_strtolower($prefix . ' -'))
+                        || mb_strtolower($q->product_name) === mb_strtolower($prefix)) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+
+            $byDate = $matching->groupBy(fn ($q) => $q->quoted_at->format('Y-m-d'))
+                ->map(fn ($group) => (float) $group->min('unit_price'))
+                ->sortKeys();
+
+            if ($byDate->isEmpty()) {
+                continue;
+            }
+
+            $dates = $byDate->keys()->toArray();
+            $currentDate = end($dates);
+            $currentPrice = $byDate[$currentDate];
+
+            $previousPrice = null;
+            if (count($dates) >= 2) {
+                $previousDate = $dates[count($dates) - 2];
+                $previousPrice = $byDate[$previousDate];
+            }
+
+            $diff = $previousPrice !== null ? $currentPrice - $previousPrice : null;
+
+            $result[] = [
+                'label' => $label,
+                'current_price' => $currentPrice,
+                'previous_price' => $previousPrice,
+                'diff' => $diff,
+                'history' => $byDate->toArray(),
+            ];
+        }
+
+        return $result;
     }
 
     private function getNewLeadsWaiting(): \Illuminate\Support\Collection

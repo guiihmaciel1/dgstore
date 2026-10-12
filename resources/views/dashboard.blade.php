@@ -242,35 +242,62 @@
             </style>
             @endif
 
-            <!-- COTAÇÃO FORNECEDOR (WhatsApp) -->
-            @if(!empty($supplierQuoteInfo))
+            <!-- COTAÇÃO FORNECEDOR (WhatsApp) — somente admin -->
+            @if(!empty($supplierQuoteInfo) && auth()->user()->isAdmin())
             <div style="margin-bottom: 1rem;">
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    @foreach($supplierQuoteInfo as $quote)
+                @foreach($supplierQuoteInfo as $quote)
+                <div style="background: #141414; border: 1px solid rgba(37,211,102,0.15); border-radius: 0.5rem; overflow: hidden;">
+                    {{-- Header clicável --}}
                     <a href="{{ route('quotations.index', ['supplier_id' => $quote['supplier_id']]) }}"
-                       style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; background: #141414; border: 1px solid rgba(37,211,102,0.2); border-radius: 0.5rem; text-decoration: none; transition: all 0.15s; flex: 1; min-width: 200px;"
-                       onmouseover="this.style.borderColor='rgba(37,211,102,0.4)'" onmouseout="this.style.borderColor='rgba(37,211,102,0.2)'">
-                        <div style="width: 2rem; height: 2rem; background: rgba(37,211,102,0.1); border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <svg style="width: 1rem; height: 1rem; color: #25D366;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       style="display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.75rem; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.04);"
+                       onmouseover="this.style.background='rgba(37,211,102,0.04)'" onmouseout="this.style.background='transparent'">
+                        <div style="width: 1.5rem; height: 1.5rem; background: rgba(37,211,102,0.1); border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg style="width: 0.75rem; height: 0.75rem; color: #25D366;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                             </svg>
                         </div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-size: 0.75rem; font-weight: 700; color: #25D366;">Cotação {{ $quote['supplier_name'] }}</div>
-                            <div style="font-size: 0.7rem; color: #818181; margin-top: 0.0625rem;">
-                                Atualizado {{ $quote['last_update']->setTimezone('America/Sao_Paulo')->format('d/m') }}
-                                <span style="color: #555;">·</span>
-                                {{ $quote['items_count'] }} {{ $quote['items_count'] === 1 ? 'item' : 'itens' }}
-                                <span style="color: #555;">·</span>
-                                {{ $quote['last_update']->setTimezone('America/Sao_Paulo')->diffForHumans() }}
-                            </div>
+                            <span style="font-size: 0.7rem; font-weight: 700; color: #25D366;">Cotação {{ $quote['supplier_name'] }}</span>
+                            <span style="font-size: 0.65rem; color: #555; margin-left: 0.5rem;">
+                                {{ $quote['last_update']->setTimezone('America/Sao_Paulo')->format('d/m H:i') }}
+                                · {{ $quote['items_count'] }} itens
+                            </span>
                         </div>
-                        <svg style="width: 0.875rem; height: 0.875rem; color: #555;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg style="width: 0.75rem; height: 0.75rem; color: #444;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </a>
-                    @endforeach
+
+                    {{-- Modelos monitorados inline --}}
+                    @if(!empty($quote['tracked_models']))
+                    <div style="display: flex; flex-wrap: wrap; gap: 0; padding: 0;">
+                        @foreach($quote['tracked_models'] as $model)
+                        <div style="flex: 1; min-width: 120px; padding: 0.375rem 0.625rem; border-right: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <div style="font-size: 0.6rem; color: #666; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $model['label'] }}</div>
+                            <div style="display: flex; align-items: baseline; gap: 0.25rem; margin-top: 0.125rem;">
+                                <span style="font-size: 0.75rem; font-weight: 800; color: #e0e0e0; font-variant-numeric: tabular-nums;">
+                                    {{ number_format($model['current_price'], 0, ',', '.') }}
+                                </span>
+                                @if($model['diff'] !== null)
+                                    @if($model['diff'] < 0)
+                                        <span style="font-size: 0.6rem; font-weight: 700; color: #22c55e;" title="Baixou R$ {{ number_format(abs($model['diff']), 0, ',', '.') }}">
+                                            ▼ {{ number_format(abs($model['diff']), 0, ',', '.') }}
+                                        </span>
+                                    @elseif($model['diff'] > 0)
+                                        <span style="font-size: 0.6rem; font-weight: 700; color: #ef4444;" title="Subiu R$ {{ number_format($model['diff'], 0, ',', '.') }}">
+                                            ▲ {{ number_format($model['diff'], 0, ',', '.') }}
+                                        </span>
+                                    @else
+                                        <span style="font-size: 0.6rem; color: #555;">—</span>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
                 </div>
+                @endforeach
             </div>
             @endif
 
