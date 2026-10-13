@@ -149,12 +149,12 @@ class DashboardController extends Controller
     private function getTrackedModelPrices(string $supplierId): array
     {
         $patterns = [
-            '18 Pro 256'     => '18 pro 256gb',
-            '18 Pro Max 256' => '18 pro max 256gb',
             '18 Pro Max 512' => '18 pro max 512gb',
-            '17 Pro 256'     => ['iPhone 17 Pro 256gb', '17 pro 256gb'],
-            '17 Pro Max 256' => ['iPhone 17 Pro Max 256gb', '17 pro max 256gb'],
+            '18 Pro Max 256' => '18 pro max 256gb',
+            '18 Pro 256'     => '18 pro 256gb',
             '17 Pro Max 512' => ['iPhone 17 Pro Max 512gb', '17 pro max 512gb'],
+            '17 Pro Max 256' => ['iPhone 17 Pro Max 256gb', '17 pro max 256gb'],
+            '17 Pro 256'     => ['iPhone 17 Pro 256gb', '17 pro 256gb'],
         ];
 
         $today = today();
@@ -181,7 +181,10 @@ class DashboardController extends Controller
             });
 
             $byDate = $matching->groupBy(fn ($q) => $q->quoted_at->format('Y-m-d'))
-                ->map(fn ($group) => (float) $group->min('unit_price'))
+                ->map(fn ($group) => [
+                    'min' => (float) $group->min('unit_price'),
+                    'max' => (float) $group->max('unit_price'),
+                ])
                 ->sortKeys();
 
             if ($byDate->isEmpty()) {
@@ -190,12 +193,14 @@ class DashboardController extends Controller
 
             $dates = $byDate->keys()->toArray();
             $currentDate = end($dates);
-            $currentPrice = $byDate[$currentDate];
+            $currentPrice = $byDate[$currentDate]['min'];
+            $currentMax = $byDate[$currentDate]['max'];
+            $hasColorVariation = $currentMax > $currentPrice;
 
             $previousPrice = null;
             if (count($dates) >= 2) {
                 $previousDate = $dates[count($dates) - 2];
-                $previousPrice = $byDate[$previousDate];
+                $previousPrice = $byDate[$previousDate]['min'];
             }
 
             $diff = $previousPrice !== null ? $currentPrice - $previousPrice : null;
@@ -203,9 +208,11 @@ class DashboardController extends Controller
             $result[] = [
                 'label' => $label,
                 'current_price' => $currentPrice,
+                'max_price' => $currentMax,
+                'has_color_variation' => $hasColorVariation,
                 'previous_price' => $previousPrice,
                 'diff' => $diff,
-                'history' => $byDate->toArray(),
+                'history' => $byDate->map(fn ($v) => $v['min'])->toArray(),
             ];
         }
 

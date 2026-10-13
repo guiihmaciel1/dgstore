@@ -272,12 +272,17 @@
                     @if(!empty($quote['tracked_models']))
                     <div style="display: flex; flex-wrap: wrap; gap: 0; padding: 0;">
                         @foreach($quote['tracked_models'] as $model)
-                        <div style="flex: 1; min-width: 120px; padding: 0.375rem 0.625rem; border-right: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <div style="flex: 1; min-width: 130px; padding: 0.375rem 0.625rem; border-right: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.03);">
                             <div style="font-size: 0.6rem; color: #666; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $model['label'] }}</div>
                             <div style="display: flex; align-items: baseline; gap: 0.25rem; margin-top: 0.125rem;">
                                 <span style="font-size: 0.75rem; font-weight: 800; color: #e0e0e0; font-variant-numeric: tabular-nums;">
                                     {{ number_format($model['current_price'], 0, ',', '.') }}
                                 </span>
+                                @if(!empty($model['has_color_variation']))
+                                    <span style="font-size: 0.55rem; font-weight: 600; color: #818181;">
+                                        ~ {{ number_format($model['max_price'], 0, ',', '.') }}
+                                    </span>
+                                @endif
                                 @if($model['diff'] !== null)
                                     @if($model['diff'] < 0)
                                         <span style="font-size: 0.6rem; font-weight: 700; color: #22c55e;" title="Baixou R$ {{ number_format(abs($model['diff']), 0, ',', '.') }}">
