@@ -48,12 +48,14 @@
                                     </svg>
                                     Vendas
                                 </a>
+                                {{-- Solic. Compra — oculto temporariamente
                                 <a href="{{ route('purchase-requests.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('purchase-requests.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
                                     </svg>
                                     Solic. Compra
                                 </a>
+                                --}}
                                 <a href="{{ route('schedule.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('schedule.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -446,9 +448,11 @@
                 <a href="{{ route('sales.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('sales.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Vendas
                 </a>
+                {{-- Solic. Compra — oculto temporariamente
                 <a href="{{ route('purchase-requests.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('purchase-requests.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Solic. Compra
                 </a>
+                --}}
                 <a href="{{ route('schedule.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('schedule.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Agenda
                 </a>

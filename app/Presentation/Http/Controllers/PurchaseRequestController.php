@@ -36,11 +36,12 @@ class PurchaseRequestController extends Controller
 
         $purchaseRequests = $this->service->list(20, $filters);
 
-        $sellers = User::whereIn('role', [
-            UserRole::AdminGeral->value,
-            UserRole::Seller->value,
-            UserRole::Intern->value,
-        ])->orderBy('name')->get(['id', 'name']);
+        $sellers = User::where('active', true)
+            ->whereIn('role', [
+                UserRole::AdminGeral->value,
+                UserRole::Seller->value,
+                UserRole::Intern->value,
+            ])->orderBy('name')->get(['id', 'name']);
 
         $pendingCount = $this->service->pendingCount();
 

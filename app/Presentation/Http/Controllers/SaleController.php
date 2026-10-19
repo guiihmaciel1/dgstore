@@ -98,7 +98,8 @@ class SaleController extends Controller
                 ->find($request->get('from_presale'));
         }
 
-        $sellers = User::whereIn('role', [
+        $sellers = User::where('active', true)
+            ->whereIn('role', [
                 UserRole::AdminGeral->value,
                 UserRole::Seller->value,
                 UserRole::Intern->value,

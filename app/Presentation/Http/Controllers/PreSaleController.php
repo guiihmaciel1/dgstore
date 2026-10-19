@@ -37,11 +37,12 @@ class PreSaleController extends Controller
 
         $preSales = $this->preSaleService->list(20, $filters);
 
-        $sellers = User::whereIn('role', [
-            UserRole::AdminGeral->value,
-            UserRole::Seller->value,
-            UserRole::Intern->value,
-        ])->orderBy('name')->get(['id', 'name']);
+        $sellers = User::where('active', true)
+            ->whereIn('role', [
+                UserRole::AdminGeral->value,
+                UserRole::Seller->value,
+                UserRole::Intern->value,
+            ])->orderBy('name')->get(['id', 'name']);
 
         return view('pre-sales.index', [
             'preSales' => $preSales,
