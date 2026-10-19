@@ -20,6 +20,16 @@ class TimeClockController extends Controller
             return back()->with('error', 'Todos os pontos do dia já foram registrados.');
         }
 
+        if ($nextType === TimeClockEntry::TYPE_LUNCH_IN) {
+            $lunchOut = TimeClockEntry::getTodayEntries($user->id)
+                ->firstWhere('type', TimeClockEntry::TYPE_LUNCH_OUT);
+
+            if ($lunchOut && $lunchOut->punched_at->diffInMinutes(now()) < 60) {
+                $remaining = 60 - (int) $lunchOut->punched_at->diffInMinutes(now());
+                return back()->with('error', "Almoço mínimo de 1 hora. Faltam {$remaining} minutos.");
+            }
+        }
+
         TimeClockEntry::create([
             'user_id' => $user->id,
             'type' => $nextType,
