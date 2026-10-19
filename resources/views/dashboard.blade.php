@@ -401,8 +401,9 @@
                         <span style="font-size: 0.6875rem; color: #666666;">Negociação</span>
                     </div>
                 </a>
+                @if(config('crm.pipeline_enabled'))
                 <a href="{{ route('crm.board') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #141414; border: 2px solid rgba(255,255,255,0.08); color: #e3e3e3; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#f59e0b'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.boxShadow=''">
-                    <div style="width: 2.5rem; height: 2.5rem; background: #141414beb; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <div style="width: 2.5rem; height: 2.5rem; background: rgba(245,158,11,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                         </svg>
@@ -412,6 +413,7 @@
                         <span style="font-size: 0.6875rem; color: #666666;">CRM / Leads</span>
                     </div>
                 </a>
+                @endif
                 <a href="{{ route('marketing.index') }}?tab=used" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #141414; border: 2px solid rgba(255,255,255,0.08); color: #e3e3e3; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#ec4899'; this.style.boxShadow='0 4px 12px rgba(236,72,153,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.boxShadow=''">
                     <div style="width: 2.5rem; height: 2.5rem; background: rgba(236,72,153,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #ec4899;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
