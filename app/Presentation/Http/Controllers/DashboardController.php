@@ -839,9 +839,9 @@ class DashboardController extends Controller
     {
         return [
             'monthly' => [
-                ['target' => 30, 'reward' => 'R$ 100 no Pix'],
-                ['target' => 40, 'reward' => '1 perfume do estoque da loja'],
-                ['target' => 50, 'reward' => '1 perfume árabe à escolha do nosso catálogo'],
+                ['target' => 20, 'reward' => 'R$ 100 no Pix'],
+                ['target' => 30, 'reward' => 'R$ 150 no Pix'],
+                ['target' => 40, 'reward' => 'R$ 200 no Pix'],
             ],
             'weekly' => [
                 'target' => 10,

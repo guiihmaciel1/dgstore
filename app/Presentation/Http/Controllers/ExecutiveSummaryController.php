@@ -257,9 +257,9 @@ class ExecutiveSummaryController extends Controller
         $combinedWeekSales = array_sum(array_column($internsData, 'sales_this_week'));
 
         $monthlyGoals = collect([
-            ['target' => 30, 'reward' => 'Colônia Victoria Secrets para cada'],
-            ['target' => 40, 'reward' => 'Kit Colônia + Creme Victoria Secrets para cada'],
-            ['target' => 50, 'reward' => 'Perfume Árabe para cada'],
+            ['target' => 20, 'reward' => 'R$ 100 no Pix'],
+            ['target' => 30, 'reward' => 'R$ 150 no Pix'],
+            ['target' => 40, 'reward' => 'R$ 200 no Pix'],
         ])->map(fn ($goal) => [
             ...$goal,
             'reached' => $combinedSales >= $goal['target'],

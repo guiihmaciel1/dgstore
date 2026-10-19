@@ -135,9 +135,9 @@ class InternDashboardController extends Controller
             ->count();
 
         $goals = [
-            ['target' => 30, 'reward' => 'R$ 100 no Pix', 'emoji' => '💰', 'color' => '#06b6d4'],
-            ['target' => 40, 'reward' => '1 perfume do estoque da loja', 'emoji' => '🌸', 'color' => '#8b5cf6'],
-            ['target' => 50, 'reward' => '1 perfume árabe à escolha', 'emoji' => '✨', 'color' => '#f59e0b'],
+            ['target' => 20, 'reward' => 'R$ 100 no Pix', 'emoji' => '💰', 'color' => '#06b6d4'],
+            ['target' => 30, 'reward' => 'R$ 150 no Pix', 'emoji' => '🔥', 'color' => '#8b5cf6'],
+            ['target' => 40, 'reward' => 'R$ 200 no Pix', 'emoji' => '✨', 'color' => '#f59e0b'],
         ];
 
         return [
