@@ -93,6 +93,11 @@ class InternDashboardController extends Controller
         $weekSummary = $this->buildWeekSummary($user->id);
         $phoneSalesGoals = $this->buildPhoneSalesGoals($user->id);
 
+        $needsClockIn = !now()->isWeekend()
+            && (int) now()->format('H') >= 8
+            && (int) now()->format('H') < 17
+            && $nextPunchType === TimeClockEntry::TYPE_CLOCK_IN;
+
         return view('intern.dashboard', compact(
             'user',
             'timeClockEntries',
@@ -110,6 +115,7 @@ class InternDashboardController extends Controller
             'nextAppointment',
             'weekSummary',
             'phoneSalesGoals',
+            'needsClockIn',
         ));
     }
 

@@ -23,3 +23,5 @@ Schedule::command('radar:fetch-prices')->hourly();
 Schedule::command('purchase-requests:expire')->hourly();
 Schedule::command('whatsapp:process-media --limit=20')->everyFiveMinutes()->when(fn () => config('crm.pipeline_enabled'));
 Schedule::command('whatsapp:enrich-customers --limit=10')->everyThirtyMinutes();
+Schedule::command('timeclock:check-late')->weekdays()->at('09:15');
+Schedule::command('timeclock:weekly-report')->mondays()->at('08:00');

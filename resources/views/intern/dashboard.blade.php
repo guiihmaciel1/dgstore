@@ -60,8 +60,17 @@
                 </div>
             @endif
 
+            @if($needsClockIn ?? false)
+                <div style="background: rgba(239,68,68,0.08); border: 2px solid #ef4444; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔒</div>
+                    <h3 style="font-size: 1.125rem; font-weight: 800; color: #fca5a5; margin-bottom: 0.5rem;">Sistema bloqueado</h3>
+                    <p style="font-size: 0.875rem; color: #a4a4a4; margin-bottom: 0.25rem;">Registre sua chegada acima para liberar o acesso ao sistema.</p>
+                    <p style="font-size: 0.75rem; color: #666;">Vendas, simulador e demais funcionalidades ficam disponíveis após o registro do ponto.</p>
+                </div>
+            @endif
+
             {{-- RESUMO SEMANAL DE PONTO --}}
-            @if($weekSummary['days_worked'] > 0)
+            @if(!($needsClockIn ?? false) && $weekSummary['days_worked'] > 0)
             <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
                 <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -152,7 +161,7 @@
             @endif
 
             {{-- METAS DE VENDAS DE CELULARES --}}
-            @if(!empty($phoneSalesGoals['goals']))
+            @if(!($needsClockIn ?? false) && !empty($phoneSalesGoals['goals']))
             <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
                 <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; display: flex; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -224,6 +233,7 @@
             </div>
             @endif
 
+            @if(!($needsClockIn ?? false))
             {{-- ANIVERSARIANTES DO MÊS --}}
             @if($birthdayCustomers->count() > 0)
             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
@@ -428,6 +438,7 @@
                 </div>
             </div>
             @endif
+            @endif {{-- needsClockIn --}}
 
         </div>
 

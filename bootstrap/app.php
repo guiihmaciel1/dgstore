@@ -28,11 +28,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
             'crm.enabled' => \App\Http\Middleware\EnsureCrmEnabled::class,
+            'clock-in' => \App\Http\Middleware\EnsureClockIn::class,
             'b2b.auth' => \App\Http\Middleware\B2BAuthenticate::class,
             'b2b.approved' => \App\Http\Middleware\B2BApproved::class,
             'supplier.auth' => \App\Http\Middleware\SupplierAuthenticate::class,
             'supplier.active' => \App\Http\Middleware\SupplierActive::class,
         ]);
+
+        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureClockIn::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
