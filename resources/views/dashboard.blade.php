@@ -360,9 +360,26 @@
                                     $hasOur = ($color['our_price'] ?? null) !== null;
                                     $margin = $color['margin'] ?? null;
                                     $marginColor = $margin !== null ? ($margin >= 0 ? '#22c55e' : '#ef4444') : '#555';
-                                    $rowBg = ($margin !== null && $margin < 0) ? 'rgba(239,68,68,0.06)' : '#1a1a1a';
+                                    $colorDiff = $color['diff'] ?? null;
+                                    $changed = $colorDiff !== null && $colorDiff != 0;
+                                    $wentUp = $changed && $colorDiff > 0;
+                                    $wentDown = $changed && $colorDiff < 0;
+
+                                    if ($margin !== null && $margin < 0) {
+                                        $rowBg = 'rgba(239,68,68,0.06)';
+                                        $rowBorder = 'border: 1px solid rgba(239,68,68,0.15);';
+                                    } elseif ($wentUp) {
+                                        $rowBg = 'rgba(239,68,68,0.04)';
+                                        $rowBorder = 'border-left: 3px solid #ef4444;';
+                                    } elseif ($wentDown) {
+                                        $rowBg = 'rgba(34,197,94,0.04)';
+                                        $rowBorder = 'border-left: 3px solid #22c55e;';
+                                    } else {
+                                        $rowBg = '#1a1a1a';
+                                        $rowBorder = '';
+                                    }
                                 @endphp
-                                <div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.3rem 0.5rem; background: {{ $rowBg }}; border-radius: 0.375rem; {{ $margin !== null && $margin < 0 ? 'border: 1px solid rgba(239,68,68,0.15);' : '' }}">
+                                <div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.3rem 0.5rem; background: {{ $rowBg }}; border-radius: 0.375rem; {{ $rowBorder }}">
                                     <span style="width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); background: {{ $color['hex'] }};" title="{{ $color['name'] }}"></span>
                                     @if(($color['diff'] ?? null) !== null && $color['diff'] != 0)
                                         @if($color['diff'] < 0)
