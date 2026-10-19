@@ -172,11 +172,11 @@ class DashboardController extends Controller
 
         $supplierToOurColor = [
             'preto' => ['preto', 'meia-noite'],
-            'branco' => ['branco', 'estelar', 'glacial', 'titânio branco'],
+            'branco' => ['prata', 'branco', 'estelar', 'titânio branco'],
             'bordo' => ['bordô'],
-            'azul' => ['azul', 'ultramarino', 'glacial'],
-            'white' => ['branco', 'estelar', 'glacial', 'titânio branco'],
-            'blue' => ['azul', 'ultramarino', 'glacial'],
+            'azul' => ['glacial', 'azul', 'ultramarino'],
+            'white' => ['prata', 'branco', 'estelar', 'titânio branco'],
+            'blue' => ['glacial', 'azul', 'ultramarino'],
             'laranja' => ['laranja', 'deserto', 'titânio natural'],
         ];
 

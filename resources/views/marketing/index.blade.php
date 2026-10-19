@@ -197,8 +197,7 @@
                                 </thead>
                                 <tbody>
                                     <template x-for="(row, idx) in filteredPrices" :key="row._key">
-                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);"
-                                            :style="dragOverIdx === idx ? 'border-top: 2px solid #6d28d9;' : ''"
+                                        <tr :style="'border-bottom: 1px solid rgba(255,255,255,0.04); background:' + priceGroupBg(row, idx) + ';' + (priceIsFirstInGroup(row, idx) && idx > 0 ? 'border-top: 2px solid rgba(255,255,255,0.08);' : '') + (dragOverIdx === idx ? 'border-top: 2px solid #6d28d9;' : '')"
                                             draggable="true"
                                             x-show-drag="!priceSearch"
                                             @dragstart="if(priceSearch) return; dragIdx = idx; $event.dataTransfer.effectAllowed = 'move'; $el.style.opacity = '0.4';"
@@ -1125,6 +1124,28 @@
                     );
                 }
                 return items;
+            },
+
+            priceGroupKey(row) {
+                return ((row.name || '') + '|' + (row.storage || '')).toLowerCase();
+            },
+
+            priceGroupBg(row, idx) {
+                const items = this.filteredPrices;
+                const key = this.priceGroupKey(row);
+                let groupIdx = 0;
+                let prevKey = '';
+                for (let i = 0; i <= idx; i++) {
+                    const k = this.priceGroupKey(items[i]);
+                    if (k !== prevKey) { if (i > 0) groupIdx++; prevKey = k; }
+                }
+                return groupIdx % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.025)';
+            },
+
+            priceIsFirstInGroup(row, idx) {
+                if (idx === 0) return true;
+                const items = this.filteredPrices;
+                return this.priceGroupKey(row) !== this.priceGroupKey(items[idx - 1]);
             },
 
             get filteredUsed() {
