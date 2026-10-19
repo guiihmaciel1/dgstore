@@ -109,7 +109,14 @@ class IdleMonitorController extends Controller
         ]);
 
         try {
-            $message = "Alert {$validated['idle_minutes']}min (total: {$cumulative}min)";
+            $name = $user->name;
+            $startedAt = \Carbon\Carbon::parse($validated['started_at'])->format('H:i');
+            $now = now()->format('H:i');
+
+            $message = "⚠️ *{$name}* está inativa há *{$validated['idle_minutes']}min*\n"
+                     . "Popup sem resposta desde {$startedAt}\n"
+                     . "Acumulado hoje: *{$cumulative}min* de inatividade\n"
+                     . "Horário: {$now}";
 
             app(UazapiService::class)->sendText(self::ADMIN_WHATSAPP, $message);
         } catch (\Throwable $e) {
