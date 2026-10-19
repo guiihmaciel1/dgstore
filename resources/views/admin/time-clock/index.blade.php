@@ -28,11 +28,29 @@
                             </span>
                         </div>
 
-                        @if($status['clock_in_time'])
-                            <p style="font-size: 0.8rem; color: #818181;">
-                                Chegou às <strong style="color: #e3e3e3;">{{ $status['clock_in_time'] }}</strong>
-                            </p>
-                        @endif
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            @if($status['clock_in_time'])
+                                <p style="font-size: 0.8rem; color: #818181;">
+                                    Chegou às <strong style="color: #e3e3e3;">{{ $status['clock_in_time'] }}</strong>
+                                </p>
+                            @else
+                                <p style="font-size: 0.8rem; color: #818181;">—</p>
+                            @endif
+
+                            @if($status['worked_minutes'] > 0)
+                                @php
+                                    $h = intdiv($status['worked_minutes'], 60);
+                                    $m = $status['worked_minutes'] % 60;
+                                    $isOngoing = $status['next_type'] !== null && $status['entries']->isNotEmpty();
+                                @endphp
+                                <span style="font-size: 0.8rem; font-weight: 700; color: {{ $status['worked_minutes'] >= 480 ? '#059669' : '#e3e3e3' }}; font-variant-numeric: tabular-nums;">
+                                    {{ $h }}h{{ str_pad((string)$m, 2, '0', STR_PAD_LEFT) }}
+                                    @if($isOngoing)
+                                        <span style="font-size: 0.6rem; color: #2563eb; font-weight: 600;">ao vivo</span>
+                                    @endif
+                                </span>
+                            @endif
+                        </div>
 
                         @if($status['entries']->count() > 0)
                             <div style="display: flex; gap: 0.375rem; margin-top: 0.5rem; flex-wrap: wrap;">
@@ -47,6 +65,66 @@
                     </div>
                 @endforeach
             </div>
+
+            {{-- Resumo Semanal --}}
+            @if(count($weeklySummary) > 0)
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg style="width: 1rem; height: 1rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    <h3 style="font-size: 0.875rem; font-weight: 700; color: #e3e3e3;">Resumo da Semana</h3>
+                    <span style="font-size: 0.7rem; color: #666; margin-left: auto;">
+                        {{ now()->startOfWeek(\Carbon\Carbon::MONDAY)->format('d/m') }} — {{ now()->endOfWeek(\Carbon\Carbon::SUNDAY)->format('d/m') }}
+                    </span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                <th style="padding: 0.625rem 1rem; text-align: left; font-weight: 600; color: #818181;">Vendedora</th>
+                                <th style="padding: 0.625rem 1rem; text-align: center; font-weight: 600; color: #818181;">Dias</th>
+                                <th style="padding: 0.625rem 1rem; text-align: center; font-weight: 600; color: #818181;">Trabalhado</th>
+                                <th style="padding: 0.625rem 1rem; text-align: center; font-weight: 600; color: #818181;">Esperado</th>
+                                <th style="padding: 0.625rem 1rem; text-align: center; font-weight: 600; color: #818181;">Saldo</th>
+                                <th style="padding: 0.625rem 1rem; text-align: center; font-weight: 600; color: #818181;">Média/dia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($weeklySummary as $ws)
+                                @php
+                                    $wH = intdiv($ws['total_worked_minutes'], 60);
+                                    $wM = $ws['total_worked_minutes'] % 60;
+                                    $eH = intdiv($ws['expected_minutes'], 60);
+                                    $eM = $ws['expected_minutes'] % 60;
+                                    $bAbs = abs($ws['balance_minutes']);
+                                    $bH = intdiv($bAbs, 60);
+                                    $bM = $bAbs % 60;
+                                    $bSign = $ws['balance_minutes'] >= 0 ? '+' : '-';
+                                    $bColor = $ws['balance_minutes'] >= 0 ? '#059669' : '#ef4444';
+                                    $aH = intdiv($ws['avg_minutes_per_day'], 60);
+                                    $aM = $ws['avg_minutes_per_day'] % 60;
+                                    $avgColor = $ws['avg_minutes_per_day'] >= 480 ? '#059669' : ($ws['avg_minutes_per_day'] >= 420 ? '#d97706' : '#ef4444');
+                                @endphp
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding: 0.625rem 1rem; font-weight: 700; color: #e3e3e3;">{{ $ws['user']->name }}</td>
+                                    <td style="padding: 0.625rem 1rem; text-align: center; color: #a4a4a4; font-variant-numeric: tabular-nums;">{{ $ws['days_worked'] }}</td>
+                                    <td style="padding: 0.625rem 1rem; text-align: center; font-weight: 700; color: #e3e3e3; font-variant-numeric: tabular-nums;">{{ $wH }}h{{ str_pad((string)$wM, 2, '0', STR_PAD_LEFT) }}</td>
+                                    <td style="padding: 0.625rem 1rem; text-align: center; color: #818181; font-variant-numeric: tabular-nums;">{{ $eH }}h{{ str_pad((string)$eM, 2, '0', STR_PAD_LEFT) }}</td>
+                                    <td style="padding: 0.625rem 1rem; text-align: center; font-weight: 700; color: {{ $bColor }}; font-variant-numeric: tabular-nums;">
+                                        {{ $bSign }}{{ $bH }}h{{ str_pad((string)$bM, 2, '0', STR_PAD_LEFT) }}
+                                    </td>
+                                    <td style="padding: 0.625rem 1rem; text-align: center; font-variant-numeric: tabular-nums;">
+                                        <span style="font-weight: 700; color: {{ $avgColor }};">{{ $aH }}h{{ str_pad((string)$aM, 2, '0', STR_PAD_LEFT) }}</span>
+                                        <span style="font-size: 0.65rem; color: #666;">/dia</span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endif
 
             {{-- Filtros --}}
             <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
@@ -77,6 +155,29 @@
                                 <span style="font-size: 0.7rem; font-weight: 600; color: #2563eb; margin-left: 0.25rem;">HOJE</span>
                             @endif
                         </h3>
+                        {{-- Resumo do dia --}}
+                        @if(isset($dailyHours[$dateStr]))
+                            <div style="display: flex; gap: 0.75rem;">
+                                @foreach($dailyHours[$dateStr] as $userId => $dh)
+                                    @php
+                                        $userName = $dayEntries->firstWhere('user_id', $userId)?->user?->name ?? '?';
+                                        $dhH = intdiv($dh['worked_minutes'], 60);
+                                        $dhM = $dh['worked_minutes'] % 60;
+                                        $dhBal = $dh['balance_minutes'];
+                                        $dhBAbs = abs($dhBal);
+                                        $dhBH = intdiv($dhBAbs, 60);
+                                        $dhBM = $dhBAbs % 60;
+                                        $dhSign = $dhBal >= 0 ? '+' : '-';
+                                        $dhColor = $dhBal >= 0 ? '#059669' : '#ef4444';
+                                    @endphp
+                                    <span style="font-size: 0.7rem; color: #a4a4a4; font-variant-numeric: tabular-nums;">
+                                        {{ $userName }}:
+                                        <strong style="color: #e3e3e3;">{{ $dhH }}h{{ str_pad((string)$dhM, 2, '0', STR_PAD_LEFT) }}</strong>
+                                        <span style="color: {{ $dhColor }}; font-weight: 700;">({{ $dhSign }}{{ $dhBH }}h{{ str_pad((string)$dhBM, 2, '0', STR_PAD_LEFT) }})</span>
+                                    </span>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
