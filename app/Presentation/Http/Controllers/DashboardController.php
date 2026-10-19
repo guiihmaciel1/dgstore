@@ -118,6 +118,8 @@ class DashboardController extends Controller
         $suppliers = Supplier::active()->get();
         $quotes = [];
 
+        $ourPrices = MarketingPrice::active()->ordered()->get();
+
         foreach ($suppliers as $supplier) {
             $lastUpdate = SystemSetting::get('supplier_quote_last_update_' . $supplier->id);
             if (!$lastUpdate) {
@@ -130,6 +132,7 @@ class DashboardController extends Controller
                 ->count();
 
             $trackedModels = $this->getTrackedModelPrices($supplier->id);
+            $trackedModels = $this->enrichWithOurPrices($trackedModels, $ourPrices);
 
             $quotes[] = [
                 'supplier_name' => $supplier->name,
@@ -144,8 +147,58 @@ class DashboardController extends Controller
     }
 
     /**
+     * Compara modelos monitorados com nossos preços de venda (MarketingPrice).
+     */
+    /**
+     * Compara modelos monitorados com nossos preços de venda (MarketingPrice).
+     * Formato do MarketingPrice: name="iPhone 18 Pro Max", storage="512GB"
+     */
+    private function enrichWithOurPrices(array $trackedModels, \Illuminate\Support\Collection $ourPrices): array
+    {
+        $labelMap = [
+            '18 Pro Max 512' => ['name' => '18 pro max', 'storage' => '512', 'exact' => true],
+            '18 Pro Max 256' => ['name' => '18 pro max', 'storage' => '256', 'exact' => true],
+            '18 Pro 256'     => ['name' => '18 pro',     'storage' => '256', 'exact' => false],
+            '17 Pro Max 512' => ['name' => '17 pro max', 'storage' => '512', 'exact' => true],
+            '17 Pro Max 256' => ['name' => '17 pro max', 'storage' => '256', 'exact' => true],
+            '17 Pro 256'     => ['name' => '17 pro',     'storage' => '256', 'exact' => false],
+        ];
+
+        foreach ($trackedModels as &$model) {
+            $config = $labelMap[$model['label']] ?? null;
+            if (!$config) {
+                $model['we_have'] = false;
+                $model['our_min_price'] = null;
+                continue;
+            }
+
+            $matching = $ourPrices->filter(function ($p) use ($config) {
+                $nameLower = mb_strtolower($p->name ?? '');
+                $storageLower = mb_strtolower($p->storage ?? '');
+
+                if (!str_contains($nameLower, $config['name'])) {
+                    return false;
+                }
+
+                if (!$config['exact'] && str_contains($nameLower, 'pro max')) {
+                    return false;
+                }
+
+                return str_contains($storageLower, $config['storage']);
+            });
+
+            $model['we_have'] = $matching->isNotEmpty();
+            $model['our_min_price'] = $matching->isNotEmpty()
+                ? (float) $matching->min('price')
+                : null;
+        }
+
+        return $trackedModels;
+    }
+
+    /**
      * Busca preço mínimo (a partir de) dos modelos monitorados nos últimos 7 dias.
-     * Retorna array com label, preço atual, preço anterior e variação.
+     * Retorna array com label, preço atual, preço anterior, variação e cores com preços.
      */
     private function getTrackedModelPrices(string $supplierId): array
     {
@@ -156,6 +209,27 @@ class DashboardController extends Controller
             '17 Pro Max 512' => ['iPhone 17 Pro Max 512gb', '17 pro max 512gb'],
             '17 Pro Max 256' => ['iPhone 17 Pro Max 256gb', '17 pro max 256gb'],
             '17 Pro 256'     => ['iPhone 17 Pro 256gb', '17 pro 256gb'],
+        ];
+
+        $colorHexMap = [
+            'preto' => '#1c1c1e', 'black' => '#1c1c1e', 'jet black' => '#0a0a0a',
+            'branco' => '#f5f5f7', 'white' => '#f5f5f7',
+            'titânio natural' => '#c2a67d', 'natural titanium' => '#c2a67d', 'natural' => '#c2a67d',
+            'titânio preto' => '#3a3a3c', 'black titanium' => '#3a3a3c',
+            'titânio branco' => '#f0ede8', 'white titanium' => '#f0ede8',
+            'titânio deserto' => '#c4a882', 'desert titanium' => '#c4a882', 'deserto' => '#c4a882',
+            'ultramarino' => '#3634a3', 'ultramarine' => '#3634a3',
+            'teal' => '#0d9488',
+            'rosa' => '#f9a8d4', 'pink' => '#f9a8d4',
+            'azul' => '#3b82f6', 'blue' => '#3b82f6',
+            'verde' => '#22c55e', 'green' => '#22c55e',
+            'bordo' => '#7f1d1d', 'burgundy' => '#7f1d1d',
+            'laranja' => '#f97316', 'orange' => '#f97316',
+            'sage' => '#9caf88',
+            'lavender' => '#b4a7d6', 'lavanda' => '#b4a7d6',
+            'mist blue' => '#94b8c9',
+            'midnight' => '#191970',
+            'translucent' => '#2d2d2d',
         ];
 
         $today = today();
@@ -206,6 +280,8 @@ class DashboardController extends Controller
 
             $diff = $previousPrice !== null ? $currentPrice - $previousPrice : null;
 
+            $colors = $this->extractColorPrices($matching, $currentDate, $colorHexMap);
+
             $result[] = [
                 'label' => $label,
                 'current_price' => $currentPrice,
@@ -214,10 +290,54 @@ class DashboardController extends Controller
                 'previous_price' => $previousPrice,
                 'diff' => $diff,
                 'history' => $byDate->map(fn ($v) => $v['min'])->toArray(),
+                'colors' => $colors,
             ];
         }
 
         return $result;
+    }
+
+    /**
+     * Extrai preço por cor do último dia de cotação de um modelo.
+     */
+    private function extractColorPrices(\Illuminate\Support\Collection $matching, string $currentDate, array $colorHexMap): array
+    {
+        $todayItems = $matching->filter(
+            fn ($q) => $q->quoted_at->format('Y-m-d') === $currentDate
+        );
+
+        $colors = [];
+        foreach ($todayItems as $item) {
+            $name = mb_strtolower($item->product_name);
+            $colorName = null;
+
+            if (preg_match('/\s-\s(.+)$/i', $item->product_name, $m)) {
+                $colorName = trim($m[1]);
+            }
+
+            if (!$colorName) {
+                continue;
+            }
+
+            $hex = '#6b7280';
+            $colorLower = mb_strtolower($colorName);
+            foreach ($colorHexMap as $keyword => $color) {
+                if (str_contains($colorLower, $keyword)) {
+                    $hex = $color;
+                    break;
+                }
+            }
+
+            $colors[] = [
+                'name' => $colorName,
+                'hex' => $hex,
+                'price' => (float) $item->unit_price,
+            ];
+        }
+
+        usort($colors, fn ($a, $b) => $a['price'] <=> $b['price']);
+
+        return $colors;
     }
 
     private function getNewLeadsWaiting(): \Illuminate\Support\Collection

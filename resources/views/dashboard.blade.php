@@ -246,18 +246,18 @@
             @if(!empty($supplierQuoteInfo) && auth()->user()->isAdmin())
             <div style="margin-bottom: 1rem;">
                 @foreach($supplierQuoteInfo as $quote)
-                <div style="background: #141414; border: 1px solid rgba(37,211,102,0.15); border-radius: 0.5rem; overflow: hidden;">
-                    {{-- Header clicável --}}
+                <div style="background: #141414; border: 1px solid rgba(37,211,102,0.15); border-radius: 0.75rem; overflow: hidden;">
+                    {{-- Header --}}
                     <a href="{{ route('quotations.index', ['supplier_id' => $quote['supplier_id']]) }}"
-                       style="display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.75rem; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.04);"
+                       style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.06);"
                        onmouseover="this.style.background='rgba(37,211,102,0.04)'" onmouseout="this.style.background='transparent'">
-                        <div style="width: 1.5rem; height: 1.5rem; background: rgba(37,211,102,0.1); border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            <svg style="width: 0.75rem; height: 0.75rem; color: #25D366;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div style="width: 1.75rem; height: 1.75rem; background: rgba(37,211,102,0.12); border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg style="width: 0.875rem; height: 0.875rem; color: #25D366;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                             </svg>
                         </div>
                         <div style="flex: 1; min-width: 0;">
-                            <span style="font-size: 0.7rem; font-weight: 700; color: #25D366;">Cotação {{ $quote['supplier_name'] }}</span>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: #25D366;">Cotação {{ $quote['supplier_name'] }}</span>
                             <span style="font-size: 0.65rem; color: #555; margin-left: 0.5rem;">
                                 {{ $quote['last_update']->setTimezone('America/Sao_Paulo')->format('d/m H:i') }}
                                 · {{ $quote['items_count'] }} itens
@@ -268,35 +268,71 @@
                         </svg>
                     </a>
 
-                    {{-- Modelos monitorados inline --}}
+                    {{-- Cards de modelos --}}
                     @if(!empty($quote['tracked_models']))
-                    <div style="display: flex; flex-wrap: wrap; gap: 0; padding: 0;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1px; background: rgba(255,255,255,0.04);">
                         @foreach($quote['tracked_models'] as $model)
-                        <div style="flex: 1; min-width: 130px; padding: 0.375rem 0.625rem; border-right: 1px solid rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.03);">
-                            <div style="font-size: 0.6rem; color: #666; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $model['label'] }}</div>
-                            <div style="display: flex; align-items: baseline; gap: 0.25rem; margin-top: 0.125rem;">
-                                <span style="font-size: 0.75rem; font-weight: 800; color: #e0e0e0; font-variant-numeric: tabular-nums;">
-                                    {{ number_format($model['current_price'], 0, ',', '.') }}
-                                </span>
-                                @if(!empty($model['has_color_variation']))
-                                    <span style="font-size: 0.55rem; font-weight: 600; color: #818181;">
-                                        ~ {{ number_format($model['max_price'], 0, ',', '.') }}
-                                    </span>
-                                @endif
-                                @if($model['diff'] !== null)
-                                    @if($model['diff'] < 0)
-                                        <span style="font-size: 0.6rem; font-weight: 700; color: #22c55e;" title="Baixou R$ {{ number_format(abs($model['diff']), 0, ',', '.') }}">
-                                            ▼ {{ number_format(abs($model['diff']), 0, ',', '.') }}
-                                        </span>
-                                    @elseif($model['diff'] > 0)
-                                        <span style="font-size: 0.6rem; font-weight: 700; color: #ef4444;" title="Subiu R$ {{ number_format($model['diff'], 0, ',', '.') }}">
-                                            ▲ {{ number_format($model['diff'], 0, ',', '.') }}
-                                        </span>
+                        <div style="background: #141414; padding: 0.75rem 0.875rem;">
+                            {{-- Cabeçalho do modelo --}}
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 0.8rem; font-weight: 800; color: #e3e3e3;">{{ $model['label'] }}</span>
+                                    @if($model['we_have'] ?? false)
+                                        <span style="font-size: 0.55rem; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.12); padding: 0.125rem 0.375rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.03em;">✓ Temos</span>
                                     @else
-                                        <span style="font-size: 0.6rem; color: #555;">—</span>
+                                        <span style="font-size: 0.55rem; font-weight: 700; color: #ef4444; background: rgba(239,68,68,0.1); padding: 0.125rem 0.375rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.03em;">✗ Sem</span>
                                     @endif
-                                @endif
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.375rem;">
+                                    @if($model['diff'] !== null)
+                                        @if($model['diff'] < 0)
+                                            <span style="display: inline-flex; align-items: center; gap: 0.125rem; font-size: 0.65rem; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.1); padding: 0.125rem 0.375rem; border-radius: 9999px;">
+                                                ▼ {{ number_format(abs($model['diff']), 0, ',', '.') }}
+                                            </span>
+                                        @elseif($model['diff'] > 0)
+                                            <span style="display: inline-flex; align-items: center; gap: 0.125rem; font-size: 0.65rem; font-weight: 700; color: #ef4444; background: rgba(239,68,68,0.1); padding: 0.125rem 0.375rem; border-radius: 9999px;">
+                                                ▲ {{ number_format($model['diff'], 0, ',', '.') }}
+                                            </span>
+                                        @endif
+                                    @endif
+                                    <span style="font-size: 0.875rem; font-weight: 800; color: #e0e0e0; font-variant-numeric: tabular-nums;">
+                                        {{ number_format($model['current_price'], 0, ',', '.') }}
+                                    </span>
+                                </div>
                             </div>
+
+                            {{-- Nosso preço vs custo --}}
+                            @if($model['we_have'] ?? false)
+                            <div style="display: flex; align-items: center; gap: 0.375rem; margin-bottom: 0.375rem; padding: 0.25rem 0.5rem; background: rgba(34,197,94,0.06); border-radius: 0.25rem; border-left: 2px solid #22c55e;">
+                                <span style="font-size: 0.6rem; color: #818181;">Vendemos por</span>
+                                <span style="font-size: 0.75rem; font-weight: 800; color: #22c55e; font-variant-numeric: tabular-nums;">
+                                    R$ {{ number_format($model['our_min_price'], 0, ',', '.') }}
+                                </span>
+                                @php $margin = $model['our_min_price'] - $model['current_price']; @endphp
+                                <span style="font-size: 0.6rem; font-weight: 600; color: {{ $margin >= 0 ? '#22c55e' : '#ef4444' }};">
+                                    ({{ $margin >= 0 ? '+' : '' }}{{ number_format($margin, 0, ',', '.') }} margem)
+                                </span>
+                            </div>
+                            @endif
+
+                            {{-- Cores com preço individual --}}
+                            @if(!empty($model['colors']))
+                            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                @foreach($model['colors'] as $color)
+                                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; background: #1a1a1a; border-radius: 0.375rem;">
+                                    <span style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); background: {{ $color['hex'] }};"></span>
+                                    <span style="font-size: 0.7rem; font-weight: 600; color: #a4a4a4; flex: 1;">{{ $color['name'] }}</span>
+                                    <span style="font-size: 0.75rem; font-weight: 700; color: #e3e3e3; font-variant-numeric: tabular-nums;">
+                                        {{ number_format($color['price'], 0, ',', '.') }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <div style="padding: 0.25rem 0.5rem; background: #1a1a1a; border-radius: 0.375rem;">
+                                <span style="font-size: 0.65rem; color: #555;">Sem detalhamento de cores</span>
+                            </div>
+                            @endif
                         </div>
                         @endforeach
                     </div>
