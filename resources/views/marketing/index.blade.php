@@ -60,58 +60,69 @@
                 <form method="POST" action="{{ route('marketing.prices.store') }}">
                     @csrf
 
-                    <!-- Busca + Filtro Tipo + Copiar WhatsApp -->
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; flex: 1;">
-                            <input type="text" x-model="priceSearch" placeholder="Buscar por nome, storage ou cor..."
-                                   style="width: 100%; max-width: 280px; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                            {{-- Filtro de categoria --}}
-                            <div style="display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap;">
-                                <button type="button" @click="priceCategoryFilter = ''"
-                                        style="padding: 0.3rem 0.6rem; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; white-space: nowrap;"
-                                        :style="priceCategoryFilter === '' ? 'background:#e3e3e3;color:#0d0d0d;border-color:#e3e3e3;' : 'background:transparent;color:#818181;'">
-                                    Todos
-                                </button>
-                                <template x-for="(label, key) in priceCategories" :key="key">
-                                    <button type="button" @click="priceCategoryFilter = key"
-                                            style="padding: 0.3rem 0.6rem; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; white-space: nowrap;"
-                                            :style="priceCategoryFilter === key ? 'background:#e3e3e3;color:#0d0d0d;border-color:#e3e3e3;' : 'background:transparent;color:#818181;'"
-                                            x-text="label"></button>
-                                </template>
-                            </div>
-                        </div>
+                    <!-- Filtro de Categoria -->
+                    <div style="display: flex; align-items: center; gap: 0.375rem; margin-bottom: 0.75rem; padding: 0.25rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.625rem; overflow-x: auto; scrollbar-width: none;">
+                        <button type="button" @click="priceCategoryFilter = ''"
+                                style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; transition: all 0.15s;"
+                                :style="priceCategoryFilter === ''
+                                    ? 'background: #e3e3e3; color: #0d0d0d;'
+                                    : 'background: transparent; color: #666;'"
+                                onmouseover="if(!this.style.background.includes('#e3e3e3'))this.style.color='#a4a4a4'"
+                                onmouseout="if(!this.style.background.includes('#e3e3e3'))this.style.color='#666'">
+                            Todos
+                        </button>
+                        <template x-for="(label, key) in priceCategories" :key="key">
+                            <button type="button" @click="priceCategoryFilter = key"
+                                    style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; transition: all 0.15s;"
+                                    :style="priceCategoryFilter === key
+                                        ? 'background: #e3e3e3; color: #0d0d0d;'
+                                        : 'background: transparent; color: #666;'">
+                                <span x-text="getCategoryEmoji(key)" style="font-size: 0.8rem;"></span>
+                                <span x-text="label"></span>
+                            </button>
+                        </template>
+                    </div>
+
+                    <!-- Busca + Copiar WhatsApp -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                        <input type="text" x-model="priceSearch" placeholder="Buscar por nome, storage ou cor..."
+                               style="width: 100%; max-width: 320px; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
                         {{-- Botão Copiar com dropdown --}}
                         <div style="position: relative;" x-data="{ copyMenuOpen: false }" @click.away="copyMenuOpen = false">
-                            <div style="display: flex; align-items: center;">
+                            <div style="display: inline-flex; align-items: stretch; border-radius: 0.5rem; overflow: hidden;">
                                 <button type="button" @click="copyPriceListToClipboard(priceCategoryFilter)"
                                         :style="priceCopied
-                                            ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#059669;color:white;border:none;border-radius:0.5rem 0 0 0.5rem;font-size:0.8rem;font-weight:600;cursor:default;white-space:nowrap;'
-                                            : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#16a34a;color:white;border:none;border-radius:0.5rem 0 0 0.5rem;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;'">
-                                    <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="currentColor">
+                                            ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 0.875rem;background:#059669;color:white;border:none;font-size:0.8rem;font-weight:600;cursor:default;white-space:nowrap;'
+                                            : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 0.875rem;background:#16a34a;color:white;border:none;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;'">
+                                    <svg style="width: 0.9rem; height: 0.9rem;" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                                     </svg>
                                     <span x-text="priceCopied ? 'Copiado!' : (priceCategoryFilter ? 'Copiar ' + priceCategories[priceCategoryFilter] : 'Copiar Tudo')"></span>
                                 </button>
                                 <button type="button" @click="copyMenuOpen = !copyMenuOpen"
-                                        style="padding: 0.5rem 0.4rem; background: #15803d; color: white; border: none; border-left: 1px solid rgba(255,255,255,0.2); border-radius: 0 0.5rem 0.5rem 0; cursor: pointer; display: flex; align-items: center;">
-                                    <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                        style="display: inline-flex; align-items: center; padding: 0 0.5rem; background: #15803d; color: white; border: none; border-left: 1px solid rgba(255,255,255,0.2); cursor: pointer;"
+                                        onmouseover="this.style.background='#166534'" onmouseout="this.style.background='#15803d'">
+                                    <svg style="width: 0.625rem; height: 0.625rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                 </button>
                             </div>
-                            <div x-show="copyMenuOpen" x-transition style="position: absolute; right: 0; top: 100%; margin-top: 0.25rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; overflow: hidden; min-width: 180px; z-index: 50;">
-                                <button type="button" @click="copyPriceListToClipboard(''); copyMenuOpen = false"
-                                        style="width: 100%; text-align: left; padding: 0.5rem 0.75rem; background: none; border: none; color: #e3e3e3; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
-                                        onmouseover="this.style.background='#222'" onmouseout="this.style.background='transparent'">
-                                    <span>📋</span> Copiar Tudo
-                                </button>
-                                <template x-for="(label, key) in priceCategories" :key="'copy_'+key">
-                                    <button type="button" @click="copyPriceListToClipboard(key); copyMenuOpen = false"
-                                            x-show="prices.some(p => p.active && (p.category || 'iphone') === key)"
-                                            style="width: 100%; text-align: left; padding: 0.5rem 0.75rem; background: none; border: none; color: #e3e3e3; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
+                            <div x-show="copyMenuOpen" x-transition
+                                 style="position: absolute; right: 0; top: 100%; margin-top: 0.375rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; overflow: hidden; min-width: 200px; z-index: 50; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+                                <div style="padding: 0.25rem;">
+                                    <button type="button" @click="copyPriceListToClipboard(''); copyMenuOpen = false"
+                                            style="width: 100%; text-align: left; padding: 0.5rem 0.625rem; background: none; border: none; color: #e3e3e3; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; border-radius: 0.375rem;"
                                             onmouseover="this.style.background='#222'" onmouseout="this.style.background='transparent'">
-                                        <span x-text="getCategoryEmoji(key)"></span> <span x-text="'Copiar ' + label"></span>
+                                        📋 Copiar Tudo
                                     </button>
-                                </template>
+                                    <template x-for="(label, key) in priceCategories" :key="'copy_'+key">
+                                        <button type="button" @click="copyPriceListToClipboard(key); copyMenuOpen = false"
+                                                x-show="prices.some(p => p.active && (p.category || 'iphone') === key)"
+                                                style="width: 100%; text-align: left; padding: 0.5rem 0.625rem; background: none; border: none; color: #e3e3e3; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; border-radius: 0.375rem;"
+                                                onmouseover="this.style.background='#222'" onmouseout="this.style.background='transparent'">
+                                            <span x-text="getCategoryEmoji(key)"></span> <span x-text="'Copiar ' + label"></span>
+                                        </button>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </div>
