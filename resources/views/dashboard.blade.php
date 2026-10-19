@@ -334,54 +334,60 @@
                                     @endif
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.375rem;">
-                                    @if($model['diff'] !== null)
+                                    @if($model['diff'] !== null && $model['diff'] != 0)
                                         @if($model['diff'] < 0)
-                                            <span style="display: inline-flex; align-items: center; gap: 0.125rem; font-size: 0.65rem; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.1); padding: 0.125rem 0.375rem; border-radius: 9999px;">
-                                                ▼ {{ number_format(abs($model['diff']), 0, ',', '.') }}
-                                            </span>
-                                        @elseif($model['diff'] > 0)
-                                            <span style="display: inline-flex; align-items: center; gap: 0.125rem; font-size: 0.65rem; font-weight: 700; color: #ef4444; background: rgba(239,68,68,0.1); padding: 0.125rem 0.375rem; border-radius: 9999px;">
-                                                ▲ {{ number_format($model['diff'], 0, ',', '.') }}
-                                            </span>
+                                            <span style="display: inline-flex; align-items: center; font-size: 0.6rem; font-weight: 700; color: #22c55e; background: rgba(34,197,94,0.1); padding: 0.125rem 0.375rem; border-radius: 9999px;">▼{{ number_format(abs($model['diff']), 0, ',', '.') }}</span>
+                                        @else
+                                            <span style="display: inline-flex; align-items: center; font-size: 0.6rem; font-weight: 700; color: #ef4444; background: rgba(239,68,68,0.1); padding: 0.125rem 0.375rem; border-radius: 9999px;">▲{{ number_format($model['diff'], 0, ',', '.') }}</span>
                                         @endif
                                     @endif
-                                    <span style="font-size: 0.875rem; font-weight: 800; color: #e0e0e0; font-variant-numeric: tabular-nums;">
-                                        {{ number_format($model['current_price'], 0, ',', '.') }}
-                                    </span>
                                 </div>
                             </div>
 
-                            {{-- Nosso preço vs custo --}}
-                            @if($model['we_have'] ?? false)
-                            <div style="display: flex; align-items: center; gap: 0.375rem; margin-bottom: 0.375rem; padding: 0.25rem 0.5rem; background: rgba(34,197,94,0.06); border-radius: 0.25rem; border-left: 2px solid #22c55e;">
-                                <span style="font-size: 0.6rem; color: #818181;">Vendemos por</span>
-                                <span style="font-size: 0.75rem; font-weight: 800; color: #22c55e; font-variant-numeric: tabular-nums;">
-                                    R$ {{ number_format($model['our_min_price'], 0, ',', '.') }}
-                                </span>
-                                @php $margin = $model['our_min_price'] - $model['current_price']; @endphp
-                                <span style="font-size: 0.6rem; font-weight: 600; color: {{ $margin >= 0 ? '#22c55e' : '#ef4444' }};">
-                                    ({{ $margin >= 0 ? '+' : '' }}{{ number_format($margin, 0, ',', '.') }} margem)
-                                </span>
+                            {{-- Legenda de colunas --}}
+                            <div style="display: flex; align-items: center; padding: 0 0.5rem; margin-bottom: 0.125rem;">
+                                <span style="flex: 1; font-size: 0.55rem; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em;"></span>
+                                <span style="font-size: 0.55rem; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; width: 55px; text-align: right;">Custo</span>
+                                <span style="font-size: 0.55rem; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; width: 55px; text-align: right;">Venda</span>
+                                <span style="font-size: 0.55rem; color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; width: 55px; text-align: right;">Margem</span>
                             </div>
-                            @endif
 
-                            {{-- Cores com preço individual --}}
+                            {{-- Cores: custo forn → nosso preço → margem --}}
                             @if(!empty($model['colors']))
-                            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                            <div style="display: flex; flex-direction: column; gap: 2px;">
                                 @foreach($model['colors'] as $color)
-                                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; background: #1a1a1a; border-radius: 0.375rem;">
-                                    <span style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); background: {{ $color['hex'] }};"></span>
-                                    <span style="font-size: 0.7rem; font-weight: 600; color: #a4a4a4; flex: 1;">{{ $color['name'] }}</span>
-                                    @if($color['diff'] !== null && $color['diff'] != 0)
-                                        @if($color['diff'] < 0)
-                                            <span style="font-size: 0.55rem; font-weight: 700; color: #22c55e;">▼{{ number_format(abs($color['diff']), 0, ',', '.') }}</span>
-                                        @else
-                                            <span style="font-size: 0.55rem; font-weight: 700; color: #ef4444;">▲{{ number_format($color['diff'], 0, ',', '.') }}</span>
+                                @php
+                                    $hasOur = ($color['our_price'] ?? null) !== null;
+                                    $margin = $color['margin'] ?? null;
+                                    $marginColor = $margin !== null ? ($margin >= 0 ? '#22c55e' : '#ef4444') : '#555';
+                                    $rowBg = ($margin !== null && $margin < 0) ? 'rgba(239,68,68,0.06)' : '#1a1a1a';
+                                @endphp
+                                <div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.3rem 0.5rem; background: {{ $rowBg }}; border-radius: 0.375rem; {{ $margin !== null && $margin < 0 ? 'border: 1px solid rgba(239,68,68,0.15);' : '' }}">
+                                    <span style="width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); background: {{ $color['hex'] }};"></span>
+                                    <span style="font-size: 0.7rem; font-weight: 600; color: #a4a4a4; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        {{ $color['name'] }}
+                                        @if(($color['diff'] ?? null) !== null && $color['diff'] != 0)
+                                            @if($color['diff'] < 0)
+                                                <span style="font-size: 0.5rem; color: #22c55e; font-weight: 700;">▼{{ number_format(abs($color['diff']), 0, ',', '.') }}</span>
+                                            @else
+                                                <span style="font-size: 0.5rem; color: #ef4444; font-weight: 700;">▲{{ number_format($color['diff'], 0, ',', '.') }}</span>
+                                            @endif
                                         @endif
-                                    @endif
-                                    <span style="font-size: 0.75rem; font-weight: 700; color: #e3e3e3; font-variant-numeric: tabular-nums;">
+                                    </span>
+                                    <span style="font-size: 0.75rem; font-weight: 700; color: #e3e3e3; font-variant-numeric: tabular-nums; width: 55px; text-align: right;">
                                         {{ number_format($color['price'], 0, ',', '.') }}
                                     </span>
+                                    @if($hasOur)
+                                        <span style="font-size: 0.75rem; font-weight: 700; color: #818181; font-variant-numeric: tabular-nums; width: 55px; text-align: right;">
+                                            {{ number_format($color['our_price'], 0, ',', '.') }}
+                                        </span>
+                                        <span style="font-size: 0.7rem; font-weight: 800; color: {{ $marginColor }}; font-variant-numeric: tabular-nums; width: 55px; text-align: right;">
+                                            {{ $margin >= 0 ? '+' : '' }}{{ number_format($margin, 0, ',', '.') }}
+                                        </span>
+                                    @else
+                                        <span style="font-size: 0.65rem; color: #444; width: 55px; text-align: right;">—</span>
+                                        <span style="font-size: 0.65rem; color: #444; width: 55px; text-align: right;">—</span>
+                                    @endif
                                 </div>
                                 @endforeach
                             </div>

@@ -155,11 +155,12 @@ class DashboardController extends Controller
      * Compara modelos monitorados com nossos preços de venda (MarketingPrice).
      */
     /**
-     * Compara modelos monitorados com nossos preços de venda (MarketingPrice).
-     * Formato do MarketingPrice: name="iPhone 18 Pro Max", storage="512GB"
+     * Enriquece modelos monitorados com nossos preços de venda por cor.
      */
     private function enrichWithOurPrices(array $trackedModels, \Illuminate\Support\Collection $ourPrices): array
     {
+        $colorNameMap = MarketingPrice::COLORS;
+
         $labelMap = [
             '18 Pro Max 512' => ['name' => '18 pro max', 'storage' => '512', 'exact' => true],
             '18 Pro Max 256' => ['name' => '18 pro max', 'storage' => '256', 'exact' => true],
@@ -167,6 +168,16 @@ class DashboardController extends Controller
             '17 Pro Max 512' => ['name' => '17 pro max', 'storage' => '512', 'exact' => true],
             '17 Pro Max 256' => ['name' => '17 pro max', 'storage' => '256', 'exact' => true],
             '17 Pro 256'     => ['name' => '17 pro',     'storage' => '256', 'exact' => false],
+        ];
+
+        $supplierToOurColor = [
+            'preto' => ['preto', 'meia-noite'],
+            'branco' => ['branco', 'estelar', 'glacial', 'titânio branco'],
+            'bordo' => ['bordô'],
+            'azul' => ['azul', 'ultramarino', 'glacial'],
+            'white' => ['branco', 'estelar', 'glacial', 'titânio branco'],
+            'blue' => ['azul', 'ultramarino', 'glacial'],
+            'laranja' => ['laranja', 'deserto', 'titânio natural'],
         ];
 
         foreach ($trackedModels as &$model) {
@@ -184,11 +195,9 @@ class DashboardController extends Controller
                 if (!str_contains($nameLower, $config['name'])) {
                     return false;
                 }
-
                 if (!$config['exact'] && str_contains($nameLower, 'pro max')) {
                     return false;
                 }
-
                 return str_contains($storageLower, $config['storage']);
             });
 
@@ -196,6 +205,48 @@ class DashboardController extends Controller
             $model['our_min_price'] = $matching->isNotEmpty()
                 ? (float) $matching->min('price')
                 : null;
+
+            if (!empty($model['colors']) && $matching->isNotEmpty()) {
+                $usedIds = [];
+
+                foreach ($model['colors'] as &$color) {
+                    $supplierColor = mb_strtolower($color['name']);
+                    $possibleOurColors = $supplierToOurColor[$supplierColor] ?? [$supplierColor];
+
+                    $ourMatch = $matching->first(function ($p) use ($possibleOurColors, $colorNameMap, $usedIds) {
+                        if (in_array($p->id, $usedIds, true)) {
+                            return false;
+                        }
+                        $ourColor = $p->color;
+                        if (!$ourColor && $p->color_hex) {
+                            $ourColor = $colorNameMap[$p->color_hex] ?? null;
+                        }
+                        if (!$ourColor) {
+                            return false;
+                        }
+                        return in_array(mb_strtolower($ourColor), $possibleOurColors, true);
+                    });
+
+                    if (!$ourMatch) {
+                        $supplierPrice = $color['price'];
+                        $ourMatch = $matching
+                            ->reject(fn ($p) => in_array($p->id, $usedIds, true))
+                            ->sortBy(fn ($p) => abs((float) $p->price - $supplierPrice))
+                            ->first();
+                    }
+
+                    if ($ourMatch) {
+                        $usedIds[] = $ourMatch->id;
+                        $ourSalePrice = (float) $ourMatch->price;
+                        $color['our_price'] = $ourSalePrice;
+                        $color['margin'] = round($ourSalePrice - $color['price']);
+                    } else {
+                        $color['our_price'] = null;
+                        $color['margin'] = null;
+                    }
+                }
+                unset($color);
+            }
         }
 
         return $trackedModels;
