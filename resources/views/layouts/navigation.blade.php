@@ -309,6 +309,12 @@
                                     </svg>
                                     Ficha Tecnica
                                 </a>
+                                <a href="{{ route('tools.shipping-calculator') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('tools.shipping-calculator') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
+                                    <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+                                    </svg>
+                                    Calculadora Frete
+                                </a>
                                 @if(config('crm.pipeline_enabled'))
                                 <div class="border-t border-border my-1"></div>
                                 <div class="px-4 py-1 text-xs font-semibold text-dg-500 uppercase tracking-wider">CRM</div>
@@ -666,6 +672,9 @@
                 </a>
                 <a href="{{ route('tools.specs') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.specs') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Ficha Tecnica
+                </a>
+                <a href="{{ route('tools.shipping-calculator') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('tools.shipping-calculator') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
+                    Calculadora Frete
                 </a>
                 @if(!$isIntern && config('crm.pipeline_enabled'))
                 <div class="border-t border-border-strong mt-1 pt-1 mx-4"></div>

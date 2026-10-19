@@ -95,4 +95,9 @@ class ToolController extends Controller
             'quickValuesFromMarketing' => $quickValues,
         ]);
     }
+
+    public function shippingCalculator(): View
+    {
+        return view('tools.shipping-calculator');
+    }
 }

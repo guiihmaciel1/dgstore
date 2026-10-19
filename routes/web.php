@@ -145,6 +145,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('/ficha-tecnica', 'tools.specs')->name('tools.specs');
         Route::view('/treinamento-vendas', 'tools.sales-training')->name('tools.sales-training');
         Route::get('/calculadora-stone', [ToolController::class, 'stoneCalculator'])->name('tools.stone-calculator');
+        Route::get('/calculadora-frete', [ToolController::class, 'shippingCalculator'])->name('tools.shipping-calculator');
 
         // Checklists
         Route::get('/checklists', [DeviceChecklistController::class, 'index'])->name('checklists.index');
