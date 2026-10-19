@@ -13,7 +13,7 @@
                             </svg>
                             Calculadora de Frete
                         </h1>
-                        <p style="font-size: 0.8125rem; color: #818181;">Entregas at&eacute; 50km de S&atilde;o Jos&eacute; do Rio Preto</p>
+                        <p style="font-size: 0.8125rem; color: #818181;">Entregas na regi&atilde;o de S&atilde;o Jos&eacute; do Rio Preto</p>
                     </div>
                     <button x-show="selected" @click="reset()" type="button"
                             style="padding: 0.5rem 0.875rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); background: transparent; cursor: pointer; color: #818181; font-size: 0.8125rem; display: flex; align-items: center; gap: 0.375rem;"
@@ -182,7 +182,7 @@
                         </svg>
                         Cidades Atendidas
                     </h2>
-                    <span style="font-size: 0.75rem; color: #555;" x-text="cities.length + ' cidades no raio de 50km'"></span>
+                    <span style="font-size: 0.75rem; color: #555;" x-text="cities.length + ' cidades atendidas'"></span>
                 </div>
 
                 <div style="overflow-x: auto;">
@@ -248,30 +248,33 @@
                     { min: 21, max: 30, cost: 60,    label: 'At\u00e9 30km' },
                     { min: 31, max: 40, cost: 80,    label: 'At\u00e9 40km' },
                     { min: 41, max: 50, cost: 100,   label: 'At\u00e9 50km' },
+                    { min: 51, max: 60, cost: 120,   label: 'At\u00e9 60km' },
                 ],
 
                 cities: [
-                    { name: 'S\u00e3o Jos\u00e9 do Rio Preto', distance: 0, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Engenheiro Schmitt', distance: 12, toll: 0, tollTag: 0, tollName: null, isDistrict: true },
-                    { name: 'Bady Bassitt', distance: 15, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Mirassol', distance: 16, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Cedral', distance: 19, toll: 19.80, tollTag: 18.81, tollName: 'Catigu\u00e1 \u2013 SP-310', isDistrict: false },
-                    { name: 'Ipigua', distance: 19, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Guapia\u00e7u', distance: 20, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Jaci', distance: 27, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'B\u00e1lsamo', distance: 28, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Mirassol\u00e2ndia', distance: 28, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Nova Alian\u00e7a', distance: 28, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Onda Verde', distance: 28, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Neves Paulista', distance: 34, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Potirendaba', distance: 35, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Nova Granada', distance: 35, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Uchoa', distance: 35, toll: 19.80, tollTag: 18.81, tollName: 'Catigu\u00e1 \u2013 SP-310', isDistrict: false },
-                    { name: 'Monte Apraz\u00edvel', distance: 38, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Tanabi', distance: 41, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Ibir\u00e1', distance: 41, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Jos\u00e9 Bonif\u00e1cio', distance: 47, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
-                    { name: 'Mendon\u00e7a', distance: 50, toll: 0, tollTag: 0, tollName: null, isDistrict: false },
+                    { name: 'S\u00e3o Jos\u00e9 do Rio Preto', distance: 0, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Engenheiro Schmitt', distance: 12, toll: 0, tollTag: 0, tollName: null, isDistrict: true, fixedCost: 30 },
+                    { name: 'Bady Bassitt', distance: 15, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: 30 },
+                    { name: 'Mirassol', distance: 16, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: 30 },
+                    { name: 'Cedral', distance: 19, toll: 19.80, tollTag: 18.81, tollName: 'Catigu\u00e1 \u2013 SP-310', isDistrict: false, fixedCost: null },
+                    { name: 'Ipigua', distance: 19, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Guapia\u00e7u', distance: 20, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: 30 },
+                    { name: 'Jaci', distance: 27, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'B\u00e1lsamo', distance: 28, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Mirassol\u00e2ndia', distance: 28, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Nova Alian\u00e7a', distance: 28, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Onda Verde', distance: 28, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Neves Paulista', distance: 34, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Potirendaba', distance: 35, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Nova Granada', distance: 35, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Uchoa', distance: 35, toll: 19.80, tollTag: 18.81, tollName: 'Catigu\u00e1 \u2013 SP-310', isDistrict: false, fixedCost: null },
+                    { name: 'Monte Apraz\u00edvel', distance: 38, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Tanabi', distance: 41, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Ibir\u00e1', distance: 41, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Jos\u00e9 Bonif\u00e1cio', distance: 47, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Mendon\u00e7a', distance: 50, toll: 0, tollTag: 0, tollName: null, isDistrict: false, fixedCost: null },
+                    { name: 'Ol\u00edmpia', distance: 54, toll: 19.80, tollTag: 18.81, tollName: 'Catigu\u00e1 \u2013 SP-310', isDistrict: false, fixedCost: null },
+                    { name: 'Catanduva', distance: 60, toll: 19.80, tollTag: 18.81, tollName: 'Catigu\u00e1 \u2013 SP-310', isDistrict: false, fixedCost: null },
                 ],
 
                 init() {},
@@ -316,6 +319,7 @@
                 },
 
                 calcShippingForCity(city) {
+                    if (city.fixedCost !== null) return city.fixedCost;
                     return this.calcShipping(city.distance);
                 },
 
@@ -329,16 +333,17 @@
 
                 getShippingCost() {
                     if (!this.selected) return 0;
-                    return this.calcShipping(this.selected.distance);
+                    return this.calcShippingForCity(this.selected);
                 },
 
                 getBracketLabel() {
                     if (!this.selected) return '';
+                    if (this.selected.fixedCost !== null) return 'Valor fixo';
                     const d = this.selected.distance;
                     for (const b of this.brackets) {
                         if (d >= b.min && d <= b.max) return b.label;
                     }
-                    return 'At\u00e9 50km';
+                    return 'At\u00e9 60km';
                 },
 
                 getTotalCost() {
