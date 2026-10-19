@@ -60,21 +60,60 @@
                 <form method="POST" action="{{ route('marketing.prices.store') }}">
                     @csrf
 
-                    <!-- Busca + Copiar WhatsApp -->
+                    <!-- Busca + Filtro Tipo + Copiar WhatsApp -->
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
-                        <input type="text" x-model="priceSearch" placeholder="Buscar por nome, storage ou cor..."
-                               style="width: 100%; max-width: 360px; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                        <button type="button" @click="copyPriceListToClipboard()"
-                                :style="priceCopied
-                                    ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#059669;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:default;white-space:nowrap;'
-                                    : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#16a34a;color:white;border:none;border-radius:0.5rem;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;'"
-                                onmouseover="if(!this.__vue_app__)this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                            <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                            </svg>
-                            <span x-text="priceCopied ? 'Copiado!' : 'Copiar p/ WhatsApp'"></span>
-                        </button>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; flex: 1;">
+                            <input type="text" x-model="priceSearch" placeholder="Buscar por nome, storage ou cor..."
+                                   style="width: 100%; max-width: 280px; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
+                                   onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                            {{-- Filtro de categoria --}}
+                            <div style="display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap;">
+                                <button type="button" @click="priceCategoryFilter = ''"
+                                        style="padding: 0.3rem 0.6rem; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; white-space: nowrap;"
+                                        :style="priceCategoryFilter === '' ? 'background:#e3e3e3;color:#0d0d0d;border-color:#e3e3e3;' : 'background:transparent;color:#818181;'">
+                                    Todos
+                                </button>
+                                <template x-for="(label, key) in priceCategories" :key="key">
+                                    <button type="button" @click="priceCategoryFilter = key"
+                                            style="padding: 0.3rem 0.6rem; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; white-space: nowrap;"
+                                            :style="priceCategoryFilter === key ? 'background:#e3e3e3;color:#0d0d0d;border-color:#e3e3e3;' : 'background:transparent;color:#818181;'"
+                                            x-text="label"></button>
+                                </template>
+                            </div>
+                        </div>
+                        {{-- Botão Copiar com dropdown --}}
+                        <div style="position: relative;" x-data="{ copyMenuOpen: false }" @click.away="copyMenuOpen = false">
+                            <div style="display: flex; align-items: center;">
+                                <button type="button" @click="copyPriceListToClipboard(priceCategoryFilter)"
+                                        :style="priceCopied
+                                            ? 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#059669;color:white;border:none;border-radius:0.5rem 0 0 0.5rem;font-size:0.8rem;font-weight:600;cursor:default;white-space:nowrap;'
+                                            : 'display:inline-flex;align-items:center;gap:0.375rem;padding:0.5rem 1rem;background:#16a34a;color:white;border:none;border-radius:0.5rem 0 0 0.5rem;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;'">
+                                    <svg style="width: 1rem; height: 1rem;" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                                    </svg>
+                                    <span x-text="priceCopied ? 'Copiado!' : (priceCategoryFilter ? 'Copiar ' + priceCategories[priceCategoryFilter] : 'Copiar Tudo')"></span>
+                                </button>
+                                <button type="button" @click="copyMenuOpen = !copyMenuOpen"
+                                        style="padding: 0.5rem 0.4rem; background: #15803d; color: white; border: none; border-left: 1px solid rgba(255,255,255,0.2); border-radius: 0 0.5rem 0.5rem 0; cursor: pointer; display: flex; align-items: center;">
+                                    <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                </button>
+                            </div>
+                            <div x-show="copyMenuOpen" x-transition style="position: absolute; right: 0; top: 100%; margin-top: 0.25rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; overflow: hidden; min-width: 180px; z-index: 50;">
+                                <button type="button" @click="copyPriceListToClipboard(''); copyMenuOpen = false"
+                                        style="width: 100%; text-align: left; padding: 0.5rem 0.75rem; background: none; border: none; color: #e3e3e3; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
+                                        onmouseover="this.style.background='#222'" onmouseout="this.style.background='transparent'">
+                                    <span>📋</span> Copiar Tudo
+                                </button>
+                                <template x-for="(label, key) in priceCategories" :key="'copy_'+key">
+                                    <button type="button" @click="copyPriceListToClipboard(key); copyMenuOpen = false"
+                                            x-show="prices.some(p => p.active && (p.category || 'iphone') === key)"
+                                            style="width: 100%; text-align: left; padding: 0.5rem 0.75rem; background: none; border: none; color: #e3e3e3; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
+                                            onmouseover="this.style.background='#222'" onmouseout="this.style.background='transparent'">
+                                        <span x-text="getCategoryEmoji(key)"></span> <span x-text="'Copiar ' + label"></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- MOBILE: Cards Novos --}}
@@ -130,8 +169,9 @@
                                         <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; width: 24px;" x-show="!priceSearch"></th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 30px;">#</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase;">Modelo</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 90px;">Tipo</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Storage</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Cor</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 140px;">Cor</th>
                                         @if(auth()->user()->role->isAdminGeral())
                                         <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Custo</th>
                                         @endif
@@ -167,16 +207,48 @@
                                                        placeholder="Ex: iPhone 16 Pro">
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
+                                                <select :name="'prices[' + row._origIdx + '][category]'" x-model="row.category"
+                                                        style="width: 100%; padding: 0.375rem 0.35rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.75rem; outline: none; cursor: pointer;">
+                                                    <template x-for="(label, key) in priceCategories" :key="'cat_'+key">
+                                                        <option :value="key" x-text="label" :selected="row.category === key"></option>
+                                                    </template>
+                                                </select>
+                                            </td>
+                                            <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="text" :name="'prices[' + row._origIdx + '][storage]'" x-model="row.storage"
                                                        style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
                                                        onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                                        placeholder="128GB">
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
-                                                <input type="text" :name="'prices[' + row._origIdx + '][color]'" x-model="row.color"
-                                                       style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
-                                                       placeholder="Preto">
+                                                <input type="hidden" :name="'prices[' + row._origIdx + '][color_hex]'" x-model="row.color_hex">
+                                                <div style="position: relative;" x-data="{ colorOpen: false }" @click.away="colorOpen = false">
+                                                    <button type="button" @click="colorOpen = !colorOpen"
+                                                            style="width: 100%; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; cursor: pointer; text-align: left;">
+                                                        <span x-show="row.color_hex" style="width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px solid rgba(255,255,255,0.15); flex-shrink: 0;"
+                                                              :style="'background:' + row.color_hex"></span>
+                                                        <span x-show="!row.color_hex" style="width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 2px dashed rgba(255,255,255,0.15); flex-shrink: 0;"></span>
+                                                        <span x-text="row.color || 'Selecionar'" :style="!row.color ? 'color:#666' : ''" style="font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+                                                    </button>
+                                                    <div x-show="colorOpen" x-transition
+                                                         style="position: absolute; left: 0; top: 100%; margin-top: 0.25rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; padding: 0.5rem; z-index: 50; width: 220px; display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                                                        <button type="button" @click="row.color = ''; row.color_hex = ''; colorOpen = false"
+                                                                style="width: 100%; text-align: left; padding: 0.25rem 0.375rem; background: none; border: none; color: #818181; font-size: 0.75rem; cursor: pointer; border-radius: 0.25rem;"
+                                                                onmouseover="this.style.background='#222'" onmouseout="this.style.background='transparent'">
+                                                            Nenhuma cor
+                                                        </button>
+                                                        <template x-for="(colorLabel, colorHex) in priceColors" :key="colorHex">
+                                                            <button type="button"
+                                                                    @click="row.color = colorLabel; row.color_hex = colorHex; colorOpen = false"
+                                                                    style="display: flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.375rem; background: none; border: none; cursor: pointer; border-radius: 0.25rem; width: 100%;"
+                                                                    onmouseover="this.style.background='#222'" onmouseout="this.style.background='transparent'">
+                                                                <span style="width: 16px; height: 16px; border-radius: 50%; display: inline-block; border: 2px solid rgba(255,255,255,0.15); flex-shrink: 0;"
+                                                                      :style="'background:' + colorHex"></span>
+                                                                <span style="font-size: 0.75rem; color: #e3e3e3;" x-text="colorLabel"></span>
+                                                            </button>
+                                                        </template>
+                                                    </div>
+                                                </div>
                                             </td>
                                             @if(auth()->user()->role->isAdminGeral())
                                             <td style="padding: 0.375rem 0.5rem;">
@@ -870,28 +942,17 @@
         const newProductsForResale = @json($newProductsResaleJson);
         const resaleItemsMap = @json($resaleItems);
 
-        const colorMap = {
-            'preto': '#000000', 'black': '#000000', 'midnight': '#1c1c1e', 'meia-noite': '#1c1c1e',
-            'branco': '#f5f5f7', 'white': '#f5f5f7', 'starlight': '#f9f3ee', 'estelar': '#f9f3ee',
-            'azul': '#0071e3', 'blue': '#0071e3', 'ultramarine': '#3634a3', 'ultramarino': '#3634a3',
-            'verde': '#4caf50', 'green': '#4caf50',
-            'roxo': '#bf5af2', 'purple': '#bf5af2',
-            'rosa': '#f472b6', 'pink': '#f472b6',
-            'vermelho': '#dc2626', 'red': '#dc2626', 'product red': '#dc2626',
-            'laranja': '#f97316', 'orange': '#f97316',
-            'dourado': '#f5d08e', 'gold': '#f5d08e',
-            'prateado': '#c0c0c0', 'silver': '#c0c0c0', 'prata': '#c0c0c0',
-            'grafite': '#5c5c5e', 'graphite': '#5c5c5e',
-            'natural titanium': '#b0a898', 'titanio natural': '#b0a898', 'titânio natural': '#b0a898',
-            'desert': '#c2a97c', 'desert titanium': '#c2a97c', 'deserto': '#c2a97c',
-            'white titanium': '#f0ede8', 'titanio branco': '#f0ede8', 'titânio branco': '#f0ede8',
-            'black titanium': '#3c3c3d', 'titanio preto': '#3c3c3d', 'titânio preto': '#3c3c3d',
-            'teal': '#5ac8d8',
-        };
+        const priceCategories = @json($categoriesJson);
+        const priceColors = @json($colorsJson);
 
         function getColorHex(colorName) {
             if (!colorName) return '';
-            return colorMap[colorName.toLowerCase().trim()] || '';
+            const lower = colorName.toLowerCase().trim();
+            const fallbackMap = {};
+            Object.entries(priceColors).forEach(([hex, label]) => {
+                fallbackMap[label.toLowerCase()] = hex;
+            });
+            return fallbackMap[lower] || '';
         }
 
         function getColorEmoji(colorName) {
@@ -938,6 +999,9 @@
             tab: urlParams.get('tab') || 'prices',
             mobileEdit: false,
             priceSearch: '',
+            priceCategoryFilter: '',
+            priceCategories,
+            priceColors,
             dragIdx: null,
             dragOverIdx: null,
             priceCopied: false,
@@ -1032,13 +1096,19 @@
             }).sort((a, b) => (parseFloat(a._usedListing.final_price) || 0) - (parseFloat(b._usedListing.final_price) || 0)),
 
             get filteredPrices() {
-                if (!this.priceSearch) return this.prices;
-                const s = this.priceSearch.toLowerCase();
-                return this.prices.filter(p =>
-                    (p.name || '').toLowerCase().includes(s) ||
-                    (p.storage || '').toLowerCase().includes(s) ||
-                    (p.color || '').toLowerCase().includes(s)
-                );
+                let items = this.prices;
+                if (this.priceCategoryFilter) {
+                    items = items.filter(p => (p.category || 'iphone') === this.priceCategoryFilter);
+                }
+                if (this.priceSearch) {
+                    const s = this.priceSearch.toLowerCase();
+                    items = items.filter(p =>
+                        (p.name || '').toLowerCase().includes(s) ||
+                        (p.storage || '').toLowerCase().includes(s) ||
+                        (p.color || '').toLowerCase().includes(s)
+                    );
+                }
+                return items;
             },
 
             get filteredUsed() {
@@ -1052,12 +1122,19 @@
                 );
             },
 
+            getCategoryEmoji(key) {
+                const emojis = { iphone: '📱', ipad: '📱', macbook: '💻', applewatch: '⌚', airpods: '🎧', outros: '📦' };
+                return emojis[key] || '📦';
+            },
+
             addPrice() {
                 this.prices.push({
                     id: '',
                     name: '',
+                    category: this.priceCategoryFilter || 'iphone',
                     storage: '',
                     color: '',
+                    color_hex: '',
                     cost_price: '',
                     price: '',
                     notes: '',
@@ -1100,11 +1177,14 @@
                 });
             },
 
-            copyPriceListToClipboard() {
-                const activePrices = this.prices.filter(p => p.active && p.name);
+            copyPriceListToClipboard(categoryFilter = '') {
+                let activePrices = this.prices.filter(p => p.active && p.name);
+                if (categoryFilter) {
+                    activePrices = activePrices.filter(p => (p.category || 'iphone') === categoryFilter);
+                }
 
                 if (activePrices.length === 0) {
-                    alert('Nenhum item ativo na tabela.');
+                    alert('Nenhum item ativo' + (categoryFilter ? ' nessa categoria.' : ' na tabela.'));
                     return;
                 }
 
@@ -1115,8 +1195,14 @@
                     grouped[key].push(p);
                 });
 
+                const emoji = this.getCategoryEmoji(categoryFilter || 'iphone');
+                const catLabel = categoryFilter ? (priceCategories[categoryFilter] || '') : '';
+                const title = categoryFilter
+                    ? `${emoji} *TABELA DE PREÇOS ${catLabel.toUpperCase()} - NOVOS LACRADOS*`
+                    : '📱 *TABELA DE PREÇOS NOVOS LACRADOS COM 1 ANO DE GARANTIA APPLE*';
+
                 let lines = [];
-                lines.push('📱 *TABELA DE PREÇOS NOVOS LACRADOS COM 1 ANO DE GARANTIA APPLE*');
+                lines.push(title);
                 lines.push('━━━━━━━━━━━━━━━━━━━');
                 lines.push('');
 

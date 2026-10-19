@@ -13,10 +13,45 @@ class MarketingPrice extends Model
 {
     use HasUlids;
 
+    public const CATEGORIES = [
+        'iphone' => 'iPhone',
+        'ipad' => 'iPad',
+        'macbook' => 'MacBook',
+        'applewatch' => 'Apple Watch',
+        'airpods' => 'AirPods',
+        'outros' => 'Outros',
+    ];
+
+    public const COLORS = [
+        '#000000' => 'Preto',
+        '#1c1c1e' => 'Meia-Noite',
+        '#f5f5f7' => 'Branco',
+        '#f9f3ee' => 'Estelar',
+        '#3634a3' => 'Ultramarino',
+        '#0071e3' => 'Azul',
+        '#0d9488' => 'Teal',
+        '#4caf50' => 'Verde',
+        '#bf5af2' => 'Roxo',
+        '#f472b6' => 'Rosa',
+        '#dc2626' => 'Vermelho',
+        '#f97316' => 'Laranja',
+        '#f5d08e' => 'Dourado',
+        '#c0c0c0' => 'Prata',
+        '#5c5c5e' => 'Grafite',
+        '#b0a898' => 'Titânio Natural',
+        '#c2a97c' => 'Deserto',
+        '#f0ede8' => 'Titânio Branco',
+        '#3c3c3d' => 'Titânio Preto',
+        '#7a1e3e' => 'Bordô',
+        '#d1e8f0' => 'Glacial',
+    ];
+
     protected $fillable = [
         'name',
+        'category',
         'storage',
         'color',
+        'color_hex',
         'price',
         'cost_price',
         'notes',

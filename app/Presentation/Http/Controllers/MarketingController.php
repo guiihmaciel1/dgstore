@@ -81,8 +81,10 @@ class MarketingController extends Controller
             $data = [
                 'id' => $p->id,
                 'name' => $p->name,
+                'category' => $p->category ?? 'iphone',
                 'storage' => $p->storage,
                 'color' => $p->color,
+                'color_hex' => $p->color_hex,
                 'price' => $p->price,
                 'notes' => $p->notes,
                 'active' => $p->active,
@@ -190,6 +192,8 @@ class MarketingController extends Controller
         return view('marketing.index', [
             'prices' => $prices,
             'pricesJson' => $pricesJson,
+            'categoriesJson' => MarketingPrice::CATEGORIES,
+            'colorsJson' => MarketingPrice::COLORS,
             'creatives' => $creatives,
             'creativeDate' => $creativeDate,
             'usedProductsJson' => $usedProductsJson,
@@ -207,8 +211,10 @@ class MarketingController extends Controller
         $request->validate([
             'prices' => ['required', 'array', 'min:1'],
             'prices.*.name' => ['required', 'string', 'max:255'],
+            'prices.*.category' => ['nullable', 'string', 'in:' . implode(',', array_keys(MarketingPrice::CATEGORIES))],
             'prices.*.storage' => ['nullable', 'string', 'max:50'],
             'prices.*.color' => ['nullable', 'string', 'max:50'],
+            'prices.*.color_hex' => ['nullable', 'string', 'max:7'],
             'prices.*.price' => ['required', 'numeric', 'min:0'],
             'prices.*.cost_price' => ['nullable', 'numeric', 'min:0'],
             'prices.*.notes' => ['nullable', 'string', 'max:500'],
@@ -224,8 +230,10 @@ class MarketingController extends Controller
             foreach ($request->prices as $index => $row) {
                 $data = [
                     'name' => $row['name'],
+                    'category' => $row['category'] ?? 'iphone',
                     'storage' => $row['storage'] ?? null,
                     'color' => $row['color'] ?? null,
+                    'color_hex' => $row['color_hex'] ?? null,
                     'price' => $row['price'],
                     'notes' => $row['notes'] ?? null,
                     'active' => isset($row['active']),

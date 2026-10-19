@@ -94,23 +94,7 @@ class NegotiationController extends Controller
             return trim($p->name . ' ' . ($p->storage ?? ''));
         });
 
-        $colorMap = [
-            'preto' => '#1f2937', 'black' => '#1f2937', 'desert' => '#1f2937',
-            'branco' => '#f5f5f4', 'white' => '#f5f5f4', 'starlight' => '#f5f5f4',
-            'azul' => '#3b82f6', 'blue' => '#3b82f6', 'ultramarine' => '#3b82f6', 'teal' => '#0d9488',
-            'verde' => '#22c55e', 'green' => '#22c55e',
-            'rosa' => '#ec4899', 'pink' => '#ec4899',
-            'roxo' => '#8b5cf6', 'purple' => '#8b5cf6',
-            'vermelho' => '#ef4444', 'red' => '#ef4444',
-            'laranja' => '#f97316', 'orange' => '#f97316',
-            'amarelo' => '#eab308', 'yellow' => '#eab308',
-            'dourado' => '#d4a574', 'gold' => '#d4a574',
-            'prata' => '#9ca3af', 'silver' => '#9ca3af',
-            'cinza' => '#6b7280', 'gray' => '#6b7280', 'graphite' => '#6b7280',
-            'natural' => '#c2a67d', 'titanium' => '#8b8589',
-        ];
-
-        return $grouped->map(function ($items, $key) use ($colorMap) {
+        return $grouped->map(function ($items, $key) {
             if ($items->count() === 1 && (! $items->first()->color || $items->first()->color === 'Todas')) {
                 return [
                     'name' => $key,
@@ -119,20 +103,10 @@ class NegotiationController extends Controller
                 ];
             }
 
-            $variants = $items->map(function ($item) use ($colorMap) {
-                $label = $item->color ?? 'Padrão';
-                $colorLower = mb_strtolower(trim($label));
-                $hex = '#cccccc';
-                foreach ($colorMap as $keyword => $color) {
-                    if (str_contains($colorLower, $keyword)) {
-                        $hex = $color;
-                        break;
-                    }
-                }
-
+            $variants = $items->map(function ($item) {
                 return [
-                    'label' => $label,
-                    'color' => $hex,
+                    'label' => $item->color ?? 'Padrão',
+                    'color' => $item->color_hex ?: '#cccccc',
                     'value' => (float) $item->price,
                     'cost_price' => (float) ($item->cost_price ?? 0),
                 ];
