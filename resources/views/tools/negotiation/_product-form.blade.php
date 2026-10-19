@@ -5,7 +5,8 @@
                placeholder="Ex: iPhone 16 Pro Max 256GB"
                class="w-full px-4 py-3 bg-surface border border-border rounded-[10px] text-[15px] text-dg-100 outline-none focus:border-gray-900 focus:bg-surface-raised transition-colors">
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <div class="grid grid-cols-1 {{ auth()->user()->canViewFinancials() ? 'sm:grid-cols-2' : '' }} gap-3">
+        @if(auth()->user()->canViewFinancials())
         <div>
             <label class="block text-xs font-semibold text-dg-100 uppercase tracking-wider mb-1.5">Custo (p/ comissão)</label>
             <div class="relative">
@@ -18,6 +19,7 @@
             </div>
             <p class="text-[10px] text-dg-500 mt-1">Preenchido ao selecionar produto</p>
         </div>
+        @endif
         <div>
             <label class="block text-xs font-semibold text-dg-100 uppercase tracking-wider mb-1.5">Preço de Venda *</label>
             <div class="relative">

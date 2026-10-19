@@ -45,7 +45,9 @@
                 {{-- Preview da mensagem (direita no desktop, sticky) --}}
                 <div class="order-2 lg:sticky lg:top-6 space-y-3">
                     @include('tools.negotiation._message-preview')
-                    @include('tools.negotiation._commission-preview')
+                    @if(auth()->user()->canViewFinancials())
+                        @include('tools.negotiation._commission-preview')
+                    @endif
                 </div>
 
             </div>
@@ -75,6 +77,7 @@
             quickValues: @json($quickValuesFromMarketing ?? []),
             quickValuesUsed: @json($quickValuesUsed ?? []),
             tradeInModels: @json($tradeInModels ?? []),
+            canViewFinancials: {{ auth()->user()->canViewFinancials() ? 'true' : 'false' }},
             toast: '',
             copied: false,
             pixCopied: false,
@@ -547,18 +550,20 @@
                     }
                 }
 
-                const ce = this.commissionEstimate;
-                if (ce.total > 0) {
-                    lines.push('');
-                    lines.push(`COMISSÃO APROXIMADA: R$ ${this.fmt(ce.total)}`);
-                    if (ce.profit > 0) {
-                        lines.push(`  • Aparelho: R$ ${this.fmt(ce.profit)}`);
+                if (this.canViewFinancials) {
+                    const ce = this.commissionEstimate;
+                    if (ce.total > 0) {
+                        lines.push('');
+                        lines.push(`COMISSÃO APROXIMADA: R$ ${this.fmt(ce.total)}`);
+                        if (ce.profit > 0) {
+                            lines.push(`  • Aparelho: R$ ${this.fmt(ce.profit)}`);
+                        }
+                        if (ce.accessoryTotal > 0) {
+                            lines.push(`  • Acessórios: R$ ${this.fmt(ce.accessoryTotal)}`);
+                        }
+                        lines.push('');
+                        lines.push('* A comissão pode variar caso o preço de custo altere até a efetivação da compra.');
                     }
-                    if (ce.accessoryTotal > 0) {
-                        lines.push(`  • Acessórios: R$ ${this.fmt(ce.accessoryTotal)}`);
-                    }
-                    lines.push('');
-                    lines.push('* A comissão pode variar caso o preço de custo altere até a efetivação da compra.');
                 }
 
                 return lines.join('\n');
