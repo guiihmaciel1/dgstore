@@ -81,6 +81,10 @@ class DashboardController extends Controller
             ? $this->getSupplierQuoteInfo()
             : [];
 
+        $priceBelowCostAlerts = auth()->user()->isAdmin()
+            ? $this->getPriceBelowCostAlerts()
+            : [];
+
         return view('dashboard', [
             'todayTotal' => $data['today']['total'],
             'todayCount' => $data['today']['count'],
@@ -106,6 +110,7 @@ class DashboardController extends Controller
             'isCurrentMonth' => $isCurrentMonth,
             'executiveSummary' => $executiveSummary,
             'supplierQuoteInfo' => $supplierQuoteInfo,
+            'priceBelowCostAlerts' => $priceBelowCostAlerts,
         ]);
     }
 
@@ -338,6 +343,101 @@ class DashboardController extends Controller
         usort($colors, fn ($a, $b) => $a['price'] <=> $b['price']);
 
         return $colors;
+    }
+
+    /**
+     * Detecta preços de venda (MarketingPrice) que estão abaixo do custo mínimo
+     * do fornecedor local (última cotação Santa Fé via WhatsApp REPASSE).
+     */
+    private function getPriceBelowCostAlerts(): array
+    {
+        $ourPrices = MarketingPrice::active()->ordered()->get();
+
+        if ($ourPrices->isEmpty()) {
+            return [];
+        }
+
+        $latestQuotations = Quotation::where('notes', 'Importado via WhatsApp REPASSE')
+            ->whereDate('quoted_at', '>=', today()->subDays(7))
+            ->get(['product_name', 'unit_price', 'quoted_at']);
+
+        if ($latestQuotations->isEmpty()) {
+            return [];
+        }
+
+        $supplierMinByModel = $latestQuotations
+            ->groupBy(function ($q) {
+                $base = preg_replace('/\s-\s.+$/', '', $q->product_name);
+                return mb_strtolower(trim($base));
+            })
+            ->map(fn ($group) => (float) $group->min('unit_price'));
+
+        $matchMap = [
+            '18 pro max' => ['storage_match' => true],
+            '18 pro'     => ['storage_match' => true, 'exclude' => 'pro max'],
+            '17 pro max' => ['storage_match' => true],
+            '17 pro'     => ['storage_match' => true, 'exclude' => 'pro max'],
+            '17 '        => ['storage_match' => true, 'exclude' => 'pro'],
+        ];
+
+        $alerts = [];
+
+        foreach ($ourPrices as $item) {
+            $nameLower = mb_strtolower($item->name ?? '');
+            $storageLower = mb_strtolower($item->storage ?? '');
+            $storageNum = preg_replace('/[^0-9]/', '', $storageLower);
+
+            $supplierCost = null;
+
+            foreach ($matchMap as $pattern => $config) {
+                if (!str_contains($nameLower, $pattern)) {
+                    continue;
+                }
+
+                if (!empty($config['exclude']) && str_contains($nameLower, $config['exclude'])) {
+                    continue;
+                }
+
+                foreach ($supplierMinByModel as $supplierKey => $minPrice) {
+                    if (!str_contains($supplierKey, $pattern)) {
+                        continue;
+                    }
+
+                    if (!empty($config['exclude']) && str_contains($supplierKey, $config['exclude'])) {
+                        continue;
+                    }
+
+                    if ($config['storage_match'] && $storageNum && !str_contains($supplierKey, $storageNum)) {
+                        continue;
+                    }
+
+                    $supplierCost = $minPrice;
+                    break;
+                }
+
+                break;
+            }
+
+            if ($supplierCost === null) {
+                continue;
+            }
+
+            $salePrice = (float) $item->price;
+
+            if ($salePrice < $supplierCost) {
+                $colorLabel = $item->color ?: null;
+                $alerts[] = [
+                    'id' => $item->id,
+                    'name' => trim($item->name . ' ' . ($item->storage ?? '')),
+                    'color' => $colorLabel,
+                    'sale_price' => $salePrice,
+                    'supplier_cost' => $supplierCost,
+                    'diff' => round($salePrice - $supplierCost),
+                ];
+            }
+        }
+
+        return $alerts;
     }
 
     private function getNewLeadsWaiting(): \Illuminate\Support\Collection

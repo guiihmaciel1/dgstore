@@ -242,6 +242,51 @@
             </style>
             @endif
 
+            <!-- ALERTA: PREÇOS ABAIXO DO CUSTO DO FORNECEDOR -->
+            @if(!empty($priceBelowCostAlerts))
+            <div style="background: #141414; border: 2px solid #ef4444; border-radius: 0.75rem; overflow: hidden; margin-bottom: 1rem;">
+                <div style="padding: 0.625rem 0.875rem; background: rgba(239,68,68,0.08); border-bottom: 1px solid rgba(239,68,68,0.15); display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 1rem;">⚠️</span>
+                    <div>
+                        <span style="font-size: 0.8rem; font-weight: 800; color: #fca5a5;">Preços abaixo do custo do fornecedor</span>
+                        <span style="font-size: 0.65rem; color: #ef4444; margin-left: 0.375rem;">({{ count($priceBelowCostAlerts) }} {{ count($priceBelowCostAlerts) === 1 ? 'item' : 'itens' }})</span>
+                    </div>
+                    <a href="{{ route('marketing.index', ['tab' => 'prices']) }}" style="margin-left: auto; font-size: 0.65rem; font-weight: 700; color: #ef4444; text-decoration: none; background: rgba(239,68,68,0.1); padding: 0.25rem 0.625rem; border-radius: 9999px; white-space: nowrap;">
+                        Corrigir preços →
+                    </a>
+                </div>
+                <div style="padding: 0.375rem 0.5rem;">
+                    @foreach($priceBelowCostAlerts as $alert)
+                    <div style="display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.5rem; {{ !$loop->last ? 'border-bottom: 1px solid rgba(255,255,255,0.04);' : '' }}">
+                        <div style="flex: 1; min-width: 0;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #e3e3e3;">{{ $alert['name'] }}</span>
+                            @if($alert['color'])
+                                <span style="font-size: 0.65rem; color: #818181; margin-left: 0.25rem;">{{ $alert['color'] }}</span>
+                            @endif
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.6rem; color: #818181; font-weight: 500;">Nosso preço</div>
+                                <div style="font-size: 0.8rem; font-weight: 800; color: #fca5a5; font-variant-numeric: tabular-nums;">
+                                    {{ number_format($alert['sale_price'], 0, ',', '.') }}
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.6rem; color: #818181; font-weight: 500;">Custo forn.</div>
+                                <div style="font-size: 0.8rem; font-weight: 800; color: #e3e3e3; font-variant-numeric: tabular-nums;">
+                                    {{ number_format($alert['supplier_cost'], 0, ',', '.') }}
+                                </div>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 800; color: #ef4444; background: rgba(239,68,68,0.1); padding: 0.125rem 0.5rem; border-radius: 9999px; font-variant-numeric: tabular-nums; white-space: nowrap;">
+                                {{ number_format($alert['diff'], 0, ',', '.') }}
+                            </span>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
             <!-- COTAÇÃO FORNECEDOR (WhatsApp) — somente admin -->
             @if(!empty($supplierQuoteInfo) && auth()->user()->isAdmin())
             <div style="margin-bottom: 1rem;">
