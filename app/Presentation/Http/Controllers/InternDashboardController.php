@@ -124,7 +124,7 @@ class InternDashboardController extends Controller
             ->where('payment_status', '!=', PaymentStatus::Cancelled)
             ->get()
             ->filter(fn (Sale $sale) => $sale->items->contains(
-                fn ($item) => ($item->product?->category ?? null) === ProductCategory::Smartphone
+                fn ($item) => in_array($item->product?->category, [ProductCategory::Smartphone, ProductCategory::Tablet], true)
             ))
             ->count();
 

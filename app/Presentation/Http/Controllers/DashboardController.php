@@ -601,7 +601,7 @@ class DashboardController extends Controller
             $salesCount = $sales->count();
 
             $phoneSales = $sales->filter(fn (Sale $sale) => $sale->items->contains(
-                fn ($item) => ($item->product?->category ?? null) === ProductCategory::Smartphone
+                fn ($item) => in_array($item->product?->category, [ProductCategory::Smartphone, ProductCategory::Tablet], true)
             ))->count();
 
             return [
@@ -689,6 +689,10 @@ class DashboardController extends Controller
                 $conditionLabel = 'Misto';
             }
 
+            $hasPhone = $sale->items->contains(
+                fn ($item) => in_array($item->product?->category, [ProductCategory::Smartphone, ProductCategory::Tablet], true)
+            );
+
             return [
                 'sale_number' => $sale->sale_number,
                 'seller_name' => $seller?->name ?? $sale->seller_name,
@@ -701,6 +705,7 @@ class DashboardController extends Controller
                 'net_profit' => $netProfit,
                 'condition' => $conditionLabel,
                 'sold_at' => $sale->sold_at->format('d/m H:i'),
+                'has_phone' => $hasPhone,
             ];
         })->values()->toArray();
 

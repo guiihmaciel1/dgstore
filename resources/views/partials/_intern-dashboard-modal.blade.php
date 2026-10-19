@@ -374,7 +374,7 @@
                             Vendas Contabilizadas para Meta
                         </h3>
                         <span style="font-size: 0.75rem; color: #64748b; background: rgba(255,255,255,0.04); padding: 0.25rem 0.625rem; border-radius: 6px;"
-                              x-text="internStats.sales_detail?.length + ' vendas'"></span>
+                              x-text="(internStats.sales_detail || []).filter(s => s.has_phone).length + ' vendas'"></span>
                     </div>
 
                     <div x-data="{ filterSeller: '' }">
@@ -410,7 +410,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template x-for="(sale, index) in (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller)" :key="index">
+                                    <template x-for="(sale, index) in (internStats.sales_detail || []).filter(s => s.has_phone && (!filterSeller || s.seller_name === filterSeller))" :key="index">
                                         <tr style="border-top: 1px solid rgba(255,255,255,0.04);"
                                             :style="index % 2 === 0 ? '' : 'background: rgba(255,255,255,0.015);'">
                                             <td style="padding: 0.4rem 0.5rem; color: #64748b; font-size: 0.6875rem;" x-text="sale.sale_number"></td>
@@ -437,25 +437,25 @@
                                         </tr>
                                     </template>
                                 </tbody>
-                                <tfoot x-show="(internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).length > 0">
+                                <tfoot x-show="(internStats.sales_detail || []).filter(s => s.has_phone && (!filterSeller || s.seller_name === filterSeller)).length > 0">
                                     <tr style="border-top: 2px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);">
                                         <td colspan="6" style="padding: 0.625rem 0.5rem; font-weight: 700; color: #e2e8f0; font-size: 0.75rem;">TOTAIS</td>
                                         <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #f87171; font-size: 0.75rem;"
-                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.cost, 0).toFixed(2)"></td>
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => s.has_phone && (!filterSeller || s.seller_name === filterSeller)).reduce((sum, s) => sum + s.cost, 0).toFixed(2)"></td>
                                         <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #e2e8f0; font-size: 0.75rem;"
-                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.total, 0).toFixed(2)"></td>
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => s.has_phone && (!filterSeller || s.seller_name === filterSeller)).reduce((sum, s) => sum + s.total, 0).toFixed(2)"></td>
                                         <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #34d399; font-size: 0.75rem;"
-                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.gross_profit, 0).toFixed(2)"></td>
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => s.has_phone && (!filterSeller || s.seller_name === filterSeller)).reduce((sum, s) => sum + s.gross_profit, 0).toFixed(2)"></td>
                                         <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #c084fc; font-size: 0.75rem;"
-                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.commission, 0).toFixed(2)"></td>
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => s.has_phone && (!filterSeller || s.seller_name === filterSeller)).reduce((sum, s) => sum + s.commission, 0).toFixed(2)"></td>
                                         <td style="padding: 0.625rem 0.5rem; text-align: right; font-weight: 700; color: #67e8f9; font-size: 0.75rem;"
-                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).reduce((sum, s) => sum + s.net_profit, 0).toFixed(2)"></td>
+                                            x-text="'R$ ' + (internStats.sales_detail || []).filter(s => s.has_phone && (!filterSeller || s.seller_name === filterSeller)).reduce((sum, s) => sum + s.net_profit, 0).toFixed(2)"></td>
                                     </tr>
                                 </tfoot>
                             </table>
                         </div>
 
-                        <div x-show="(internStats.sales_detail || []).filter(s => !filterSeller || s.seller_name === filterSeller).length === 0"
+                        <div x-show="(internStats.sales_detail || []).filter(s => s.has_phone && (!filterSeller || s.seller_name === filterSeller)).length === 0"
                              style="text-align: center; padding: 2rem; color: #64748b; font-size: 0.8125rem;">
                             Nenhuma venda encontrada para o filtro selecionado.
                         </div>
