@@ -388,7 +388,7 @@
                 <x-news-dropdown />
 
                 {{-- Idle Monitor Bell (admin_geral only) --}}
-                @if(auth()->user()->isAdminGeral())
+                @if(auth()->user()->isAdminGeral() && Route::has('idle-monitor.notifications'))
                 <div x-data="idleBell()" x-init="init()" class="relative">
                     <button @click="open = !open; if(open) loadNotifications()" class="relative p-2 rounded-lg text-dg-300 hover:text-white hover:bg-surface-overlay transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,7 +1,7 @@
 {{-- Idle Monitor — detecção de inatividade para interns --}}
 {{-- Popup estilo Netflix "Você ainda está aí?" --}}
 @auth
-@if(auth()->user()->isIntern())
+@if(auth()->user()->isIntern() && Route::has('idle-monitor.dismiss'))
 
 <div id="idle-overlay" style="
     display: none;
