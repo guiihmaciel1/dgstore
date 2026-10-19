@@ -95,9 +95,12 @@ class NegotiationController extends Controller
         });
 
         return $grouped->map(function ($items, $key) {
+            $modelBase = trim($items->first()->name ?? '');
+
             if ($items->count() === 1 && (! $items->first()->color || $items->first()->color === 'Todas')) {
                 return [
                     'name' => $key,
+                    'model_base' => $modelBase,
                     'value' => (float) $items->first()->price,
                     'cost_price' => (float) ($items->first()->cost_price ?? 0),
                 ];
@@ -112,7 +115,7 @@ class NegotiationController extends Controller
                 ];
             })->values()->toArray();
 
-            return ['name' => $key, 'value' => 0, 'variants' => $variants];
+            return ['name' => $key, 'model_base' => $modelBase, 'value' => 0, 'variants' => $variants];
         })->values()->toArray();
     }
 

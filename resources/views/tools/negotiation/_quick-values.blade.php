@@ -9,43 +9,51 @@
             <span>Editar</span>
         </a>
     </div>
-    <div class="flex flex-wrap gap-1.5">
-        <template x-for="(qv, idx) in quickValues" :key="idx">
-            <div class="inline-flex">
-                <template x-if="!qv.variants || qv.variants.length === 0">
-                    <button @click="selectQuickValue(qv.name, qv.value, qv.cost_price || 0)" type="button"
-                            class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-2 whitespace-nowrap transition-colors"
-                            :class="isQuickValueActive(qv.name, qv.value)
-                                ? 'border-gray-900 bg-surface text-white'
-                                : 'border-border bg-surface-raised text-dg-300 hover:border-border-strong'">
-                        <span x-text="chipLabel(qv.name)"></span>
-                        <span class="opacity-60 ml-1" x-text="'R$ ' + fmt(qv.value)"></span>
-                    </button>
-                </template>
-                <template x-if="qv.variants && qv.variants.length > 0">
-                    <div class="inline-flex items-center rounded-lg border-2 overflow-hidden transition-colors"
-                         :class="isQuickValueActiveByName(qv.name) ? 'border-gray-900' : 'border-border'">
-                        <span class="py-1.5 pl-3 pr-2 text-xs font-semibold text-dg-300 whitespace-nowrap" x-text="chipLabel(qv.name)"></span>
-                        <template x-for="(v, vi) in qv.variants" :key="vi">
-                            <button @click="selectQuickValue(qv.name + ' ' + v.label, v.value, v.cost_price || 0)" type="button"
-                                    class="px-2 py-1 cursor-pointer border-none flex items-center gap-1 transition-colors"
-                                    :class="isQuickValueActive(qv.name + ' ' + v.label, v.value)
-                                        ? 'bg-surface'
-                                        : 'bg-transparent hover:bg-surface-overlay'"
-                                    :title="v.label + ' - R$ ' + fmt(v.value)">
-                                <span class="w-3.5 h-3.5 rounded-full border-2 shrink-0"
-                                      :style="'background:' + v.color"
-                                      :class="isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'border-white' : 'border-border-strong'"></span>
-                                <span class="text-[11px] font-semibold"
-                                      :class="isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'text-white' : 'text-dg-500'"
-                                      x-text="fmt(v.value)"></span>
-                            </button>
-                        </template>
-                    </div>
-                </template>
-            </div>
-        </template>
-    </div>
+
+    {{-- Novos — agrupados por modelo --}}
+    <template x-if="groupedQuickValues.length > 0">
+        <div class="flex flex-col gap-1.5">
+            <template x-for="(group, gi) in groupedQuickValues" :key="gi">
+                <div class="flex flex-wrap gap-1.5">
+                    <template x-for="(qv, idx) in group.items" :key="idx">
+                        <div class="inline-flex">
+                            <template x-if="!qv.variants || qv.variants.length === 0">
+                                <button @click="selectQuickValue(qv.name, qv.value, qv.cost_price || 0)" type="button"
+                                        class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-2 whitespace-nowrap transition-colors"
+                                        :class="isQuickValueActive(qv.name, qv.value)
+                                            ? 'border-gray-900 bg-surface text-white'
+                                            : 'border-border bg-surface-raised text-dg-300 hover:border-border-strong'">
+                                    <span x-text="chipLabel(qv.name)"></span>
+                                    <span class="opacity-60 ml-1" x-text="'R$ ' + fmt(qv.value)"></span>
+                                </button>
+                            </template>
+                            <template x-if="qv.variants && qv.variants.length > 0">
+                                <div class="inline-flex items-center rounded-lg border-2 overflow-hidden transition-colors"
+                                     :class="isQuickValueActiveByName(qv.name) ? 'border-gray-900' : 'border-border'">
+                                    <span class="py-1.5 pl-3 pr-2 text-xs font-semibold text-dg-300 whitespace-nowrap" x-text="chipLabel(qv.name)"></span>
+                                    <template x-for="(v, vi) in qv.variants" :key="vi">
+                                        <button @click="selectQuickValue(qv.name + ' ' + v.label, v.value, v.cost_price || 0)" type="button"
+                                                class="px-2 py-1 cursor-pointer border-none flex items-center gap-1 transition-colors"
+                                                :class="isQuickValueActive(qv.name + ' ' + v.label, v.value)
+                                                    ? 'bg-surface'
+                                                    : 'bg-transparent hover:bg-surface-overlay'"
+                                                :title="v.label + ' - R$ ' + fmt(v.value)">
+                                            <span class="w-3.5 h-3.5 rounded-full border-2 shrink-0"
+                                                  :style="'background:' + v.color"
+                                                  :class="isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'border-white' : 'border-border-strong'"></span>
+                                            <span class="text-[11px] font-semibold"
+                                                  :class="isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'text-white' : 'text-dg-500'"
+                                                  x-text="fmt(v.value)"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </template>
 
     {{-- Seminovos em Estoque --}}
     <template x-if="quickValuesUsed.length > 0">

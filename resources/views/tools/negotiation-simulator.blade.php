@@ -77,6 +77,20 @@
             quickValues: @json($quickValuesFromMarketing ?? []),
             quickValuesUsed: @json($quickValuesUsed ?? []),
             tradeInModels: @json($tradeInModels ?? []),
+
+            get groupedQuickValues() {
+                const groups = [];
+                const map = {};
+                this.quickValues.forEach(qv => {
+                    const base = qv.model_base || qv.name;
+                    if (!map[base]) {
+                        map[base] = { model: base, items: [] };
+                        groups.push(map[base]);
+                    }
+                    map[base].items.push(qv);
+                });
+                return groups;
+            },
             canViewFinancials: {{ auth()->user()->canViewFinancials() ? 'true' : 'false' }},
             toast: '',
             copied: false,
