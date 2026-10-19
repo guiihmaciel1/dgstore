@@ -60,9 +60,96 @@
                 </div>
             @endif
 
-            {{-- MODO OCIOSO — SUGESTÕES INTELIGENTES (apenas admin) --}}
-            {{-- CHECKLIST DIÁRIO (apenas admin) --}}
-            {{-- Removido para perfis vendedor/intern --}}
+            {{-- RESUMO SEMANAL DE PONTO --}}
+            @if($weekSummary['days_worked'] > 0)
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 1rem; height: 1rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h3 style="font-size: 0.875rem; font-weight: 700; color: #e3e3e3;">Meu Ponto — Semana</h3>
+                    </div>
+                    <span style="font-size: 0.7rem; color: #666;">
+                        {{ $weekSummary['start']->format('d/m') }} — {{ $weekSummary['end']->format('d/m') }}
+                    </span>
+                </div>
+
+                {{-- Resumo geral --}}
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                    @php
+                        $twH = intdiv($weekSummary['total_worked'], 60);
+                        $twM = $weekSummary['total_worked'] % 60;
+                        $teH = intdiv($weekSummary['expected_total'], 60);
+                        $teM = $weekSummary['expected_total'] % 60;
+                        $tbAbs = abs($weekSummary['total_balance']);
+                        $tbH = intdiv($tbAbs, 60);
+                        $tbM = $tbAbs % 60;
+                        $tbSign = $weekSummary['total_balance'] >= 0 ? '+' : '-';
+                        $tbColor = $weekSummary['total_balance'] >= 0 ? '#059669' : '#ef4444';
+                        $avgH = intdiv($weekSummary['avg_per_day'], 60);
+                        $avgM = $weekSummary['avg_per_day'] % 60;
+                        $avgColor = $weekSummary['avg_per_day'] >= 360 ? '#059669' : ($weekSummary['avg_per_day'] >= 300 ? '#d97706' : '#ef4444');
+                    @endphp
+                    <div style="padding: 0.875rem 1.25rem; text-align: center; border-right: 1px solid rgba(255,255,255,0.04);">
+                        <p style="font-size: 0.65rem; color: #818181; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Trabalhado</p>
+                        <p style="font-size: 1.125rem; font-weight: 800; color: #e3e3e3; font-variant-numeric: tabular-nums; margin-top: 0.125rem;">
+                            {{ $twH }}h{{ str_pad((string)$twM, 2, '0', STR_PAD_LEFT) }}
+                        </p>
+                    </div>
+                    <div style="padding: 0.875rem 1.25rem; text-align: center; border-right: 1px solid rgba(255,255,255,0.04);">
+                        <p style="font-size: 0.65rem; color: #818181; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Esperado</p>
+                        <p style="font-size: 1.125rem; font-weight: 800; color: #818181; font-variant-numeric: tabular-nums; margin-top: 0.125rem;">
+                            {{ $teH }}h{{ str_pad((string)$teM, 2, '0', STR_PAD_LEFT) }}
+                        </p>
+                    </div>
+                    <div style="padding: 0.875rem 1.25rem; text-align: center; border-right: 1px solid rgba(255,255,255,0.04);">
+                        <p style="font-size: 0.65rem; color: #818181; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Saldo</p>
+                        <p style="font-size: 1.125rem; font-weight: 800; color: {{ $tbColor }}; font-variant-numeric: tabular-nums; margin-top: 0.125rem;">
+                            {{ $tbSign }}{{ $tbH }}h{{ str_pad((string)$tbM, 2, '0', STR_PAD_LEFT) }}
+                        </p>
+                    </div>
+                    <div style="padding: 0.875rem 1.25rem; text-align: center;">
+                        <p style="font-size: 0.65rem; color: #818181; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Média/dia</p>
+                        <p style="font-size: 1.125rem; font-weight: 800; color: {{ $avgColor }}; font-variant-numeric: tabular-nums; margin-top: 0.125rem;">
+                            {{ $avgH }}h{{ str_pad((string)$avgM, 2, '0', STR_PAD_LEFT) }}
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Dia a dia --}}
+                <div style="padding: 0.5rem 1rem;">
+                    @foreach($weekSummary['days'] as $dateStr => $day)
+                        @php
+                            $dateObj = \Carbon\Carbon::parse($dateStr);
+                            $dH = intdiv($day['worked_minutes'], 60);
+                            $dM = $day['worked_minutes'] % 60;
+                            $dbAbs = abs($day['balance_minutes']);
+                            $dbH = intdiv($dbAbs, 60);
+                            $dbM = $dbAbs % 60;
+                            $dbSign = $day['balance_minutes'] >= 0 ? '+' : '-';
+                            $dbColor = $day['balance_minutes'] >= 0 ? '#059669' : '#ef4444';
+                            $barWidth = min(100, round(($day['worked_minutes'] / 360) * 100));
+                            $barColor = $day['balance_minutes'] >= 0 ? '#059669' : '#ef4444';
+                        @endphp
+                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.375rem 0; {{ !$loop->last ? 'border-bottom: 1px solid rgba(255,255,255,0.04);' : '' }}">
+                            <span style="font-size: 0.75rem; font-weight: 600; color: {{ $dateObj->isToday() ? '#2563eb' : '#a4a4a4' }}; min-width: 3rem; text-transform: capitalize;">
+                                {{ $dateObj->isToday() ? 'Hoje' : $dateObj->translatedFormat('D') }}
+                            </span>
+                            <div style="flex: 1; height: 6px; background: #222; border-radius: 9999px; overflow: hidden;">
+                                <div style="height: 100%; width: {{ $barWidth }}%; background: {{ $barColor }}; border-radius: 9999px; transition: width 0.3s;"></div>
+                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 700; color: #e3e3e3; min-width: 3rem; text-align: right; font-variant-numeric: tabular-nums;">
+                                {{ $dH }}h{{ str_pad((string)$dM, 2, '0', STR_PAD_LEFT) }}
+                            </span>
+                            <span style="font-size: 0.7rem; font-weight: 700; color: {{ $dbColor }}; min-width: 3.5rem; text-align: right; font-variant-numeric: tabular-nums;">
+                                {{ $dbSign }}{{ $dbH }}h{{ str_pad((string)$dbM, 2, '0', STR_PAD_LEFT) }}
+                            </span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
 
             {{-- ANIVERSARIANTES DO MÊS --}}
             @if($birthdayCustomers->count() > 0)

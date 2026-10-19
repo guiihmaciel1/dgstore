@@ -12,11 +12,15 @@ use App\Domain\Sale\Models\Sale;
 use App\Domain\Schedule\Models\Appointment;
 use App\Domain\TimeClock\Models\TimeClockEntry;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class InternDashboardController extends Controller
 {
+    private const EXPECTED_HOURS_PER_DAY = 6;
+
     public function index(Request $request): View
     {
         $user = $request->user();
@@ -85,6 +89,8 @@ class InternDashboardController extends Controller
             ->orderBy('start_time')
             ->first();
 
+        $weekSummary = $this->buildWeekSummary($user->id);
+
         return view('intern.dashboard', compact(
             'user',
             'timeClockEntries',
@@ -100,7 +106,80 @@ class InternDashboardController extends Controller
             'birthdayCustomers',
             'todayAppointments',
             'nextAppointment',
+            'weekSummary',
         ));
     }
 
+    private function buildWeekSummary(string $userId): array
+    {
+        $startOfWeek = now()->startOfWeek(Carbon::MONDAY);
+        $endOfWeek = now()->endOfWeek(Carbon::SUNDAY);
+
+        $weekEntries = TimeClockEntry::forUser($userId)
+            ->whereBetween('punched_at', [$startOfWeek, $endOfWeek])
+            ->orderBy('punched_at')
+            ->get();
+
+        $byDate = $weekEntries->groupBy(fn ($e) => $e->punched_at->format('Y-m-d'));
+
+        $days = [];
+        $totalWorked = 0;
+        $daysWorked = 0;
+
+        foreach ($byDate as $dateStr => $dayEntries) {
+            $sorted = $dayEntries->sortBy('punched_at');
+            $minutes = $this->calcWorkedMinutes($sorted);
+
+            if ($minutes > 0) {
+                $totalWorked += $minutes;
+                $daysWorked++;
+            }
+
+            $expected = self::EXPECTED_HOURS_PER_DAY * 60;
+            $balance = $minutes - $expected;
+
+            $days[$dateStr] = [
+                'worked_minutes' => $minutes,
+                'balance_minutes' => $balance,
+            ];
+        }
+
+        $expectedTotal = $daysWorked * self::EXPECTED_HOURS_PER_DAY * 60;
+        $totalBalance = $totalWorked - $expectedTotal;
+
+        return [
+            'days' => $days,
+            'total_worked' => $totalWorked,
+            'days_worked' => $daysWorked,
+            'expected_total' => $expectedTotal,
+            'total_balance' => $totalBalance,
+            'avg_per_day' => $daysWorked > 0 ? (int) round($totalWorked / $daysWorked) : 0,
+            'start' => $startOfWeek,
+            'end' => $endOfWeek,
+        ];
+    }
+
+    private function calcWorkedMinutes(Collection $entries): int
+    {
+        $clockIn = $entries->firstWhere('type', TimeClockEntry::TYPE_CLOCK_IN);
+        if (!$clockIn) {
+            return 0;
+        }
+
+        $clockOut = $entries->firstWhere('type', TimeClockEntry::TYPE_CLOCK_OUT);
+        if (!$clockOut) {
+            return 0;
+        }
+
+        $totalMinutes = (int) $clockIn->punched_at->diffInMinutes($clockOut->punched_at);
+
+        $lunchOut = $entries->firstWhere('type', TimeClockEntry::TYPE_LUNCH_OUT);
+        $lunchIn = $entries->firstWhere('type', TimeClockEntry::TYPE_LUNCH_IN);
+
+        if ($lunchOut && $lunchIn) {
+            $totalMinutes -= (int) $lunchOut->punched_at->diffInMinutes($lunchIn->punched_at);
+        }
+
+        return max(0, $totalMinutes);
+    }
 }
