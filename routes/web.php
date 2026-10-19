@@ -39,6 +39,7 @@ use App\Presentation\Http\Controllers\Admin\CommissionController;
 use App\Presentation\Http\Controllers\Admin\DollarRateController;
 use App\Presentation\Http\Controllers\Admin\TimeClockAdminController;
 use App\Presentation\Http\Controllers\IdleModeController;
+use App\Presentation\Http\Controllers\IdleMonitorController;
 use App\Presentation\Http\Controllers\InternDashboardController;
 use App\Presentation\Http\Controllers\TimeClockController;
 use App\Presentation\Http\Controllers\ExecutiveSummaryController;
@@ -97,6 +98,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Modo Ocioso — sugestões inteligentes
     // ----------------------------------------------------------------
     Route::get('/api/idle-mode/suggestions', [IdleModeController::class, 'suggestions'])->name('idle-mode.suggestions');
+
+    // ----------------------------------------------------------------
+    // Monitor de Inatividade
+    // ----------------------------------------------------------------
+    Route::post('/api/idle-monitor/dismiss', [IdleMonitorController::class, 'dismiss'])->name('idle-monitor.dismiss');
+    Route::get('/api/idle-monitor/alert', [IdleMonitorController::class, 'alert'])->name('idle-monitor.alert');
+    Route::get('/api/idle-monitor/notifications', [IdleMonitorController::class, 'notifications'])->name('idle-monitor.notifications');
+    Route::post('/api/idle-monitor/mark-read', [IdleMonitorController::class, 'markRead'])->name('idle-monitor.mark-read');
 
     // ----------------------------------------------------------------
     // Simulações — acessível por todos os perfis autenticados

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers\Admin;
 
+use App\Domain\TimeClock\Models\IdleLog;
 use App\Domain\TimeClock\Models\TimeClockEntry;
 use App\Domain\User\Enums\UserRole;
 use App\Domain\User\Models\User;
@@ -38,6 +39,7 @@ class TimeClockAdminController extends Controller
         $todayStatus = $this->buildTodayStatus($interns);
         $dailyHours = $this->buildDailyHours($groupedByDate);
         $weeklySummary = $this->buildWeeklySummary($interns, $selectedUserId);
+        $idleSummary = $this->buildIdleSummary($interns, $selectedUserId);
 
         return view('admin.time-clock.index', compact(
             'interns',
@@ -46,6 +48,7 @@ class TimeClockAdminController extends Controller
             'todayStatus',
             'dailyHours',
             'weeklySummary',
+            'idleSummary',
         ));
     }
 
@@ -157,6 +160,45 @@ class TimeClockAdminController extends Controller
                 'expected_minutes' => $expectedMinutes,
                 'balance_minutes' => $balance,
                 'avg_minutes_per_day' => $daysWorked > 0 ? (int) round($totalWorked / $daysWorked) : 0,
+            ];
+        }
+
+        return $summary;
+    }
+
+    private function buildIdleSummary(Collection $interns, ?string $selectedUserId): array
+    {
+        $startOfWeek = now()->startOfWeek(Carbon::MONDAY);
+        $endOfWeek = now()->endOfWeek(Carbon::SUNDAY);
+
+        $targetUsers = $selectedUserId
+            ? $interns->where('id', $selectedUserId)
+            : $interns;
+
+        $summary = [];
+
+        foreach ($targetUsers as $intern) {
+            $todayLogs = IdleLog::forUser($intern->id)
+                ->forDate(today()->toDateString())
+                ->orderByDesc('started_at')
+                ->get();
+
+            $todayTotal = $todayLogs->sum('idle_minutes');
+
+            $weekTotal = (int) IdleLog::forUser($intern->id)
+                ->whereBetween('date', [$startOfWeek->toDateString(), $endOfWeek->toDateString()])
+                ->sum('idle_minutes');
+
+            $weekCount = (int) IdleLog::forUser($intern->id)
+                ->whereBetween('date', [$startOfWeek->toDateString(), $endOfWeek->toDateString()])
+                ->count();
+
+            $summary[] = [
+                'user' => $intern,
+                'today_idle_minutes' => $todayTotal,
+                'today_logs' => $todayLogs,
+                'week_idle_minutes' => $weekTotal,
+                'week_idle_count' => $weekCount,
             ];
         }
 

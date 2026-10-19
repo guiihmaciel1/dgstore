@@ -386,6 +386,94 @@
 
                 <!-- Novidades Apple (RSS) -->
                 <x-news-dropdown />
+
+                {{-- Idle Monitor Bell (admin_geral only) --}}
+                @if(auth()->user()->isAdminGeral())
+                <div x-data="idleBell()" x-init="init()" class="relative">
+                    <button @click="open = !open; if(open) loadNotifications()" class="relative p-2 rounded-lg text-dg-300 hover:text-white hover:bg-surface-overlay transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        <span x-show="count > 0" x-text="count" x-cloak
+                              style="position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;font-size:0.65rem;font-weight:800;background:#ef4444;color:#fff;border-radius:9999px;display:flex;align-items:center;justify-content:center;padding:0 4px;"></span>
+                    </button>
+
+                    <div x-show="open" @click.away="open = false" x-cloak x-transition
+                         style="position:absolute;right:0;top:100%;margin-top:0.5rem;width:360px;max-height:400px;overflow-y:auto;background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:0.75rem;box-shadow:0 15px 40px rgba(0,0,0,0.4);z-index:60;">
+                        <div style="padding:0.75rem 1rem;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;">
+                            <span style="font-size:0.8rem;font-weight:700;color:#e3e3e3;">⏸ Alertas de Inatividade</span>
+                            <button x-show="count > 0" @click="markAllRead()" style="font-size:0.7rem;color:#2563eb;font-weight:600;background:none;border:none;cursor:pointer;">Limpar</button>
+                        </div>
+
+                        <template x-if="items.length === 0">
+                            <div style="padding:2rem;text-align:center;color:#666;font-size:0.8rem;">Nenhum alerta recente</div>
+                        </template>
+
+                        <template x-for="item in items" :key="item.id">
+                            <div style="padding:0.625rem 1rem;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;align-items:flex-start;gap:0.625rem;">
+                                <div style="width:32px;height:32px;border-radius:50%;background:rgba(239,68,68,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <svg style="width:16px;height:16px;color:#ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div style="flex:1;min-width:0;">
+                                    <p style="font-size:0.8rem;color:#e3e3e3;font-weight:600;" x-text="item.user_name"></p>
+                                    <p style="font-size:0.7rem;color:#a4a4a4;">
+                                        <span x-text="item.idle_minutes + ' min'"></span> inativa
+                                        <span style="color:#666;">·</span>
+                                        <span x-text="item.started_at + ' → ' + (item.ended_at || '...')"></span>
+                                    </p>
+                                    <p style="font-size:0.65rem;color:#ef4444;font-weight:600;margin-top:2px;">
+                                        Acumulado: <span x-text="item.cumulative_minutes + ' min'"></span>
+                                    </p>
+                                </div>
+                                <span style="font-size:0.6rem;color:#666;white-space:nowrap;" x-text="item.created_at"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <script>
+                function idleBell() {
+                    return {
+                        open: false,
+                        count: 0,
+                        items: [],
+                        init() {
+                            this.poll();
+                            setInterval(() => this.poll(), 60000);
+                        },
+                        poll() {
+                            fetch('{{ route("idle-monitor.notifications") }}', {
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                            })
+                            .then(r => r.json())
+                            .then(data => {
+                                this.count = data.count;
+                                this.items = data.items;
+                            })
+                            .catch(() => {});
+                        },
+                        loadNotifications() {
+                            this.poll();
+                        },
+                        markAllRead() {
+                            fetch('{{ route("idle-monitor.mark-read") }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                }
+                            })
+                            .then(() => {
+                                this.count = 0;
+                                this.items = [];
+                            })
+                            .catch(() => {});
+                        },
+                    };
+                }
+                </script>
+                @endif
                 
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">

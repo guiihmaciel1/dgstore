@@ -126,6 +126,88 @@
             </div>
             @endif
 
+            {{-- Inatividade --}}
+            @if(count($idleSummary) > 0 && collect($idleSummary)->sum('week_idle_count') > 0)
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; display: flex; align-items: center; gap: 0.5rem;">
+                    <svg style="width: 1rem; height: 1rem; color: #ef4444;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <h3 style="font-size: 0.875rem; font-weight: 700; color: #e3e3e3;">⏸ Tempo Inativo</h3>
+                    <span style="font-size: 0.7rem; color: #666; margin-left: auto;">
+                        {{ now()->startOfWeek(\Carbon\Carbon::MONDAY)->format('d/m') }} — {{ now()->endOfWeek(\Carbon\Carbon::SUNDAY)->format('d/m') }}
+                    </span>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                <th style="padding: 0.625rem 1rem; text-align: left; font-weight: 600; color: #818181;">Vendedora</th>
+                                <th style="padding: 0.625rem 1rem; text-align: center; font-weight: 600; color: #818181;">Hoje</th>
+                                <th style="padding: 0.625rem 1rem; text-align: center; font-weight: 600; color: #818181;">Semana</th>
+                                <th style="padding: 0.625rem 1rem; text-align: center; font-weight: 600; color: #818181;">Ocorrências</th>
+                                <th style="padding: 0.625rem 1rem; text-align: left; font-weight: 600; color: #818181;">Registros Hoje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($idleSummary as $is)
+                                @php
+                                    $todayColor = $is['today_idle_minutes'] >= 60 ? '#ef4444' : ($is['today_idle_minutes'] >= 30 ? '#d97706' : '#059669');
+                                    $weekColor = $is['week_idle_minutes'] >= 120 ? '#ef4444' : ($is['week_idle_minutes'] >= 60 ? '#d97706' : '#059669');
+                                @endphp
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                    <td style="padding: 0.625rem 1rem; font-weight: 700; color: #e3e3e3;">{{ $is['user']->name }}</td>
+                                    <td style="padding: 0.625rem 1rem; text-align: center;">
+                                        <span style="font-weight: 700; color: {{ $todayColor }}; font-variant-numeric: tabular-nums;">
+                                            {{ $is['today_idle_minutes'] }}min
+                                        </span>
+                                    </td>
+                                    <td style="padding: 0.625rem 1rem; text-align: center;">
+                                        <span style="font-weight: 700; color: {{ $weekColor }}; font-variant-numeric: tabular-nums;">
+                                            @php
+                                                $wH = intdiv($is['week_idle_minutes'], 60);
+                                                $wM = $is['week_idle_minutes'] % 60;
+                                            @endphp
+                                            @if($wH > 0)
+                                                {{ $wH }}h{{ str_pad((string)$wM, 2, '0', STR_PAD_LEFT) }}
+                                            @else
+                                                {{ $wM }}min
+                                            @endif
+                                        </span>
+                                    </td>
+                                    <td style="padding: 0.625rem 1rem; text-align: center; color: #a4a4a4; font-variant-numeric: tabular-nums;">
+                                        {{ $is['week_idle_count'] }}×
+                                    </td>
+                                    <td style="padding: 0.625rem 1rem;">
+                                        @if($is['today_logs']->count() > 0)
+                                            <div style="display: flex; gap: 0.375rem; flex-wrap: wrap;">
+                                                @foreach($is['today_logs'] as $log)
+                                                    <span style="
+                                                        font-size: 0.65rem;
+                                                        padding: 0.125rem 0.5rem;
+                                                        border-radius: 9999px;
+                                                        background: {{ $log->idle_minutes >= 15 ? 'rgba(239,68,68,0.15)' : '#222222' }};
+                                                        color: {{ $log->idle_minutes >= 15 ? '#ef4444' : '#a4a4a4' }};
+                                                        font-weight: 500;
+                                                    ">
+                                                        {{ $log->started_at->format('H:i') }}→{{ $log->ended_at?->format('H:i') ?? '...' }}
+                                                        ({{ $log->idle_minutes }}min)
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span style="font-size: 0.75rem; color: #666;">—</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endif
+
             {{-- Filtros --}}
             <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
                 <form method="GET" action="{{ route('admin.time-clock.index') }}" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">

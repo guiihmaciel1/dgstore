@@ -56,6 +56,7 @@
             @endunless
         @endauth
         <x-stone-fab-calculator />
+        <x-idle-monitor />
 
         @stack('scripts')
 
