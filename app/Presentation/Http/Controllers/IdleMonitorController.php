@@ -43,6 +43,16 @@ class IdleMonitorController extends Controller
     }
 
     /**
+     * Check if an alert was already sent for this exact idle period.
+     */
+    private function alreadyLoggedForPeriod(string $userId, string $startedAt): bool
+    {
+        return IdleLog::forUser($userId)
+            ->where('started_at', $startedAt)
+            ->exists();
+    }
+
+    /**
      * Intern clicked "Sim, estou aqui" — registers idle period as dismissed.
      */
     public function dismiss(Request $request): JsonResponse
@@ -57,6 +67,22 @@ class IdleMonitorController extends Controller
 
         if (!$this->isWithinWorkHours($user->id)) {
             return response()->json(['ok' => true, 'skipped' => true]);
+        }
+
+        // If an alert was already sent for this period, just mark it as dismissed
+        // without adding to the cumulative (avoids double-counting)
+        $existingAlert = IdleLog::forUser($user->id)
+            ->where('started_at', $validated['started_at'])
+            ->where('alert_sent', true)
+            ->first();
+
+        if ($existingAlert) {
+            $existingAlert->update(['dismissed' => true, 'ended_at' => now()->utc()]);
+
+            return response()->json([
+                'ok' => true,
+                'cumulative_minutes' => $existingAlert->cumulative_minutes,
+            ]);
         }
 
         $cumulative = IdleLog::getDailyCumulative($user->id, $today) + $validated['idle_minutes'];
@@ -80,6 +106,7 @@ class IdleMonitorController extends Controller
 
     /**
      * 5 min without response — registers idle period, sends WhatsApp alert.
+     * Repeated alerts for the same period update the existing record.
      */
     public function alert(Request $request): JsonResponse
     {
@@ -95,9 +122,32 @@ class IdleMonitorController extends Controller
             return response()->json(['ok' => true, 'skipped' => true]);
         }
 
+        // If we already logged this idle period, just update the duration
+        $existing = IdleLog::forUser($user->id)
+            ->where('started_at', $validated['started_at'])
+            ->where('alert_sent', true)
+            ->first();
+
+        if ($existing) {
+            $diff = $validated['idle_minutes'] - $existing->idle_minutes;
+            $newCumulative = $existing->cumulative_minutes + max(0, $diff);
+
+            $existing->update([
+                'idle_minutes' => $validated['idle_minutes'],
+                'cumulative_minutes' => $newCumulative,
+                'ended_at' => now()->utc(),
+            ]);
+
+            return response()->json([
+                'ok' => true,
+                'cumulative_minutes' => $newCumulative,
+                'alert_sent' => true,
+            ]);
+        }
+
         $cumulative = IdleLog::getDailyCumulative($user->id, $today) + $validated['idle_minutes'];
 
-        $log = IdleLog::create([
+        IdleLog::create([
             'user_id' => $user->id,
             'date' => $today,
             'idle_minutes' => $validated['idle_minutes'],

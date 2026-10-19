@@ -224,8 +224,22 @@
         }).catch(() => {});
     };
 
+    function isLunchBreak() {
+        const now = new Date();
+        const h = now.getHours();
+        const m = now.getMinutes();
+        const time = h * 60 + m;
+        // Pause between 12:45 and 14:15 to cover typical lunch window
+        return time >= 765 && time <= 855;
+    }
+
     setInterval(() => {
         if (isIdle) return;
+        if (isLunchBreak()) {
+            // Reset activity so we don't trigger right after lunch
+            lastActivity = Date.now();
+            return;
+        }
         if (Date.now() - lastActivity >= IDLE_THRESHOLD_MS) {
             showPopup();
         }
