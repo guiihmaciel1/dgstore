@@ -79,6 +79,7 @@
                                         : 'background: transparent; color: #666;'">
                                 <span x-text="getCategoryEmoji(key)" style="font-size: 0.8rem;"></span>
                                 <span x-text="label"></span>
+                                <span x-show="key !== 'iphone'" style="font-size: 0.55rem; font-weight: 700; color: #d97706; background: rgba(217,119,6,0.1); padding: 0.0625rem 0.375rem; border-radius: 9999px; margin-left: 0.125rem;">Encomenda</span>
                             </button>
                         </template>
                     </div>
@@ -146,6 +147,7 @@
                                             <span x-show="row.storage" style="font-size: 0.7rem; padding: 1px 6px; background: #222; color: #a4a4a4; border-radius: 4px;" x-text="row.storage"></span>
                                             <span x-show="row.color" style="font-size: 0.7rem; padding: 1px 6px; background: #222; color: #a4a4a4; border-radius: 4px;" x-text="row.color"></span>
                                             <span style="font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(16,163,106,0.15);color:#6ee7b7;">Novo</span>
+                                            <span x-show="(row.category || 'iphone') !== 'iphone'" style="font-size:0.6rem;font-weight:700;padding:1px 5px;border-radius:4px;background:rgba(217,119,6,0.12);color:#d97706;">Sob Encomenda</span>
                                         </div>
                                     </div>
                                     <div style="text-align: right; flex-shrink: 0;">
@@ -211,10 +213,13 @@
                                             <td style="padding: 0.375rem 0.75rem; font-size: 0.75rem; color: #666666;" x-text="idx + 1"></td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="hidden" :name="'prices[' + row._origIdx + '][id]'" :value="row.id || ''">
-                                                <input type="text" :name="'prices[' + row._origIdx + '][name]'" x-model="row.name" required
-                                                       style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
-                                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
-                                                       placeholder="Ex: iPhone 16 Pro">
+                                                <div style="display: flex; align-items: center; gap: 0.375rem;">
+                                                    <input type="text" :name="'prices[' + row._origIdx + '][name]'" x-model="row.name" required
+                                                           style="flex: 1; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
+                                                           onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
+                                                           placeholder="Ex: iPhone 16 Pro">
+                                                    <span x-show="(row.category || 'iphone') !== 'iphone'" style="font-size: 0.5rem; font-weight: 700; color: #d97706; background: rgba(217,119,6,0.1); padding: 0.125rem 0.375rem; border-radius: 9999px; white-space: nowrap; flex-shrink: 0;">Encomenda</span>
+                                                </div>
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <select :name="'prices[' + row._origIdx + '][category]'" x-model="row.category"
@@ -1009,7 +1014,7 @@
             tab: urlParams.get('tab') || 'prices',
             mobileEdit: false,
             priceSearch: '',
-            priceCategoryFilter: '',
+            priceCategoryFilter: urlParams.get('category') || 'iphone',
             priceCategories,
             priceColors,
             dragIdx: null,
