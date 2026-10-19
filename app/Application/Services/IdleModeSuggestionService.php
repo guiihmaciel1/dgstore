@@ -37,6 +37,10 @@ class IdleModeSuggestionService
 
     private function newLeadsWaiting(): Collection
     {
+        if (! config('crm.pipeline_enabled')) {
+            return collect();
+        }
+
         $defaultStage = PipelineStage::where('is_default', true)->first();
 
         if (!$defaultStage) {

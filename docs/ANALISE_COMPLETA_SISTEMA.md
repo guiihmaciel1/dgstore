@@ -613,9 +613,9 @@ flowchart TB
 - Templates de mensagens prontas
 - Integração com CRM
 
-**Controllers:**
-- `WhatsAppWebhookController` - Recebe webhooks
-- Rota API: `/api/whatsapp/webhook`
+**Webhook:** o webhook da Meta (`/api/whatsapp/webhook`) foi removido (nunca chegou a ser usado).
+O recebimento de mensagens é feito apenas pela UazAPI (`/api/uazapi/webhook`), que processa somente
+mensagens de fornecedores cadastrados (cotações) e não cria clientes/leads automaticamente.
 
 **Service:** `App\Domain\WhatsApp\Services\WhatsAppService`
 

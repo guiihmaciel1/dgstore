@@ -1,19 +1,17 @@
 <?php
 
 use App\Presentation\Http\Controllers\UazapiWebhookController;
-use App\Presentation\Http\Controllers\WhatsAppWebhookController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Rotas da API (sem CSRF, sem autenticação)
+| Rotas da API (sem CSRF, sem autenticação de sessão)
 |--------------------------------------------------------------------------
+|
+| O webhook da UazAPI é validado pelo token da instância e processa apenas
+| mensagens de fornecedores cadastrados (cotações).
+|
 */
-
-Route::prefix('whatsapp')->group(function () {
-    Route::get('/webhook', [WhatsAppWebhookController::class, 'verify']);
-    Route::post('/webhook', [WhatsAppWebhookController::class, 'handle']);
-});
 
 Route::post('/uazapi/webhook', [UazapiWebhookController::class, 'handle'])
     ->middleware('throttle:120,1');

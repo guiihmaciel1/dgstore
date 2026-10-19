@@ -142,44 +142,46 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Follow-ups (legado - redireciona para CRM)
         Route::get('followups', fn() => redirect()->route('crm.board'))->name('followups.index');
 
-        // CRM - Pipeline de Vendas
-        Route::get('/crm', [CrmController::class, 'board'])->name('crm.board');
-        Route::get('/crm/history', [CrmController::class, 'history'])->name('crm.history');
-        Route::get('/crm/deals/create', [CrmController::class, 'create'])->name('crm.deals.create');
-        Route::post('/crm/deals', [CrmController::class, 'store'])->name('crm.deals.store');
-        Route::get('/crm/deals/{deal}', [CrmController::class, 'show'])->name('crm.show');
-        Route::put('/crm/deals/{deal}', [CrmController::class, 'update'])->name('crm.deals.update');
-        Route::delete('/crm/deals/{deal}', [CrmController::class, 'destroy'])->name('crm.deals.destroy');
-        Route::post('/crm/deals/{deal}/move', [CrmController::class, 'moveStage'])->name('crm.deals.move');
-        Route::patch('/crm/deals/{deal}/followup', [CrmController::class, 'updateFollowup'])->name('crm.deals.followup');
-        Route::patch('/crm/deals/{deal}/phone', [CrmController::class, 'updatePhone'])->name('crm.deals.phone');
-        Route::post('/crm/deals/{deal}/win', [CrmController::class, 'win'])->name('crm.deals.win');
-        Route::post('/crm/deals/{deal}/lose', [CrmController::class, 'lose'])->name('crm.deals.lose');
-        Route::post('/crm/deals/{deal}/reopen', [CrmController::class, 'reopen'])->name('crm.deals.reopen');
-        Route::post('/crm/deals/{deal}/activities', [CrmController::class, 'storeActivity'])->name('crm.deals.activities.store');
-        Route::post('/crm/deals/{deal}/interests', [CrmController::class, 'storeInterest'])->name('crm.deals.interests.store');
-        Route::delete('/crm/deals/{deal}/interests/{interest}', [CrmController::class, 'destroyInterest'])->name('crm.deals.interests.destroy');
-        Route::post('/crm/deals/{deal}/appointments', [CrmController::class, 'storeAppointment'])->name('crm.deals.appointments.store');
-        Route::post('/api/crm/deals/{deal}/ai-message', [CrmController::class, 'aiSuggestMessage'])->name('crm.deals.ai-message');
-        Route::post('/api/crm/deals/{deal}/ai-analysis', [CrmController::class, 'aiAnalyzeDeal'])->name('crm.deals.ai-analysis');
-        Route::get('/api/crm/new-deals-check', [CrmController::class, 'newDealsCheck'])->name('crm.deals.check');
-        Route::post('/crm/deals/{deal}/whatsapp/send', [CrmController::class, 'sendWhatsApp'])->name('crm.deals.wa.send');
-        Route::post('/crm/deals/{deal}/whatsapp/send-media', [CrmController::class, 'sendWhatsAppMedia'])->name('crm.deals.wa.send-media');
-        Route::get('/crm/deals/{deal}/whatsapp/messages', [CrmController::class, 'getWhatsAppMessages'])->name('crm.deals.wa.messages');
-        Route::get('/crm/deals/{deal}/whatsapp/media/{messageId}', [CrmController::class, 'downloadWhatsAppMedia'])->name('crm.deals.wa.media');
-        Route::get('/api/crm/check-number', [CrmController::class, 'checkWhatsAppNumber'])->name('crm.check-number');
-        Route::post('/crm/deals/{deal}/whatsapp/send-menu', [CrmController::class, 'sendWhatsAppMenu'])->name('crm.deals.wa.send-menu');
-        Route::get('/api/crm/deals/{deal}/wa/poll', [CrmController::class, 'pollWhatsAppMessages'])->name('crm.deals.wa.poll');
-        Route::get('/api/crm/deals/{deal}/wa/presence', [CrmController::class, 'getWhatsAppPresence'])->name('crm.deals.wa.presence');
-        Route::post('/crm/deals/{deal}/whatsapp/react', [CrmController::class, 'reactWhatsApp'])->name('crm.deals.wa.react');
-        Route::post('/crm/deals/{deal}/whatsapp/send-location', [CrmController::class, 'sendWhatsAppLocation'])->name('crm.deals.wa.send-location');
-        Route::post('/crm/deals/{deal}/whatsapp/send-pix', [CrmController::class, 'sendWhatsAppPix'])->name('crm.deals.wa.send-pix');
-        Route::post('/crm/deals/{deal}/whatsapp/edit', [CrmController::class, 'editWhatsAppMessage'])->name('crm.deals.wa.edit');
-        Route::post('/crm/deals/{deal}/whatsapp/delete', [CrmController::class, 'deleteWhatsAppMessage'])->name('crm.deals.wa.delete');
-        Route::get('/api/crm/quick-replies', [CrmController::class, 'listQuickReplies'])->name('crm.quick-replies.list');
-        Route::post('/api/crm/quick-replies', [CrmController::class, 'createQuickReply'])->name('crm.quick-replies.store');
-        Route::patch('/api/crm/quick-replies/{id}', [CrmController::class, 'updateQuickReply'])->name('crm.quick-replies.update');
-        Route::delete('/api/crm/quick-replies/{id}', [CrmController::class, 'deleteQuickReply'])->name('crm.quick-replies.destroy');
+        // CRM - Pipeline de Vendas (desativado via config crm.pipeline_enabled)
+        Route::middleware('crm.enabled')->group(function () {
+            Route::get('/crm', [CrmController::class, 'board'])->name('crm.board');
+            Route::get('/crm/history', [CrmController::class, 'history'])->name('crm.history');
+            Route::get('/crm/deals/create', [CrmController::class, 'create'])->name('crm.deals.create');
+            Route::post('/crm/deals', [CrmController::class, 'store'])->name('crm.deals.store');
+            Route::get('/crm/deals/{deal}', [CrmController::class, 'show'])->name('crm.show');
+            Route::put('/crm/deals/{deal}', [CrmController::class, 'update'])->name('crm.deals.update');
+            Route::delete('/crm/deals/{deal}', [CrmController::class, 'destroy'])->name('crm.deals.destroy');
+            Route::post('/crm/deals/{deal}/move', [CrmController::class, 'moveStage'])->name('crm.deals.move');
+            Route::patch('/crm/deals/{deal}/followup', [CrmController::class, 'updateFollowup'])->name('crm.deals.followup');
+            Route::patch('/crm/deals/{deal}/phone', [CrmController::class, 'updatePhone'])->name('crm.deals.phone');
+            Route::post('/crm/deals/{deal}/win', [CrmController::class, 'win'])->name('crm.deals.win');
+            Route::post('/crm/deals/{deal}/lose', [CrmController::class, 'lose'])->name('crm.deals.lose');
+            Route::post('/crm/deals/{deal}/reopen', [CrmController::class, 'reopen'])->name('crm.deals.reopen');
+            Route::post('/crm/deals/{deal}/activities', [CrmController::class, 'storeActivity'])->name('crm.deals.activities.store');
+            Route::post('/crm/deals/{deal}/interests', [CrmController::class, 'storeInterest'])->name('crm.deals.interests.store');
+            Route::delete('/crm/deals/{deal}/interests/{interest}', [CrmController::class, 'destroyInterest'])->name('crm.deals.interests.destroy');
+            Route::post('/crm/deals/{deal}/appointments', [CrmController::class, 'storeAppointment'])->name('crm.deals.appointments.store');
+            Route::post('/api/crm/deals/{deal}/ai-message', [CrmController::class, 'aiSuggestMessage'])->name('crm.deals.ai-message');
+            Route::post('/api/crm/deals/{deal}/ai-analysis', [CrmController::class, 'aiAnalyzeDeal'])->name('crm.deals.ai-analysis');
+            Route::get('/api/crm/new-deals-check', [CrmController::class, 'newDealsCheck'])->name('crm.deals.check');
+            Route::post('/crm/deals/{deal}/whatsapp/send', [CrmController::class, 'sendWhatsApp'])->name('crm.deals.wa.send');
+            Route::post('/crm/deals/{deal}/whatsapp/send-media', [CrmController::class, 'sendWhatsAppMedia'])->name('crm.deals.wa.send-media');
+            Route::get('/crm/deals/{deal}/whatsapp/messages', [CrmController::class, 'getWhatsAppMessages'])->name('crm.deals.wa.messages');
+            Route::get('/crm/deals/{deal}/whatsapp/media/{messageId}', [CrmController::class, 'downloadWhatsAppMedia'])->name('crm.deals.wa.media');
+            Route::get('/api/crm/check-number', [CrmController::class, 'checkWhatsAppNumber'])->name('crm.check-number');
+            Route::post('/crm/deals/{deal}/whatsapp/send-menu', [CrmController::class, 'sendWhatsAppMenu'])->name('crm.deals.wa.send-menu');
+            Route::get('/api/crm/deals/{deal}/wa/poll', [CrmController::class, 'pollWhatsAppMessages'])->name('crm.deals.wa.poll');
+            Route::get('/api/crm/deals/{deal}/wa/presence', [CrmController::class, 'getWhatsAppPresence'])->name('crm.deals.wa.presence');
+            Route::post('/crm/deals/{deal}/whatsapp/react', [CrmController::class, 'reactWhatsApp'])->name('crm.deals.wa.react');
+            Route::post('/crm/deals/{deal}/whatsapp/send-location', [CrmController::class, 'sendWhatsAppLocation'])->name('crm.deals.wa.send-location');
+            Route::post('/crm/deals/{deal}/whatsapp/send-pix', [CrmController::class, 'sendWhatsAppPix'])->name('crm.deals.wa.send-pix');
+            Route::post('/crm/deals/{deal}/whatsapp/edit', [CrmController::class, 'editWhatsAppMessage'])->name('crm.deals.wa.edit');
+            Route::post('/crm/deals/{deal}/whatsapp/delete', [CrmController::class, 'deleteWhatsAppMessage'])->name('crm.deals.wa.delete');
+            Route::get('/api/crm/quick-replies', [CrmController::class, 'listQuickReplies'])->name('crm.quick-replies.list');
+            Route::post('/api/crm/quick-replies', [CrmController::class, 'createQuickReply'])->name('crm.quick-replies.store');
+            Route::patch('/api/crm/quick-replies/{id}', [CrmController::class, 'updateQuickReply'])->name('crm.quick-replies.update');
+            Route::delete('/api/crm/quick-replies/{id}', [CrmController::class, 'deleteQuickReply'])->name('crm.quick-replies.destroy');
+        });
 
         // Campanhas WhatsApp
         Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');

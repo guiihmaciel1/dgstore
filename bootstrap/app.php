@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
+            'crm.enabled' => \App\Http\Middleware\EnsureCrmEnabled::class,
             'b2b.auth' => \App\Http\Middleware\B2BAuthenticate::class,
             'b2b.approved' => \App\Http\Middleware\B2BApproved::class,
             'supplier.auth' => \App\Http\Middleware\SupplierAuthenticate::class,

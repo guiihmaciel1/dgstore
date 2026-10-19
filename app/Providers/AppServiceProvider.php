@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layouts.navigation', function ($view) {
             $pendingReplyCount = 0;
 
-            if (auth()->check()) {
+            if (config('crm.pipeline_enabled') && auth()->check()) {
                 $pendingReplyCount = Deal::open()
                     ->where('unread_wa_count', '>', 0)
                     ->count();

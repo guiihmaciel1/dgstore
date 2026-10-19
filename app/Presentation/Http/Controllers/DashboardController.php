@@ -221,6 +221,10 @@ class DashboardController extends Controller
 
     private function getNewLeadsWaiting(): \Illuminate\Support\Collection
     {
+        if (! config('crm.pipeline_enabled')) {
+            return collect();
+        }
+
         $defaultStage = PipelineStage::where('is_default', true)->first();
 
         if (! $defaultStage) {
@@ -288,40 +292,8 @@ class DashboardController extends Controller
             ];
         }
 
-        $overdueDeals = Deal::where('user_id', auth()->id())->open()
-            ->whereNotNull('expected_close_date')
-            ->where('expected_close_date', '<', today())
-            ->count();
-        if ($overdueDeals > 0) {
-            $notifications[] = [
-                'type' => 'danger', 'icon' => 'crm', 'count' => $overdueDeals,
-                'label' => 'Negócios atrasados',
-                'route' => route('crm.board'),
-            ];
-        }
-
-        $staleDeals = Deal::where('user_id', auth()->id())->open()
-            ->where('updated_at', '<', now()->subDays(5))
-            ->count();
-        if ($staleDeals > 0) {
-            $notifications[] = [
-                'type' => 'info', 'icon' => 'crm', 'count' => $staleDeals,
-                'label' => 'Negócios parados',
-                'route' => route('crm.board'),
-            ];
-        }
-
-        $interestsMatched = ProductInterest::pending()
-            ->whereHas('deal', fn ($q) => $q->open())
-            ->get()
-            ->filter(fn (ProductInterest $pi) => $pi->hasMatchInStock())
-            ->count();
-        if ($interestsMatched > 0) {
-            $notifications[] = [
-                'type' => 'success', 'icon' => 'crm', 'count' => $interestsMatched,
-                'label' => 'Interesses com estoque',
-                'route' => route('crm.board'),
-            ];
+        if (config('crm.pipeline_enabled')) {
+            array_push($notifications, ...$this->getCrmNotifications());
         }
 
         $warrantiesExpiring = $this->warrantyService->countExpiringSoon(30);
@@ -383,7 +355,7 @@ class DashboardController extends Controller
 
         try {
             $uazapi = app(UazapiService::class);
-            if ($uazapi->isConfigured()) {
+            if (config('crm.pipeline_enabled') && $uazapi->isConfigured()) {
                 $chatCount = $uazapi->countChats();
                 $total = $chatCount['total'] ?? 0;
                 if ($total > 0) {
@@ -395,6 +367,53 @@ class DashboardController extends Controller
                 }
             }
         } catch (\Throwable) {
+        }
+
+        return $notifications;
+    }
+
+    /**
+     * Alertas do CRM (negócios atrasados/parados e interesses com estoque).
+     * Chamar somente com o pipeline ativado (config crm.pipeline_enabled).
+     */
+    private function getCrmNotifications(): array
+    {
+        $notifications = [];
+
+        $overdueDeals = Deal::where('user_id', auth()->id())->open()
+            ->whereNotNull('expected_close_date')
+            ->where('expected_close_date', '<', today())
+            ->count();
+        if ($overdueDeals > 0) {
+            $notifications[] = [
+                'type' => 'danger', 'icon' => 'crm', 'count' => $overdueDeals,
+                'label' => 'Negócios atrasados',
+                'route' => route('crm.board'),
+            ];
+        }
+
+        $staleDeals = Deal::where('user_id', auth()->id())->open()
+            ->where('updated_at', '<', now()->subDays(5))
+            ->count();
+        if ($staleDeals > 0) {
+            $notifications[] = [
+                'type' => 'info', 'icon' => 'crm', 'count' => $staleDeals,
+                'label' => 'Negócios parados',
+                'route' => route('crm.board'),
+            ];
+        }
+
+        $interestsMatched = ProductInterest::pending()
+            ->whereHas('deal', fn ($q) => $q->open())
+            ->get()
+            ->filter(fn (ProductInterest $pi) => $pi->hasMatchInStock())
+            ->count();
+        if ($interestsMatched > 0) {
+            $notifications[] = [
+                'type' => 'success', 'icon' => 'crm', 'count' => $interestsMatched,
+                'label' => 'Interesses com estoque',
+                'route' => route('crm.board'),
+            ];
         }
 
         return $notifications;

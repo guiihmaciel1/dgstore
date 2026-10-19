@@ -12,7 +12,7 @@ Artisan::command('inspire', function () {
 Schedule::command('reservations:process-expired')->dailyAt('00:05');
 Schedule::command('finance:mark-overdue')->dailyAt('00:10');
 Schedule::command('sessions:prune')->dailyAt('01:00');
-Schedule::command('crm:check-overdue-deals')->hourly();
+Schedule::command('crm:check-overdue-deals')->hourly()->when(fn () => config('crm.pipeline_enabled'));
 Schedule::command('imports:check-delayed')->dailyAt('08:05');
 Schedule::command('news:fetch-apple')->hourly();
 Schedule::command('db:backup')->dailyAt('03:00');
@@ -21,5 +21,5 @@ Schedule::command('dollar:reset')->dailyAt('00:01');
 Schedule::command('dollar:fetch-cp')->everyThirtyMinutes();
 Schedule::command('radar:fetch-prices')->hourly();
 Schedule::command('purchase-requests:expire')->hourly();
-Schedule::command('whatsapp:process-media --limit=20')->everyFiveMinutes();
+Schedule::command('whatsapp:process-media --limit=20')->everyFiveMinutes()->when(fn () => config('crm.pipeline_enabled'));
 Schedule::command('whatsapp:enrich-customers --limit=10')->everyThirtyMinutes();
