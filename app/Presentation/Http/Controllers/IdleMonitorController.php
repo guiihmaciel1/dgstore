@@ -109,7 +109,7 @@ class IdleMonitorController extends Controller
         ]);
 
         try {
-            $startedAt = \Carbon\Carbon::parse($validated['started_at'])->format('H:i');
+            $startedAt = \Carbon\Carbon::parse($validated['started_at'])->setTimezone('America/Sao_Paulo')->format('H:i');
 
             $message = "⚠️ *Sistema* está inativo há *{$validated['idle_minutes']}min*\n"
                      . "Popup sem resposta desde {$startedAt}\n"
@@ -144,8 +144,8 @@ class IdleMonitorController extends Controller
                 'idle_minutes' => $log->idle_minutes,
                 'cumulative_minutes' => $log->cumulative_minutes,
                 'date' => $log->date->format('d/m'),
-                'started_at' => $log->started_at->format('H:i'),
-                'ended_at' => $log->ended_at?->format('H:i'),
+                'started_at' => $log->started_at->setTimezone('America/Sao_Paulo')->format('H:i'),
+                'ended_at' => $log->ended_at?->setTimezone('America/Sao_Paulo')->format('H:i'),
                 'created_at' => $log->created_at->diffForHumans(),
             ]);
 
