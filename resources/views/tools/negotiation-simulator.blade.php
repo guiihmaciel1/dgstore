@@ -45,7 +45,7 @@
                 {{-- Preview da mensagem (direita no desktop, sticky) --}}
                 <div class="order-2 lg:sticky lg:top-6 space-y-3">
                     @include('tools.negotiation._message-preview')
-                    @if(auth()->user()->canViewFinancials())
+                    @if(auth()->user()->canViewOwnCommissions())
                         @include('tools.negotiation._commission-preview')
                     @endif
                 </div>
@@ -92,6 +92,7 @@
                 return groups;
             },
             canViewFinancials: {{ auth()->user()->canViewFinancials() ? 'true' : 'false' }},
+            canViewCommissions: {{ auth()->user()->canViewOwnCommissions() ? 'true' : 'false' }},
             toast: '',
             copied: false,
             pixCopied: false,
@@ -564,7 +565,7 @@
                     }
                 }
 
-                if (this.canViewFinancials) {
+                if (this.canViewCommissions) {
                     const ce = this.commissionEstimate;
                     if (ce.total > 0) {
                         lines.push('');

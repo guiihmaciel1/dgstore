@@ -119,6 +119,11 @@ class User extends Authenticatable
         return !$this->isIntern();
     }
 
+    public function canViewOwnCommissions(): bool
+    {
+        return true;
+    }
+
     public function isActive(): bool
     {
         return $this->active;
