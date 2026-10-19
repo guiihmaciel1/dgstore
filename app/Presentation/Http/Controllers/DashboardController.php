@@ -416,7 +416,7 @@ class DashboardController extends Controller
             ];
         }
 
-        usort($colors, fn ($a, $b) => $a['price'] <=> $b['price']);
+        usort($colors, fn ($a, $b) => $b['price'] <=> $a['price']);
 
         return $colors;
     }
