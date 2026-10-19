@@ -88,13 +88,14 @@ class NegotiationController extends Controller
 
     private function buildQuickValues(): array
     {
+        $colorNames = MarketingPrice::COLORS;
         $prices = MarketingPrice::active()->ordered()->get();
 
         $grouped = $prices->groupBy(function ($p) {
             return trim($p->name . ' ' . ($p->storage ?? ''));
         });
 
-        return $grouped->map(function ($items, $key) {
+        return $grouped->map(function ($items, $key) use ($colorNames) {
             $modelBase = trim($items->first()->name ?? '');
 
             if ($items->count() === 1 && (! $items->first()->color || $items->first()->color === 'Todas')) {
@@ -106,17 +107,45 @@ class NegotiationController extends Controller
                 ];
             }
 
-            $variants = $items->map(function ($item) {
-                return [
-                    'label' => $item->color ?? 'Padrão',
-                    'color' => $item->color_hex ?: '#cccccc',
-                    'value' => (float) $item->price,
-                    'cost_price' => (float) ($item->cost_price ?? 0),
-                ];
-            })->values()->toArray();
+            $variants = $this->buildGroupedVariants($items, $colorNames);
 
             return ['name' => $key, 'model_base' => $modelBase, 'value' => 0, 'variants' => $variants];
         })->values()->toArray();
+    }
+
+    /**
+     * Agrupa variantes de cor com mesmo preço em "Cor A | Cor B".
+     */
+    private function buildGroupedVariants(\Illuminate\Support\Collection $items, array $colorNames): array
+    {
+        $resolved = $items->map(function ($item) use ($colorNames) {
+            $colorLabel = $item->color;
+            if (!$colorLabel && $item->color_hex) {
+                $colorLabel = $colorNames[$item->color_hex] ?? null;
+            }
+
+            return [
+                'label' => $colorLabel ?: 'Sem cor',
+                'color' => $item->color_hex ?: '#cccccc',
+                'value' => (float) $item->price,
+                'cost_price' => (float) ($item->cost_price ?? 0),
+            ];
+        });
+
+        $byPrice = $resolved->groupBy('value');
+
+        return $byPrice->map(function ($group) {
+            $labels = $group->pluck('label')->unique()->values()->toArray();
+            $first = $group->first();
+
+            return [
+                'label' => implode(' | ', $labels),
+                'color' => $first['color'],
+                'value' => $first['value'],
+                'cost_price' => $first['cost_price'],
+                'colors' => $group->map(fn ($v) => ['label' => $v['label'], 'hex' => $v['color']])->unique('label')->values()->toArray(),
+            ];
+        })->sortByDesc('value')->values()->toArray();
     }
 
     private function buildUsedQuickValues(): array

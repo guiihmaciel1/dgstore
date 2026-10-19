@@ -363,17 +363,16 @@
                                     $rowBg = ($margin !== null && $margin < 0) ? 'rgba(239,68,68,0.06)' : '#1a1a1a';
                                 @endphp
                                 <div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.3rem 0.5rem; background: {{ $rowBg }}; border-radius: 0.375rem; {{ $margin !== null && $margin < 0 ? 'border: 1px solid rgba(239,68,68,0.15);' : '' }}">
-                                    <span style="width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); background: {{ $color['hex'] }};"></span>
-                                    <span style="font-size: 0.7rem; font-weight: 600; color: #a4a4a4; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                        {{ $color['name'] }}
-                                        @if(($color['diff'] ?? null) !== null && $color['diff'] != 0)
-                                            @if($color['diff'] < 0)
-                                                <span style="font-size: 0.5rem; color: #22c55e; font-weight: 700;">▼{{ number_format(abs($color['diff']), 0, ',', '.') }}</span>
-                                            @else
-                                                <span style="font-size: 0.5rem; color: #ef4444; font-weight: 700;">▲{{ number_format($color['diff'], 0, ',', '.') }}</span>
-                                            @endif
+                                    <span style="width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); background: {{ $color['hex'] }};" title="{{ $color['name'] }}"></span>
+                                    @if(($color['diff'] ?? null) !== null && $color['diff'] != 0)
+                                        @if($color['diff'] < 0)
+                                            <span style="font-size: 0.55rem; color: #22c55e; font-weight: 700; flex: 1;">▼{{ number_format(abs($color['diff']), 0, ',', '.') }}</span>
+                                        @else
+                                            <span style="font-size: 0.55rem; color: #ef4444; font-weight: 700; flex: 1;">▲{{ number_format($color['diff'], 0, ',', '.') }}</span>
                                         @endif
-                                    </span>
+                                    @else
+                                        <span style="flex: 1;"></span>
+                                    @endif
                                     <span style="font-size: 0.75rem; font-weight: 700; color: #e3e3e3; font-variant-numeric: tabular-nums; width: 55px; text-align: right;">
                                         {{ number_format($color['price'], 0, ',', '.') }}
                                     </span>

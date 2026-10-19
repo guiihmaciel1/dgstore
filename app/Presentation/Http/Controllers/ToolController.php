@@ -66,8 +66,9 @@ class ToolController extends Controller
                 'natural' => '#c2a67d', 'titanium' => '#8b8589',
             ];
 
-            $variants = $items->map(function ($item) use ($colorMap) {
-                $label = $item->color ?? 'Padrão';
+            $colorNames = MarketingPrice::COLORS;
+            $variants = $items->map(function ($item) use ($colorMap, $colorNames) {
+                $label = $item->color ?? ($item->color_hex ? ($colorNames[$item->color_hex] ?? null) : null) ?? 'Sem cor';
                 $colorLower = mb_strtolower(trim($label));
                 $hex = '#cccccc';
                 foreach ($colorMap as $keyword => $color) {

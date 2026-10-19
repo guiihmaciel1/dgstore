@@ -38,9 +38,20 @@
                                                     ? 'bg-surface'
                                                     : 'bg-transparent hover:bg-surface-overlay'"
                                                 :title="v.label + ' - R$ ' + fmt(v.value)">
-                                            <span class="w-3.5 h-3.5 rounded-full border-2 shrink-0"
-                                                  :style="'background:' + v.color"
-                                                  :class="isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'border-white' : 'border-border-strong'"></span>
+                                            <template x-if="!v.colors || v.colors.length <= 1">
+                                                <span class="w-3.5 h-3.5 rounded-full border-2 shrink-0"
+                                                      :style="'background:' + v.color"
+                                                      :class="isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'border-white' : 'border-border-strong'"></span>
+                                            </template>
+                                            <template x-if="v.colors && v.colors.length > 1">
+                                                <span class="flex -space-x-1">
+                                                    <template x-for="(c, ci) in v.colors" :key="ci">
+                                                        <span class="w-3 h-3 rounded-full border-2 shrink-0"
+                                                              :style="'background:' + c.hex"
+                                                              :class="isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'border-white' : 'border-border-strong'"></span>
+                                                    </template>
+                                                </span>
+                                            </template>
                                             <span class="text-[11px] font-semibold"
                                                   :class="isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'text-white' : 'text-dg-500'"
                                                   x-text="fmt(v.value)"></span>
