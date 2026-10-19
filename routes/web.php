@@ -102,10 +102,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ----------------------------------------------------------------
     // Monitor de Inatividade
     // ----------------------------------------------------------------
-    Route::post('/api/idle-monitor/dismiss', [IdleMonitorController::class, 'dismiss'])->name('idle-monitor.dismiss');
-    Route::get('/api/idle-monitor/alert', [IdleMonitorController::class, 'alert'])->name('idle-monitor.alert');
-    Route::get('/api/idle-monitor/notifications', [IdleMonitorController::class, 'notifications'])->name('idle-monitor.notifications');
-    Route::post('/api/idle-monitor/mark-read', [IdleMonitorController::class, 'markRead'])->name('idle-monitor.mark-read');
+    Route::middleware('role:intern')->prefix('api/idle')->group(function () {
+        Route::post('/dismiss', [IdleMonitorController::class, 'dismiss'])->name('idle-monitor.dismiss');
+        Route::post('/alert', [IdleMonitorController::class, 'alert'])->name('idle-monitor.alert');
+    });
+
+    Route::middleware('role:admin_geral')->group(function () {
+        Route::get('/api/idle/notifications', [IdleMonitorController::class, 'notifications'])->name('idle-monitor.notifications');
+        Route::post('/api/idle/notifications/read', [IdleMonitorController::class, 'markRead'])->name('idle-monitor.mark-read');
+    });
 
     // ----------------------------------------------------------------
     // Simulações — acessível por todos os perfis autenticados

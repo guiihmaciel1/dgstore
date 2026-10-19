@@ -1,5 +1,5 @@
 {{-- Idle Monitor — detecção de inatividade para interns --}}
-{{-- Popup estilo Netflix "Você ainda está aí?" --}}
+{{-- Popup estilo Netflix "Tem alguém aí?" --}}
 @auth
 @if(auth()->user()->isIntern() && Route::has('idle-monitor.dismiss'))
 
@@ -35,7 +35,7 @@
         </div>
 
         <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">
-            Você ainda está aí?
+            Tem alguém aí?
         </h2>
         <p style="font-size: 0.9rem; color: #818181; margin-bottom: 0.25rem;">
             Detectamos que você está inativa há
@@ -46,7 +46,7 @@
             margin-bottom: 0.5rem;
         ">00:00</div>
 
-        {{-- Cumulative warning (shown when >= 30min total) --}}
+        {{-- Cumulative warning --}}
         <div id="idle-cumulative-warning" style="
             display: none;
             background: rgba(239,68,68,0.1);
@@ -79,7 +79,7 @@
             <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
             </svg>
-            Estou aqui!
+            Sim, estou aqui!
         </button>
     </div>
 </div>
@@ -97,15 +97,21 @@
 
 <script>
 (function() {
-    const IDLE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
-    const TICK_INTERVAL_MS  = 1000;
+    const IDLE_THRESHOLD_MS   = 10 * 60 * 1000; // 10 minutes to show popup
+    const ALERT_AFTER_MS      = 5 * 60 * 1000;  // 5 min without response → alert
+    const ALERT_REPEAT_MS     = 5 * 60 * 1000;  // repeat alert every 5 min
+    const TICK_INTERVAL_MS    = 1000;
+    const THROTTLE_MS         = 30000;           // throttle activity listeners
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content;
 
     let lastActivity = Date.now();
     let idleStart = null;
     let isIdle = false;
     let tickTimer = null;
-    let cumulativeToday = 0;
+    let alertTimer = null;
+    let alertRepeatTimer = null;
+    let alertSentThisSession = false;
+    let lastThrottledEvent = 0;
 
     const overlay   = document.getElementById('idle-overlay');
     const timerEl   = document.getElementById('idle-timer');
@@ -114,8 +120,10 @@
     const iconCont  = document.getElementById('idle-icon-container');
 
     function resetActivity() {
-        lastActivity = Date.now();
-        if (!isIdle) return;
+        const now = Date.now();
+        if (now - lastThrottledEvent < THROTTLE_MS) return;
+        lastThrottledEvent = now;
+        lastActivity = now;
     }
 
     ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt => {
@@ -132,38 +140,53 @@
     function showPopup() {
         if (isIdle) return;
         isIdle = true;
+        alertSentThisSession = false;
         idleStart = new Date(Date.now() - IDLE_THRESHOLD_MS);
         overlay.style.display = 'flex';
         document.title = '⏸ Inativa — DG Store';
-
-        fetchCumulative();
 
         tickTimer = setInterval(() => {
             const elapsed = Date.now() - idleStart.getTime();
             timerEl.textContent = formatTime(elapsed);
 
             const totalMin = Math.floor(elapsed / 60000);
-            if (totalMin >= 10) {
+            if (totalMin >= 15) {
                 timerEl.style.color = '#dc2626';
                 iconCont.style.animationDuration = '0.5s';
-            } else if (totalMin >= 5) {
+            } else if (totalMin >= 10) {
                 timerEl.style.color = '#ef4444';
                 iconCont.style.animationDuration = '1s';
             }
         }, TICK_INTERVAL_MS);
+
+        alertTimer = setTimeout(() => {
+            sendAlert();
+            alertRepeatTimer = setInterval(sendAlert, ALERT_REPEAT_MS);
+        }, ALERT_AFTER_MS);
     }
 
-    function fetchCumulative() {
+    function sendAlert() {
+        const idleMinutes = Math.max(1, Math.round((Date.now() - idleStart.getTime()) / 60000));
+
         fetch('{{ route("idle-monitor.alert") }}', {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': CSRF_TOKEN,
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: JSON.stringify({
+                idle_minutes: idleMinutes,
+                started_at: idleStart.toISOString(),
+            }),
         })
         .then(r => r.json())
         .then(data => {
-            cumulativeToday = data.cumulative_minutes || 0;
-            if (cumulativeToday >= 20) {
+            if (data.cumulative_minutes >= 20) {
                 cumWarn.style.display = 'block';
-                cumDisp.textContent = cumulativeToday;
+                cumDisp.textContent = data.cumulative_minutes;
             }
+            alertSentThisSession = true;
         })
         .catch(() => {});
     }
@@ -173,16 +196,19 @@
 
         const idleMinutes = Math.max(1, Math.round((Date.now() - idleStart.getTime()) / 60000));
 
+        clearInterval(tickTimer);
+        clearTimeout(alertTimer);
+        clearInterval(alertRepeatTimer);
+
         overlay.style.display = 'none';
         document.title = document.title.replace('⏸ Inativa — ', '');
-        clearInterval(tickTimer);
-
         timerEl.textContent = '00:00';
         timerEl.style.color = '#ef4444';
         iconCont.style.animationDuration = '2s';
         cumWarn.style.display = 'none';
         isIdle = false;
         lastActivity = Date.now();
+        lastThrottledEvent = 0;
 
         fetch('{{ route("idle-monitor.dismiss") }}', {
             method: 'POST',
