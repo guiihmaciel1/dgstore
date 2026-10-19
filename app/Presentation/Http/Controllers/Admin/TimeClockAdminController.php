@@ -17,7 +17,7 @@ use Illuminate\View\View;
 
 class TimeClockAdminController extends Controller
 {
-    private const EXPECTED_HOURS_PER_DAY = 8;
+    private const EXPECTED_HOURS_PER_DAY = 7;
 
     public function index(Request $request): View
     {
