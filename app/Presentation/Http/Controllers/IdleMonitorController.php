@@ -69,7 +69,7 @@ class IdleMonitorController extends Controller
             'dismissed' => true,
             'alert_sent' => false,
             'started_at' => $validated['started_at'],
-            'ended_at' => now(),
+            'ended_at' => now()->utc(),
         ]);
 
         return response()->json([
@@ -105,7 +105,7 @@ class IdleMonitorController extends Controller
             'dismissed' => false,
             'alert_sent' => true,
             'started_at' => $validated['started_at'],
-            'ended_at' => now(),
+            'ended_at' => now()->utc(),
         ]);
 
         try {
