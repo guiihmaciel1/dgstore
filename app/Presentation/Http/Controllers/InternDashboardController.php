@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controllers;
 use App\Domain\Commission\Models\Commission;
 use App\Domain\Commission\Models\CommissionWithdrawal;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Schedule\Models\Appointment;
@@ -90,6 +91,7 @@ class InternDashboardController extends Controller
             ->first();
 
         $weekSummary = $this->buildWeekSummary($user->id);
+        $phoneSalesGoals = $this->buildPhoneSalesGoals($user->id);
 
         return view('intern.dashboard', compact(
             'user',
@@ -107,7 +109,40 @@ class InternDashboardController extends Controller
             'todayAppointments',
             'nextAppointment',
             'weekSummary',
+            'phoneSalesGoals',
         ));
+    }
+
+    private function buildPhoneSalesGoals(string $userId): array
+    {
+        $monthStart = now()->startOfMonth();
+        $monthEnd = now()->endOfMonth();
+
+        $phoneSalesCount = Sale::with('items.product')
+            ->where('seller_id', $userId)
+            ->whereBetween('sold_at', [$monthStart, $monthEnd])
+            ->where('payment_status', '!=', PaymentStatus::Cancelled)
+            ->get()
+            ->filter(fn (Sale $sale) => $sale->items->contains(
+                fn ($item) => ($item->product?->category ?? null) === ProductCategory::Smartphone
+            ))
+            ->count();
+
+        $goals = [
+            ['target' => 30, 'reward' => 'R$ 100 no Pix', 'emoji' => '💰', 'color' => '#06b6d4'],
+            ['target' => 40, 'reward' => '1 perfume do estoque da loja', 'emoji' => '🌸', 'color' => '#8b5cf6'],
+            ['target' => 50, 'reward' => '1 perfume árabe à escolha', 'emoji' => '✨', 'color' => '#f59e0b'],
+        ];
+
+        return [
+            'phone_sales' => $phoneSalesCount,
+            'goals' => collect($goals)->map(fn ($goal) => [
+                ...$goal,
+                'reached' => $phoneSalesCount >= $goal['target'],
+                'progress' => min(100, round(($phoneSalesCount / $goal['target']) * 100)),
+                'remaining' => max(0, $goal['target'] - $phoneSalesCount),
+            ])->toArray(),
+        ];
     }
 
     private function buildWeekSummary(string $userId): array

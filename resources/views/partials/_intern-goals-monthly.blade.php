@@ -1,8 +1,8 @@
 {{-- Metas Mensais --}}
 <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.5rem;">
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-        <h3 style="font-size: 0.8125rem; font-weight: 600; color: #e2e8f0;">Metas do Mês (Time)</h3>
-        <span style="font-size: 0.6875rem; color: #64748b;">{{ $internStats['combined']['total_sales'] }} vendas até agora</span>
+        <h3 style="font-size: 0.8125rem; font-weight: 600; color: #e2e8f0;">Metas do Mês (Individual)</h3>
+        <span style="font-size: 0.6875rem; color: #64748b;">{{ $internStats['combined']['total_phone_sales'] ?? 0 }} vendas de celulares</span>
     </div>
 
     @foreach($internStats['goals']['monthly'] as $index => $goal)

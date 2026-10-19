@@ -151,6 +151,79 @@
             </div>
             @endif
 
+            {{-- METAS DE VENDAS DE CELULARES --}}
+            @if(!empty($phoneSalesGoals['goals']))
+            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
+                <div style="padding: 0.75rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #1a1a1a; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1rem;">🏆</span>
+                        <h3 style="font-size: 0.875rem; font-weight: 700; color: #e3e3e3;">Premiação do Mês</h3>
+                    </div>
+                    <span style="font-size: 0.75rem; color: #818181; font-weight: 600;">
+                        <strong style="color: #e3e3e3;">{{ $phoneSalesGoals['phone_sales'] }}</strong> celulares vendidos
+                    </span>
+                </div>
+
+                <div style="padding: 1rem 1.25rem;">
+                    @foreach($phoneSalesGoals['goals'] as $index => $goal)
+                        @php
+                            $reached = $goal['reached'];
+                            $barColor = $reached ? '#059669' : $goal['color'];
+                        @endphp
+                        <div style="margin-bottom: {{ $loop->last ? '0' : '1.25rem' }};">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.375rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    @if($reached)
+                                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(5,150,105,0.2);">
+                                            <svg style="width: 12px; height: 12px; color: #059669;" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                        </span>
+                                    @else
+                                        <span style="font-size: 0.9rem;">{{ $goal['emoji'] }}</span>
+                                    @endif
+                                    <div>
+                                        <span style="font-size: 0.8rem; font-weight: 700; color: {{ $reached ? '#059669' : '#e3e3e3' }};">
+                                            {{ $goal['target'] }} vendas
+                                        </span>
+                                        <span style="font-size: 0.7rem; color: #818181; margin-left: 0.375rem;">
+                                            {{ $goal['reward'] }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <span style="font-size: 0.75rem; font-weight: 700; color: {{ $reached ? '#059669' : '#a4a4a4' }}; font-variant-numeric: tabular-nums;">
+                                    {{ $goal['progress'] }}%
+                                </span>
+                            </div>
+
+                            <div style="height: 8px; background: #222222; border-radius: 9999px; overflow: hidden;">
+                                <div style="
+                                    height: 100%;
+                                    border-radius: 9999px;
+                                    background: {{ $barColor }};
+                                    width: {{ $goal['progress'] }}%;
+                                    transition: width 0.5s ease;
+                                    {{ $reached ? 'box-shadow: 0 0 8px rgba(5,150,105,0.4);' : '' }}
+                                "></div>
+                            </div>
+
+                            @if(!$reached && $goal['remaining'] > 0)
+                                <p style="font-size: 0.7rem; color: #666; margin-top: 0.25rem;">
+                                    Faltam <strong style="color: {{ $goal['color'] }};">{{ $goal['remaining'] }}</strong> vendas
+                                </p>
+                            @elseif($reached)
+                                <p style="font-size: 0.7rem; color: #059669; font-weight: 600; margin-top: 0.25rem;">
+                                    ✅ Meta atingida!
+                                </p>
+                            @endif
+                        </div>
+                    @endforeach
+
+                    <p style="font-size: 0.65rem; color: #555; margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.04); text-align: center;">
+                        Contabiliza apenas vendas de celulares · {{ now()->translatedFormat('F Y') }}
+                    </p>
+                </div>
+            </div>
+            @endif
+
             {{-- ANIVERSARIANTES DO MÊS --}}
             @if($birthdayCustomers->count() > 0)
             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">

@@ -14,6 +14,7 @@ use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
 use App\Domain\Marketing\Models\MarketingPrice;
 use App\Domain\Marketing\Models\MarketingUsedListing;
+use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
 use App\Domain\Reservation\Services\ReservationService;
@@ -537,9 +538,9 @@ class DashboardController extends Controller
     {
         return [
             'monthly' => [
-                ['target' => 30, 'reward' => 'Colônia Victoria Secrets para cada'],
-                ['target' => 40, 'reward' => 'Kit Colônia + Creme Victoria Secrets para cada'],
-                ['target' => 50, 'reward' => 'Perfume Árabe para cada'],
+                ['target' => 30, 'reward' => 'R$ 100 no Pix'],
+                ['target' => 40, 'reward' => '1 perfume do estoque da loja'],
+                ['target' => 50, 'reward' => '1 perfume árabe à escolha do nosso catálogo'],
             ],
             'weekly' => [
                 'target' => 10,
@@ -599,10 +600,15 @@ class DashboardController extends Controller
             $totalProfit = (float) $sales->flatMap->items->sum(fn ($item) => $item->item_profit);
             $salesCount = $sales->count();
 
+            $phoneSales = $sales->filter(fn (Sale $sale) => $sale->items->contains(
+                fn ($item) => ($item->product?->category ?? null) === ProductCategory::Smartphone
+            ))->count();
+
             return [
                 'id' => $intern->id,
                 'name' => $intern->name,
                 'sales_count' => $salesCount,
+                'phone_sales_count' => $phoneSales,
                 'total_revenue' => $totalRevenue,
                 'total_profit' => $totalProfit,
                 'commission_earned' => (float) $commissions->sum('commission_amount'),
@@ -618,10 +624,24 @@ class DashboardController extends Controller
         $combinedWeekSales = array_sum(array_column($internsData, 'sales_this_week'));
 
         $goals = $this->getInternGoals();
+
+        $goalsPerIntern = [];
+        foreach ($internsData as $internData) {
+            $phoneSales = $internData['phone_sales_count'];
+            $goalsPerIntern[$internData['id']] = collect($goals['monthly'])->map(fn ($goal) => [
+                ...$goal,
+                'reached' => $phoneSales >= $goal['target'],
+                'progress' => min(100, round(($phoneSales / $goal['target']) * 100)),
+                'current' => $phoneSales,
+            ])->toArray();
+        }
+
+        $combinedPhoneSales = array_sum(array_column($internsData, 'phone_sales_count'));
         $monthlyGoals = collect($goals['monthly'])->map(fn ($goal) => [
             ...$goal,
-            'reached' => $combinedSales >= $goal['target'],
-            'progress' => min(100, round(($combinedSales / $goal['target']) * 100)),
+            'reached' => $combinedPhoneSales >= $goal['target'],
+            'progress' => min(100, round(($combinedPhoneSales / max(1, $goal['target'])) * 100)),
+            'current' => $combinedPhoneSales,
         ])->toArray();
 
         $weeklyGoal = $goals['weekly'];
@@ -688,6 +708,7 @@ class DashboardController extends Controller
             'interns' => $internsData,
             'combined' => [
                 'total_sales' => $combinedSales,
+                'total_phone_sales' => $combinedPhoneSales,
                 'total_revenue' => $combinedRevenue,
                 'total_profit' => $combinedProfit,
                 'total_commission' => $combinedCommission,
@@ -697,6 +718,7 @@ class DashboardController extends Controller
                 'monthly' => $monthlyGoals,
                 'weekly' => $weeklyGoalData,
             ],
+            'goals_per_intern' => $goalsPerIntern,
             'daily_chart' => $dailyChart,
             'sales_detail' => $salesDetail,
         ];
