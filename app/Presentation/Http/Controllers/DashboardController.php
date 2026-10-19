@@ -303,17 +303,37 @@ class DashboardController extends Controller
     }
 
     /**
-     * Extrai preço por cor do último dia de cotação de um modelo.
+     * Extrai preço por cor com variação dia-a-dia.
      */
     private function extractColorPrices(\Illuminate\Support\Collection $matching, string $currentDate, array $colorHexMap): array
     {
+        $dates = $matching->pluck('quoted_at')
+            ->map(fn ($d) => $d->format('Y-m-d'))
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
+
+        $previousDate = null;
+        if (count($dates) >= 2) {
+            $previousDate = $dates[count($dates) - 2];
+        }
+
+        $previousByColor = [];
+        if ($previousDate) {
+            foreach ($matching->filter(fn ($q) => $q->quoted_at->format('Y-m-d') === $previousDate) as $item) {
+                if (preg_match('/\s-\s(.+)$/i', $item->product_name, $m)) {
+                    $previousByColor[mb_strtolower(trim($m[1]))] = (float) $item->unit_price;
+                }
+            }
+        }
+
         $todayItems = $matching->filter(
             fn ($q) => $q->quoted_at->format('Y-m-d') === $currentDate
         );
 
         $colors = [];
         foreach ($todayItems as $item) {
-            $name = mb_strtolower($item->product_name);
             $colorName = null;
 
             if (preg_match('/\s-\s(.+)$/i', $item->product_name, $m)) {
@@ -333,10 +353,15 @@ class DashboardController extends Controller
                 }
             }
 
+            $currentPrice = (float) $item->unit_price;
+            $prevPrice = $previousByColor[$colorLower] ?? null;
+            $colorDiff = $prevPrice !== null ? $currentPrice - $prevPrice : null;
+
             $colors[] = [
                 'name' => $colorName,
                 'hex' => $hex,
-                'price' => (float) $item->unit_price,
+                'price' => $currentPrice,
+                'diff' => $colorDiff,
             ];
         }
 
@@ -425,11 +450,16 @@ class DashboardController extends Controller
             $salePrice = (float) $item->price;
 
             if ($salePrice < $supplierCost) {
-                $colorLabel = $item->color ?: null;
+                $colorLabel = $item->color;
+                if (!$colorLabel && $item->color_hex) {
+                    $colorLabel = MarketingPrice::COLORS[$item->color_hex] ?? null;
+                }
+
                 $alerts[] = [
                     'id' => $item->id,
                     'name' => trim($item->name . ' ' . ($item->storage ?? '')),
                     'color' => $colorLabel,
+                    'color_hex' => $item->color_hex,
                     'sale_price' => $salePrice,
                     'supplier_cost' => $supplierCost,
                     'diff' => round($salePrice - $supplierCost),

@@ -258,11 +258,16 @@
                 <div style="padding: 0.375rem 0.5rem;">
                     @foreach($priceBelowCostAlerts as $alert)
                     <div style="display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.5rem; {{ !$loop->last ? 'border-bottom: 1px solid rgba(255,255,255,0.04);' : '' }}">
-                        <div style="flex: 1; min-width: 0;">
-                            <span style="font-size: 0.8rem; font-weight: 700; color: #e3e3e3;">{{ $alert['name'] }}</span>
-                            @if($alert['color'])
-                                <span style="font-size: 0.65rem; color: #818181; margin-left: 0.25rem;">{{ $alert['color'] }}</span>
+                        <div style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.5rem;">
+                            @if(!empty($alert['color_hex']))
+                                <span style="width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); background: {{ $alert['color_hex'] }};"></span>
                             @endif
+                            <div>
+                                <span style="font-size: 0.8rem; font-weight: 700; color: #e3e3e3;">{{ $alert['name'] }}</span>
+                                @if($alert['color'])
+                                    <span style="font-size: 0.7rem; font-weight: 600; color: #a4a4a4; margin-left: 0.25rem;">{{ $alert['color'] }}</span>
+                                @endif
+                            </div>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
                             <div style="text-align: right;">
@@ -367,6 +372,13 @@
                                 <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; background: #1a1a1a; border-radius: 0.375rem;">
                                     <span style="width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15); background: {{ $color['hex'] }};"></span>
                                     <span style="font-size: 0.7rem; font-weight: 600; color: #a4a4a4; flex: 1;">{{ $color['name'] }}</span>
+                                    @if($color['diff'] !== null && $color['diff'] != 0)
+                                        @if($color['diff'] < 0)
+                                            <span style="font-size: 0.55rem; font-weight: 700; color: #22c55e;">▼{{ number_format(abs($color['diff']), 0, ',', '.') }}</span>
+                                        @else
+                                            <span style="font-size: 0.55rem; font-weight: 700; color: #ef4444;">▲{{ number_format($color['diff'], 0, ',', '.') }}</span>
+                                        @endif
+                                    @endif
                                     <span style="font-size: 0.75rem; font-weight: 700; color: #e3e3e3; font-variant-numeric: tabular-nums;">
                                         {{ number_format($color['price'], 0, ',', '.') }}
                                     </span>

@@ -1021,7 +1021,12 @@
             creativeDate: @json($creativeDate),
             usedSearch: '',
 
-            prices: initialPrices.map((p, i) => ({ ...p, images: p.images || [], _key: 'existing_' + i, _origIdx: i })),
+            prices: initialPrices.map((p, i) => {
+                if (p.color_hex && !p.color && priceColors[p.color_hex]) {
+                    p.color = priceColors[p.color_hex];
+                }
+                return { ...p, images: p.images || [], _key: 'existing_' + i, _origIdx: i };
+            }),
             _priceCounter: initialPrices.length,
 
             imgModal: { open: false, priceIdx: null, uploading: false },
