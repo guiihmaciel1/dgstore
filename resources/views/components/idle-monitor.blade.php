@@ -182,6 +182,15 @@
         })
         .then(r => r.json())
         .then(data => {
+            if (data.skipped) {
+                monitorStopped = true;
+                clearInterval(tickTimer);
+                clearTimeout(alertTimer);
+                clearInterval(alertRepeatTimer);
+                overlay.style.display = 'none';
+                isIdle = false;
+                return;
+            }
             if (data.cumulative_minutes >= 20) {
                 cumWarn.style.display = 'block';
                 cumDisp.textContent = data.cumulative_minutes;
@@ -221,22 +230,38 @@
                 idle_minutes: idleMinutes,
                 started_at: idleStart.toISOString(),
             }),
-        }).catch(() => {});
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.skipped) {
+                monitorStopped = true;
+            }
+        })
+        .catch(() => {});
     };
+
+    let monitorStopped = false;
+
+    function isOutsideWorkHours() {
+        const now = new Date();
+        const h = now.getHours();
+        const m = now.getMinutes();
+        const time = h * 60 + m;
+        // Before 9:00 or after 16:20 (small margin after typical clock_out)
+        return time < 540 || time > 980;
+    }
 
     function isLunchBreak() {
         const now = new Date();
         const h = now.getHours();
         const m = now.getMinutes();
         const time = h * 60 + m;
-        // Pause between 12:45 and 14:15 to cover typical lunch window
         return time >= 765 && time <= 855;
     }
 
     setInterval(() => {
-        if (isIdle) return;
-        if (isLunchBreak()) {
-            // Reset activity so we don't trigger right after lunch
+        if (isIdle || monitorStopped) return;
+        if (isOutsideWorkHours() || isLunchBreak()) {
             lastActivity = Date.now();
             return;
         }

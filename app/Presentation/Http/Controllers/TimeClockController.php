@@ -30,6 +30,13 @@ class TimeClockController extends Controller
             }
         }
 
+        $alreadyExists = TimeClockEntry::getTodayEntries($user->id)
+            ->contains('type', $nextType);
+
+        if ($alreadyExists) {
+            return back()->with('error', 'Este ponto já foi registrado.');
+        }
+
         TimeClockEntry::create([
             'user_id' => $user->id,
             'type' => $nextType,

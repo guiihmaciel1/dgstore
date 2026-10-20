@@ -32,6 +32,12 @@ class IdleMonitorController extends Controller
         }
 
         $todayEntries = TimeClockEntry::getTodayEntries($userId);
+
+        $clockOut = $todayEntries->firstWhere('type', TimeClockEntry::TYPE_CLOCK_OUT);
+        if ($clockOut) {
+            return false;
+        }
+
         $lunchOut = $todayEntries->firstWhere('type', TimeClockEntry::TYPE_LUNCH_OUT);
         $lunchIn = $todayEntries->firstWhere('type', TimeClockEntry::TYPE_LUNCH_IN);
 
