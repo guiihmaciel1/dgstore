@@ -27,7 +27,7 @@ class WhatsAppQuotationService
 
         $supplier = $this->findSupplierByPhone($fromPhone);
         if (!$supplier) {
-            Log::info('WhatsAppQuotation: mensagem REPASSE ignorada - telefone sem fornecedor', [
+            Log::info('WhatsAppQuotation: cotação ignorada - telefone sem fornecedor cadastrado', [
                 'phone' => $fromPhone,
             ]);
             return false;
@@ -37,11 +37,22 @@ class WhatsAppQuotationService
     }
 
     /**
-     * Verifica se a mensagem contém palavra-chave de cotação.
+     * Verifica se a mensagem é uma cotação de fornecedor.
+     * Reconhece pela palavra "REPASSE" ou pelo padrão estrutural:
+     * modelos de iPhone/Apple + preços numéricos + indicadores ❌.
      */
     private function isQuotationMessage(string $body): bool
     {
-        return (bool) preg_match('/\bREPASSE\b/iu', $body);
+        if (preg_match('/\bREPASSE\b/iu', $body)) {
+            return true;
+        }
+
+        $hasProducts = preg_match('/\b(?:iPhone|pro\s*max|Airpods?|Apple\s*Watch|Mac\s*Book|iPad)\b/iu', $body);
+        $hasPrices = preg_match('/\*?\d{1,3}(?:\.\d{3})+\*?/u', $body);
+        $hasColorLines = preg_match_all('/(?:AZUL|BORDO|BRANCO|PRETO|WHITE|BLACK|SILVER|LARANJA|ROSE|BLUE|GOLD|MIDNIGHT|SAGE|LAVENDER)/iu', $body);
+        $hasUnavailable = str_contains($body, '❌');
+
+        return $hasProducts && $hasPrices && $hasColorLines >= 3 && $hasUnavailable;
     }
 
     /**
@@ -72,7 +83,7 @@ class WhatsAppQuotationService
         $items = $parser->parse($messageBody);
 
         if (empty($items)) {
-            Log::warning('WhatsAppQuotation: REPASSE detectado mas parser não extraiu itens', [
+            Log::warning('WhatsAppQuotation: cotação detectada mas parser não extraiu itens', [
                 'supplier' => $supplier->name,
             ]);
             return false;
@@ -100,7 +111,7 @@ class WhatsAppQuotationService
                     'quantity' => 1,
                     'unit' => 'un',
                     'category' => $item['category'] ?: null,
-                    'notes' => 'Importado via WhatsApp REPASSE',
+                    'notes' => 'Importado via WhatsApp',
                     'user_id' => $adminUserId,
                 ]
             );
