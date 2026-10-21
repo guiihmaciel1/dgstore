@@ -292,7 +292,7 @@ class DashboardController extends Controller
         $sevenDaysAgo = $today->copy()->subDays(7);
 
         $allQuotations = Quotation::where('supplier_id', $supplierId)
-            ->where('notes', 'Importado via WhatsApp REPASSE')
+            ->where('notes', 'like', 'Importado via WhatsApp%')
             ->whereDate('quoted_at', '>=', $sevenDaysAgo)
             ->get(['product_name', 'unit_price', 'quoted_at']);
 
@@ -433,7 +433,7 @@ class DashboardController extends Controller
             return [];
         }
 
-        $latestQuotations = Quotation::where('notes', 'Importado via WhatsApp REPASSE')
+        $latestQuotations = Quotation::where('notes', 'like', 'Importado via WhatsApp%')
             ->whereDate('quoted_at', '>=', today()->subDays(7))
             ->get(['product_name', 'unit_price', 'quoted_at']);
 
