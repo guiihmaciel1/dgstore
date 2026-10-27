@@ -297,15 +297,18 @@
             <div style="margin-bottom: 1rem;">
                 @foreach($supplierQuoteInfo as $quote)
                 <div style="background: #141414; border: 1px solid rgba(37,211,102,0.15); border-radius: 0.75rem; overflow: hidden;">
-                    {{-- Header --}}
-                    <a href="{{ route('quotations.index', ['supplier_id' => $quote['supplier_id']]) }}"
-                       style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.06);"
-                       onmouseover="this.style.background='rgba(37,211,102,0.04)'" onmouseout="this.style.background='transparent'">
-                        <div style="width: 1.75rem; height: 1.75rem; background: rgba(37,211,102,0.12); border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    {{-- Header com toggle --}}
+                    <div style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer;"
+                         onclick="toggleQuoteAccordion(this)"
+                         onmouseover="this.style.background='rgba(37,211,102,0.04)'" onmouseout="this.style.background='transparent'">
+                        <a href="{{ route('quotations.index', ['supplier_id' => $quote['supplier_id']]) }}"
+                           onclick="event.stopPropagation()"
+                           style="width: 1.75rem; height: 1.75rem; background: rgba(37,211,102,0.12); border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; text-decoration: none;"
+                           title="Ver todas as cotações">
                             <svg style="width: 0.875rem; height: 0.875rem; color: #25D366;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                             </svg>
-                        </div>
+                        </a>
                         <div style="flex: 1; min-width: 0;">
                             <span style="font-size: 0.75rem; font-weight: 700; color: #25D366;">Cotação {{ $quote['supplier_name'] }}</span>
                             <span style="font-size: 0.65rem; color: #555; margin-left: 0.5rem;">
@@ -313,14 +316,14 @@
                                 · {{ $quote['items_count'] }} itens
                             </span>
                         </div>
-                        <svg style="width: 0.75rem; height: 0.75rem; color: #444;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        <svg class="quote-chevron" style="width: 0.75rem; height: 0.75rem; color: #444; transition: transform 0.2s ease;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
-                    </a>
+                    </div>
 
-                    {{-- Cards de modelos --}}
+                    {{-- Cards de modelos (colapsável) --}}
                     @if(!empty($quote['tracked_models']))
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1px; background: rgba(255,255,255,0.04);">
+                    <div class="quote-accordion-body" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1px; background: rgba(255,255,255,0.04); transition: max-height 0.3s ease; overflow: hidden;">
                         @foreach($quote['tracked_models'] as $model)
                         <div style="background: #141414; padding: 0.75rem 0.875rem;">
                             {{-- Cabeçalho do modelo --}}
@@ -1328,6 +1331,30 @@
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        function toggleQuoteAccordion(header) {
+            const container = header.closest('div[style*="border-radius: 0.75rem"]');
+            const body = container.querySelector('.quote-accordion-body');
+            const chevron = header.querySelector('.quote-chevron');
+            if (!body) return;
+
+            const isHidden = body.style.display === 'none';
+            body.style.display = isHidden ? 'grid' : 'none';
+            chevron.style.transform = isHidden ? '' : 'rotate(-90deg)';
+
+            localStorage.setItem('dg_quote_accordion', isHidden ? 'open' : 'closed');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const saved = localStorage.getItem('dg_quote_accordion');
+            if (saved === 'closed') {
+                document.querySelectorAll('.quote-accordion-body').forEach(function(body) {
+                    body.style.display = 'none';
+                    const chevron = body.closest('div[style*="border-radius: 0.75rem"]').querySelector('.quote-chevron');
+                    if (chevron) chevron.style.transform = 'rotate(-90deg)';
+                });
+            }
+        });
+
         // Atalho F2 para Nova Venda
         document.addEventListener('keydown', function(e) {
             if (e.key === 'F2') {
