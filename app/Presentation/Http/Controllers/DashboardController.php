@@ -268,6 +268,7 @@ class DashboardController extends Controller
     private function getTrackedModelPrices(string $supplierId): array
     {
         $patterns = [
+            // iPhones
             '18 Pro Max 512' => ['18 pro max 512gb', 'IPHONE 18 PRO MAX 512GB'],
             '18 Pro Max 256' => ['18 pro max 256gb', 'IPHONE 18 PRO MAX 256GB'],
             '18 Pro Max 1TB' => ['18 pro max 1tb', 'IPHONE 18 PRO MAX 1TB'],
@@ -279,6 +280,22 @@ class DashboardController extends Controller
             '17 Pro Max 2TB' => ['IPHONE 17 PRO MAX 2TB'],
             '17 Pro 256'     => ['iPhone 17 Pro 256gb', '17 pro 256gb', 'IPHONE 17 PRO 256GB'],
             '17 256'         => ['iPhone 17 256gb', '17 256gb', 'IPHONE 17 256GB'],
+            '16 128'         => ['IPHONE 16 128GB'],
+            // AirPods
+            'AirPods 4'     => ['Airpods 4', '4 MXP63LL/A'],
+            'AirPods 4 ANC' => ['Airpods 4 c/ ANC', '4 MXP93LL/A'],
+            'AirPods Pro'   => ['Airpods Pro 3', '5 MKFW4LL/A'],
+            // Apple Watch
+            'Watch Ultra 4' => ['Apple Watch ULTRA 4', 'ULTRA 4 49MM'],
+            'Watch Ultra 3' => ['Apple Watch ULTRA 3', 'ULTRA 3 49MM'],
+            'Watch S11'     => ['Apple Watch S11', 'S11 46MM'],
+            'Watch SE3'     => ['Apple Watch SE 3', 'SE3 40MM'],
+            // iPad
+            'iPad 11'       => ['IPAD 11 A16', 'APPLE IPAD 11'],
+            // MacBook
+            'MacBook Air M5'  => ['AIR M5 13'],
+            'MacBook Neo'     => ['Mac Book NEO', 'NEO A18 PRO'],
+            'MacBook Pro M5'  => ['PRO M5 14'],
         ];
 
         $colorHexMap = [
@@ -305,6 +322,14 @@ class DashboardController extends Controller
             'sky blue' => '#87ceeb',
             'citrus' => '#c8cc5d',
             'space black' => '#1c1c1e',
+            'rose gold' => '#e8b4b8', 'light blush' => '#e8b4b8',
+            'yellow' => '#fbbf24', 'amarelo' => '#fbbf24',
+            'silver' => '#c0c0c0', 'prata' => '#c0c0c0',
+            'alpine' => '#8b6914',
+            'ocean' => '#1e3a5f',
+            'titanium' => '#8a8a8a', 'natural titanium' => '#c2a67d',
+            'índigo' => '#4b0082', 'indigo' => '#4b0082',
+            'bush' => '#2d5a27',
         ];
 
         $today = today();
@@ -324,9 +349,9 @@ class DashboardController extends Controller
                 $nameLower = mb_strtolower($q->product_name);
                 foreach ($prefixList as $prefix) {
                     $prefixLower = mb_strtolower($prefix);
-                    if (str_starts_with($nameLower, $prefixLower . ' -')
-                        || str_starts_with($nameLower, $prefixLower . ' ')
-                        || $nameLower === $prefixLower) {
+                    if (str_starts_with($nameLower, $prefixLower)
+                        && ($nameLower === $prefixLower
+                            || !ctype_alnum(mb_substr($nameLower, mb_strlen($prefixLower), 1)))) {
                         return true;
                     }
                 }
@@ -392,15 +417,35 @@ class DashboardController extends Controller
             $previousDate = $dates[count($dates) - 2];
         }
 
+        $extractColor = function (string $productName) use ($colorHexMap): ?string {
+            // Format BR: "modelo - COR"
+            if (preg_match('/\s-\s([^$\d]+)$/i', $productName, $m)) {
+                return trim($m[1]);
+            }
+            // Format PY iPhone: "IPHONE 18 PRO MAX 512GB GLACIER"
+            if (preg_match('/\d+(?:GB|TB)\s+([A-Za-z][\w\s]+?)(?:\s+\w{4,}\d\w+\/\w)?$/i', $productName, $m)) {
+                $candidate = trim(preg_replace('/\s*\w{5,}\d\w*\/\w.*$/', '', $m[1]));
+                if ($candidate !== '' && !preg_match('/^\d/', $candidate)) {
+                    return $candidate;
+                }
+            }
+            // Format PY AirPods: "4 MXP63LL/A WHITE"
+            if (preg_match('/\b[A-Z]{2,}\d[\w]+\/\w\s+(.+)$/i', $productName, $m)) {
+                return trim($m[1]);
+            }
+            // Last word fallback for known colors
+            $words = preg_split('/\s+/', $productName);
+            $lastWord = mb_strtolower(end($words));
+            if (isset($colorHexMap[$lastWord])) {
+                return end($words);
+            }
+            return null;
+        };
+
         $previousByColor = [];
         if ($previousDate) {
             foreach ($matching->filter(fn ($q) => $q->quoted_at->format('Y-m-d') === $previousDate) as $item) {
-                $prevColor = null;
-                if (preg_match('/\s-\s(.+)$/i', $item->product_name, $m)) {
-                    $prevColor = trim($m[1]);
-                } elseif (preg_match('/\d+(?:GB|TB)\s+(.+)$/i', $item->product_name, $m)) {
-                    $prevColor = trim($m[1]);
-                }
+                $prevColor = $extractColor($item->product_name);
                 if ($prevColor) {
                     $previousByColor[mb_strtolower($prevColor)] = (float) $item->unit_price;
                 }
@@ -413,18 +458,10 @@ class DashboardController extends Controller
 
         $colors = [];
         foreach ($todayItems as $item) {
-            $colorName = null;
-
-            if (preg_match('/\s-\s(.+)$/i', $item->product_name, $m)) {
-                $colorName = trim($m[1]);
-            }
-
-            if (!$colorName && preg_match('/\d+(?:GB|TB)\s+(.+)$/i', $item->product_name, $m)) {
-                $colorName = trim($m[1]);
-            }
+            $colorName = $extractColor($item->product_name);
 
             if (!$colorName) {
-                continue;
+                $colorName = $item->product_name;
             }
 
             $hex = '#6b7280';
