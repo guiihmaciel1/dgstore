@@ -324,7 +324,16 @@
                     {{-- Cards de modelos (colapsável) --}}
                     @if(!empty($quote['tracked_models']))
                     <div class="quote-accordion-body" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1px; background: rgba(255,255,255,0.04); transition: max-height 0.3s ease; overflow: hidden;">
+                        @php $currentGroup = null; @endphp
                         @foreach($quote['tracked_models'] as $model)
+                        @if(($model['group'] ?? null) !== $currentGroup)
+                            @php $currentGroup = $model['group'] ?? null; @endphp
+                            @if($currentGroup)
+                            <div style="grid-column: 1 / -1; padding: 0.375rem 0.875rem; background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.08);">
+                                <span style="font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.08em;">{{ $currentGroup }}</span>
+                            </div>
+                            @endif
+                        @endif
                         <div style="background: #141414; padding: 0.75rem 0.875rem;">
                             {{-- Cabeçalho do modelo --}}
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">

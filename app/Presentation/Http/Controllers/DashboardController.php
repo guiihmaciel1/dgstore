@@ -269,36 +269,36 @@ class DashboardController extends Controller
     {
         $patterns = [
             // iPhones
-            '18 Pro Max 512' => ['18 pro max 512gb', 'IPHONE 18 PRO MAX 512GB'],
-            '18 Pro Max 256' => ['18 pro max 256gb', 'IPHONE 18 PRO MAX 256GB'],
-            '18 Pro Max 1TB' => ['18 pro max 1tb', 'IPHONE 18 PRO MAX 1TB'],
-            '18 Pro 256'     => ['18 pro 256gb', 'IPHONE 18 PRO 256GB'],
-            '18 Pro 512'     => ['18 pro 512gb', 'IPHONE 18 PRO 512GB'],
-            '18 Pro 1TB'     => ['18 pro 1tb', 'IPHONE 18 PRO 1TB'],
-            '17 Pro Max 512' => ['iPhone 17 Pro Max 512gb', '17 pro max 512gb', 'IPHONE 17 PRO MAX 512GB'],
-            '17 Pro Max 256' => ['iPhone 17 Pro Max 256gb', '17 pro max 256gb', 'IPHONE 17 PRO MAX 256GB'],
-            '17 Pro Max 2TB' => ['IPHONE 17 PRO MAX 2TB'],
-            '17 Pro 256'     => ['iPhone 17 Pro 256gb', '17 pro 256gb', 'IPHONE 17 PRO 256GB'],
-            '17 256'         => ['iPhone 17 256gb', '17 256gb', 'IPHONE 17 256GB'],
-            '16 128'         => ['IPHONE 16 128GB'],
-            // AirPods
-            'AirPods 4'     => ['Airpods 4', '4 MXP63LL/A'],
-            'AirPods 4 ANC' => ['Airpods 4 c/ ANC', '4 MXP93LL/A'],
-            'AirPods Pro 3' => ['Airpods Pro 3', '5 MKFW4LL/A'],
-            // Apple Pencil
-            'Pencil USB-C'  => ['APPLE PENCIL MUWA3AM/A'],
-            'Pencil Pro'    => ['APPLE PENCIL PRO MX2D3AM/A'],
-            // Apple Watch
-            'Watch Ultra 4 49mm' => ['Apple Watch ULTRA 4', 'ULTRA 4 49MM'],
-            'Watch Ultra 3 49mm' => ['Apple Watch ULTRA 3', 'ULTRA 3 49MM'],
-            'Watch S11 46mm'     => ['Apple Watch S11', 'S11 46MM'],
-            'Watch SE3 40mm'     => ['Apple Watch SE 3', 'SE3 40MM'],
-            // iPad
-            'iPad 11 128GB'      => ['IPAD 11 A16 128', 'APPLE IPAD 11 128GB'],
+            '18 Pro Max 512' => ['group' => 'iPhone', 'prefixes' => ['18 pro max 512gb', 'IPHONE 18 PRO MAX 512GB']],
+            '18 Pro Max 256' => ['group' => 'iPhone', 'prefixes' => ['18 pro max 256gb', 'IPHONE 18 PRO MAX 256GB']],
+            '18 Pro Max 1TB' => ['group' => 'iPhone', 'prefixes' => ['18 pro max 1tb', 'IPHONE 18 PRO MAX 1TB']],
+            '18 Pro 256'     => ['group' => 'iPhone', 'prefixes' => ['18 pro 256gb', 'IPHONE 18 PRO 256GB']],
+            '18 Pro 512'     => ['group' => 'iPhone', 'prefixes' => ['18 pro 512gb', 'IPHONE 18 PRO 512GB']],
+            '18 Pro 1TB'     => ['group' => 'iPhone', 'prefixes' => ['18 pro 1tb', 'IPHONE 18 PRO 1TB']],
+            '17 Pro Max 512' => ['group' => 'iPhone', 'prefixes' => ['iPhone 17 Pro Max 512gb', '17 pro max 512gb', 'IPHONE 17 PRO MAX 512GB']],
+            '17 Pro Max 256' => ['group' => 'iPhone', 'prefixes' => ['iPhone 17 Pro Max 256gb', '17 pro max 256gb', 'IPHONE 17 PRO MAX 256GB']],
+            '17 Pro Max 2TB' => ['group' => 'iPhone', 'prefixes' => ['IPHONE 17 PRO MAX 2TB']],
+            '17 Pro 256'     => ['group' => 'iPhone', 'prefixes' => ['iPhone 17 Pro 256gb', '17 pro 256gb', 'IPHONE 17 PRO 256GB']],
+            '17 256'         => ['group' => 'iPhone', 'prefixes' => ['iPhone 17 256gb', '17 256gb', 'IPHONE 17 256GB']],
+            '16 128'         => ['group' => 'iPhone', 'prefixes' => ['IPHONE 16 128GB']],
             // MacBook
-            'Air M5 13" 16+512'    => ['AIR M5 13'],
-            'Neo A18 Pro 13" 8+512' => ['Mac Book NEO', 'NEO A18 PRO'],
-            'Pro M5 14" 24+1TB'     => ['PRO M5 14'],
+            'Pro M5 14" 24+1TB'     => ['group' => 'Mac', 'prefixes' => ['PRO M5 14']],
+            'Air M5 13" 16+512'     => ['group' => 'Mac', 'prefixes' => ['AIR M5 13']],
+            'Neo A18 Pro 13" 8+512' => ['group' => 'Mac', 'prefixes' => ['Mac Book NEO', 'NEO A18 PRO']],
+            // iPad
+            'iPad 11 128GB'         => ['group' => 'iPad', 'prefixes' => ['IPAD 11 A16 128', 'APPLE IPAD 11 128GB']],
+            // Apple Watch
+            'Watch Ultra 4 49mm'    => ['group' => 'Watch', 'prefixes' => ['Apple Watch ULTRA 4', 'ULTRA 4 49MM']],
+            'Watch Ultra 3 49mm'    => ['group' => 'Watch', 'prefixes' => ['Apple Watch ULTRA 3', 'ULTRA 3 49MM']],
+            'Watch S11 46mm'        => ['group' => 'Watch', 'prefixes' => ['Apple Watch S11', 'S11 46MM']],
+            'Watch SE3 40mm'        => ['group' => 'Watch', 'prefixes' => ['Apple Watch SE 3', 'SE3 40MM']],
+            // AirPods
+            'AirPods Pro 3'         => ['group' => 'AirPods', 'prefixes' => ['Airpods Pro 3', '5 MKFW4LL/A']],
+            'AirPods 4 ANC'         => ['group' => 'AirPods', 'prefixes' => ['Airpods 4 c/ ANC', '4 MXP93LL/A']],
+            'AirPods 4'             => ['group' => 'AirPods', 'prefixes' => ['Airpods 4', '4 MXP63LL/A']],
+            // Apple Pencil
+            'Pencil Pro'            => ['group' => 'Pencil', 'prefixes' => ['APPLE PENCIL PRO MX2D3AM/A']],
+            'Pencil USB-C'          => ['group' => 'Pencil', 'prefixes' => ['APPLE PENCIL MUWA3AM/A']],
         ];
 
         $colorHexMap = [
@@ -345,8 +345,9 @@ class DashboardController extends Controller
 
         $result = [];
 
-        foreach ($patterns as $label => $prefixes) {
-            $prefixList = is_array($prefixes) ? $prefixes : [$prefixes];
+        foreach ($patterns as $label => $config) {
+            $prefixList = $config['prefixes'];
+            $group = $config['group'];
 
             $matching = $allQuotations->filter(function ($q) use ($prefixList) {
                 $nameLower = mb_strtolower($q->product_name);
@@ -390,6 +391,7 @@ class DashboardController extends Controller
 
             $result[] = [
                 'label' => $label,
+                'group' => $group,
                 'current_price' => $currentPrice,
                 'max_price' => $currentMax,
                 'has_color_variation' => $hasColorVariation,
@@ -399,6 +401,17 @@ class DashboardController extends Controller
                 'colors' => $colors,
             ];
         }
+
+        $groupOrder = ['iPhone' => 0, 'Mac' => 1, 'iPad' => 2, 'Watch' => 3, 'AirPods' => 4, 'Pencil' => 5];
+
+        usort($result, function ($a, $b) use ($groupOrder) {
+            $ga = $groupOrder[$a['group']] ?? 99;
+            $gb = $groupOrder[$b['group']] ?? 99;
+            if ($ga !== $gb) {
+                return $ga <=> $gb;
+            }
+            return $b['current_price'] <=> $a['current_price'];
+        });
 
         return $result;
     }
