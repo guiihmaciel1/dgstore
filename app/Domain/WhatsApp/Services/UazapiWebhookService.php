@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\WhatsApp\Services;
 
 use App\Domain\Supplier\Models\Supplier;
+use App\Domain\Supplier\Services\WhatsAppPyQuotationService;
 use App\Domain\Supplier\Services\WhatsAppQuotationService;
 use App\Domain\WhatsApp\Models\WhatsAppMessage;
 use Illuminate\Support\Facades\Log;
@@ -64,8 +65,12 @@ class UazapiWebhookService
         $isGroup = $message['isGroup'] ?? false;
         $chatId = $message['chatid'] ?? $message['key']['remoteJid'] ?? null;
 
-        if ($fromMe || $isGroup || !is_string($chatId)
-            || str_ends_with($chatId, '@g.us') || str_ends_with($chatId, '@newsletter')) {
+        if ($fromMe || !is_string($chatId) || str_ends_with($chatId, '@newsletter')) {
+            return;
+        }
+
+        if ($isGroup || str_ends_with($chatId, '@g.us')) {
+            $this->processGroupMessage($message, $chatId);
             return;
         }
 
@@ -162,6 +167,42 @@ class UazapiWebhookService
             $service->processIfQuotation($fromPhone, $messageBody);
         } catch (\Throwable $e) {
             Log::warning('Erro ao processar cotação de fornecedor', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Processa mensagens de grupo — apenas cotações PY de fornecedores cadastrados.
+     */
+    private function processGroupMessage(array $message, string $chatId): void
+    {
+        $messageBody = $message['text'] ?? $this->extractBody($message);
+
+        if (!is_string($messageBody) || mb_strlen($messageBody) < 100) {
+            return;
+        }
+
+        if (!preg_match('/\$\s*\d+/u', $messageBody)) {
+            return;
+        }
+
+        $pySuppliers = Supplier::active()->where('origin', 'py')->get();
+
+        foreach ($pySuppliers as $supplier) {
+            try {
+                $service = app(WhatsAppPyQuotationService::class);
+                if ($service->processGroupQuotation($supplier, $messageBody)) {
+                    Log::info('UazAPI: cotação PY processada de grupo', [
+                        'supplier' => $supplier->name,
+                        'group' => $chatId,
+                    ]);
+                    return;
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Erro ao processar cotação PY de grupo', [
+                    'supplier' => $supplier->name,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
     }
 

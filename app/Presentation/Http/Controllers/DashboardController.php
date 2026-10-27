@@ -164,9 +164,13 @@ class DashboardController extends Controller
         $labelMap = [
             '18 Pro Max 512' => ['name' => '18 pro max', 'storage' => '512', 'exact' => true],
             '18 Pro Max 256' => ['name' => '18 pro max', 'storage' => '256', 'exact' => true],
+            '18 Pro Max 1TB' => ['name' => '18 pro max', 'storage' => '1tb', 'exact' => true],
             '18 Pro 256'     => ['name' => '18 pro',     'storage' => '256', 'exact' => false, 'exclude' => 'pro max'],
+            '18 Pro 512'     => ['name' => '18 pro',     'storage' => '512', 'exact' => false, 'exclude' => 'pro max'],
+            '18 Pro 1TB'     => ['name' => '18 pro',     'storage' => '1tb', 'exact' => false, 'exclude' => 'pro max'],
             '17 Pro Max 512' => ['name' => '17 pro max', 'storage' => '512', 'exact' => true],
             '17 Pro Max 256' => ['name' => '17 pro max', 'storage' => '256', 'exact' => true],
+            '17 Pro Max 2TB' => ['name' => '17 pro max', 'storage' => '2tb', 'exact' => true],
             '17 Pro 256'     => ['name' => '17 pro',     'storage' => '256', 'exact' => false, 'exclude' => 'pro max'],
             '17 256'         => ['name' => '17',         'storage' => '256', 'exact' => false, 'exclude' => 'pro'],
         ];
@@ -264,13 +268,17 @@ class DashboardController extends Controller
     private function getTrackedModelPrices(string $supplierId): array
     {
         $patterns = [
-            '18 Pro Max 512' => '18 pro max 512gb',
-            '18 Pro Max 256' => '18 pro max 256gb',
-            '18 Pro 256'     => '18 pro 256gb',
-            '17 Pro Max 512' => ['iPhone 17 Pro Max 512gb', '17 pro max 512gb'],
-            '17 Pro Max 256' => ['iPhone 17 Pro Max 256gb', '17 pro max 256gb'],
-            '17 Pro 256'     => ['iPhone 17 Pro 256gb', '17 pro 256gb'],
-            '17 256'         => ['iPhone 17 256gb', '17 256gb'],
+            '18 Pro Max 512' => ['18 pro max 512gb', 'IPHONE 18 PRO MAX 512GB'],
+            '18 Pro Max 256' => ['18 pro max 256gb', 'IPHONE 18 PRO MAX 256GB'],
+            '18 Pro Max 1TB' => ['18 pro max 1tb', 'IPHONE 18 PRO MAX 1TB'],
+            '18 Pro 256'     => ['18 pro 256gb', 'IPHONE 18 PRO 256GB'],
+            '18 Pro 512'     => ['18 pro 512gb', 'IPHONE 18 PRO 512GB'],
+            '18 Pro 1TB'     => ['18 pro 1tb', 'IPHONE 18 PRO 1TB'],
+            '17 Pro Max 512' => ['iPhone 17 Pro Max 512gb', '17 pro max 512gb', 'IPHONE 17 PRO MAX 512GB'],
+            '17 Pro Max 256' => ['iPhone 17 Pro Max 256gb', '17 pro max 256gb', 'IPHONE 17 PRO MAX 256GB'],
+            '17 Pro Max 2TB' => ['IPHONE 17 PRO MAX 2TB'],
+            '17 Pro 256'     => ['iPhone 17 Pro 256gb', '17 pro 256gb', 'IPHONE 17 PRO 256GB'],
+            '17 256'         => ['iPhone 17 256gb', '17 256gb', 'IPHONE 17 256GB'],
         ];
 
         $colorHexMap = [
@@ -292,6 +300,11 @@ class DashboardController extends Controller
             'mist blue' => '#94b8c9',
             'midnight' => '#191970',
             'translucent' => '#2d2d2d',
+            'glacier' => '#b8d4e3',
+            'starlight' => '#f5e6d3',
+            'sky blue' => '#87ceeb',
+            'citrus' => '#c8cc5d',
+            'space black' => '#1c1c1e',
         ];
 
         $today = today();
@@ -308,9 +321,12 @@ class DashboardController extends Controller
             $prefixList = is_array($prefixes) ? $prefixes : [$prefixes];
 
             $matching = $allQuotations->filter(function ($q) use ($prefixList) {
+                $nameLower = mb_strtolower($q->product_name);
                 foreach ($prefixList as $prefix) {
-                    if (str_starts_with(mb_strtolower($q->product_name), mb_strtolower($prefix . ' -'))
-                        || mb_strtolower($q->product_name) === mb_strtolower($prefix)) {
+                    $prefixLower = mb_strtolower($prefix);
+                    if (str_starts_with($nameLower, $prefixLower . ' -')
+                        || str_starts_with($nameLower, $prefixLower . ' ')
+                        || $nameLower === $prefixLower) {
                         return true;
                     }
                 }
@@ -379,8 +395,14 @@ class DashboardController extends Controller
         $previousByColor = [];
         if ($previousDate) {
             foreach ($matching->filter(fn ($q) => $q->quoted_at->format('Y-m-d') === $previousDate) as $item) {
+                $prevColor = null;
                 if (preg_match('/\s-\s(.+)$/i', $item->product_name, $m)) {
-                    $previousByColor[mb_strtolower(trim($m[1]))] = (float) $item->unit_price;
+                    $prevColor = trim($m[1]);
+                } elseif (preg_match('/\d+(?:GB|TB)\s+(.+)$/i', $item->product_name, $m)) {
+                    $prevColor = trim($m[1]);
+                }
+                if ($prevColor) {
+                    $previousByColor[mb_strtolower($prevColor)] = (float) $item->unit_price;
                 }
             }
         }
@@ -394,6 +416,10 @@ class DashboardController extends Controller
             $colorName = null;
 
             if (preg_match('/\s-\s(.+)$/i', $item->product_name, $m)) {
+                $colorName = trim($m[1]);
+            }
+
+            if (!$colorName && preg_match('/\d+(?:GB|TB)\s+(.+)$/i', $item->product_name, $m)) {
                 $colorName = trim($m[1]);
             }
 
