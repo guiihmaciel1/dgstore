@@ -284,18 +284,21 @@ class DashboardController extends Controller
             // AirPods
             'AirPods 4'     => ['Airpods 4', '4 MXP63LL/A'],
             'AirPods 4 ANC' => ['Airpods 4 c/ ANC', '4 MXP93LL/A'],
-            'AirPods Pro'   => ['Airpods Pro 3', '5 MKFW4LL/A'],
+            'AirPods Pro 3' => ['Airpods Pro 3', '5 MKFW4LL/A'],
+            // Apple Pencil
+            'Pencil USB-C'  => ['APPLE PENCIL MUWA3AM/A'],
+            'Pencil Pro'    => ['APPLE PENCIL PRO MX2D3AM/A'],
             // Apple Watch
-            'Watch Ultra 4' => ['Apple Watch ULTRA 4', 'ULTRA 4 49MM'],
-            'Watch Ultra 3' => ['Apple Watch ULTRA 3', 'ULTRA 3 49MM'],
-            'Watch S11'     => ['Apple Watch S11', 'S11 46MM'],
-            'Watch SE3'     => ['Apple Watch SE 3', 'SE3 40MM'],
+            'Watch Ultra 4 49mm' => ['Apple Watch ULTRA 4', 'ULTRA 4 49MM'],
+            'Watch Ultra 3 49mm' => ['Apple Watch ULTRA 3', 'ULTRA 3 49MM'],
+            'Watch S11 46mm'     => ['Apple Watch S11', 'S11 46MM'],
+            'Watch SE3 40mm'     => ['Apple Watch SE 3', 'SE3 40MM'],
             // iPad
-            'iPad 11'       => ['IPAD 11 A16', 'APPLE IPAD 11'],
+            'iPad 11 128GB'      => ['IPAD 11 A16 128', 'APPLE IPAD 11 128GB'],
             // MacBook
-            'MacBook Air M5'  => ['AIR M5 13'],
-            'MacBook Neo'     => ['Mac Book NEO', 'NEO A18 PRO'],
-            'MacBook Pro M5'  => ['PRO M5 14'],
+            'Air M5 13" 16+512'    => ['AIR M5 13'],
+            'Neo A18 Pro 13" 8+512' => ['Mac Book NEO', 'NEO A18 PRO'],
+            'Pro M5 14" 24+1TB'     => ['PRO M5 14'],
         ];
 
         $colorHexMap = [
@@ -325,8 +328,8 @@ class DashboardController extends Controller
             'rose gold' => '#e8b4b8', 'light blush' => '#e8b4b8',
             'yellow' => '#fbbf24', 'amarelo' => '#fbbf24',
             'silver' => '#c0c0c0', 'prata' => '#c0c0c0',
-            'alpine' => '#8b6914',
-            'ocean' => '#1e3a5f',
+            'alpine' => '#8b6914', 'black alpine' => '#2d2d27',
+            'ocean' => '#1e3a5f', 'black titanium ocean black' => '#1a2a3a',
             'titanium' => '#8a8a8a', 'natural titanium' => '#c2a67d',
             'índigo' => '#4b0082', 'indigo' => '#4b0082',
             'bush' => '#2d5a27',
@@ -418,23 +421,42 @@ class DashboardController extends Controller
         }
 
         $extractColor = function (string $productName) use ($colorHexMap): ?string {
+            // Watch: "S11 46MM CODE - M/L - ROSE GOLD LIGHT BLUSH" → strip band size
+            $cleaned = preg_replace('/\s-\s[SML]\/[SML]\s-\s/', ' - ', $productName);
+            // Watch: "ULTRA 3 49MM S/M BLACK TITANIUM OCEAN BLACK" → remove S/M band prefix
+            $cleaned = preg_replace('/\b49MM\s+S(?:\/[SML])?\s+/', '49MM ', $cleaned);
+
             // Format BR: "modelo - COR"
-            if (preg_match('/\s-\s([^$\d]+)$/i', $productName, $m)) {
+            if (preg_match('/\s-\s([^$\d]+)$/i', $cleaned, $m)) {
                 return trim($m[1]);
             }
-            // Format PY iPhone: "IPHONE 18 PRO MAX 512GB GLACIER"
-            if (preg_match('/\d+(?:GB|TB)\s+([A-Za-z][\w\s]+?)(?:\s+\w{4,}\d\w+\/\w)?$/i', $productName, $m)) {
+            // Format PY iPhone/iPad/MacBook: "...512GB COLOR CODE/X"
+            if (preg_match('/\d+(?:GB|TB)\s+([A-Za-z][\w\s]+?)(?:\s+\w{4,}\d\w+\/\w)?$/i', $cleaned, $m)) {
                 $candidate = trim(preg_replace('/\s*\w{5,}\d\w*\/\w.*$/', '', $m[1]));
                 if ($candidate !== '' && !preg_match('/^\d/', $candidate)) {
                     return $candidate;
                 }
             }
-            // Format PY AirPods: "4 MXP63LL/A WHITE"
-            if (preg_match('/\b[A-Z]{2,}\d[\w]+\/\w\s+(.+)$/i', $productName, $m)) {
-                return trim($m[1]);
+            // Watch: "49MM COLOR CODE" (after band size removal)
+            if (preg_match('/\d+MM\s+([A-Za-z][\w\s]+?)(?:\s+\w{4,}\d\w*\/\w)?$/i', $cleaned, $m)) {
+                $candidate = trim(preg_replace('/\s*\w{5,}\d\w*\/\w.*$/', '', $m[1]));
+                if ($candidate !== '' && !preg_match('/^\d/', $candidate)) {
+                    return $candidate;
+                }
+            }
+            // Format PY AirPods/Accessories: "CODE WHITE" → only last known color
+            if (preg_match('/\b[A-Z]{2,}\d[\w]+\/\w\b/i', $cleaned)) {
+                $words = preg_split('/\s+/', $cleaned);
+                for ($i = count($words) - 1; $i >= 0; $i--) {
+                    $w = mb_strtolower($words[$i]);
+                    if (isset($colorHexMap[$w])) {
+                        return $words[$i];
+                    }
+                }
+                return null;
             }
             // Last word fallback for known colors
-            $words = preg_split('/\s+/', $productName);
+            $words = preg_split('/\s+/', $cleaned);
             $lastWord = mb_strtolower(end($words));
             if (isset($colorHexMap[$lastWord])) {
                 return end($words);
