@@ -164,10 +164,11 @@ class DashboardController extends Controller
         $labelMap = [
             '18 Pro Max 512' => ['name' => '18 pro max', 'storage' => '512', 'exact' => true],
             '18 Pro Max 256' => ['name' => '18 pro max', 'storage' => '256', 'exact' => true],
-            '18 Pro 256'     => ['name' => '18 pro',     'storage' => '256', 'exact' => false],
+            '18 Pro 256'     => ['name' => '18 pro',     'storage' => '256', 'exact' => false, 'exclude' => 'pro max'],
             '17 Pro Max 512' => ['name' => '17 pro max', 'storage' => '512', 'exact' => true],
             '17 Pro Max 256' => ['name' => '17 pro max', 'storage' => '256', 'exact' => true],
-            '17 Pro 256'     => ['name' => '17 pro',     'storage' => '256', 'exact' => false],
+            '17 Pro 256'     => ['name' => '17 pro',     'storage' => '256', 'exact' => false, 'exclude' => 'pro max'],
+            '17 256'         => ['name' => '17',         'storage' => '256', 'exact' => false, 'exclude' => 'pro'],
         ];
 
         $supplierToOurColor = [
@@ -178,6 +179,10 @@ class DashboardController extends Controller
             'white' => ['prata', 'branco', 'estelar', 'titânio branco'],
             'blue' => ['glacial', 'azul', 'ultramarino'],
             'laranja' => ['laranja', 'deserto', 'titânio natural'],
+            'black' => ['preto', 'meia-noite'],
+            'lavender' => ['lavanda', 'lavender'],
+            'mist blue' => ['glacial', 'azul'],
+            'sage' => ['sage', 'verde'],
         ];
 
         foreach ($trackedModels as &$model) {
@@ -195,7 +200,7 @@ class DashboardController extends Controller
                 if (!str_contains($nameLower, $config['name'])) {
                     return false;
                 }
-                if (!$config['exact'] && str_contains($nameLower, 'pro max')) {
+                if (!empty($config['exclude']) && str_contains($nameLower, $config['exclude'])) {
                     return false;
                 }
                 return str_contains($storageLower, $config['storage']);
@@ -265,6 +270,7 @@ class DashboardController extends Controller
             '17 Pro Max 512' => ['iPhone 17 Pro Max 512gb', '17 pro max 512gb'],
             '17 Pro Max 256' => ['iPhone 17 Pro Max 256gb', '17 pro max 256gb'],
             '17 Pro 256'     => ['iPhone 17 Pro 256gb', '17 pro 256gb'],
+            '17 256'         => ['iPhone 17 256gb', '17 256gb'],
         ];
 
         $colorHexMap = [
