@@ -385,6 +385,15 @@ class CreateSaleUseCase
                 continue;
             }
 
+            if ($product->isInRepair()) {
+                $unavailableItems[] = [
+                    'product_id' => $item->productId,
+                    'product_name' => $product->name,
+                    'message' => "'{$product->name}' está na assistência",
+                ];
+                continue;
+            }
+
             if ($product->stock_quantity < $item->quantity) {
                 $unavailableItems[] = [
                     'product_id' => $item->productId,

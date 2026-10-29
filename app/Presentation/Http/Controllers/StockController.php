@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controllers;
 
 use App\Domain\Product\Models\Product;
+use App\Domain\Product\Services\ProductRepairService;
 use App\Domain\Product\Services\ProductService;
 use App\Domain\Sale\Enums\TradeInStatus;
 use App\Domain\Sale\Models\TradeIn;
@@ -24,6 +25,7 @@ class StockController extends Controller
         private readonly StockService $stockService,
         private readonly ProductService $productService,
         private readonly TradeInProcessingService $tradeInProcessingService,
+        private readonly ProductRepairService $repairService,
     ) {}
 
     public function index(Request $request): View
@@ -192,15 +194,27 @@ class StockController extends Controller
                 ->with('success', 'Trade-in rejeitado com sucesso.');
         }
 
+        $sendToRepair = $request->boolean('send_to_repair');
+
         try {
-            $product = DB::transaction(fn () => $this->tradeInProcessingService->createProductFromTradeIn(
-                $tradeIn,
-                auth()->id(),
-            ));
+            $product = DB::transaction(function () use ($tradeIn, $sendToRepair) {
+                $product = $this->tradeInProcessingService->createProductFromTradeIn($tradeIn, auth()->id());
+
+                if ($sendToRepair) {
+                    $this->repairService->send($product, reason: 'Revisão de entrada (trade-in)', userId: auth()->id());
+                }
+
+                return $product;
+            });
+
+            $message = "Produto criado automaticamente a partir do trade-in: {$product->full_name}";
+            if ($sendToRepair) {
+                $message .= ' — enviado para a assistência.';
+            }
 
             return redirect()
                 ->route('products.show', $product)
-                ->with('success', "Produto criado automaticamente a partir do trade-in: {$product->full_name}");
+                ->with('success', $message);
         } catch (\Exception $e) {
             return redirect()
                 ->back()

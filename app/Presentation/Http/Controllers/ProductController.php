@@ -47,6 +47,8 @@ class ProductController extends Controller
             $filters['active'] = true;
         } elseif ($filters['status'] === 'inactive') {
             $filters['active'] = false;
+        } elseif ($filters['status'] === 'in_repair') {
+            $filters['in_repair'] = true;
         }
 
         $products = $this->productService->list(15, $filters);
@@ -83,7 +85,7 @@ class ProductController extends Controller
 
     public function show(Product $product): View
     {
-        $product->load(['stockMovements.user', 'tradeIn.sale.customer', 'saleItems.sale.customer']);
+        $product->load(['stockMovements.user', 'tradeIn.sale.customer', 'saleItems.sale.customer', 'repairs', 'openRepair']);
 
         return view('products.show', [
             'product' => $product,
@@ -150,7 +152,8 @@ class ProductController extends Controller
         }
 
         $products = $this->productService->search($term);
-        $products->load('tradeIn:id,product_id,sale_id,estimated_value');
+        $products->load(['tradeIn:id,product_id,sale_id,estimated_value', 'openRepair']);
+        $products = $products->reject(fn (Product $product) => $product->isInRepair());
 
         $canViewFinancials = auth()->user()->canViewFinancials();
 
@@ -161,7 +164,7 @@ class ProductController extends Controller
             'imei' => $product->imei,
             'category' => $product->category->value,
             'stock' => $product->stock_quantity,
-            'cost_price' => $canViewFinancials && $product->cost_price ? (float) $product->cost_price : null,
+            'cost_price' => $canViewFinancials ? $product->final_cost : null,
             'sale_price' => $product->sale_price ? (float) $product->sale_price : null,
             'condition' => $product->condition?->value,
             'from_trade_in' => $product->tradeIn !== null,

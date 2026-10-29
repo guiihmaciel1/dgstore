@@ -34,7 +34,11 @@ class EloquentProductRepository implements ProductRepositoryInterface
 
     public function paginate(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        $query = Product::query();
+        $query = Product::query()->with('openRepair');
+
+        if (!empty($filters['in_repair'])) {
+            $query->inRepair();
+        }
 
         if (!empty($filters['search'])) {
             $search = $filters['search'];

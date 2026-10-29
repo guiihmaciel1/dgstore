@@ -150,7 +150,8 @@ class NegotiationController extends Controller
 
     private function buildUsedQuickValues(): array
     {
-        $products = Product::where('active', true)
+        $products = Product::with('openRepair')
+            ->where('active', true)
             ->where('stock_quantity', '>', 0)
             ->whereIn('condition', [ProductCondition::Used, ProductCondition::Refurbished])
             ->whereNotNull('sale_price')
@@ -169,12 +170,13 @@ class NegotiationController extends Controller
             return [
                 'name' => $label,
                 'value' => (float) $product->sale_price,
-                'cost_price' => (float) ($product->cost_price ?? 0),
+                'cost_price' => (float) ($product->final_cost ?? 0),
                 'battery_health' => $product->battery_health,
                 'has_box' => (bool) $product->has_box,
                 'has_cable' => (bool) $product->has_cable,
                 'notes' => $product->notes,
                 'is_used' => true,
+                'in_repair' => $product->isInRepair(),
             ];
         })->values()->toArray();
     }

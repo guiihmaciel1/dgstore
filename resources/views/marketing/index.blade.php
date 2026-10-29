@@ -531,8 +531,8 @@
                     <div x-show="resaleUsed.length > 0 && !mobileEdit" class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem;">
                         <template x-for="item in resaleUsed" :key="'rm_' + item.morph_type + '_' + item.id">
                             <div x-data="{ tapped: false }"
-                                 @click="if ($event.target.closest('input, button, label')) return; if (!item.resale.resale_price) { alert('Defina o preço de repasse antes de copiar.'); return; } copySingleResale(item); tapped = true; setTimeout(() => tapped = false, 1500);"
-                                 :class="tapped ? 'used-card-tapped' : ''"
+                                 @click="if ($event.target.closest('input, button, label')) return; if (_blockedByRepair(item)) return; if (!item.resale.resale_price) { alert('Defina o preço de repasse antes de copiar.'); return; } copySingleResale(item); tapped = true; setTimeout(() => tapped = false, 1500);"
+                                 :class="[tapped ? 'used-card-tapped' : '', item.in_repair ? 'repair-blocked' : '']"
                                  class="used-card-mobile">
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
                                     <div style="flex: 1; min-width: 0;">
@@ -547,6 +547,7 @@
                                             <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
                                                 <span style="font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(139,92,246,0.15);color:#c4b5fd;">Consig.</span>
                                             </template>
+                                            <span x-show="item.in_repair" class="repair-badge">🔧 Na assistência</span>
                                         </div>
                                     </div>
                                     <div style="text-align: right; flex-shrink: 0;">
@@ -608,6 +609,7 @@
                                                     <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
                                                         <span style="font-size:0.6rem;font-weight:600;padding:1px 5px;border-radius:3px;background:rgba(139,92,246,0.15);color:#c4b5fd;">Consig.</span>
                                                     </template>
+                                                    <span x-show="item.in_repair" class="repair-badge">🔧 Na assistência</span>
                                                     <span x-show="item.storage" style="font-size:0.6rem;color:#818181;" x-text="item.storage"></span>
                                                     <span x-show="item.color" style="font-size:0.6rem;color:#818181;" x-text="item.color"></span>
                                                 </div>
@@ -637,10 +639,11 @@
                                             <td style="padding: 0.375rem 0.375rem; text-align: center;">
                                                 <button type="button"
                                                         x-data="{ justCopied: false }"
-                                                        @click="if (!item.resale.resale_price) { alert('Defina o preço de repasse antes de copiar.'); return; } copySingleResale(item); justCopied = true; setTimeout(() => justCopied = false, 2000);"
-                                                        :title="justCopied ? 'Copiado!' : 'Copiar este item'"
+                                                        @click="if (_blockedByRepair(item)) return; if (!item.resale.resale_price) { alert('Defina o preço de repasse antes de copiar.'); return; } copySingleResale(item); justCopied = true; setTimeout(() => justCopied = false, 2000);"
+                                                        :disabled="item.in_repair"
+                                                        :title="item.in_repair ? 'Na assistência' : (justCopied ? 'Copiado!' : 'Copiar este item')"
                                                         class="resale-copy-btn"
-                                                        :class="justCopied ? 'copied' : ''">
+                                                        :class="[justCopied ? 'copied' : '', item.in_repair ? 'repair-blocked' : '']">
                                                     <svg x-show="!justCopied" style="width: 0.8rem; height: 0.8rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                                                     </svg>
@@ -713,8 +716,8 @@
                 <div x-show="filteredUsed.length > 0 && !mobileEdit" class="sm:hidden" style="display: flex; flex-direction: column; gap: 0.5rem;">
                     <template x-for="(item, idx) in filteredUsed" :key="'m_' + item.morph_type + '_' + item.id">
                         <div x-data="{ tapped: false }"
-                             @click="if ($event.target.closest('input, button, label, a')) return; copyUsedToWhatsApp(item); tapped = true; setTimeout(() => tapped = false, 1500);"
-                             :class="tapped ? 'used-card-tapped' : ''"
+                             @click="if ($event.target.closest('input, button, label, a')) return; if (_blockedByRepair(item)) return; copyUsedToWhatsApp(item); tapped = true; setTimeout(() => tapped = false, 1500);"
+                             :class="[tapped ? 'used-card-tapped' : '', item.in_repair ? 'repair-blocked' : '']"
                              class="used-card-mobile"
                              :style="(item.images || []).length === 0 ? 'border-left: 3px solid #dc2626; background: rgba(239,68,68,0.08);' : ''">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
@@ -730,6 +733,7 @@
                                         <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
                                             <span style="font-size:0.65rem;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(139,92,246,0.15);color:#c4b5fd;">Consig.</span>
                                         </template>
+                                        <span x-show="item.in_repair" class="repair-badge">🔧 Na assistência</span>
                                     </div>
                                 </div>
                                 <div style="text-align: right; flex-shrink: 0;">
@@ -826,6 +830,7 @@
                                                 <template x-if="item.morph_type && item.morph_type.includes('ConsignmentStockItem')">
                                                     <span style="font-size:0.6rem;font-weight:600;padding:1px 4px;border-radius:3px;background:rgba(139,92,246,0.15);color:#c4b5fd;">Consig.</span>
                                                 </template>
+                                                <span x-show="item.in_repair" class="repair-badge">🔧 Na assistência</span>
                                             </div>
                                         </td>
                                         <td style="padding: 0.375rem 0.375rem; text-align: center;">
@@ -878,6 +883,8 @@
                                         </td>
                                         <td style="padding: 0.375rem 0.25rem; text-align: center;">
                                             <button type="button" @click="copyUsedToWhatsApp(item)"
+                                                    :disabled="item.in_repair"
+                                                    :class="item.in_repair ? 'repair-blocked' : ''"
                                                     :style="item._copied
                                                         ? 'padding:0.25rem;background:none;border:none;cursor:default;color:#059669;'
                                                         : 'padding:0.25rem;background:none;border:none;cursor:pointer;color:#666666;border-radius:0.25rem;'"
@@ -1543,8 +1550,14 @@
                 }
             },
 
+            _blockedByRepair(item) {
+                if (!item.in_repair) return false;
+                alert('Este aparelho está na assistência e não pode ser divulgado até voltar.');
+                return true;
+            },
+
             copyUsedListToWhatsApp() {
-                const visibleItems = this.usedItems.filter(i => i.listing.visible && i.listing.final_price);
+                const visibleItems = this.usedItems.filter(i => !i.in_repair && i.listing.visible && i.listing.final_price);
 
                 if (visibleItems.length === 0) {
                     alert('Nenhum seminovo marcado como "Na Lista" com preço final.');
@@ -1601,6 +1614,7 @@
             },
 
             copyUsedToWhatsApp(item) {
+                if (this._blockedByRepair(item)) return;
                 const name = (item.name || '').trim();
                 const storage = item.storage ? ` ${item.storage}` : '';
                 const color = item.color ? ` ${item.color}` : '';
@@ -1651,7 +1665,7 @@
             },
 
             printUsedLabels() {
-                const visibleItems = this.usedItems.filter(i => i.listing.visible && i.listing.final_price);
+                const visibleItems = this.usedItems.filter(i => !i.in_repair && i.listing.visible && i.listing.final_price);
 
                 if (visibleItems.length === 0) {
                     alert('Nenhum seminovo marcado como "Na Lista" com preço final.');
@@ -1946,6 +1960,7 @@
             },
 
             copySingleResale(item) {
+                if (this._blockedByRepair(item)) return;
                 if (!item.resale.resale_price) {
                     alert('Defina o preço de repasse antes de copiar.');
                     return;
@@ -1991,7 +2006,7 @@
             },
 
             copyResaleSeminovos() {
-                const visibleUsed = this.resaleUsed.filter(u => u.resale.visible && u.resale.resale_price);
+                const visibleUsed = this.resaleUsed.filter(u => !u.in_repair && u.resale.visible && u.resale.resale_price);
 
                 if (visibleUsed.length === 0) {
                     alert('Nenhum seminovo marcado como visível com preço.');
@@ -2046,6 +2061,11 @@
     </script>
 
     <style>
+        .repair-badge {
+            font-size: 0.6rem; font-weight: 600; padding: 1px 5px; border-radius: 3px;
+            background: rgba(249,115,22,0.15); color: #fb923c; white-space: nowrap;
+        }
+        .repair-blocked { opacity: 0.45; cursor: not-allowed !important; }
         .used-card-mobile {
             position: relative;
             background: #141414;

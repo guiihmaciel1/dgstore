@@ -47,7 +47,7 @@ class MarketingController extends Controller
             }
         }
 
-        $usedProducts = Product::with('tradeIn.sale.customer')
+        $usedProducts = Product::with(['tradeIn.sale.customer', 'openRepair'])
             ->where('active', true)
             ->where('stock_quantity', '>', 0)
             ->whereIn('condition', ['used', 'refurbished'])
@@ -119,6 +119,7 @@ class MarketingController extends Controller
                 'product_notes' => $p->notes,
                 'origin_customer' => $originCustomer,
                 'origin_date' => $originDate,
+                'in_repair' => $p->isInRepair(),
             ];
         })->values();
 
@@ -177,6 +178,7 @@ class MarketingController extends Controller
             'color' => $p->color,
             'condition' => $p->condition->value,
             'stock' => $p->stock_quantity,
+            'in_repair' => $p->isInRepair(),
         ])->values();
 
         $newProductsResaleJson = $newProducts->map(fn ($p) => [

@@ -35,6 +35,11 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if(session('error'))
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 0.5rem; color: #fca5a5;">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 lg:gap-6">
                 <!-- Coluna Principal -->
@@ -384,6 +389,8 @@
                     </div>
                     @endif
 
+                    @include('products.partials.repair-card', ['product' => $product])
+
                     <!-- Estoque -->
                     <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; {{ $product->isLowStock() ? ($product->isOutOfStock() ? 'border-color: #fecaca;' : 'border-color: #fde68a;') : '' }}">
                         <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#fef2f2' : '#fefce8') : '#f9fafb' }};">
@@ -422,4 +429,5 @@
         </div>
     </div>
 
+    @include('products.partials.repair-modals')
 </x-app-layout>

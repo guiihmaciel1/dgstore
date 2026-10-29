@@ -107,7 +107,10 @@ class ReservationService
                 if ($product->reserved) {
                     throw new \Exception("O produto \"{$product->full_name}\" já está reservado.");
                 }
-                $totalCost += (float) ($item['cost_price'] ?? $product->cost_price);
+                if ($product->isInRepair()) {
+                    throw new \Exception("O produto \"{$product->full_name}\" está na assistência.");
+                }
+                $totalCost += (float) ($item['cost_price'] ?? $product->final_cost);
                 $totalSale += (float) $item['sale_price'];
                 $descriptions[] = $product->full_name;
                 if (!$firstProductId) {
@@ -136,7 +139,7 @@ class ReservationService
                 ReservationItem::create([
                     'reservation_id' => $reservation->id,
                     'product_id' => $product->id,
-                    'cost_price' => $item['cost_price'] ?? $product->cost_price,
+                    'cost_price' => $item['cost_price'] ?? $product->final_cost,
                     'sale_price' => $item['sale_price'],
                     'quantity' => 1,
                 ]);

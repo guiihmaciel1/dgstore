@@ -17,6 +17,7 @@ use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
+use App\Domain\Product\Services\ProductRepairService;
 use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Commission\Models\Commission;
 use App\Domain\Sale\Enums\PaymentMethod;
@@ -47,7 +48,8 @@ class DashboardController extends Controller
         private readonly WarrantyService $warrantyService,
         private readonly ImportOrderService $importService,
         private readonly ReservationService $reservationService,
-        private readonly AppleNewsService $appleNewsService
+        private readonly AppleNewsService $appleNewsService,
+        private readonly ProductRepairService $repairService
     ) {}
 
     public function index(Request $request): View
@@ -71,6 +73,7 @@ class DashboardController extends Controller
         $internStats = $this->buildInternStats($referenceDate);
         $appleNews = $this->appleNewsService->getCached();
         $stockItems = $this->getStockCatalog();
+        $openRepairs = $this->repairService->openRepairs();
 
         $executiveSummary = null;
         if (auth()->user()->isAdminGeral()) {
@@ -111,6 +114,7 @@ class DashboardController extends Controller
             'executiveSummary' => $executiveSummary,
             'supplierQuoteInfo' => $supplierQuoteInfo,
             'priceBelowCostAlerts' => $priceBelowCostAlerts,
+            'openRepairs' => $openRepairs,
         ]);
     }
 
@@ -860,6 +864,7 @@ class DashboardController extends Controller
     {
         $products = Product::active()
             ->inStock()
+            ->notInRepair()
             ->where('category', 'smartphone')
             ->get();
 

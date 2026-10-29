@@ -202,13 +202,19 @@
                                         <td style="padding: 0.75rem 1.5rem; text-align: right;">
                                             @if($tradeIn->isPending())
                                                 <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-                                                    <form method="POST" action="{{ route('stock.trade-ins.process', $tradeIn) }}">
+                                                    <form method="POST" action="{{ route('stock.trade-ins.process', $tradeIn) }}" style="display: flex; gap: 0.5rem;">
                                                         @csrf
                                                         <input type="hidden" name="action" value="create">
                                                         <button type="submit" 
                                                                 style="padding: 0.375rem 0.75rem; background: #16a34a; color: white; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer;"
                                                                 onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
                                                             Cadastrar
+                                                        </button>
+                                                        <button type="submit" name="send_to_repair" value="1"
+                                                                title="Cadastra o aparelho e já marca como na assistência"
+                                                                style="padding: 0.375rem 0.75rem; background: #ea580c; color: white; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer;"
+                                                                onmouseover="this.style.background='#c2410c'" onmouseout="this.style.background='#ea580c'">
+                                                            🔧 Cadastrar + Assistência
                                                         </button>
                                                     </form>
                                                     <form method="POST" action="{{ route('stock.trade-ins.process', $tradeIn) }}" 

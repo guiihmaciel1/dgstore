@@ -260,6 +260,7 @@ class ReservationController extends Controller
                   ->orWhere('model', 'like', "%{$query}%");
             })
             ->active()
+            ->notInRepair()
             ->where('reserved', false);
 
         if (!empty($excludeIds)) {
@@ -275,11 +276,11 @@ class ReservationController extends Controller
                 'name' => $p->full_name,
                 'sku' => $p->sku,
                 'stock' => $p->stock_quantity,
-                'cost_price' => (float) $p->cost_price,
+                'cost_price' => (float) $p->final_cost,
                 'sale_price' => (float) $p->sale_price,
                 'condition' => $p->condition instanceof \BackedEnum ? $p->condition->value : $p->condition,
                 'formatted_price' => $p->sale_price > 0 ? 'R$ ' . number_format((float) $p->sale_price, 2, ',', '.') : null,
-                'formatted_cost' => $p->cost_price > 0 ? 'R$ ' . number_format((float) $p->cost_price, 2, ',', '.') : null,
+                'formatted_cost' => $p->final_cost > 0 ? 'R$ ' . number_format((float) $p->final_cost, 2, ',', '.') : null,
             ]);
 
         return response()->json($results);

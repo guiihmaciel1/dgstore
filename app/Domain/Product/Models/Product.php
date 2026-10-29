@@ -63,6 +63,7 @@ class Product extends Model
             'battery_health' => 'integer',
             'device_details' => 'array',
             'cost_price' => 'decimal:2',
+            'repair_cost' => 'decimal:2',
             'sale_price' => 'decimal:2',
             'resale_price' => 'decimal:2',
             'stock_quantity' => 'integer',
@@ -100,7 +101,27 @@ class Product extends Model
         return $this->hasOne(TradeIn::class, 'product_id');
     }
 
+    public function repairs(): HasMany
+    {
+        return $this->hasMany(ProductRepair::class)->latest('sent_at');
+    }
+
+    public function openRepair(): HasOne
+    {
+        return $this->hasOne(ProductRepair::class)->whereNull('returned_at');
+    }
+
     // Scopes
+
+    public function scopeInRepair(Builder $query): Builder
+    {
+        return $query->whereHas('openRepair');
+    }
+
+    public function scopeNotInRepair(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('openRepair');
+    }
 
     public function scopeActive(Builder $query): Builder
     {
@@ -157,6 +178,29 @@ class Product extends Model
         return $this->tradeIn()->exists();
     }
 
+    public function isInRepair(): bool
+    {
+        return $this->openRepair !== null;
+    }
+
+    public function canGoToRepair(): bool
+    {
+        return in_array($this->category->group(), ['Celulares', 'Eletrônicos'], true);
+    }
+
+    /**
+     * Custo final = custo de compra + custos de assistência acumulados.
+     * Base para lucro e comissão na venda.
+     */
+    public function getFinalCostAttribute(): ?float
+    {
+        if ($this->cost_price === null && (float) $this->repair_cost <= 0) {
+            return null;
+        }
+
+        return round((float) $this->cost_price + (float) $this->repair_cost, 2);
+    }
+
     public function getFormattedCostPriceAttribute(): string
     {
         if ($this->cost_price === null) {
@@ -197,6 +241,8 @@ class Product extends Model
             'condition' => $this->condition->value,
             'imei' => $this->imei,
             'cost_price' => $this->cost_price,
+            'repair_cost' => $this->repair_cost,
+            'final_cost' => $this->final_cost,
             'sale_price' => $this->sale_price,
             'resale_price' => $this->resale_price,
         ];

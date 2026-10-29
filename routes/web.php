@@ -6,6 +6,7 @@ use App\Presentation\Http\Controllers\CustomerTagController;
 use App\Presentation\Http\Controllers\DashboardController;
 use App\Presentation\Http\Controllers\ImportOrderController;
 use App\Presentation\Http\Controllers\ProductController;
+use App\Presentation\Http\Controllers\ProductRepairController;
 use App\Presentation\Http\Controllers\QuotationController;
 use App\Presentation\Http\Controllers\ReportController;
 use App\Presentation\Http\Controllers\ReservationController;
@@ -215,6 +216,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/api/products/imei-lookup', [ProductController::class, 'lookupImei'])->name('products.imei-lookup');
         Route::post('/api/products/analyze-box', [ProductController::class, 'analyzeBoxLabel'])->name('products.analyze-box');
         Route::post('/api/products/store-quick', [ProductController::class, 'storeQuick'])->name('products.store-quick');
+        Route::post('/products/{product}/repair/send', [ProductRepairController::class, 'send'])->name('products.repair.send');
+        Route::post('/products/{product}/repair/return', [ProductRepairController::class, 'markReturned'])->name('products.repair.return');
 
         // Clientes
         Route::resource('customers', CustomerController::class);

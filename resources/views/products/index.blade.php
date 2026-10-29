@@ -7,6 +7,11 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if(session('error'))
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 0.5rem; color: #fca5a5;">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             <!-- Cabeçalho -->
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
@@ -68,6 +73,7 @@
                                 <option value="">Todos</option>
                                 <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Ativo</option>
                                 <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>Inativo</option>
+                                <option value="in_repair" {{ ($filters['status'] ?? '') === 'in_repair' ? 'selected' : '' }}>Na assistência</option>
                             </select>
                         </div>
                         <div class="flex flex-col gap-2 pt-5">
@@ -159,9 +165,13 @@
                                         @else
                                             <span style="display: inline-block; padding: 0.25rem 0.75rem; background: #222222; color: #818181; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">Inativo</span>
                                         @endif
+                                        @if($product->openRepair)
+                                            @include('products.partials.repair-badge', ['repair' => $product->openRepair])
+                                        @endif
                                     </td>
                                     <td style="padding: 0.75rem 1.5rem; text-align: right;">
-                                        <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                                        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; align-items: center;">
+                                            @include('products.partials.repair-action', ['product' => $product])
                                             <a href="{{ route('products.label', $product) }}" target="_blank" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'" title="Gerar Etiqueta">
                                                 <svg style="width: 1rem; height: 1rem; display: inline;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
                                             </a>
@@ -192,6 +202,7 @@
     </div>
 
     @include('products.partials.create-modal')
+    @include('products.partials.repair-modals')
 
     @if(request('open_entry'))
     <script>

@@ -242,6 +242,8 @@
             </style>
             @endif
 
+            @include('partials._dashboard-open-repairs', ['openRepairs' => $openRepairs])
+
             <!-- ALERTA: PREÇOS ABAIXO DO CUSTO DO FORNECEDOR -->
             @if(!empty($priceBelowCostAlerts))
             <div style="background: #141414; border: 2px solid #ef4444; border-radius: 0.75rem; overflow: hidden; margin-bottom: 1rem;">

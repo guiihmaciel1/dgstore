@@ -17,6 +17,10 @@ class PreSaleService
     public function create(array $data): PreSale
     {
         return DB::transaction(function () use ($data) {
+            if (! empty($data['product_id']) && Product::whereKey($data['product_id'])->inRepair()->exists()) {
+                throw new \RuntimeException('Este aparelho está na assistência.');
+            }
+
             $preSale = PreSale::create($data);
 
             $this->reserveProduct($preSale);
@@ -80,6 +84,7 @@ class PreSaleService
         $product = Product::where('imei', $imei)
             ->where('active', true)
             ->where('stock_quantity', '>', 0)
+            ->notInRepair()
             ->first();
 
         if ($product) {
@@ -95,7 +100,7 @@ class PreSaleService
                 'color' => $product->color,
                 'condition' => $product->condition?->value ?? 'new',
                 'imei' => $product->imei,
-                'cost_price' => $marketingCost ?? (float) $product->cost_price,
+                'cost_price' => $marketingCost ?? (float) $product->final_cost,
                 'sale_price' => (float) $product->sale_price,
                 'reserved' => (bool) $product->reserved,
                 'reserved_by' => $product->reserved_by,
@@ -138,6 +143,7 @@ class PreSaleService
         $product = Product::where('id', $productId)
             ->where('active', true)
             ->where('stock_quantity', '>', 0)
+            ->notInRepair()
             ->first();
 
         if (!$product) {
@@ -156,7 +162,7 @@ class PreSaleService
             'color' => $product->color,
             'condition' => $product->condition?->value ?? 'new',
             'imei' => $product->imei,
-            'cost_price' => $marketingCost ?? (float) $product->cost_price,
+            'cost_price' => $marketingCost ?? (float) $product->final_cost,
             'sale_price' => (float) $product->sale_price,
             'reserved' => (bool) $product->reserved,
             'reserved_by' => $product->reserved_by,
@@ -202,6 +208,7 @@ class PreSaleService
 
         $products = Product::where('active', true)
             ->where('stock_quantity', '>', 0)
+            ->notInRepair()
             ->where(function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
                   ->orWhere('model', 'like', "%{$query}%")
@@ -223,7 +230,7 @@ class PreSaleService
                 'color' => $product->color,
                 'condition' => $product->condition?->value ?? 'new',
                 'imei' => $product->imei,
-                'cost_price' => $marketingCost ?? (float) $product->cost_price,
+                'cost_price' => $marketingCost ?? (float) $product->final_cost,
                 'sale_price' => (float) $product->sale_price,
                 'reserved' => (bool) $product->reserved,
                 'reserved_by' => $product->reserved_by,

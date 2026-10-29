@@ -72,13 +72,17 @@
             <label class="text-[10px] font-semibold uppercase tracking-wider text-amber-600 mb-1.5 block">Seminovos</label>
             <div class="flex flex-wrap gap-1.5">
                 <template x-for="(uv, uidx) in quickValuesUsed" :key="'used-' + uidx">
-                    <button @click="selectQuickValue(uv.name, uv.value, uv.cost_price || 0, { battery: uv.battery_health, hasBox: uv.has_box, hasCable: uv.has_cable, notes: uv.notes, isUsed: true })" type="button"
-                            class="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer border-2 whitespace-nowrap transition-colors"
+                    <button @click="if (uv.in_repair) return; selectQuickValue(uv.name, uv.value, uv.cost_price || 0, { battery: uv.battery_health, hasBox: uv.has_box, hasCable: uv.has_cable, notes: uv.notes, isUsed: true })" type="button"
+                            :disabled="uv.in_repair"
+                            :title="uv.in_repair ? 'Na assistência — indisponível para simulação' : ''"
+                            class="px-3 py-1.5 rounded-lg text-xs font-semibold border-2 whitespace-nowrap transition-colors"
+                            :style="uv.in_repair ? 'opacity: 0.45; cursor: not-allowed;' : 'cursor: pointer;'"
                             :class="isQuickValueActive(uv.name, uv.value)
                                 ? 'border-amber-600 bg-amber-600 text-white'
                                 : 'border-amber-200 bg-amber-50 text-amber-800 hover:border-amber-300'">
+                        <span x-show="uv.in_repair">🔧</span>
                         <span x-text="chipLabel(uv.name)"></span>
-                        <span class="opacity-60 ml-1" x-text="'R$ ' + fmt(uv.value)"></span>
+                        <span class="opacity-60 ml-1" x-text="uv.in_repair ? 'Assistência' : 'R$ ' + fmt(uv.value)"></span>
                     </button>
                 </template>
             </div>
