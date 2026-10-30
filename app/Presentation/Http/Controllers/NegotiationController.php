@@ -86,31 +86,68 @@ class NegotiationController extends Controller
         }
     }
 
+    private const AVAILABILITY_PATTERN = '/\s*\((pronta entrega|sob encomenda|encomenda)\)\s*/i';
+
+    /**
+     * Valores rápidos ordenados por: modelo (ordem do Marketing) → armazenamento (maior primeiro)
+     * → Pronta Entrega antes de Encomenda. Cada linha da tela agrupa modelo + armazenamento.
+     */
     private function buildQuickValues(): array
     {
         $colorNames = MarketingPrice::COLORS;
         $prices = MarketingPrice::active()->ordered()->get();
 
+        $modelOrder = [];
+        foreach ($prices as $p) {
+            $modelOrder[$this->baseModelName($p->name)] ??= count($modelOrder);
+        }
+
         $grouped = $prices->groupBy(function ($p) {
             return trim($p->name . ' ' . ($p->storage ?? ''));
         });
 
-        return $grouped->map(function ($items, $key) use ($colorNames) {
-            $modelBase = trim($items->first()->name ?? '');
+        return $grouped->map(function ($items, $key) use ($colorNames, $modelOrder) {
+            $first = $items->first();
+            $baseModel = $this->baseModelName($first->name);
+            $entry = [
+                'name' => $key,
+                'model_base' => trim($baseModel . ' ' . ($first->storage ?? '')),
+                '_sort' => [$modelOrder[$baseModel], -$this->storageInGb($first->storage), $this->availabilityRank($first->name)],
+            ];
 
-            if ($items->count() === 1 && (! $items->first()->color || $items->first()->color === 'Todas')) {
-                return [
-                    'name' => $key,
-                    'model_base' => $modelBase,
-                    'value' => (float) $items->first()->price,
-                    'cost_price' => (float) ($items->first()->cost_price ?? 0),
+            if ($items->count() === 1 && (! $first->color || $first->color === 'Todas')) {
+                return $entry + [
+                    'value' => (float) $first->price,
+                    'cost_price' => (float) ($first->cost_price ?? 0),
                 ];
             }
 
-            $variants = $this->buildGroupedVariants($items, $colorNames);
+            return $entry + ['value' => 0, 'variants' => $this->buildGroupedVariants($items, $colorNames)];
+        })
+            ->sort(fn ($a, $b) => $a['_sort'] <=> $b['_sort'])
+            ->map(fn ($entry) => array_diff_key($entry, ['_sort' => true]))
+            ->values()
+            ->toArray();
+    }
 
-            return ['name' => $key, 'model_base' => $modelBase, 'value' => 0, 'variants' => $variants];
-        })->values()->toArray();
+    private function baseModelName(?string $name): string
+    {
+        return trim((string) preg_replace(self::AVAILABILITY_PATTERN, ' ', (string) $name));
+    }
+
+    /** 0 = Pronta Entrega (ou sem indicação), 1 = Encomenda / Sob Encomenda. */
+    private function availabilityRank(?string $name): int
+    {
+        return preg_match('/encomenda/i', (string) $name) ? 1 : 0;
+    }
+
+    private function storageInGb(?string $storage): int
+    {
+        if (! $storage || ! preg_match('/(\d+)\s*(TB|GB)/i', $storage, $m)) {
+            return 0;
+        }
+
+        return strtoupper($m[2]) === 'TB' ? (int) $m[1] * 1024 : (int) $m[1];
     }
 
     /**
