@@ -59,6 +59,9 @@
             <div x-show="tab === 'prices'" x-cloak>
                 <form method="POST" action="{{ route('marketing.prices.store') }}">
                     @csrf
+                    <template x-for="deletedId in deletedPriceIds" :key="'del_' + deletedId">
+                        <input type="hidden" name="deleted_ids[]" :value="deletedId">
+                    </template>
 
                     <!-- Filtro de Categoria -->
                     <div style="display: flex; align-items: center; gap: 0.375rem; margin-bottom: 0.75rem; padding: 0.25rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.625rem; overflow-x: auto; scrollbar-width: none;">
@@ -310,7 +313,7 @@
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
                                                 <button type="button" @click="removePrice(row._origIdx)"
                                                         style="padding: 0.25rem; color: #fca5a5; background: none; border: none; cursor: pointer; border-radius: 0.25rem;"
-                                                        onmouseover="this.style.background=rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'"
+                                                        onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'"
                                                         title="Remover">
                                                     <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -1039,6 +1042,7 @@
                 return { ...p, images: p.images || [], _key: 'existing_' + i, _origIdx: i };
             }),
             _priceCounter: initialPrices.length,
+            deletedPriceIds: [],
 
             imgModal: { open: false, priceIdx: null, uploading: false },
 
@@ -1195,13 +1199,23 @@
             },
 
             removePrice(origIdx) {
+                const removed = this.prices.find(p => p._origIdx === origIdx);
+                if (removed && removed.id) {
+                    this.deletedPriceIds.push(removed.id);
+                }
                 this.prices = this.prices.filter(p => p._origIdx !== origIdx);
                 this.prices.forEach((p, i) => p._origIdx = i);
             },
 
+            // fromIdx/toIdx são posições na lista filtrada; converte para a lista completa
             movePrice(fromIdx, toIdx) {
-                const item = this.prices.splice(fromIdx, 1)[0];
-                this.prices.splice(toIdx, 0, item);
+                const visible = this.filteredPrices;
+                const from = visible[fromIdx]?._origIdx;
+                const to = visible[toIdx]?._origIdx;
+                if (from === undefined || to === undefined) return;
+
+                const item = this.prices.splice(from, 1)[0];
+                this.prices.splice(to, 0, item);
                 this.prices.forEach((p, i) => p._origIdx = i);
             },
 

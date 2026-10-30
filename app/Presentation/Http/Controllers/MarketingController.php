@@ -211,7 +211,9 @@ class MarketingController extends Controller
     public function storePrices(Request $request): RedirectResponse
     {
         $request->validate([
-            'prices' => ['required', 'array', 'min:1'],
+            'prices' => ['nullable', 'array'],
+            'deleted_ids' => ['nullable', 'array'],
+            'deleted_ids.*' => ['string', 'max:26'],
             'prices.*.name' => ['required', 'string', 'max:255'],
             'prices.*.category' => ['nullable', 'string', 'in:' . implode(',', array_keys(MarketingPrice::CATEGORIES))],
             'prices.*.storage' => ['nullable', 'string', 'max:50'],
@@ -225,11 +227,12 @@ class MarketingController extends Controller
 
         $isAdmin = auth()->user()->role->isAdminGeral();
 
+        // A tela envia apenas as linhas visíveis (filtro de categoria/busca), então
+        // linhas ausentes no request NÃO podem ser tratadas como excluídas.
         DB::transaction(function () use ($request, $isAdmin) {
-            $existingIds = MarketingPrice::pluck('id')->toArray();
             $sentIds = [];
 
-            foreach ($request->prices as $index => $row) {
+            foreach ($request->input('prices', []) as $index => $row) {
                 $data = [
                     'name' => $row['name'],
                     'category' => $row['category'] ?? 'iphone',
@@ -259,7 +262,10 @@ class MarketingController extends Controller
                 $sentIds[] = $created->id;
             }
 
-            $toDelete = array_diff($existingIds, $sentIds);
+            $toDelete = $isAdmin
+                ? array_values(array_diff($request->input('deleted_ids', []), $sentIds))
+                : [];
+
             if ($toDelete) {
                 $orphanImages = MarketingPriceImage::whereIn('marketing_price_id', $toDelete)->get();
                 foreach ($orphanImages as $img) {
