@@ -567,6 +567,12 @@ class DashboardController extends Controller
         $alerts = [];
 
         foreach ($ourPrices as $item) {
+            // Encomenda é precificada sobre cotação futura; e o matchMap só cobre iPhones
+            // ("Macbook A18 Pro" casaria com "18 pro").
+            if ($item->isOnOrder() || ($item->category ?? 'iphone') !== 'iphone') {
+                continue;
+            }
+
             $nameLower = mb_strtolower($item->name ?? '');
             $storageLower = mb_strtolower($item->storage ?? '');
             $storageNum = preg_replace('/[^0-9]/', '', $storageLower);

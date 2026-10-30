@@ -84,6 +84,14 @@ class MarketingPrice extends Model
         return $query->orderBy('sort_order')->orderBy('name');
     }
 
+    /**
+     * Disponibilidade vem do próprio nome: "(Encomenda)" / "(Sob Encomenda)".
+     */
+    public function isOnOrder(): bool
+    {
+        return (bool) preg_match('/encomenda/i', (string) $this->name);
+    }
+
     public function getFormattedPriceAttribute(): string
     {
         return 'R$ ' . number_format((float) $this->price, 2, ',', '.');

@@ -112,7 +112,7 @@ class NegotiationController extends Controller
             $entry = [
                 'name' => $key,
                 'model_base' => trim($baseModel . ' ' . ($first->storage ?? '')),
-                '_sort' => [$modelOrder[$baseModel], -$this->storageInGb($first->storage), $this->availabilityRank($first->name)],
+                '_sort' => [$modelOrder[$baseModel], -$this->storageInGb($first->storage), $first->isOnOrder() ? 1 : 0],
             ];
 
             if ($items->count() === 1 && (! $first->color || $first->color === 'Todas')) {
@@ -133,12 +133,6 @@ class NegotiationController extends Controller
     private function baseModelName(?string $name): string
     {
         return trim((string) preg_replace(self::AVAILABILITY_PATTERN, ' ', (string) $name));
-    }
-
-    /** 0 = Pronta Entrega (ou sem indicação), 1 = Encomenda / Sob Encomenda. */
-    private function availabilityRank(?string $name): int
-    {
-        return preg_match('/encomenda/i', (string) $name) ? 1 : 0;
     }
 
     private function storageInGb(?string $storage): int
