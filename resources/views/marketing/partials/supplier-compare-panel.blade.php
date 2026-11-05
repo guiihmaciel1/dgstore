@@ -58,6 +58,17 @@
                         style="padding: 0.4rem 0.875rem; background: #222; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
                     Só alinhar custos
                 </button>
+                <span style="width: 1px; height: 1.5rem; background: rgba(255,255,255,0.08);"></span>
+                <label style="display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; color: #a4a4a4;">
+                    Encomenda = Santa Fé − R$
+                    <input type="number" step="1" min="0" x-model="compareEncomendaDiscount" placeholder="99"
+                           @keydown.enter.prevent="compareApplyEncomenda()"
+                           style="width: 70px; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.375rem; font-size: 0.8rem; text-align: right; outline: none;">
+                </label>
+                <button type="button" @click="compareApplyEncomenda()"
+                        style="padding: 0.4rem 0.875rem; background: rgba(217,119,6,0.15); color: #fbbf24; border: 1px solid rgba(217,119,6,0.4); border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                    Preencher encomenda
+                </button>
                 <button type="button" @click="compareUndo()" x-show="compareUndoStack.length > 0"
                         style="padding: 0.4rem 0.875rem; background: transparent; color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
                     Desfazer

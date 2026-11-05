@@ -210,6 +210,7 @@
                                         <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Custo</th>
                                         @endif
                                         <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Venda</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #d97706; text-transform: uppercase; width: 100px;">Encomenda</th>
                                         @if(auth()->user()->role->isAdminGeral())
                                         <th x-show="compareMode" x-cloak style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #25D366; text-transform: uppercase; width: 190px;">Santa Fé</th>
                                         @endif
@@ -304,6 +305,17 @@
                                                        style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
                                                        onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                                        placeholder="0.00">
+                                            </td>
+                                            <td style="padding: 0.375rem 0.5rem;">
+                                                <input type="number" step="0.01" min="0" :name="'prices[' + row._origIdx + '][encomenda_price]'" x-model="row.encomenda_price"
+                                                       style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #fbbf24; border: 1px solid rgba(217,119,6,0.2); border-radius: 0.375rem; font-size: 0.8rem; outline: none; text-align: right;"
+                                                       onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='rgba(217,119,6,0.2)'"
+                                                       :placeholder="compareEncomendaSuggestion(row) !== null ? compareFmt(compareEncomendaSuggestion(row)) : '0.00'">
+                                                <button type="button" x-show="compareEncomendaSuggestion(row) !== null && parseFloat(row.encomenda_price) !== compareEncomendaSuggestion(row)"
+                                                        @click="compareApplyEncomendaRow(row)"
+                                                        :title="'Sugestão: custo Santa Fé - R$ ' + compareFmt(compareEncomendaDiscountValue())"
+                                                        style="display: block; margin: 0.15rem 0 0 auto; padding: 0; background: none; border: none; color: #d97706; font-size: 0.62rem; cursor: pointer;"
+                                                        x-text="'sugerido ' + compareFmt(compareEncomendaSuggestion(row))"></button>
                                             </td>
                                             @if(auth()->user()->role->isAdminGeral())
                                             <td x-show="compareMode" x-cloak style="padding: 0.375rem 0.5rem; white-space: nowrap;">
@@ -1218,6 +1230,7 @@
                     color_hex: '',
                     cost_price: '',
                     price: '',
+                    encomenda_price: '',
                     notes: '',
                     active: true,
                     images: [],

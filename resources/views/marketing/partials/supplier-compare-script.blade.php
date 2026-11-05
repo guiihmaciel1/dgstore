@@ -6,7 +6,10 @@
  */
 function supplierCompareMixin(data) {
     const MARGIN_STORAGE_KEY = 'marketing.supplierCompareMargin';
+    const ENCOMENDA_STORAGE_KEY = 'marketing.supplierCompareEncomendaDiscount';
+    const DEFAULT_ENCOMENDA_DISCOUNT = '99';
     const BULK_TYPES = ['color', 'no_color'];
+    const TRACKED_FIELDS = ['cost_price', 'price', 'encomenda_price'];
     const toNumber = (value) => {
         const n = parseFloat(value);
         return Number.isFinite(n) ? n : null;
@@ -16,6 +19,7 @@ function supplierCompareMixin(data) {
         compareData: data,
         compareMode: false,
         compareMargin: localStorage.getItem(MARGIN_STORAGE_KEY) || '',
+        compareEncomendaDiscount: localStorage.getItem(ENCOMENDA_STORAGE_KEY) || DEFAULT_ENCOMENDA_DISCOUNT,
         compareShowMissing: false,
         compareUndoStack: [],
         compareOriginals: {},
@@ -129,14 +133,9 @@ function supplierCompareMixin(data) {
         },
 
         _compareSetValues(rows, margin, forcedCost = null) {
-            this.compareUndoStack.push(rows.map(row => ({
-                key: row._key, cost_price: row.cost_price, price: row.price,
-            })));
+            this._compareRemember(rows);
 
             rows.forEach(row => {
-                if (!(row._key in this.compareOriginals)) {
-                    this.compareOriginals[row._key] = { cost_price: row.cost_price, price: row.price };
-                }
                 const cost = forcedCost ?? this.compareInfo(row).supplier_cost;
                 row.cost_price = cost.toFixed(2);
                 if (margin !== null) {
@@ -144,7 +143,62 @@ function supplierCompareMixin(data) {
                 }
             });
 
-            this.compareFeedback = `${rows.length} item(ns) atualizado(s) na tela.`;
+            this._compareNotify(rows.length);
+        },
+
+        compareEncomendaDiscountValue() {
+            const n = toNumber(this.compareEncomendaDiscount);
+            return n !== null && n >= 0 ? n : null;
+        },
+
+        compareEncomendaSuggestion(row) {
+            const cost = this.compareCostOf(row);
+            const discount = this.compareEncomendaDiscountValue();
+            if (cost === null || discount === null) return null;
+            return Math.max(cost - discount, 0);
+        },
+
+        compareApplyEncomenda() {
+            const discount = this.compareEncomendaDiscountValue();
+            if (discount === null) {
+                alert('Informe um desconto válido em R$ para a encomenda (ex.: 99).');
+                return;
+            }
+
+            const rows = this.compareEligibleRows();
+            if (rows.length === 0) {
+                alert('Nenhum item ativo com cotação do fornecedor na lista atual.');
+                return;
+            }
+            if (!confirm(`Preencher Encomenda = custo Santa Fé - R$ ${this.compareFmt(discount)} em ${rows.length} item(ns)?\n\nNada é gravado até você clicar em "Salvar Tabela".`)) {
+                return;
+            }
+
+            this._compareRemember(rows);
+            rows.forEach(row => row.encomenda_price = this.compareEncomendaSuggestion(row).toFixed(2));
+            localStorage.setItem(ENCOMENDA_STORAGE_KEY, String(discount));
+            this._compareNotify(rows.length);
+        },
+
+        compareApplyEncomendaRow(row) {
+            const suggestion = this.compareEncomendaSuggestion(row);
+            if (suggestion === null) return;
+            this._compareRemember([row]);
+            row.encomenda_price = suggestion.toFixed(2);
+        },
+
+        _compareRemember(rows) {
+            const pick = row => Object.fromEntries(TRACKED_FIELDS.map(f => [f, row[f]]));
+            this.compareUndoStack.push(rows.map(row => ({ key: row._key, ...pick(row) })));
+            rows.forEach(row => {
+                if (!(row._key in this.compareOriginals)) {
+                    this.compareOriginals[row._key] = pick(row);
+                }
+            });
+        },
+
+        _compareNotify(count) {
+            this.compareFeedback = `${count} item(ns) atualizado(s) na tela.`;
             setTimeout(() => this.compareFeedback = '', 4000);
         },
 
@@ -154,8 +208,7 @@ function supplierCompareMixin(data) {
             snapshot.forEach(saved => {
                 const row = this.prices.find(p => p._key === saved.key);
                 if (row) {
-                    row.cost_price = saved.cost_price;
-                    row.price = saved.price;
+                    TRACKED_FIELDS.forEach(f => row[f] = saved[f]);
                 }
             });
         },
@@ -163,8 +216,7 @@ function supplierCompareMixin(data) {
         compareIsChanged(row) {
             const original = this.compareOriginals[row._key];
             if (!original) return false;
-            return toNumber(original.cost_price) !== toNumber(row.cost_price)
-                || toNumber(original.price) !== toNumber(row.price);
+            return TRACKED_FIELDS.some(f => toNumber(original[f]) !== toNumber(row[f]));
         },
 
         compareChangedCount() {
@@ -192,6 +244,9 @@ function supplierCompareMixin(data) {
                 color_hex: item.color_hex,
                 cost_price: item.price.toFixed(2),
                 price: (item.price + margin).toFixed(2),
+                encomenda_price: this.compareEncomendaDiscountValue() !== null
+                    ? Math.max(item.price - this.compareEncomendaDiscountValue(), 0).toFixed(2)
+                    : '',
             });
             item._added = true;
         },
