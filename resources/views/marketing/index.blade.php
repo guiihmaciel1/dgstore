@@ -92,6 +92,19 @@
                         <input type="text" x-model="priceSearch" placeholder="Buscar por nome, storage ou cor..."
                                style="width: 100%; max-width: 320px; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
                                onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        @if(auth()->user()->role->isAdminGeral())
+                        <button type="button" @click="toggleCompareMode()"
+                                style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.875rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;"
+                                :style="compareMode
+                                    ? { background: 'rgba(37,211,102,0.15)', color: '#25D366', border: '1px solid rgba(37,211,102,0.4)' }
+                                    : { background: '#1a1a1a', color: '#e3e3e3', border: '1px solid rgba(255,255,255,0.1)' }">
+                            <svg style="width: 0.9rem; height: 0.9rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                            </svg>
+                            <span x-text="compareMode ? 'Fechar comparação' : 'Comparar fornecedor Santa Fé'"></span>
+                        </button>
+                        @endif
                         {{-- Botão Copiar com dropdown --}}
                         <div style="position: relative;" x-data="{ copyMenuOpen: false }" @click.away="copyMenuOpen = false">
                             <div style="display: inline-flex; align-items: stretch; border-radius: 0.5rem; overflow: hidden;">
@@ -129,7 +142,12 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
                     </div>
+
+                    @if(auth()->user()->role->isAdminGeral())
+                        @include('marketing.partials.supplier-compare-panel')
+                    @endif
 
                     {{-- MOBILE: Cards Novos --}}
                     <div x-show="!mobileEdit" class="sm:hidden" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.5rem; background: rgba(22,163,106,0.08); border: 1px solid rgba(22,163,106,0.15); border-radius: 0.5rem;">
@@ -184,7 +202,7 @@
                                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
                                         <th style="padding: 0.625rem 0.25rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; width: 24px;" x-show="!priceSearch"></th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 30px;">#</th>
-                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase;">Modelo</th>
+                                        <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 190px;">Modelo</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 90px;">Tipo</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Storage</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 140px;">Cor</th>
@@ -192,6 +210,9 @@
                                         <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Custo</th>
                                         @endif
                                         <th style="padding: 0.625rem 0.75rem; text-align: right; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 100px;">Venda</th>
+                                        @if(auth()->user()->role->isAdminGeral())
+                                        <th x-show="compareMode" x-cloak style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #25D366; text-transform: uppercase; width: 190px;">Santa Fé</th>
+                                        @endif
                                         <th style="padding: 0.625rem 0.75rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 150px;">Obs</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 50px;">Ativo</th>
                                         <th style="padding: 0.625rem 0.75rem; text-align: center; font-size: 0.7rem; font-weight: 600; color: #818181; text-transform: uppercase; width: 50px;">Fotos</th>
@@ -202,7 +223,7 @@
                                 </thead>
                                 <tbody>
                                     <template x-for="(row, idx) in filteredPrices" :key="row._key">
-                                        <tr :style="'border-bottom: 1px solid rgba(255,255,255,0.04); background:' + priceGroupBg(row, idx) + ';' + (priceIsFirstInGroup(row, idx) && idx > 0 ? 'border-top: 2px solid rgba(255,255,255,0.08);' : '') + (dragOverIdx === idx ? 'border-top: 2px solid #6d28d9;' : '')"
+                                        <tr :style="'border-bottom: 1px solid rgba(255,255,255,0.04); background:' + priceGroupBg(row, idx) + ';' + (priceIsFirstInGroup(row, idx) && idx > 0 ? 'border-top: 2px solid rgba(255,255,255,0.08);' : '') + (dragOverIdx === idx ? 'border-top: 2px solid #6d28d9;' : '') + (compareIsChanged(row) ? 'box-shadow: inset 3px 0 0 #f59e0b;' : '')"
                                             draggable="true"
                                             x-show-drag="!priceSearch"
                                             @dragstart="if(priceSearch) return; dragIdx = idx; $event.dataTransfer.effectAllowed = 'move'; $el.style.opacity = '0.4';"
@@ -284,6 +305,11 @@
                                                        onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
                                                        placeholder="0.00">
                                             </td>
+                                            @if(auth()->user()->role->isAdminGeral())
+                                            <td x-show="compareMode" x-cloak style="padding: 0.375rem 0.5rem; white-space: nowrap;">
+                                                @include('marketing.partials.supplier-compare-cell')
+                                            </td>
+                                            @endif
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <input type="text" :name="'prices[' + row._origIdx + '][notes]'" x-model="row.notes"
                                                        style="width: 100%; padding: 0.375rem 0.5rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; outline: none;"
@@ -939,6 +965,8 @@
 
         </div>
     </div>
+
+    @include('marketing.partials.supplier-compare-script')
 
     <script>
     function copyText(btn, text) {
@@ -2070,6 +2098,8 @@
 
                 this._copyToClipboard(lines.join('\n'), 'resaleSeminovosCopied');
             },
+
+            ...supplierCompareMixin(@json($supplierComparisonJson ?? null)),
         };
     }
     </script>

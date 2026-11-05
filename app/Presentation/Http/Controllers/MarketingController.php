@@ -13,6 +13,7 @@ use App\Domain\Marketing\Models\MarketingPriceImage;
 use App\Domain\Marketing\Models\MarketingResaleItem;
 use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Marketing\Models\MarketingUsedListingImage;
+use App\Domain\Marketing\Services\LocalSupplierComparisonService;
 use App\Domain\Product\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Controllers\Concerns\CompressesImages;
@@ -26,7 +27,7 @@ use Illuminate\View\View;
 class MarketingController extends Controller
 {
     use CompressesImages;
-    public function index(Request $request): View
+    public function index(Request $request, LocalSupplierComparisonService $supplierComparison): View
     {
         $prices = MarketingPrice::with('images')->ordered()->get();
 
@@ -205,6 +206,7 @@ class MarketingController extends Controller
             'usedResaleJson' => $usedResaleJson,
             'newProductsResaleJson' => $newProductsResaleJson,
             'resaleItems' => $resaleItems,
+            'supplierComparisonJson' => $isAdmin ? $supplierComparison->compare($prices) : null,
         ]);
     }
 
