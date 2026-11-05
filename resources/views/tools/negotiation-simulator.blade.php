@@ -75,13 +75,20 @@
     function negotiationSimulator() {
         return {
             quickValues: @json($quickValuesFromMarketing ?? []),
+            quickValuesEncomenda: @json($quickValuesEncomenda ?? []),
             quickValuesUsed: @json($quickValuesUsed ?? []),
             tradeInModels: @json($tradeInModels ?? []),
+            saleMode: 'pronta',
+            deliveryDate: '',
+
+            get activeQuickValues() {
+                return this.saleMode === 'encomenda' ? this.quickValuesEncomenda : this.quickValues;
+            },
 
             get groupedQuickValues() {
                 const groups = [];
                 const map = {};
-                this.quickValues.forEach(qv => {
+                this.activeQuickValues.forEach(qv => {
                     const base = qv.model_base || qv.name;
                     if (!map[base]) {
                         map[base] = { model: base, items: [] };
@@ -280,6 +287,7 @@
             },
 
             selectQuickValue(name, value, costPrice, meta) {
+                if (meta?.isUsed) this.saleMode = 'pronta';
                 this.product.description = name;
                 this.product.priceInput = this.fmt(value);
                 this.productCost = costPrice || 0;
@@ -288,6 +296,56 @@
             },
             isQuickValueActive(name, value) {
                 return this.product.description === name && this.product.priceInput === this.fmt(value);
+            },
+
+            // Cada opção clicável; "colors" permite achar a mesma cor quando o agrupamento por preço muda entre os modos.
+            flatQuickValues(list) {
+                return list.flatMap(qv => {
+                    const base = qv.model_base || qv.name;
+                    if (!qv.variants || qv.variants.length === 0) {
+                        return [{ name: qv.name, value: qv.value, cost: qv.cost_price || 0, colors: [base] }];
+                    }
+                    return qv.variants.map(v => ({
+                        name: qv.name + ' ' + v.label,
+                        value: v.value,
+                        cost: v.cost_price || 0,
+                        colors: (v.colors && v.colors.length ? v.colors : [{ label: v.label }]).map(c => base + ' ' + c.label),
+                    }));
+                });
+            },
+
+            setSaleMode(mode) {
+                if (this.saleMode === mode) return;
+
+                const current = this.flatQuickValues(this.activeQuickValues)
+                    .find(o => this.isQuickValueActive(o.name, o.value));
+                this.saleMode = mode;
+                if (!current) return;
+
+                const matches = this.flatQuickValues(this.activeQuickValues)
+                    .filter(o => o.colors.some(c => current.colors.includes(c)));
+                if (matches.length === 1) {
+                    this.selectQuickValue(matches[0].name, matches[0].value, matches[0].cost);
+                } else {
+                    this.product = { description: '', priceInput: '' };
+                    this.productCost = 0;
+                    this.recalculate();
+                }
+            },
+
+            todayIso() {
+                const d = new Date();
+                const pad = n => String(n).padStart(2, '0');
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+            },
+
+            deliveryLine(format) {
+                if (this.saleMode !== 'encomenda' || this.usedMeta?.isUsed) return '';
+                const date = this.deliveryDate ? this.deliveryDate.split('-').reverse().join('/') : '';
+                if (format === 'summary') {
+                    return date ? `Entrega: Sob encomenda — previsão ${date}` : 'Entrega: Sob encomenda';
+                }
+                return date ? `📦 *Sob encomenda* — Previsão de entrega: *${date}*` : '📦 *Sob encomenda*';
             },
             isQuickValueActiveByName(baseName) {
                 return this.product.description.startsWith(baseName);
@@ -451,6 +509,7 @@
 
                 const desc = this.product.description || 'Produto';
                 lines.push(`📱 *${desc}*`);
+                if (this.deliveryLine()) lines.push(this.deliveryLine());
 
                 if (this.usedMeta?.isUsed) {
                     const details = [];
@@ -516,6 +575,7 @@
                 const clientName = this.saveModal.selectedCustomer?.name || '—';
                 lines.push(`Cliente: ${clientName}`);
                 lines.push(`Produto: ${this.product.description || '—'}`);
+                if (this.deliveryLine('summary')) lines.push(this.deliveryLine('summary'));
                 lines.push(`Preço de venda: R$ ${this.fmt(this.productPrice)}`);
 
                 if (this.tradeInValue > 0) {
@@ -744,6 +804,9 @@
             clearAll() {
                 this.product = { description: '', priceInput: '' };
                 this.productCost = 0;
+                this.saleMode = 'pronta';
+                this.deliveryDate = '';
+                this.usedMeta = { battery: null, hasBox: false, hasCable: false, notes: '', isUsed: false };
                 this.tradeIn = {
                     showEval: false, model: '', storage: '', battery: 100,
                     deviceState: 'original', noBox: false, noCable: false,
