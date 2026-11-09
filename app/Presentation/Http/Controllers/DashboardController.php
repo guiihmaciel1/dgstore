@@ -14,6 +14,7 @@ use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
 use App\Domain\Marketing\Models\MarketingPrice;
 use App\Domain\Marketing\Models\MarketingUsedListing;
+use App\Domain\Marketing\Services\LocalSupplierComparisonService;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
@@ -179,19 +180,12 @@ class DashboardController extends Controller
             '17 256'         => ['name' => '17',         'storage' => '256', 'exact' => false, 'exclude' => 'pro'],
         ];
 
-        $supplierToOurColor = [
-            'preto' => ['preto', 'meia-noite'],
-            'branco' => ['prata', 'branco', 'estelar', 'titânio branco'],
-            'bordo' => ['bordô'],
-            'azul' => ['glacial', 'azul', 'ultramarino'],
-            'white' => ['prata', 'branco', 'estelar', 'titânio branco'],
-            'blue' => ['glacial', 'azul', 'ultramarino'],
-            'laranja' => ['laranja', 'deserto', 'titânio natural'],
-            'black' => ['preto', 'meia-noite'],
-            'lavender' => ['lavanda', 'lavender'],
-            'mist blue' => ['glacial', 'azul'],
-            'sage' => ['sage', 'verde'],
-        ];
+        $supplierToOurColor = LocalSupplierComparisonService::SUPPLIER_TO_OUR_COLOR;
+
+        // labelMap só cobre iPhones; sem esse filtro "Macbook Neo A18 Pro" casa com "18 pro".
+        $ourPrices = $ourPrices->filter(
+            fn ($p) => ($p->category ?? 'iphone') === 'iphone' && !$p->isOnOrder()
+        );
 
         foreach ($trackedModels as &$model) {
             $config = $labelMap[$model['label']] ?? null;

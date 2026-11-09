@@ -23,12 +23,15 @@ class NegotiationController extends Controller
 
     public function index(): View
     {
-        $quickValues = $this->buildQuickValues();
+        $marketingPrices = MarketingPrice::active()->ordered()->get();
+        $quickValues = $this->buildQuickValues($marketingPrices);
+        $quickValuesEncomenda = $this->buildQuickValues($marketingPrices, 'encomenda_price');
         $usedQuickValues = $this->buildUsedQuickValues();
         $tradeInModels = config('dgifipe.models');
 
         return view('tools.negotiation-simulator', [
             'quickValuesFromMarketing' => $quickValues,
+            'quickValuesEncomenda' => $quickValuesEncomenda,
             'quickValuesUsed' => $usedQuickValues,
             'tradeInModels' => $tradeInModels,
         ]);
@@ -91,11 +94,15 @@ class NegotiationController extends Controller
     /**
      * Valores rápidos ordenados por: modelo (ordem do Marketing) → armazenamento (maior primeiro)
      * → Pronta Entrega antes de Encomenda. Cada linha da tela agrupa modelo + armazenamento.
+     *
+     * @param string $priceField 'price' (pronta entrega) ou 'encomenda_price' (só itens com valor de encomenda)
      */
-    private function buildQuickValues(): array
+    private function buildQuickValues(\Illuminate\Support\Collection $prices, string $priceField = 'price'): array
     {
         $colorNames = MarketingPrice::COLORS;
-        $prices = MarketingPrice::active()->ordered()->get();
+        if ($priceField !== 'price') {
+            $prices = $prices->filter(fn ($p) => (float) $p->{$priceField} > 0)->values();
+        }
 
         $modelOrder = [];
         foreach ($prices as $p) {
@@ -106,7 +113,7 @@ class NegotiationController extends Controller
             return trim($p->name . ' ' . ($p->storage ?? ''));
         });
 
-        return $grouped->map(function ($items, $key) use ($colorNames, $modelOrder) {
+        return $grouped->map(function ($items, $key) use ($colorNames, $modelOrder, $priceField) {
             $first = $items->first();
             $baseModel = $this->baseModelName($first->name);
             $entry = [
@@ -117,12 +124,12 @@ class NegotiationController extends Controller
 
             if ($items->count() === 1 && (! $first->color || $first->color === 'Todas')) {
                 return $entry + [
-                    'value' => (float) $first->price,
+                    'value' => (float) $first->{$priceField},
                     'cost_price' => (float) ($first->cost_price ?? 0),
                 ];
             }
 
-            return $entry + ['value' => 0, 'variants' => $this->buildGroupedVariants($items, $colorNames)];
+            return $entry + ['value' => 0, 'variants' => $this->buildGroupedVariants($items, $colorNames, $priceField)];
         })
             ->sort(fn ($a, $b) => $a['_sort'] <=> $b['_sort'])
             ->map(fn ($entry) => array_diff_key($entry, ['_sort' => true]))
@@ -147,9 +154,9 @@ class NegotiationController extends Controller
     /**
      * Agrupa variantes de cor com mesmo preço em "Cor A | Cor B".
      */
-    private function buildGroupedVariants(\Illuminate\Support\Collection $items, array $colorNames): array
+    private function buildGroupedVariants(\Illuminate\Support\Collection $items, array $colorNames, string $priceField = 'price'): array
     {
-        $resolved = $items->map(function ($item) use ($colorNames) {
+        $resolved = $items->map(function ($item) use ($colorNames, $priceField) {
             $colorLabel = $item->color;
             if (!$colorLabel && $item->color_hex) {
                 $colorLabel = $colorNames[$item->color_hex] ?? null;
@@ -158,7 +165,7 @@ class NegotiationController extends Controller
             return [
                 'label' => $colorLabel ?: 'Sem cor',
                 'color' => $item->color_hex ?: '#cccccc',
-                'value' => (float) $item->price,
+                'value' => (float) $item->{$priceField},
                 'cost_price' => (float) ($item->cost_price ?? 0),
             ];
         });

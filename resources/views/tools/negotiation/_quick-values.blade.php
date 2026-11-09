@@ -1,6 +1,20 @@
 <div class="bg-surface-raised rounded-xl border border-border px-4 py-3 sm:px-5 sm:py-4 mb-3">
-    <div class="flex items-center justify-between mb-2">
-        <label class="apple-section-title">Valores Rápidos</label>
+    <div class="flex items-center justify-between gap-2 mb-2 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap">
+            <label class="apple-section-title">Valores Rápidos</label>
+            <div class="inline-flex rounded-lg border border-border overflow-hidden text-[11px] font-semibold">
+                <button type="button" @click="setSaleMode('pronta')"
+                        class="px-2.5 py-1 border-none cursor-pointer transition-colors"
+                        :class="saleMode === 'pronta' ? 'bg-surface text-white' : 'bg-transparent text-dg-500 hover:text-dg-300'">
+                    Pronta Entrega
+                </button>
+                <button type="button" @click="setSaleMode('encomenda')"
+                        class="px-2.5 py-1 border-none cursor-pointer transition-colors"
+                        :class="saleMode === 'encomenda' ? 'bg-amber-600 text-white' : 'bg-transparent text-dg-500 hover:text-dg-300'">
+                    Encomenda
+                </button>
+            </div>
+        </div>
         <a href="{{ route('marketing.index', ['tab' => 'prices']) }}"
            class="text-[11px] text-dg-500 no-underline flex items-center gap-0.5 hover:text-dg-100 transition-colors">
             <svg class="w-[13px] h-[13px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -9,6 +23,20 @@
             <span>Editar</span>
         </a>
     </div>
+
+    {{-- Encomenda: previsão de entrega --}}
+    <template x-if="saleMode === 'encomenda'">
+        <div class="mb-3 flex items-center gap-2 flex-wrap">
+            <label class="text-[11px] font-semibold text-amber-500">Previsão de entrega</label>
+            <input type="date" x-model="deliveryDate" :min="todayIso()" style="color-scheme: dark;"
+                   class="px-2 py-1 rounded-lg text-xs bg-surface border border-amber-600 text-dg-100 focus:outline-none focus:border-amber-500">
+            <span x-show="!deliveryDate" class="text-[11px] text-amber-500">Selecione a data para aparecer na simulação</span>
+        </div>
+    </template>
+
+    <template x-if="saleMode === 'encomenda' && groupedQuickValues.length === 0">
+        <div class="text-xs text-dg-500 mb-1">Nenhum valor de encomenda cadastrado no Marketing.</div>
+    </template>
 
     {{-- Novos — agrupados por modelo --}}
     <template x-if="groupedQuickValues.length > 0">

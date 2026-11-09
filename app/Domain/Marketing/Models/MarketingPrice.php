@@ -53,6 +53,7 @@ class MarketingPrice extends Model
         'color',
         'color_hex',
         'price',
+        'encomenda_price',
         'cost_price',
         'notes',
         'active',
@@ -63,6 +64,7 @@ class MarketingPrice extends Model
     {
         return [
             'price' => 'decimal:2',
+            'encomenda_price' => 'decimal:2',
             'cost_price' => 'decimal:2',
             'active' => 'boolean',
             'sort_order' => 'integer',

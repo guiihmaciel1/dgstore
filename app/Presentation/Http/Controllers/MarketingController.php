@@ -13,6 +13,7 @@ use App\Domain\Marketing\Models\MarketingPriceImage;
 use App\Domain\Marketing\Models\MarketingResaleItem;
 use App\Domain\Marketing\Models\MarketingUsedListing;
 use App\Domain\Marketing\Models\MarketingUsedListingImage;
+use App\Domain\Marketing\Services\LocalSupplierComparisonService;
 use App\Domain\Product\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Controllers\Concerns\CompressesImages;
@@ -26,7 +27,7 @@ use Illuminate\View\View;
 class MarketingController extends Controller
 {
     use CompressesImages;
-    public function index(Request $request): View
+    public function index(Request $request, LocalSupplierComparisonService $supplierComparison): View
     {
         $prices = MarketingPrice::with('images')->ordered()->get();
 
@@ -86,6 +87,7 @@ class MarketingController extends Controller
                 'color' => $p->color,
                 'color_hex' => $p->color_hex,
                 'price' => $p->price,
+                'encomenda_price' => $p->encomenda_price,
                 'notes' => $p->notes,
                 'active' => $p->active,
                 'images' => $p->images->map(fn ($img) => [
@@ -205,6 +207,7 @@ class MarketingController extends Controller
             'usedResaleJson' => $usedResaleJson,
             'newProductsResaleJson' => $newProductsResaleJson,
             'resaleItems' => $resaleItems,
+            'supplierComparisonJson' => $isAdmin ? $supplierComparison->compare($prices) : null,
         ]);
     }
 
@@ -220,6 +223,7 @@ class MarketingController extends Controller
             'prices.*.color' => ['nullable', 'string', 'max:50'],
             'prices.*.color_hex' => ['nullable', 'string', 'max:7'],
             'prices.*.price' => ['required', 'numeric', 'min:0'],
+            'prices.*.encomenda_price' => ['nullable', 'numeric', 'min:0'],
             'prices.*.cost_price' => ['nullable', 'numeric', 'min:0'],
             'prices.*.notes' => ['nullable', 'string', 'max:500'],
             'prices.*.active' => ['nullable'],
@@ -244,6 +248,12 @@ class MarketingController extends Controller
                     'active' => isset($row['active']),
                     'sort_order' => $index,
                 ];
+
+                if (array_key_exists('encomenda_price', $row)) {
+                    $data['encomenda_price'] = $row['encomenda_price'] !== null && $row['encomenda_price'] !== ''
+                        ? $row['encomenda_price']
+                        : null;
+                }
 
                 if ($isAdmin) {
                     $data['cost_price'] = !empty($row['cost_price']) ? $row['cost_price'] : null;
