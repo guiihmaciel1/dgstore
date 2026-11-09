@@ -207,7 +207,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($commissions as $commission)
-                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); position: relative;" class="commission-row group" x-data="{ showTip: false }" @mouseenter="showTip = true" @mouseleave="showTip = false">
+                                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); position: relative; {{ $commission->isCancelled() ? 'opacity: 0.5;' : '' }}" class="commission-row group" x-data="{ showTip: false }" @mouseenter="showTip = true" @mouseleave="showTip = false">
                                             <td style="padding: 0.625rem 1rem; color: #a4a4a4;">{{ $commission->created_at->format('d/m/Y H:i') }}</td>
                                             <td style="padding: 0.625rem 1rem;">
                                                 @if($commission->is_manual)
@@ -228,7 +228,7 @@
                                                     <span style="color: #666666;">—</span>
                                                 @endif
                                             </td>
-                                            <td style="padding: 0.625rem 1rem; text-align: right; font-weight: 700; color: #059669; position: relative;">
+                                            <td style="padding: 0.625rem 1rem; text-align: right; font-weight: 700; color: #059669; position: relative; {{ $commission->isCancelled() ? 'text-decoration: line-through;' : '' }}">
                                                 R$ {{ number_format($commission->commission_amount, 2, ',', '.') }}
                                                 {{-- Tooltip com breakdown --}}
                                                 @if(!$commission->is_manual && ($commission->customer_name || $commission->product_summary))
@@ -273,9 +273,16 @@
                                                 @endif
                                             </td>
                                             <td style="padding: 0.625rem 1rem; text-align: center;">
-                                                <span style="font-size: 0.7rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px;
-                                                    {{ $commission->status === 'approved' ? 'background: rgba(16,185,129,0.1); color: #6ee7b7;' : ($commission->status === 'paid' ? 'background: rgba(59,130,246,0.1); color: #93c5fd;' : 'background: #141414beb; color: #fbbf24;') }}">
-                                                    {{ $commission->status === 'approved' ? 'Aprovada' : ($commission->status === 'paid' ? 'Paga' : 'Pendente') }}
+                                                @php
+                                                    [$statusLabel, $statusStyle] = match ($commission->status) {
+                                                        'approved' => ['Aprovada', 'background: rgba(16,185,129,0.1); color: #6ee7b7;'],
+                                                        'paid' => ['Paga', 'background: rgba(59,130,246,0.1); color: #93c5fd;'],
+                                                        'cancelled' => ['Cancelada', 'background: rgba(239,68,68,0.1); color: #fca5a5;'],
+                                                        default => ['Pendente', 'background: rgba(251,191,36,0.1); color: #fbbf24;'],
+                                                    };
+                                                @endphp
+                                                <span style="font-size: 0.7rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; {{ $statusStyle }}">
+                                                    {{ $statusLabel }}
                                                 </span>
                                             </td>
                                         </tr>

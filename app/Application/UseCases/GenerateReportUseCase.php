@@ -302,6 +302,7 @@ class GenerateReportUseCase
         $expensesWithoutSalaries = $monthExpensesPaid - $salariesPaid;
 
         $monthCommissions = (float) Commission::whereBetween('created_at', [$monthStart, $monthEnd->copy()->endOfDay()])
+            ->notCancelled()
             ->sum('commission_amount');
 
         $realProfit = $monthProfit - $monthExpensesPaid - $monthCommissions;
@@ -355,6 +356,7 @@ class GenerateReportUseCase
         $expensesWithoutSalaries = $expensesPaid - $salariesPaid;
 
         $monthCommissions = (float) Commission::whereBetween('created_at', [$monthStart, $monthEnd->copy()->endOfDay()])
+            ->notCancelled()
             ->sum('commission_amount');
 
         $realProfit = $monthProfit - $expensesPaid - $monthCommissions;

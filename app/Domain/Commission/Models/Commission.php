@@ -14,6 +14,8 @@ class Commission extends Model
 {
     use HasUlids;
 
+    public const STATUS_CANCELLED = 'cancelled';
+
     protected $fillable = [
         'user_id',
         'sale_id',
@@ -63,5 +65,15 @@ class Commission extends Model
     public function scopeApproved($query)
     {
         return $query->where('status', 'approved');
+    }
+
+    public function scopeNotCancelled($query)
+    {
+        return $query->where('status', '!=', self::STATUS_CANCELLED);
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === self::STATUS_CANCELLED;
     }
 }

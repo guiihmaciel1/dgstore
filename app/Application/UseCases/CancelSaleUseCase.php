@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Application\UseCases;
 
+use App\Domain\Commission\Models\Commission;
 use App\Domain\Finance\Services\FinanceService;
 use App\Domain\Sale\Enums\PaymentStatus;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Repositories\SaleRepositoryInterface;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CancelSaleUseCase
@@ -28,8 +30,13 @@ class CancelSaleUseCase
         // 1. Validar se pode ser cancelada
         $this->validateCancellation($sale);
 
-        // 2. Cancelar a venda (o repository cuida de devolver o estoque)
-        $sale = $this->saleRepository->cancel($sale);
+        // 2. Cancelar a venda (o repository devolve o estoque) e estornar comissões
+        $sale = DB::transaction(function () use ($sale) {
+            $cancelled = $this->saleRepository->cancel($sale);
+            $this->cancelCommissions($cancelled);
+
+            return $cancelled;
+        });
 
         // 3. Cancelar transações financeiras
         $this->cancelFinancialTransactions($sale);
@@ -42,6 +49,13 @@ class CancelSaleUseCase
         }
 
         return $sale;
+    }
+
+    private function cancelCommissions(Sale $sale): void
+    {
+        Commission::where('sale_id', $sale->id)
+            ->notCancelled()
+            ->update(['status' => Commission::STATUS_CANCELLED]);
     }
 
     /**

@@ -230,6 +230,7 @@ class ExecutiveSummaryController extends Controller
         $weekSalesByIntern = $weekSales->groupBy('seller_id');
 
         $internCommissions = Commission::whereBetween('created_at', [$start, $end])
+            ->notCancelled()
             ->whereIn('user_id', $internIds)
             ->get()
             ->groupBy('user_id');
