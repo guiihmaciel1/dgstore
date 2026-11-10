@@ -681,7 +681,7 @@
                                                 <button type="button"
                                                         x-data="{ justCopied: false }"
                                                         @click="if (_blockedByRepair(item)) return; if (!item.resale.resale_price) { alert('Defina o preço de repasse antes de copiar.'); return; } copySingleResale(item); justCopied = true; setTimeout(() => justCopied = false, 2000);"
-                                                        :disabled="item.in_repair"
+                                                        :disabled="!!item.in_repair"
                                                         :title="item.in_repair ? 'Na assistência' : (justCopied ? 'Copiado!' : 'Copiar este item')"
                                                         class="resale-copy-btn"
                                                         :class="[justCopied ? 'copied' : '', item.in_repair ? 'repair-blocked' : '']">
@@ -924,7 +924,7 @@
                                         </td>
                                         <td style="padding: 0.375rem 0.25rem; text-align: center;">
                                             <button type="button" @click="copyUsedToWhatsApp(item)"
-                                                    :disabled="item.in_repair"
+                                                    :disabled="!!item.in_repair"
                                                     :class="item.in_repair ? 'repair-blocked' : ''"
                                                     :style="item._copied
                                                         ? 'padding:0.25rem;background:none;border:none;cursor:default;color:#059669;'

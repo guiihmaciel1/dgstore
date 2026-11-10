@@ -96,7 +96,7 @@
                                   :title="item.supplier_color"
                                   x-text="item.name + ' ' + item.storage + (item.color ? ' · ' + item.color : ' · ' + item.supplier_color)"></span>
                             <span style="font-size: 0.72rem; font-weight: 700; color: #a4a4a4;" x-text="compareFmt(item.price)"></span>
-                            <button type="button" @click="compareAddMissing(item)" :disabled="item._added"
+                            <button type="button" @click="compareAddMissing(item)" :disabled="!!item._added"
                                     :style="{ opacity: item._added ? 0.4 : 1, cursor: item._added ? 'default' : 'pointer' }"
                                     style="padding: 0.15rem 0.5rem; background: #222; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; font-size: 0.65rem;"
                                     x-text="item._added ? 'Adicionado' : 'Adicionar'"></button>
