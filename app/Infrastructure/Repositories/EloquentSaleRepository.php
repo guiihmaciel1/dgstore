@@ -51,7 +51,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
     public function paginate(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        $query = Sale::with(['customer', 'user', 'seller', 'items', 'commissions']);
+        $query = Sale::with(['customer', 'user', 'seller', 'items', 'commissions', 'receiptSender:id,name']);
 
         $this->applyFilters($query, $filters);
 

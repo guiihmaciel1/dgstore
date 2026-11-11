@@ -46,6 +46,8 @@ class Sale extends Model
         'delivery_type',
         'delivery_method',
         'sold_at',
+        'receipt_sent_at',
+        'receipt_sent_by',
     ];
 
     protected function casts(): array
@@ -63,6 +65,7 @@ class Sale extends Model
             'payment_status' => PaymentStatus::class,
             'installments' => 'integer',
             'sold_at' => 'datetime',
+            'receipt_sent_at' => 'datetime',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
@@ -95,6 +98,11 @@ class Sale extends Model
     public function seller(): BelongsTo
     {
         return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    public function receiptSender(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'receipt_sent_by');
     }
 
     public function items(): HasMany

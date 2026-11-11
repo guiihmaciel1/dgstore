@@ -69,20 +69,26 @@ class UazapiService
     }
 
     /**
-     * Envia documento/arquivo.
+     * Envia documento/arquivo. $file aceita URL pública ou conteúdo em base64.
      */
-    public function sendDocument(string $number, string $fileUrl, ?string $filename = null): array
+    public function sendDocument(string $number, string $file, ?string $filename = null, ?string $caption = null): array
     {
         $payload = [
             'number' => $this->normalizeNumber($number),
-            'file' => $fileUrl,
+            'type' => 'document',
+            'file' => $file,
         ];
 
         if ($filename) {
+            $payload['docName'] = $filename;
             $payload['fileName'] = $filename;
         }
 
-        return $this->post('/send/media', $payload);
+        if ($caption) {
+            $payload['text'] = $caption;
+        }
+
+        return $this->post('/send/media', $payload, timeout: 60);
     }
 
     /**
@@ -483,10 +489,10 @@ class UazapiService
         return $digits;
     }
 
-    private function httpClient(): \Illuminate\Http\Client\PendingRequest
+    private function httpClient(int $timeout = 15): \Illuminate\Http\Client\PendingRequest
     {
         return Http::withHeaders(['token' => $this->token])
-            ->timeout(15)
+            ->timeout($timeout)
             ->connectTimeout(5);
     }
 
@@ -503,10 +509,10 @@ class UazapiService
         }
     }
 
-    private function post(string $endpoint, array $data = []): array
+    private function post(string $endpoint, array $data = [], int $timeout = 15): array
     {
         try {
-            $response = $this->httpClient()
+            $response = $this->httpClient($timeout)
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->post("{$this->baseUrl}{$endpoint}", $data);
 
