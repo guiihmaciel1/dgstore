@@ -1,7 +1,8 @@
 {{--
     Números do mês na home.
     Espera: $todayTotal, $todayCount, $monthTotal, $monthCount, $profit, $prevMonthProfit,
-    $forecast (null fora do mês atual), $todayAppointments, $nextAppointment, $isCurrentMonth.
+    $forecast (null fora do mês atual), $todayAppointments, $nextAppointment, $isCurrentMonth,
+    $stockCapital (null para quem não vê o financeiro).
     Precisa estar dentro do x-data que define showValues.
 --}}
 @php
@@ -209,5 +210,62 @@
             @endif
         </div>
     </div>
+
+    {{-- Capital em estoque (a preço de custo) --}}
+    @if(!empty($stockCapital))
+        @php
+            $capitalTotal = $stockCapital['total'];
+            $barTones = ['iphone_new' => 'bg-indigo-400', 'iphone_used' => 'bg-amber-400', 'other' => 'bg-dg-500'];
+        @endphp
+        <div class="mt-3 rounded-xl border border-border bg-surface-raised p-4 sm:mt-4 sm:p-5">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-8">
+                <div class="lg:w-64 lg:flex-shrink-0">
+                    <p class="text-xs font-medium uppercase tracking-wide text-dg-400">Capital em estoque</p>
+                    <p class="mt-1 text-2xl font-bold text-dg-50 sm:text-3xl"><x-money :value="$capitalTotal" :decimals="0" /></p>
+                    <p class="mt-0.5 text-xs text-dg-400">{{ $stockCapital['units'] }} {{ $stockCapital['units'] === 1 ? 'item' : 'itens' }} a preço de custo · hoje</p>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    @if($capitalTotal > 0)
+                        <div class="flex h-2 overflow-hidden rounded-full bg-surface-elevated" aria-hidden="true">
+                            @foreach($stockCapital['groups'] as $key => $group)
+                                @if($group['cost'] > 0)
+                                    <div class="{{ $barTones[$key] }}" style="width: {{ round($group['cost'] / $capitalTotal * 100, 2) }}%"></div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+                    <dl class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        @foreach($stockCapital['groups'] as $key => $group)
+                            <div>
+                                <dt class="flex items-center gap-2 text-xs text-dg-400">
+                                    <span class="h-2 w-2 flex-shrink-0 rounded-full {{ $barTones[$key] }}" aria-hidden="true"></span>
+                                    {{ $group['label'] }}
+                                    <span class="tabular-nums text-dg-500">· {{ $group['units'] }} un.</span>
+                                </dt>
+                                <dd class="mt-0.5 text-base font-semibold text-dg-100">
+                                    <x-money :value="$group['cost']" :decimals="0" />
+                                    @if($capitalTotal > 0)
+                                        <span class="text-xs font-normal tabular-nums text-dg-400">{{ number_format($group['cost'] / $capitalTotal * 100, 0, ',', '.') }}%</span>
+                                    @endif
+                                </dd>
+                            </div>
+                        @endforeach
+                    </dl>
+                </div>
+            </div>
+
+            <div class="mt-4 flex flex-col gap-1.5 border-t border-border pt-3 text-xs sm:flex-row sm:items-center sm:justify-between">
+                <p class="text-dg-400">
+                    Retiradas acima do lucro líquido do mês (<x-money :value="$profit['real_profit']" :decimals="0" class="font-medium text-dg-200" />) saem deste capital. Consignado não entra.
+                </p>
+                @if($stockCapital['missing_cost_units'] > 0)
+                    <a href="{{ route('products.index') }}" class="flex-shrink-0 font-medium text-amber-300 underline-offset-4 hover:underline">
+                        {{ $stockCapital['missing_cost_units'] }} {{ $stockCapital['missing_cost_units'] === 1 ? 'item sem custo cadastrado' : 'itens sem custo cadastrado' }} — capital real é maior
+                    </a>
+                @endif
+            </div>
+        </div>
+    @endif
     @endif
 </section>

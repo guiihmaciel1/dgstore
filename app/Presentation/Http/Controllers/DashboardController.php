@@ -80,6 +80,7 @@ class DashboardController extends Controller
         $appleNews = $this->appleNewsService->getCached();
         $stockItems = $this->getStockCatalog();
         $openRepairs = $this->repairService->openRepairs();
+        $stockCapital = auth()->user()->canViewFinancials() ? $this->getStockCapital() : null;
 
         $executiveSummary = null;
         if (auth()->user()->isAdminGeral()) {
@@ -122,6 +123,7 @@ class DashboardController extends Controller
             'supplierQuoteInfo' => $supplierQuoteInfo,
             'priceBelowCostAlerts' => $priceBelowCostAlerts,
             'openRepairs' => $openRepairs,
+            'stockCapital' => $stockCapital,
         ]);
     }
 
@@ -924,6 +926,52 @@ class DashboardController extends Controller
             ->when($systemCategoryIds->isNotEmpty(), fn ($q) => $q->whereNotIn('category_id', $systemCategoryIds))
             ->orderBy('amount', 'desc')
             ->get();
+    }
+
+    /**
+     * Capital parado em estoque próprio, a preço de custo (compra + assistência).
+     * Não inclui consignado (não é da loja) nem serviços.
+     *
+     * @return array{total: float, units: int, groups: array<string, array{label: string, units: int, cost: float}>, missing_cost_units: int}
+     */
+    private function getStockCapital(): array
+    {
+        $rows = Product::query()
+            ->where('active', true)
+            ->where('stock_quantity', '>', 0)
+            ->where('category', '!=', ProductCategory::Service->value)
+            ->selectRaw('category, `condition`')
+            ->selectRaw('SUM(stock_quantity) as units')
+            ->selectRaw('SUM(stock_quantity * (COALESCE(cost_price, 0) + COALESCE(repair_cost, 0))) as cost')
+            ->selectRaw('SUM(CASE WHEN cost_price IS NULL OR cost_price <= 0 THEN stock_quantity ELSE 0 END) as missing_cost_units')
+            ->groupBy('category', 'condition')
+            ->toBase()
+            ->get();
+
+        $groups = [
+            'iphone_new' => ['label' => 'iPhones novos', 'units' => 0, 'cost' => 0.0],
+            'iphone_used' => ['label' => 'iPhones seminovos', 'units' => 0, 'cost' => 0.0],
+            'other' => ['label' => 'Outros produtos', 'units' => 0, 'cost' => 0.0],
+        ];
+        $missing = 0;
+
+        foreach ($rows as $row) {
+            $key = match (true) {
+                $row->category === ProductCategory::Smartphone->value && $row->condition === ProductCondition::New->value => 'iphone_new',
+                $row->category === ProductCategory::Smartphone->value => 'iphone_used',
+                default => 'other',
+            };
+            $groups[$key]['units'] += (int) $row->units;
+            $groups[$key]['cost'] += (float) $row->cost;
+            $missing += (int) $row->missing_cost_units;
+        }
+
+        return [
+            'total' => array_sum(array_column($groups, 'cost')),
+            'units' => array_sum(array_column($groups, 'units')),
+            'groups' => $groups,
+            'missing_cost_units' => $missing,
+        ];
     }
 
     private function getStockCatalog(): array
