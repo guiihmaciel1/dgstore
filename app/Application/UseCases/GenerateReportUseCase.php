@@ -190,8 +190,45 @@ class GenerateReportUseCase
                 'labels' => $chartLabels,
                 'data' => $chartData,
             ],
-            'profit' => $this->profitData($monthStart, $monthEnd),
-            'prev_month_profit' => $this->prevMonthProfitSummary($prevMonthStart, $prevMonthEnd),
+            'profit' => $profit = $this->profitData($monthStart, $monthEnd),
+            'prev_month_profit' => $this->prevMonthProfitSummary(
+                $prevMonthStart,
+                $prevMonthEnd,
+                $isCurrentMonth ? Carbon::now()->day : null,
+            ),
+            'forecast' => $isCurrentMonth ? $this->monthForecast($profit, $monthStart, $monthEnd) : null,
+        ];
+    }
+
+    /**
+     * Estimativa de fechamento do mês atual: vendas e comissões no ritmo atual,
+     * despesas já pagas + contas ainda em aberto com vencimento neste mês.
+     */
+    private function monthForecast(array $profit, Carbon $monthStart, Carbon $monthEnd): array
+    {
+        $daysInMonth = $monthEnd->day;
+        $daysElapsed = max(1, min($daysInMonth, Carbon::now()->day));
+        $pace = $daysInMonth / $daysElapsed;
+
+        $pendingExpenses = (float) FinancialTransaction::expense()
+            ->unpaid()
+            ->whereBetween('due_date', [$monthStart->toDateString(), $monthEnd->toDateString()])
+            ->sum('amount');
+
+        $revenue = $profit['month_revenue'] * $pace;
+        $grossProfit = $profit['month_profit'] * $pace;
+        $commissions = ($profit['month_commissions'] ?? 0) * $pace;
+        $expenses = $profit['month_expenses_paid'] + $pendingExpenses;
+
+        return [
+            'days_elapsed' => $daysElapsed,
+            'days_in_month' => $daysInMonth,
+            'revenue' => $revenue,
+            'gross_profit' => $grossProfit,
+            'commissions' => $commissions,
+            'expenses_paid' => $profit['month_expenses_paid'],
+            'expenses_pending' => $pendingExpenses,
+            'net_profit' => $grossProfit - $expenses - $commissions,
         ];
     }
 
@@ -325,7 +362,11 @@ class GenerateReportUseCase
         ];
     }
 
-    private function prevMonthProfitSummary(Carbon $monthStart, Carbon $monthEnd): array
+    /**
+     * Resumo do mês anterior. Com $untilDay, inclui também faturamento e lucro bruto
+     * do dia 1 até esse dia (comparação justa com o mês atual em andamento).
+     */
+    private function prevMonthProfitSummary(Carbon $monthStart, Carbon $monthEnd, ?int $untilDay = null): array
     {
         $monthSales = Sale::with(['items.product'])
             ->whereBetween('sold_at', [$monthStart, $monthEnd])
@@ -361,14 +402,27 @@ class GenerateReportUseCase
 
         $realProfit = $monthProfit - $expensesPaid - $monthCommissions;
 
+        $samePeriod = null;
+        if ($untilDay !== null) {
+            $periodEnd = $monthStart->copy()->day(min($untilDay, $monthEnd->day))->endOfDay();
+            $periodSales = $monthSales->filter(fn (Sale $s) => $s->sold_at->lte($periodEnd));
+            $samePeriod = [
+                'until_label' => $periodEnd->format('d/m'),
+                'revenue' => (float) $periodSales->sum('total'),
+                'profit' => (float) $periodSales->sum(fn (Sale $s) => $s->profit),
+            ];
+        }
+
         return [
             'month_label' => $monthStart->translatedFormat('M/Y'),
             'month_profit' => $monthProfit,
             'month_revenue' => $monthRevenue,
             'month_expenses' => $expensesPaid,
+            'month_commissions' => $monthCommissions,
             'salaries_paid' => $salariesPaid,
             'expenses_without_salaries' => $expensesWithoutSalaries,
             'real_profit' => $realProfit,
+            'same_period' => $samePeriod,
         ];
     }
 

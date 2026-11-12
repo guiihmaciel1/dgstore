@@ -103,6 +103,7 @@ class DashboardController extends Controller
             'salesChart' => $data['sales_chart'],
             'profit' => $data['profit'],
             'prevMonthProfit' => $data['prev_month_profit'],
+            'forecast' => $data['forecast'],
             'systemNotifications' => $systemNotifications,
             'newLeadsWaiting' => $newLeadsWaiting,
             'birthdayCustomers' => $birthdayCustomers,
