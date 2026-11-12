@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controllers\Admin;
 
 use App\Domain\TimeClock\Models\IdleLog;
 use App\Domain\TimeClock\Models\TimeClockEntry;
+use App\Domain\TimeClock\Services\WorkedTimeCalculator;
 use App\Domain\User\Enums\UserRole;
 use App\Domain\User\Models\User;
 use App\Http\Controllers\Controller;
@@ -207,30 +208,6 @@ class TimeClockAdminController extends Controller
 
     private function calcWorkedMinutes(Collection $entries, bool $isOngoing = false): int
     {
-        $clockIn = $entries->firstWhere('type', TimeClockEntry::TYPE_CLOCK_IN);
-        if (! $clockIn) {
-            return 0;
-        }
-
-        $clockOut = $entries->firstWhere('type', TimeClockEntry::TYPE_CLOCK_OUT);
-        $lunchOut = $entries->firstWhere('type', TimeClockEntry::TYPE_LUNCH_OUT);
-        $lunchIn = $entries->firstWhere('type', TimeClockEntry::TYPE_LUNCH_IN);
-
-        $end = $clockOut ? $clockOut->punched_at : ($isOngoing ? now() : null);
-        if (! $end) {
-            return 0;
-        }
-
-        $totalMinutes = (int) $clockIn->punched_at->diffInMinutes($end);
-
-        if ($lunchOut && $lunchIn) {
-            $lunchMinutes = (int) $lunchOut->punched_at->diffInMinutes($lunchIn->punched_at);
-            $totalMinutes -= $lunchMinutes;
-        } elseif ($lunchOut && ! $lunchIn && $isOngoing) {
-            $lunchMinutes = (int) $lunchOut->punched_at->diffInMinutes(now());
-            $totalMinutes -= $lunchMinutes;
-        }
-
-        return max(0, $totalMinutes);
+        return WorkedTimeCalculator::workedMinutes($entries, $isOngoing);
     }
 }

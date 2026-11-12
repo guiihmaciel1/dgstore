@@ -10,7 +10,6 @@
         execPeriod: 'month',
         execSearch: '',
         execMixChart: null,
-        execTypeChart: null,
         execPayChart: null,
         get selectedInternData() {
             if (!this.selectedIntern) return null;
@@ -33,7 +32,6 @@
         },
         renderExecCharts() {
             this.renderExecMixChart();
-            this.renderExecTypeChart();
             this.renderExecPayChart();
         },
         renderExecMixChart() {
@@ -43,14 +41,6 @@
             const g = this.execData?.gerencial;
             if (!g) return;
             this.execMixChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Novos', 'Seminovos'], datasets: [{ data: [g.iphone_new?.qty||0, g.iphone_used?.qty||0], backgroundColor: ['#6366f1','#f59e0b'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } } } } });
-        },
-        renderExecTypeChart() {
-            const ctx = document.getElementById('execTypeCanvas');
-            if (!ctx) return;
-            if (this.execTypeChart) this.execTypeChart.destroy();
-            const g = this.execData?.gerencial;
-            if (!g) return;
-            this.execTypeChart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Cliente Final', 'Repasse'], datasets: [{ data: [g.cliente_final?.count||0, g.repasse?.count||0], backgroundColor: ['#10b981','#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 } } } } } });
         },
         renderExecPayChart() {
             const ctx = document.getElementById('execPayCanvas');
@@ -64,14 +54,14 @@
             const sales = this.execData?.detalhado || [];
             if (!this.execSearch) return sales;
             const q = this.execSearch.toLowerCase();
-            return sales.filter(s => s.seller?.toLowerCase().includes(q) || s.customer?.toLowerCase().includes(q) || s.product?.toLowerCase().includes(q) || s.type?.toLowerCase().includes(q));
+            return sales.filter(s => s.seller?.toLowerCase().includes(q) || s.customer?.toLowerCase().includes(q) || s.product?.toLowerCase().includes(q));
         },
         get execTotals() {
             const items = this.filteredExecSales;
             return { value: items.reduce((s,i)=>s+(i.value||0),0), cost: items.reduce((s,i)=>s+(i.cost||0),0), profit: items.reduce((s,i)=>s+(i.profit||0),0) };
         }
      }"
-     x-on:open-month-summary.window="open = true; $nextTick(() => { if(typeof internChartInstance !== 'undefined' && internChartInstance) { internChartInstance.destroy(); internChartInstance = null; } if(tab === 'overview') initInternChart(); if(tab === 'gerencial') renderExecCharts(); })"
+     x-on:open-month-summary.window="if ($event.detail?.tab) tab = $event.detail.tab; if ($event.detail?.intern) selectedIntern = $event.detail.intern; open = true; $nextTick(() => { if(typeof internChartInstance !== 'undefined' && internChartInstance) { internChartInstance.destroy(); internChartInstance = null; } if(tab === 'overview') initInternChart(); if(tab === 'gerencial') renderExecCharts(); })"
      x-on:keydown.escape.window="open = false"
      x-show="open" x-cloak
      style="position: fixed; inset: 0; z-index: 9999;"

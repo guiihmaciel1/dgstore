@@ -1,7 +1,59 @@
 <x-app-layout>
     <x-slot name="title">Dashboard</x-slot>
-    <div class="py-6" x-data="{ stockModalOpen: false }">
-        <div class="px-6 lg:px-8">
+    @php
+        $prevMonth = $referenceDate->copy()->subMonth();
+        $nextMonth = $referenceDate->copy()->addMonth();
+    @endphp
+    <div class="py-6"
+         x-data="{ stockModalOpen: false, showValues: localStorage.getItem('dg_show_values') !== 'false' }"
+         x-init="$watch('showValues', v => localStorage.setItem('dg_show_values', v))">
+        <div class="px-4 sm:px-6 lg:px-8">
+            {{-- Barra da página: mês de referência + ações --}}
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <nav class="flex items-center gap-1" aria-label="Mês de referência">
+                    <a href="{{ route('dashboard', ['month' => $prevMonth->month, 'year' => $prevMonth->year]) }}"
+                       class="flex h-8 w-8 items-center justify-center rounded-lg text-dg-400 transition-colors hover:bg-surface-elevated hover:text-dg-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
+                       aria-label="Mês anterior">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </a>
+                    <h1 class="min-w-[9.5rem] text-center text-base font-semibold capitalize text-dg-100">{{ $referenceDate->translatedFormat('F Y') }}</h1>
+                    @if(!$isCurrentMonth)
+                        <a href="{{ route('dashboard', ['month' => $nextMonth->month, 'year' => $nextMonth->year]) }}"
+                           class="flex h-8 w-8 items-center justify-center rounded-lg text-dg-400 transition-colors hover:bg-surface-elevated hover:text-dg-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400"
+                           aria-label="Próximo mês">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="{{ route('dashboard') }}" class="ml-2 text-xs font-medium text-indigo-300 underline-offset-4 hover:underline">Voltar ao mês atual</a>
+                    @else
+                        <span class="flex h-8 w-8 items-center justify-center text-dg-700" aria-hidden="true">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                    @endif
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="$dispatch('open-month-summary')"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-500/15 px-3 py-2 text-xs font-semibold text-indigo-200 transition-colors hover:bg-indigo-500/25 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Resumo Executivo
+                    </button>
+                    <button type="button" @click="showValues = !showValues"
+                            class="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-dg-400 transition-colors hover:bg-surface-elevated hover:text-dg-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
+                            :aria-pressed="(!showValues).toString()">
+                        <svg x-show="showValues" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        <svg x-show="!showValues" x-cloak class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.59 6.59m7.532 7.532l3.29 3.29M3 3l18 18"/>
+                        </svg>
+                        <span x-text="showValues ? 'Ocultar valores' : 'Mostrar valores'"></span>
+                    </button>
+                </div>
+            </div>
+
             @if(session('success'))
                 <div class="mb-4">
                     <x-alert type="success">{{ session('success') }}</x-alert>
@@ -435,23 +487,6 @@
             </div>
             @endif
 
-            <!-- PRÓXIMOS ANIVERSARIANTES DO MÊS -->
-            @if($birthdayCustomers->count() > 0)
-            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.875rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
-                <span style="font-size: 0.9rem;">&#127874;</span>
-                <span style="color: #818181; font-weight: 500;">Próximos aniversariantes do mês:</span>
-                @foreach($birthdayCustomers as $customer)
-                    <a href="{{ route('customers.show', $customer) }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; {{ $customer->birth_date->day === now()->day ? 'background: #fef3c7; color: #fbbf24;' : 'background: #222222; color: #a4a4a4;' }}" title="{{ $customer->phone }}">
-                        <span style="color: #ec4899; font-weight: 800;">{{ $customer->birth_date->format('d') }}</span>
-                        {{ $customer->name }}
-                        @if($customer->birth_date->day === now()->day)
-                            <span style="font-size: 0.625rem; font-weight: 800; color: #d97706;">HOJE!</span>
-                        @endif
-                    </a>
-                @endforeach
-            </div>
-            @endif
-
             <!-- CONTAS A PAGAR HOJE -->
             @if($todayPayables->count() > 0)
             <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.875rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
@@ -473,88 +508,6 @@
                 </a>
             </div>
             @endif
-
-            <!-- PRÓXIMO AGENDAMENTO -->
-            @if($nextAppointment)
-            <div style="margin-bottom: 1rem;">
-                <a href="{{ route('schedule.index') }}" style="display: flex; align-items: center; gap: 0.875rem; padding: 0.75rem 1rem; background: #141414; border: 1px solid #c7d2fe; border-radius: 0.625rem; text-decoration: none; transition: all 0.15s; box-shadow: 0 1px 3px rgba(99,102,241,0.08);" onmouseover="this.style.borderColor='#818cf8'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.15)'" onmouseout="this.style.borderColor='#c7d2fe'; this.style.boxShadow='0 1px 3px rgba(99,102,241,0.08)'">
-                    <div style="width: 2.5rem; height: 2.5rem; background: rgba(99,102,241,0.1); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: #4f46e5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <div style="display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap;">
-                            <span style="font-size: 0.8rem; font-weight: 700; color: #4f46e5;">Próximo agendamento</span>
-                            <span style="font-size: 0.7rem; font-weight: 600; color: #e3e3e3; background: rgba(99,102,241,0.15); padding: 0.0625rem 0.5rem; border-radius: 9999px;">{{ substr($nextAppointment->start_time, 0, 5) }}</span>
-                        </div>
-                        <div style="font-size: 0.775rem; color: #a4a4a4; margin-top: 0.125rem;">
-                            <span style="font-weight: 600;">{{ $nextAppointment->customer_name }}</span>
-                            <span style="color: #818181;">com</span>
-                            <span style="font-weight: 600; color: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$nextAppointment->attendant] ?? '#6b7280' }};">{{ $nextAppointment->attendant_name }}</span>
-                            @if($nextAppointment->service_description)
-                                <span style="color: #666666;">·</span>
-                                <span style="color: #818181;">{{ $nextAppointment->service_description }}</span>
-                            @endif
-                        </div>
-                    </div>
-                    <div style="flex-shrink: 0; display: flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 600; color: #4f46e5;">
-                        <span>Ver agenda</span>
-                        <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </div>
-                </a>
-            </div>
-            @endif
-
-            <!-- ATALHOS RÁPIDOS -->
-            <div class="dashboard-shortcuts">
-                <a href="{{ route('sales.create') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #111827; color: white; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" onmouseout="this.style.transform=''; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'">
-                    <div style="width: 2.5rem; height: 2.5rem; background: #22c55e; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Venda</span>
-                        <span style="font-size: 0.6875rem; color: #666666;">Nova venda</span>
-                    </div>
-                </a>
-                <a href="{{ route('tools.negotiation-simulator') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #141414; border: 2px solid rgba(255,255,255,0.08); color: #e3e3e3; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#818181'; this.style.boxShadow='0 4px 12px rgba(99,102,241,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.boxShadow=''">
-                    <div style="width: 2.5rem; height: 2.5rem; background: rgba(99,102,241,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: #6366f1;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Simular</span>
-                        <span style="font-size: 0.6875rem; color: #666666;">Negociação</span>
-                    </div>
-                </a>
-                @if(config('crm.pipeline_enabled'))
-                <a href="{{ route('crm.board') }}" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #141414; border: 2px solid rgba(255,255,255,0.08); color: #e3e3e3; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#f59e0b'; this.style.boxShadow='0 4px 12px rgba(245,158,11,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.boxShadow=''">
-                    <div style="width: 2.5rem; height: 2.5rem; background: rgba(245,158,11,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: #f59e0b;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Pipeline</span>
-                        <span style="font-size: 0.6875rem; color: #666666;">CRM / Leads</span>
-                    </div>
-                </a>
-                @endif
-                <a href="{{ route('marketing.index') }}?tab=used" style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: #141414; border: 2px solid rgba(255,255,255,0.08); color: #e3e3e3; border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='#ec4899'; this.style.boxShadow='0 4px 12px rgba(236,72,153,0.15)'" onmouseout="this.style.transform=''; this.style.borderColor='rgba(255,255,255,0.06)'; this.style.boxShadow=''">
-                    <div style="width: 2.5rem; height: 2.5rem; background: rgba(236,72,153,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: #ec4899;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <span style="font-size: 0.9375rem; font-weight: 700; display: block; line-height: 1.2;">Seminovos</span>
-                        <span style="font-size: 0.6875rem; color: #666666;">Marketing</span>
-                    </div>
-                </a>
-            </div>
 
             <!-- Mensagens do Sistema -->
             <div class="mb-6 sm:mb-8">
@@ -578,17 +531,6 @@
             </div>
 
             <style>
-                .dashboard-shortcuts {
-                    display: grid;
-                    grid-template-columns: repeat(2, 1fr);
-                    gap: 0.75rem;
-                    margin-bottom: 1rem;
-                }
-                @media (min-width: 640px) {
-                    .dashboard-shortcuts {
-                        grid-template-columns: repeat(4, 1fr);
-                    }
-                }
                 .dg-hidden-value {
                     letter-spacing: 0.1em;
                     color: #515151;
@@ -619,8 +561,8 @@
                     opacity: 0.8;
                 }
                 .sn-card-danger { background: rgba(239,68,68,0.1); border-color: #fecaca; color: #fca5a5; }
-                .sn-card-warning { background: #141414beb; border-color: #fde68a; color: #fbbf24; }
-                .sn-card-info { background: #f0f9ff; border-color: #bae6fd; color: #0c4a6e; }
+                .sn-card-warning { background: rgba(245,158,11,0.08); border-color: rgba(253,230,138,0.7); color: #fbbf24; }
+                .sn-card-info { background: rgba(56,189,248,0.08); border-color: rgba(125,211,252,0.35); color: #7dd3fc; }
                 .sn-card-success { background: rgba(16,185,129,0.1); border-color: #bbf7d0; color: #6ee7b7; }
                 .sn-ok {
                     display: inline-flex;
@@ -637,68 +579,8 @@
                 .sn-ok svg { width: 1rem; height: 1rem; color: #16a34a; }
             </style>
 
-            <!-- Navegação de Mês -->
-            @php
-                $prevMonth = $referenceDate->copy()->subMonth();
-                $nextMonth = $referenceDate->copy()->addMonth();
-                $canGoNext = !$isCurrentMonth;
-            @endphp
-            <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem; background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 0.625rem 1.25rem;">
-                <a href="{{ route('dashboard', ['month' => $prevMonth->month, 'year' => $prevMonth->year]) }}"
-                   style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #222222; text-decoration: none; color: #a4a4a4; transition: all 0.15s;"
-                   onmouseover="this.style.background='#222222'" onmouseout="this.style.background='transparent'">
-                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                </a>
-                <div style="text-align: center; min-width: 160px;">
-                    <span style="font-size: 1rem; font-weight: 700; color: #e3e3e3; text-transform: capitalize;">{{ $referenceDate->translatedFormat('F Y') }}</span>
-                    @if(!$isCurrentMonth)
-                        <a href="{{ route('dashboard') }}" style="display: block; font-size: 0.6875rem; color: #2563eb; text-decoration: none; font-weight: 500; margin-top: 0.125rem;">Voltar ao mês atual</a>
-                    @endif
-                </div>
-                @if($canGoNext)
-                    <a href="{{ route('dashboard', ['month' => $nextMonth->month, 'year' => $nextMonth->year]) }}"
-                       style="display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: #222222; text-decoration: none; color: #a4a4a4; transition: all 0.15s;"
-                       onmouseover="this.style.background='#222222'" onmouseout="this.style.background='transparent'">
-                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </a>
-                @else
-                    <div style="width: 2rem; height: 2rem; border-radius: 0.5rem; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: #515151;">
-                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </div>
-                @endif
-            </div>
-
             <!-- Cards de Estatísticas -->
-            <div x-data="{ showValues: localStorage.getItem('dg_show_values') !== 'false' }"
-                 x-init="$watch('showValues', v => localStorage.setItem('dg_show_values', v))"
-                 class="mb-6 sm:mb-8">
-                {{-- Botões de ação --}}
-                <div class="flex items-center justify-end gap-2 mb-2">
-                    <button type="button" @click="$dispatch('open-month-summary')"
-                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                            title="Resumo Executivo">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        <span class="hidden sm:inline">Resumo Executivo</span>
-                    </button>
-                    <button type="button" @click="showValues = !showValues"
-                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors"
-                            :class="showValues ? 'text-dg-500 hover:text-dg-400 hover:bg-surface-overlay' : 'text-dg-500 bg-surface-overlay hover:bg-surface-elevated'"
-                            :title="showValues ? 'Ocultar valores' : 'Mostrar valores'">
-                        {{-- Olho aberto --}}
-                        <svg x-show="showValues" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                        {{-- Olho fechado --}}
-                        <svg x-show="!showValues" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L6.59 6.59m7.532 7.532l3.29 3.29M3 3l18 18"/>
-                        </svg>
-                        <span x-text="showValues ? 'Ocultar' : 'Mostrar'" class="hidden sm:inline"></span>
-                    </button>
-                </div>
-
+            <div class="mb-6 sm:mb-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     <div class="bg-surface-raised rounded-xl p-4 sm:p-5 ring-1 ring-white/[0.03] border border-border">
                         <div class="flex items-center justify-between">
@@ -761,7 +643,7 @@
                             </div>
                         </div>
                         @if($nextAppointment)
-                            <p class="text-xs text-indigo-600 font-medium mt-2">Próximo: {{ substr($nextAppointment->start_time, 0, 5) }} - {{ $nextAppointment->attendant_name }}</p>
+                            <p class="text-xs text-indigo-300 font-medium mt-2">Próximo: {{ substr($nextAppointment->start_time, 0, 5) }} - {{ $nextAppointment->attendant_name }}</p>
                         @endif
                     </a>
                 </div>
@@ -1035,53 +917,17 @@
                     </div>
                 </div>
                 @endif
-
-                {{-- Inteligência Atacado x Cliente Final --}}
-                @include('partials._wholesale-intelligence', ['wholesaleData' => $wholesaleData, 'referenceDate' => $referenceDate])
             </div>
 
-            <!-- Agenda do Dia -->
-            @if($todayAppointments->count() > 0)
-            <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6 mb-4 sm:mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base sm:text-lg font-semibold text-dg-100">Agenda de Hoje</h3>
-                    <a href="{{ route('schedule.index') }}" class="text-xs sm:text-sm text-dg-400 hover:text-dg-100">Ver agenda completa →</a>
-                </div>
-                <div class="space-y-2">
-                    @foreach($todayAppointments as $appt)
-                        @php
-                            $isPast = $appt->end_time <= now()->format('H:i:s');
-                            $isNow = $appt->start_time <= now()->format('H:i:s') && $appt->end_time > now()->format('H:i:s');
-                            $statusColors = [
-                                'scheduled' => ['border' => '#bfdbfe', 'bg' => '#eff6ff', 'dot' => '#3b82f6'],
-                                'confirmed' => ['border' => '#bbf7d0', 'bg' => '#f0fdf4', 'dot' => '#16a34a'],
-                                'completed' => ['border' => 'rgba(255,255,255,0.06)', 'bg' => '#1a1a1a', 'dot' => '#666666'],
-                                'cancelled' => ['border' => '#fecaca', 'bg' => '#fef2f2', 'dot' => '#dc2626'],
-                                'no_show'   => ['border' => '#fde68a', 'bg' => '#fefce8', 'dot' => '#d97706'],
-                            ];
-                            $sc = $statusColors[$appt->status->value] ?? $statusColors['scheduled'];
-                        @endphp
-                        <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 0.5rem; border: 1px solid {{ $sc['border'] }}; background: {{ $isNow ? '#eef2ff' : $sc['bg'] }}; {{ $isPast && $appt->status->value !== 'completed' ? 'opacity: 0.6;' : '' }}">
-                            <div style="width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: {{ $isNow ? '#4f46e5' : $sc['dot'] }}; flex-shrink: 0; {{ $isNow ? 'box-shadow: 0 0 0 3px rgba(79,70,229,0.2);' : '' }}"></div>
-                            <div style="min-width: 4.5rem; font-size: 0.8rem; font-weight: 700; color: {{ $isNow ? '#4f46e5' : '#111827' }}; font-variant-numeric: tabular-nums;">
-                                {{ substr($appt->start_time, 0, 5) }} - {{ substr($appt->end_time, 0, 5) }}
-                            </div>
-                            <div style="flex: 1; min-width: 0;">
-                                <span style="font-size: 0.8rem; font-weight: 600; color: #e3e3e3;">{{ $appt->customer_name }}</span>
-                                @if($appt->service_description)
-                                    <span style="font-size: 0.7rem; color: #818181; margin-left: 0.375rem;">· {{ $appt->service_description }}</span>
-                                @endif
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 0.375rem; flex-shrink: 0;">
-                                <span style="font-size: 0.7rem; font-weight: 600; color: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_COLORS[$appt->attendant] ?? '#6b7280' }}; background: {{ \App\Domain\Schedule\Models\Appointment::ATTENDANT_BG_COLORS[$appt->attendant] ?? '#f3f4f6' }}; padding: 0.125rem 0.5rem; border-radius: 9999px;">{{ $appt->attendant_name }}</span>
-                                <span style="font-size: 0.65rem; font-weight: 500; padding: 0.125rem 0.375rem; border-radius: 9999px; background: {{ $sc['bg'] }}; color: {{ $sc['dot'] }}; border: 1px solid {{ $sc['border'] }};">{{ $appt->status->label() }}</span>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
+            {{-- Equipe: vendas, lucro, ponto e comissões das vendedoras (admin geral) --}}
+            @if($teamPanel)
+                @include("partials._home-team")
             @endif
 
+            <div class="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 lg:grid-cols-2">
+                @include("partials._home-birthdays")
+                @include("partials._home-agenda")
+            </div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <!-- Gráfico de Vendas -->
                 <div class="bg-surface-raised rounded-xl ring-1 ring-white/[0.03] border border-border p-4 sm:p-6">

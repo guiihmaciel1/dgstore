@@ -35,7 +35,6 @@
                     <th style="padding: 0.75rem 0.875rem; text-align: left; font-weight: 600; color: #94a3b8; white-space: nowrap; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
                     <th style="padding: 0.75rem 0.875rem; text-align: left; font-weight: 600; color: #94a3b8; white-space: nowrap; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Vendedor</th>
                     <th style="padding: 0.75rem 0.875rem; text-align: left; font-weight: 600; color: #94a3b8; white-space: nowrap; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</th>
-                    <th style="padding: 0.75rem 0.875rem; text-align: center; font-weight: 600; color: #94a3b8; white-space: nowrap; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Tipo</th>
                     <th style="padding: 0.75rem 0.875rem; text-align: left; font-weight: 600; color: #94a3b8; white-space: nowrap; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Produto</th>
                     <th style="padding: 0.75rem 0.875rem; text-align: center; font-weight: 600; color: #94a3b8; white-space: nowrap; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Cond.</th>
                     <th style="padding: 0.75rem 0.875rem; text-align: right; font-weight: 600; color: #94a3b8; white-space: nowrap; font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.05em;">Valor</th>
@@ -50,12 +49,6 @@
                         <td style="padding: 0.5rem 0.875rem; white-space: nowrap; color: #cbd5e1;" x-text="sale.date"></td>
                         <td style="padding: 0.5rem 0.875rem; white-space: nowrap; color: #cbd5e1;" x-text="sale.seller"></td>
                         <td style="padding: 0.5rem 0.875rem; white-space: nowrap; color: #cbd5e1; max-width: 9rem; overflow: hidden; text-overflow: ellipsis;" x-text="sale.customer"></td>
-                        <td style="padding: 0.5rem 0.875rem; text-align: center; white-space: nowrap;">
-                            <span :style="sale.type_raw === 'repasse'
-                                ? 'display: inline-block; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.625rem; font-weight: 600; background: rgba(139,92,246,0.15); color: #c4b5fd;'
-                                : 'display: inline-block; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.625rem; font-weight: 600; background: rgba(16,185,129,0.15); color: #6ee7b7;'"
-                                x-text="sale.type"></span>
-                        </td>
                         <td style="padding: 0.5rem 0.875rem; color: #cbd5e1; max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="sale.product"></td>
                         <td style="padding: 0.5rem 0.875rem; text-align: center; white-space: nowrap; color: #64748b;" x-text="sale.condition"></td>
                         <td style="padding: 0.5rem 0.875rem; text-align: right; white-space: nowrap; font-weight: 500; color: #f1f5f9;">
@@ -76,13 +69,13 @@
                 </template>
                 <template x-if="filteredExecSales.length === 0">
                     <tr>
-                        <td colspan="10" style="padding: 2rem; text-align: center; color: #475569;">Nenhuma venda encontrada.</td>
+                        <td colspan="9" style="padding: 2rem; text-align: center; color: #475569;">Nenhuma venda encontrada.</td>
                     </tr>
                 </template>
             </tbody>
             <tfoot>
                 <tr style="border-top: 1px solid rgba(255,255,255,0.08);">
-                    <td colspan="6" style="padding: 0.75rem 0.875rem; font-weight: 700; color: #e2e8f0; font-size: 0.75rem;">
+                    <td colspan="5" style="padding: 0.75rem 0.875rem; font-weight: 700; color: #e2e8f0; font-size: 0.75rem;">
                         Total (<span x-text="filteredExecSales.length"></span> vendas)
                     </td>
                     <td style="padding: 0.75rem 0.875rem; text-align: right; font-weight: 700; color: #f1f5f9; font-size: 0.75rem;">

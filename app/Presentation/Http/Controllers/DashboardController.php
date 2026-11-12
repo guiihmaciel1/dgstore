@@ -23,12 +23,14 @@ use App\Domain\Reservation\Services\ReservationService;
 use App\Domain\Commission\Models\Commission;
 use App\Domain\Sale\Enums\PaymentMethod;
 use App\Domain\Sale\Enums\PaymentStatus;
-use App\Domain\Sale\Enums\SaleType;
 use App\Domain\Sale\Models\Sale;
 use App\Domain\Sale\Models\SaleItem;
 use App\Domain\Sale\Models\TradeIn;
 use App\Domain\Schedule\Enums\AppointmentStatus;
 use App\Domain\Schedule\Models\Appointment;
+use App\Domain\Commission\Models\CommissionWithdrawal;
+use App\Domain\TimeClock\Models\TimeClockEntry;
+use App\Domain\TimeClock\Services\WorkedTimeCalculator;
 use App\Domain\User\Enums\UserRole;
 use App\Domain\User\Models\User;
 use App\Domain\Warranty\Services\WarrantyService;
@@ -70,8 +72,10 @@ class DashboardController extends Controller
         $todayPayables = $this->getTodayPayables();
 
         [$monthSummary, $salesAnalytics] = $this->getMonthSummaryAndAnalytics($referenceDate);
-        $wholesaleData = $this->buildWholesaleIntelligence($referenceDate);
         $internStats = $this->buildInternStats($referenceDate);
+        $teamPanel = auth()->user()->isAdminGeral()
+            ? $this->buildTeamPanel($internStats)
+            : null;
         $appleNews = $this->appleNewsService->getCached();
         $stockItems = $this->getStockCatalog();
         $openRepairs = $this->repairService->openRepairs();
@@ -106,8 +110,8 @@ class DashboardController extends Controller
             'todayPayables' => $todayPayables,
             'monthSummary' => $monthSummary,
             'salesAnalytics' => $salesAnalytics,
-            'wholesaleData' => $wholesaleData,
             'internStats' => $internStats,
+            'teamPanel' => $teamPanel,
             'appleNews' => $appleNews,
             'stockItems' => $stockItems,
             'referenceDate' => $referenceDate,
@@ -651,13 +655,59 @@ class DashboardController extends Controller
             ->get();
     }
 
-    private function getBirthdayCustomers(): \Illuminate\Support\Collection
+    /**
+     * Aniversariantes de hoje até os próximos 14 dias (atravessa a virada do mês).
+     * Clientes duplicados (mesmo nome e data) aparecem uma vez só.
+     *
+     * @return \Illuminate\Support\Collection<int, array{customer: Customer, date: Carbon, days_until: int, age: ?int, whatsapp_url: ?string}>
+     */
+    private function getBirthdayCustomers(int $windowDays = 14): \Illuminate\Support\Collection
     {
+        $today = now()->startOfDay();
+        $limit = $today->copy()->addDays($windowDays);
+        $months = array_values(array_unique([$today->month, $limit->month]));
+
         return Customer::whereNotNull('birth_date')
-            ->whereMonth('birth_date', now()->month)
-            ->whereRaw('DAY(birth_date) >= ?', [now()->day])
-            ->orderByRaw('DAY(birth_date) ASC')
-            ->get();
+            ->where(function ($query) use ($months) {
+                foreach ($months as $month) {
+                    $query->orWhereMonth('birth_date', $month);
+                }
+            })
+            ->get(['id', 'name', 'phone', 'birth_date'])
+            ->map(function (Customer $customer) use ($today) {
+                $next = Carbon::create($today->year, $customer->birth_date->month, $customer->birth_date->day)->startOfDay();
+                if ($next->lt($today)) {
+                    $next->addYear();
+                }
+
+                return [
+                    'customer' => $customer,
+                    'date' => $next,
+                    'days_until' => (int) $today->diffInDays($next),
+                    'age' => $customer->birth_date->year > 1900 ? $next->year - $customer->birth_date->year : null,
+                    'whatsapp_url' => $this->birthdayWhatsAppUrl($customer),
+                ];
+            })
+            ->filter(fn (array $b) => $b['days_until'] <= $windowDays)
+            ->unique(fn (array $b) => mb_strtolower(trim($b['customer']->name)) . '|' . $b['date']->format('m-d'))
+            ->sortBy(fn (array $b) => sprintf('%03d|%s', $b['days_until'], mb_strtolower($b['customer']->name)))
+            ->values();
+    }
+
+    private function birthdayWhatsAppUrl(Customer $customer): ?string
+    {
+        $digits = preg_replace('/\D/', '', (string) $customer->phone);
+        if (strlen($digits) < 10) {
+            return null;
+        }
+        if (! str_starts_with($digits, '55') || strlen($digits) <= 11) {
+            $digits = '55' . $digits;
+        }
+
+        $firstName = explode(' ', trim($customer->name))[0];
+        $message = "Olá {$firstName}! 🎂🎉\n\nA equipe DG Store deseja um feliz aniversário! 🥳\n\nQue esse novo ano seja repleto de conquistas e alegrias.\n\nComo presente, preparamos condições especiais para você! Venha nos visitar 😉";
+
+        return 'https://wa.me/' . $digits . '?text=' . rawurlencode($message);
     }
 
     private function getSystemNotifications(): array
@@ -1141,6 +1191,112 @@ class DashboardController extends Controller
     }
 
     /**
+     * Painel "Equipe" da home (admin geral): desempenho do mês, ponto de hoje,
+     * horas da semana atual e saldo de comissões de cada vendedora.
+     */
+    private function buildTeamPanel(array $internStats): array
+    {
+        $interns = collect($internStats['interns'] ?? []);
+
+        if ($interns->isEmpty()) {
+            return ['members' => [], 'totals' => [], 'goals' => $internStats['goals'] ?? []];
+        }
+
+        $ids = $interns->pluck('id')->all();
+        $weekStart = now()->startOfWeek(Carbon::MONDAY);
+        $todayKey = now()->toDateString();
+
+        $weekEntries = TimeClockEntry::whereIn('user_id', $ids)
+            ->where('punched_at', '>=', $weekStart)
+            ->orderBy('punched_at')
+            ->get()
+            ->groupBy('user_id');
+
+        $approvedEarned = Commission::whereIn('user_id', $ids)
+            ->approved()
+            ->selectRaw('user_id, SUM(commission_amount) as total')
+            ->groupBy('user_id')
+            ->pluck('total', 'user_id');
+
+        $approvedWithdrawn = CommissionWithdrawal::whereIn('user_id', $ids)
+            ->approved()
+            ->selectRaw('user_id, SUM(amount) as total')
+            ->groupBy('user_id')
+            ->pluck('total', 'user_id');
+
+        $pendingWithdrawals = CommissionWithdrawal::whereIn('user_id', $ids)
+            ->pending()
+            ->selectRaw('user_id, COUNT(*) as total')
+            ->groupBy('user_id')
+            ->pluck('total', 'user_id');
+
+        $members = $interns->map(function (array $intern) use ($weekEntries, $todayKey, $approvedEarned, $approvedWithdrawn, $pendingWithdrawals) {
+            $byDay = $weekEntries->get($intern['id'], collect())
+                ->groupBy(fn (TimeClockEntry $e) => $e->punched_at->toDateString());
+
+            $todayEntries = $byDay->get($todayKey, collect());
+            $nextType = WorkedTimeCalculator::nextExpectedType($todayEntries);
+            $isOngoing = $todayEntries->isNotEmpty() && $nextType !== null;
+
+            $weekMinutes = 0;
+            $daysWorked = 0;
+            foreach ($byDay as $day => $entries) {
+                $minutes = WorkedTimeCalculator::workedMinutes($entries, $day === $todayKey && $isOngoing);
+                if ($minutes > 0) {
+                    $weekMinutes += $minutes;
+                    $daysWorked++;
+                }
+            }
+
+            $status = match (true) {
+                $todayEntries->isEmpty() => 'absent',
+                $nextType === TimeClockEntry::TYPE_LUNCH_IN => 'lunch',
+                $nextType === null => 'done',
+                default => 'working',
+            };
+
+            $commissionBalance = (float) ($approvedEarned[$intern['id']] ?? 0) - (float) ($approvedWithdrawn[$intern['id']] ?? 0);
+
+            return [
+                'id' => $intern['id'],
+                'name' => $intern['name'],
+                'sales_count' => $intern['sales_count'],
+                'phone_sales_count' => $intern['phone_sales_count'],
+                'revenue' => $intern['total_revenue'],
+                'profit' => $intern['total_profit'],
+                'commission' => $intern['commission_earned'],
+                'net_profit' => $intern['total_profit'] - $intern['commission_earned'],
+                'avg_ticket' => $intern['avg_ticket'],
+                'clock' => [
+                    'status' => $status,
+                    'clock_in' => $todayEntries->firstWhere('type', TimeClockEntry::TYPE_CLOCK_IN)?->punched_at?->format('H:i'),
+                    'today_minutes' => WorkedTimeCalculator::workedMinutes($todayEntries, $isOngoing),
+                    'week_minutes' => $weekMinutes,
+                    'week_balance_minutes' => $weekMinutes - ($daysWorked * WorkedTimeCalculator::EXPECTED_HOURS_PER_DAY * 60),
+                ],
+                'commission_balance' => $commissionBalance,
+                'pending_withdrawals' => (int) ($pendingWithdrawals[$intern['id']] ?? 0),
+            ];
+        })->values()->all();
+
+        $sum = fn (string $key) => array_sum(array_column($members, $key));
+
+        return [
+            'members' => $members,
+            'totals' => [
+                'sales_count' => $sum('sales_count'),
+                'phone_sales_count' => $sum('phone_sales_count'),
+                'revenue' => $sum('revenue'),
+                'profit' => $sum('profit'),
+                'commission' => $sum('commission'),
+                'net_profit' => $sum('net_profit'),
+                'commission_balance' => $sum('commission_balance'),
+            ],
+            'goals' => $internStats['goals'] ?? [],
+        ];
+    }
+
+    /**
      * Monta dados diários para o chart de evolução das vendedoras.
      */
     private function buildInternDailyChart($internSales, Carbon $start, Carbon $end, Carbon $referenceDate): array
@@ -1572,279 +1728,5 @@ class DashboardController extends Controller
         ];
 
         return $map[$lower] ?? ucfirst($color);
-    }
-
-    /**
-     * Inteligencia Atacado x Cliente Final: KPIs de repasse vs cliente final.
-     */
-    private function buildWholesaleIntelligence(Carbon $referenceDate): array
-    {
-        $start = $referenceDate->copy()->startOfMonth();
-        $end = $referenceDate->copy()->endOfMonth();
-
-        $sales = Sale::with(['items.product', 'customer'])
-            ->whereBetween('sold_at', [$start, $end])
-            ->where('payment_status', '!=', PaymentStatus::Cancelled)
-            ->get();
-
-        $repasseSales = $sales->where('sale_type', SaleType::Repasse);
-        $cfSales = $sales->where('sale_type', SaleType::ClienteFinal);
-
-        $channelSummary = $this->buildChannelSummary($repasseSales, $cfSales);
-        $topRepasseClients = $this->buildTopRepasseClients($repasseSales);
-        $inactiveClients = $this->buildInactiveRepasseClients($referenceDate);
-        $accumulated = $this->buildAccumulatedRanking($referenceDate);
-        $monthlyEvolution = $this->buildMonthlyEvolution($referenceDate);
-
-        return [
-            'channel_summary' => $channelSummary,
-            'top_repasse_clients' => $topRepasseClients,
-            'inactive_clients' => $inactiveClients,
-            'accumulated_ranking' => $accumulated,
-            'monthly_evolution' => $monthlyEvolution,
-        ];
-    }
-
-    private function buildChannelSummary($repasseSales, $cfSales): array
-    {
-        $build = function ($sales, string $label) {
-            $count = $sales->count();
-            $revenue = (float) $sales->sum('total');
-            $profit = (float) $sales->sum(fn (Sale $s) => $s->profit);
-            $items = (int) $sales->flatMap->items->sum('quantity');
-            $margin = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
-            $ticket = $count > 0 ? $revenue / $count : 0;
-
-            return compact('label', 'count', 'revenue', 'profit', 'items', 'margin', 'ticket');
-        };
-
-        $repasse = $build($repasseSales, 'Repasse');
-        $cf = $build($cfSales, 'Cliente Final');
-
-        $totalRevenue = $repasse['revenue'] + $cf['revenue'];
-        $totalProfit = $repasse['profit'] + $cf['profit'];
-        $repasseRevenuePct = $totalRevenue > 0 ? ($repasse['revenue'] / $totalRevenue) * 100 : 0;
-        $repasseProfitPct = $totalProfit > 0 ? ($repasse['profit'] / $totalProfit) * 100 : 0;
-
-        return [
-            'repasse' => $repasse,
-            'cliente_final' => $cf,
-            'total_revenue' => $totalRevenue,
-            'total_profit' => $totalProfit,
-            'repasse_revenue_pct' => $repasseRevenuePct,
-            'repasse_profit_pct' => $repasseProfitPct,
-        ];
-    }
-
-    private function buildTopRepasseClients($repasseSales): array
-    {
-        return $repasseSales
-            ->filter(fn (Sale $s) => $s->customer_id !== null)
-            ->groupBy('customer_id')
-            ->map(function ($sales) {
-                $customer = $sales->first()->customer;
-                $count = $sales->count();
-                $revenue = (float) $sales->sum('total');
-                $profit = (float) $sales->sum(fn (Sale $s) => $s->profit);
-                $margin = $revenue > 0 ? ($profit / $revenue) * 100 : 0;
-
-                return [
-                    'customer_id' => $customer?->id,
-                    'name' => $customer?->name ?? 'Sem cliente',
-                    'phone' => $customer?->phone,
-                    'count' => $count,
-                    'revenue' => $revenue,
-                    'profit' => $profit,
-                    'margin' => $margin,
-                ];
-            })
-            ->sortByDesc('profit')
-            ->take(10)
-            ->values()
-            ->toArray();
-    }
-
-    /**
-     * Clientes de repasse que ja compraram mas estao inativos (sem compra nos ultimos 30 dias).
-     */
-    private function buildInactiveRepasseClients(Carbon $referenceDate): array
-    {
-        $cutoffDate = $referenceDate->copy()->endOfMonth()->subDays(30);
-
-        $allRepasseCustomerIds = Sale::where('sale_type', SaleType::Repasse)
-            ->where('payment_status', '!=', PaymentStatus::Cancelled)
-            ->whereNotNull('customer_id')
-            ->distinct()
-            ->pluck('customer_id');
-
-        if ($allRepasseCustomerIds->isEmpty()) {
-            return [];
-        }
-
-        $recentBuyerIds = Sale::where('sale_type', SaleType::Repasse)
-            ->where('payment_status', '!=', PaymentStatus::Cancelled)
-            ->whereNotNull('customer_id')
-            ->where('sold_at', '>=', $cutoffDate)
-            ->distinct()
-            ->pluck('customer_id');
-
-        $inactiveIds = $allRepasseCustomerIds->diff($recentBuyerIds);
-
-        if ($inactiveIds->isEmpty()) {
-            return [];
-        }
-
-        $lastSales = Sale::whereIn('customer_id', $inactiveIds)
-            ->where('sale_type', SaleType::Repasse)
-            ->where('payment_status', '!=', PaymentStatus::Cancelled)
-            ->selectRaw('customer_id, MAX(sold_at) as last_purchase, COUNT(*) as total_purchases, SUM(total) as total_spent')
-            ->groupBy('customer_id')
-            ->orderByDesc('total_spent')
-            ->limit(10)
-            ->get();
-
-        $customers = Customer::whereIn('id', $lastSales->pluck('customer_id'))->get()->keyBy('id');
-
-        return $lastSales->map(function ($row) use ($customers) {
-            $customer = $customers->get($row->customer_id);
-            $lastPurchase = Carbon::parse($row->last_purchase);
-            $daysSince = (int) $lastPurchase->diffInDays(now());
-
-            $phone = $customer?->phone;
-            $cleanPhone = $phone ? preg_replace('/\D/', '', $phone) : '';
-            $hasPhone = strlen($cleanPhone) >= 8;
-            if ($hasPhone && strlen($cleanPhone) <= 11) {
-                $cleanPhone = '55' . $cleanPhone;
-            }
-
-            $message = "Olá {$customer?->name}! Aqui é a DG Store.\n"
-                . "Faz um tempo que não fazemos negócio juntos! 📱\n"
-                . "Temos novidades em estoque com ótimas condições de repasse.\n"
-                . "Posso te enviar nossa tabela atualizada?";
-
-            return [
-                'customer_id' => $row->customer_id,
-                'name' => $customer?->name ?? 'Sem cliente',
-                'phone' => $phone,
-                'has_phone' => $hasPhone,
-                'last_purchase' => $lastPurchase->format('d/m/Y'),
-                'days_since' => $daysSince,
-                'total_purchases' => (int) $row->total_purchases,
-                'total_spent' => (float) $row->total_spent,
-                'whatsapp_url' => $hasPhone
-                    ? 'https://wa.me/' . $cleanPhone . '?text=' . urlencode($message)
-                    : null,
-            ];
-        })->values()->toArray();
-    }
-
-    /**
-     * Ranking acumulado de clientes de repasse nos ultimos 6 meses.
-     */
-    private function buildAccumulatedRanking(Carbon $referenceDate): array
-    {
-        $endMonth = $referenceDate->copy()->endOfMonth();
-        $startMonth = $referenceDate->copy()->subMonths(5)->startOfMonth();
-
-        $sales = Sale::with('customer')
-            ->where('sale_type', SaleType::Repasse)
-            ->where('payment_status', '!=', PaymentStatus::Cancelled)
-            ->whereNotNull('customer_id')
-            ->whereBetween('sold_at', [$startMonth, $endMonth])
-            ->get();
-
-        $months = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $m = $referenceDate->copy()->subMonths($i);
-            $months[] = $m->format('Y-m');
-        }
-
-        $byCustomer = $sales->groupBy('customer_id');
-
-        $ranking = $byCustomer->map(function ($customerSales) use ($months) {
-            $customer = $customerSales->first()->customer;
-            $totalRevenue = (float) $customerSales->sum('total');
-            $totalProfit = (float) $customerSales->sum(fn (Sale $s) => $s->profit);
-            $totalCount = $customerSales->count();
-
-            $perMonth = [];
-            foreach ($months as $monthKey) {
-                $monthSales = $customerSales->filter(
-                    fn (Sale $s) => $s->sold_at->format('Y-m') === $monthKey
-                );
-                $perMonth[$monthKey] = [
-                    'revenue' => (float) $monthSales->sum('total'),
-                    'count' => $monthSales->count(),
-                ];
-            }
-
-            $monthValues = array_column($perMonth, 'revenue');
-            $firstHalf = array_sum(array_slice($monthValues, 0, 3));
-            $secondHalf = array_sum(array_slice($monthValues, 3, 3));
-            $trend = $firstHalf > 0
-                ? round((($secondHalf - $firstHalf) / $firstHalf) * 100, 1)
-                : ($secondHalf > 0 ? 100 : 0);
-
-            return [
-                'customer_id' => $customer?->id,
-                'name' => $customer?->name ?? 'Sem cliente',
-                'total_revenue' => $totalRevenue,
-                'total_profit' => $totalProfit,
-                'total_count' => $totalCount,
-                'per_month' => $perMonth,
-                'trend' => $trend,
-            ];
-        })
-            ->sortByDesc('total_revenue')
-            ->take(5)
-            ->values()
-            ->toArray();
-
-        return [
-            'months' => $months,
-            'month_labels' => array_map(fn ($m) => Carbon::createFromFormat('Y-m', $m)->translatedFormat('M'), $months),
-            'clients' => $ranking,
-        ];
-    }
-
-    /**
-     * Evolucao mensal: lucro repasse vs cliente final nos ultimos 6 meses.
-     */
-    private function buildMonthlyEvolution(Carbon $referenceDate): array
-    {
-        $endMonth = $referenceDate->copy()->endOfMonth();
-        $startMonth = $referenceDate->copy()->subMonths(5)->startOfMonth();
-
-        $sales = Sale::with('items')
-            ->where('payment_status', '!=', PaymentStatus::Cancelled)
-            ->whereBetween('sold_at', [$startMonth, $endMonth])
-            ->get();
-
-        $months = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $m = $referenceDate->copy()->subMonths($i);
-            $months[] = $m->format('Y-m');
-        }
-
-        $repasseData = [];
-        $cfData = [];
-        $labels = [];
-
-        foreach ($months as $monthKey) {
-            $monthSales = $sales->filter(fn (Sale $s) => $s->sold_at->format('Y-m') === $monthKey);
-            $labels[] = Carbon::createFromFormat('Y-m', $monthKey)->translatedFormat('M/y');
-
-            $repasseMonthSales = $monthSales->where('sale_type', SaleType::Repasse);
-            $cfMonthSales = $monthSales->where('sale_type', SaleType::ClienteFinal);
-
-            $repasseData[] = (float) $repasseMonthSales->sum(fn (Sale $s) => $s->profit);
-            $cfData[] = (float) $cfMonthSales->sum(fn (Sale $s) => $s->profit);
-        }
-
-        return [
-            'labels' => $labels,
-            'repasse' => $repasseData,
-            'cliente_final' => $cfData,
-        ];
     }
 }

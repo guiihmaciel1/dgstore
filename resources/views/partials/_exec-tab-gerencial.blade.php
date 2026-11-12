@@ -104,17 +104,11 @@
         <h3 style="font-size: 0.8125rem; font-weight: 600; color: #e2e8f0; margin-bottom: 1rem;">Novos vs Seminovos</h3>
         <div style="height: 200px;"><canvas id="execMixCanvas"></canvas></div>
     </div>
-    {{-- Mix: Cliente Final vs Repasse --}}
+    {{-- Formas de Pagamento --}}
     <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.5rem;">
-        <h3 style="font-size: 0.8125rem; font-weight: 600; color: #e2e8f0; margin-bottom: 1rem;">Cliente Final vs Repasse</h3>
-        <div style="height: 200px;"><canvas id="execTypeCanvas"></canvas></div>
+        <h3 style="font-size: 0.8125rem; font-weight: 600; color: #e2e8f0; margin-bottom: 1rem;">Formas de Pagamento</h3>
+        <div style="height: 200px;"><canvas id="execPayCanvas"></canvas></div>
     </div>
-</div>
-
-{{-- Formas de Pagamento --}}
-<div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-    <h3 style="font-size: 0.8125rem; font-weight: 600; color: #e2e8f0; margin-bottom: 1rem;">Formas de Pagamento</h3>
-    <div style="height: 200px;"><canvas id="execPayCanvas"></canvas></div>
 </div>
 
 {{-- Top 5 Modelos + Top 5 Vendedores --}}
