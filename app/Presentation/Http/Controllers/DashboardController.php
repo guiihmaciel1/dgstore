@@ -9,6 +9,7 @@ use App\Domain\CRM\Models\Deal;
 use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\CRM\Models\ProductInterest;
 use App\Domain\Customer\Models\Customer;
+use App\Domain\Customer\Services\BirthdayGreetingService;
 use App\Domain\Finance\Models\FinancialTransaction;
 use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
@@ -659,55 +660,69 @@ class DashboardController extends Controller
      * Aniversariantes de hoje até os próximos 14 dias (atravessa a virada do mês).
      * Clientes duplicados (mesmo nome e data) aparecem uma vez só.
      *
-     * @return \Illuminate\Support\Collection<int, array{customer: Customer, date: Carbon, days_until: int, age: ?int, whatsapp_url: ?string}>
+     * Para os de hoje, traz também o status da mensagem automática de aniversário.
+     *
+     * @return \Illuminate\Support\Collection<int, array{customer: Customer, date: Carbon, days_until: int, age: ?int, can_send: bool, greeting: ?\App\Domain\Customer\Models\BirthdayGreeting}>
      */
     private function getBirthdayCustomers(int $windowDays = 14): \Illuminate\Support\Collection
     {
+        $greetings = app(BirthdayGreetingService::class);
         $today = now()->startOfDay();
         $limit = $today->copy()->addDays($windowDays);
         $months = array_values(array_unique([$today->month, $limit->month]));
 
-        return Customer::whereNotNull('birth_date')
+        $birthdays = Customer::whereNotNull('birth_date')
             ->where(function ($query) use ($months) {
                 foreach ($months as $month) {
                     $query->orWhereMonth('birth_date', $month);
                 }
             })
             ->get(['id', 'name', 'phone', 'birth_date'])
-            ->map(function (Customer $customer) use ($today) {
-                $next = Carbon::create($today->year, $customer->birth_date->month, $customer->birth_date->day)->startOfDay();
-                if ($next->lt($today)) {
-                    $next->addYear();
-                }
+            ->map(function (Customer $customer) use ($today, $greetings) {
+                $next = $this->nextBirthday($customer->birth_date, $today);
 
                 return [
                     'customer' => $customer,
                     'date' => $next,
                     'days_until' => (int) $today->diffInDays($next),
                     'age' => $customer->birth_date->year > 1900 ? $next->year - $customer->birth_date->year : null,
-                    'whatsapp_url' => $this->birthdayWhatsAppUrl($customer),
+                    'can_send' => $greetings->whatsappNumber($customer) !== null,
+                    'greeting' => null,
                 ];
             })
             ->filter(fn (array $b) => $b['days_until'] <= $windowDays)
             ->unique(fn (array $b) => mb_strtolower(trim($b['customer']->name)) . '|' . $b['date']->format('m-d'))
             ->sortBy(fn (array $b) => sprintf('%03d|%s', $b['days_until'], mb_strtolower($b['customer']->name)))
             ->values();
+
+        $todayIds = $birthdays->where('days_until', 0)->map(fn (array $b) => $b['customer']->id)->all();
+        $sent = $greetings->greetingsThisYear($todayIds);
+
+        return $birthdays->map(function (array $b) use ($sent) {
+            if ($b['days_until'] === 0) {
+                $b['greeting'] = $sent->get($b['customer']->id);
+            }
+
+            return $b;
+        });
     }
 
-    private function birthdayWhatsAppUrl(Customer $customer): ?string
+    /**
+     * Próximo aniversário a partir de $from (29/02 vira 28/02 em anos não bissextos).
+     */
+    private function nextBirthday(Carbon $birthDate, Carbon $from): Carbon
     {
-        $digits = preg_replace('/\D/', '', (string) $customer->phone);
-        if (strlen($digits) < 10) {
-            return null;
-        }
-        if (! str_starts_with($digits, '55') || strlen($digits) <= 11) {
-            $digits = '55' . $digits;
-        }
+        $forYear = function (int $year) use ($birthDate): Carbon {
+            $day = $birthDate->month === 2 && $birthDate->day === 29 && ! Carbon::create($year)->isLeapYear()
+                ? 28
+                : $birthDate->day;
 
-        $firstName = explode(' ', trim($customer->name))[0];
-        $message = "Olá {$firstName}! 🎂🎉\n\nA equipe DG Store deseja um feliz aniversário! 🥳\n\nQue esse novo ano seja repleto de conquistas e alegrias.\n\nComo presente, preparamos condições especiais para você! Venha nos visitar 😉";
+            return Carbon::create($year, $birthDate->month, $day)->startOfDay();
+        };
 
-        return 'https://wa.me/' . $digits . '?text=' . rawurlencode($message);
+        $next = $forYear($from->year);
+
+        return $next->lt($from) ? $forYear($from->year + 1) : $next;
     }
 
     private function getSystemNotifications(): array

@@ -42,9 +42,9 @@
                 <div class="flex gap-2 sm:gap-3">
                     @if($customer->is_birthday_month && $customer->phone)
                         @php
-                            $whatsPhone = '55' . preg_replace('/\D/', '', $customer->phone);
-                            $firstName = explode(' ', trim($customer->name))[0];
-                            $birthdayMsg = "Olá {$firstName}! 🎂🎉\n\nA equipe DG Store deseja um feliz aniversário! 🥳\n\nQue esse novo ano seja repleto de conquistas e alegrias.\n\nComo presente, preparamos condições especiais para você! Venha nos visitar 😉";
+                            $birthdayService = app(\App\Domain\Customer\Services\BirthdayGreetingService::class);
+                            $whatsPhone = $birthdayService->whatsappNumber($customer) ?? ('55' . preg_replace('/\D/', '', $customer->phone));
+                            $birthdayMsg = $birthdayService->message($customer);
                         @endphp
                         <a href="https://wa.me/{{ $whatsPhone }}?text={{ urlencode($birthdayMsg) }}" target="_blank"
                            style="display: inline-flex; align-items: center; justify-content: center; gap: 0.375rem; padding: 0.625rem 1rem; background: #25D366; color: white; font-weight: 600; font-size: 0.875rem; border-radius: 0.5rem; text-decoration: none; white-space: nowrap;"

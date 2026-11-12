@@ -1,14 +1,13 @@
 {{--
     Aniversariantes da home.
     Espera: $birthdayCustomers (DashboardController::getBirthdayCustomers) — itens com
-    customer, date, days_until, age, whatsapp_url.
+    customer, date, days_until, age, can_send, greeting (só para os de hoje).
 --}}
 @php
     $birthdaysToday = $birthdayCustomers->where('days_until', 0)->values();
     $upcomingByDay = $birthdayCustomers->where('days_until', '>', 0)->groupBy(fn ($b) => $b['date']->toDateString());
     $upcomingCount = $birthdayCustomers->where('days_until', '>', 0)->count();
-    $visibleDays = 4;
-@endphp
+    $visibleDays = 4;@endphp
 
 <section class="flex flex-col rounded-xl border border-border bg-surface-raised" aria-labelledby="birthdays-title"
          x-data="{ showAll: false }">
@@ -37,14 +36,33 @@
                                     {{ $b['customer']->formatted_phone }}
                                 </span>
                             </a>
-                            @if($b['whatsapp_url'])
-                                <a href="{{ $b['whatsapp_url'] }}" target="_blank" rel="noopener"
-                                   class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-md bg-emerald-500/15 px-2.5 py-1.5 text-xs font-medium text-emerald-300 transition-colors hover:bg-emerald-500/25 hover:text-emerald-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-300">
+                            @php $greeting = $b['greeting']; @endphp
+                            @if($greeting?->isSent())
+                                <span class="inline-flex flex-shrink-0 items-center gap-1.5 text-xs font-medium text-emerald-300"
+                                      title="Enviado pelo WhatsApp{{ $greeting->sender ? ' por ' . $greeting->sender->name : '' }}">
                                     <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    Parabenizar
-                                </a>
+                                    Parabéns enviado {{ $greeting->sent_at?->format('H:i') }}
+                                </span>
+                            @elseif($b['can_send'])
+                                <form method="POST" action="{{ route('customers.birthday-greeting', $b['customer']) }}"
+                                      class="flex flex-shrink-0 flex-col items-end gap-0.5"
+                                      x-data="{ busy: false }" @submit="busy = true">
+                                    @csrf
+                                    <button type="submit" :disabled="busy"
+                                            class="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/15 px-2.5 py-1.5 text-xs font-medium text-emerald-300 transition-colors hover:bg-emerald-500/25 hover:text-emerald-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-300 disabled:cursor-wait disabled:opacity-60">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                        </svg>
+                                        <span x-text="busy ? 'Enviando…' : '{{ $greeting ? 'Tentar de novo' : 'Parabenizar' }}'">{{ $greeting ? 'Tentar de novo' : 'Parabenizar' }}</span>
+                                    </button>
+                                    @if($greeting)
+                                        <span class="text-[0.625rem] text-red-300" title="{{ $greeting->error }}">O envio falhou</span>
+                                    @endif
+                                </form>
+                            @else
+                                <span class="flex-shrink-0 text-[0.6875rem] text-dg-400">Sem celular válido</span>
                             @endif
                         </li>
                     @endforeach
