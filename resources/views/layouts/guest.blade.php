@@ -7,7 +7,7 @@
 
         <title>{{ isset($title) ? $title . ' — ' . config('app.name', 'Laravel') : 'Login — ' . config('app.name', 'Laravel') }}</title>
         
-        <link rel="icon" type="image/png" href="{{ asset('images/logodgnovo.png') }}?v={{ filemtime(public_path('images/logodgnovo.png')) }}">
+        @include('partials.favicon')
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

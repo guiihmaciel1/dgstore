@@ -8,7 +8,7 @@
         <title>{{ isset($title) ? $title . ' — ' . config('app.name', 'Laravel') : config('app.name', 'Laravel') }}</title>
         
         <!-- Favicon -->
-        <link rel="icon" type="image/png" href="{{ asset('images/logodg.png') }}?v={{ filemtime(public_path('images/logodg.png')) }}">
+        @include('partials.favicon')
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
