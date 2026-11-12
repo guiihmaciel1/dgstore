@@ -847,6 +847,11 @@
     {{-- Resumo Executivo (Vendedoras + Gerencial + Detalhado) --}}
     @include('partials._intern-dashboard-modal')
 
+    {{-- Conferência de caixa (banco + espécie) a cada N horas em horário comercial --}}
+    @if($cashStatus)
+        @include('partials._home-cash-modal')
+    @endif
+
 
     @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -225,6 +225,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/customers/{customer}/birthday-greeting', [\App\Presentation\Http\Controllers\BirthdayGreetingController::class, 'store'])
             ->middleware('throttle:20,1')
             ->name('customers.birthday-greeting');
+        Route::post('/caixa/conferencia', [\App\Presentation\Http\Controllers\CashSnapshotController::class, 'store'])
+            ->middleware('throttle:30,1')
+            ->name('cash-snapshots.store');
 
         // Fornecedores
         Route::resource('suppliers', SupplierController::class);

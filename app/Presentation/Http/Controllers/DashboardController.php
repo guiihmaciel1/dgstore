@@ -10,6 +10,7 @@ use App\Domain\CRM\Models\PipelineStage;
 use App\Domain\CRM\Models\ProductInterest;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\BirthdayGreetingService;
+use App\Domain\Finance\Services\StoreCapitalService;
 use App\Domain\Finance\Models\FinancialTransaction;
 use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
@@ -80,7 +81,8 @@ class DashboardController extends Controller
         $appleNews = $this->appleNewsService->getCached();
         $stockItems = $this->getStockCatalog();
         $openRepairs = $this->repairService->openRepairs();
-        $stockCapital = auth()->user()->canViewFinancials() ? $this->getStockCapital() : null;
+        // Caixa real e conferência de caixa: só admin geral
+        $cashStatus = auth()->user()->isAdminGeral() ? $this->buildCashStatus($referenceDate) : null;
 
         $executiveSummary = null;
         if (auth()->user()->isAdminGeral()) {
@@ -123,7 +125,7 @@ class DashboardController extends Controller
             'supplierQuoteInfo' => $supplierQuoteInfo,
             'priceBelowCostAlerts' => $priceBelowCostAlerts,
             'openRepairs' => $openRepairs,
-            'stockCapital' => $stockCapital,
+            'cashStatus' => $cashStatus,
         ]);
     }
 
@@ -929,48 +931,36 @@ class DashboardController extends Controller
     }
 
     /**
-     * Capital parado em estoque próprio, a preço de custo (compra + assistência).
-     * Não inclui consignado (não é da loja) nem serviços.
-     *
-     * @return array{total: float, units: int, groups: array<string, array{label: string, units: int, cost: float}>, missing_cost_units: int}
+     * Caixa real da loja (banco + espécie + iPhones novos + seminovos) e se está
+     * na hora de pedir a conferência de caixa.
      */
-    private function getStockCapital(): array
+    private function buildCashStatus(Carbon $referenceDate): array
     {
-        $rows = Product::query()
-            ->where('active', true)
-            ->where('stock_quantity', '>', 0)
-            ->where('category', '!=', ProductCategory::Service->value)
-            ->selectRaw('category, `condition`')
-            ->selectRaw('SUM(stock_quantity) as units')
-            ->selectRaw('SUM(stock_quantity * (COALESCE(cost_price, 0) + COALESCE(repair_cost, 0))) as cost')
-            ->selectRaw('SUM(CASE WHEN cost_price IS NULL OR cost_price <= 0 THEN stock_quantity ELSE 0 END) as missing_cost_units')
-            ->groupBy('category', 'condition')
-            ->toBase()
-            ->get();
+        $capital = app(StoreCapitalService::class);
+        $stock = $capital->stockCapital();
+        $latest = $capital->latestSnapshot();
 
-        $groups = [
-            'iphone_new' => ['label' => 'iPhones novos', 'units' => 0, 'cost' => 0.0],
-            'iphone_used' => ['label' => 'iPhones seminovos', 'units' => 0, 'cost' => 0.0],
-            'other' => ['label' => 'Outros produtos', 'units' => 0, 'cost' => 0.0],
-        ];
-        $missing = 0;
+        $bank = $latest ? (float) $latest->bank_amount : null;
+        $cash = $latest ? (float) $latest->cash_amount : null;
+        $iphonesNew = $stock['groups']['iphone_new']['cost'];
+        $iphonesUsed = $stock['groups']['iphone_used']['cost'];
 
-        foreach ($rows as $row) {
-            $key = match (true) {
-                $row->category === ProductCategory::Smartphone->value && $row->condition === ProductCondition::New->value => 'iphone_new',
-                $row->category === ProductCategory::Smartphone->value => 'iphone_used',
-                default => 'other',
-            };
-            $groups[$key]['units'] += (int) $row->units;
-            $groups[$key]['cost'] += (float) $row->cost;
-            $missing += (int) $row->missing_cost_units;
-        }
+        $monthStart = now()->startOfMonth();
+        $previousClose = $capital->snapshotBefore($monthStart);
 
         return [
-            'total' => array_sum(array_column($groups, 'cost')),
-            'units' => array_sum(array_column($groups, 'units')),
-            'groups' => $groups,
-            'missing_cost_units' => $missing,
+            'stock' => $stock,
+            'latest' => $latest,
+            'bank' => $bank,
+            'cash' => $cash,
+            'real_total' => $latest ? $bank + $cash + $iphonesNew + $iphonesUsed : null,
+            'previous_close' => $previousClose ? [
+                'total' => $previousClose->realTotal(),
+                'at' => $previousClose->created_at,
+            ] : null,
+            'is_due' => $capital->isCheckDue($latest),
+            'interval_hours' => (int) config('store.cash_check.interval_hours'),
+            'next_check_at' => $latest?->created_at->copy()->addHours((int) config('store.cash_check.interval_hours')),
         ];
     }
 
