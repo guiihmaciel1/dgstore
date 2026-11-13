@@ -394,6 +394,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/finance/receivables', [FinanceController::class, 'receivables'])->name('finance.receivables');
         Route::get('/finance/accounts', [FinanceController::class, 'accounts'])->name('finance.accounts');
         Route::post('/finance/accounts', [FinanceController::class, 'storeAccount'])->name('finance.accounts.store');
+        Route::post('/finance/accounts/{account}/desativar', [FinanceController::class, 'deactivateAccount'])->name('finance.accounts.deactivate');
         Route::post('/finance/transfers', [FinanceController::class, 'storeTransfer'])->name('finance.transfers.store');
         Route::get('/finance/categories', [FinanceController::class, 'categories'])->name('finance.categories');
         Route::post('/finance/categories', [FinanceController::class, 'storeCategory'])->name('finance.categories.store');

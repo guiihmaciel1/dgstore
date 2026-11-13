@@ -124,6 +124,22 @@ class FinanceController extends Controller
         return redirect()->route('finance.accounts')->with('success', 'Carteira criada com sucesso!');
     }
 
+    /** Desativa (oculta) a carteira. Nada é apagado: lançamentos e transferências continuam no histórico. */
+    public function deactivateAccount(FinancialAccount $account): RedirectResponse
+    {
+        if ($account->is_default) {
+            return back()->with('error', 'A carteira padrão não pode ser desativada.');
+        }
+
+        if (round((float) $account->current_balance, 2) !== 0.0) {
+            return back()->with('error', "A carteira {$account->name} ainda tem saldo ({$account->formatted_balance}). Transfira o saldo antes de desativar.");
+        }
+
+        $account->update(['is_active' => false]);
+
+        return redirect()->route('finance.accounts')->with('success', "Carteira {$account->name} desativada.");
+    }
+
     public function storeTransfer(Request $request): RedirectResponse
     {
         $request->validate([

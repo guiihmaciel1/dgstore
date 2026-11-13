@@ -107,8 +107,9 @@
             <!-- Cards de Carteiras -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 @foreach($accounts as $account)
+                    <div style="position: relative;">
                     <a href="{{ route('finance.accounts', ['account_id' => $account->id]) }}"
-                       style="background: #141414; border-radius: 0.75rem; padding: 1.25rem; border: 2px solid {{ $selectedAccountId == $account->id ? $account->color : '#e5e7eb' }}; text-decoration: none; display: block; transition: all 0.15s;"
+                       style="background: #141414; border-radius: 0.75rem; padding: 1.25rem; border: 2px solid {{ $selectedAccountId == $account->id ? $account->color : 'rgba(255,255,255,0.08)' }}; text-decoration: none; display: block; height: 100%; transition: all 0.15s;"
                        onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
                         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                             <div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; background: {{ $account->color }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -121,10 +122,23 @@
                                 <div style="font-size: 0.75rem; color: #818181;">{{ $account->type->label() }}{{ $account->is_default ? ' — Padrão' : '' }}</div>
                             </div>
                         </div>
-                        <div style="font-size: 1.5rem; font-weight: 800; color: {{ (float)$account->current_balance >= 0 ? '#111827' : '#dc2626' }};">
+                        <div style="font-size: 1.5rem; font-weight: 800; color: {{ (float)$account->current_balance >= 0 ? '#e3e3e3' : '#f87171' }};">
                             {{ $account->formatted_balance }}
                         </div>
                     </a>
+                    @unless($account->is_default)
+                        <form method="POST" action="{{ route('finance.accounts.deactivate', $account) }}"
+                              onsubmit="return confirm('Desativar a carteira {{ addslashes($account->name) }}? Ela some das listas, mas o histórico fica guardado.')"
+                              style="position: absolute; top: 1rem; right: 1rem;">
+                            @csrf
+                            <button type="submit" title="Desativar carteira"
+                                    style="padding: 0.25rem 0.625rem; background: transparent; color: #818181; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;"
+                                    onmouseover="this.style.color='#fca5a5'; this.style.borderColor='rgba(248,113,113,0.4)'" onmouseout="this.style.color='#818181'; this.style.borderColor='rgba(255,255,255,0.08)'">
+                                Desativar
+                            </button>
+                        </form>
+                    @endunless
+                    </div>
                 @endforeach
             </div>
 
