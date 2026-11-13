@@ -8,6 +8,7 @@ use App\Domain\Finance\Models\CashSnapshot;
 use App\Domain\Product\Enums\ProductCategory;
 use App\Domain\Product\Enums\ProductCondition;
 use App\Domain\Product\Models\Product;
+use App\Domain\Purchase\Services\PurchaseService;
 use App\Domain\User\Models\User;
 use Carbon\CarbonInterface;
 
@@ -62,6 +63,14 @@ class StoreCapitalService
         ];
     }
 
+    /**
+     * Compras já pagas que ainda não chegaram (custo dos itens a receber).
+     */
+    public function inTransitCost(): float
+    {
+        return app(PurchaseService::class)->inTransitCost();
+    }
+
     public function latestSnapshot(): ?CashSnapshot
     {
         return CashSnapshot::with('user:id,name')->latest('created_at')->first();
@@ -88,6 +97,7 @@ class StoreCapitalService
             'stock_new_cost' => $stock['groups']['iphone_new']['cost'],
             'stock_used_cost' => $stock['groups']['iphone_used']['cost'],
             'stock_other_cost' => $stock['groups']['other']['cost'],
+            'in_transit_cost' => $this->inTransitCost(),
             'user_id' => $user?->id,
         ]);
     }

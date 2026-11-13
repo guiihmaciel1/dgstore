@@ -189,12 +189,14 @@
                                     </svg>
                                     Movimentações
                                 </a>
-                                <a href="{{ route('imports.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('imports.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
+                                @if(auth()->user()->isAdminGeral())
+                                <a href="{{ route('purchases.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('purchases.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                     </svg>
-                                    Importações
+                                    Compras
                                 </a>
+                                @endif
                                 <a href="{{ route('stock.consignment.index') }}" class="flex items-center px-4 py-2.5 text-sm {{ request()->routeIs('stock.consignment.*') ? 'text-white bg-surface-elevated' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                                     <svg class="w-4 h-4 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
@@ -603,9 +605,11 @@
                 <a href="{{ route('stock.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Movimentações
                 </a>
-                <a href="{{ route('imports.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('imports.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
-                    Importações
+                @if(auth()->user()->isAdminGeral())
+                <a href="{{ route('purchases.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('purchases.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
+                    Compras
                 </a>
+                @endif
                 <a href="{{ route('stock.consignment.index') }}" class="block px-6 py-2 text-base font-medium {{ request()->routeIs('stock.consignment.*') ? 'text-white bg-surface' : 'text-dg-300 hover:text-white hover:bg-surface-elevated' }}">
                     Fornecedor Interno
                 </a>

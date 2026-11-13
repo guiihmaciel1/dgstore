@@ -23,6 +23,7 @@ class CashSnapshot extends Model
         'stock_new_cost',
         'stock_used_cost',
         'stock_other_cost',
+        'in_transit_cost',
         'user_id',
     ];
 
@@ -34,6 +35,7 @@ class CashSnapshot extends Model
             'stock_new_cost' => 'decimal:2',
             'stock_used_cost' => 'decimal:2',
             'stock_other_cost' => 'decimal:2',
+            'in_transit_cost' => 'decimal:2',
         ];
     }
 
@@ -43,11 +45,12 @@ class CashSnapshot extends Model
     }
 
     /**
-     * Caixa real: banco + espécie + iPhones novos + iPhones seminovos.
+     * Caixa real: banco + espécie + iPhones novos + seminovos + compras em trânsito.
      */
     public function realTotal(): float
     {
         return (float) $this->bank_amount + (float) $this->cash_amount
-            + (float) $this->stock_new_cost + (float) $this->stock_used_cost;
+            + (float) $this->stock_new_cost + (float) $this->stock_used_cost
+            + (float) ($this->in_transit_cost ?? 0);
     }
 }

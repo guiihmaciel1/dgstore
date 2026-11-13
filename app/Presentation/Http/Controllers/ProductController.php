@@ -13,6 +13,8 @@ use App\Domain\Product\Models\Product;
 use App\Domain\AI\Services\GeminiService;
 use App\Domain\Product\Services\ImeiLookupService;
 use App\Domain\Product\Services\ProductService;
+use App\Domain\Purchase\Models\PurchaseItem;
+use App\Domain\Purchase\Services\PurchaseService;
 use App\Http\Controllers\Controller;
 use App\Presentation\Http\Requests\StoreProductRequest;
 use App\Presentation\Http\Requests\UpdateProductRequest;
@@ -22,6 +24,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -61,26 +64,69 @@ class ProductController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
+        // "Dar entrada" de um item de compra: formulário já preenchido com os dados da compra
+        $purchaseItem = $this->pendingPurchaseItem($request, $request->query('purchase_item'));
+
+        if ($purchaseItem && ! $request->session()->hasOldInput()) {
+            $request->session()->now('_old_input', app(PurchaseService::class)->productPrefill($purchaseItem));
+        }
+
         return view('products.create', [
             'categories' => ProductCategory::cases(),
             'conditions' => ProductCondition::cases(),
+            'purchaseItem' => $purchaseItem,
         ]);
     }
 
     public function store(StoreProductRequest $request): RedirectResponse
     {
-        $data = ProductData::fromArray($request->validated());
-        $product = $this->productService->create($data);
+        $purchaseItemId = $request->input('purchase_item_id');
+        $purchaseItem = $purchaseItemId ? $this->pendingPurchaseItem($request, $purchaseItemId) : null;
 
-        if ($checklistId = $request->validated('checklist_id')) {
-            $product->update(['checklist_id' => $checklistId]);
+        if ($purchaseItemId && ! $purchaseItem) {
+            return back()->withInput()->with('error', 'Este item da compra já foi recebido ou cancelado.');
+        }
+
+        $product = DB::transaction(function () use ($request, $purchaseItem) {
+            $data = ProductData::fromArray($request->validated());
+            $product = $this->productService->create($data);
+
+            if ($checklistId = $request->validated('checklist_id')) {
+                $product->update(['checklist_id' => $checklistId]);
+            }
+
+            if ($purchaseItem) {
+                app(PurchaseService::class)->markReceived($purchaseItem, $product);
+            }
+
+            return $product;
+        });
+
+        if ($purchaseItem) {
+            return redirect()
+                ->route('purchases.show', $purchaseItem->purchase_id)
+                ->with('success', "{$product->name} entrou no estoque.");
         }
 
         return redirect()
             ->route('products.show', $product)
             ->with('success', 'Produto cadastrado com sucesso!');
+    }
+
+    /**
+     * Item de compra ainda pendente, acessível só por admin geral.
+     */
+    private function pendingPurchaseItem(Request $request, ?string $itemId): ?PurchaseItem
+    {
+        if (! $itemId || ! $request->user()?->isAdminGeral()) {
+            return null;
+        }
+
+        $item = PurchaseItem::with('purchase.supplier')->find($itemId);
+
+        return $item?->isPending() ? $item : null;
     }
 
     public function show(Product $product): View

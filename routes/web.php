@@ -340,6 +340,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/imports/{import}/receive', [ImportOrderController::class, 'confirmReceive'])->name('imports.confirm-receive');
         Route::post('/imports/{import}/cancel', [ImportOrderController::class, 'cancel'])->name('imports.cancel');
 
+        // Compras para estoque (pagas, aguardando chegada) — só admin geral
+        Route::middleware('role:admin_geral')->prefix('compras')->name('purchases.')->group(function () {
+            Route::get('/', [\App\Presentation\Http\Controllers\PurchaseController::class, 'index'])->name('index');
+            Route::get('/nova', [\App\Presentation\Http\Controllers\PurchaseController::class, 'create'])->name('create');
+            Route::post('/', [\App\Presentation\Http\Controllers\PurchaseController::class, 'store'])->name('store');
+            Route::get('/{purchase}', [\App\Presentation\Http\Controllers\PurchaseController::class, 'show'])->name('show');
+            Route::post('/itens/{item}/cancelar', [\App\Presentation\Http\Controllers\PurchaseController::class, 'cancelItem'])->name('items.cancel');
+        });
+
         // Reservas
         Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
         Route::get('/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');

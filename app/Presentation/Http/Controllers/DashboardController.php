@@ -11,6 +11,7 @@ use App\Domain\CRM\Models\ProductInterest;
 use App\Domain\Customer\Models\Customer;
 use App\Domain\Customer\Services\BirthdayGreetingService;
 use App\Domain\Finance\Services\StoreCapitalService;
+use App\Domain\Purchase\Services\PurchaseService;
 use App\Domain\Finance\Models\FinancialTransaction;
 use App\Domain\Import\Models\ImportOrder;
 use App\Domain\Import\Services\ImportOrderService;
@@ -752,6 +753,24 @@ class DashboardController extends Controller
             ];
         }
 
+        if (auth()->user()->isAdminGeral()) {
+            $purchases = app(PurchaseService::class)->pendingSummary();
+            if ($purchases['late'] > 0) {
+                $notifications[] = [
+                    'type' => 'danger', 'icon' => 'stock', 'count' => $purchases['late'],
+                    'label' => $purchases['late'] === 1 ? 'Compra atrasada' : 'Compras atrasadas',
+                    'route' => route('purchases.index'),
+                ];
+            }
+            if ($purchases['units'] > 0) {
+                $notifications[] = [
+                    'type' => 'info', 'icon' => 'stock', 'count' => $purchases['units'],
+                    'label' => 'Itens a receber',
+                    'route' => route('purchases.index'),
+                ];
+            }
+        }
+
         $overdueTransactions = FinancialTransaction::where('status', 'overdue')->count();
         if ($overdueTransactions > 0) {
             $notifications[] = [
@@ -931,7 +950,7 @@ class DashboardController extends Controller
     }
 
     /**
-     * Caixa real da loja (banco + espécie + iPhones novos + seminovos) e se está
+     * Caixa real da loja (banco + espécie + iPhones novos + seminovos + compras em trânsito) e se está
      * na hora de pedir a conferência de caixa.
      */
     private function buildCashStatus(Carbon $referenceDate): array
@@ -944,6 +963,8 @@ class DashboardController extends Controller
         $cash = $latest ? (float) $latest->cash_amount : null;
         $iphonesNew = $stock['groups']['iphone_new']['cost'];
         $iphonesUsed = $stock['groups']['iphone_used']['cost'];
+        $purchases = app(PurchaseService::class)->pendingSummary();
+        $inTransit = $purchases['cost'];
 
         $monthStart = now()->startOfMonth();
         $previousClose = $capital->snapshotBefore($monthStart);
@@ -953,7 +974,9 @@ class DashboardController extends Controller
             'latest' => $latest,
             'bank' => $bank,
             'cash' => $cash,
-            'real_total' => $latest ? $bank + $cash + $iphonesNew + $iphonesUsed : null,
+            'in_transit' => $inTransit,
+            'in_transit_units' => $purchases['units'],
+            'real_total' => $latest ? $bank + $cash + $iphonesNew + $iphonesUsed + $inTransit : null,
             'previous_close' => $previousClose ? [
                 'total' => $previousClose->realTotal(),
                 'at' => $previousClose->created_at,

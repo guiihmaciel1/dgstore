@@ -211,7 +211,7 @@
         </div>
     </div>
 
-    {{-- Caixa real da loja: banco + espécie (conferidos) + iPhones novos + seminovos (a custo) --}}
+    {{-- Caixa real da loja: banco + espécie (conferidos) + iPhones novos + seminovos (a custo) + compras em trânsito --}}
     @if(!empty($cashStatus))
         @php
             $stock = $cashStatus['stock'];
@@ -221,6 +221,7 @@
                 'cash' => ['label' => 'Espécie', 'value' => $cashStatus['cash'], 'tone' => 'bg-emerald-400', 'hint' => 'conferido'],
                 'iphone_new' => ['label' => 'iPhones novos', 'value' => $stock['groups']['iphone_new']['cost'], 'tone' => 'bg-indigo-400', 'hint' => $stock['groups']['iphone_new']['units'] . ' un. a custo'],
                 'iphone_used' => ['label' => 'iPhones seminovos', 'value' => $stock['groups']['iphone_used']['cost'], 'tone' => 'bg-amber-400', 'hint' => $stock['groups']['iphone_used']['units'] . ' un. a custo'],
+                'in_transit' => ['label' => 'Em trânsito', 'value' => $cashStatus['in_transit'] ?? 0, 'tone' => 'bg-fuchsia-400', 'hint' => ($cashStatus['in_transit_units'] ?? 0) . ' a receber', 'href' => route('purchases.index')],
             ];
             $realTotal = $cashStatus['real_total'];
             $previousClose = $cashStatus['previous_close'];
@@ -268,12 +269,16 @@
                             @endforeach
                         </div>
                     @endif
-                    <dl class="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                    <dl class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
                         @foreach($parts as $part)
                             <div>
                                 <dt class="flex items-center gap-2 text-xs text-dg-400">
                                     <span class="h-2 w-2 flex-shrink-0 rounded-full {{ $part['tone'] }}" aria-hidden="true"></span>
-                                    {{ $part['label'] }}
+                                    @if(!empty($part['href']))
+                                        <a href="{{ $part['href'] }}" class="underline-offset-4 hover:text-dg-100 hover:underline">{{ $part['label'] }}</a>
+                                    @else
+                                        {{ $part['label'] }}
+                                    @endif
                                 </dt>
                                 <dd class="mt-0.5 text-base font-semibold text-dg-100">
                                     @if($part['value'] === null)

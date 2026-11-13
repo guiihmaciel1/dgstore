@@ -9,6 +9,7 @@
     $hasErrors = $errors->cashCheck->any();
     $stockNew = $cashStatus['stock']['groups']['iphone_new']['cost'];
     $stockUsed = $cashStatus['stock']['groups']['iphone_used']['cost'];
+    $inTransit = (float) ($cashStatus['in_transit'] ?? 0);
     $check = config('store.cash_check');
 @endphp
 
@@ -21,7 +22,7 @@
         endHour: @js($check['end_hour']),
         bank: @js(old('bank_amount', $fmt($cashStatus['bank']))),
         cash: @js(old('cash_amount', $fmt($cashStatus['cash']))),
-        stock: @js($stockNew + $stockUsed),
+        stock: @js($stockNew + $stockUsed + $inTransit),
      })"
      x-on:open-cash-check.window="openNow()"
      x-on:keydown.escape.window="if (open) snooze()">
@@ -69,6 +70,9 @@
                 <dl class="mt-5 space-y-1.5 rounded-lg bg-surface-overlay px-3.5 py-3 text-xs">
                     <div class="flex justify-between gap-3"><dt class="text-dg-400">iPhones novos (custo)</dt><dd class="tabular-nums text-dg-200">R$ {{ number_format($stockNew, 2, ',', '.') }}</dd></div>
                     <div class="flex justify-between gap-3"><dt class="text-dg-400">iPhones seminovos (custo)</dt><dd class="tabular-nums text-dg-200">R$ {{ number_format($stockUsed, 2, ',', '.') }}</dd></div>
+                    @if($inTransit > 0)
+                        <div class="flex justify-between gap-3"><dt class="text-dg-400">Compras em trânsito</dt><dd class="tabular-nums text-dg-200">R$ {{ number_format($inTransit, 2, ',', '.') }}</dd></div>
+                    @endif
                     <div class="flex justify-between gap-3 border-t border-border pt-1.5 text-sm">
                         <dt class="font-medium text-dg-200">Caixa real</dt>
                         <dd class="font-bold tabular-nums text-dg-50" x-text="'R$ ' + money(total())"></dd>

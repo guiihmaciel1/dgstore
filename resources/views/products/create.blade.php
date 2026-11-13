@@ -19,7 +19,23 @@
             <div style="background: #141414; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06);">
                 <form method="POST" action="{{ route('products.store') }}">
                     @csrf
-                    
+                    @php $purchaseItem = $purchaseItem ?? null; $purchaseItemId = $purchaseItem?->id ?? old('purchase_item_id'); @endphp
+                    @if(session('error'))
+                        <div class="mx-5 mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">{{ session('error') }}</div>
+                    @endif
+                    @if($purchaseItemId)
+                        <input type="hidden" name="purchase_item_id" value="{{ $purchaseItemId }}">
+                        @if($purchaseItem)
+                            <div class="mx-5 mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-indigo-400/30 bg-indigo-500/10 px-3 py-2.5 text-sm">
+                                <span class="text-indigo-100">
+                                    Entrada da compra <a href="{{ route('purchases.show', $purchaseItem->purchase_id) }}" class="font-semibold underline underline-offset-4">{{ $purchaseItem->purchase->number }}</a>
+                                    · {{ $purchaseItem->displayName() }}. Complete o IMEI e os dados do aparelho.
+                                </span>
+                                <span class="text-xs text-indigo-200/80">Custo da compra: R$ {{ number_format((float) $purchaseItem->unit_cost, 2, ',', '.') }}</span>
+                            </div>
+                        @endif
+                    @endif
+
                     <div style="padding: 1rem 1.25rem;">
                         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.875rem;">
                             <!-- Nome -->
