@@ -19,35 +19,34 @@
         <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
+                <div class="mb-4 py-3 px-4 bg-emerald-500/10 border border-emerald-500/35 rounded-lg text-emerald-300 text-sm">
                     {{ session('success') }}
                 </div>
             @endif
 
             {{-- Header --}}
-            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+            <div class="flex items-start justify-between mb-4 flex-wrap gap-3">
                 <div>
-                    <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Pipeline de Vendas</h1>
-                    <div style="display: flex; gap: 1rem; margin-top: 0.375rem; flex-wrap: wrap;">
-                        <span style="font-size: 0.75rem; color: #818181;">
-                            <strong style="color: #e3e3e3;">{{ $metrics['total_open'] }}</strong> em aberto
+                    <h1 class="text-2xl font-bold text-dg-100">Pipeline de Vendas</h1>
+                    <div class="flex gap-4 mt-1.5 flex-wrap">
+                        <span class="text-xs text-dg-400">
+                            <strong class="text-dg-100">{{ $metrics['total_open'] }}</strong> em aberto
                             &middot;
-                            <strong style="color: #059669;">R$ {{ number_format($metrics['total_value'], 2, ',', '.') }}</strong> no pipeline
+                            <strong class="text-emerald-600">R$ {{ number_format($metrics['total_value'], 2, ',', '.') }}</strong> no pipeline
                         </span>
-                        <span style="font-size: 0.75rem; color: #818181;">
+                        <span class="text-xs text-dg-400">
                             Mês:
-                            <strong style="color: #059669;">{{ $metrics['won_month'] }} ganhos</strong> (R$ {{ number_format($metrics['won_value_month'], 2, ',', '.') }})
+                            <strong class="text-emerald-600">{{ $metrics['won_month'] }} ganhos</strong> (R$ {{ number_format($metrics['won_value_month'], 2, ',', '.') }})
                             &middot;
-                            <strong style="color: #fca5a5;">{{ $metrics['lost_month'] }} perdidos</strong>
+                            <strong class="text-red-300">{{ $metrics['lost_month'] }} perdidos</strong>
                         </span>
                     </div>
                 </div>
-                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <div class="flex gap-2 items-center flex-wrap">
                     @php
                         $crmSellers = $sellers->filter(fn($s) => in_array($s->name, ['Guilherme', 'Danilo', 'Sophia']));
                     @endphp
-                    <select onchange="window.location.href='{{ route('crm.board') }}?user_id=' + this.value"
-                            style="padding: 0.4rem 0.75rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; font-size: 0.8rem; background: #141414;">
+                    <select class="py-[0.4rem] px-3 border border-border rounded-lg text-[0.8rem] bg-surface-raised" onchange="window.location.href='{{ route('crm.board') }}?user_id=' + this.value">
                         <option value="">Todos os vendedores</option>
                         @foreach($crmSellers as $seller)
                             <option value="{{ $seller->id }}" {{ $filterUserId === $seller->id ? 'selected' : '' }}>
@@ -55,11 +54,10 @@
                             </option>
                         @endforeach
                     </select>
-                    <a href="{{ route('crm.history') }}" style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; color: #a4a4a4; text-decoration: none; background: #141414; font-weight: 500;">
+                    <a class="py-2 px-4 text-[0.8rem] border border-border rounded-lg text-dg-300 no-underline bg-surface-raised font-medium" href="{{ route('crm.history') }}">
                         Histórico
                     </a>
-                    <a href="{{ route('crm.deals.create') }}"
-                       style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; font-size: 0.8rem; font-weight: 600; border-radius: 0.5rem; text-decoration: none; cursor: pointer;">
+                    <a class="inline-flex items-center gap-1.5 py-2 px-4 bg-[#111827] text-white text-[0.8rem] font-semibold rounded-lg no-underline cursor-pointer" href="{{ route('crm.deals.create') }}">
                         Novo Lead
                     </a>
                 </div>
@@ -67,26 +65,26 @@
 
             {{-- Alertas de atenção --}}
             @if($metrics['stale_4h'] > 0 || $metrics['overdue_followups'] > 0)
-                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                <div class="flex gap-2 mb-3 flex-wrap">
                     @if($metrics['stale_24h'] > 0)
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #fca5a5;">
-                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <div class="inline-flex items-center gap-1.5 py-1.5 px-3 bg-red-500/10 border border-red-500/35 rounded-lg text-xs font-semibold text-red-300">
+                            <svg class="w-[14px] h-[14px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                             </svg>
                             {{ $metrics['stale_24h'] }} lead(s) sem resposta +24h
                         </div>
                     @endif
                     @if($metrics['stale_4h'] > $metrics['stale_24h'])
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.35); border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #ea580c;">
-                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <div class="inline-flex items-center gap-1.5 py-1.5 px-3 bg-orange-500/[0.12] border border-orange-500/35 rounded-lg text-xs font-semibold text-orange-600">
+                            <svg class="w-[14px] h-[14px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                             {{ $metrics['stale_4h'] - $metrics['stale_24h'] }} lead(s) sem resposta +4h
                         </div>
                     @endif
                     @if($metrics['overdue_followups'] > 0)
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #fca5a5;">
-                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <div class="inline-flex items-center gap-1.5 py-1.5 px-3 bg-red-500/10 border border-red-500/35 rounded-lg text-xs font-semibold text-red-300">
+                            <svg class="w-[14px] h-[14px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                             </svg>
                             {{ $metrics['overdue_followups'] }} follow-up(s) atrasado(s)
@@ -99,31 +97,30 @@
             @include('crm.partials.modal-new-schedule')
 
             {{-- Kanban Board --}}
-            <div style="display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 1rem; min-height: 65vh;">
+            <div class="flex gap-3 overflow-x-auto pb-4 min-h-[65vh]">
                 @foreach($activeStages as $stage)
-                    <div style="min-width: 240px; max-width: 300px; flex: 1; flex-shrink: 0; display: flex; flex-direction: column; background: #1a1a1a; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06);">
+                    <div class="min-w-[240px] max-w-[300px] flex-1 shrink-0 flex flex-col bg-surface-overlay rounded-lg border border-border">
                         {{-- Stage Header --}}
-                        <div style="padding: 0.5rem 0.75rem; border-bottom: 2px solid {{ $stage->color }};">
-                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <div style="display: flex; align-items: center; gap: 0.375rem;">
-                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $stage->color }};"></span>
-                                    <span style="font-size: 0.7rem; font-weight: 700; color: #e3e3e3;">{{ $stage->name }}</span>
+                        <div class="py-2 px-3" style="border-bottom: 2px solid {{ $stage->color }};">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-[8px] h-[8px] rounded-full" style="background: {{ $stage->color }};"></span>
+                                    <span class="text-[0.7rem] font-bold text-dg-100">{{ $stage->name }}</span>
                                 </div>
-                                <span style="font-size: 0.6rem; font-weight: 600; color: #818181; background: #222; padding: 1px 6px; border-radius: 9999px;">
+                                <span class="text-[0.6rem] font-semibold text-dg-400 bg-surface-elevated py-[1px] px-[6px] rounded-full">
                                     {{ ($dealsByStage[$stage->id] ?? collect())->count() }}
                                 </span>
                             </div>
                             @php $stageValue = ($dealsByStage[$stage->id] ?? collect())->sum('value'); @endphp
                             @if($stageValue > 0)
-                                <div style="font-size: 0.6rem; color: #666; margin-top: 0.15rem;">
+                                <div class="text-[0.6rem] text-dg-500 mt-[0.15rem]">
                                     R$ {{ number_format($stageValue, 0, ',', '.') }}
                                 </div>
                             @endif
                         </div>
 
                         {{-- Cards Container (sortable) --}}
-                        <div class="deal-column" data-stage-id="{{ $stage->id }}"
-                             style="flex: 1; padding: 0.375rem; display: flex; flex-direction: column; gap: 0.35rem; overflow-y: auto; min-height: 100px;">
+                        <div class="deal-column flex-1 p-1.5 flex flex-col gap-[0.35rem] overflow-y-auto min-h-[100px]" data-stage-id="{{ $stage->id }}">
                             @foreach(($dealsByStage[$stage->id] ?? collect()) as $deal)
                                 @php
                                     $interest = $deal->productInterests->first();
@@ -149,111 +146,109 @@
                                      style="background: {{ $deal->unread_wa_count > 0 ? '#0d1f13' : '#141414' }}; border: 1px solid {{ $deal->unread_wa_count > 0 ? 'rgba(37,211,102,0.3)' : 'rgba(255,255,255,0.06)' }}; border-left: 3px solid {{ $deal->unread_wa_count > 0 ? '#25D366' : $borderColor }}; border-radius: 0.375rem; cursor: grab; transition: box-shadow 0.15s; position: relative;"
                                      onmouseover="this.style.boxShadow='0 2px 8px {{ $deal->unread_wa_count > 0 ? 'rgba(37,211,102,0.15)' : 'rgba(0,0,0,0.08)' }}'" onmouseout="this.style.boxShadow='none'">
 
-                                    <a href="{{ route('crm.show', $deal) }}"
-                                       style="display: block; padding: 0.5rem 0.625rem; text-decoration: none;"
+                                    <a class="block py-2 px-2.5 no-underline" href="{{ route('crm.show', $deal) }}"
+
                                        @click="if (editingFollowup) $event.preventDefault()">
 
                                         {{-- Badges: origem + temperatura + condição --}}
-                                        <div style="display: flex; gap: 0.2rem; flex-wrap: wrap; margin-bottom: 0.25rem; align-items: center;">
-                                            <span style="width: 6px; height: 6px; border-radius: 50%; background: {{ $tempColors[$deal->temperature] ?? '#f59e0b' }}; flex-shrink: 0;"
+                                        <div class="flex gap-[0.2rem] flex-wrap mb-1 items-center">
+                                            <span class="w-[6px] h-[6px] rounded-full" style="background: {{ $tempColors[$deal->temperature] ?? '#f59e0b' }}; flex-shrink: 0;"
                                                   title="{{ $tempLabels[$deal->temperature] ?? 'Morno' }}"></span>
                                             @if($deal->lead_source)
-                                                <span style="font-size: 0.55rem; font-weight: 600; padding: 0px 4px; border-radius: 3px; color: white; background: {{ $deal->lead_source->color() }};">
+                                                <span class="text-[0.55rem] font-semibold py-0 px-[4px] rounded-[3px] text-white" style="background: {{ $deal->lead_source->color() }};">
                                                     {{ $deal->lead_source->label() }}
                                                 </span>
                                             @endif
                                             @if($deal->product_interest)
-                                                <span style="font-size: 0.55rem; font-weight: 600; color: #888; background: #1e1e1e; padding: 0px 4px; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 110px;">
+                                                <span class="text-[0.55rem] font-semibold text-[#888] bg-[#1e1e1e] py-0 px-[4px] rounded-[3px] overflow-hidden text-ellipsis whitespace-nowrap max-w-[110px]">
                                                     {{ $deal->product_interest }}
                                                 </span>
                                             @endif
                                             @if($interest && $interest->condition)
-                                                <span style="font-size: 0.5rem; font-weight: 600; padding: 0px 4px; border-radius: 3px; {{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.15); color: #93c5fd;' : 'background: rgba(245,158,11,0.15); color: #fbbf24;' }}">
+                                                <span class="text-[0.5rem] font-semibold py-0 px-[4px] rounded-[3px]" style="{{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.15); color: #93c5fd;' : 'background: rgba(245,158,11,0.15); color: #fbbf24;' }}">
                                                     {{ $interest->condition === 'novo' ? 'N' : 'U' }}
                                                 </span>
                                             @endif
                                         </div>
 
-                                        <div style="font-size: 0.75rem; font-weight: 600; color: #e3e3e3; line-height: 1.2; display: flex; align-items: center; gap: 0.25rem;">
-                                            <span style="flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $deal->title }}</span>
+                                        <div class="text-xs font-semibold text-dg-100 leading-[1.2] flex items-center gap-1">
+                                            <span class="flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">{{ $deal->title }}</span>
                                             @if($deal->phone)
-                                                <span style="font-size: 0.55rem; font-weight: 500; color: #555; flex-shrink: 0;">{{ substr(preg_replace('/\D/', '', $deal->phone), -4) }}</span>
+                                                <span class="text-[0.55rem] font-medium text-dg-500 shrink-0">{{ substr(preg_replace('/\D/', '', $deal->phone), -4) }}</span>
                                             @endif
                                             @if($deal->unread_wa_count > 0)
-                                                <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 8px; background: #25D366; color: #e3e3e3; font-size: 0.6rem; font-weight: 700; flex-shrink: 0; animation: pulse-badge 2s infinite;" title="{{ $deal->unread_wa_count }} mensagens não lidas">
+                                                <span class="inline-flex items-center justify-center min-w-[16px] h-[16px] py-0 px-[3px] rounded-[8px] bg-[#25d366] text-dg-100 text-[0.6rem] font-bold shrink-0" style="animation: pulse-badge 2s infinite;" title="{{ $deal->unread_wa_count }} mensagens não lidas">
                                                     {{ $deal->unread_wa_count }}
                                                 </span>
                                             @endif
                                         </div>
 
                                         @if($deal->customer)
-                                            <div style="font-size: 0.65rem; color: #777; margin-top: 0.15rem; display: flex; align-items: center; gap: 0.25rem; overflow: hidden;">
+                                            <div class="text-[0.65rem] text-[#777] mt-[0.15rem] flex items-center gap-1 overflow-hidden">
                                                 @if($deal->customer->wa_avatar_url)
-                                                    <img src="{{ $deal->customer->wa_avatar_url }}" alt="" style="width: 14px; height: 14px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid #333;">
+                                                    <img class="w-[14px] h-[14px] rounded-full object-cover shrink-0 border border-[#333]" src="{{ $deal->customer->wa_avatar_url }}" alt="">
                                                 @endif
-                                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $deal->customer->name }}</span>
+                                                <span class="overflow-hidden text-ellipsis whitespace-nowrap">{{ $deal->customer->name }}</span>
                                                 @if($deal->customer->wa_is_business)
-                                                    <span style="font-size: 0.45rem; font-weight: 700; padding: 0px 2px; border-radius: 2px; background: rgba(37,211,102,0.15); color: #25D366; flex-shrink: 0;">BIZ</span>
+                                                    <span class="text-[0.45rem] font-bold py-0 px-[2px] rounded-[2px] bg-[rgba(37,211,102,0.15)] text-[#25d366] shrink-0">BIZ</span>
                                                 @endif
                                             </div>
                                             @if($deal->customer->tags->isNotEmpty())
-                                                <div style="display: flex; gap: 0.15rem; flex-wrap: wrap; margin-top: 0.15rem;">
+                                                <div class="flex gap-[0.15rem] flex-wrap mt-[0.15rem]">
                                                     @foreach($deal->customer->tags->take(3) as $ctag)
-                                                        <span style="font-size: 0.5rem; font-weight: 600; padding: 0px 4px; border-radius: 3px; background: {{ $ctag->color }}20; color: {{ $ctag->color }};">
+                                                        <span class="text-[0.5rem] font-semibold py-0 px-[4px] rounded-[3px]" style="background: {{ $ctag->color }}20; color: {{ $ctag->color }};">
                                                             {{ $ctag->name }}
                                                         </span>
                                                     @endforeach
                                                     @if($deal->customer->tags->count() > 3)
-                                                        <span style="font-size: 0.45rem; color: #555;">+{{ $deal->customer->tags->count() - 3 }}</span>
+                                                        <span class="text-[0.45rem] text-dg-500">+{{ $deal->customer->tags->count() - 3 }}</span>
                                                     @endif
                                                 </div>
                                             @endif
                                         @endif
 
                                         {{-- Rodapé: valor + tempo + vendedor --}}
-                                        <div style="margin-top: 0.3rem; display: flex; align-items: center; justify-content: space-between; gap: 0.25rem;">
-                                            <div style="display: flex; align-items: center; gap: 0.3rem;">
-                                                <span style="font-size: 0.55rem; font-weight: 600; color: {{ $waitingColors[$urgency] ?? '#6b7280' }};">
+                                        <div class="mt-[0.3rem] flex items-center justify-between gap-1">
+                                            <div class="flex items-center gap-[0.3rem]">
+                                                <span class="text-[0.55rem] font-semibold" style="color: {{ $waitingColors[$urgency] ?? '#6b7280' }};">
                                                     ⏱ {{ $deal->waiting_time_label }}
                                                 </span>
                                                 @if($deal->whatsapp_link)
-                                                    <svg viewBox="0 0 24 24" fill="#25D366" style="width: 10px; height: 10px; flex-shrink: 0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                                    <svg class="w-[10px] h-[10px] shrink-0" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                                                 @endif
                                             </div>
-                                            <div style="display: flex; align-items: center; gap: 0.3rem;">
+                                            <div class="flex items-center gap-[0.3rem]">
                                                 @if($deal->value)
-                                                    <span style="font-size: 0.6rem; font-weight: 700; color: #059669;">
+                                                    <span class="text-[0.6rem] font-bold text-emerald-600">
                                                         R$ {{ number_format((float)$deal->value, 0, ',', '.') }}
                                                     </span>
                                                 @endif
-                                                <span style="font-size: 0.5rem; color: #555;">{{ $deal->user?->name }}</span>
+                                                <span class="text-[0.5rem] text-dg-500">{{ $deal->user?->name }}</span>
                                             </div>
                                         </div>
                                     </a>
 
                                     {{-- Tag section --}}
                                     @if($deal->customer)
-                                    <div style="padding: 0 0.625rem 0.25rem 0.625rem;" x-data="{ showTagMenu: false }">
-                                        <button @click.stop="showTagMenu = !showTagMenu" type="button"
-                                                style="display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.3rem; border-radius: 0.2rem; font-size: 0.5rem; color: #555; background: none; border: 1px dashed rgba(255,255,255,0.06); cursor: pointer; transition: all 0.15s;"
-                                                onmouseover="this.style.borderColor='rgba(59,130,246,0.3)'; this.style.color='#93c5fd'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.color='#555'">
-                                            <svg style="width: 8px; height: 8px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="pt-0 px-2.5 pb-1" x-data="{ showTagMenu: false }">
+                                        <button class="inline-flex items-center gap-[0.2rem] py-[0.1rem] px-[0.3rem] rounded-[0.2rem] text-[0.5rem] text-dg-500 bg-transparent cursor-pointer transition-all hover:border-blue-500/30 hover:text-blue-300" @click.stop="showTagMenu = !showTagMenu" type="button"
+                                                style="border: 1px dashed rgba(255,255,255,0.06);">
+                                            <svg class="w-[8px] h-[8px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                             </svg>
                                             Tags
                                         </button>
-                                        <div x-show="showTagMenu" x-transition @click.away="showTagMenu = false" @click.stop
-                                             style="position: absolute; z-index: 50; margin-top: 0.25rem; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.375rem; padding: 0.375rem; min-width: 160px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                                        <div class="absolute z-[50] mt-1 bg-surface-overlay border border-white/10 rounded-md p-1.5 min-w-[160px] shadow-[0_4px_12px_rgba(0,0,0,0.3)]" x-show="showTagMenu" x-transition @click.away="showTagMenu = false" @click.stop>
                                             @foreach($allTags as $atag)
                                                 @php $hasTag = $deal->customer->tags->contains('id', $atag->id); @endphp
-                                                <button @click.stop="toggleTag('{{ $deal->customer->id }}', '{{ $atag->id }}', {{ $hasTag ? 'true' : 'false' }})"
+                                                <button class="flex items-center gap-1.5 w-full py-[0.3rem] px-2 rounded text-[0.7rem]" @click.stop="toggleTag('{{ $deal->customer->id }}', '{{ $atag->id }}', {{ $hasTag ? 'true' : 'false' }})"
                                                         type="button"
-                                                        style="display: flex; align-items: center; gap: 0.375rem; width: 100%; padding: 0.3rem 0.5rem; border-radius: 0.25rem; font-size: 0.7rem; color: {{ $hasTag ? $atag->color : '#a4a4a4' }}; background: {{ $hasTag ? $atag->color . '15' : 'transparent' }}; border: none; cursor: pointer; text-align: left; transition: background 0.15s;"
+                                                        style="color: {{ $hasTag ? $atag->color : '#a4a4a4' }}; background: {{ $hasTag ? $atag->color . '15' : 'transparent' }}; border: none; cursor: pointer; text-align: left; transition: background 0.15s;"
                                                         onmouseover="this.style.background='{{ $atag->color }}20'" onmouseout="this.style.background='{{ $hasTag ? $atag->color . '15' : 'transparent' }}'">
-                                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: {{ $atag->color }}; flex-shrink: 0;"></span>
+                                                    <span class="w-[8px] h-[8px] rounded-full" style="background: {{ $atag->color }}; flex-shrink: 0;"></span>
                                                     {{ $atag->name }}
                                                     @if($hasTag)
-                                                        <svg style="width: 12px; height: 12px; margin-left: auto; color: {{ $atag->color }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg class="w-[12px] h-[12px] ml-auto" style="color: {{ $atag->color }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                         </svg>
                                                     @endif
@@ -264,60 +259,55 @@
                                     @endif
 
                                     {{-- Follow-up section --}}
-                                    <div style="padding: 0 0.625rem 0.5rem 0.625rem;" x-show="!editingFollowup">
+                                    <div class="pt-0 px-2.5 pb-2" x-show="!editingFollowup">
                                         @if($deal->next_action)
-                                            <div style="padding: 0.25rem 0.375rem; border-radius: 0.25rem; font-size: 0.6rem; line-height: 1.3; position: relative; {{ $deal->is_followup_overdue ? 'background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5;' : 'background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15); color: #93c5fd;' }}">
-                                                <div style="display: flex; align-items: flex-start; gap: 0.25rem;">
-                                                    <svg style="width: 10px; height: 10px; flex-shrink: 0; margin-top: 2px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <div class="py-1 px-1.5 rounded text-[0.6rem] leading-[1.3] relative" style="{{ $deal->is_followup_overdue ? 'background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5;' : 'background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15); color: #93c5fd;' }}">
+                                                <div class="flex items-start gap-1">
+                                                    <svg class="w-[10px] h-[10px] shrink-0 mt-[2px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                                                     </svg>
-                                                    <span class="followup-text" style="word-break: break-word; flex: 1;">{{ $deal->next_action }}</span>
-                                                    <button @click.stop="editingFollowup = true" type="button" title="Editar follow-up"
-                                                            style="flex-shrink: 0; background: none; border: none; cursor: pointer; padding: 0; color: inherit; opacity: 0.5; transition: opacity 0.15s;"
+                                                    <span class="followup-text flex-1" style="word-break: break-word;">{{ $deal->next_action }}</span>
+                                                    <button class="shrink-0 bg-transparent border-0 cursor-pointer p-0 opacity-[0.5]" @click.stop="editingFollowup = true" type="button" title="Editar follow-up"
+                                                            style="color: inherit; transition: opacity 0.15s;"
                                                             onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
-                                                        <svg style="width: 10px; height: 10px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                        <svg class="w-[10px] h-[10px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                                                         </svg>
                                                     </button>
                                                 </div>
                                                 @if($deal->next_action_at)
-                                                    <div style="font-size: 0.6rem; font-weight: 600; margin-top: 0.125rem; opacity: 0.8;">
+                                                    <div class="text-[0.6rem] font-semibold mt-0.5 opacity-[0.8]">
                                                         {{ $deal->next_action_at->format('d/m H:i') }}
                                                     </div>
                                                 @endif
                                             </div>
                                         @else
-                                            <button @click.stop="editingFollowup = true" type="button"
-                                                    style="width: 100%; padding: 0.15rem; border-radius: 0.25rem; font-size: 0.55rem; color: #555; background: none; border: 1px dashed rgba(255,255,255,0.06); cursor: pointer; transition: all 0.15s;"
-                                                    onmouseover="this.style.borderColor='rgba(59,130,246,0.3)'; this.style.color='#93c5fd'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.color='#555'">
+                                            <button class="w-full p-[0.15rem] rounded text-[0.55rem] text-dg-500 bg-transparent cursor-pointer transition-all hover:border-blue-500/30 hover:text-blue-300" @click.stop="editingFollowup = true" type="button"
+                                                    style="border: 1px dashed rgba(255,255,255,0.06);">
                                                 + Adicionar follow-up
                                             </button>
                                         @endif
 
                                         @if($deal->description)
-                                            <div class="followup-text" style="margin-top: 0.15rem; font-size: 0.55rem; color: #555; line-height: 1.2; word-break: break-word; font-style: italic; padding-left: 0.2rem; border-left: 2px solid rgba(255,255,255,0.04); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                            <div class="followup-text mt-[0.15rem] text-[0.55rem] text-dg-500 leading-[1.2] italic pl-[0.2rem] border-l-2 border-border-subtle overflow-hidden text-ellipsis whitespace-nowrap" style="word-break: break-word;">
                                                 {{ Str::limit($deal->description, 60) }}
                                             </div>
                                         @endif
                                     </div>
 
                                     {{-- Inline follow-up edit form --}}
-                                    <div x-show="editingFollowup" x-transition @click.stop style="padding: 0 0.75rem 0.75rem 0.75rem;">
-                                        <div style="background: #1a1a1a; border: 1px solid rgba(59,130,246,0.3); border-radius: 0.375rem; padding: 0.5rem;">
-                                            <textarea x-model="followupText" rows="2" placeholder="Ex: esperando resposta sobre parcelamento..."
+                                    <div class="pt-0 px-3 pb-3" x-show="editingFollowup" x-transition @click.stop>
+                                        <div class="bg-surface-overlay border border-blue-500/30 rounded-md p-2">
+                                            <textarea class="w-full p-1.5 border border-white/10 rounded text-xs resize-y bg-surface-raised text-dg-100 min-h-[40px]" x-model="followupText" rows="2" placeholder="Ex: esperando resposta sobre parcelamento..."
                                                       x-ref="followupInput"
                                                       @keydown.escape="editingFollowup = false"
-                                                      @keydown.ctrl.enter="$dispatch('save-followup')"
-                                                      style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; font-size: 0.75rem; resize: vertical; background: #141414; color: #e3e3e3; min-height: 40px;"></textarea>
-                                            <div style="display: flex; align-items: center; gap: 0.375rem; margin-top: 0.375rem;">
-                                                <input type="datetime-local" x-model="followupDate"
-                                                       style="flex: 1; padding: 0.25rem 0.375rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; font-size: 0.65rem; background: #141414; color: #e3e3e3;">
-                                                <button @click="editingFollowup = false" type="button"
-                                                        style="padding: 0.25rem 0.5rem; font-size: 0.65rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.25rem; background: #141414; color: #a4a4a4; cursor: pointer;">
+                                                      @keydown.ctrl.enter="$dispatch('save-followup')"></textarea>
+                                            <div class="flex items-center gap-1.5 mt-1.5">
+                                                <input class="flex-1 py-1 px-1.5 border border-white/10 rounded text-[0.65rem] bg-surface-raised text-dg-100" type="datetime-local" x-model="followupDate">
+                                                <button class="py-1 px-2 text-[0.65rem] border border-white/10 rounded bg-surface-raised text-dg-300 cursor-pointer" @click="editingFollowup = false" type="button">
                                                     Cancelar
                                                 </button>
-                                                <button @click="saveFollowup('{{ $deal->id }}', $el)" :disabled="saving" type="button"
-                                                        style="padding: 0.25rem 0.5rem; font-size: 0.65rem; border: none; border-radius: 0.25rem; background: #3b82f6; color: white; cursor: pointer; font-weight: 600;">
+                                                <button class="py-1 px-2 text-[0.65rem] border-0 rounded bg-blue-500 text-white cursor-pointer font-semibold" @click="saveFollowup('{{ $deal->id }}', $el)" :disabled="saving" type="button">
                                                     <span x-show="!saving">Salvar</span>
                                                     <span x-show="saving">...</span>
                                                 </button>

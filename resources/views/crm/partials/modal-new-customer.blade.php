@@ -1,8 +1,8 @@
 {{-- Modal: Cadastrar Cliente Rápido --}}
-<div x-show="showCustomerForm" x-transition.opacity style="position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4);" x-cloak>
-    <div @click.away="showCustomerForm = false" style="background: #141414; border-radius: 0.75rem; padding: 1.5rem; width: 100%; max-width: 28rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto;">
-        <h2 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.375rem;">
-            <svg style="width: 18px; height: 18px; color: #3b82f6;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<div class="fixed inset-0 z-[50] flex items-center justify-center bg-black/40" x-show="showCustomerForm" x-transition.opacity x-cloak>
+    <div class="bg-surface-raised rounded-xl p-6 w-full max-w-[28rem] shadow-[0_25px_50px_rgba(0,0,0,0.25)] max-h-[90vh] overflow-y-auto" @click.away="showCustomerForm = false">
+        <h2 class="text-lg font-bold text-dg-100 mb-4 flex items-center gap-1.5">
+            <svg class="w-[18px] h-[18px] text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>
             Cadastrar Cliente
@@ -10,49 +10,41 @@
         <form method="POST" action="{{ route('customers.store') }}">
             @csrf
             <input type="hidden" name="_redirect" value="{{ route('crm.board') }}">
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div class="flex flex-col gap-3">
                 <div>
-                    <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Nome <span style="color: #fca5a5;">*</span></label>
-                    <input type="text" name="name" required placeholder="Nome completo"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
+                    <label class="text-xs font-semibold text-dg-400 block mb-[2px]">Nome <span class="text-red-300">*</span></label>
+                    <input class="w-full p-2 border border-border rounded-md text-sm" type="text" name="name" required placeholder="Nome completo">
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="grid grid-cols-[1fr_1fr] gap-3">
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Telefone <span style="color: #fca5a5;">*</span></label>
-                        <input type="text" name="phone" required placeholder="(17) 99649-8338"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
+                        <label class="text-xs font-semibold text-dg-400 block mb-[2px]">Telefone <span class="text-red-300">*</span></label>
+                        <input class="w-full p-2 border border-border rounded-md text-sm" type="text" name="phone" required placeholder="(17) 99649-8338">
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">CPF</label>
-                        <input type="text" name="cpf" placeholder="000.000.000-00"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
+                        <label class="text-xs font-semibold text-dg-400 block mb-[2px]">CPF</label>
+                        <input class="w-full p-2 border border-border rounded-md text-sm" type="text" name="cpf" placeholder="000.000.000-00">
                     </div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div class="grid grid-cols-[1fr_1fr] gap-3">
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Instagram</label>
-                        <input type="text" name="instagram" placeholder="@usuario"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
+                        <label class="text-xs font-semibold text-dg-400 block mb-[2px]">Instagram</label>
+                        <input class="w-full p-2 border border-border rounded-md text-sm" type="text" name="instagram" placeholder="@usuario">
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Data de Nascimento</label>
-                        <input type="date" name="birth_date"
-                               style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem;">
+                        <label class="text-xs font-semibold text-dg-400 block mb-[2px]">Data de Nascimento</label>
+                        <input class="w-full p-2 border border-border rounded-md text-sm" type="date" name="birth_date">
                     </div>
                 </div>
                 <div>
-                    <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Observações</label>
-                    <textarea name="notes" rows="2" placeholder="Notas sobre o cliente..."
-                              style="width: 100%; padding: 0.5rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.875rem; resize: vertical;"></textarea>
+                    <label class="text-xs font-semibold text-dg-400 block mb-[2px]">Observações</label>
+                    <textarea class="w-full p-2 border border-border rounded-md text-sm resize-y" name="notes" rows="2" placeholder="Notas sobre o cliente..."></textarea>
                 </div>
             </div>
-            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1rem;">
-                <button @click.prevent="showCustomerForm = false" type="button"
-                        style="padding: 0.5rem 1rem; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; background: #141414; color: #818181; cursor: pointer;">
+            <div class="flex gap-2 justify-end mt-4">
+                <button class="py-2 px-4 text-[0.8rem] border border-border rounded-md bg-surface-raised text-dg-400 cursor-pointer" @click.prevent="showCustomerForm = false" type="button">
                     Cancelar
                 </button>
-                <button type="submit"
-                        style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #3b82f6; color: white; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600;">
+                <button class="py-2 px-4 text-[0.8rem] bg-blue-500 text-white rounded-md border-0 cursor-pointer font-semibold" type="submit">
                     Cadastrar Cliente
                 </button>
             </div>

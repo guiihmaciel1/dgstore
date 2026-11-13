@@ -1,14 +1,12 @@
 {{-- Seção: Interesses de Produto (CRUD) --}}
-<div style="background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 1rem;"
+<div class="bg-surface-raised border border-border rounded-xl p-4"
      x-data="{ showAddInterest: false }">
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-        <span style="color: #555; font-weight: 600; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em;">
+    <div class="flex items-center justify-between mb-2">
+        <span class="text-dg-500 font-semibold text-[0.65rem] uppercase tracking-wider">
             Interesses de Produto
         </span>
         @if($deal->isOpen())
-            <button @click="showAddInterest = !showAddInterest" type="button"
-                    style="font-size: 0.65rem; font-weight: 600; color: #3b82f6; background: none; border: none; cursor: pointer; padding: 0.15rem 0.375rem; border-radius: 0.25rem; transition: background 0.15s;"
-                    onmouseover="this.style.background='rgba(59,130,246,0.08)'" onmouseout="this.style.background='none'">
+            <button class="text-[0.65rem] font-semibold text-blue-500 bg-transparent border-0 cursor-pointer py-[0.15rem] px-1.5 rounded transition-colors hover:bg-blue-500/[0.08]" @click="showAddInterest = !showAddInterest" type="button">
                 <span x-show="!showAddInterest">+ Adicionar</span>
                 <span x-show="showAddInterest">Cancelar</span>
             </button>
@@ -18,38 +16,36 @@
     {{-- Lista de interesses existentes --}}
     @forelse($deal->productInterests as $interest)
         @php $inStock = $interest->hasMatchInStock(); @endphp
-        <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: {{ $inStock ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)' }}; border: 1px solid {{ $inStock ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; border-radius: 0.375rem; margin-bottom: 0.375rem;">
-            <div style="flex: 1;">
-                <div style="font-size: 0.8rem; font-weight: 600; color: #e3e3e3;">
+        <div class="flex items-center gap-2 p-2" style="background: {{ $inStock ? 'rgba(16,185,129,0.05)' : 'rgba(239,68,68,0.05)' }}; border: 1px solid {{ $inStock ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; border-radius: 0.375rem; margin-bottom: 0.375rem;">
+            <div class="flex-1">
+                <div class="text-[0.8rem] font-semibold text-dg-100">
                     {{ $interest->model }}
                     @if($interest->storage)
-                        <span style="font-weight: 400; color: #666;">{{ $interest->storage }}</span>
+                        <span class="font-normal text-dg-500">{{ $interest->storage }}</span>
                     @endif
                 </div>
-                <div style="display: flex; gap: 0.5rem; margin-top: 0.125rem; flex-wrap: wrap;">
+                <div class="flex gap-2 mt-0.5 flex-wrap">
                     @if($interest->color)
-                        <span style="font-size: 0.7rem; color: #666;">{{ $interest->color }}</span>
+                        <span class="text-[0.7rem] text-dg-500">{{ $interest->color }}</span>
                     @endif
                     @if($interest->condition)
-                        <span style="font-size: 0.6rem; font-weight: 600; padding: 1px 6px; border-radius: 4px; {{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.12); color: #93c5fd;' : 'background: rgba(251,191,36,0.12); color: #fbbf24;' }}">
+                        <span class="text-[0.6rem] font-semibold py-[1px] px-[6px] rounded-[4px]" style="{{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.12); color: #93c5fd;' : 'background: rgba(251,191,36,0.12); color: #fbbf24;' }}">
                             {{ $interest->condition === 'novo' ? 'Novo' : 'Seminovo' }}
                         </span>
                     @endif
                     @if($interest->max_budget)
-                        <span style="font-size: 0.7rem; color: #666;">Ate R$ {{ number_format((float)$interest->max_budget, 2, ',', '.') }}</span>
+                        <span class="text-[0.7rem] text-dg-500">Ate R$ {{ number_format((float)$interest->max_budget, 2, ',', '.') }}</span>
                     @endif
                 </div>
             </div>
-            <span style="font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; white-space: nowrap; {{ $inStock ? 'background: rgba(16,185,129,0.12); color: #6ee7b7;' : 'background: rgba(239,68,68,0.12); color: #fca5a5;' }}">
+            <span class="text-[0.65rem] font-bold py-[2px] px-[8px] rounded-[4px] whitespace-nowrap" style="{{ $inStock ? 'background: rgba(16,185,129,0.12); color: #6ee7b7;' : 'background: rgba(239,68,68,0.12); color: #fca5a5;' }}">
                 {{ $inStock ? 'Em estoque' : 'Sem estoque' }}
             </span>
             @if($deal->isOpen())
-                <form method="POST" action="{{ route('crm.deals.interests.destroy', [$deal, $interest]) }}" style="display: inline;">
+                <form class="inline" method="POST" action="{{ route('crm.deals.interests.destroy', [$deal, $interest]) }}">
                     @csrf @method('DELETE')
-                    <button type="submit" onclick="return confirm('Remover este interesse?')" title="Remover"
-                            style="background: none; border: none; cursor: pointer; color: #555; padding: 0.15rem; transition: color 0.15s;"
-                            onmouseover="this.style.color='#fca5a5'" onmouseout="this.style.color='#555'">
-                        <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button class="bg-transparent border-0 cursor-pointer text-dg-500 p-[0.15rem] transition-colors hover:text-red-300" type="submit" onclick="return confirm('Remover este interesse?')" title="Remover">
+                        <svg class="w-[14px] h-[14px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
                     </button>
@@ -57,19 +53,19 @@
             @endif
         </div>
     @empty
-        <div x-show="!showAddInterest" style="text-align: center; padding: 0.75rem; color: #444; font-size: 0.75rem;">
+        <div class="text-center p-3 text-[#444] text-xs" x-show="!showAddInterest">
             Nenhum interesse cadastrado
         </div>
     @endforelse
 
     {{-- Formulario para adicionar interesse --}}
-    <div x-show="showAddInterest" x-transition style="margin-top: 0.5rem; padding: 0.75rem; background: #1a1a1a; border: 1px solid rgba(59,130,246,0.15); border-radius: 0.5rem;">
+    <div class="mt-2 p-3 bg-surface-overlay border border-blue-500/15 rounded-lg" x-show="showAddInterest" x-transition>
         <form method="POST" action="{{ route('crm.deals.interests.store', $deal) }}">
             @csrf
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+            <div class="grid grid-cols-[1fr_1fr] gap-2">
                 <div>
-                    <label style="font-size: 0.65rem; font-weight: 600; color: #555;">Modelo <span style="color: #fca5a5;">*</span></label>
-                    <select name="model" required style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; background: #0d0d0d; color: #e3e3e3;">
+                    <label class="text-[0.65rem] font-semibold text-dg-500">Modelo <span class="text-red-300">*</span></label>
+                    <select class="w-full p-1.5 border border-border rounded-md text-[0.8rem] bg-surface text-dg-100" name="model" required>
                         <option value="">Selecione...</option>
                         <optgroup label="iPhone">
                             <option>iPhone 18 Pro Max</option>
@@ -104,8 +100,8 @@
                     </select>
                 </div>
                 <div>
-                    <label style="font-size: 0.65rem; font-weight: 600; color: #555;">Armazenamento</label>
-                    <select name="storage" style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; background: #0d0d0d; color: #e3e3e3;">
+                    <label class="text-[0.65rem] font-semibold text-dg-500">Armazenamento</label>
+                    <select class="w-full p-1.5 border border-border rounded-md text-[0.8rem] bg-surface text-dg-100" name="storage">
                         <option value="">Qualquer</option>
                         <option>64GB</option>
                         <option>128GB</option>
@@ -115,31 +111,27 @@
                     </select>
                 </div>
                 <div>
-                    <label style="font-size: 0.65rem; font-weight: 600; color: #555;">Cor</label>
-                    <input type="text" name="color" placeholder="Ex: Titanio Natural"
-                           style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; background: #0d0d0d; color: #e3e3e3;">
+                    <label class="text-[0.65rem] font-semibold text-dg-500">Cor</label>
+                    <input class="w-full p-1.5 border border-border rounded-md text-[0.8rem] bg-surface text-dg-100" type="text" name="color" placeholder="Ex: Titanio Natural">
                 </div>
                 <div>
-                    <label style="font-size: 0.65rem; font-weight: 600; color: #555;">Condicao</label>
-                    <select name="condition" style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; background: #0d0d0d; color: #e3e3e3;">
+                    <label class="text-[0.65rem] font-semibold text-dg-500">Condicao</label>
+                    <select class="w-full p-1.5 border border-border rounded-md text-[0.8rem] bg-surface text-dg-100" name="condition">
                         <option value="">Qualquer</option>
                         <option value="novo">Novo</option>
                         <option value="seminovo">Seminovo</option>
                     </select>
                 </div>
             </div>
-            <div style="margin-top: 0.5rem;">
-                <label style="font-size: 0.65rem; font-weight: 600; color: #555;">Orcamento maximo (R$)</label>
-                <input type="number" name="max_budget" step="0.01" placeholder="0,00"
-                       style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; font-size: 0.8rem; background: #0d0d0d; color: #e3e3e3;">
+            <div class="mt-2">
+                <label class="text-[0.65rem] font-semibold text-dg-500">Orcamento maximo (R$)</label>
+                <input class="w-full p-1.5 border border-border rounded-md text-[0.8rem] bg-surface text-dg-100" type="number" name="max_budget" step="0.01" placeholder="0,00">
             </div>
-            <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem;">
-                <button @click.prevent="showAddInterest = false" type="button"
-                        style="padding: 0.3rem 0.625rem; font-size: 0.7rem; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.375rem; background: #141414; color: #a4a4a4; cursor: pointer;">
+            <div class="flex gap-2 justify-end mt-2">
+                <button class="py-[0.3rem] px-2.5 text-[0.7rem] border border-border rounded-md bg-surface-raised text-dg-300 cursor-pointer" @click.prevent="showAddInterest = false" type="button">
                     Cancelar
                 </button>
-                <button type="submit"
-                        style="padding: 0.3rem 0.625rem; font-size: 0.7rem; background: #3b82f6; color: white; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600;">
+                <button class="py-[0.3rem] px-2.5 text-[0.7rem] bg-blue-500 text-white rounded-md border-0 cursor-pointer font-semibold" type="submit">
                     Adicionar
                 </button>
             </div>
