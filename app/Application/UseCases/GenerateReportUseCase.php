@@ -211,6 +211,7 @@ class GenerateReportUseCase
         $pace = $daysInMonth / $daysElapsed;
 
         $pendingExpenses = (float) FinancialTransaction::expense()
+            ->operating()
             ->unpaid()
             ->whereBetween('due_date', [$monthStart->toDateString(), $monthEnd->toDateString()])
             ->sum('amount');
@@ -318,6 +319,7 @@ class GenerateReportUseCase
             ->pluck('id');
 
         $expensesQuery = FinancialTransaction::expense()
+            ->operating()
             ->paid()
             ->whereNotNull('paid_at')
             ->whereNotNull('account_id')
@@ -377,6 +379,7 @@ class GenerateReportUseCase
         $monthRevenue = (float) $monthSales->sum('total');
 
         $expensesQuery = FinancialTransaction::expense()
+            ->operating()
             ->paid()
             ->whereNotNull('paid_at')
             ->whereNotNull('account_id')

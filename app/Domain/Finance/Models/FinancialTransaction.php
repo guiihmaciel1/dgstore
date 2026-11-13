@@ -74,6 +74,18 @@ class FinancialTransaction extends Model
         return $query->where('type', 'expense');
     }
 
+    /**
+     * Despesas que reduzem o lucro: exclui compras de mercadoria (Compra Fornecedor, Custo de Mercadoria,
+     * Trade-in), que já entram no lucro bruto como custo dos produtos vendidos e saem só do caixa.
+     */
+    public function scopeOperating($query)
+    {
+        return $query->where(fn ($q) => $q->whereNull('category_id')->orWhereNotIn('category_id',
+            FinancialCategory::whereIn('name', self::INVENTORY_CATEGORIES)->select('id')));
+    }
+
+    public const INVENTORY_CATEGORIES = ['Trade-in', 'Custo de Mercadoria', 'Compra Fornecedor'];
+
     public function scopePending($query)
     {
         return $query->where('status', 'pending');

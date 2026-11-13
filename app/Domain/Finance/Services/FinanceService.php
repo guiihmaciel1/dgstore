@@ -73,8 +73,17 @@ class FinanceService
 
         $salesData = $this->getSalesMonthData($referenceDate);
 
-        $netProfitCurrent = $salesData['salesProfit'] - $monthExpensePaid;
-        $netProfitProjected = $salesData['salesProfit'] - $monthExpenseTotal;
+        // Lucro líquido não desconta compra de mercadoria (já está no custo das vendas); o caixa sim.
+        $operatingPaid = (float) FinancialTransaction::expense()->operating()->paid()
+            ->whereNotNull('paid_at')->whereNotNull('account_id')
+            ->whereBetween('paid_at', [$monthStart, $monthEnd->copy()->endOfDay()])
+            ->sum('amount');
+        $operatingPending = (float) FinancialTransaction::expense()->operating()
+            ->whereMonth('due_date', $ref->month)->whereYear('due_date', $ref->year)
+            ->unpaid()->sum('amount');
+
+        $netProfitCurrent = $salesData['salesProfit'] - $operatingPaid;
+        $netProfitProjected = $salesData['salesProfit'] - $operatingPaid - $operatingPending;
 
         $dueSoon = FinancialTransaction::unpaid()
             ->where('due_date', '<=', ($isCurrentMonth ? now() : $monthEnd)->copy()->addDays(7))
