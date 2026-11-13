@@ -23,7 +23,7 @@
             </div>
 
             <!-- Aviso financeiro -->
-            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: rgba(59,130,246,0.1); border: 1px solid #bfdbfe; border-radius: 0.625rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: #93c5fd;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.35); border-radius: 0.625rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: #93c5fd;">
                 <svg style="width: 1.1rem; height: 1.1rem; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
@@ -264,7 +264,7 @@
                                         <span style="color: #818181;">+ Impostos/Taxas/TAXI:</span>
                                         <span style="font-weight: 500;" x-text="'R$ ' + taxes.toFixed(2).replace('.', ',')"></span>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 2px solid #111827;">
+                                    <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 2px solid #e3e3e3;">
                                         <span style="font-weight: 700; color: #e3e3e3;">Total Estimado:</span>
                                         <span style="font-weight: 700; color: #e3e3e3; font-size: 1.125rem;" x-text="'R$ ' + totalBrl.toFixed(2).replace('.', ',')"></span>
                                     </div>

@@ -4,7 +4,7 @@
         <div class="px-6 lg:px-8" x-data="followupPage()">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
+                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -89,15 +89,15 @@
             <!-- Filtros -->
             <div style="display: flex; gap: 0.375rem; margin-bottom: 1rem; overflow-x: auto; flex-wrap: wrap;">
                 <a href="{{ route('followups.index', ['status' => 'pending']) }}"
-                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $currentStatus === 'pending' ? 'transparent' : '#e5e7eb' }}; background: {{ $currentStatus === 'pending' ? '#111827' : 'white' }}; color: {{ $currentStatus === 'pending' ? 'white' : '#6b7280' }}; text-decoration: none; white-space: nowrap;">
+                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $currentStatus === 'pending' ? 'transparent' : 'rgba(255,255,255,0.08)' }}; background: {{ $currentStatus === 'pending' ? '#111827' : '#141414' }}; color: {{ $currentStatus === 'pending' ? 'white' : '#6b7280' }}; text-decoration: none; white-space: nowrap;">
                     Pendentes ({{ $counts['pending'] }})
                 </a>
                 <a href="{{ route('followups.index', ['status' => 'done']) }}"
-                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $currentStatus === 'done' ? 'transparent' : '#e5e7eb' }}; background: {{ $currentStatus === 'done' ? '#111827' : 'white' }}; color: {{ $currentStatus === 'done' ? 'white' : '#6b7280' }}; text-decoration: none; white-space: nowrap;">
+                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $currentStatus === 'done' ? 'transparent' : 'rgba(255,255,255,0.08)' }}; background: {{ $currentStatus === 'done' ? '#111827' : '#141414' }}; color: {{ $currentStatus === 'done' ? 'white' : '#6b7280' }}; text-decoration: none; white-space: nowrap;">
                     Concluidos
                 </a>
                 <a href="{{ route('followups.index', ['status' => 'all']) }}"
-                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $currentStatus === 'all' ? 'transparent' : '#e5e7eb' }}; background: {{ $currentStatus === 'all' ? '#111827' : 'white' }}; color: {{ $currentStatus === 'all' ? 'white' : '#6b7280' }}; text-decoration: none; white-space: nowrap;">
+                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $currentStatus === 'all' ? 'transparent' : 'rgba(255,255,255,0.08)' }}; background: {{ $currentStatus === 'all' ? '#111827' : '#141414' }}; color: {{ $currentStatus === 'all' ? 'white' : '#6b7280' }}; text-decoration: none; white-space: nowrap;">
                     Todos
                 </a>
             </div>
@@ -108,7 +108,7 @@
                     @php
                         $isOverdue = $f->isPending() && $f->due_date->lt(today());
                         $isToday = $f->isPending() && $f->due_date->isToday();
-                        $borderColor = $isOverdue ? '#fecaca' : ($isToday ? '#fde68a' : '#e5e7eb');
+                        $borderColor = $isOverdue ? 'rgba(239,68,68,0.35)' : ($isToday ? 'rgba(245,158,11,0.35)' : 'rgba(255,255,255,0.08)');
                         $bgColor = $isOverdue ? '#fef2f2' : ($isToday ? '#fffbeb' : 'white');
                     @endphp
                     <div style="background: {{ $bgColor }}; border: 1px solid {{ $borderColor }}; border-radius: 0.75rem; padding: 0.875rem 1.25rem;">
@@ -163,7 +163,7 @@
                                     <form method="POST" action="{{ route('followups.cancel', $f) }}" style="display: inline;">
                                         @csrf
                                         <button type="submit" title="Cancelar"
-                                                style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 0.375rem; background: #e5e7eb; color: #818181; border: none; cursor: pointer;">
+                                                style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 0.375rem; background: #222222; color: #818181; border: none; cursor: pointer;">
                                             <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                         </button>
                                     </form>

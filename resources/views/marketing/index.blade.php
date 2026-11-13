@@ -35,19 +35,19 @@
             <div style="display: flex; gap: 0.25rem; margin-bottom: 1.5rem; border-bottom: 2px solid rgba(255,255,255,0.06); padding-bottom: 0;">
                 <button @click="tab = 'prices'" type="button"
                         :style="tab === 'prices'
-                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #e3e3e3; margin-bottom: -2px;'
                             : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Novos
                 </button>
                 <button @click="tab = 'used'" type="button"
                         :style="tab === 'used'
-                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #e3e3e3; margin-bottom: -2px;'
                             : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Seminovos
                 </button>
                 <button @click="tab = 'resale'" type="button"
                         :style="tab === 'resale'
-                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #111827; margin-bottom: -2px;'
+                            ? 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; background: transparent; color: #e3e3e3; border-bottom: 2px solid #e3e3e3; margin-bottom: -2px;'
                             : 'padding: 0.625rem 1.25rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; background: transparent; color: #818181; border-bottom: 2px solid transparent; margin-bottom: -2px;'">
                     Repasses
                 </button>
@@ -434,7 +434,7 @@
                         <!-- Upload -->
                         <div x-show="imgModalPrice && imgModalPrice.id && (imgModalPrice.images || []).length < 5">
                             <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 2px dashed rgba(255,255,255,0.08); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #818181; transition: all 0.15s;"
-                                   onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.color='#6b7280'">
+                                   onmouseover="this.style.borderColor='#e3e3e3'; this.style.color='#e3e3e3'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.color='#6b7280'">
                                 <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
@@ -465,7 +465,7 @@
                         </div>
                         <button type="button" @click="closeUsedImageModal()"
                                 style="padding: 4px; background: none; border: none; cursor: pointer; color: #666666; border-radius: 4px;"
-                                onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9ca3af'">
+                                onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#9ca3af'">
                             <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
@@ -498,7 +498,7 @@
                     <!-- Upload -->
                     <div x-show="usedImgModalItem && usedImgModalItem.listing_id && (usedImgModalItem.images || []).length < 5">
                         <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border: 2px dashed rgba(255,255,255,0.08); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #818181; transition: all 0.15s;"
-                               onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.color='#6b7280'">
+                               onmouseover="this.style.borderColor='#e3e3e3'; this.style.color='#e3e3e3'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.color='#6b7280'">
                             <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
@@ -656,10 +656,10 @@
                                                 </div>
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem; text-align: center; font-size: 0.8rem; color: #a4a4a4;">
-                                                <span x-text="item._usedListing.battery_health ? item._usedListing.battery_health + '%' : '-'" :style="item._usedListing.battery_health ? 'color:#059669;font-weight:600;' : 'color:#d1d5db;'"></span>
+                                                <span x-text="item._usedListing.battery_health ? item._usedListing.battery_health + '%' : '-'" :style="item._usedListing.battery_health ? 'color:#059669;font-weight:600;' : 'color:#515151;'"></span>
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem; text-align: center;">
-                                                <span :style="item._usedListing.has_box ? 'color:#059669;font-size:0.8rem;' : 'color:#d1d5db;font-size:0.8rem;'" x-text="item._usedListing.has_box ? '✓' : '—'"></span>
+                                                <span :style="item._usedListing.has_box ? 'color:#059669;font-size:0.8rem;' : 'color:#515151;font-size:0.8rem;'" x-text="item._usedListing.has_box ? '✓' : '—'"></span>
                                             </td>
                                             <td style="padding: 0.375rem 0.5rem;">
                                                 <span style="font-size: 0.75rem; color: #818181;" x-text="item._usedListing.notes || '—'"></span>
@@ -734,7 +734,7 @@
                 </div>
 
                 <div x-show="filteredUsed.filter(i => (i.images || []).length === 0).length > 0"
-                     style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 0.75rem;">
+                     style="display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; margin-bottom: 0.75rem;">
                     <svg style="width: 1.125rem; height: 1.125rem; color: #fca5a5; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
@@ -829,7 +829,7 @@
                                 <col style="width: 40px;">
                             </colgroup>
                             <thead>
-                                <tr style="background: #222222; border-bottom: 2px solid #d1d5db;">
+                                <tr style="background: #222222; border-bottom: 2px solid rgba(255,255,255,0.08);">
                                     <th style="padding: 0.625rem 0.5rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Lista</th>
                                     <th style="padding: 0.625rem 0.5rem; text-align: left; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Produto</th>
                                     <th style="padding: 0.625rem 0.375rem; text-align: center; font-size: 0.65rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.025em;">Storage</th>
@@ -944,7 +944,7 @@
                                                     :style="(item.images || []).length > 0
                                                         ? 'position:relative;padding:0.25rem;background:none;border:none;cursor:pointer;color:#059669;'
                                                         : 'position:relative;padding:0.25rem;background:none;border:none;cursor:pointer;color:#dc2626;'"
-                                                    onmouseover="this.style.color='#111827'" onmouseout="this.style.color=this.dataset.hasimg==='1'?'#059669':'#dc2626'"
+                                                    onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color=this.dataset.hasimg==='1'?'#059669':'#dc2626'"
                                                     :data-hasimg="(item.images || []).length > 0 ? '1' : '0'"
                                                     :title="(item.images || []).length > 0 ? 'Gerenciar fotos' : 'Sem fotos — clique para adicionar'">
                                                 <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">

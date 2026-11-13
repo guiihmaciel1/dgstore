@@ -16,7 +16,7 @@
                     <div style="display: flex; gap: 0.5rem;">
                         <button x-show="model1 && model2" @click="swapModels()" type="button" title="Inverter modelos"
                                 style="padding: 0.5rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); background: #141414; cursor: pointer; color: #818181;"
-                                onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
+                                onmouseover="this.style.background='#1a1a1a'" onmouseout="this.style.background='transparent'">
                             <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                             </svg>
@@ -25,7 +25,7 @@
                                 :style="shareCopied
                                     ? 'padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #16a34a; background: rgba(16,185,129,0.1); cursor: pointer; color: #16a34a; display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 500; transition: all 0.15s;'
                                     : 'padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); background: #141414; cursor: pointer; color: #818181; display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; font-weight: 500; transition: all 0.15s;'"
-                                onmouseover="if(!this.__x_refs)this.style.background='#f3f4f6'" onmouseout="if(!this.__x_refs)this.style.background='#141414'">
+                                onmouseover="if(!this.__x_refs)this.style.background='#1a1a1a'" onmouseout="if(!this.__x_refs)this.style.background='#141414'">
                             <template x-if="!shareCopied">
                                 <svg style="width:1.25rem;height:1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
@@ -87,10 +87,10 @@
                 <div :style="model2
                     ? 'display: grid; grid-template-columns: minmax(120px, 0.8fr) 1fr 1fr;'
                     : 'display: grid; grid-template-columns: minmax(120px, 0.8fr) 1fr;'">
-                    <div style="padding: 1rem 1.25rem; background: #1a1a1a; border-bottom: 2px solid rgba(255,255,255,0.06); border-right: 1px solid #e5e7eb;">
+                    <div style="padding: 1rem 1.25rem; background: #1a1a1a; border-bottom: 2px solid rgba(255,255,255,0.06); border-right: 1px solid rgba(255,255,255,0.08);">
                         <span style="font-size: 0.6875rem; font-weight: 600; color: #666666; text-transform: uppercase; letter-spacing: 0.05em;">Especifica&ccedil;&atilde;o</span>
                     </div>
-                    <div style="padding: 1rem 1.25rem; background: #111827; border-bottom: 2px solid #111827;">
+                    <div style="padding: 1rem 1.25rem; background: #111827; border-bottom: 2px solid #e3e3e3;">
                         <template x-if="model1">
                             <div>
                                 <div style="font-size: 1rem; font-weight: 700; color: white;" x-text="model1.name"></div>
@@ -123,7 +123,7 @@
                                 : 'display: grid; grid-template-columns: minmax(120px, 0.8fr) 1fr;')
                                 + 'border-bottom: 1px solid rgba(255,255,255,0.04);'">
                                 <!-- Label -->
-                                <div style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; color: #818181; border-right: 1px solid #f3f4f6; display: flex; align-items: center;" x-text="field.label"></div>
+                                <div style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; color: #818181; border-right: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center;" x-text="field.label"></div>
                                 <!-- Valor Modelo 1 -->
                                 <div style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; font-weight: 500; display: flex; align-items: center; gap: 0.375rem;"
                                      :style="getCellStyle(field.key, 1)">
@@ -133,7 +133,7 @@
                                     </template>
                                 </div>
                                 <!-- Valor Modelo 2 -->
-                                <div x-show="model2" style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; font-weight: 500; display: flex; align-items: center; gap: 0.375rem; border-left: 1px solid #f3f4f6;"
+                                <div x-show="model2" style="padding: 0.625rem 1.25rem; font-size: 0.8125rem; font-weight: 500; display: flex; align-items: center; gap: 0.375rem; border-left: 1px solid rgba(255,255,255,0.08);"
                                      :style="getCellStyle(field.key, 2)">
                                     <span x-text="model2 ? (model2[field.key] || '-') : '-'"></span>
                                     <template x-if="model2 && getComparison(field.key) === -1">
@@ -149,11 +149,11 @@
             <!-- Legenda -->
             <div x-show="model1 && model2" style="display: flex; gap: 1.25rem; justify-content: center; margin-top: 0.75rem; font-size: 0.75rem; color: #818181; flex-wrap: wrap;">
                 <span style="display: flex; align-items: center; gap: 0.25rem;">
-                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: rgba(16,185,129,0.15); border: 1px solid #bbf7d0;"></span>
+                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.35);"></span>
                     Melhor
                 </span>
                 <span style="display: flex; align-items: center; gap: 0.25rem;">
-                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: rgba(239,68,68,0.15); border: 1px solid #fecaca;"></span>
+                    <span style="width: 0.75rem; height: 0.75rem; border-radius: 0.25rem; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.35);"></span>
                     Inferior
                 </span>
                 <span style="display: flex; align-items: center; gap: 0.25rem;">

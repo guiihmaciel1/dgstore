@@ -8,7 +8,7 @@
                 <div>
                     <label style="font-size: 0.75rem; font-weight: 600; color: #818181; display: block; margin-bottom: 2px;">Título <span style="color: #fca5a5;">*</span></label>
                     <input type="text" name="title" required value="{{ old('title') }}" placeholder="Ex: iPhone 16 Pro Max - João"
-                           style="width: 100%; padding: 0.5rem; border: 1px solid {{ $errors->has('title') ? '#fca5a5' : '#e5e7eb' }}; border-radius: 0.375rem; font-size: 0.875rem;">
+                           style="width: 100%; padding: 0.5rem; border: 1px solid {{ $errors->has('title') ? '#fca5a5' : 'rgba(255,255,255,0.08)' }}; border-radius: 0.375rem; font-size: 0.875rem;">
                 </div>
 
                 {{-- Interesse de Produto (estruturado) --}}
@@ -95,7 +95,7 @@
                             <input type="text" name="phone" id="new-deal-phone" required value="{{ old('phone') }}" placeholder="(00) 00000-0000"
                                    maxlength="15"
                                    @input="$el.value = $el.value.replace(/\D/g,'').replace(/^(\d{2})(\d)/,'($1) $2').replace(/(\d{5})(\d)/,'$1-$2').substring(0,15)"
-                                   style="flex: 1; padding: 0.5rem; border: 1px solid {{ $errors->has('phone') ? '#fca5a5' : '#e5e7eb' }}; border-radius: 0.375rem; font-size: 0.875rem;">
+                                   style="flex: 1; padding: 0.5rem; border: 1px solid {{ $errors->has('phone') ? '#fca5a5' : 'rgba(255,255,255,0.08)' }}; border-radius: 0.375rem; font-size: 0.875rem;">
                             <button type="button" onclick="checkWaNumber()" id="check-wa-btn" title="Verificar WhatsApp"
                                     style="padding: 0.5rem 0.625rem; border: 1px solid #333; border-radius: 0.375rem; background: #1a1a1a; cursor: pointer; display: flex; align-items: center;">
                                 <svg style="width: 16px; height: 16px; color: #25D366;" viewBox="0 0 24 24" fill="currentColor">

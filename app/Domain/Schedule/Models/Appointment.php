@@ -31,9 +31,9 @@ class Appointment extends Model
     ];
 
     public const ATTENDANT_BG_COLORS = [
-        'danilo'    => '#eff6ff',
-        'guilherme' => '#f5f3ff',
-        'sophia'    => '#fdf2f8',
+        'danilo'    => 'rgba(37,99,235,0.15)',
+        'guilherme' => 'rgba(124,58,237,0.15)',
+        'sophia'    => 'rgba(219,39,119,0.15)',
     ];
 
     public const MIN_HOUR = 8;

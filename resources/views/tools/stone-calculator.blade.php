@@ -28,7 +28,7 @@
                             <label style="font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Valores Rápidos</label>
                             <a href="{{ route('marketing.index', ['tab' => 'prices']) }}"
                                style="font-size: 11px; color: #666666; cursor: pointer; background: none; border: none; display: flex; align-items: center; gap: 3px; text-decoration: none;"
-                               onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9ca3af'">
+                               onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#9ca3af'">
                                 <svg style="width: 13px; height: 13px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
@@ -51,7 +51,7 @@
                                     <template x-if="!qv.variants || qv.variants.length === 0">
                                         <button @click="selectQuickValue(qv.name, qv.value)" type="button"
                                                 :style="isQuickValueActive(qv.name, qv.value)
-                                                    ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #111827; background: #111827; color: white; white-space: nowrap;'
+                                                    ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e3e3e3; background: #111827; color: white; white-space: nowrap;'
                                                     : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #a4a4a4; white-space: nowrap;'">
                                             <span x-text="qv.name"></span>
                                             <span style="opacity: 0.6; margin-left: 4px;" x-text="'R$ ' + formatNumber(qv.value)"></span>
@@ -60,7 +60,7 @@
                                     <!-- Aparelho com variantes (cores) -->
                                     <template x-if="qv.variants && qv.variants.length > 0">
                                         <div :style="isQuickValueActiveByName(qv.name)
-                                                ? 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #111827; overflow: hidden;'
+                                                ? 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid #e3e3e3; overflow: hidden;'
                                                 : 'display: inline-flex; align-items: center; gap: 0; border-radius: 8px; border: 2px solid rgba(255,255,255,0.08); overflow: hidden;'">
                                             <span style="padding: 6px 8px 6px 12px; font-size: 12px; font-weight: 600; color: #a4a4a4; white-space: nowrap;" x-text="qv.name"></span>
                                             <template x-for="(v, vi) in qv.variants" :key="vi">
@@ -69,7 +69,7 @@
                                                             ? 'padding: 4px 8px; cursor: pointer; border: none; background: #111827; display: flex; align-items: center; gap: 4px;'
                                                             : 'padding: 4px 8px; cursor: pointer; border: none; background: transparent; display: flex; align-items: center; gap: 4px;'"
                                                         :title="v.label + ' - R$ ' + formatNumber(v.value)">
-                                                    <span :style="'width: 14px; height: 14px; border-radius: 50%; border: 2px solid ' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'white' : '#d1d5db') + '; background: ' + v.color + ';'"></span>
+                                                    <span :style="'width: 14px; height: 14px; border-radius: 50%; border: 2px solid ' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? 'white' : 'rgba(255,255,255,0.08)') + '; background: ' + v.color + ';'"></span>
                                                     <span :style="'font-size: 11px; font-weight: 600;' + (isQuickValueActive(qv.name + ' ' + v.label, v.value) ? ' color: white;' : ' color: #818181;')"
                                                           x-text="formatNumber(v.value)"></span>
                                                 </button>
@@ -87,13 +87,13 @@
                         <div style="display: flex; gap: 0.5rem;">
                             <button @click="deliveryType = 'pronta'" type="button"
                                     :style="deliveryType === 'pronta'
-                                        ? 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #111827; background: #111827; color: white; cursor: pointer;'
+                                        ? 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #e3e3e3; background: #111827; color: white; cursor: pointer;'
                                         : 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 500; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #818181; cursor: pointer;'">
                                 Pronta Entrega
                             </button>
                             <button @click="deliveryType = 'programada'" type="button"
                                     :style="deliveryType === 'programada'
-                                        ? 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #111827; background: #111827; color: white; cursor: pointer;'
+                                        ? 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; border: 2px solid #e3e3e3; background: #111827; color: white; cursor: pointer;'
                                         : 'flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 500; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #818181; cursor: pointer;'">
                                 Compra Programada
                             </button>
@@ -110,7 +110,7 @@
                                    @keydown.enter="$refs.amountField.focus()"
                                    placeholder="Ex: iPhone 16 Pro Max 256GB Black"
                                    style="width: 100%; padding: 12px 16px; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; font-size: 15px; color: #e3e3e3; outline: none;"
-                                   onfocus="this.style.borderColor='#111827'; this.style.background='#141414'"
+                                   onfocus="this.style.borderColor='#e3e3e3'; this.style.background='#141414'"
                                    onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
                         </div>
                         <div>
@@ -124,7 +124,7 @@
                                        @keydown.enter="$refs.downPaymentField.focus()"
                                        placeholder="0,00"
                                        style="width: 100%; padding: 16px 16px 16px 44px; background: #1a1a1a; border: 2px solid rgba(255,255,255,0.08); border-radius: 10px; font-size: 24px; font-weight: 700; color: #e3e3e3; outline: none; text-align: right;"
-                                       onfocus="this.style.borderColor='#111827'; this.style.background='#141414'"
+                                       onfocus="this.style.borderColor='#e3e3e3'; this.style.background='#141414'"
                                        onblur="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.background='#1a1a1a'">
                             </div>
                         </div>
@@ -143,9 +143,9 @@
                                            @input.debounce.300ms="calculate()"
                                            @keydown.enter="$refs.tradeInField.focus()"
                                            placeholder="0,00"
-                                           style="width: 100%; padding: 12px 14px 12px 40px; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 10px; font-size: 18px; font-weight: 600; color: #059669; outline: none; text-align: right;"
+                                           style="width: 100%; padding: 12px 14px 12px 40px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 10px; font-size: 18px; font-weight: 600; color: #059669; outline: none; text-align: right;"
                                            onfocus="this.style.borderColor='#059669'; this.style.background='#141414'"
-                                           onblur="this.style.borderColor='#bbf7d0'; this.style.background='#f0fdf4'">
+                                           onblur="this.style.borderColor='rgba(16,185,129,0.35)'; this.style.background='rgba(16,185,129,0.15)'">
                                 </div>
                             </div>
                             <div>
@@ -157,9 +157,9 @@
                                            x-ref="tradeInField"
                                            @input.debounce.300ms="calculate()"
                                            placeholder="0,00"
-                                           style="width: 100%; padding: 12px 14px 12px 40px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 10px; font-size: 18px; font-weight: 600; color: #d97706; outline: none; text-align: right;"
+                                           style="width: 100%; padding: 12px 14px 12px 40px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.35); border-radius: 10px; font-size: 18px; font-weight: 600; color: #d97706; outline: none; text-align: right;"
                                            onfocus="this.style.borderColor='#d97706'; this.style.background='#141414'"
-                                           onblur="this.style.borderColor='#fde68a'; this.style.background='#fef3c7'">
+                                           onblur="this.style.borderColor='rgba(245,158,11,0.35)'; this.style.background='rgba(245,158,11,0.15)'">
                                 </div>
                             </div>
                         </div>
@@ -213,11 +213,11 @@
                 <div>
                     <!-- Loading -->
                     <div x-show="loading" style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 3rem; text-align: center;">
-                        <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f4f6; border-top-color: #e3e3e3; border-radius: 50%; animation: stoneCalcSpin 1s linear infinite;"></div>
+                        <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.08); border-top-color: #e3e3e3; border-radius: 50%; animation: stoneCalcSpin 1s linear infinite;"></div>
                     </div>
 
                     <!-- Erro -->
-                    <div x-show="error && !loading" x-transition style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
+                    <div x-show="error && !loading" x-transition style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1rem;">
                         <div style="display: flex; align-items: start; gap: 10px;">
                             <svg style="width: 20px; height: 20px; color: #fca5a5; flex-shrink: 0; margin-top: 2px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -240,7 +240,7 @@
                     <!-- Resultados -->
                     <div x-show="!loading && results.length > 0" x-transition>
                         <!-- Pix -->
-                        <div style="background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                        <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                             <div>
                                 <div style="font-size: 15px; font-weight: 700; color: #059669;">Pix</div>
                                 <div style="font-size: 12px; color: #818181;">Melhor preço - sem taxa</div>
@@ -253,7 +253,7 @@
                             <template x-for="p in presets" :key="p.key">
                                 <button @click="setSelection(p.key)" type="button"
                                         :style="activePreset === p.key
-                                            ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #111827; background: #111827; color: white;'
+                                            ? 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid #e3e3e3; background: #111827; color: white;'
                                             : 'padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid rgba(255,255,255,0.08); background: #141414; color: #a4a4a4;'"
                                         x-text="p.label"></button>
                             </template>
@@ -271,7 +271,7 @@
                                 <div></div>
                             </div>
                             <template x-for="(row, idx) in results" :key="idx">
-                                <div :style="'display: grid; grid-template-columns: 32px 1fr auto 52px; align-items: center; border-top: 1px solid #f3f4f6; transition: opacity 0.15s;' + (row.selected ? (idx % 2 === 0 ? ' background: #141414;' : ' background: #1a1a1a;') : ' background: #222222; opacity: 0.4;')">
+                                <div :style="'display: grid; grid-template-columns: 32px 1fr auto 52px; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); transition: opacity 0.15s;' + (row.selected ? (idx % 2 === 0 ? ' background: #141414;' : ' background: #1a1a1a;') : ' background: #222222; opacity: 0.4;')">
                                     <div style="padding: 10px 0 10px 10px; display: flex; align-items: center;">
                                         <input type="checkbox" x-model="row.selected" @change="activePreset = null" style="width: 15px; height: 15px; accent-color: #e3e3e3; cursor: pointer;">
                                     </div>
@@ -288,7 +288,7 @@
                                         <button @click.stop="copyRow(row)" type="button"
                                                 :style="row.copied
                                                     ? 'background: #059669; border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center;'
-                                                    : 'background: #e5e7eb; border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: #a4a4a4; display: flex; align-items: center; justify-content: center;'"
+                                                    : 'background: #222222; border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; color: #a4a4a4; display: flex; align-items: center; justify-content: center;'"
                                                 :title="row.copied ? 'Copiado!' : 'Copiar mensagem'">
                                             <svg x-show="!row.copied" style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -303,7 +303,7 @@
                         </div>
 
                         <!-- Você recebe + Ações fixas -->
-                        <div style="margin-top: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.75rem; padding: 1rem 1.25rem;">
+                        <div style="margin-top: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.75rem; padding: 1rem 1.25rem;">
                             <div style="display: flex; align-items: center; justify-content: space-between;">
                                 <span style="font-size: 14px; font-weight: 600; color: #059669;">VOCÊ RECEBE</span>
                                 <span style="font-size: 22px; font-weight: 800; color: #059669;" x-text="'R$ ' + formatNumber(finalAmount)"></span>

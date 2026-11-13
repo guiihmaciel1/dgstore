@@ -1,17 +1,17 @@
 <div x-data="dailyChecklist()" x-init="init()" class="mb-4">
     <div class="bg-surface-raised rounded-xl border overflow-hidden ring-1 ring-white/[0.03]"
-         :class="progressPercent === 100 ? 'border-emerald-200' : 'border-amber-300'">
+         :class="progressPercent === 100 ? 'border-emerald-500/30' : 'border-amber-300'">
 
         {{-- Header com progresso e alerta --}}
         <div class="px-4 py-3 border-b"
-             :class="progressPercent === 100 ? 'border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50' : 'border-amber-100 bg-gradient-to-r from-amber-50 to-orange-50'">
+             :class="progressPercent === 100 ? 'border-emerald-500/30 bg-gradient-to-r from-emerald-50 to-teal-50' : 'border-amber-500/30 bg-gradient-to-r from-amber-50 to-orange-50'">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
                     <span class="text-lg">📋</span>
                     <h3 class="text-sm font-extrabold text-dg-100 m-0">Checklist do Dia</h3>
                 </div>
                 <span class="text-xs font-bold px-2 py-0.5 rounded-full"
-                      :class="progressPercent === 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+                      :class="progressPercent === 100 ? 'bg-emerald-500/15 text-emerald-300' : 'bg-amber-500/15 text-amber-300'"
                       x-text="totalDone + '/' + totalItems + ' (' + Math.round(progressPercent) + '%)'"></span>
             </div>
             <div class="w-full h-2 bg-surface-elevated rounded-full overflow-hidden">
@@ -52,7 +52,7 @@
                             <span class="text-xs font-bold text-dg-300" x-text="cat.name"></span>
                         </div>
                         <span class="text-[0.65rem] font-bold px-2 py-0.5 rounded-full"
-                              :class="catDone(catIdx) === cat.items.length ? 'bg-emerald-100 text-emerald-700' : (catDone(catIdx) > 0 ? 'bg-amber-100 text-amber-600' : 'bg-red-50 text-red-500')"
+                              :class="catDone(catIdx) === cat.items.length ? 'bg-emerald-500/15 text-emerald-300' : (catDone(catIdx) > 0 ? 'bg-amber-500/15 text-amber-600' : 'bg-red-500/10 text-red-500')"
                               x-text="catDone(catIdx) + '/' + cat.items.length"></span>
                     </button>
                     <div x-show="cat.open" x-collapse>

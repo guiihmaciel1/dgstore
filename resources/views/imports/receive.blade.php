@@ -94,7 +94,7 @@
                 <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
                     <a href="{{ route('imports.show', $order) }}" 
                        style="padding: 0.75rem 1.5rem; color: #818181; font-weight: 500; border-radius: 0.5rem; text-decoration: none;"
-                       onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
+                       onmouseover="this.style.background='#1a1a1a'" onmouseout="this.style.background='transparent'">
                         Cancelar
                     </a>
                     <button type="submit" style="padding: 0.75rem 1.5rem; background: #16a34a; color: white; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer;"

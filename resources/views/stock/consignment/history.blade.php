@@ -68,7 +68,7 @@
                                         @php
                                             $isIncome = (float) $exchange->cost_adjustment > 0;
                                         @endphp
-                                        <span style="font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; background: {{ $isIncome ? '#ecfdf5' : '#fef2f2' }}; color: {{ $isIncome ? '#065f46' : '#991b1b' }};">
+                                        <span style="font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; background: {{ $isIncome ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; color: {{ $isIncome ? '#6ee7b7' : '#fca5a5' }};">
                                             {{ $exchange->formatted_cost_adjustment }}
                                         </span>
                                     @endif
@@ -88,7 +88,7 @@
                                     </div>
 
                                     {{-- Depois --}}
-                                    <div style="background: #141414; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #a7f3d0;">
+                                    <div style="background: #141414; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(16,185,129,0.35);">
                                         <div style="font-size: 0.6875rem; font-weight: 700; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Depois</div>
                                         <div style="font-size: 0.8125rem; color: #e3e3e3; font-weight: 600;">{{ $exchange->new_full_name }}</div>
                                         @if($exchange->new_imei)
@@ -101,7 +101,7 @@
                                 </div>
 
                                 @if($exchange->reason)
-                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed #e5e7eb; font-size: 0.8125rem; color: #818181;">
+                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 0.8125rem; color: #818181;">
                                         <strong>Motivo:</strong> {{ $exchange->reason }}
                                     </div>
                                 @endif
@@ -131,7 +131,7 @@
                                 ];
                                 $colors = $typeColors[$movement->type->value] ?? ['#f3f4f6', '#374151'];
                             @endphp
-                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 0.5rem; border: 1px solid #f3f4f6; background: #1a1a1a;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.875rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.08); background: #1a1a1a;">
                                 <span style="display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; background: {{ $colors[0] }}; color: {{ $colors[1] }}; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">{{ $movement->type->label() }}</span>
                                 <div style="flex: 1; font-size: 0.8125rem; color: #a4a4a4;">{{ $movement->reason ?: '-' }}</div>
                                 <div style="font-size: 0.75rem; color: #818181; white-space: nowrap;">

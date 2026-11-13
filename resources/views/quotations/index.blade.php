@@ -30,7 +30,7 @@
     <div class="py-6">
         <div class="px-6 lg:px-8" x-data="quotationIndex()">
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -41,8 +41,8 @@
                 $hasUpdatesToday = $todayQuotations->count() > 0;
                 $lastUpdate = $todayQuotations->sortByDesc('created_at')->first();
             @endphp
-            <div style="margin-bottom: 1.5rem; border-radius: 0.75rem; overflow: hidden; border: 1px solid {{ $hasUpdatesToday ? '#bbf7d0' : '#fde68a' }};">
-                <div style="padding: 1rem 1.25rem; background: {{ $hasUpdatesToday ? 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)' : 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' }}; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <div style="margin-bottom: 1.5rem; border-radius: 0.75rem; overflow: hidden; border: 1px solid {{ $hasUpdatesToday ? 'rgba(16,185,129,0.35)' : 'rgba(245,158,11,0.35)' }};">
+                <div style="padding: 1rem 1.25rem; background: {{ $hasUpdatesToday ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.12)' }}; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                     @if($hasUpdatesToday)
                         <div style="display: flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: #16a34a; flex-shrink: 0;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@
                             </div>
                             <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
                                 @foreach($todayBySupplier as $supplierName => $supplierQuotes)
-                                    <span style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: #141414; color: #6ee7b7; border: 1px solid #a7f3d0; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                                    <span style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: #141414; color: #6ee7b7; border: 1px solid rgba(16,185,129,0.35); box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
                                         <span style="width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #16a34a; flex-shrink: 0;"></span>
                                         {{ $supplierName }}
                                         <span style="font-weight: 400; color: #6ee7b7;">({{ $supplierQuotes->count() }})</span>
@@ -287,7 +287,7 @@
             <!-- Comparativo de Preços -->
             @if($priceComparison->count() > 0)
                 <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
-                    <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #fef3c7;">
+                    <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(245,158,11,0.15);">
                         <h2 style="font-size: 1rem; font-weight: 600; color: #fbbf24; display: flex; align-items: center; gap: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
@@ -316,7 +316,7 @@
                                             <a href="https://www.google.com/search?q={{ urlencode($productName) }}" target="_blank" rel="noopener"
                                                style="font-weight: 500; color: #e3e3e3; display: inline-flex; align-items: center; gap: 0.375rem; text-decoration: none; cursor: pointer;"
                                                onmouseover="this.style.color='#2563eb'; this.querySelector('.search-icon').style.opacity='1'"
-                                               onmouseout="this.style.color='#111827'; this.querySelector('.search-icon').style.opacity='0'">
+                                               onmouseout="this.style.color='#e3e3e3'; this.querySelector('.search-icon').style.opacity='0'">
                                                 {!! quotationFlag($productName) !!} {{ $productName }}
                                                 <svg class="search-icon" style="width: 0.875rem; height: 0.875rem; opacity: 0; transition: opacity 0.15s; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -374,8 +374,8 @@
                          style="display: flex; align-items: center; gap: 0.75rem;">
                         <span style="font-size: 0.8125rem; color: #818181;" x-text="selectedIds.length + ' selecionado(s) na página'"></span>
                         <button type="button" @click="bulkDelete()"
-                                style="padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 500; border: 1px solid #fecaca; border-radius: 0.375rem; background: rgba(239,68,68,0.1); color: #fca5a5; cursor: pointer; display: inline-flex; align-items: center; gap: 0.375rem;"
-                                onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+                                style="padding: 0.375rem 0.75rem; font-size: 0.8125rem; font-weight: 500; border: 1px solid rgba(239,68,68,0.35); border-radius: 0.375rem; background: rgba(239,68,68,0.1); color: #fca5a5; cursor: pointer; display: inline-flex; align-items: center; gap: 0.375rem;"
+                                onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">
                             <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
@@ -425,7 +425,7 @@
                                         <a href="https://www.google.com/search?q={{ urlencode($quotation->product_name) }}" target="_blank" rel="noopener"
                                            style="font-weight: 500; color: #e3e3e3; display: inline-flex; align-items: center; gap: 0.375rem; text-decoration: none; cursor: pointer;"
                                            onmouseover="this.style.color='#2563eb'; this.querySelector('.search-icon').style.opacity='1'"
-                                           onmouseout="this.style.color='#111827'; this.querySelector('.search-icon').style.opacity='0'">
+                                           onmouseout="this.style.color='#e3e3e3'; this.querySelector('.search-icon').style.opacity='0'">
                                             {!! quotationFlag($quotation->product_name) !!} {{ $quotation->product_name }}
                                             <svg class="search-icon" style="width: 0.875rem; height: 0.875rem; opacity: 0; transition: opacity 0.15s; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>

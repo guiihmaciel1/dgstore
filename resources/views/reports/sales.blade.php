@@ -135,7 +135,7 @@
             @if($comparison)
             <!-- Comparativo -->
             <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #f0f9ff;">
+                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(59,130,246,0.15);">
                     <h3 style="font-weight: 600; color: #e3e3e3;">Comparativo de Períodos</h3>
                     <p style="font-size: 0.75rem; color: #818181;">{{ $comparison['period1']['period']['start'] }} - {{ $comparison['period1']['period']['end'] }} vs {{ $comparison['period2']['period']['start'] }} - {{ $comparison['period2']['period']['end'] }}</p>
                 </div>
@@ -202,7 +202,7 @@
                             @forelse($report['sales'] as $sale)
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                                     <td style="padding: 1rem 1.5rem;">
-                                        <a href="{{ route('sales.show', $sale) }}" style="font-weight: 600; color: #e3e3e3; text-decoration: none;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#111827'">
+                                        <a href="{{ route('sales.show', $sale) }}" style="font-weight: 600; color: #e3e3e3; text-decoration: none;" onmouseover="this.style.color='#c8c8c8'" onmouseout="this.style.color='#e3e3e3'">
                                             {{ $sale->sale_number }}
                                         </a>
                                     </td>
@@ -218,12 +218,12 @@
                                     <td style="padding: 0.75rem 1rem; text-align: center;">
                                         @php
                                             $statusColors = [
-                                                'paid' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                                'pending' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
-                                                'partial' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                                'cancelled' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
+                                                'paid' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                                'pending' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04'],
+                                                'partial' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                                'cancelled' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
                                             ];
-                                            $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                            $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                         @endphp
                                         <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $sc['bg'] }}; color: {{ $sc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                             {{ $sale->payment_status->label() }}

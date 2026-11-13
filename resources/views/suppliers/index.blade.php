@@ -3,7 +3,7 @@
     <div class="py-6">
         <div class="px-6 lg:px-8">
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -105,9 +105,9 @@
                                     </td>
                                     <td style="padding: 0.75rem 1.5rem; text-align: right;">
                                         <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-                                            <a href="{{ route('quotations.create', ['supplier_id' => $supplier->id]) }}" style="color: #16a34a; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#15803d'" onmouseout="this.style.color='#16a34a'">+ Cotação</a>
-                                            <a href="{{ route('suppliers.show', $supplier) }}" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'">Ver</a>
-                                            <a href="{{ route('suppliers.edit', $supplier) }}" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'">Editar</a>
+                                            <a href="{{ route('quotations.create', ['supplier_id' => $supplier->id]) }}" style="color: #16a34a; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#6ee7b7'" onmouseout="this.style.color='#16a34a'">+ Cotação</a>
+                                            <a href="{{ route('suppliers.show', $supplier) }}" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#6b7280'">Ver</a>
+                                            <a href="{{ route('suppliers.edit', $supplier) }}" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#6b7280'">Editar</a>
                                         </div>
                                     </td>
                                 </tr>

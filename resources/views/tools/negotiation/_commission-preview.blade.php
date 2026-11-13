@@ -1,7 +1,7 @@
 @if(true)
 <div x-transition>
     <div class="rounded-xl border overflow-hidden"
-         :class="commissionEstimate.total > 0 ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-teal-50' : 'border-amber-200 bg-gradient-to-br from-amber-50 via-white to-orange-50'">
+         :class="commissionEstimate.total > 0 ? 'border-emerald-500/30 bg-gradient-to-br from-emerald-50 via-white to-teal-50' : 'border-amber-500/30 bg-gradient-to-br from-amber-50 via-white to-orange-50'">
 
         {{-- Header com valor total --}}
         <div class="px-4 py-3 flex items-center justify-between"
@@ -26,7 +26,7 @@
                         <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
                         Lucro do aparelho
                     </span>
-                    <span class="text-xs font-bold" :class="commissionEstimate.profit > 0 ? 'text-emerald-700' : 'text-dg-500'"
+                    <span class="text-xs font-bold" :class="commissionEstimate.profit > 0 ? 'text-emerald-300' : 'text-dg-500'"
                           x-text="commissionEstimate.profit > 0 ? 'R$ ' + fmt(commissionEstimate.profit) : 'R$ 0'"></span>
                 </div>
                 <div class="w-full h-2 bg-surface-overlay rounded-full overflow-hidden">
@@ -46,14 +46,14 @@
                         <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
                         Comissão do aparelho
                     </span>
-                    <span class="text-xs font-bold" :class="commissionEstimate.profit > 0 ? 'text-emerald-700' : 'text-dg-500'"
+                    <span class="text-xs font-bold" :class="commissionEstimate.profit > 0 ? 'text-emerald-300' : 'text-dg-500'"
                           x-text="commissionEstimate.profit > 0 ? '+R$ ' + fmt(commissionEstimate.profit) : 'R$ 0'"></span>
                 </div>
                 @endif
             </div>
 
             {{-- Seção: Acessórios --}}
-            <div :class="productPrice > 0 && productCost > 0 ? 'border-t border-dashed pt-3 ' + (commissionEstimate.total > 0 ? 'border-emerald-200' : 'border-amber-200') : ''">
+            <div :class="productPrice > 0 && productCost > 0 ? 'border-t border-dashed pt-3 ' + (commissionEstimate.total > 0 ? 'border-emerald-500/30' : 'border-amber-500/30') : ''">
                 <div class="flex items-center gap-1.5 mb-2">
                     <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
                     <span class="text-xs font-semibold text-dg-300">Acessórios</span>
@@ -62,7 +62,7 @@
 
                 {{-- Capinha: toggle + combos --}}
                 <div class="rounded-lg p-3 border transition-all duration-200 mb-2"
-                     :class="caseEnabled ? 'bg-purple-50 border-purple-300' : 'bg-surface border-border'">
+                     :class="caseEnabled ? 'bg-purple-500/10 border-purple-300' : 'bg-surface border-border'">
                     <label class="flex items-center justify-between cursor-pointer mb-0"
                            :class="caseEnabled ? 'mb-2' : ''">
                         <span class="text-[10px] font-semibold uppercase tracking-wider"
@@ -81,7 +81,7 @@
                             <div class="relative">
                                 <span class="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-dg-500">R$</span>
                                 <input type="number" :value="caseUnitPrice" readonly
-                                       class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center bg-surface-overlay border-purple-300 text-purple-800 cursor-not-allowed">
+                                       class="w-full pl-7 pr-2 py-1.5 text-xs font-semibold border rounded-md text-center bg-surface-overlay border-purple-300 text-purple-300 cursor-not-allowed">
                             </div>
                         </div>
 
@@ -93,11 +93,11 @@
                                 <span x-show="caseTotalOverride !== null && caseQty > 1" class="line-through text-gray-300 ml-1"
                                       x-text="'R$ ' + fmt(caseUnitPrice * caseQty)"></span>
                             </span>
-                            <p class="text-xs font-bold text-purple-700">+R$ <span x-text="fmt(commissionEstimate.caseComm)"></span></p>
+                            <p class="text-xs font-bold text-purple-300">+R$ <span x-text="fmt(commissionEstimate.caseComm)"></span></p>
                         </div>
 
                         {{-- Sugestão de combos com desconto progressivo --}}
-                        <div x-show="caseUnitPrice > 10" x-transition class="mt-2.5 pt-2.5 border-t border-purple-100">
+                        <div x-show="caseUnitPrice > 10" x-transition class="mt-2.5 pt-2.5 border-t border-purple-500/30">
                         <p class="text-[9px] font-semibold text-purple-500 uppercase tracking-wider mb-1.5">Ofereça combos ao cliente</p>
                         <div class="space-y-1"
                              x-data="{
@@ -118,8 +118,8 @@
                                         @click="caseQty = combo.qty; caseTotalOverride = combo.qty === 1 ? null : combo.total"
                                         class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-[11px] transition-all border"
                                         :class="caseQty === combo.qty
-                                            ? 'bg-purple-100 border-purple-300 text-purple-800 font-bold ring-1 ring-white/[0.03]'
-                                            : 'bg-surface-raised border-border text-dg-400 hover:bg-purple-50 hover:border-purple-200'">
+                                            ? 'bg-purple-500/15 border-purple-300 text-purple-300 font-bold ring-1 ring-white/[0.03]'
+                                            : 'bg-surface-raised border-border text-dg-400 hover:bg-purple-500/10 hover:border-purple-500/30'">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold"
                                               :class="caseQty === combo.qty ? 'bg-purple-600 text-white' : 'bg-surface-overlay text-dg-500'"
@@ -129,7 +129,7 @@
                                             <span class="font-bold ml-0.5" x-text="'R$ ' + fmt(combo.total)"></span>
                                         </span>
                                         <span x-show="combo.discount > 0"
-                                              class="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold"
+                                              class="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-bold"
                                               x-text="'-' + combo.discount + '%'"></span>
                                     </span>
                                     <span class="font-bold text-emerald-600"
@@ -143,7 +143,7 @@
 
                 {{-- Carregador --}}
                 <div class="rounded-lg p-2.5 border transition-all duration-200"
-                     :class="chargerEnabled && accessoryChargerPrice > 80 ? 'bg-purple-50 border-purple-300' : 'bg-surface border-border'">
+                     :class="chargerEnabled && accessoryChargerPrice > 80 ? 'bg-purple-500/10 border-purple-300' : 'bg-surface border-border'">
                     <label class="flex items-center justify-between cursor-pointer"
                            :class="chargerEnabled ? 'mb-1.5' : ''">
                         <span class="text-[10px] font-semibold uppercase tracking-wider"
@@ -191,9 +191,9 @@
 
                 {{-- Total de acessórios --}}
                 <div x-show="commissionEstimate.accessoryTotal > 0" x-transition
-                     class="mt-2 bg-purple-100 border border-purple-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-purple-700">Comissão acessórios</span>
-                    <span class="text-sm font-black text-purple-800" x-text="'+R$ ' + fmt(commissionEstimate.accessoryTotal)"></span>
+                     class="mt-2 bg-purple-500/15 border border-purple-500/30 rounded-lg px-3 py-2 flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-purple-300">Comissão acessórios</span>
+                    <span class="text-sm font-black text-purple-300" x-text="'+R$ ' + fmt(commissionEstimate.accessoryTotal)"></span>
                 </div>
             </div>
 

@@ -41,7 +41,7 @@
                                         <div @click="selectTradeInModel(modelName); evalDropdownOpen = false; evalSearch = ''"
                                              class="px-3.5 py-2.5 text-[13px] cursor-pointer border-b border-gray-50 transition-colors"
                                              :class="tradeIn.model === modelName
-                                                 ? 'bg-amber-50 text-amber-600 font-semibold'
+                                                 ? 'bg-amber-500/10 text-amber-600 font-semibold'
                                                  : 'text-dg-300 hover:bg-surface-overlay'">
                                             <span x-show="tradeIn.model === modelName" class="mr-1.5 text-amber-600">✓</span>
                                             <span x-text="modelName"></span>
@@ -78,7 +78,7 @@
                 <label class="block text-[0.7rem] font-semibold text-dg-500 uppercase tracking-wider mb-1.5">
                     Saúde da Bateria: <span class="text-dg-100" x-text="tradeIn.battery + '%'"></span>
                     <span class="ml-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full"
-                          :class="tradeIn.battery >= 90 ? 'bg-green-100 text-green-800' : (tradeIn.battery >= 80 ? 'bg-yellow-100 text-yellow-800' : (tradeIn.battery >= 70 ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'))"
+                          :class="tradeIn.battery >= 90 ? 'bg-green-500/15 text-green-300' : (tradeIn.battery >= 80 ? 'bg-yellow-500/15 text-yellow-300' : (tradeIn.battery >= 70 ? 'bg-orange-500/15 text-orange-300' : 'bg-red-500/15 text-red-300'))"
                           x-text="tradeIn.battery >= 90 ? 'Excelente' : (tradeIn.battery >= 80 ? 'Bom' : (tradeIn.battery >= 70 ? 'Regular' : 'Ruim'))"></span>
                 </label>
                 <input type="range" x-model.number="tradeIn.battery" min="0" max="100" step="1"
@@ -115,7 +115,7 @@
                 <label class="block text-[0.7rem] font-semibold text-dg-500 uppercase tracking-wider mb-1.5">
                     Acessórios
                     <span class="ml-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full"
-                          :class="(!tradeIn.noBox && !tradeIn.noCable) ? 'bg-green-100 text-green-800' : ((tradeIn.noBox && tradeIn.noCable) ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800')"
+                          :class="(!tradeIn.noBox && !tradeIn.noCable) ? 'bg-green-500/15 text-green-300' : ((tradeIn.noBox && tradeIn.noCable) ? 'bg-red-500/15 text-red-300' : 'bg-yellow-500/15 text-yellow-300')"
                           x-text="(!tradeIn.noBox && !tradeIn.noCable) ? 'Completo (+3%)' : ((tradeIn.noBox && tradeIn.noCable) ? 'Nenhum (-3%)' : 'Parcial (0%)')"></span>
                 </label>
                 <label class="flex items-center gap-2.5 py-2.5 px-3 rounded-[10px] bg-surface-raised cursor-pointer mb-1.5 hover:bg-surface-overlay transition-colors">
@@ -167,7 +167,7 @@
                         <div class="flex items-center gap-2 mt-0.5">
                             <span class="text-[1.1rem] font-semibold text-dg-100" x-text="tradeIn.result?.listings_count"></span>
                             <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-                                  :class="tradeIn.result?.confidence === 'high' ? 'bg-green-100 text-green-800' : (tradeIn.result?.confidence === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800')"
+                                  :class="tradeIn.result?.confidence === 'high' ? 'bg-green-500/15 text-green-300' : (tradeIn.result?.confidence === 'medium' ? 'bg-yellow-500/15 text-yellow-300' : 'bg-red-500/15 text-red-300')"
                                   x-text="tradeIn.result?.confidence === 'high' ? 'Confiança Alta' : (tradeIn.result?.confidence === 'medium' ? 'Confiança Média' : 'Confiança Baixa')"></span>
                         </div>
                     </div>
@@ -215,7 +215,7 @@
 
             {{-- Erro --}}
             <div x-show="tradeIn.error && !tradeIn.loading" x-transition
-                 class="p-3 rounded-[10px] bg-red-50 text-[13px] text-red-800 text-center mt-3">
+                 class="p-3 rounded-[10px] bg-red-500/10 text-[13px] text-red-300 text-center mt-3">
                 <span x-text="tradeIn.error"></span>
             </div>
         </div>

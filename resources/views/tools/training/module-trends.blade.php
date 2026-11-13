@@ -17,7 +17,7 @@
         </div>
     </button>
 
-    <div x-show="openModule === 'trends'" x-transition style="border-top: 1px solid #f3f4f6; padding: 1.25rem;">
+    <div x-show="openModule === 'trends'" x-transition style="border-top: 1px solid rgba(255,255,255,0.08); padding: 1.25rem;">
         <p style="font-size: 0.875rem; color: #a4a4a4; margin-bottom: 1rem; line-height: 1.6;">
             Quer impressionar o cliente e mostrar que você manja? Solta essas informações na conversa — funciona demais pra criar conexão e passar credibilidade. 🌟
         </p>
@@ -52,7 +52,7 @@
         </div>
 
         {{-- Sustentabilidade --}}
-        <div style="background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
+        <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
             <p style="font-size: 0.875rem; font-weight: 700; color: #6ee7b7; margin-bottom: 0.5rem;">🌿 Sustentabilidade Apple</p>
             <div style="display: flex; flex-direction: column; gap: 0.375rem; font-size: 0.8rem; color: #6ee7b7;">
                 <p>• iPhone 17 Pro usa <strong>titânio reciclado</strong> e <strong>alumínio 100% reciclado</strong></p>

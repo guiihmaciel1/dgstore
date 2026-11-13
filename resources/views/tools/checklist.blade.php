@@ -33,7 +33,7 @@
             <!-- Importar Device Info -->
             <div style="margin-bottom: 1rem;">
                 <div x-show="!deviceInfo">
-                    <div x-show="!showPasteArea" style="background: #141414; border: 2px dashed #d1d5db; border-radius: 0.75rem; padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color 0.2s;"
+                    <div x-show="!showPasteArea" style="background: #141414; border: 2px dashed rgba(255,255,255,0.08); border-radius: 0.75rem; padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color 0.2s;"
                          @click="showPasteArea = true"
                          onmouseover="this.style.borderColor='#818181'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
                         <svg style="width: 2rem; height: 2rem; color: #666666; margin: 0 auto 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,12 +69,12 @@
                 </div>
 
                 <!-- Device Info Card -->
-                <div x-show="deviceInfo" x-transition style="background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 100%); border: 1px solid #c7d2fe; border-radius: 0.75rem; overflow: hidden;">
-                    <div style="padding: 0.875rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(199,210,254,0.5);">
+                <div x-show="deviceInfo" x-transition style="background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(16,185,129,0.08) 100%); border: 1px solid rgba(99,102,241,0.3); border-radius: 0.75rem; overflow: hidden;">
+                    <div style="padding: 0.875rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(99,102,241,0.2);">
                         <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                             <span style="font-size: 1rem;">📱</span>
-                            <span style="font-size: 0.8rem; font-weight: 700; color: #312e81;" x-text="deviceInfo?.modelName || 'Dispositivo'"></span>
-                            <span x-show="deviceInfo?.capacity" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #a5b4fc;" x-text="deviceInfo?.capacity"></span>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #a5b4fc;" x-text="deviceInfo?.modelName || 'Dispositivo'"></span>
+                            <span x-show="deviceInfo?.capacity" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: rgba(99,102,241,0.3); color: #a5b4fc;" x-text="deviceInfo?.capacity"></span>
                             <span x-show="deviceInfo?.color" style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: rgba(99,102,241,0.15); color: #a5b4fc;" x-text="deviceInfo?.color"></span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -88,7 +88,7 @@
                         <template x-for="field in _cardFields('identity')">
                             <div x-show="field.show">
                                 <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;" x-text="field.label"></span>
-                                <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="(field.mono ? 'font-family:monospace;' : '') + 'color:' + (field.color || '#111827')" x-text="field.value"></p>
+                                <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="(field.mono ? 'font-family:monospace;' : '') + 'color:' + (field.color || '#e3e3e3')" x-text="field.value"></p>
                             </div>
                         </template>
                     </div>
@@ -99,7 +99,7 @@
                             <template x-for="field in _cardFields('status')">
                                 <div x-show="field.show">
                                     <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;" x-text="field.label"></span>
-                                    <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (field.color || '#111827')" x-text="field.value"></p>
+                                    <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (field.color || '#e3e3e3')" x-text="field.value"></p>
                                 </div>
                             </template>
                         </div>
@@ -147,7 +147,7 @@
                             <template x-for="field in _cardFields('sensors')">
                                 <div x-show="field.show">
                                     <span style="font-size: 0.6rem; font-weight: 600; color: #818181; text-transform: uppercase;" x-text="field.label"></span>
-                                    <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (field.color || '#111827')" x-text="field.value"></p>
+                                    <p style="font-size: 0.75rem; font-weight: 600; margin: 0;" :style="'color:' + (field.color || '#e3e3e3')" x-text="field.value"></p>
                                 </div>
                             </template>
                         </div>
@@ -196,7 +196,7 @@
                         </button>
 
                         <!-- Itens -->
-                        <div x-show="section.open" x-transition style="border-top: 1px solid #f3f4f6;">
+                        <div x-show="section.open" x-transition style="border-top: 1px solid rgba(255,255,255,0.08);">
                             <!-- Subsecoes -->
                             <template x-for="(sub, subIdx) in section.subs" :key="subIdx">
                                 <div>
@@ -268,7 +268,7 @@
                                onblur="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.boxShadow='none'">
                         <p x-show="saveError" style="font-size: 0.75rem; color: #fca5a5; margin: 0.5rem 0 0;" x-text="saveError"></p>
                     </div>
-                    <div style="padding: 0.75rem 1.5rem; display: flex; justify-content: flex-end; gap: 0.5rem; border-top: 1px solid #f3f4f6;">
+                    <div style="padding: 0.75rem 1.5rem; display: flex; justify-content: flex-end; gap: 0.5rem; border-top: 1px solid rgba(255,255,255,0.08);">
                         <button @click="showSaveModal = false" type="button"
                                 style="padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; background: #141414; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;">
                             Cancelar

@@ -6,7 +6,7 @@
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-300 text-sm font-medium">R$</span>
                 <input type="text" x-model="downPaymentInput"
                        placeholder="0,00"
-                       class="w-full py-3 pl-10 pr-3.5 bg-green-50 border border-green-200 rounded-[10px] text-lg font-semibold text-emerald-600 outline-none text-right focus:border-emerald-600 focus:bg-surface-raised transition-colors">
+                       class="w-full py-3 pl-10 pr-3.5 bg-green-500/10 border border-green-500/30 rounded-[10px] text-lg font-semibold text-emerald-600 outline-none text-right focus:border-emerald-600 focus:bg-surface-raised transition-colors">
             </div>
         </div>
         <div>
@@ -15,7 +15,7 @@
                 <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-amber-300 text-sm font-medium">R$</span>
                 <input type="text" x-model="tradeIn.offeredInput"
                        placeholder="0,00"
-                       class="w-full py-3 pl-10 pr-3.5 bg-amber-50 border border-amber-200 rounded-[10px] text-lg font-semibold text-amber-600 outline-none text-right focus:border-amber-600 focus:bg-surface-raised transition-colors">
+                       class="w-full py-3 pl-10 pr-3.5 bg-amber-500/10 border border-amber-500/30 rounded-[10px] text-lg font-semibold text-amber-600 outline-none text-right focus:border-amber-600 focus:bg-surface-raised transition-colors">
             </div>
         </div>
     </div>
@@ -29,14 +29,14 @@
                 <span class="text-[13px] font-semibold text-dg-300">Valorizar trade-in</span>
             </label>
             <span x-show="numberGame.enabled && numberGame.boost > 0"
-                  class="text-[11px] font-bold text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full"
+                  class="text-[11px] font-bold text-violet-600 bg-violet-500/10 px-2 py-0.5 rounded-full"
                   x-text="'+ R$ ' + fmt(numberGame.boost)"></span>
         </div>
 
-        <div x-show="numberGame.enabled" x-collapse class="mt-2 p-3 bg-violet-50/60 border border-violet-200 rounded-lg space-y-2">
+        <div x-show="numberGame.enabled" x-collapse class="mt-2 p-3 bg-violet-50/60 border border-violet-500/30 rounded-lg space-y-2">
             <div class="flex items-center justify-between text-[12px] text-dg-500">
                 <span>Valorização</span>
-                <span class="font-bold text-violet-700" x-text="'R$ ' + fmt(numberGame.boost)"></span>
+                <span class="font-bold text-violet-300" x-text="'R$ ' + fmt(numberGame.boost)"></span>
             </div>
             <input type="range" x-model.number="numberGame.boost"
                    min="0" :max="boostMax" step="50"
@@ -45,12 +45,12 @@
                 <span>R$ 0</span>
                 <span x-text="'R$ ' + fmt(boostMax)"></span>
             </div>
-            <div x-show="numberGame.boost > 0" x-collapse class="mt-1 p-2 bg-surface-raised rounded-md border border-violet-100 text-[12px] space-y-1">
+            <div x-show="numberGame.boost > 0" x-collapse class="mt-1 p-2 bg-surface-raised rounded-md border border-violet-500/30 text-[12px] space-y-1">
                 <div class="flex justify-between text-dg-500">
                     <span>Trade-in real:</span>
                     <span class="font-semibold" x-text="'R$ ' + fmt(tradeInValue)"></span>
                 </div>
-                <div class="flex justify-between text-violet-700">
+                <div class="flex justify-between text-violet-300">
                     <span>Cliente vê:</span>
                     <span class="font-bold" x-text="'R$ ' + fmt(displayTradeInValue)"></span>
                 </div>

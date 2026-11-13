@@ -25,7 +25,7 @@
             </div>
 
             @if($checklist->product || $checklist->tradeIn)
-                <div style="background: rgba(99,102,241,0.1); border: 1px solid #c7d2fe; border-radius: 0.75rem; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: #a5b4fc;">
+                <div style="background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); border-radius: 0.75rem; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: #a5b4fc;">
                     Vinculado a:
                     @if($checklist->product)
                         <strong>Produto — {{ $checklist->product->name }}</strong>
@@ -37,12 +37,12 @@
 
             @php $deviceInfo = $checklist->device_info; @endphp
             @if($deviceInfo)
-                <div style="background: linear-gradient(135deg, #eef2ff 0%, #f0fdf4 100%); border: 1px solid #c7d2fe; border-radius: 0.75rem; overflow: hidden; margin-bottom: 1.25rem;">
-                    <div style="padding: 0.875rem 1.25rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; border-bottom: 1px solid rgba(199,210,254,0.5);">
+                <div style="background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(16,185,129,0.08) 100%); border: 1px solid rgba(99,102,241,0.3); border-radius: 0.75rem; overflow: hidden; margin-bottom: 1.25rem;">
+                    <div style="padding: 0.875rem 1.25rem; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; border-bottom: 1px solid rgba(99,102,241,0.2);">
                         <span style="font-size: 1rem;">📱</span>
-                        <span style="font-size: 0.8rem; font-weight: 700; color: #312e81;">{{ $deviceInfo['modelName'] ?? 'Dispositivo' }}</span>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #a5b4fc;">{{ $deviceInfo['modelName'] ?? 'Dispositivo' }}</span>
                         @if(!empty($deviceInfo['capacity']))
-                            <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #c7d2fe; color: #a5b4fc;">{{ $deviceInfo['capacity'] }}</span>
+                            <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: rgba(99,102,241,0.3); color: #a5b4fc;">{{ $deviceInfo['capacity'] }}</span>
                         @endif
                         @if(!empty($deviceInfo['color']))
                             <span style="font-size: 0.65rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; background: rgba(99,102,241,0.15); color: #a5b4fc;">{{ $deviceInfo['color'] }}</span>
@@ -174,7 +174,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                                             </svg>
                                         @else
-                                            <div style="width: 8px; height: 8px; border-radius: 9999px; background: #d1d5db;"></div>
+                                            <div style="width: 8px; height: 8px; border-radius: 9999px; background: #222222;"></div>
                                         @endif
                                     </div>
                                     <div style="flex: 1; min-width: 0;">

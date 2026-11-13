@@ -167,7 +167,7 @@
                     </div>
 
                     <!-- Resumo detalhado -->
-                    <div style="background: rgba(59,130,246,0.1); border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px 16px;">
+                    <div style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.35); border-radius: 12px; padding: 14px 16px;">
                         <div style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #93c5fd; flex-wrap: wrap; text-align: center;">
                             <span>R$ <strong x-text="formatNumber(valueInReais)"></strong></span>
                             <span>+</span>
@@ -183,7 +183,7 @@
 
                     <!-- Botão copiar resumo para funcionário -->
                     <button @click="copySummary()" type="button"
-                            :style="copied ? 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:#059669;color:white;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;' : 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:1px solid #e5e7eb;cursor:pointer;font-size:13px;font-weight:600;background:white;color:#a4a4a4;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;'">
+                            :style="copied ? 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:#059669;color:white;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;' : 'width:100%;margin-top:10px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);cursor:pointer;font-size:13px;font-weight:600;background:#141414;color:#a4a4a4;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s;'">
                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
                         </svg>

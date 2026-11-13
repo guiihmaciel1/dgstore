@@ -20,7 +20,7 @@
         @if(!empty($details[$key]))
             <div style="display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px solid #fef3c7;">
                 <span style="font-size: 0.6875rem; font-weight: 500; color: #fbbf24;">{{ $label }}</span>
-                <span style="font-size: 0.6875rem; color: #78350f; font-family: monospace;">{{ $details[$key] }}</span>
+                <span style="font-size: 0.6875rem; color: #fcd34d; font-family: monospace;">{{ $details[$key] }}</span>
             </div>
         @endif
     @endforeach

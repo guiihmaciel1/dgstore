@@ -15,7 +15,7 @@
             </div>
 
             {{-- Resumo da nova entrada --}}
-            <div style="background: rgba(59,130,246,0.1); border: 1px solid #bfdbfe; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem;">
+            <div style="background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.35); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem;">
                 <div style="font-size: 0.8rem; font-weight: 600; color: #93c5fd; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.375rem;">
                     <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -47,14 +47,14 @@
             </div>
 
             {{-- Alerta de divergência --}}
-            <div style="background: #141414beb; border: 1px solid #fde68a; border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem;">
+            <div style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35); border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem;">
                 <div style="font-size: 0.875rem; font-weight: 600; color: #fbbf24; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.375rem;">
                     <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                     </svg>
                     {{ $divergentItems->count() }} {{ $divergentItems->count() === 1 ? 'item disponível tem' : 'itens disponíveis têm' }} preço diferente
                 </div>
-                <p style="font-size: 0.8125rem; color: #78350f; line-height: 1.5;">
+                <p style="font-size: 0.8125rem; color: #fcd34d; line-height: 1.5;">
                     Os itens abaixo do mesmo produto estão com custo de fornecedor diferente do novo lote.
                     Você pode atualizar o preço deles para o novo valor ou manter como estão.
                 </p>
@@ -134,7 +134,7 @@
                             O que deseja fazer com os preços dos itens anteriores?
                         </label>
                         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                            <label :style="updatePrices ? 'display:flex;align-items:flex-start;gap:0.625rem;padding:0.875rem;border:2px solid #111827;border-radius:0.5rem;cursor:pointer;background:#1a1a1a;' : 'display:flex;align-items:flex-start;gap:0.625rem;padding:0.875rem;border:2px solid #e5e7eb;border-radius:0.5rem;cursor:pointer;'">
+                            <label :style="updatePrices ? 'display:flex;align-items:flex-start;gap:0.625rem;padding:0.875rem;border:2px solid #e3e3e3;border-radius:0.5rem;cursor:pointer;background:#1a1a1a;' : 'display:flex;align-items:flex-start;gap:0.625rem;padding:0.875rem;border:2px solid rgba(255,255,255,0.08);border-radius:0.5rem;cursor:pointer;'">
                                 <input type="radio" name="update_prices" value="1" x-model="updatePrices"
                                        :value="true" style="accent-color: #e3e3e3; margin-top: 2px;">
                                 <div>
@@ -145,7 +145,7 @@
                                     </div>
                                 </div>
                             </label>
-                            <label :style="!updatePrices ? 'display:flex;align-items:flex-start;gap:0.625rem;padding:0.875rem;border:2px solid #111827;border-radius:0.5rem;cursor:pointer;background:#1a1a1a;' : 'display:flex;align-items:flex-start;gap:0.625rem;padding:0.875rem;border:2px solid #e5e7eb;border-radius:0.5rem;cursor:pointer;'">
+                            <label :style="!updatePrices ? 'display:flex;align-items:flex-start;gap:0.625rem;padding:0.875rem;border:2px solid #e3e3e3;border-radius:0.5rem;cursor:pointer;background:#1a1a1a;' : 'display:flex;align-items:flex-start;gap:0.625rem;padding:0.875rem;border:2px solid rgba(255,255,255,0.08);border-radius:0.5rem;cursor:pointer;'">
                                 <input type="radio" name="update_prices" value="0" x-model="updatePrices"
                                        :value="false" style="accent-color: #e3e3e3; margin-top: 2px;">
                                 <div>

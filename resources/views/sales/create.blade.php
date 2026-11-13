@@ -9,7 +9,7 @@
             @endif
 
             @if($errors->any())
-                <div style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
+                <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #fca5a5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -303,7 +303,7 @@
                                                     </div>
                                                     <button type="button" @click="removeItem(index)" 
                                                             style="padding: 0.375rem; color: #ef4444; border-radius: 0.5rem; cursor: pointer; background: none; border: none; flex-shrink: 0;"
-                                                            onmouseover="this.style.backgroundColor='#fef2f2'" onmouseout="this.style.backgroundColor='transparent'">
+                                                            onmouseover="this.style.backgroundColor='rgba(239,68,68,0.15)'" onmouseout="this.style.backgroundColor='transparent'">
                                                         <svg style="height: 1.125rem; width: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                         </svg>
@@ -490,12 +490,12 @@
 
                                                 {{-- Alerta de sem estoque --}}
                                                 <div x-show="item.stock <= 0"
-                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: #1414147ed; border: 1px solid #fed7aa; border-radius: 0.375rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.35); border-radius: 0.375rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
                                                     <div style="display: flex; align-items: center; gap: 0.375rem;">
                                                         <svg style="width: 1rem; height: 1rem; color: #ea580c; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                                         </svg>
-                                                        <span style="font-size: 0.75rem; color: #9a3412; font-weight: 600;">
+                                                        <span style="font-size: 0.75rem; color: #fdba74; font-weight: 600;">
                                                             Sem estoque disponível!
                                                         </span>
                                                     </div>
@@ -511,7 +511,7 @@
                                                 {{-- Alerta de preço abaixo do custo total --}}
                                                 @if(auth()->user()->canViewFinancials())
                                                 <div x-show="item.cost_price > 0 && item.price > 0 && item.price < getItemTotalCost(item)"
-                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.375rem; display: flex; align-items: center; gap: 0.375rem;">
+                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.375rem; display: flex; align-items: center; gap: 0.375rem;">
                                                     <svg style="width: 1rem; height: 1rem; color: #fca5a5; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                                                     </svg>
@@ -761,9 +761,9 @@
                                 </button>
 
                                 <!-- Total dos trade-ins -->
-                                <div x-show="tradeIns.length > 1" style="margin-top: 0.75rem; padding: 0.75rem; background: #ede9fe; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 0.8125rem; font-weight: 600; color: #5b21b6;" x-text="tradeIns.length + ' aparelhos'"></span>
-                                    <span style="font-size: 1rem; font-weight: 700; color: #5b21b6;" x-text="'Total: ' + formatMoney(totalTradeInValue)"></span>
+                                <div x-show="tradeIns.length > 1" style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(139,92,246,0.15); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.8125rem; font-weight: 600; color: #c4b5fd;" x-text="tradeIns.length + ' aparelhos'"></span>
+                                    <span style="font-size: 1rem; font-weight: 700; color: #c4b5fd;" x-text="'Total: ' + formatMoney(totalTradeInValue)"></span>
                                 </div>
 
                             </div>
@@ -851,7 +851,7 @@
                                     </div>
                                 </div>
                                 
-                                <div x-show="selectedCustomer.id" style="position: relative; padding: 0.625rem 2.5rem 0.625rem 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid #bbf7d0; display: flex; align-items: center; gap: 0.625rem;">
+                                <div x-show="selectedCustomer.id" style="position: relative; padding: 0.625rem 2.5rem 0.625rem 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid rgba(16,185,129,0.35); display: flex; align-items: center; gap: 0.625rem;">
                                     <div style="width: 2rem; height: 2rem; min-width: 2rem; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                         <svg style="width: 1rem; height: 1rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -862,7 +862,7 @@
                                         <span style="font-size: 0.75rem; color: #818181; margin-left: 0.5rem;" x-text="selectedCustomer.phone"></span>
                                     </div>
                                     <button type="button" @click="clearCustomer" style="position: absolute; top: 0.375rem; right: 0.375rem; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                            onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
+                                            onmouseover="this.style.background='rgba(239,68,68,0.15)'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
                                         <svg style="height: 0.875rem; width: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
@@ -875,7 +875,7 @@
                                         <template x-for="snap in customerSnapshots" :key="snap.id">
                                             <button type="button" @click="useSnapshot(snap)"
                                                     style="display: flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0; background: none; border: none; cursor: pointer; font-size: 0.6875rem; color: #818181; width: 100%; text-align: left;"
-                                                    onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'">
+                                                    onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#6b7280'">
                                                 <span style="font-size: 0.625rem; opacity: 0.6;">&#128203;</span>
                                                 <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="snap.product_description + ' · R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2})"></span>
                                             </button>
@@ -897,7 +897,7 @@
                                 <!-- Dinheiro + PIX -->
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
                                     <!-- Dinheiro -->
-                                    <div style="padding: 1rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid #bbf7d0;">
+                                    <div style="padding: 1rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid rgba(16,185,129,0.35);">
                                         <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #6ee7b7; margin-bottom: 0.75rem;">
                                             <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -929,7 +929,7 @@
                                 </div>
                                 
                                 <!-- Parcelamentos em Cartões (Múltiplos) com Taxa Stone -->
-                                <div x-show="saleType === 'cliente_final' || saleType === null" style="margin-bottom: 1rem; padding: 1rem; background: rgba(59,130,246,0.1); border-radius: 0.75rem; border: 1px solid #bfdbfe;">
+                                <div x-show="saleType === 'cliente_final' || saleType === null" style="margin-bottom: 1rem; padding: 1rem; background: rgba(59,130,246,0.1); border-radius: 0.75rem; border: 1px solid rgba(59,130,246,0.35);">
                                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
                                         <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #93c5fd;">
                                             <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1220,7 +1220,7 @@
                         </button>
                     </div>
                     <div style="padding: 1.5rem;">
-                        <div x-show="customerFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem;">
+                        <div x-show="customerFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem;">
                             <p style="font-size: 0.8125rem; color: #fca5a5;" x-text="customerFormError"></p>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -1306,7 +1306,7 @@
                         </button>
                     </div>
                     <div style="padding: 1.5rem;">
-                        <div x-show="productFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem;">
+                        <div x-show="productFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem;">
                             <p style="font-size: 0.8125rem; color: #fca5a5;" x-text="productFormError"></p>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -1394,7 +1394,7 @@
                         <!-- Campos Seminovo -->
                         <div x-show="productForm.condition === 'used' || productForm.condition === 'refurbished'"
                              x-transition
-                             style="margin-top: 1rem; padding: 1rem; background: #141414beb; border: 1px solid #fde68a; border-radius: 0.5rem;">
+                             style="margin-top: 1rem; padding: 1rem; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35); border-radius: 0.5rem;">
                             <p style="font-size: 0.8125rem; font-weight: 600; color: #fbbf24; margin-bottom: 0.75rem;">Informações do Seminovo</p>
                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
                                 <div>
@@ -1420,7 +1420,7 @@
                             </div>
                         </div>
 
-                        <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(59,130,246,0.1); border: 1px solid #bfdbfe; border-radius: 0.5rem; font-size: 0.8125rem; color: #93c5fd;">
+                        <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.35); border-radius: 0.5rem; font-size: 0.8125rem; color: #93c5fd;">
                             Os valores de custo e venda serão informados na hora da venda.
                         </p>
                     </div>
@@ -1450,7 +1450,7 @@
                      @click.stop>
                     <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between;">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; background: #1414147ed; border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 2.5rem; height: 2.5rem; background: rgba(249,115,22,0.12); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
                                 <svg style="width: 1.25rem; height: 1.25rem; color: #ea580c;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                 </svg>
@@ -1468,10 +1468,10 @@
                         </button>
                     </div>
                     <div style="padding: 1.5rem;">
-                        <div x-show="stockFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem;">
+                        <div x-show="stockFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem;">
                             <p style="font-size: 0.8125rem; color: #fca5a5;" x-text="stockFormError"></p>
                         </div>
-                        <div x-show="stockFormSuccess" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem;">
+                        <div x-show="stockFormSuccess" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem;">
                             <p style="font-size: 0.8125rem; color: #6ee7b7;" x-text="stockFormSuccess"></p>
                         </div>
                         <div style="margin-bottom: 1rem;">

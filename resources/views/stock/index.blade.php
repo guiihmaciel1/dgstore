@@ -3,7 +3,7 @@
     <div class="py-6">
         <div class="px-6 lg:px-8">
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -56,7 +56,7 @@
                                         {{ $movement->created_at->format('d/m/Y H:i') }}
                                     </td>
                                     <td style="padding: 0.75rem 1rem;">
-                                        <a href="{{ route('products.show', $movement->product) }}" style="font-weight: 500; color: #e3e3e3; text-decoration: none;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#111827'">
+                                        <a href="{{ route('products.show', $movement->product) }}" style="font-weight: 500; color: #e3e3e3; text-decoration: none;" onmouseover="this.style.color='#c8c8c8'" onmouseout="this.style.color='#e3e3e3'">
                                             {{ $movement->product?->name ?? 'Produto removido' }}
                                         </a>
                                         <div style="font-size: 0.75rem; color: #666666;">
@@ -66,12 +66,12 @@
                                     <td style="padding: 0.75rem 1rem; text-align: center;">
                                         @php
                                             $typeColors = [
-                                                'in' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                                'out' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
-                                                'adjustment' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                                'return' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
+                                                'in' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                                'out' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
+                                                'adjustment' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                                'return' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04'],
                                             ];
-                                            $tc = $typeColors[$movement->type->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                            $tc = $typeColors[$movement->type->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                         @endphp
                                         <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $tc['bg'] }}; color: {{ $tc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                             {{ $movement->type->label() }}

@@ -17,7 +17,7 @@
         </div>
     </button>
 
-    <div x-show="openModule === 'lineup'" x-transition style="border-top: 1px solid #f3f4f6; padding: 1.25rem;">
+    <div x-show="openModule === 'lineup'" x-transition style="border-top: 1px solid rgba(255,255,255,0.08); padding: 1.25rem;">
         <p style="font-size: 0.875rem; color: #a4a4a4; margin-bottom: 1rem; line-height: 1.6;">
             Bora conhecer os iPhones que tão bombando agora? A Apple mandou <strong>muito bem</strong> esse ano. Cada modelo tem seu público — e saber indicar o certo faz TODA a diferença na venda. 🎯
         </p>
@@ -51,7 +51,7 @@
                                 <span>🔋</span> <span x-text="phone.battery"></span>
                             </div>
                         </div>
-                        <div style="margin-top: 0.75rem; padding-top: 0.625rem; border-top: 1px solid #f3f4f6;">
+                        <div style="margin-top: 0.75rem; padding-top: 0.625rem; border-top: 1px solid rgba(255,255,255,0.08);">
                             <p style="font-size: 0.75rem; color: #e3e3e3; font-weight: 600;" x-text="'💡 ' + phone.sellTip"></p>
                         </div>
                     </div>

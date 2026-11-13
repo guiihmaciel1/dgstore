@@ -62,7 +62,7 @@
                         Cancelar
                     </a>
                     <button type="submit"
-                            style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #25D366; color: #000; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600;">
+                            style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #25D366; color: #e3e3e3; border-radius: 0.375rem; border: none; cursor: pointer; font-weight: 600;">
                         Criar Campanha
                     </button>
                 </div>

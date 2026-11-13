@@ -27,13 +27,13 @@
                     <div style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Total de Unidades</div>
                     <div style="font-size: 1.75rem; font-weight: 700; color: #16a34a; margin-top: 0.25rem;">{{ $report['summary']['total_units'] }}</div>
                 </div>
-                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; {{ $report['summary']['out_of_stock'] > 0 ? 'background: rgba(239,68,68,0.1); border-color: #fecaca;' : '' }}">
+                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; {{ $report['summary']['out_of_stock'] > 0 ? 'background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.35);' : '' }}">
                     <div style="font-size: 0.75rem; font-weight: 500; color: {{ $report['summary']['out_of_stock'] > 0 ? '#dc2626' : '#6b7280' }}; text-transform: uppercase;">Sem Estoque</div>
-                    <div style="font-size: 1.75rem; font-weight: 700; color: {{ $report['summary']['out_of_stock'] > 0 ? '#dc2626' : '#111827' }}; margin-top: 0.25rem;">{{ $report['summary']['out_of_stock'] }}</div>
+                    <div style="font-size: 1.75rem; font-weight: 700; color: {{ $report['summary']['out_of_stock'] > 0 ? '#dc2626' : '#e3e3e3' }}; margin-top: 0.25rem;">{{ $report['summary']['out_of_stock'] }}</div>
                 </div>
-                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; {{ $report['summary']['low_stock'] > 0 ? 'background: rgba(245,158,11,0.1); border-color: #fde68a;' : '' }}">
+                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; {{ $report['summary']['low_stock'] > 0 ? 'background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.35);' : '' }}">
                     <div style="font-size: 0.75rem; font-weight: 500; color: {{ $report['summary']['low_stock'] > 0 ? '#ca8a04' : '#6b7280' }}; text-transform: uppercase;">Estoque Baixo</div>
-                    <div style="font-size: 1.75rem; font-weight: 700; color: {{ $report['summary']['low_stock'] > 0 ? '#ca8a04' : '#111827' }}; margin-top: 0.25rem;">{{ $report['summary']['low_stock'] }}</div>
+                    <div style="font-size: 1.75rem; font-weight: 700; color: {{ $report['summary']['low_stock'] > 0 ? '#ca8a04' : '#e3e3e3' }}; margin-top: 0.25rem;">{{ $report['summary']['low_stock'] }}</div>
                 </div>
             </div>
 

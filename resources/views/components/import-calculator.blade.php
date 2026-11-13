@@ -58,9 +58,9 @@
                     <svg style="width: 14px; height: 14px; color: #2563eb;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <span style="font-size: 12px; color: #64748b; font-weight: 500;">Cotação do dia</span>
+                    <span style="font-size: 12px; color: #a4a4a4; font-weight: 500;">Cotação do dia</span>
                 </div>
-                <span style="font-size: 16px; font-weight: 800; color: #1e293b; letter-spacing: -0.02em;">R$ <span x-text="fmt(dollarRate)"></span></span>
+                <span style="font-size: 16px; font-weight: 800; color: #f7f7f7; letter-spacing: -0.02em;">R$ <span x-text="fmt(dollarRate)"></span></span>
             </div>
 
             {{-- Valor em dólar --}}
@@ -112,14 +112,14 @@
                     <span class="imp-formula-op">=</span>
                     <div class="imp-formula-item imp-formula-highlight">
                         <span class="imp-formula-label">BRL</span>
-                        <span class="imp-formula-value" style="color: #1e293b; font-weight: 800;" x-text="'R$ ' + fmt(valueInReais)"></span>
+                        <span class="imp-formula-value" style="color: #f7f7f7; font-weight: 800;" x-text="'R$ ' + fmt(valueInReais)"></span>
                     </div>
                 </div>
 
                 {{-- Cards de resultado --}}
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
                     <div class="imp-result-card">
-                        <div class="imp-result-icon" style="background: linear-gradient(135deg, #eef2ff, #e0e7ff); color: #4f46e5;">
+                        <div class="imp-result-icon" style="background: rgba(99, 102, 241, 0.18); color: #a5b4fc;">
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
@@ -130,14 +130,14 @@
                         </div>
                     </div>
                     <div class="imp-result-card">
-                        <div class="imp-result-icon" style="background: linear-gradient(135deg, #fffbeb, #fef3c7); color: #d97706;">
+                        <div class="imp-result-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
                             </svg>
                         </div>
                         <div>
                             <div class="imp-result-label">Transporte <span x-text="'(' + (transportRate || '0') + '%)'"></span></div>
-                            <div class="imp-result-value" style="color: #d97706;" x-text="'R$ ' + fmt(transportValue)"></div>
+                            <div class="imp-result-value" style="color: #fbbf24;" x-text="'R$ ' + fmt(transportValue)"></div>
                         </div>
                     </div>
                 </div>
@@ -172,7 +172,7 @@
                         <span>Valor convertido</span>
                         <span x-text="'R$ ' + fmt(valueInReais)"></span>
                     </div>
-                    <div class="imp-breakdown-row" style="color: #d97706;">
+                    <div class="imp-breakdown-row" style="color: #fbbf24;">
                         <span x-text="'+ Transporte (' + (transportRate || '0') + '%)'"></span>
                         <span x-text="'R$ ' + fmt(transportValue)"></span>
                     </div>
@@ -186,7 +186,7 @@
 
             {{-- Estado vazio --}}
             <div x-show="valueInReais <= 0" style="text-align: center; padding: 32px 16px;">
-                <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #eef2ff, #e0e7ff); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(99, 102, 241, 0.18); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
                     <svg style="width: 24px; height: 24px; color: #6366f1;" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
@@ -220,10 +220,10 @@
             border-radius: 20px;
             max-height: calc(100vh - 110px);
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(20, 20, 20, 0.97);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
         }
 
@@ -263,14 +263,14 @@
 
         .imp-body {
             scrollbar-width: thin;
-            scrollbar-color: #e2e8f0 transparent;
+            scrollbar-color: #383838 transparent;
         }
         .imp-body::-webkit-scrollbar { width: 4px; }
         .imp-body::-webkit-scrollbar-track { background: transparent; }
-        .imp-body::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+        .imp-body::-webkit-scrollbar-thumb { background: #383838; border-radius: 4px; }
 
         .imp-rate-badge {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            background: #1a1a1a;
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
             padding: 10px 14px;
@@ -287,7 +287,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: #64748b;
+            color: #a4a4a4;
             margin-bottom: 5px;
             display: block;
         }
@@ -322,8 +322,8 @@
             border-radius: 12px;
             font-size: 22px;
             font-weight: 800;
-            color: #1e293b;
-            background: #f8fafc;
+            color: #f7f7f7;
+            background: #1a1a1a;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
             letter-spacing: -0.02em;
         }
@@ -337,8 +337,8 @@
             border-radius: 10px;
             font-size: 15px;
             font-weight: 700;
-            color: #d97706;
-            background: #141414beb;
+            color: #fbbf24;
+            background: rgba(245, 158, 11, 0.1);
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
         }
         .imp-input-amber:focus {
@@ -348,7 +348,7 @@
 
         .imp-input-wrap-amber {
             border-radius: 10px;
-            background: #141414beb;
+            background: rgba(245, 158, 11, 0.1);
         }
 
         .imp-formula {
@@ -358,7 +358,7 @@
             gap: 6px;
             padding: 12px;
             margin-bottom: 12px;
-            background: #f8fafc;
+            background: #1a1a1a;
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
             flex-wrap: wrap;
@@ -376,7 +376,7 @@
         .imp-formula-value {
             font-size: 13px;
             font-weight: 700;
-            color: #64748b;
+            color: #a4a4a4;
         }
         .imp-formula-highlight {
             background: rgba(99,102,241,0.1);
@@ -386,7 +386,7 @@
         .imp-formula-op {
             font-size: 14px;
             font-weight: 600;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.2);
         }
 
         .imp-result-card {
@@ -421,7 +421,7 @@
         .imp-result-value {
             font-size: 15px;
             font-weight: 800;
-            color: #1e293b;
+            color: #f7f7f7;
             letter-spacing: -0.02em;
         }
 
@@ -484,17 +484,17 @@
             justify-content: space-between;
             align-items: center;
             padding: 4px 0;
-            color: #64748b;
+            color: #a4a4a4;
             font-weight: 500;
         }
 
         .imp-breakdown-divider {
-            border-top: 1px dashed #e2e8f0;
+            border-top: 1px dashed rgba(255,255,255,0.1);
             margin: 6px 0;
         }
 
         .imp-breakdown-total {
-            color: #1e293b !important;
+            color: #f7f7f7 !important;
             font-weight: 800 !important;
             font-size: 13px !important;
         }

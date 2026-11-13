@@ -61,7 +61,7 @@
                         @endphp
 
                         <!-- Linha de progresso -->
-                        <div style="position: absolute; top: 1rem; left: 2.5rem; right: 2.5rem; height: 2px; background: #e5e7eb; z-index: 0;">
+                        <div style="position: absolute; top: 1rem; left: 2.5rem; right: 2.5rem; height: 2px; background: #222222; z-index: 0;">
                             <div style="height: 100%; background: #16a34a; transition: width 0.3s ease;" 
                                  @if($order->status === \App\Domain\Import\Enums\ImportOrderStatus::Cancelled)
                                      style="width: 0%;"
@@ -77,7 +77,7 @@
                                 $isCurrent = $currentStep === $step['step'] && $order->status !== \App\Domain\Import\Enums\ImportOrderStatus::Cancelled;
                             @endphp
                             <div style="display: flex; flex-direction: column; align-items: center; z-index: 1; flex: 1;">
-                                <div style="width: 2rem; height: 2rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; {{ $isCompleted ? 'background: #16a34a; color: white;' : 'background: #e5e7eb; color: #666666;' }} {{ $isCurrent ? 'box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2);' : '' }}">
+                                <div style="width: 2rem; height: 2rem; border-radius: 9999px; display: flex; align-items: center; justify-content: center; {{ $isCompleted ? 'background: #16a34a; color: white;' : 'background: #222222; color: #666666;' }} {{ $isCurrent ? 'box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2);' : '' }}">
                                     @if($isCompleted)
                                         <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
@@ -86,7 +86,7 @@
                                         <span style="font-size: 0.75rem; font-weight: 600;">{{ $step['step'] }}</span>
                                     @endif
                                 </div>
-                                <span style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: {{ $isCurrent ? '600' : '500' }}; color: {{ $isCompleted ? '#111827' : '#9ca3af' }};">{{ $step['label'] }}</span>
+                                <span style="margin-top: 0.5rem; font-size: 0.75rem; font-weight: {{ $isCurrent ? '600' : '500' }}; color: {{ $isCompleted ? '#e3e3e3' : '#9ca3af' }};">{{ $step['label'] }}</span>
                             </div>
                         @endforeach
                     </div>
@@ -162,7 +162,7 @@
                                                     {{ $item->received_quantity }}/{{ $item->quantity }}
                                                 </span>
                                             @elseif($item->is_partially_received)
-                                                <span style="display: inline-block; padding: 0.125rem 0.5rem; background: #fef3c7; color: #d97706; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">
+                                                <span style="display: inline-block; padding: 0.125rem 0.5rem; background: rgba(245,158,11,0.15); color: #d97706; font-size: 0.75rem; font-weight: 500; border-radius: 9999px;">
                                                     {{ $item->received_quantity }}/{{ $item->quantity }}
                                                 </span>
                                             @else
@@ -292,8 +292,8 @@
                         <form method="POST" action="{{ route('imports.cancel', $order) }}" style="margin-top: 1rem;"
                               onsubmit="return confirm('Tem certeza que deseja cancelar este pedido?');">
                             @csrf
-                            <button type="submit" style="width: 100%; padding: 0.5rem; color: #fca5a5; font-size: 0.875rem; background: none; border: 1px solid #fecaca; border-radius: 0.5rem; cursor: pointer;"
-                                    onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+                            <button type="submit" style="width: 100%; padding: 0.5rem; color: #fca5a5; font-size: 0.875rem; background: none; border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; cursor: pointer;"
+                                    onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='transparent'">
                                 Cancelar Pedido
                             </button>
                         </form>

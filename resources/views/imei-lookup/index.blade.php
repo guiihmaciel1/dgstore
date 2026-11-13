@@ -25,7 +25,7 @@
                 <a href="https://checkcoverage.apple.com/?locale=pt_BR"
                    target="_blank" rel="noopener noreferrer"
                    style="display: flex; align-items: center; gap: 1rem; padding: 1.125rem 1.25rem; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; text-decoration: none; transition: all 0.15s;"
-                   onmouseover="this.style.borderColor='#111827'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)';"
+                   onmouseover="this.style.borderColor='#e3e3e3'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)';"
                    onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'; this.style.boxShadow='none';">
                     <div style="width: 44px; height: 44px; border-radius: 12px; background: #111827; color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                         <svg style="width: 22px; height: 22px;" viewBox="0 0 24 24" fill="currentColor">

@@ -80,13 +80,13 @@
             </div>
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #16a34a;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #16a34a;">
                     {{ session('success') }}
                 </div>
             @endif
             
             @if(session('error'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; color: #fca5a5;">
                     {{ session('error') }}
                 </div>
             @endif
@@ -145,19 +145,19 @@
                                                         <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trade-in</span>
                                                     @endif
                                                     @if($item->isConsignment())
-                                                        <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #fef3c7; color: #fbbf24; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Consignado</span>
+                                                        <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: rgba(245,158,11,0.15); color: #fbbf24; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Consignado</span>
                                                     @endif
                                                     @if(!empty($snapshot['is_fragrance']))
                                                         <span style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: rgba(201,169,110,0.15); color: #c9a96e; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Perfume</span>
                                                     @endif
                                                     @if(!empty($exchanges))
-                                                        <span title="Item ja foi trocado com outro lojista" style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: #fce7f3; color: #9d174d; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trocado</span>
+                                                        <span title="Item ja foi trocado com outro lojista" style="font-size: 0.5625rem; padding: 0.0625rem 0.375rem; background: rgba(236,72,153,0.15); color: #f9a8d4; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trocado</span>
                                                     @endif
                                                 </div>
                                                 <div style="font-size: 0.75rem; color: #666666;">
                                                     SKU: {{ $item->product_sku }}
                                                     @if($item->supplier_origin)
-                                                        <span style="margin-left: 0.5rem; padding: 0.125rem 0.375rem; background: {{ $item->supplier_origin === 'py' ? '#fef3c7' : '#dbeafe' }}; color: {{ $item->supplier_origin === 'py' ? '#92400e' : '#1e40af' }}; font-size: 0.6875rem; font-weight: 600; border-radius: 0.25rem;">
+                                                        <span style="margin-left: 0.5rem; padding: 0.125rem 0.375rem; background: {{ $item->supplier_origin === 'py' ? 'rgba(245,158,11,0.15)' : 'rgba(59,130,246,0.15)' }}; color: {{ $item->supplier_origin === 'py' ? '#fcd34d' : '#93c5fd' }}; font-size: 0.6875rem; font-weight: 600; border-radius: 0.25rem;">
                                                             {{ strtoupper($item->supplier_origin) }}
                                                         </span>
                                                     @endif
@@ -180,13 +180,13 @@
                                                 @endif
                                                 @if(!empty($exchanges))
                                                     <div style="margin-top: 0.5rem; padding: 0.5rem 0.625rem; background: rgba(236,72,153,0.1); border: 1px solid #fce7f3; border-radius: 0.375rem;">
-                                                        <div style="font-size: 0.6875rem; font-weight: 700; color: #9d174d; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                                                        <div style="font-size: 0.6875rem; font-weight: 700; color: #f9a8d4; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
                                                             Historico de Trocas
                                                         </div>
                                                         @foreach($exchanges as $exch)
                                                             <div style="font-size: 0.75rem; color: #818181; margin-top: 0.125rem;">
                                                                 @if(!empty($exch['exchanged_at']))
-                                                                    <span style="color: #9d174d; font-weight: 500;">{{ \Carbon\Carbon::parse($exch['exchanged_at'])->format('d/m/Y') }}</span>
+                                                                    <span style="color: #f9a8d4; font-weight: 500;">{{ \Carbon\Carbon::parse($exch['exchanged_at'])->format('d/m/Y') }}</span>
                                                                 @endif
                                                                 · {{ $exch['partner_name'] ?? 'Lojista' }}
                                                                 @if(!empty($exch['old_imei']))
@@ -242,7 +242,7 @@
                                                             <a href="{{ $img->url }}" target="_blank">
                                                                 <img src="{{ $img->url }}" alt="{{ $img->original_name }}"
                                                                      style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; border: 2px solid rgba(255,255,255,0.08); cursor: pointer;"
-                                                                     onmouseover="this.style.borderColor='#111827'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                                     onmouseover="this.style.borderColor='#e3e3e3'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'">
                                                             </a>
                                                             <button type="button"
                                                                     @click="deleteImage('{{ $img->id }}', $el.closest('td'))"
@@ -251,8 +251,8 @@
                                                                     title="Remover foto">&times;</button>
                                                         </div>
                                                     @else
-                                                        <label style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 2px dashed #d1d5db; border-radius: 6px; cursor: pointer; color: #666666; transition: all 0.15s;"
-                                                               onmouseover="this.style.borderColor='#111827'; this.style.color='#111827'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.color='#9ca3af'"
+                                                        <label style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 2px dashed rgba(255,255,255,0.08); border-radius: 6px; cursor: pointer; color: #666666; transition: all 0.15s;"
+                                                               onmouseover="this.style.borderColor='#e3e3e3'; this.style.color='#e3e3e3'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'; this.style.color='#9ca3af'"
                                                                title="Adicionar foto">
                                                             <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
@@ -324,7 +324,7 @@
                                     <div style="font-size: 1.125rem; font-weight: 700; color: #fca5a5;">R$ {{ number_format($totalCost, 2, ',', '.') }}</div>
                                 </div>
                                 <!-- Lucro Bruto -->
-                                <div style="text-align: center; padding: 0.75rem; background: {{ $profit >= 0 ? '#f0fdf4' : '#fef2f2' }}; border-radius: 0.75rem;">
+                                <div style="text-align: center; padding: 0.75rem; background: {{ $profit >= 0 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; border-radius: 0.75rem;">
                                     <div style="font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase; margin-bottom: 0.25rem;">Lucro Bruto</div>
                                     <div style="font-size: 1.125rem; font-weight: 700; color: {{ $profit >= 0 ? '#16a34a' : '#dc2626' }};">R$ {{ number_format($profit, 2, ',', '.') }}</div>
                                     <div style="font-size: 0.625rem; color: #818181; margin-top: 0.125rem;">{{ number_format($margin, 1, ',', '.') }}% margem</div>
@@ -339,7 +339,7 @@
                                     <div style="font-size: 1.125rem; font-weight: 700; color: #c4b5fd;">− R$ {{ number_format($commissionTotal, 2, ',', '.') }}</div>
                                 </div>
                                 <!-- Lucro Líquido -->
-                                <div style="text-align: center; padding: 0.75rem; background: {{ $netProfit >= 0 ? '#ecfdf5' : '#fef2f2' }}; border-radius: 0.75rem; border: 2px solid {{ $netProfit >= 0 ? '#a7f3d0' : '#fecaca' }};">
+                                <div style="text-align: center; padding: 0.75rem; background: {{ $netProfit >= 0 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; border-radius: 0.75rem; border: 2px solid {{ $netProfit >= 0 ? 'rgba(16,185,129,0.35)' : 'rgba(239,68,68,0.35)' }};">
                                     <div style="font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase; margin-bottom: 0.25rem;">Lucro Líquido</div>
                                     <div style="font-size: 1.125rem; font-weight: 700; color: {{ $netProfit >= 0 ? '#059669' : '#dc2626' }};">R$ {{ number_format($netProfit, 2, ',', '.') }}</div>
                                     <div style="font-size: 0.625rem; color: #818181; margin-top: 0.125rem;">{{ number_format($netMargin, 1, ',', '.') }}% líquido</div>
@@ -354,9 +354,9 @@
                             @endif
 
                             @if($tradeInVal > 0)
-                            <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(168,85,247,0.1); border-radius: 0.5rem; border: 1px solid #ddd6fe;">
+                            <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(168,85,247,0.1); border-radius: 0.5rem; border: 1px solid rgba(139,92,246,0.35);">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 0.8125rem; color: #5b21b6; font-weight: 500;">Trade-in recebido (abatido do total):</span>
+                                    <span style="font-size: 0.8125rem; color: #c4b5fd; font-weight: 500;">Trade-in recebido (abatido do total):</span>
                                     <span style="font-size: 1rem; font-weight: 700; color: #c4b5fd;">R$ {{ number_format($tradeInVal, 2, ',', '.') }}</span>
                                 </div>
                                 <p style="font-size: 0.6875rem; color: #818181; margin-top: 0.25rem;">
@@ -366,7 +366,7 @@
                             @endif
 
                             @if($profit < 0)
-                            <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 0.5rem; border: 1px solid #fecaca;">
+                            <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 0.5rem; border: 1px solid rgba(239,68,68,0.35);">
                                 <p style="font-size: 0.8125rem; color: #fca5a5; font-weight: 600;">
                                     Atencao: Esta venda teve prejuizo de R$ {{ number_format(abs($profit), 2, ',', '.') }}. O preco de venda ficou abaixo do custo dos produtos.
                                 </p>
@@ -385,19 +385,19 @@
                         <div style="padding: 1.5rem;">
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 @if($sale->hasTradeIn())
-                                <div style="padding: 1rem; background: rgba(168,85,247,0.1); border-radius: 0.75rem; border: 1px solid #ddd6fe;">
+                                <div style="padding: 1rem; background: rgba(168,85,247,0.1); border-radius: 0.75rem; border: 1px solid rgba(139,92,246,0.35);">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                         <svg style="width: 1.25rem; height: 1.25rem; color: #c4b5fd;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                         </svg>
                                         <span style="font-size: 0.75rem; font-weight: 600; color: #c4b5fd; text-transform: uppercase;">Trade-in</span>
                                     </div>
-                                    <p style="font-size: 1.25rem; font-weight: 700; color: #5b21b6;">{{ $sale->formatted_trade_in_value }}</p>
+                                    <p style="font-size: 1.25rem; font-weight: 700; color: #c4b5fd;">{{ $sale->formatted_trade_in_value }}</p>
                                 </div>
                                 @endif
                                 
                                 @if($sale->cash_payment > 0)
-                                <div style="padding: 1rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid #bbf7d0;">
+                                <div style="padding: 1rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid rgba(16,185,129,0.35);">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                         <svg style="width: 1.25rem; height: 1.25rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -421,7 +421,7 @@
                                 @endif
                                 
                                 @if($sale->card_payment > 0)
-                                <div style="padding: 1rem; background: rgba(59,130,246,0.1); border-radius: 0.75rem; border: 1px solid #bfdbfe;">
+                                <div style="padding: 1rem; background: rgba(59,130,246,0.1); border-radius: 0.75rem; border: 1px solid rgba(59,130,246,0.35);">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                         <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
@@ -445,13 +445,13 @@
                     
                     <!-- Trade-Ins (detalhes dos aparelhos) -->
                     @if($sale->tradeIns->isNotEmpty())
-                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid #ddd6fe; overflow: hidden;">
-                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid #ddd6fe; background: rgba(168,85,247,0.1);">
+                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(139,92,246,0.35); overflow: hidden;">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(139,92,246,0.35); background: rgba(168,85,247,0.1);">
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
                                 <svg style="width: 1.25rem; height: 1.25rem; color: #c4b5fd;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                 </svg>
-                                <h3 style="font-weight: 600; color: #5b21b6;">
+                                <h3 style="font-weight: 600; color: #c4b5fd;">
                                     {{ $sale->tradeIns->count() > 1 ? 'Aparelhos Recebidos (Trade-in)' : 'Aparelho Recebido (Trade-in)' }}
                                 </h3>
                             </div>
@@ -461,11 +461,11 @@
                             <div style="{{ !$loop->last ? 'padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06);' : '' }}">
                                 @php
                                     $tradeInStatusColors = [
-                                        'pending' => ['bg' => '#fefce8', 'color' => '#ca8a04', 'border' => '#fde68a'],
-                                        'processed' => ['bg' => '#f0fdf4', 'color' => '#16a34a', 'border' => '#bbf7d0'],
-                                        'rejected' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'border' => '#fecaca'],
+                                        'pending' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04', 'border' => 'rgba(245,158,11,0.35)'],
+                                        'processed' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a', 'border' => 'rgba(16,185,129,0.35)'],
+                                        'rejected' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626', 'border' => 'rgba(239,68,68,0.35)'],
                                     ];
-                                    $tisc = $tradeInStatusColors[$tradeInItem->status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280', 'border' => '#e5e7eb'];
+                                    $tisc = $tradeInStatusColors[$tradeInItem->status->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280', 'border' => 'rgba(255,255,255,0.08)'];
                                 @endphp
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
                                     @if($sale->tradeIns->count() > 1)
@@ -499,12 +499,12 @@
                                         <dd style="margin-top: 0.25rem;">
                                             @php
                                                 $conditionColors = [
-                                                    'excellent' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                                    'good' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                                    'fair' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
-                                                    'poor' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
+                                                    'excellent' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                                    'good' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                                    'fair' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04'],
+                                                    'poor' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
                                                 ];
-                                                $cc = $conditionColors[$tradeInItem->condition->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                                $cc = $conditionColors[$tradeInItem->condition->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                             @endphp
                                             <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $cc['bg'] }}; color: {{ $cc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                                 {{ $tradeInItem->condition->label() }}
@@ -547,10 +547,10 @@
                                         🔋 {{ $tradeInItem->battery_health }}%
                                     </span>
                                     @endif
-                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: {{ $tradeInItem->has_box ? '#dcfce7' : '#fee2e2' }}; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: {{ $tradeInItem->has_box ? '#166534' : '#991b1b' }};">
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: {{ $tradeInItem->has_box ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: {{ $tradeInItem->has_box ? '#6ee7b7' : '#fca5a5' }};">
                                         {{ $tradeInItem->has_box ? '✓' : '✗' }} Caixa
                                     </span>
-                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: {{ $tradeInItem->has_cable ? '#dcfce7' : '#fee2e2' }}; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: {{ $tradeInItem->has_cable ? '#166534' : '#991b1b' }};">
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: {{ $tradeInItem->has_cable ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; color: {{ $tradeInItem->has_cable ? '#6ee7b7' : '#fca5a5' }};">
                                         {{ $tradeInItem->has_cable ? '✓' : '✗' }} Cabo
                                     </span>
                                 </div>
@@ -563,7 +563,7 @@
                                 @endif
                                 {{-- Rastreio: produto criado a partir do trade-in --}}
                                 @if($tradeInItem->product)
-                                <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 0.5rem; border: 1px solid #bfdbfe;">
+                                <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 0.5rem; border: 1px solid rgba(59,130,246,0.35);">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                         <svg style="width: 1rem; height: 1rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -578,7 +578,7 @@
                                         $productSale = $tradeInItem->product->saleItems->first()?->sale;
                                     @endphp
                                     @if($productSale)
-                                    <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #bfdbfe; display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(59,130,246,0.35); display: flex; align-items: center; gap: 0.5rem;">
                                         <svg style="width: 0.875rem; height: 0.875rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                         </svg>
@@ -599,10 +599,10 @@
                                 @endif
 
                                 @if($tradeInItem->isPending())
-                                <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 0.5rem; border: 1px solid #fde68a;">
+                                <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 0.5rem; border: 1px solid rgba(245,158,11,0.35);">
                                     <p style="font-size: 0.75rem; color: #fbbf24;">
                                         <strong>Atenção:</strong> Este aparelho ainda não foi cadastrado no estoque. 
-                                        <a href="{{ route('stock.trade-ins') }}" style="color: #b45309; text-decoration: underline;">Processar trade-ins pendentes</a>
+                                        <a href="{{ route('stock.trade-ins') }}" style="color: #fcd34d; text-decoration: underline;">Processar trade-ins pendentes</a>
                                     </p>
                                 </div>
                                 @endif
@@ -619,13 +619,13 @@
                                             : null;
                                         $tradeInCost = (float) $tradeInItem->estimated_value;
                                     @endphp
-                                    <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid {{ $resaleSaleItem ? '#bbf7d0' : '#bfdbfe' }}; background: {{ $resaleSaleItem ? '#f0fdf4' : '#eff6ff' }};">
+                                    <div style="margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid {{ $resaleSaleItem ? 'rgba(16,185,129,0.35)' : 'rgba(59,130,246,0.35)' }}; background: {{ $resaleSaleItem ? 'rgba(16,185,129,0.15)' : 'rgba(59,130,246,0.15)' }};">
                                         @if($resaleSaleItem)
                                             @php
                                                 $resalePrice = (float) $resaleSaleItem->unit_price * $resaleSaleItem->quantity;
                                                 $resaleProfit = $resalePrice - $tradeInCost;
                                             @endphp
-                                            <p style="font-size: 0.8125rem; font-weight: 600; color: {{ $resaleProfit >= 0 ? '#166534' : '#dc2626' }};">
+                                            <p style="font-size: 0.8125rem; font-weight: 600; color: {{ $resaleProfit >= 0 ? '#6ee7b7' : '#dc2626' }};">
                                                 Trade-in revendido na venda
                                                 <a href="{{ route('sales.show', $resaleSaleItem->sale) }}" style="text-decoration: underline;">
                                                     #{{ $resaleSaleItem->sale->sale_number }}
@@ -679,12 +679,12 @@
                         <div style="padding: 1.5rem;">
                             @php
                                 $statusColors = [
-                                    'paid' => ['bg' => '#f0fdf4', 'color' => '#16a34a', 'border' => '#bbf7d0'],
-                                    'pending' => ['bg' => '#fefce8', 'color' => '#ca8a04', 'border' => '#fde68a'],
-                                    'partial' => ['bg' => '#eff6ff', 'color' => '#2563eb', 'border' => '#bfdbfe'],
-                                    'cancelled' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'border' => '#fecaca'],
+                                    'paid' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a', 'border' => 'rgba(16,185,129,0.35)'],
+                                    'pending' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04', 'border' => 'rgba(245,158,11,0.35)'],
+                                    'partial' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb', 'border' => 'rgba(59,130,246,0.35)'],
+                                    'cancelled' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626', 'border' => 'rgba(239,68,68,0.35)'],
                                 ];
-                                $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280', 'border' => '#e5e7eb'];
+                                $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280', 'border' => 'rgba(255,255,255,0.08)'];
                             @endphp
                             <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
                                 <span style="display: inline-block; padding: 0.5rem 1.5rem; background: {{ $sc['bg'] }}; color: {{ $sc['color'] }}; font-size: 0.875rem; font-weight: 600; border-radius: 9999px; border: 1px solid {{ $sc['border'] }};">

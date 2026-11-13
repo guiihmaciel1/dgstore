@@ -17,7 +17,7 @@
         </div>
     </button>
 
-    <div x-show="openModule === 'ai'" x-transition style="border-top: 1px solid #f3f4f6; padding: 1.25rem;">
+    <div x-show="openModule === 'ai'" x-transition style="border-top: 1px solid rgba(255,255,255,0.08); padding: 1.25rem;">
         <p style="font-size: 0.875rem; color: #a4a4a4; margin-bottom: 1rem; line-height: 1.6;">
             A Apple Intelligence é tipo o "cérebro" novo dos iPhones. Usa IA direto no aparelho — privacidade total, sem mandar seus dados pra nuvem. Esse é o grande diferencial! 🔐
         </p>

@@ -19,7 +19,7 @@
         <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
+                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -69,7 +69,7 @@
             @if($metrics['stale_4h'] > 0 || $metrics['overdue_followups'] > 0)
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
                     @if($metrics['stale_24h'] > 0)
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #fca5a5;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #fca5a5;">
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                             </svg>
@@ -77,7 +77,7 @@
                         </div>
                     @endif
                     @if($metrics['stale_4h'] > $metrics['stale_24h'])
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: #1414147ed; border: 1px solid #fed7aa; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #ea580c;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.35); border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #ea580c;">
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
@@ -85,7 +85,7 @@
                         </div>
                     @endif
                     @if($metrics['overdue_followups'] > 0)
-                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #fca5a5;">
+                        <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; color: #fca5a5;">
                             <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                             </svg>
@@ -134,7 +134,7 @@
                                         'orange' => '#f97316',
                                         'red' => '#ef4444',
                                     ];
-                                    $borderColor = $urgencyColors[$urgency] ?? '#e5e7eb';
+                                    $borderColor = $urgencyColors[$urgency] ?? 'rgba(255,255,255,0.08)';
                                     $tempColors = ['hot' => '#ef4444', 'warm' => '#f59e0b', 'cold' => '#3b82f6'];
                                     $tempLabels = ['hot' => 'Quente', 'warm' => 'Morno', 'cold' => 'Frio'];
                                     $waitingColors = [
@@ -168,7 +168,7 @@
                                                 </span>
                                             @endif
                                             @if($interest && $interest->condition)
-                                                <span style="font-size: 0.5rem; font-weight: 600; padding: 0px 4px; border-radius: 3px; {{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.15); color: #93c5fd;' : 'background: #fef3c7; color: #fbbf24;' }}">
+                                                <span style="font-size: 0.5rem; font-weight: 600; padding: 0px 4px; border-radius: 3px; {{ $interest->condition === 'novo' ? 'background: rgba(59,130,246,0.15); color: #93c5fd;' : 'background: rgba(245,158,11,0.15); color: #fbbf24;' }}">
                                                     {{ $interest->condition === 'novo' ? 'N' : 'U' }}
                                                 </span>
                                             @endif
@@ -180,7 +180,7 @@
                                                 <span style="font-size: 0.55rem; font-weight: 500; color: #555; flex-shrink: 0;">{{ substr(preg_replace('/\D/', '', $deal->phone), -4) }}</span>
                                             @endif
                                             @if($deal->unread_wa_count > 0)
-                                                <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 8px; background: #25D366; color: #000; font-size: 0.6rem; font-weight: 700; flex-shrink: 0; animation: pulse-badge 2s infinite;" title="{{ $deal->unread_wa_count }} mensagens não lidas">
+                                                <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 8px; background: #25D366; color: #e3e3e3; font-size: 0.6rem; font-weight: 700; flex-shrink: 0; animation: pulse-badge 2s infinite;" title="{{ $deal->unread_wa_count }} mensagens não lidas">
                                                     {{ $deal->unread_wa_count }}
                                                 </span>
                                             @endif

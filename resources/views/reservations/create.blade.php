@@ -9,7 +9,7 @@
             @endif
 
             @if($errors->any())
-                <div style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
+                <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                         <svg style="width: 1.25rem; height: 1.25rem; color: #fca5a5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -98,7 +98,7 @@
                                         <template x-for="(product, idx) in searchResults" :key="product.id">
                                             <button type="button" @click="addProduct(product)"
                                                     style="width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; background: #141414; display: flex; justify-content: space-between; align-items: center;"
-                                                    onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
+                                                    onmouseover="this.style.backgroundColor='#1a1a1a'" onmouseout="this.style.backgroundColor='#141414'">
                                                 <div style="min-width: 0; flex: 1;">
                                                     <span style="font-weight: 500; color: #e3e3e3; display: block;" x-text="product.name"></span>
                                                     <span style="font-size: 0.75rem; color: #818181;" x-text="product.sku"></span>
@@ -108,7 +108,7 @@
                                                         <div style="font-weight: 600; color: #16a34a; font-size: 0.875rem;" x-text="product.formatted_price"></div>
                                                     </template>
                                                     <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 1rem; font-weight: 500;"
-                                                          :style="product.stock > 0 ? 'background: rgba(16,185,129,0.15); color: #16a34a;' : 'background: #fef3c7; color: #d97706;'"
+                                                          :style="product.stock > 0 ? 'background: rgba(16,185,129,0.15); color: #16a34a;' : 'background: rgba(245,158,11,0.15); color: #d97706;'"
                                                           x-text="product.stock > 0 ? 'Estoque: ' + product.stock : 'Sem estoque'"></span>
                                                 </div>
                                             </button>
@@ -157,7 +157,7 @@
                                                 </div>
                                                 <button type="button" @click="removeProduct(idx)"
                                                         style="width: 1.75rem; height: 1.75rem; display: flex; align-items: center; justify-content: center; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                                        onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
+                                                        onmouseover="this.style.background='rgba(239,68,68,0.15)'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
                                                     <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                                     </svg>
@@ -213,7 +213,7 @@
 
                         <!-- PAGAMENTO INICIAL -->
                         <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06);">
-                            <div style="padding: 0.75rem 1.5rem; background: #fef3c7; border-radius: 1rem 1rem 0 0; border-bottom: 1px solid #fde68a;">
+                            <div style="padding: 0.75rem 1.5rem; background: rgba(245,158,11,0.15); border-radius: 1rem 1rem 0 0; border-bottom: 1px solid rgba(245,158,11,0.35);">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                                     <svg style="width: 1.125rem; height: 1.125rem; color: #fbbf24;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -281,7 +281,7 @@
                                         <template x-for="customer in customerResults" :key="customer.id">
                                             <button type="button" @click="selectCustomer(customer)"
                                                     style="width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; background: #141414;"
-                                                    onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
+                                                    onmouseover="this.style.backgroundColor='#1a1a1a'" onmouseout="this.style.backgroundColor='#141414'">
                                                 <span style="font-weight: 500; color: #e3e3e3;" x-text="customer.name"></span>
                                                 <span style="font-size: 0.875rem; color: #818181; display: block;" x-text="customer.phone"></span>
                                             </button>
@@ -293,7 +293,7 @@
                                     </div>
                                 </div>
 
-                                <div x-show="selectedCustomer" x-cloak style="position: relative; padding: 0.625rem 2.5rem 0.625rem 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid #bbf7d0; display: flex; align-items: center; gap: 0.625rem;">
+                                <div x-show="selectedCustomer" x-cloak style="position: relative; padding: 0.625rem 2.5rem 0.625rem 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid rgba(16,185,129,0.35); display: flex; align-items: center; gap: 0.625rem;">
                                     <div style="width: 2rem; height: 2rem; min-width: 2rem; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                         <svg style="width: 1rem; height: 1rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
@@ -304,7 +304,7 @@
                                         <span style="font-size: 0.75rem; color: #818181; margin-left: 0.5rem;" x-text="selectedCustomer?.phone"></span>
                                     </div>
                                     <button type="button" @click="clearCustomer()" style="position: absolute; top: 0.375rem; right: 0.375rem; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                            onmouseover="this.style.background='#fee2e2'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
+                                            onmouseover="this.style.background='rgba(239,68,68,0.15)'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
                                         <svg style="height: 0.875rem; width: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>

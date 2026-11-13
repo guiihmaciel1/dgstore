@@ -3,7 +3,7 @@
     <div class="py-6">
         <div class="px-6 lg:px-8">
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -137,7 +137,7 @@
                                             <span style="display: inline-block; padding: 0.0625rem 0.375rem; background: #faf5ff; color: #6b21a8; font-size: 0.675rem; font-weight: 500; border-radius: 0.25rem;">{{ $product->color }}</span>
                                             @endif
                                             @if($product->battery_health)
-                                            <span style="display: inline-block; padding: 0.0625rem 0.375rem; background: {{ $product->battery_health >= 80 ? '#f0fdf4' : '#fef2f2' }}; color: {{ $product->battery_health >= 80 ? '#166534' : '#991b1b' }}; font-size: 0.675rem; font-weight: 500; border-radius: 0.25rem;">{{ $product->battery_health }}% bat</span>
+                                            <span style="display: inline-block; padding: 0.0625rem 0.375rem; background: {{ $product->battery_health >= 80 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; color: {{ $product->battery_health >= 80 ? '#6ee7b7' : '#fca5a5' }}; font-size: 0.675rem; font-weight: 500; border-radius: 0.25rem;">{{ $product->battery_health }}% bat</span>
                                             @endif
                                         </div>
                                         @endif
@@ -172,11 +172,11 @@
                                     <td style="padding: 0.75rem 1.5rem; text-align: right;">
                                         <div style="display: flex; gap: 0.75rem; justify-content: flex-end; align-items: center;">
                                             @include('products.partials.repair-action', ['product' => $product])
-                                            <a href="{{ route('products.label', $product) }}" target="_blank" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'" title="Gerar Etiqueta">
+                                            <a href="{{ route('products.label', $product) }}" target="_blank" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#6b7280'" title="Gerar Etiqueta">
                                                 <svg style="width: 1rem; height: 1rem; display: inline;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
                                             </a>
-                                            <a href="{{ route('products.show', $product) }}" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'">Ver</a>
-                                            <a href="{{ route('products.edit', $product) }}" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'">Editar</a>
+                                            <a href="{{ route('products.show', $product) }}" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#6b7280'">Ver</a>
+                                            <a href="{{ route('products.edit', $product) }}" style="color: #818181; text-decoration: none; font-size: 0.875rem; font-weight: 500;" onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#6b7280'">Editar</a>
                                         </div>
                                     </td>
                                 </tr>

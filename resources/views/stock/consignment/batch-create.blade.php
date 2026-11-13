@@ -18,7 +18,7 @@
             </div>
 
             @if($errors->any())
-                <div style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
+                <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
                     <div style="font-weight: 600; color: #fca5a5; margin-bottom: 0.5rem;">Verifique os erros abaixo:</div>
                     <ul style="list-style: disc; padding-left: 1.25rem; color: #fca5a5; font-size: 0.875rem;">
                         @foreach($errors->all() as $error)
@@ -216,7 +216,7 @@
                                 <div x-show="unit.imei_error || unit.serial_error" x-cloak style="font-size: 0.75rem; color: #fca5a5; margin-bottom: 0.5rem;" x-text="unit.imei_error || unit.serial_error"></div>
 
                                 {{-- Custo e Preco Sugerido --}}
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #e5e7eb;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
                                     <div>
                                         <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Custo (R$) <span style="color: #fca5a5;">*</span></label>
                                         <input type="number" :name="'units[' + idx + '][supplier_cost]'" x-model="unit.supplier_cost"
@@ -233,7 +233,7 @@
 
                                 {{-- Campos de Seminovo --}}
                                 <div x-show="form.condition === 'used'" x-cloak
-                                     style="display: grid; grid-template-columns: 1fr 1fr 1fr 2fr; gap: 0.75rem; padding-top: 0.5rem; border-top: 1px dashed #e5e7eb;">
+                                     style="display: grid; grid-template-columns: 1fr 1fr 1fr 2fr; gap: 0.75rem; padding-top: 0.5rem; border-top: 1px dashed rgba(255,255,255,0.08);">
                                     <div>
                                         <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Bateria (%)</label>
                                         <input type="number" :name="'units[' + idx + '][battery_health]'" x-model="unit.battery_health" min="0" max="100" placeholder="87"
@@ -259,7 +259,7 @@
                         </template>
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f3f4f6;">
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
                         <a href="{{ route('stock.consignment.index') }}"
                            style="padding: 0.625rem 1.5rem; color: #818181; font-size: 0.875rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem;">
                             Cancelar

@@ -107,7 +107,7 @@
                             :style="uv.in_repair ? 'opacity: 0.45; cursor: not-allowed;' : 'cursor: pointer;'"
                             :class="isQuickValueActive(uv.name, uv.value)
                                 ? 'border-amber-600 bg-amber-600 text-white'
-                                : 'border-amber-200 bg-amber-50 text-amber-800 hover:border-amber-300'">
+                                : 'border-amber-500/30 bg-amber-500/10 text-amber-300 hover:border-amber-300'">
                         <span x-show="uv.in_repair">🔧</span>
                         <span x-text="chipLabel(uv.name)"></span>
                         <span class="opacity-60 ml-1" x-text="uv.in_repair ? 'Assistência' : 'R$ ' + fmt(uv.value)"></span>

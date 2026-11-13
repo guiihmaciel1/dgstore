@@ -7,7 +7,7 @@
 <div x-show="!cardLoading && cardResults.length > 0" x-transition>
     {{-- Pix --}}
     <div x-show="cardBalance > 0" class="mb-3">
-        <div class="bg-green-50 border border-green-200 rounded-xl px-4 py-3 sm:px-5 sm:py-4 flex items-center justify-between">
+        <div class="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 sm:px-5 sm:py-4 flex items-center justify-between">
             <div>
                 <div class="text-[15px] font-bold text-emerald-600">Pix / Dinheiro</div>
                 <div class="text-xs text-dg-500">Melhor preço - sem taxa</div>

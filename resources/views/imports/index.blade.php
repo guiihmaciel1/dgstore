@@ -26,15 +26,15 @@
 
             <!-- Cards de Estatísticas -->
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-                <div style="padding: 1.25rem; background: {{ $stats['in_transit'] > 0 ? '#eff6ff' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['in_transit'] > 0 ? '#bfdbfe' : '#e5e7eb' }};">
+                <div style="padding: 1.25rem; background: {{ $stats['in_transit'] > 0 ? 'rgba(59,130,246,0.15)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['in_transit'] > 0 ? 'rgba(59,130,246,0.35)' : 'rgba(255,255,255,0.08)' }};">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.625rem; background: {{ $stats['in_transit'] > 0 ? '#dbeafe' : '#f3f4f6' }}; border-radius: 0.5rem;">
+                        <div style="padding: 0.625rem; background: {{ $stats['in_transit'] > 0 ? 'rgba(59,130,246,0.15)' : '#1a1a1a' }}; border-radius: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: {{ $stats['in_transit'] > 0 ? '#2563eb' : '#6b7280' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
                             </svg>
                         </div>
                         <div>
-                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['in_transit'] > 0 ? '#2563eb' : '#111827' }};">{{ $stats['in_transit'] }}</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['in_transit'] > 0 ? '#2563eb' : '#e3e3e3' }};">{{ $stats['in_transit'] }}</p>
                             <p style="font-size: 0.75rem; color: #818181;">Em trânsito</p>
                         </div>
                     </div>
@@ -120,14 +120,14 @@
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @php
                                                 $statusColors = [
-                                                    'ordered' => ['bg' => '#f3f4f6', 'color' => '#6b7280'],
-                                                    'shipped' => ['bg' => '#dbeafe', 'color' => '#2563eb'],
-                                                    'in_transit' => ['bg' => '#e0e7ff', 'color' => '#4f46e5'],
-                                                    'customs' => ['bg' => '#fef3c7', 'color' => '#d97706'],
-                                                    'received' => ['bg' => '#dcfce7', 'color' => '#16a34a'],
-                                                    'cancelled' => ['bg' => '#fee2e2', 'color' => '#dc2626'],
+                                                    'ordered' => ['bg' => '#1a1a1a', 'color' => '#6b7280'],
+                                                    'shipped' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                                    'in_transit' => ['bg' => 'rgba(99,102,241,0.15)', 'color' => '#4f46e5'],
+                                                    'customs' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#d97706'],
+                                                    'received' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                                    'cancelled' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
                                                 ];
-                                                $sc = $statusColors[$order->status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                                $sc = $statusColors[$order->status->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                             @endphp
                                             <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $sc['bg'] }}; color: {{ $sc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                                 {{ $order->status->label() }}

@@ -3,13 +3,13 @@
     <div class="py-6">
         <div class="px-6 lg:px-8">
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
             
             @if(session('error'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; color: #fca5a5;">
                     {{ session('error') }}
                 </div>
             @endif
@@ -156,7 +156,7 @@
                                     <td style="padding: 0.75rem 0.75rem; text-align: right; font-weight: 600; font-size: 0.8125rem; color: {{ $sale->profit >= 0 ? '#16a34a' : '#dc2626' }};">
                                         R$ {{ number_format($sale->profit, 2, ',', '.') }}
                                     </td>
-                                    <td style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.8125rem; font-weight: 600; color: {{ $commissionTotal > 0 ? '#7c3aed' : '#d1d5db' }};">
+                                    <td style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.8125rem; font-weight: 600; color: {{ $commissionTotal > 0 ? '#7c3aed' : '#515151' }};">
                                         {{ $commissionTotal > 0 ? 'R$ ' . number_format($commissionTotal, 2, ',', '.') : '-' }}
                                     </td>
                                     <td style="padding: 0.75rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ $netProfit >= 0 ? '#059669' : '#dc2626' }};">
@@ -212,7 +212,7 @@
                                 <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ $totals['total_profit'] >= 0 ? '#16a34a' : '#dc2626' }};">
                                     R$ {{ number_format($totals['total_profit'], 2, ',', '.') }}
                                 </td>
-                                <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ ($totals['total_commissions'] ?? 0) > 0 ? '#7c3aed' : '#d1d5db' }};">
+                                <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ ($totals['total_commissions'] ?? 0) > 0 ? '#7c3aed' : '#515151' }};">
                                     {{ ($totals['total_commissions'] ?? 0) > 0 ? 'R$ ' . number_format($totals['total_commissions'], 2, ',', '.') : '-' }}
                                 </td>
                                 <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 800; font-size: 0.8125rem; color: {{ ($totals['total_net_profit'] ?? 0) >= 0 ? '#059669' : '#dc2626' }};">

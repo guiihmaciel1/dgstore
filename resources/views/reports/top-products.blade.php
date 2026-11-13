@@ -67,8 +67,8 @@
                                     $medalColors = ['#fbbf24', '#9ca3af', '#d97706']; // ouro, prata, bronze
                                 @endphp
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); {{ $isTop3 ? 'background: rgba(245,158,11,0.1);' : '' }}" 
-                                    onmouseover="this.style.background='{{ $isTop3 ? '#fef9c3' : '#f9fafb' }}'" 
-                                    onmouseout="this.style.background='{{ $isTop3 ? '#fefce8' : 'white' }}'">
+                                    onmouseover="this.style.background='{{ $isTop3 ? 'rgba(245,158,11,0.15)' : '#1a1a1a' }}'" 
+                                    onmouseout="this.style.background='{{ $isTop3 ? 'rgba(245,158,11,0.15)' : '#141414' }}'">
                                     <td style="padding: 1rem 1.5rem; text-align: center;">
                                         @if($isTop3)
                                             <span style="display: inline-flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; background: {{ $medalColors[$index] }}; color: white; border-radius: 50%; font-weight: 700; font-size: 1rem;">
@@ -81,7 +81,7 @@
                                         @endif
                                     </td>
                                     <td style="padding: 0.75rem 1rem;">
-                                        <a href="{{ route('products.show', $item['product']) }}" style="font-weight: 600; color: #e3e3e3; text-decoration: none;" onmouseover="this.style.color='#374151'" onmouseout="this.style.color='#111827'">
+                                        <a href="{{ route('products.show', $item['product']) }}" style="font-weight: 600; color: #e3e3e3; text-decoration: none;" onmouseover="this.style.color='#c8c8c8'" onmouseout="this.style.color='#e3e3e3'">
                                             {{ $item['product']->name }}
                                         </a>
                                         <div style="font-size: 0.75rem; color: #666666;">SKU: {{ $item['product']->sku }}</div>

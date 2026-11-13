@@ -32,8 +32,8 @@
                     @if($reservation->status !== App\Domain\Reservation\Enums\ReservationStatus::Converted && 
                         $reservation->status !== App\Domain\Reservation\Enums\ReservationStatus::Cancelled)
                         <a href="{{ route('reservations.edit', $reservation) }}"
-                           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(59,130,246,0.1); color: #2563eb; font-weight: 500; font-size: 0.875rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid #bfdbfe;"
-                           onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                           style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(59,130,246,0.1); color: #2563eb; font-weight: 500; font-size: 0.875rem; border-radius: 0.5rem; text-decoration: none; border: 1px solid rgba(59,130,246,0.35);"
+                           onmouseover="this.style.background='rgba(59,130,246,0.15)'" onmouseout="this.style.background='rgba(59,130,246,0.15)'">
                             <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -56,10 +56,10 @@
             <!-- Status Banner -->
             @php
                 $statusColors = [
-                    'active' => ['bg' => '#f0fdf4', 'border' => '#86efac', 'color' => '#16a34a', 'icon' => 'M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z'],
-                    'converted' => ['bg' => '#eff6ff', 'border' => '#93c5fd', 'color' => '#2563eb', 'icon' => 'M5 13l4 4L19 7'],
-                    'cancelled' => ['bg' => '#fef2f2', 'border' => '#fecaca', 'color' => '#dc2626', 'icon' => 'M6 18L18 6M6 6l12 12'],
-                    'expired' => ['bg' => '#f3f4f6', 'border' => '#d1d5db', 'color' => '#6b7280', 'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
+                    'active' => ['bg' => 'rgba(16,185,129,0.15)', 'border' => '#86efac', 'color' => '#16a34a', 'icon' => 'M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z'],
+                    'converted' => ['bg' => 'rgba(59,130,246,0.15)', 'border' => '#93c5fd', 'color' => '#2563eb', 'icon' => 'M5 13l4 4L19 7'],
+                    'cancelled' => ['bg' => 'rgba(239,68,68,0.15)', 'border' => 'rgba(239,68,68,0.35)', 'color' => '#dc2626', 'icon' => 'M6 18L18 6M6 6l12 12'],
+                    'expired' => ['bg' => '#1a1a1a', 'border' => 'rgba(255,255,255,0.08)', 'color' => '#6b7280', 'icon' => 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
                 ];
                 $sc = $statusColors[$reservation->status->value] ?? $statusColors['active'];
             @endphp
@@ -118,9 +118,9 @@
                             <h3 style="font-weight: 600; color: #e3e3e3;">Produto Reservado</h3>
                             @php
                                 $sourceColors = [
-                                    'stock' => ['bg' => '#dcfce7', 'color' => '#16a34a', 'label' => 'Estoque'],
-                                    'quotation' => ['bg' => '#dbeafe', 'color' => '#2563eb', 'label' => 'Cotação'],
-                                    'manual' => ['bg' => '#fef3c7', 'color' => '#d97706', 'label' => 'Manual'],
+                                    'stock' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a', 'label' => 'Estoque'],
+                                    'quotation' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb', 'label' => 'Cotação'],
+                                    'manual' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#d97706', 'label' => 'Manual'],
                                 ];
                                 $src = $sourceColors[$reservation->source ?? 'stock'] ?? $sourceColors['stock'];
                             @endphp
@@ -151,7 +151,7 @@
                             $hasManySuppliers = $bestQuotations->count() > 1;
                         @endphp
                         <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
-                            <div style="padding: 1rem; background: rgba(59,130,246,0.1); border-bottom: 1px solid #bfdbfe; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="padding: 1rem; background: rgba(59,130,246,0.1); border-bottom: 1px solid rgba(59,130,246,0.35); display: flex; justify-content: space-between; align-items: center;">
                                 <h3 style="font-weight: 600; color: #93c5fd;">
                                     <svg style="width: 1.25rem; height: 1.25rem; display: inline; vertical-align: text-bottom; margin-right: 0.375rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
@@ -286,8 +286,8 @@
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" title="Estornar pagamento"
-                                                                        style="padding: 0.25rem 0.5rem; background: none; color: #fca5a5; font-size: 0.7rem; font-weight: 500; border: 1px solid #fecaca; border-radius: 0.25rem; cursor: pointer;"
-                                                                        onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+                                                                        style="padding: 0.25rem 0.5rem; background: none; color: #fca5a5; font-size: 0.7rem; font-weight: 500; border: 1px solid rgba(239,68,68,0.35); border-radius: 0.25rem; cursor: pointer;"
+                                                                        onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='transparent'">
                                                                     Estornar
                                                                 </button>
                                                             </form>
@@ -403,7 +403,7 @@
                                 </div>
                                 <div style="display: flex; justify-content: space-between;">
                                     <dt style="color: #818181;">Data Limite:</dt>
-                                    <dd style="font-weight: 500; color: {{ $reservation->is_overdue ? '#dc2626' : ($reservation->is_expiring_soon ? '#d97706' : '#111827') }};">
+                                    <dd style="font-weight: 500; color: {{ $reservation->is_overdue ? '#dc2626' : ($reservation->is_expiring_soon ? '#d97706' : '#e3e3e3') }};">
                                         {{ $reservation->expires_at->format('d/m/Y') }}
                                     </dd>
                                 </div>
@@ -450,8 +450,8 @@
                         <form method="POST" action="{{ route('reservations.cancel', $reservation) }}"
                               onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva? O produto será liberado.');">
                             @csrf
-                            <button type="submit" style="width: 100%; padding: 0.5rem; color: #fca5a5; font-size: 0.875rem; background: none; border: 1px solid #fecaca; border-radius: 0.5rem; cursor: pointer;"
-                                    onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+                            <button type="submit" style="width: 100%; padding: 0.5rem; color: #fca5a5; font-size: 0.875rem; background: none; border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; cursor: pointer;"
+                                    onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='transparent'">
                                 Cancelar Reserva
                             </button>
                         </form>

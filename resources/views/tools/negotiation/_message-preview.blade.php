@@ -35,22 +35,22 @@
 
 {{-- Confirmação de vínculo --}}
 <div x-show="productPrice > 0 && saveModal.selectedCustomer" x-cloak x-transition
-     class="bg-emerald-50 border border-emerald-300 rounded-xl p-3 mt-3">
+     class="bg-emerald-500/10 border border-emerald-300 rounded-xl p-3 mt-3">
     <div class="flex items-center gap-2.5">
         <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         <div class="flex-1 min-w-0">
-            <p class="text-[0.8rem] font-bold text-emerald-800 leading-tight">
+            <p class="text-[0.8rem] font-bold text-emerald-300 leading-tight">
                 Proposta vinculada a <span x-text="saveModal.selectedCustomer?.name"></span>
             </p>
         </div>
         <button @click="saveModal.selectedCustomer = null" type="button"
-                class="text-[0.7rem] font-semibold text-emerald-600 hover:text-emerald-800 bg-transparent border-none cursor-pointer">
+                class="text-[0.7rem] font-semibold text-emerald-600 hover:text-emerald-300 bg-transparent border-none cursor-pointer">
             Trocar
         </button>
     </div>
-    <div class="mt-2 pt-2 border-t border-emerald-200 flex gap-2">
+    <div class="mt-2 pt-2 border-t border-emerald-500/30 flex gap-2">
         {{-- Botão principal: Salvar Simulação --}}
         <button @click="openSaveModal()" type="button"
                 class="flex-1 px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer border-none flex items-center justify-center gap-1.5 transition-colors bg-indigo-600 text-white hover:bg-indigo-700">
@@ -150,7 +150,7 @@
                     </div>
                 </div>
 
-                <div x-show="saveModal.createError" x-cloak class="mt-3 p-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 font-medium" x-text="saveModal.createError"></div>
+                <div x-show="saveModal.createError" x-cloak class="mt-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-300 font-medium" x-text="saveModal.createError"></div>
 
                 <button @click="createAndSelectCustomer()" type="button"
                         :disabled="saveModal.creating || !saveModal.newCustomer.name || !saveModal.newCustomer.phone"
@@ -163,13 +163,13 @@
         </div>
 
         {{-- Cliente selecionado --}}
-        <div x-show="saveModal.selectedCustomer" class="mb-4 p-3 bg-indigo-50 rounded-lg border border-indigo-200 flex items-center justify-between">
+        <div x-show="saveModal.selectedCustomer" class="mb-4 p-3 bg-indigo-500/10 rounded-lg border border-indigo-500/30 flex items-center justify-between">
             <div>
                 <span class="font-semibold text-dg-100 text-sm" x-text="saveModal.selectedCustomer?.name"></span>
                 <span class="text-xs text-dg-400 block" x-text="saveModal.selectedCustomer?.phone"></span>
             </div>
             <button type="button" @click="saveModal.selectedCustomer = null; saveModal.search = ''; saveModal.tab = 'search'"
-                    class="text-indigo-600 hover:text-indigo-800 bg-transparent border-none cursor-pointer text-xs font-semibold">
+                    class="text-indigo-600 hover:text-indigo-300 bg-transparent border-none cursor-pointer text-xs font-semibold">
                 Trocar
             </button>
         </div>

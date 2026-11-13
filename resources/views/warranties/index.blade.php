@@ -18,29 +18,29 @@
 
             <!-- Cards de Estatísticas -->
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-                <div style="padding: 1.25rem; background: {{ $stats['expiring_soon'] > 0 ? '#fefce8' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['expiring_soon'] > 0 ? '#fde68a' : '#e5e7eb' }};">
+                <div style="padding: 1.25rem; background: {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.15)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.35)' : 'rgba(255,255,255,0.08)' }};">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.625rem; background: {{ $stats['expiring_soon'] > 0 ? '#fef3c7' : '#f3f4f6' }}; border-radius: 0.5rem;">
+                        <div style="padding: 0.625rem; background: {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.15)' : '#1a1a1a' }}; border-radius: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: {{ $stats['expiring_soon'] > 0 ? '#d97706' : '#6b7280' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                         <div>
-                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['expiring_soon'] > 0 ? '#d97706' : '#111827' }};">{{ $stats['expiring_soon'] }}</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['expiring_soon'] > 0 ? '#d97706' : '#e3e3e3' }};">{{ $stats['expiring_soon'] }}</p>
                             <p style="font-size: 0.75rem; color: #818181;">Vencendo em 30 dias</p>
                         </div>
                     </div>
                 </div>
 
-                <div style="padding: 1.25rem; background: {{ $stats['open_claims'] > 0 ? '#fef2f2' : 'white' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['open_claims'] > 0 ? '#fecaca' : '#e5e7eb' }};">
+                <div style="padding: 1.25rem; background: {{ $stats['open_claims'] > 0 ? 'rgba(239,68,68,0.15)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['open_claims'] > 0 ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.08)' }};">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.625rem; background: {{ $stats['open_claims'] > 0 ? '#fee2e2' : '#f3f4f6' }}; border-radius: 0.5rem;">
+                        <div style="padding: 0.625rem; background: {{ $stats['open_claims'] > 0 ? 'rgba(239,68,68,0.15)' : '#1a1a1a' }}; border-radius: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: {{ $stats['open_claims'] > 0 ? '#dc2626' : '#6b7280' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                             </svg>
                         </div>
                         <div>
-                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['open_claims'] > 0 ? '#dc2626' : '#111827' }};">{{ $stats['open_claims'] }}</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['open_claims'] > 0 ? '#dc2626' : '#e3e3e3' }};">{{ $stats['open_claims'] }}</p>
                             <p style="font-size: 0.75rem; color: #818181;">Acionamentos abertos</p>
                         </div>
                     </div>

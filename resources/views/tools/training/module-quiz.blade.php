@@ -62,8 +62,8 @@
 
             <div x-show="quizAnswered !== null" x-transition style="margin-bottom: 1rem;">
                 <div :style="quizAnswered === currentQuestion.correct
-                    ? 'background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; padding: 0.75rem 1rem;'
-                    : 'background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; padding: 0.75rem 1rem;'">
+                    ? 'background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; padding: 0.75rem 1rem;'
+                    : 'background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; padding: 0.75rem 1rem;'">
                     <p :style="quizAnswered === currentQuestion.correct ? 'font-size: 0.8rem; color: #6ee7b7; font-weight: 600;' : 'font-size: 0.8rem; color: #fca5a5; font-weight: 600;'"
                        x-text="quizAnswered === currentQuestion.correct ? '✅ Certíssimo! Mandou bem!' : '❌ Errou, mas bora aprender!'"></p>
                     <p style="font-size: 0.8rem; color: #a4a4a4; margin-top: 0.25rem;" x-text="currentQuestion.explanation"></p>

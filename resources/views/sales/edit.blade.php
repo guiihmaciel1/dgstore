@@ -16,13 +16,13 @@
             </div>
 
             @if(session('error'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; color: #fca5a5;">
                     {{ session('error') }}
                 </div>
             @endif
 
             @if($errors->any())
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; color: #fca5a5;">
                     <ul style="list-style: disc; padding-left: 1.25rem;">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -70,7 +70,7 @@
                                 <input type="hidden" name="customer_id" x-model="selectedCustomer.id">
 
                                 {{-- Cliente selecionado --}}
-                                <div x-show="selectedCustomer.id" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem;">
+                                <div x-show="selectedCustomer.id" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem;">
                                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                                         <div style="width: 2rem; height: 2rem; background: #111827; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                             <span style="color: white; font-size: 0.75rem; font-weight: 600;" x-text="selectedCustomer.name ? selectedCustomer.name.charAt(0).toUpperCase() : ''"></span>
@@ -101,7 +101,7 @@
                                             <template x-for="customer in customerResults" :key="customer.id">
                                                 <button type="button" @click="selectCustomer(customer)"
                                                         style="width: 100%; padding: 0.5rem 0.75rem; text-align: left; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; background: #141414;"
-                                                        onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
+                                                        onmouseover="this.style.backgroundColor='#1a1a1a'" onmouseout="this.style.backgroundColor='#141414'">
                                                     <span style="font-weight: 500; color: #e3e3e3; font-size: 0.875rem;" x-text="customer.name"></span>
                                                     <span style="font-size: 0.75rem; color: #818181;" x-text="customer.phone"></span>
                                                 </button>
@@ -243,8 +243,8 @@
 
                         {{-- Trade-ins (somente leitura) --}}
                         @if($sale->tradeIns->isNotEmpty())
-                        <div style="background: rgba(168,85,247,0.1); border-radius: 1rem; border: 1px solid #ddd6fe; padding: 1.25rem;">
-                            <p style="font-size: 0.8125rem; font-weight: 600; color: #5b21b6; margin-bottom: 0.5rem;">Trade-in (não editável)</p>
+                        <div style="background: rgba(168,85,247,0.1); border-radius: 1rem; border: 1px solid rgba(139,92,246,0.35); padding: 1.25rem;">
+                            <p style="font-size: 0.8125rem; font-weight: 600; color: #c4b5fd; margin-bottom: 0.5rem;">Trade-in (não editável)</p>
                             @foreach($sale->tradeIns as $ti)
                                 <div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #a4a4a4; {{ !$loop->last ? 'margin-bottom: 0.25rem;' : '' }}">
                                     <span>{{ $ti->full_name }}</span>

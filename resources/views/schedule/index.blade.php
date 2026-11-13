@@ -4,7 +4,7 @@
         <div class="px-6 lg:px-8">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -197,7 +197,7 @@
                                 <label style="cursor: pointer;">
                                     <input type="radio" name="start_time" :value="slot.start" x-model="newForm.start_time" style="display: none;" required>
                                     <div :style="newForm.start_time === slot.start
-                                            ? 'text-align: center; padding: 0.375rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; border: 2px solid #111827; background: #111827; color: white;'
+                                            ? 'text-align: center; padding: 0.375rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; border: 2px solid #e3e3e3; background: #111827; color: white;'
                                             : 'text-align: center; padding: 0.375rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.06); color: #a4a4a4; background: #141414;'"
                                          x-text="slot.label"
                                          onmouseover="if(!this.previousElementSibling.checked) this.style.borderColor='#9ca3af'" onmouseout="if(!this.previousElementSibling.checked) this.style.borderColor='rgba(255,255,255,0.06)'">
@@ -331,15 +331,15 @@
                 {{-- Tabs --}}
                 <div style="display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 1.25rem;">
                     <button type="button" @click="editTab = 'details'"
-                            :style="editTab === 'details' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #e3e3e3; border-bottom: 2px solid #111827; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; border: none; background: none; cursor: pointer;'">
+                            :style="editTab === 'details' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #e3e3e3; border-bottom: 2px solid #e3e3e3; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; border: none; background: none; cursor: pointer;'">
                         Detalhes
                     </button>
                     <button type="button" @click="editTab = 'edit'"
-                            :style="editTab === 'edit' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #e3e3e3; border-bottom: 2px solid #111827; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; border: none; background: none; cursor: pointer;'">
+                            :style="editTab === 'edit' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #e3e3e3; border-bottom: 2px solid #e3e3e3; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; border: none; background: none; cursor: pointer;'">
                         Editar
                     </button>
                     <button type="button" @click="editTab = 'whatsapp'"
-                            :style="editTab === 'whatsapp' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #e3e3e3; border-bottom: 2px solid #111827; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; border: none; background: none; cursor: pointer;'">
+                            :style="editTab === 'whatsapp' ? 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600; color: #e3e3e3; border-bottom: 2px solid #e3e3e3; background: none; border-top: none; border-left: none; border-right: none; cursor: pointer;' : 'padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 500; color: #818181; border: none; background: none; cursor: pointer;'">
                         WhatsApp
                     </button>
                 </div>

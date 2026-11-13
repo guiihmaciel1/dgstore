@@ -18,7 +18,7 @@
             </div>
 
             @if($errors->any())
-                <div style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
+                <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
                     <ul style="list-style: disc; padding-left: 1.25rem; color: #fca5a5; font-size: 0.875rem;">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -82,7 +82,7 @@
                             </div>
 
                             @if($item->hasBeenExchanged())
-                                <div style="background: #fef3c7; border: 1px solid #fde68a; padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; color: #fbbf24;">
+                                <div style="background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.35); padding: 0.5rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; color: #fbbf24;">
                                     Este item ja foi trocado {{ $item->exchanges->count() }} vez(es) anteriormente.
                                 </div>
                             @endif
@@ -181,7 +181,7 @@
                         </div>
 
                         {{-- IMEI / Serial --}}
-                        <div style="background: rgba(16,185,129,0.1); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #a7f3d0;">
+                        <div style="background: rgba(16,185,129,0.1); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid rgba(16,185,129,0.35);">
                             <p style="font-size: 0.6875rem; font-weight: 700; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">IMEI/Serial Recebido</p>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                                 <div>
@@ -238,7 +238,7 @@
                                   style="width: 100%; padding: 0.625rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;">{{ old('reason') }}</textarea>
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f3f4f6;">
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
                         <a href="{{ route('stock.consignment.index') }}"
                            style="padding: 0.625rem 1.5rem; color: #818181; font-size: 0.875rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem;">
                             Cancelar

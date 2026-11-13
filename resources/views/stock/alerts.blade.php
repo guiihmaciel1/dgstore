@@ -9,7 +9,7 @@
             </div>
 
             @if($products->count() > 0)
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(245,158,11,0.1); border: 1px solid #fde68a; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35); border-radius: 0.5rem; display: flex; align-items: center; gap: 0.75rem;">
                     <svg style="width: 1.5rem; height: 1.5rem; color: #ca8a04; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
@@ -36,8 +36,8 @@
                         <tbody>
                             @forelse($products as $product)
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); {{ $product->isOutOfStock() ? 'background: rgba(239,68,68,0.1);' : '' }}" 
-                                    onmouseover="this.style.background='{{ $product->isOutOfStock() ? '#fee2e2' : '#f9fafb' }}'" 
-                                    onmouseout="this.style.background='{{ $product->isOutOfStock() ? '#fef2f2' : 'white' }}'">
+                                    onmouseover="this.style.background='{{ $product->isOutOfStock() ? 'rgba(239,68,68,0.15)' : '#1a1a1a' }}'" 
+                                    onmouseout="this.style.background='{{ $product->isOutOfStock() ? 'rgba(239,68,68,0.15)' : '#141414' }}'">
                                     <td style="padding: 1rem 1.5rem;">
                                         <div style="font-weight: 500; color: #e3e3e3;">{{ $product->name }}</div>
                                         <div style="font-size: 0.75rem; color: #666666;">SKU: {{ $product->sku }}</div>
@@ -55,11 +55,11 @@
                                     </td>
                                     <td style="padding: 0.75rem 1rem; text-align: center;">
                                         @if($product->isOutOfStock())
-                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(239,68,68,0.1); color: #fca5a5; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; border: 1px solid #fecaca;">
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(239,68,68,0.1); color: #fca5a5; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; border: 1px solid rgba(239,68,68,0.35);">
                                                 Sem Estoque
                                             </span>
                                         @else
-                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(245,158,11,0.1); color: #ca8a04; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; border: 1px solid #fde68a;">
+                                            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(245,158,11,0.1); color: #ca8a04; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; border: 1px solid rgba(245,158,11,0.35);">
                                                 Estoque Baixo
                                             </span>
                                         @endif
@@ -68,7 +68,7 @@
                                         <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
                                             <a href="{{ route('products.show', $product) }}" 
                                                style="padding: 0.375rem 0.75rem; background: #141414; color: #a4a4a4; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.06);"
-                                               onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='transparent'">
+                                               onmouseover="this.style.background='#1a1a1a'" onmouseout="this.style.background='transparent'">
                                                 Ver
                                             </a>
                                             <a href="{{ route('stock.create') }}?product_id={{ $product->id }}" 

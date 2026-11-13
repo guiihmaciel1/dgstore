@@ -20,7 +20,7 @@
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
                 <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem;">
                     <div style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Estoque Atual</div>
-                    <div style="font-size: 1.75rem; font-weight: 700; color: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#dc2626' : '#ca8a04') : '#111827' }}; margin-top: 0.25rem;">
+                    <div style="font-size: 1.75rem; font-weight: 700; color: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#dc2626' : '#ca8a04') : '#e3e3e3' }}; margin-top: 0.25rem;">
                         {{ $product->stock_quantity }} un.
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                     <div style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">SKU</div>
                     <div style="font-size: 1.25rem; font-weight: 600; color: #e3e3e3; margin-top: 0.25rem; font-family: monospace;">{{ $product->sku }}</div>
                 </div>
-                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; {{ $product->isLowStock() ? 'background: rgba(239,68,68,0.1); border-color: #fecaca;' : '' }}">
+                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; {{ $product->isLowStock() ? 'background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.35);' : '' }}">
                     <div style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Alerta Mínimo</div>
                     <div style="font-size: 1.75rem; font-weight: 700; color: {{ $product->isLowStock() ? '#dc2626' : '#16a34a' }}; margin-top: 0.25rem;">{{ $product->min_stock_alert }} un.</div>
                 </div>
@@ -54,12 +54,12 @@
                             @forelse($movements as $movement)
                                 @php
                                     $typeColors = [
-                                        'in' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                        'out' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
-                                        'adjustment' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                        'return' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
+                                        'in' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                        'out' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
+                                        'adjustment' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                        'return' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04'],
                                     ];
-                                    $tc = $typeColors[$movement->type->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                    $tc = $typeColors[$movement->type->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                 @endphp
                                 <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                                     <td style="padding: 0.75rem 1.5rem; font-size: 0.875rem; color: #818181;">

@@ -50,13 +50,13 @@
                 @if($cpLatest)
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                     <span style="font-size: 11px; font-weight: 600; color: #fbbf24; letter-spacing: 0.5px; text-transform: uppercase;">Compras Paraguai</span>
-                    <span style="font-size: 14px; font-weight: 700; color: #78350f;">R$ {{ number_format((float) $cpLatest->rate, 2, ',', '.') }}</span>
+                    <span style="font-size: 14px; font-weight: 700; color: #fcd34d;">R$ {{ number_format((float) $cpLatest->rate, 2, ',', '.') }}</span>
                     @if($cpPrevious)
                         @php
                             $cpDiff = (float) $cpLatest->rate - (float) $cpPrevious->rate;
                             $cpPct = (float) $cpPrevious->rate > 0 ? ($cpDiff / (float) $cpPrevious->rate) * 100 : 0;
                         @endphp
-                        <span style="font-size: 11px; font-weight: 600; color: {{ $cpDiff > 0 ? '#991b1b' : ($cpDiff < 0 ? '#166534' : '#92400e') }};">
+                        <span style="font-size: 11px; font-weight: 600; color: {{ $cpDiff > 0 ? '#fca5a5' : ($cpDiff < 0 ? '#6ee7b7' : '#fcd34d') }};">
                             @if($cpDiff > 0)
                                 <svg style="width: 12px; height: 12px; display: inline; vertical-align: middle;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
                             @elseif($cpDiff < 0)
@@ -68,7 +68,7 @@
                     @if($cpRates->count() >= 2)
                         <canvas id="cpDollarSparkline" width="100" height="24" style="display: inline-block; vertical-align: middle;"></canvas>
                     @endif
-                    <span style="font-size: 10px; color: #b45309;">{{ $cpLatest->fetched_at->format('d/m H:i') }}</span>
+                    <span style="font-size: 10px; color: #fcd34d;">{{ $cpLatest->fetched_at->format('d/m H:i') }}</span>
                 </div>
                 @endif
             </div>
@@ -108,7 +108,7 @@
                         </div>
                         <button type="submit"
                                 :disabled="saving"
-                                style="padding: 4px 12px; background: #34d399; color: #064e3b; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">
+                                style="padding: 4px 12px; background: #34d399; color: #6ee7b7; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">
                             <span x-show="!saving">OK</span>
                             <span x-show="saving">...</span>
                         </button>
@@ -143,7 +143,7 @@
                     @if($cpRates->count() >= 2)
                         <canvas id="cpDollarSparkline" width="100" height="24" style="display: inline-block; vertical-align: middle;"></canvas>
                     @endif
-                    <span style="font-size: 10px; color: {{ $dollarRate ? '#6ee7b7' : '#b45309' }};">{{ $cpLatest->fetched_at->format('d/m H:i') }}</span>
+                    <span style="font-size: 10px; color: {{ $dollarRate ? '#6ee7b7' : '#fcd34d' }};">{{ $cpLatest->fetched_at->format('d/m H:i') }}</span>
                 </div>
                 @endif
             </div>

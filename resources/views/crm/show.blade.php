@@ -317,7 +317,7 @@
                                                style="width: 100%; padding: 0.375rem; border: 1px solid rgba(245,158,11,0.2); border-radius: 0.25rem; font-size: 0.8rem; background: #0d0d0d; color: #e3e3e3;">
                                     </div>
                                     <button @click="save()" :disabled="saving" type="button"
-                                            style="padding: 0.375rem 0.625rem; font-size: 0.7rem; border: none; border-radius: 0.25rem; background: #f59e0b; color: #000; cursor: pointer; font-weight: 600; white-space: nowrap;">
+                                            style="padding: 0.375rem 0.625rem; font-size: 0.7rem; border: none; border-radius: 0.25rem; background: #f59e0b; color: #e3e3e3; cursor: pointer; font-weight: 600; white-space: nowrap;">
                                         <span x-show="!saving">Salvar</span>
                                         <span x-show="saving">...</span>
                                     </button>

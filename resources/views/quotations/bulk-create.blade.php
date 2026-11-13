@@ -163,7 +163,7 @@
                                                 <button type="button" @click="removeRow(index)" 
                                                         x-show="rows.length > 1"
                                                         style="padding: 0.375rem; color: #fca5a5; background: transparent; border: none; cursor: pointer; border-radius: 0.375rem;"
-                                                        onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+                                                        onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='transparent'">
                                                     <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                     </svg>
@@ -207,7 +207,7 @@
             </div>
 
             <!-- Dica -->
-            <div style="margin-top: 1rem; padding: 1rem; background: rgba(59,130,246,0.1); border: 1px solid #bfdbfe; border-radius: 0.5rem;">
+            <div style="margin-top: 1rem; padding: 1rem; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.35); border-radius: 0.5rem;">
                 <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
                     <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb; flex-shrink: 0; margin-top: 0.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>

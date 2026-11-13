@@ -17,7 +17,7 @@
             </div>
 
             @if($errors->any())
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; color: #fca5a5;">
                     <ul style="list-style: disc; padding-left: 1.5rem; font-size: 0.875rem;">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -28,8 +28,8 @@
 
             <!-- Etapa 1: Configuração -->
             <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #f0f9ff;">
-                    <h2 style="font-size: 1rem; font-weight: 600; color: #0c4a6e; display: flex; align-items: center; gap: 0.5rem;">
+                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(59,130,246,0.15);">
+                    <h2 style="font-size: 1rem; font-weight: 600; color: #7dd3fc; display: flex; align-items: center; gap: 0.5rem;">
                         <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -80,8 +80,8 @@
 
             <!-- Etapa 2: Colar Texto -->
             <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-bottom: 1.5rem;">
-                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: #f0f9ff;">
-                    <h2 style="font-size: 1rem; font-weight: 600; color: #0c4a6e; display: flex; align-items: center; gap: 0.5rem;">
+                <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(59,130,246,0.15);">
+                    <h2 style="font-size: 1rem; font-weight: 600; color: #7dd3fc; display: flex; align-items: center; gap: 0.5rem;">
                         <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
@@ -116,7 +116,7 @@ GREEN *$605* 1pc"
                                 :disabled="loading || !rawText || !supplierId || !exchangeRate"
                                 style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.5rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer; transition: all 0.15s;"
                                 :style="loading || !rawText || !supplierId || !exchangeRate
-                                    ? 'background: #e5e7eb; color: #666666; cursor: not-allowed;'
+                                    ? 'background: #222222; color: #666666; cursor: not-allowed;'
                                     : 'background: #111827; color: white;'"
                                 onmouseover="if(!this.disabled) this.style.background='#374151'"
                                 onmouseout="if(!this.disabled) this.style.background='#111827'">
@@ -137,7 +137,7 @@ GREEN *$605* 1pc"
             <!-- Mensagem de erro/info -->
             <template x-if="message">
                 <div :style="'margin-bottom: 1rem; padding: 1rem; border-radius: 0.5rem; font-size: 0.875rem; border: 1px solid; ' +
-                    (messageType === 'error' ? 'background: rgba(239,68,68,0.1); border-color: #fecaca; color: #fca5a5;' : 'background: rgba(16,185,129,0.1); border-color: #a7f3d0; color: #6ee7b7;')">
+                    (messageType === 'error' ? 'background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.35); color: #fca5a5;' : 'background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.35); color: #6ee7b7;')">
                     <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                         <span x-text="message"></span>
                         <template x-if="parserUsed && messageType !== 'error'">
@@ -245,7 +245,7 @@ GREEN *$605* 1pc"
                                     </template>
                                 </tbody>
                                 <tfoot>
-                                    <tr style="background: #1a1a1a; border-top: 2px solid #e5e7eb;">
+                                    <tr style="background: #1a1a1a; border-top: 2px solid rgba(255,255,255,0.08);">
                                         <td colspan="3" style="padding: 0.75rem 1rem; text-align: right; font-size: 0.875rem; font-weight: 600; color: #a4a4a4;">
                                             Total selecionados:
                                         </td>
@@ -276,7 +276,7 @@ GREEN *$605* 1pc"
                             <button type="submit" :disabled="selectedCount === 0"
                                     style="padding: 0.75rem 2rem; border-radius: 0.75rem; font-size: 0.9375rem; font-weight: 700; border: none; cursor: pointer; letter-spacing: 0.025em; transition: all 0.2s;"
                                     :style="selectedCount === 0
-                                        ? 'background: #e5e7eb; color: #666666; cursor: not-allowed;'
+                                        ? 'background: #222222; color: #666666; cursor: not-allowed;'
                                         : 'background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: white; box-shadow: 0 2px 8px rgba(22,163,106,0.35);'"
                                     onmouseover="if(!this.disabled) { this.style.boxShadow='0 6px 20px rgba(22,163,106,0.45)'; this.style.transform='translateY(-2px)'; }"
                                     onmouseout="this.style.boxShadow='0 2px 8px rgba(22,163,106,0.35)'; this.style.transform='none';">

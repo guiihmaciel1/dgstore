@@ -17,7 +17,7 @@
         </div>
     </button>
 
-    <div x-show="openModule === 'seminovos'" x-transition style="border-top: 1px solid #f3f4f6; padding: 1.25rem;">
+    <div x-show="openModule === 'seminovos'" x-transition style="border-top: 1px solid rgba(255,255,255,0.08); padding: 1.25rem;">
         <p style="font-size: 0.875rem; color: #a4a4a4; margin-bottom: 1rem; line-height: 1.6;">
             Seminovo não é sinônimo de velho! Um iPhone 13, por exemplo, ainda roda tudo liso e o cliente paga bem menos. A chave é saber os <strong>pontos fortes</strong> de cada geração pra convencer com segurança. 💪
         </p>
@@ -50,7 +50,7 @@
             </a>
         </div>
 
-        <div style="margin-top: 1rem; background: rgba(59,130,246,0.1); border: 1px solid #bfdbfe; border-radius: 0.5rem; padding: 0.75rem 1rem;">
+        <div style="margin-top: 1rem; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.35); border-radius: 0.5rem; padding: 0.75rem 1rem;">
             <p style="font-size: 0.8rem; color: #93c5fd; font-weight: 600;">🔑 Na hora de vender seminovo:</p>
             <p style="font-size: 0.8rem; color: #93c5fd; margin-top: 0.25rem;">Sempre mostre o Checklist pro cliente! Isso passa confiança e mostra que a gente avalia tudo direitinho antes de vender.</p>
         </div>

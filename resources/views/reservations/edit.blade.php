@@ -59,7 +59,7 @@
                                     <template x-for="customer in customerResults" :key="customer.id">
                                         <div @click="selectCustomer(customer)"
                                              style="padding: 0.75rem 1rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.15s;"
-                                             onmouseover="this.style.background='#eff6ff'" onmouseout="this.style.background='transparent'">
+                                             onmouseover="this.style.background='rgba(59,130,246,0.15)'" onmouseout="this.style.background='transparent'">
                                             <div style="font-weight: 500; color: #e3e3e3;" x-text="customer.name"></div>
                                             <div style="font-size: 0.75rem; color: #818181;" x-text="customer.phone || 'Sem telefone'"></div>
                                         </div>
@@ -67,7 +67,7 @@
                                 </div>
 
                                 <!-- Cliente selecionado -->
-                                <div x-show="selectedCustomer" x-cloak style="padding: 0.625rem 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                <div x-show="selectedCustomer" x-cloak style="padding: 0.625rem 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
                                         <span style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; min-width: 1.5rem; background: #16a34a; border-radius: 50%; color: white;">
                                             <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
@@ -80,7 +80,7 @@
                                         </div>
                                     </div>
                                     <button type="button" @click="clearCustomer()" style="display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; min-width: 1.5rem; color: #fca5a5; background: none; border: none; cursor: pointer; border-radius: 0.375rem;"
-                                            onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'" title="Trocar cliente">
+                                            onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='transparent'" title="Trocar cliente">
                                         <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
@@ -221,7 +221,7 @@
                             </button>
                             <a href="{{ route('reservations.show', $reservation) }}"
                                style="display: block; width: 100%; padding: 0.75rem; margin-top: 0.75rem; text-align: center; color: #666666; font-weight: 500; text-decoration: none; font-size: 0.875rem; transition: color 0.2s;"
-                               onmouseover="this.style.color='#374151';"
+                               onmouseover="this.style.color='#c8c8c8';"
                                onmouseout="this.style.color='#9ca3af';">
                                 Cancelar
                             </a>

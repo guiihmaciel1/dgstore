@@ -17,7 +17,7 @@
         </div>
     </button>
 
-    <div x-show="openModule === 'batalha'" x-transition style="border-top: 1px solid #f3f4f6; padding: 1.25rem;">
+    <div x-show="openModule === 'batalha'" x-transition style="border-top: 1px solid rgba(255,255,255,0.08); padding: 1.25rem;">
         <p style="font-size: 0.875rem; color: #a4a4a4; margin-bottom: 1rem; line-height: 1.6;">
             "Qual a diferença do 16 pro o 15 Pro?" — essa pergunta aparece <strong>todo dia</strong>. Cola essas comparações na cabeça e vai mandar bem demais. 🧠
         </p>

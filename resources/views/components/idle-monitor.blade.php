@@ -58,7 +58,7 @@
             <p style="font-size: 0.75rem; color: #ef4444; font-weight: 600;">
                 ⚠️ Acumulado hoje: <span id="idle-cumulative-display">0</span> min
             </p>
-            <p style="font-size: 0.7rem; color: #a16207; margin-top: 0.25rem;">
+            <p style="font-size: 0.7rem; color: #fcd34d; margin-top: 0.25rem;">
                 A gestão será notificada automaticamente.
             </p>
         </div>

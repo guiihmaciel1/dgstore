@@ -24,20 +24,20 @@ enum TransactionStatus: string
     public function color(): string
     {
         return match ($this) {
-            self::Pending => '#d97706',
-            self::Paid => '#16a34a',
-            self::Overdue => '#dc2626',
-            self::Cancelled => '#6b7280',
+            self::Pending => '#fbbf24',
+            self::Paid => '#34d399',
+            self::Overdue => '#f87171',
+            self::Cancelled => '#a4a4a4',
         };
     }
 
     public function bgColor(): string
     {
         return match ($this) {
-            self::Pending => '#fef3c7',
-            self::Paid => '#dcfce7',
-            self::Overdue => '#fef2f2',
-            self::Cancelled => '#f3f4f6',
+            self::Pending => 'rgba(245,158,11,0.15)',
+            self::Paid => 'rgba(16,185,129,0.15)',
+            self::Overdue => 'rgba(239,68,68,0.15)',
+            self::Cancelled => 'rgba(255,255,255,0.06)',
         };
     }
 }

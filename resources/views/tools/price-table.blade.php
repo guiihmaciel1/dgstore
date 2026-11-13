@@ -51,11 +51,11 @@
                                 </td>
                                 <td style="padding: 0.5rem 0.75rem; text-align: center; font-size: 0.8rem; color: #818181;" x-text="p.storage || '-'"></td>
                                 <td style="padding: 0.5rem 0.75rem; text-align: center;">
-                                    <span :style="p.condition === 'new' ? 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#dcfce7;color:#166534;' : p.condition === 'used' ? 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#fef3c7;color:#92400e;' : 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#dbeafe;color:#1e40af;'"
+                                    <span :style="p.condition === 'new' ? 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:rgba(16,185,129,0.15);color:#6ee7b7;' : p.condition === 'used' ? 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:rgba(245,158,11,0.15);color:#fcd34d;' : 'font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:rgba(59,130,246,0.15);color:#93c5fd;'"
                                           x-text="p.condition === 'new' ? 'Novo' : p.condition === 'used' ? 'Usado' : 'Recond.'"></span>
                                 </td>
                                 <td style="padding: 0.5rem 0.75rem; text-align: center;">
-                                    <span :style="p.stock > 0 ? 'font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;background:#dcfce7;color:#166534;' : 'font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;background:#fef2f2;color:#991b1b;'"
+                                    <span :style="p.stock > 0 ? 'font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;background:rgba(16,185,129,0.15);color:#6ee7b7;' : 'font-size:0.75rem;font-weight:700;padding:2px 10px;border-radius:9999px;background:rgba(239,68,68,0.15);color:#fca5a5;'"
                                           x-text="p.stock"></span>
                                 </td>
                             </tr>
@@ -77,7 +77,7 @@
                                 <div style="font-size: 0.7rem; color: #666666; margin-top: 2px;" x-text="p.sku + (p.storage ? ' · ' + p.storage : '')"></div>
                             </div>
                             <div style="text-align: right; flex-shrink: 0;">
-                                <span :style="p.stock > 0 ? 'font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#dcfce7;color:#166534;' : 'font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#fef2f2;color:#991b1b;'"
+                                <span :style="p.stock > 0 ? 'font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:rgba(16,185,129,0.15);color:#6ee7b7;' : 'font-size:0.75rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:rgba(239,68,68,0.15);color:#fca5a5;'"
                                       x-text="'Est: ' + p.stock"></span>
                             </div>
                         </div>

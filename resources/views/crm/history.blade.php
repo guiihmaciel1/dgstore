@@ -30,11 +30,11 @@
             {{-- Tabs --}}
             <div style="display: flex; gap: 0.375rem; margin-bottom: 1rem;">
                 <a href="{{ route('crm.history', ['tab' => 'won', 'user_id' => $filterUserId]) }}"
-                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $tab === 'won' ? 'transparent' : '#e5e7eb' }}; background: {{ $tab === 'won' ? '#059669' : 'white' }}; color: {{ $tab === 'won' ? 'white' : '#6b7280' }}; text-decoration: none;">
+                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $tab === 'won' ? 'transparent' : 'rgba(255,255,255,0.08)' }}; background: {{ $tab === 'won' ? '#059669' : '#141414' }}; color: {{ $tab === 'won' ? 'white' : '#6b7280' }}; text-decoration: none;">
                     Ganhos
                 </a>
                 <a href="{{ route('crm.history', ['tab' => 'lost', 'user_id' => $filterUserId]) }}"
-                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $tab === 'lost' ? 'transparent' : '#e5e7eb' }}; background: {{ $tab === 'lost' ? '#dc2626' : 'white' }}; color: {{ $tab === 'lost' ? 'white' : '#6b7280' }}; text-decoration: none;">
+                   style="padding: 0.375rem 0.875rem; font-size: 0.8rem; font-weight: 500; border-radius: 9999px; border: 1px solid {{ $tab === 'lost' ? 'transparent' : 'rgba(255,255,255,0.08)' }}; background: {{ $tab === 'lost' ? '#dc2626' : '#141414' }}; color: {{ $tab === 'lost' ? 'white' : '#6b7280' }}; text-decoration: none;">
                     Perdidos
                 </a>
             </div>

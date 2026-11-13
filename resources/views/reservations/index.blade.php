@@ -29,13 +29,13 @@
                 <a href="{{ route('reservations.index', ['status' => 'active']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['active'] > 0 ? 'rgba(16,185,129,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['active'] > 0 ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.625rem; background: {{ $stats['active'] > 0 ? '#dcfce7' : '#f3f4f6' }}; border-radius: 0.5rem;">
+                        <div style="padding: 0.625rem; background: {{ $stats['active'] > 0 ? 'rgba(16,185,129,0.15)' : '#1a1a1a' }}; border-radius: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: {{ $stats['active'] > 0 ? '#16a34a' : '#6b7280' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                             </svg>
                         </div>
                         <div>
-                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['active'] > 0 ? '#16a34a' : '#111827' }};">{{ $stats['active'] }}</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['active'] > 0 ? '#16a34a' : '#e3e3e3' }};">{{ $stats['active'] }}</p>
                             <p style="font-size: 0.75rem; color: #818181;">Reservas ativas</p>
                         </div>
                     </div>
@@ -44,13 +44,13 @@
                 <a href="{{ route('reservations.index', ['status' => 'active', 'sort' => 'expires_at', 'direction' => 'asc']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.625rem; background: {{ $stats['expiring_soon'] > 0 ? '#fef3c7' : '#f3f4f6' }}; border-radius: 0.5rem;">
+                        <div style="padding: 0.625rem; background: {{ $stats['expiring_soon'] > 0 ? 'rgba(245,158,11,0.15)' : '#1a1a1a' }}; border-radius: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: {{ $stats['expiring_soon'] > 0 ? '#d97706' : '#6b7280' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                         <div>
-                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['expiring_soon'] > 0 ? '#d97706' : '#111827' }};">{{ $stats['expiring_soon'] }}</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['expiring_soon'] > 0 ? '#d97706' : '#e3e3e3' }};">{{ $stats['expiring_soon'] }}</p>
                             <p style="font-size: 0.75rem; color: #818181;">Vencendo em 3 dias</p>
                         </div>
                     </div>
@@ -59,13 +59,13 @@
                 <a href="{{ route('reservations.index', ['status' => 'expired']) }}" style="text-decoration: none; padding: 1.25rem; background: {{ $stats['overdue'] > 0 ? 'rgba(239,68,68,0.1)' : '#141414' }}; border-radius: 0.75rem; border: 1px solid {{ $stats['overdue'] > 0 ? 'rgba(239,68,68,0.2)' : 'rgba(255,255,255,0.06)' }}; transition: box-shadow 0.15s; cursor: pointer;"
                    onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'" onmouseout="this.style.boxShadow='none'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="padding: 0.625rem; background: {{ $stats['overdue'] > 0 ? '#fee2e2' : '#f3f4f6' }}; border-radius: 0.5rem;">
+                        <div style="padding: 0.625rem; background: {{ $stats['overdue'] > 0 ? 'rgba(239,68,68,0.15)' : '#1a1a1a' }}; border-radius: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: {{ $stats['overdue'] > 0 ? '#dc2626' : '#6b7280' }};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                             </svg>
                         </div>
                         <div>
-                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['overdue'] > 0 ? '#dc2626' : '#111827' }};">{{ $stats['overdue'] }}</p>
+                            <p style="font-size: 1.5rem; font-weight: 700; color: {{ $stats['overdue'] > 0 ? '#dc2626' : '#e3e3e3' }};">{{ $stats['overdue'] }}</p>
                             <p style="font-size: 0.75rem; color: #818181;">Vencidas</p>
                         </div>
                     </div>
@@ -115,8 +115,8 @@
                         @endphp
                         @if($hasFilters)
                             <a href="{{ route('reservations.index') }}"
-                               style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; color: #fca5a5; font-size: 0.8rem; text-decoration: none; border: 1px solid #fecaca; border-radius: 0.5rem; background: rgba(239,68,68,0.1);"
-                               onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+                               style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.5rem 0.75rem; color: #fca5a5; font-size: 0.8rem; text-decoration: none; border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; background: rgba(239,68,68,0.1);"
+                               onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">
                                 <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
@@ -124,7 +124,7 @@
                             </a>
                         @endif
                     </div>
-                    <div x-show="showMore" x-collapse style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6;">
+                    <div x-show="showMore" x-collapse style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.08);">
                         <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: flex-end;">
                             <div style="min-width: 150px;">
                                 <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Data inicial</label>
@@ -202,7 +202,7 @@
                                                 {{ $reservation->formatted_product_price }}
                                                 @php $resSource = $reservation->source ?? 'stock'; @endphp
                                                 @if($resSource !== 'stock')
-                                                    <span style="margin-left: 0.25rem; font-size: 0.625rem; padding: 0.0625rem 0.375rem; border-radius: 1rem; font-weight: 500; {{ $resSource === 'quotation' ? 'background: rgba(59,130,246,0.15); color: #2563eb;' : 'background: #fef3c7; color: #d97706;' }}">
+                                                    <span style="margin-left: 0.25rem; font-size: 0.625rem; padding: 0.0625rem 0.375rem; border-radius: 1rem; font-weight: 500; {{ $resSource === 'quotation' ? 'background: rgba(59,130,246,0.15); color: #2563eb;' : 'background: rgba(245,158,11,0.15); color: #d97706;' }}">
                                                         {{ $resSource === 'quotation' ? 'Cotação' : 'Manual' }}
                                                     </span>
                                                 @endif
@@ -225,12 +225,12 @@
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @php
                                                 $statusColors = [
-                                                    'active' => ['bg' => '#dcfce7', 'color' => '#16a34a'],
-                                                    'converted' => ['bg' => '#dbeafe', 'color' => '#2563eb'],
-                                                    'cancelled' => ['bg' => '#fee2e2', 'color' => '#dc2626'],
-                                                    'expired' => ['bg' => '#f3f4f6', 'color' => '#6b7280'],
+                                                    'active' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                                    'converted' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                                    'cancelled' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
+                                                    'expired' => ['bg' => '#1a1a1a', 'color' => '#6b7280'],
                                                 ];
-                                                $sc = $statusColors[$reservation->status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                                $sc = $statusColors[$reservation->status->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                             @endphp
                                             <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $sc['bg'] }}; color: {{ $sc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                                 {{ $reservation->status->label() }}
@@ -240,7 +240,7 @@
                                             <div style="font-weight: 600; color: #e3e3e3;">{{ $reservation->formatted_deposit_paid }}</div>
                                             <div style="font-size: 0.75rem; color: #818181;">de {{ $reservation->formatted_deposit_amount }}</div>
                                             @if($reservation->deposit_amount > 0)
-                                                <div style="margin-top: 0.25rem; height: 4px; background: #e5e7eb; border-radius: 2px; overflow: hidden;">
+                                                <div style="margin-top: 0.25rem; height: 4px; background: #222222; border-radius: 2px; overflow: hidden;">
                                                     <div style="height: 100%; background: #16a34a; width: {{ $reservation->deposit_percent_paid }}%;"></div>
                                                 </div>
                                             @endif
@@ -264,8 +264,8 @@
                                             <div style="display: flex; gap: 0.375rem; justify-content: flex-end; flex-wrap: wrap;">
                                                 @if($reservation->canConvert())
                                                     <a href="{{ route('reservations.convert', $reservation) }}" title="Converter em venda"
-                                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: rgba(16,185,129,0.15); color: #6ee7b7; font-size: 0.75rem; font-weight: 600; border-radius: 0.375rem; text-decoration: none; border: 1px solid #bbf7d0;"
-                                                       onmouseover="this.style.background='#bbf7d0'" onmouseout="this.style.background='#dcfce7'">
+                                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: rgba(16,185,129,0.15); color: #6ee7b7; font-size: 0.75rem; font-weight: 600; border-radius: 0.375rem; text-decoration: none; border: 1px solid rgba(16,185,129,0.35);"
+                                                       onmouseover="this.style.background='rgba(16,185,129,0.15)'" onmouseout="this.style.background='rgba(16,185,129,0.15)'">
                                                         <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                         </svg>
@@ -274,8 +274,8 @@
                                                 @endif
                                                 @if($reservation->status->isActive())
                                                     <a href="{{ route('reservations.edit', $reservation) }}" title="Editar reserva"
-                                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: rgba(59,130,246,0.1); color: #2563eb; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid #bfdbfe;"
-                                                       onmouseover="this.style.background='#dbeafe'" onmouseout="this.style.background='#eff6ff'">
+                                                       style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.625rem; background: rgba(59,130,246,0.1); color: #2563eb; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid rgba(59,130,246,0.35);"
+                                                       onmouseover="this.style.background='rgba(59,130,246,0.15)'" onmouseout="this.style.background='rgba(59,130,246,0.15)'">
                                                         <svg style="width: 0.8rem; height: 0.8rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                         </svg>

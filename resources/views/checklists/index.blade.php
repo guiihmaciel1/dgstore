@@ -153,7 +153,7 @@
                                                         @csrf @method('DELETE')
                                                         <button type="submit"
                                                                 style="padding: 0.375rem 0.75rem; background: rgba(239,68,68,0.1); color: #fca5a5; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer;"
-                                                                onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+                                                                onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">
                                                             Excluir
                                                         </button>
                                                     </form>

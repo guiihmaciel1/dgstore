@@ -17,7 +17,7 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 0.625rem;">
-                <span style="background: #fbbf24; color: #78350f; font-size: 0.6875rem; font-weight: 800; padding: 0.25rem 0.625rem; border-radius: 9999px; white-space: nowrap; box-shadow: 0 2px 8px rgba(251,191,36,0.4);">NOVO</span>
+                <span style="background: #fbbf24; color: #fcd34d; font-size: 0.6875rem; font-weight: 800; padding: 0.25rem 0.625rem; border-radius: 9999px; white-space: nowrap; box-shadow: 0 2px 8px rgba(251,191,36,0.4);">NOVO</span>
                 <div style="width: 1.75rem; height: 1.75rem; background: rgba(255,255,255,0.15); border-radius: 0.375rem; display: flex; align-items: center; justify-content: center;">
                     <svg style="width: 1rem; height: 1rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>

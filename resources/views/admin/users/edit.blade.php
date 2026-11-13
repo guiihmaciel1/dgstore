@@ -4,7 +4,7 @@
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -123,8 +123,8 @@
                                    {{ $user->active ? 'checked' : '' }}
                                    {{ $isSelf ? 'disabled' : '' }}
                                    style="position: absolute; opacity: 0; width: 0; height: 0;"
-                                   onchange="this.parentElement.querySelector('.toggle-bg').style.background = this.checked ? '#2563eb' : '#d1d5db'; this.parentElement.querySelector('.toggle-dot').style.transform = this.checked ? 'translateX(1.25rem)' : 'translateX(0)'">
-                            <div class="toggle-bg" style="width: 2.5rem; height: 1.25rem; background: {{ $user->active ? '#2563eb' : '#d1d5db' }}; border-radius: 9999px; transition: background 0.2s;"></div>
+                                   onchange="this.parentElement.querySelector('.toggle-bg').style.background = this.checked ? '#2563eb' : '#222222'; this.parentElement.querySelector('.toggle-dot').style.transform = this.checked ? 'translateX(1.25rem)' : 'translateX(0)'">
+                            <div class="toggle-bg" style="width: 2.5rem; height: 1.25rem; background: {{ $user->active ? '#2563eb' : '#222222' }}; border-radius: 9999px; transition: background 0.2s;"></div>
                             <div class="toggle-dot" style="position: absolute; left: 0.125rem; width: 1rem; height: 1rem; background: #141414; border-radius: 9999px; transition: transform 0.2s; transform: translateX({{ $user->active ? '1.25rem' : '0' }}); box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></div>
                         </label>
                     </div>

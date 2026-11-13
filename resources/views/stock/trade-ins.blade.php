@@ -33,8 +33,8 @@
             <!-- Cards de Estatísticas -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
                 <a href="{{ route('stock.trade-ins', ['status' => 'pending']) }}" 
-                   style="display: block; padding: 1.5rem; background: {{ $currentStatus === 'pending' ? '#fefce8' : 'white' }}; border-radius: 1rem; border: 2px solid {{ $currentStatus === 'pending' ? '#fde68a' : '#e5e7eb' }}; text-decoration: none; transition: all 0.2s;"
-                   onmouseover="this.style.borderColor='#fde68a'" onmouseout="this.style.borderColor='{{ $currentStatus === 'pending' ? '#fde68a' : '#e5e7eb' }}'">
+                   style="display: block; padding: 1.5rem; background: {{ $currentStatus === 'pending' ? 'rgba(245,158,11,0.15)' : '#141414' }}; border-radius: 1rem; border: 2px solid {{ $currentStatus === 'pending' ? 'rgba(245,158,11,0.35)' : 'rgba(255,255,255,0.08)' }}; text-decoration: none; transition: all 0.2s;"
+                   onmouseover="this.style.borderColor='rgba(245,158,11,0.35)'" onmouseout="this.style.borderColor='{{ $currentStatus === 'pending' ? 'rgba(245,158,11,0.35)' : 'rgba(255,255,255,0.08)' }}'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 0.75rem;">
                             <svg style="width: 1.5rem; height: 1.5rem; color: #ca8a04;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,8 +49,8 @@
                 </a>
 
                 <a href="{{ route('stock.trade-ins', ['status' => 'processed']) }}" 
-                   style="display: block; padding: 1.5rem; background: {{ $currentStatus === 'processed' ? '#f0fdf4' : 'white' }}; border-radius: 1rem; border: 2px solid {{ $currentStatus === 'processed' ? '#bbf7d0' : '#e5e7eb' }}; text-decoration: none; transition: all 0.2s;"
-                   onmouseover="this.style.borderColor='#bbf7d0'" onmouseout="this.style.borderColor='{{ $currentStatus === 'processed' ? '#bbf7d0' : '#e5e7eb' }}'">
+                   style="display: block; padding: 1.5rem; background: {{ $currentStatus === 'processed' ? 'rgba(16,185,129,0.15)' : '#141414' }}; border-radius: 1rem; border: 2px solid {{ $currentStatus === 'processed' ? 'rgba(16,185,129,0.35)' : 'rgba(255,255,255,0.08)' }}; text-decoration: none; transition: all 0.2s;"
+                   onmouseover="this.style.borderColor='rgba(16,185,129,0.35)'" onmouseout="this.style.borderColor='{{ $currentStatus === 'processed' ? 'rgba(16,185,129,0.35)' : 'rgba(255,255,255,0.08)' }}'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem;">
                             <svg style="width: 1.5rem; height: 1.5rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -65,8 +65,8 @@
                 </a>
 
                 <a href="{{ route('stock.trade-ins', ['status' => 'rejected']) }}" 
-                   style="display: block; padding: 1.5rem; background: {{ $currentStatus === 'rejected' ? '#fef2f2' : 'white' }}; border-radius: 1rem; border: 2px solid {{ $currentStatus === 'rejected' ? '#fecaca' : '#e5e7eb' }}; text-decoration: none; transition: all 0.2s;"
-                   onmouseover="this.style.borderColor='#fecaca'" onmouseout="this.style.borderColor='{{ $currentStatus === 'rejected' ? '#fecaca' : '#e5e7eb' }}'">
+                   style="display: block; padding: 1.5rem; background: {{ $currentStatus === 'rejected' ? 'rgba(239,68,68,0.15)' : '#141414' }}; border-radius: 1rem; border: 2px solid {{ $currentStatus === 'rejected' ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.08)' }}; text-decoration: none; transition: all 0.2s;"
+                   onmouseover="this.style.borderColor='rgba(239,68,68,0.35)'" onmouseout="this.style.borderColor='{{ $currentStatus === 'rejected' ? 'rgba(239,68,68,0.35)' : 'rgba(255,255,255,0.08)' }}'">
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <div style="padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 0.75rem;">
                             <svg style="width: 1.5rem; height: 1.5rem; color: #fca5a5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,12 +160,12 @@
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @php
                                                 $conditionColors = [
-                                                    'excellent' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                                    'good' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                                    'fair' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
-                                                    'poor' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
+                                                    'excellent' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                                    'good' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                                    'fair' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04'],
+                                                    'poor' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
                                                 ];
-                                                $cc = $conditionColors[$tradeIn->condition->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                                $cc = $conditionColors[$tradeIn->condition->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                             @endphp
                                             <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $cc['bg'] }}; color: {{ $cc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                                 {{ $tradeIn->condition->label() }}
@@ -189,11 +189,11 @@
                                         <td style="padding: 0.75rem 1rem; text-align: center;">
                                             @php
                                                 $statusColors = [
-                                                    'pending' => ['bg' => '#fefce8', 'color' => '#ca8a04', 'border' => '#fde68a'],
-                                                    'processed' => ['bg' => '#f0fdf4', 'color' => '#16a34a', 'border' => '#bbf7d0'],
-                                                    'rejected' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'border' => '#fecaca'],
+                                                    'pending' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04', 'border' => 'rgba(245,158,11,0.35)'],
+                                                    'processed' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a', 'border' => 'rgba(16,185,129,0.35)'],
+                                                    'rejected' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626', 'border' => 'rgba(239,68,68,0.35)'],
                                                 ];
-                                                $sc = $statusColors[$tradeIn->status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280', 'border' => '#e5e7eb'];
+                                                $sc = $statusColors[$tradeIn->status->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280', 'border' => 'rgba(255,255,255,0.08)'];
                                             @endphp
                                             <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $sc['bg'] }}; color: {{ $sc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; border: 1px solid {{ $sc['border'] }};">
                                                 {{ $tradeIn->status->label() }}

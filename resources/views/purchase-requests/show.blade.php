@@ -223,7 +223,7 @@
                         <div style="display: flex; align-items: center; {{ $idx < count($steps) - 1 ? 'flex: 1;' : '' }}">
                             <div style="display: flex; flex-direction: column; align-items: center; min-width: 4.5rem;">
                                 <div style="width: 1.75rem; height: 1.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 700;
-                                    {{ $isDone ? 'background: ' . $step['color'] . '; color: #000;' : ($isCurrent && !$isTerminal ? 'border: 2px solid ' . $step['color'] . '; color: ' . $step['color'] . ';' : 'border: 2px solid #333; color: #515151;') }}">
+                                    {{ $isDone ? 'background: ' . $step['color'] . '; color: #e3e3e3;' : ($isCurrent && !$isTerminal ? 'border: 2px solid ' . $step['color'] . '; color: ' . $step['color'] . ';' : 'border: 2px solid #333; color: #515151;') }}">
                                     @if($isDone)
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                     @else

@@ -18,7 +18,7 @@
             </div>
 
             @if($errors->any())
-                <div style="background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
+                <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem;">
                     <div style="font-weight: 600; color: #fca5a5; margin-bottom: 0.5rem;">Verifique os erros abaixo:</div>
                     <ul style="list-style: disc; padding-left: 1.25rem; color: #fca5a5; font-size: 0.875rem;">
                         @foreach($errors->all() as $error)

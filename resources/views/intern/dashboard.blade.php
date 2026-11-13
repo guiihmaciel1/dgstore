@@ -4,13 +4,13 @@
         <div class="px-6 lg:px-8">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
+                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
                     {{ session('success') }}
                 </div>
             @endif
 
             @if(session('error'))
-                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5; font-size: 0.875rem;">
+                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; color: #fca5a5; font-size: 0.875rem;">
                     {{ session('error') }}
                 </div>
             @endif
@@ -240,7 +240,7 @@
                 <span style="font-size: 0.9rem;">&#127874;</span>
                 <span style="color: #818181; font-weight: 500;">Próximos aniversariantes do mês:</span>
                 @foreach($birthdayCustomers as $customer)
-                    <a href="{{ route('customers.show', $customer) }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; {{ $customer->birth_date->day === now()->day ? 'background: #fef3c7; color: #fbbf24;' : 'background: #222222; color: #a4a4a4;' }}" title="{{ $customer->phone }}">
+                    <a href="{{ route('customers.show', $customer) }}" style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; border-radius: 9999px; text-decoration: none; font-size: 0.75rem; font-weight: 600; {{ $customer->birth_date->day === now()->day ? 'background: rgba(245,158,11,0.15); color: #fbbf24;' : 'background: #222222; color: #a4a4a4;' }}" title="{{ $customer->phone }}">
                         <span style="color: #ec4899; font-weight: 800;">{{ $customer->birth_date->format('d') }}</span>
                         {{ $customer->name }}
                         @if($customer->birth_date->day === now()->day)
@@ -426,7 +426,7 @@
                         @endphp
                         <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem; margin-bottom: 0.25rem; {{ $isNow ? 'background: rgba(99,102,241,0.1); border: 1px solid #c7d2fe;' : ($isPast ? 'opacity: 0.5;' : '') }}">
                             <div style="width: 0.375rem; height: 0.375rem; border-radius: 9999px; background: {{ $isNow ? '#4f46e5' : '#9ca3af' }}; flex-shrink: 0;"></div>
-                            <span style="font-size: 0.8rem; font-weight: 700; color: {{ $isNow ? '#4f46e5' : '#111827' }}; min-width: 4rem; font-variant-numeric: tabular-nums;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: {{ $isNow ? '#4f46e5' : '#e3e3e3' }}; min-width: 4rem; font-variant-numeric: tabular-nums;">
                                 {{ substr($appt->start_time, 0, 5) }} - {{ substr($appt->end_time, 0, 5) }}
                             </span>
                             <span style="font-size: 0.8rem; font-weight: 600; color: #e3e3e3;">{{ $appt->customer_name }}</span>

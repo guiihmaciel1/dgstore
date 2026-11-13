@@ -36,7 +36,7 @@
                 <!-- Relatório de Vendas -->
                 <a href="{{ route('reports.sales') }}" style="text-decoration: none;">
                     <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 1.5rem; transition: all 0.2s;"
-                         onmouseover="this.style.boxShadow='0 10px 25px -5px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='#111827'"
+                         onmouseover="this.style.boxShadow='0 10px 25px -5px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='#e3e3e3'"
                          onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.06)'">
                         <div style="display: flex; align-items: flex-start; gap: 1rem;">
                             <div style="width: 3.5rem; height: 3.5rem; background: #111827; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -58,7 +58,7 @@
                 <!-- Relatório de Estoque -->
                 <a href="{{ route('reports.stock') }}" style="text-decoration: none;">
                     <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 1.5rem; transition: all 0.2s;"
-                         onmouseover="this.style.boxShadow='0 10px 25px -5px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='#111827'"
+                         onmouseover="this.style.boxShadow='0 10px 25px -5px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='#e3e3e3'"
                          onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.06)'">
                         <div style="display: flex; align-items: flex-start; gap: 1rem;">
                             <div style="width: 3.5rem; height: 3.5rem; background: #374151; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -80,7 +80,7 @@
                 <!-- Produtos Mais Vendidos -->
                 <a href="{{ route('reports.top-products') }}" style="text-decoration: none;">
                     <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 1.5rem; transition: all 0.2s;"
-                         onmouseover="this.style.boxShadow='0 10px 25px -5px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='#111827'"
+                         onmouseover="this.style.boxShadow='0 10px 25px -5px rgba(0,0,0,0.1)'; this.style.transform='translateY(-2px)'; this.style.borderColor='#e3e3e3'"
                          onmouseout="this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)'; this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.06)'">
                         <div style="display: flex; align-items: flex-start; gap: 1rem;">
                             <div style="width: 3.5rem; height: 3.5rem; background: #6b7280; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">

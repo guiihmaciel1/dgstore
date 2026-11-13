@@ -88,7 +88,7 @@
                     <div style="padding: 0.75rem 1.25rem; background: #1a1a1a; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center;">
                         <button type="button" onclick="if(confirm('Tem certeza que deseja excluir este cliente?')) document.getElementById('delete-form').submit();"
                                 style="padding: 0.5rem 0.75rem; background: rgba(239,68,68,0.15); color: #fca5a5; font-weight: 500; font-size: 0.875rem; border-radius: 0.375rem; border: none; cursor: pointer;"
-                                onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
+                                onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">
                             Excluir
                         </button>
                         <div style="display: flex; gap: 0.5rem;">

@@ -72,15 +72,15 @@
                 {{-- Badges --}}
                 <div style="display: flex; gap: 0.375rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
                     <span :style="'font-size:0.625rem;font-weight:700;padding:2px 8px;border-radius:9999px;text-transform:uppercase;letter-spacing:0.025em;'
-                        + (c.type === 'reels' ? 'background:#fce7f3;color:#be185d;'
-                         : c.type === 'stories' ? 'background:#e0e7ff;color:#3730a3;'
-                         : c.type === 'carousel' ? 'background:#fef3c7;color:#92400e;'
-                         : 'background:#ecfdf5;color:#065f46;')"
+                        + (c.type === 'reels' ? 'background:rgba(236,72,153,0.15);color:#f9a8d4;'
+                         : c.type === 'stories' ? 'background:rgba(99,102,241,0.15);color:#a5b4fc;'
+                         : c.type === 'carousel' ? 'background:rgba(245,158,11,0.15);color:#fcd34d;'
+                         : 'background:rgba(16,185,129,0.15);color:#6ee7b7;')"
                         x-text="c.type_label"></span>
                     <span style="font-size:0.625rem;font-weight:600;padding:2px 8px;border-radius:9999px;background:#222222;color:#818181;"
                           x-text="c.platform_label"></span>
                     <template x-if="c.ai_generated">
-                        <span style="font-size:0.625rem;font-weight:700;padding:2px 8px;border-radius:9999px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#7c3aed;">IA</span>
+                        <span style="font-size:0.625rem;font-weight:700;padding:2px 8px;border-radius:9999px;background:rgba(139,92,246,0.18);color:#c4b5fd;">IA</span>
                     </template>
                 </div>
 
@@ -102,19 +102,19 @@
                 </template>
 
                 {{-- Footer --}}
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.08);">
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         <span :style="'font-size:0.625rem;font-weight:700;padding:2px 8px;border-radius:9999px;'
-                            + (c.status === 'idea' ? 'background:#fef3c7;color:#92400e;'
-                             : c.status === 'production' ? 'background:#dbeafe;color:#1e40af;'
-                             : 'background:#d1fae5;color:#065f46;')"
+                            + (c.status === 'idea' ? 'background:rgba(245,158,11,0.15);color:#fcd34d;'
+                             : c.status === 'production' ? 'background:rgba(59,130,246,0.15);color:#93c5fd;'
+                             : 'background:rgba(16,185,129,0.15);color:#6ee7b7;')"
                             x-text="c.status_label"></span>
                         <span style="font-size: 0.625rem; color: #515151;" x-text="c.user_name"></span>
                     </div>
                     <div style="display: flex; gap: 0.25rem;">
                         <button type="button" @click="openEditContent(c)"
                                 style="padding: 0.25rem; background: none; border: none; cursor: pointer; color: #666666; border-radius: 0.25rem;"
-                                onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#9ca3af'" title="Editar">
+                                onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#9ca3af'" title="Editar">
                             <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -258,7 +258,7 @@
 
             {{-- Loading --}}
             <div x-show="aiLoading" style="text-align: center; padding: 2rem;">
-                <div style="display: inline-block; width: 2rem; height: 2rem; border: 3px solid #e5e7eb; border-top-color: #c4b5fd; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                <div style="display: inline-block; width: 2rem; height: 2rem; border: 3px solid rgba(255,255,255,0.08); border-top-color: #c4b5fd; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
                 <p style="color: #818181; font-size: 0.8rem; margin-top: 0.75rem;">Consultando tendências e gerando ideias...</p>
             </div>
 
@@ -274,10 +274,10 @@
                             <div style="flex: 1;">
                                 <div style="display: flex; gap: 0.375rem; margin-bottom: 0.375rem; flex-wrap: wrap;">
                                     <span :style="'font-size:0.6rem;font-weight:700;padding:2px 6px;border-radius:9999px;text-transform:uppercase;'
-                                        + (idea.type === 'reels' ? 'background:#fce7f3;color:#be185d;'
-                                         : idea.type === 'stories' ? 'background:#e0e7ff;color:#3730a3;'
-                                         : idea.type === 'carousel' ? 'background:#fef3c7;color:#92400e;'
-                                         : 'background:#ecfdf5;color:#065f46;')"
+                                        + (idea.type === 'reels' ? 'background:rgba(236,72,153,0.15);color:#f9a8d4;'
+                                         : idea.type === 'stories' ? 'background:rgba(99,102,241,0.15);color:#a5b4fc;'
+                                         : idea.type === 'carousel' ? 'background:rgba(245,158,11,0.15);color:#fcd34d;'
+                                         : 'background:rgba(16,185,129,0.15);color:#6ee7b7;')"
                                         x-text="idea.type === 'carousel' ? 'Carrossel' : (idea.type === 'reels' ? 'Reels' : (idea.type === 'stories' ? 'Stories' : 'Post'))"></span>
                                     <span style="font-size:0.6rem;font-weight:600;padding:2px 6px;border-radius:9999px;background:#222222;color:#818181;"
                                           x-text="idea.platform === 'all' ? 'Todas' : (idea.platform === 'instagram' ? 'Instagram' : (idea.platform === 'tiktok' ? 'TikTok' : 'WhatsApp'))"></span>
@@ -297,7 +297,7 @@
                                 <template x-if="!idea.saved">
                                     <button type="button" @click="saveIdeaFromAi(idea, idx)" :disabled="idea.saving"
                                             :style="idea.saving
-                                                ? 'padding: 0.375rem 0.75rem; background: #d1d5db; color: white; border: none; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; cursor: default; white-space: nowrap;'
+                                                ? 'padding: 0.375rem 0.75rem; background: #222222; color: white; border: none; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; cursor: default; white-space: nowrap;'
                                                 : 'padding: 0.375rem 0.75rem; background: #111827; color: white; border: none; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap;'"
                                             onmouseover="if(!this.disabled)this.style.background='#374151'" onmouseout="if(!this.disabled)this.style.background='#111827'">
                                         <span x-text="idea.saving ? 'Salvando...' : 'Salvar'"></span>
@@ -312,7 +312,7 @@
                 <div style="text-align: center; padding-top: 0.5rem;">
                     <button type="button" @click="generateIdeas()" :disabled="aiLoading"
                             style="padding: 0.5rem 1rem; background: transparent; color: #c4b5fd; border: 1px solid #7c3aed; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer;"
-                            onmouseover="this.style.background='#f5f3ff'" onmouseout="this.style.background='transparent'">
+                            onmouseover="this.style.background='rgba(139,92,246,0.15)'" onmouseout="this.style.background='transparent'">
                         Gerar Novamente
                     </button>
                 </div>

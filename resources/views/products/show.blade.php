@@ -31,7 +31,7 @@
             </div>
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #16a34a;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #16a34a;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -233,12 +233,12 @@
                                     @forelse($product->stockMovements->take(5) as $movement)
                                         @php
                                             $typeColors = [
-                                                'in' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                                'out' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
-                                                'adjustment' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                                'return' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
+                                                'in' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                                'out' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
+                                                'adjustment' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                                'return' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04'],
                                             ];
-                                            $tc = $typeColors[$movement->type->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                            $tc = $typeColors[$movement->type->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                         @endphp
                                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                                             <td style="padding: 0.75rem 1.5rem; font-size: 0.875rem; color: #818181;">
@@ -280,7 +280,7 @@
                         $soldItems = $product->saleItems->filter(fn($item) => $item->sale && $item->sale->status !== 'cancelled');
                     @endphp
                     @if($tradeIn || $product->cost_price || $product->sale_price || $product->resale_price)
-                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 2px solid #bfdbfe; overflow: hidden;">
+                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 2px solid rgba(59,130,246,0.35); overflow: hidden;">
                         <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(59,130,246,0.1); display: flex; align-items: center; gap: 0.5rem;">
                             <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
@@ -292,19 +292,19 @@
                             @if($canViewFinancials && ($product->cost_price || $product->sale_price || $product->resale_price))
                             <div style="display: grid; grid-template-columns: repeat({{ ($product->cost_price ? 1 : 0) + ($product->sale_price ? 1 : 0) + ($product->resale_price ? 1 : 0) }}, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
                                 @if($product->cost_price)
-                                <div style="padding: 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.5rem; border: 1px solid #bbf7d0;">
+                                <div style="padding: 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.5rem; border: 1px solid rgba(16,185,129,0.35);">
                                     <p style="font-size: 0.65rem; font-weight: 500; color: #818181; text-transform: uppercase;">Custo</p>
                                     <p style="font-size: 1.125rem; font-weight: 700; color: #16a34a;">{{ $product->formatted_cost_price }}</p>
                                 </div>
                                 @endif
                                 @if($product->sale_price)
-                                <div style="padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 0.5rem; border: 1px solid #bfdbfe;">
+                                <div style="padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 0.5rem; border: 1px solid rgba(59,130,246,0.35);">
                                     <p style="font-size: 0.65rem; font-weight: 500; color: #818181; text-transform: uppercase;">Final</p>
                                     <p style="font-size: 1.125rem; font-weight: 700; color: #2563eb;">R$ {{ number_format((float) $product->sale_price, 2, ',', '.') }}</p>
                                 </div>
                                 @endif
                                 @if($product->resale_price)
-                                <div style="padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 0.5rem; border: 1px solid #fde68a;">
+                                <div style="padding: 0.75rem; background: rgba(245,158,11,0.1); border-radius: 0.5rem; border: 1px solid rgba(245,158,11,0.35);">
                                     <p style="font-size: 0.65rem; font-weight: 500; color: #818181; text-transform: uppercase;">Repasse</p>
                                     <p style="font-size: 1.125rem; font-weight: 700; color: #ca8a04;">R$ {{ number_format((float) $product->resale_price, 2, ',', '.') }}</p>
                                 </div>
@@ -312,7 +312,7 @@
                             </div>
                             @elseif(!$canViewFinancials && $product->sale_price)
                             <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-                                <div style="padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 0.5rem; border: 1px solid #bfdbfe;">
+                                <div style="padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 0.5rem; border: 1px solid rgba(59,130,246,0.35);">
                                     <p style="font-size: 0.65rem; font-weight: 500; color: #818181; text-transform: uppercase;">Preço de Venda</p>
                                     <p style="font-size: 1.125rem; font-weight: 700; color: #2563eb;">R$ {{ number_format((float) $product->sale_price, 2, ',', '.') }}</p>
                                 </div>
@@ -326,7 +326,7 @@
                                 <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06);">
                                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                                         <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; text-transform: uppercase;">Trade-in</span>
-                                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: {{ $tradeIn->condition->value === 'excellent' ? '#f0fdf4' : ($tradeIn->condition->value === 'good' ? '#eff6ff' : '#fefce8') }}; color: {{ $tradeIn->condition->value === 'excellent' ? '#16a34a' : ($tradeIn->condition->value === 'good' ? '#2563eb' : '#ca8a04') }}; border-radius: 9999px; font-weight: 500;">
+                                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: {{ $tradeIn->condition->value === 'excellent' ? 'rgba(16,185,129,0.15)' : ($tradeIn->condition->value === 'good' ? 'rgba(59,130,246,0.15)' : 'rgba(245,158,11,0.15)') }}; color: {{ $tradeIn->condition->value === 'excellent' ? '#16a34a' : ($tradeIn->condition->value === 'good' ? '#2563eb' : '#ca8a04') }}; border-radius: 9999px; font-weight: 500;">
                                             {{ ucfirst($tradeIn->condition->value) }}
                                         </span>
                                     </div>
@@ -392,15 +392,15 @@
                     @include('products.partials.repair-card', ['product' => $product])
 
                     <!-- Estoque -->
-                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; {{ $product->isLowStock() ? ($product->isOutOfStock() ? 'border-color: #fecaca;' : 'border-color: #fde68a;') : '' }}">
-                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#fef2f2' : '#fefce8') : '#f9fafb' }};">
+                    <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; {{ $product->isLowStock() ? ($product->isOutOfStock() ? 'border-color: rgba(239,68,68,0.35);' : 'border-color: rgba(245,158,11,0.35);') : '' }}">
+                        <div style="padding: 1rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); background: {{ $product->isLowStock() ? ($product->isOutOfStock() ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)') : '#1a1a1a' }};">
                             <h3 style="font-weight: 600; color: #e3e3e3;">Estoque</h3>
                         </div>
                         <div style="padding: 1.5rem;">
                             <div style="margin-bottom: 1rem;">
                                 <dt style="font-size: 0.75rem; font-weight: 500; color: #818181; text-transform: uppercase;">Quantidade Atual</dt>
                                 <dd style="margin-top: 0.25rem;">
-                                    <span style="font-size: 2rem; font-weight: 700; color: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#dc2626' : '#ca8a04') : '#111827' }};">
+                                    <span style="font-size: 2rem; font-weight: 700; color: {{ $product->isLowStock() ? ($product->isOutOfStock() ? '#dc2626' : '#ca8a04') : '#e3e3e3' }};">
                                         {{ $product->stock_quantity }}
                                     </span>
                                     <span style="color: #818181;"> unidades</span>
@@ -411,7 +411,7 @@
                                 <dd style="margin-top: 0.25rem; font-size: 0.875rem; color: #e3e3e3;">{{ $product->min_stock_alert }} unidades</dd>
                             </div>
                             @if($product->isLowStock())
-                            <div style="margin-bottom: 1rem; padding: 0.75rem; background: {{ $product->isOutOfStock() ? '#fef2f2' : '#fefce8' }}; border-radius: 0.5rem; border: 1px solid {{ $product->isOutOfStock() ? '#fecaca' : '#fde68a' }};">
+                            <div style="margin-bottom: 1rem; padding: 0.75rem; background: {{ $product->isOutOfStock() ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)' }}; border-radius: 0.5rem; border: 1px solid {{ $product->isOutOfStock() ? 'rgba(239,68,68,0.35)' : 'rgba(245,158,11,0.35)' }};">
                                 <p style="font-size: 0.875rem; font-weight: 500; color: {{ $product->isOutOfStock() ? '#dc2626' : '#ca8a04' }};">
                                     {{ $product->isOutOfStock() ? '⚠️ Produto sem estoque!' : '⚠️ Estoque baixo! Considere reabastecer.' }}
                                 </p>

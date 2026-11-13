@@ -103,9 +103,9 @@
                     <svg style="width: 14px; height: 14px; color: #6366f1;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/>
                     </svg>
-                    <span style="font-size: 12px; color: #64748b; font-weight: 500;">No cartão</span>
+                    <span style="font-size: 12px; color: #a4a4a4; font-weight: 500;">No cartão</span>
                 </div>
-                <span style="font-size: 16px; font-weight: 800; color: #1e293b; letter-spacing: -0.02em;" x-text="'R$ ' + fmt(finalAmount)"></span>
+                <span style="font-size: 16px; font-weight: 800; color: #f7f7f7; letter-spacing: -0.02em;" x-text="'R$ ' + fmt(finalAmount)"></span>
             </div>
 
             <!-- Filtros -->
@@ -149,14 +149,14 @@
                             <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
                                 <div class="calc-installment-badge" x-text="row.installments + 'x'"></div>
                                 <div>
-                                    <div style="font-size: 13px; font-weight: 700; color: #1e293b; letter-spacing: -0.01em;" x-text="'R$ ' + fmt(row.installment_value)">
+                                    <div style="font-size: 13px; font-weight: 700; color: #f7f7f7; letter-spacing: -0.01em;" x-text="'R$ ' + fmt(row.installment_value)">
                                     </div>
                                     <div style="font-size: 10px; color: #94a3b8; font-weight: 500;">/mês</div>
                                 </div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                                 <div style="text-align: right;">
-                                    <div style="font-size: 14px; font-weight: 800; color: #1e293b; letter-spacing: -0.02em;" x-text="'R$ ' + fmt(row.gross_amount)"></div>
+                                    <div style="font-size: 14px; font-weight: 800; color: #f7f7f7; letter-spacing: -0.02em;" x-text="'R$ ' + fmt(row.gross_amount)"></div>
                                     <div style="font-size: 10px; color: #94a3b8; font-weight: 500;">total</div>
                                 </div>
                                 <button @click="copyRow(row)" type="button" class="calc-copy-btn"
@@ -199,10 +199,10 @@
         .fab-pulse { animation: fabPulse 3s ease-in-out infinite; }
 
         .calc-panel {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(20, 20, 20, 0.97);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .calc-header {
@@ -243,11 +243,11 @@
 
         .calc-body {
             scrollbar-width: thin;
-            scrollbar-color: #e2e8f0 transparent;
+            scrollbar-color: #383838 transparent;
         }
         .calc-body::-webkit-scrollbar { width: 4px; }
         .calc-body::-webkit-scrollbar-track { background: transparent; }
-        .calc-body::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+        .calc-body::-webkit-scrollbar-thumb { background: #383838; border-radius: 4px; }
 
         .calc-input-group {
             margin-bottom: 0;
@@ -262,7 +262,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: #64748b;
+            color: #a4a4a4;
             margin-bottom: 5px;
             display: block;
         }
@@ -297,8 +297,8 @@
             border-radius: 12px;
             font-size: 22px;
             font-weight: 800;
-            color: #1e293b;
-            background: #f8fafc;
+            color: #f7f7f7;
+            background: #1a1a1a;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
             letter-spacing: -0.02em;
         }
@@ -312,8 +312,8 @@
             border-radius: 10px;
             font-size: 15px;
             font-weight: 700;
-            color: #d97706;
-            background: #141414beb;
+            color: #fbbf24;
+            background: rgba(245, 158, 11, 0.1);
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
         }
         .calc-input-amber:focus {
@@ -326,7 +326,7 @@
             border-radius: 10px;
             font-size: 15px;
             font-weight: 700;
-            color: #059669;
+            color: #34d399;
             background: rgba(16,185,129,0.1);
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
         }
@@ -337,7 +337,7 @@
 
         .calc-input-wrap-amber {
             border-radius: 10px;
-            background: #141414beb;
+            background: rgba(245, 158, 11, 0.1);
         }
         .calc-input-wrap-green {
             border-radius: 10px;
@@ -345,7 +345,7 @@
         }
 
         .calc-balance {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            background: #1a1a1a;
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 12px;
             padding: 10px 14px;
@@ -369,13 +369,13 @@
             font-weight: 600;
             border: 1px solid rgba(255,255,255,0.06);
             background: #141414;
-            color: #64748b;
+            color: #a4a4a4;
             cursor: pointer;
             transition: all 0.15s ease;
         }
         .calc-filter-btn:hover {
-            border-color: #cbd5e1;
-            color: #334155;
+            border-color: rgba(255,255,255,0.2);
+            color: #e3e3e3;
         }
         .calc-filter-active {
             background: #6366f1 !important;
@@ -411,7 +411,7 @@
             display: inline-block;
             width: 28px;
             height: 28px;
-            border: 3px solid #e2e8f0;
+            border: 3px solid rgba(255,255,255,0.1);
             border-top-color: #6366f1;
             border-radius: 50%;
             animation: fabSpin 0.7s linear infinite;
@@ -432,21 +432,21 @@
             transition: background 0.15s;
         }
         .calc-row:not(:last-child) {
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .calc-row-alt {
-            background: #fafbfc;
+            background: #171717;
         }
         .calc-row:hover {
-            background: #f8fafc;
+            background: #1a1a1a;
         }
 
         .calc-installment-badge {
             width: 34px;
             height: 34px;
             border-radius: 10px;
-            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-            color: #4f46e5;
+            background: rgba(99, 102, 241, 0.18);
+            color: #a5b4fc;
             font-size: 12px;
             font-weight: 800;
             display: flex;

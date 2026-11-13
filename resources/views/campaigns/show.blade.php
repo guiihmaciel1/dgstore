@@ -74,7 +74,7 @@
                 @if($campaign->status !== 'completed')
                     <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
                         <button onclick="startSending(false)" id="send-campaign-btn"
-                                style="flex: 1; padding: 0.625rem; background: #25D366; color: #000; font-weight: 700; font-size: 0.8rem; border: none; border-radius: 8px; cursor: pointer;">
+                                style="flex: 1; padding: 0.625rem; background: #25D366; color: #e3e3e3; font-weight: 700; font-size: 0.8rem; border: none; border-radius: 8px; cursor: pointer;">
                             {{ $campaign->status === 'sending' ? '▶ Continuar' : '🚀 Enviar' }}
                         </button>
                         <button onclick="startSending(true)" id="queue-campaign-btn"

@@ -193,7 +193,7 @@
                         </div>
 
                         <!-- Campos Seminovo -->
-                        <div id="seminovo-fields" style="display: none; margin-top: 0.875rem; padding: 1rem; background: #141414beb; border: 1px solid #fde68a; border-radius: 0.5rem;">
+                        <div id="seminovo-fields" style="display: none; margin-top: 0.875rem; padding: 1rem; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35); border-radius: 0.5rem;">
                             <p style="font-size: 0.8125rem; font-weight: 600; color: #fbbf24; margin-bottom: 0.75rem;">Informações do Seminovo</p>
                             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.875rem;">
                                 <div>
@@ -247,7 +247,7 @@
                                 </div>
                             </div>
 
-                            <div style="margin-top: 0.875rem; padding-top: 0.875rem; border-top: 1px dashed #fde68a;">
+                            <div style="margin-top: 0.875rem; padding-top: 0.875rem; border-top: 1px dashed rgba(245,158,11,0.35);">
                                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
                                     <p style="font-size: 0.8125rem; font-weight: 600; color: #fbbf24;">Detalhes do Dispositivo</p>
                                     <button type="button" onclick="document.getElementById('device-details-modal').style.display='flex'"
@@ -298,7 +298,7 @@
                 <h3 style="font-size: 1rem; font-weight: 600; color: #e3e3e3;">Colar Device Details</h3>
                 <button type="button" onclick="document.getElementById('device-details-modal').style.display='none'"
                         style="padding: 0.25rem; color: #818181; background: none; border: none; cursor: pointer; border-radius: 0.25rem;"
-                        onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6b7280'">
+                        onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#6b7280'">
                     <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -308,7 +308,7 @@
                 <p style="font-size: 0.8125rem; color: #818181; margin-bottom: 0.75rem;">Cole o texto completo do Device Details abaixo. Os dados serão interpretados automaticamente.</p>
                 <textarea id="device-details-raw" rows="14" placeholder="Cole aqui o texto do Device Details..."
                           style="width: 100%; padding: 0.625rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.75rem; font-family: monospace; resize: vertical; line-height: 1.5;"></textarea>
-                <div id="device-details-parse-error" style="display: none; margin-top: 0.5rem; padding: 0.5rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.375rem; font-size: 0.75rem; color: #fca5a5;"></div>
+                <div id="device-details-parse-error" style="display: none; margin-top: 0.5rem; padding: 0.5rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.375rem; font-size: 0.75rem; color: #fca5a5;"></div>
             </div>
             <div style="padding: 0.75rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: flex-end; gap: 0.5rem;">
                 <button type="button" onclick="document.getElementById('device-details-modal').style.display='none'"
@@ -431,7 +431,7 @@
                     const label = DEVICE_DETAIL_LABELS[key] || key;
                     html += `<div style="display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px solid #fef3c7;">
                         <span style="font-size: 0.6875rem; font-weight: 500; color: #fbbf24;">${label}</span>
-                        <span style="font-size: 0.6875rem; color: #78350f; font-family: monospace;">${escapeHtml(data[key])}</span>
+                        <span style="font-size: 0.6875rem; color: #fcd34d; font-family: monospace;">${escapeHtml(data[key])}</span>
                     </div>`;
                 }
             }

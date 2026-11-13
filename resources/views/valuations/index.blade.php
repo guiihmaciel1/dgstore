@@ -146,7 +146,7 @@
                                     <p style="font-size: 0.75rem; color: #818181;">Mínimo</p>
                                     <p style="font-size: 1rem; font-weight: 700; color: #e3e3e3;" x-text="formatCurrency(result?.market_min)"></p>
                                 </div>
-                                <div style="padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 0.5rem; text-align: center; border: 1px solid #bfdbfe;">
+                                <div style="padding: 0.75rem; background: rgba(59,130,246,0.1); border-radius: 0.5rem; text-align: center; border: 1px solid rgba(59,130,246,0.35);">
                                     <p style="font-size: 0.75rem; color: #3b82f6;">Média</p>
                                     <p style="font-size: 1.125rem; font-weight: 700; color: #93c5fd;" x-text="formatCurrency(result?.market_avg)"></p>
                                 </div>
@@ -191,7 +191,7 @@
                                           :style="'color: ' + modifierColor(result?.modifiers?.accessories)"
                                           x-text="formatModifier(result?.modifiers?.accessories)"></span>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: rgba(239,68,68,0.1); border-radius: 0.375rem; border: 1px solid #fecaca;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: rgba(239,68,68,0.1); border-radius: 0.375rem; border: 1px solid rgba(239,68,68,0.35);">
                                     <span style="font-size: 0.875rem; color: #fca5a5; font-weight: 500;">Margem DG Store</span>
                                     <span style="font-size: 0.875rem; font-weight: 600; color: #fca5a5;">-15%</span>
                                 </div>
@@ -199,7 +199,7 @@
                         </div>
 
                         <!-- Valor Sugerido -->
-                        <div style="padding: 1.25rem; background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-radius: 0.75rem; border: 1px solid #a7f3d0; text-align: center; margin-bottom: 1.25rem;">
+                        <div style="padding: 1.25rem; background: rgba(16,185,129,0.12); border-radius: 0.75rem; border: 1px solid rgba(16,185,129,0.35); text-align: center; margin-bottom: 1.25rem;">
                             <p style="font-size: 0.75rem; font-weight: 600; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.05em;">Valor Sugerido de Compra</p>
                             <p style="font-size: 2rem; font-weight: 800; color: #6ee7b7; margin-top: 0.25rem;" x-text="formatCurrency(result?.suggested_buy_price)"></p>
                             <p style="font-size: 0.75rem; color: #818181; margin-top: 0.25rem;">
@@ -230,7 +230,7 @@
 
                 <!-- Card: Sem dados -->
                 <div x-show="noData" x-transition
-                     style="background: #141414beb; border-radius: 0.75rem; border: 1px solid #fde68a; padding: 1.5rem; text-align: center;">
+                     style="background: rgba(245,158,11,0.1); border-radius: 0.75rem; border: 1px solid rgba(245,158,11,0.35); padding: 1.5rem; text-align: center;">
                     <svg style="width: 2.5rem; height: 2.5rem; color: #d97706; margin: 0 auto 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
@@ -242,7 +242,7 @@
 
                 <!-- Card: Erro -->
                 <div x-show="error" x-transition
-                     style="background: rgba(239,68,68,0.1); border-radius: 0.75rem; border: 1px solid #fecaca; padding: 1rem; text-align: center;">
+                     style="background: rgba(239,68,68,0.1); border-radius: 0.75rem; border: 1px solid rgba(239,68,68,0.35); padding: 1rem; text-align: center;">
                     <p style="font-size: 0.875rem; color: #fca5a5;" x-text="error"></p>
                 </div>
             </div>

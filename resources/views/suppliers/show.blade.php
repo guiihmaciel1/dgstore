@@ -14,7 +14,7 @@
                         <div class="flex flex-wrap items-center gap-2">
                             <h1 class="text-lg sm:text-2xl font-bold text-dg-100 truncate">{{ $supplier->name }}</h1>
                             @if(!$supplier->active)
-                                <span class="px-2 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">Inativo</span>
+                                <span class="px-2 py-1 bg-surface-overlay text-gray-500 text-xs font-medium rounded-full">Inativo</span>
                             @endif
                         </div>
                         @if($supplier->cnpj)
@@ -38,7 +38,7 @@
             </div>
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #16a34a;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #16a34a;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -59,10 +59,10 @@
                                         @if($supplier->origin)
                                             @php
                                                 $originColors = [
-                                                    'py' => ['bg' => '#fef2f2', 'color' => '#dc2626', 'label' => 'Paraguai (PY) - Frete 4%'],
-                                                    'br' => ['bg' => '#f0fdf4', 'color' => '#16a34a', 'label' => 'Brasil (BR) - Sem frete'],
+                                                    'py' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626', 'label' => 'Paraguai (PY) - Frete 4%'],
+                                                    'br' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a', 'label' => 'Brasil (BR) - Sem frete'],
                                                 ];
-                                                $oc = $originColors[$supplier->origin->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280', 'label' => '-'];
+                                                $oc = $originColors[$supplier->origin->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280', 'label' => '-'];
                                             @endphp
                                             <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $oc['bg'] }}; color: {{ $oc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                                 {{ $oc['label'] }}

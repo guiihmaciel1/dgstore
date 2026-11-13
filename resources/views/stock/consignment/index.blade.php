@@ -3,12 +3,12 @@
     <div class="py-6">
         <div class="px-6 lg:px-8">
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7;">
                     {{ session('success') }}
                 </div>
             @endif
             @if(session('error'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; color: #fca5a5;">
                     {{ session('error') }}
                 </div>
             @endif
@@ -97,7 +97,7 @@
             <div style="display: flex; align-items: center; gap: 0; margin-bottom: 1rem;">
                 <a href="{{ $summaryUrl }}"
                    style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); text-decoration: none; border-radius: 0.5rem 0 0 0.5rem;
-                          {{ $viewMode === 'summary' ? 'background: #111827; color: white; border-color: #111827;' : 'background: #141414; color: #818181;' }}">
+                          {{ $viewMode === 'summary' ? 'background: #111827; color: white; border-color: #e3e3e3;' : 'background: #141414; color: #818181;' }}">
                     <svg style="width: 0.875rem; height: 0.875rem; display: inline-block; vertical-align: -2px; margin-right: 0.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
                     </svg>
@@ -105,7 +105,7 @@
                 </a>
                 <a href="{{ $detailUrl }}"
                    style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); text-decoration: none; border-radius: 0 0.5rem 0.5rem 0; border-left: none;
-                          {{ $viewMode === 'detail' ? 'background: #111827; color: white; border-color: #111827;' : 'background: #141414; color: #818181;' }}">
+                          {{ $viewMode === 'detail' ? 'background: #111827; color: white; border-color: #e3e3e3;' : 'background: #141414; color: #818181;' }}">
                     <svg style="width: 0.875rem; height: 0.875rem; display: inline-block; vertical-align: -2px; margin-right: 0.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                     </svg>

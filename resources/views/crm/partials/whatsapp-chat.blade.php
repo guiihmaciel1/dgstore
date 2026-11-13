@@ -208,7 +208,7 @@
                              style="position: absolute; bottom: 100%; left: 0; margin-bottom: 0.5rem; background: #141414; border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; padding: 0.5rem; width: 300px; max-height: 320px; z-index: 20; box-shadow: 0 -4px 16px rgba(0,0,0,0.4); display: flex; flex-direction: column;">
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.375rem;">
                                 <span style="font-size: 0.7rem; font-weight: 600; color: #e3e3e3;">Respostas Rápidas</span>
-                                <button type="button" onclick="toggleQuickReplyForm()" style="background: #25D366; border: none; border-radius: 4px; color: #000; font-size: 0.6rem; font-weight: 600; padding: 0.15rem 0.4rem; cursor: pointer;">+ Nova</button>
+                                <button type="button" onclick="toggleQuickReplyForm()" style="background: #25D366; border: none; border-radius: 4px; color: #e3e3e3; font-size: 0.6rem; font-weight: 600; padding: 0.15rem 0.4rem; cursor: pointer;">+ Nova</button>
                             </div>
                             <input type="text" id="qr-search" placeholder="Buscar atalho..." oninput="filterQuickReplies(this.value)"
                                 style="width: 100%; padding: 0.25rem 0.4rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.7rem; margin-bottom: 0.375rem; box-sizing: border-box;">
@@ -219,7 +219,7 @@
                                 <input type="text" id="qr-new-shortcut" placeholder="Atalho (ex: endereco)" style="width: 100%; padding: 0.25rem 0.4rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem; margin-bottom: 0.2rem; box-sizing: border-box;">
                                 <textarea id="qr-new-text" placeholder="Texto da resposta" rows="2" style="width: 100%; padding: 0.25rem 0.4rem; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; color: #e3e3e3; font-size: 0.65rem; resize: none; margin-bottom: 0.2rem; box-sizing: border-box;"></textarea>
                                 <div style="display: flex; gap: 0.25rem;">
-                                    <button type="button" onclick="saveQuickReply()" style="flex: 1; padding: 0.2rem; background: #25D366; color: #000; font-weight: 600; font-size: 0.6rem; border: none; border-radius: 0.25rem; cursor: pointer;">Salvar</button>
+                                    <button type="button" onclick="saveQuickReply()" style="flex: 1; padding: 0.2rem; background: #25D366; color: #e3e3e3; font-weight: 600; font-size: 0.6rem; border: none; border-radius: 0.25rem; cursor: pointer;">Salvar</button>
                                     <button type="button" onclick="toggleQuickReplyForm()" style="padding: 0.2rem 0.4rem; background: #1a1a1a; color: #888; font-size: 0.6rem; border: 1px solid #252525; border-radius: 0.25rem; cursor: pointer;">Cancelar</button>
                                 </div>
                             </div>
@@ -243,7 +243,7 @@
                 {{-- Botao Enviar --}}
                 <div style="flex-shrink: 0; padding-bottom: 1px;">
                     <button type="button" onclick="sendWaMessage()" id="wa-send-btn"
-                        style="height: 34px; padding: 0 0.75rem; border-radius: 0.375rem; background: #25D366; color: #000; font-weight: 600; font-size: 0.75rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; white-space: nowrap; transition: opacity 0.15s;"
+                        style="height: 34px; padding: 0 0.75rem; border-radius: 0.375rem; background: #25D366; color: #e3e3e3; font-weight: 600; font-size: 0.75rem; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; white-space: nowrap; transition: opacity 0.15s;"
                         onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
                         <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
@@ -780,7 +780,7 @@
                 <textarea class="wa-edit-input" style="width:100%; min-height:40px; background:#003d33; border:1px solid #25D366; border-radius:4px; color:#e3e3e3; font-size:0.8rem; padding:4px 6px; resize:none; font-family:inherit;">${escHtml(currentText)}</textarea>
                 <div style="display:flex; gap:4px; justify-content:flex-end;">
                     <button type="button" class="wa-edit-cancel" style="padding:2px 8px; background:#333; color:#888; border:none; border-radius:4px; font-size:0.65rem; cursor:pointer;">Cancelar</button>
-                    <button type="button" class="wa-edit-save" style="padding:2px 8px; background:#25D366; color:#000; border:none; border-radius:4px; font-size:0.65rem; font-weight:600; cursor:pointer;">Salvar</button>
+                    <button type="button" class="wa-edit-save" style="padding:2px 8px; background:#25D366; color:#e3e3e3; border:none; border-radius:4px; font-size:0.65rem; font-weight:600; cursor:pointer;">Salvar</button>
                 </div>
             </div>`;
 

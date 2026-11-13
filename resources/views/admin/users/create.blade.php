@@ -105,7 +105,7 @@
                     <div>
                         <input type="hidden" name="active" value="0">
                         <label style="position: relative; display: inline-flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" name="active" value="1" checked style="position: absolute; opacity: 0; width: 0; height: 0;" onchange="this.parentElement.querySelector('.toggle-bg').style.background = this.checked ? '#2563eb' : '#d1d5db'; this.parentElement.querySelector('.toggle-dot').style.transform = this.checked ? 'translateX(1.25rem)' : 'translateX(0)'">
+                            <input type="checkbox" name="active" value="1" checked style="position: absolute; opacity: 0; width: 0; height: 0;" onchange="this.parentElement.querySelector('.toggle-bg').style.background = this.checked ? '#2563eb' : '#222222'; this.parentElement.querySelector('.toggle-dot').style.transform = this.checked ? 'translateX(1.25rem)' : 'translateX(0)'">
                             <div class="toggle-bg" style="width: 2.5rem; height: 1.25rem; background: #2563eb; border-radius: 9999px; transition: background 0.2s;"></div>
                             <div class="toggle-dot" style="position: absolute; left: 0.125rem; width: 1rem; height: 1rem; background: #141414; border-radius: 9999px; transition: transform 0.2s; transform: translateX(1.25rem); box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></div>
                         </label>

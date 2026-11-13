@@ -80,7 +80,7 @@
                                                     :style="highlighted === idx
                                                         ? 'width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; border: none; cursor: pointer; background: rgba(59,130,246,0.1); outline: none;'
                                                         : 'width: 100%; text-align: left; padding: 8px 12px; font-size: 0.85rem; border: none; cursor: pointer; background: #1a1a1a; outline: none;'"
-                                                    onmouseover="if(this.style.background==='white') this.style.background='#1a1a1a'"
+                                                    onmouseover="if(this.style.background==='#141414') this.style.background='#1a1a1a'"
                                                     onmouseout="this.style.background=''">
                                                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                                                     <div style="min-width: 0; flex: 1;">

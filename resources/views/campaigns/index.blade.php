@@ -5,7 +5,7 @@
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
             <h1 style="font-size: 1.25rem; font-weight: 700; color: #e3e3e3;">📢 Campanhas WhatsApp</h1>
             <a href="{{ route('campaigns.create') }}"
-               style="padding: 0.5rem 1rem; background: #25D366; color: #000; font-weight: 600; font-size: 0.8rem; border-radius: 0.5rem; text-decoration: none;">
+               style="padding: 0.5rem 1rem; background: #25D366; color: #e3e3e3; font-weight: 600; font-size: 0.8rem; border-radius: 0.5rem; text-decoration: none;">
                 + Nova Campanha
             </a>
         </div>

@@ -489,7 +489,7 @@
 
             <!-- CONTAS A PAGAR HOJE -->
             @if($todayPayables->count() > 0)
-            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.875rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 0.875rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; font-size: 0.8rem;">
                 <svg style="width: 1rem; height: 1rem; color: #fca5a5; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                 </svg>
@@ -560,17 +560,17 @@
                     margin-top: 2px;
                     opacity: 0.8;
                 }
-                .sn-card-danger { background: rgba(239,68,68,0.1); border-color: #fecaca; color: #fca5a5; }
+                .sn-card-danger { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.35); color: #fca5a5; }
                 .sn-card-warning { background: rgba(245,158,11,0.08); border-color: rgba(253,230,138,0.7); color: #fbbf24; }
                 .sn-card-info { background: rgba(56,189,248,0.08); border-color: rgba(125,211,252,0.35); color: #7dd3fc; }
-                .sn-card-success { background: rgba(16,185,129,0.1); border-color: #bbf7d0; color: #6ee7b7; }
+                .sn-card-success { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.35); color: #6ee7b7; }
                 .sn-ok {
                     display: inline-flex;
                     align-items: center;
                     gap: 6px;
                     padding: 8px 14px;
                     background: rgba(16,185,129,0.1);
-                    border: 1px solid #bbf7d0;
+                    border: 1px solid rgba(16,185,129,0.35);
                     border-radius: 10px;
                     color: #6ee7b7;
                     font-size: 0.8rem;
@@ -648,12 +648,12 @@
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         @if(count($stockItems['used']) > 0)
-                        <button @click="copyUsed()" class="inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-orange-50 text-orange-600 text-[0.7rem] font-bold rounded-lg border border-orange-200 cursor-pointer transition-colors whitespace-nowrap hover:bg-orange-100">
+                        <button @click="copyUsed()" class="inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-orange-500/10 text-orange-600 text-[0.7rem] font-bold rounded-lg border border-orange-500/30 cursor-pointer transition-colors whitespace-nowrap hover:bg-orange-500/15">
                             <span x-text="copiedUsed ? '✓ Copiado!' : '📋 Copiar Seminovos'"></span>
                         </button>
                         @endif
                         @if(count($stockItems['new']) > 0)
-                        <button @click="copyNew()" class="inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-blue-50 text-blue-600 text-[0.7rem] font-bold rounded-lg border border-blue-200 cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-100">
+                        <button @click="copyNew()" class="inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-blue-500/10 text-blue-600 text-[0.7rem] font-bold rounded-lg border border-blue-500/30 cursor-pointer transition-colors whitespace-nowrap hover:bg-blue-500/15">
                             <span x-text="copiedNew ? '✓ Copiado!' : '📋 Copiar Novos'"></span>
                         </button>
                         @endif
@@ -665,11 +665,11 @@
                         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
                             <span style="font-size: 1.125rem;">🔄</span>
                             <h3 style="font-size: 0.9375rem; font-weight: 800; color: #e3e3e3; margin: 0;">Seminovos</h3>
-                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: #1414147ed; color: #ea580c;">{{ $stockItems['usedCount'] }} un.</span>
+                            <span style="font-size: 0.65rem; font-weight: 700; padding: 0.125rem 0.5rem; border-radius: 9999px; background: rgba(249,115,22,0.12); color: #ea580c;">{{ $stockItems['usedCount'] }} un.</span>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.625rem;">
                             @foreach($stockItems['used'] as $idx => $item)
-                            <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200 p-3.5 relative flex flex-col">
+                            <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-500/30 p-3.5 relative flex flex-col">
                                 <div class="flex items-start justify-between gap-1">
                                     <span class="text-[0.55rem] font-extrabold px-1.5 py-0.5 rounded-full bg-orange-600 text-white uppercase tracking-wide">SEMINOVO</span>
                                     @if($item['qty'] > 1)
@@ -687,13 +687,13 @@
                                 </div>
                                 <div class="flex flex-wrap gap-1 mb-1.5">
                                     @if($item['battery'])
-                                    <span class="text-[0.6rem] font-semibold px-1.5 py-px rounded-full {{ $item['battery'] >= 80 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600' }}">🔋 {{ $item['battery'] }}%</span>
+                                    <span class="text-[0.6rem] font-semibold px-1.5 py-px rounded-full {{ $item['battery'] >= 80 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600' }}">🔋 {{ $item['battery'] }}%</span>
                                     @endif
                                     @if($item['has_box'])
-                                    <span class="text-[0.6rem] font-semibold px-1.5 py-px rounded-full bg-green-50 text-green-600">📦 Caixa</span>
+                                    <span class="text-[0.6rem] font-semibold px-1.5 py-px rounded-full bg-green-500/10 text-green-600">📦 Caixa</span>
                                     @endif
                                     @if($item['has_cable'])
-                                    <span class="text-[0.6rem] font-semibold px-1.5 py-px rounded-full bg-green-50 text-green-600">🔌 Cabo</span>
+                                    <span class="text-[0.6rem] font-semibold px-1.5 py-px rounded-full bg-green-500/10 text-green-600">🔌 Cabo</span>
                                     @endif
                                 </div>
                                 @if(!empty($item['notes']))
@@ -724,7 +724,7 @@
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.625rem;">
                             @foreach($stockItems['new'] as $item)
-                            <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border-radius: 0.75rem; border: 1px solid #bfdbfe; padding: 0.875rem; position: relative;">
+                            <div style="background: linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(16,185,129,0.08) 100%); border-radius: 0.75rem; border: 1px solid #bfdbfe; padding: 0.875rem; position: relative;">
                                 <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.25rem;">
                                     <span style="font-size: 0.55rem; font-weight: 800; padding: 0.1rem 0.375rem; border-radius: 9999px; background: #2563eb; color: white; text-transform: uppercase; letter-spacing: 0.04em;">NOVO</span>
                                     @if($item['qty'] > 1)

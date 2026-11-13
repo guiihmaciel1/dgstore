@@ -4,7 +4,7 @@
         <div class="px-6 lg:px-8">
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
+                <div style="margin-bottom: 1rem; padding: 0.75rem 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7; font-size: 0.875rem;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -212,7 +212,7 @@
                                             <td style="padding: 0.625rem 1rem;">
                                                 @if($commission->is_manual)
                                                     <span style="display: inline-flex; align-items: center; gap: 0.375rem;">
-                                                        <span style="font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 9999px; background: #f3e8ff; color: #c4b5fd; text-transform: uppercase; letter-spacing: 0.03em;">Manual</span>
+                                                        <span style="font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 9999px; background: rgba(139,92,246,0.15); color: #c4b5fd; text-transform: uppercase; letter-spacing: 0.03em;">Manual</span>
                                                         <span style="color: #a4a4a4;">{{ $commission->description }}</span>
                                                     </span>
                                                 @else
@@ -323,7 +323,7 @@
                                             <td style="padding: 0.625rem 1rem; color: #a4a4a4;">{{ $withdrawal->reason }}</td>
                                             <td style="padding: 0.625rem 1rem; text-align: center;">
                                                 <span style="font-size: 0.7rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px;
-                                                    {{ $withdrawal->status === 'approved' ? 'background: rgba(16,185,129,0.1); color: #6ee7b7;' : ($withdrawal->status === 'rejected' ? 'background: rgba(239,68,68,0.1); color: #fca5a5;' : 'background: #141414beb; color: #fbbf24;') }}">
+                                                    {{ $withdrawal->status === 'approved' ? 'background: rgba(16,185,129,0.1); color: #6ee7b7;' : ($withdrawal->status === 'rejected' ? 'background: rgba(239,68,68,0.1); color: #fca5a5;' : 'background: rgba(245,158,11,0.1); color: #fbbf24;') }}">
                                                     {{ $withdrawal->status === 'approved' ? 'Aprovado' : ($withdrawal->status === 'rejected' ? 'Rejeitado' : 'Pendente') }}
                                                 </span>
                                             </td>

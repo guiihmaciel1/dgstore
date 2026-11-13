@@ -70,10 +70,10 @@
                             {{ $kpi['prefix'] }}{{ $kpi['monetary'] ? number_format((float)$val, 2, ',', '.') : $val }}
                         </div>
                         <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                            <span title="vs mês anterior" style="display: inline-block; padding: 0.1rem 0.4rem; background: {{ $prevPositive ? '#f0fdf4' : '#fef2f2' }}; color: {{ $prevPositive ? '#16a34a' : '#dc2626' }}; font-size: 0.65rem; font-weight: 600; border-radius: 0.25rem;">
+                            <span title="vs mês anterior" style="display: inline-block; padding: 0.1rem 0.4rem; background: {{ $prevPositive ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; color: {{ $prevPositive ? '#16a34a' : '#dc2626' }}; font-size: 0.65rem; font-weight: 600; border-radius: 0.25rem;">
                                 {{ $prevPositive ? '+' : '' }}{{ number_format($deltaPrev, 1, ',', '') }}% mês
                             </span>
-                            <span title="vs mesmo mês ano anterior" style="display: inline-block; padding: 0.1rem 0.4rem; background: {{ $yearPositive ? '#eff6ff' : '#fef2f2' }}; color: {{ $yearPositive ? '#2563eb' : '#dc2626' }}; font-size: 0.65rem; font-weight: 600; border-radius: 0.25rem;">
+                            <span title="vs mesmo mês ano anterior" style="display: inline-block; padding: 0.1rem 0.4rem; background: {{ $yearPositive ? 'rgba(59,130,246,0.15)' : 'rgba(239,68,68,0.15)' }}; color: {{ $yearPositive ? '#2563eb' : '#dc2626' }}; font-size: 0.65rem; font-weight: 600; border-radius: 0.25rem;">
                                 {{ $yearPositive ? '+' : '' }}{{ number_format($deltaYear, 1, ',', '') }}% ano
                             </span>
                         </div>
@@ -112,7 +112,7 @@
                                     $isTop3 = $index < 3;
                                     $medalColors = ['#fbbf24', '#9ca3af', '#d97706'];
                                 @endphp
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); {{ $isTop3 ? 'background: rgba(245,158,11,0.1);' : '' }}" onmouseover="this.style.background='{{ $isTop3 ? '#fef9c3' : '#f9fafb' }}'" onmouseout="this.style.background='{{ $isTop3 ? '#fefce8' : 'white' }}'">
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04); {{ $isTop3 ? 'background: rgba(245,158,11,0.1);' : '' }}" onmouseover="this.style.background='{{ $isTop3 ? 'rgba(245,158,11,0.15)' : '#1a1a1a' }}'" onmouseout="this.style.background='{{ $isTop3 ? 'rgba(245,158,11,0.15)' : '#141414' }}'">
                                     <td style="padding: 0.75rem 1.5rem;">
                                         <div style="display: flex; align-items: center; gap: 0.75rem;">
                                             @if($isTop3)
@@ -177,7 +177,7 @@
                         {
                             label: 'Faturamento',
                             data: revenueData,
-                            borderColor: '#111827',
+                            borderColor: '#e3e3e3',
                             backgroundColor: 'rgba(17, 24, 39, 0.1)',
                             borderWidth: 2,
                             tension: 0.3,

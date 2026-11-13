@@ -18,7 +18,7 @@
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
                                 <h1 class="text-lg sm:text-2xl font-bold text-dg-100 truncate">{{ $customer->name }}</h1>
                                 @if($customer->is_birthday_month)
-                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; background: #fef3c7; color: #d97706; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; white-space: nowrap;">
+                                    <span style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.5rem; background: rgba(245,158,11,0.15); color: #d97706; font-size: 0.75rem; font-weight: 600; border-radius: 9999px; white-space: nowrap;">
                                         <svg style="width: 0.875rem; height: 0.875rem;" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L10 6.015 6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1zm-5 8.274l-.818 2.552c.25.112.526.174.818.174.292 0 .569-.062.818-.174L5 10.274zm10 0l-.818 2.552c.25.112.526.174.818.174.292 0 .569-.062.818-.174L15 10.274z"/>
                                         </svg>
@@ -67,7 +67,7 @@
             </div>
 
             @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #bbf7d0; border-radius: 0.5rem; color: #16a34a;">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #16a34a;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -154,12 +154,12 @@
                                     @forelse($customer->sales as $sale)
                                         @php
                                             $statusColors = [
-                                                'paid' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                                'pending' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
-                                                'partial' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                                'cancelled' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
+                                                'paid' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                                'pending' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04'],
+                                                'partial' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                                'cancelled' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
                                             ];
-                                            $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                            $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                         @endphp
                                         <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
                                             <td style="padding: 0.75rem 1.5rem; font-weight: 600; color: #e3e3e3;">
@@ -226,14 +226,14 @@
                                     <div style="display: flex; gap: 0.375rem; flex-shrink: 0;">
                                         <a :href="'{{ route('tools.negotiation-simulator') }}?snap_product=' + encodeURIComponent(snap.product_description) + '&snap_price=' + snap.product_price + (snap.product_cost ? '&snap_cost=' + snap.product_cost : '') + (snap.trade_in_model ? '&snap_tradein_model=' + encodeURIComponent(snap.trade_in_model) + '&snap_tradein_value=' + (snap.trade_in_value || '') + '&snap_tradein_system_value=' + (snap.trade_in_system_value || '') + '&snap_tradein_storage=' + encodeURIComponent(snap.trade_in_storage || '') + '&snap_tradein_battery=' + (snap.trade_in_battery || '') : '')"
                                            style="padding: 0.25rem 0.5rem; background: rgba(99,102,241,0.1); color: #4f46e5; border: 1px solid #c7d2fe; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; text-decoration: none;"
-                                           onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'">
+                                           onmouseover="this.style.background='rgba(99,102,241,0.15)'" onmouseout="this.style.background='rgba(99,102,241,0.15)'">
                                             Abrir
                                         </a>
                                         <button type="button"
                                                 @click="if(confirm('Excluir esta simulação?')) { deleting = snap.id; fetch('/api/simulations/' + snap.id, { method: 'DELETE', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content } }).then(() => { snapshots = snapshots.filter(s => s.id !== snap.id); deleting = null; }); }"
                                                 :disabled="deleting === snap.id"
-                                                style="padding: 0.25rem 0.5rem; background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid #fecaca; border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; cursor: pointer;"
-                                                onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+                                                style="padding: 0.25rem 0.5rem; background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.35); border-radius: 0.25rem; font-size: 0.625rem; font-weight: 600; cursor: pointer;"
+                                                onmouseover="this.style.background='rgba(239,68,68,0.15)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">
                                             <span x-show="deleting !== snap.id">Excluir</span>
                                             <span x-show="deleting === snap.id">...</span>
                                         </button>

@@ -550,7 +550,7 @@
     function showAiError(message) {
         const el = document.getElementById('ai-result');
         el.style.display = 'block';
-        el.innerHTML = '<div style="padding:10px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;color:#991b1b;font-size:12px;">'
+        el.innerHTML = '<div style="padding:10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.35);border-radius:6px;color:#fca5a5;font-size:12px;">'
             + '<strong>⚠ Erro na IA:</strong> ' + message
             + '<br><small style="color:#6b7280;margin-top:4px;display:block;">💡 Dica: digite o IMEI no campo acima para identificação automática via banco local (sem usar IA).</small>'
             + '</div>';

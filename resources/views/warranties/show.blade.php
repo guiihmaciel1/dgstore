@@ -94,7 +94,7 @@
                                             $isActive = $warranty->is_supplier_warranty_active;
                                             $daysRemaining = $warranty->supplier_days_remaining;
                                         @endphp
-                                        <span style="padding: 0.25rem 0.75rem; background: {{ $isActive ? '#f0fdf4' : '#fef2f2' }}; color: {{ $isActive ? '#16a34a' : '#dc2626' }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
+                                        <span style="padding: 0.25rem 0.75rem; background: {{ $isActive ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; color: {{ $isActive ? '#16a34a' : '#dc2626' }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                             {{ $isActive ? 'Ativa' : 'Expirada' }}
                                         </span>
                                     @endif
@@ -127,7 +127,7 @@
                                             $isActive = $warranty->is_customer_warranty_active;
                                             $daysRemaining = $warranty->customer_days_remaining;
                                         @endphp
-                                        <span style="padding: 0.25rem 0.75rem; background: {{ $isActive ? '#f0fdf4' : '#fef2f2' }}; color: {{ $isActive ? '#16a34a' : '#dc2626' }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
+                                        <span style="padding: 0.25rem 0.75rem; background: {{ $isActive ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)' }}; color: {{ $isActive ? '#16a34a' : '#dc2626' }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                             {{ $isActive ? 'Ativa' : 'Expirada' }}
                                         </span>
                                     @endif
@@ -155,7 +155,7 @@
             <!-- Novo Acionamento -->
             @if($warranty->canClaimSupplierWarranty() || $warranty->canClaimCustomerWarranty())
             <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin-top: 1.5rem;">
-                <div style="padding: 1rem; background: #fef3c7; border-bottom: 1px solid #fde68a;">
+                <div style="padding: 1rem; background: rgba(245,158,11,0.15); border-bottom: 1px solid rgba(245,158,11,0.35);">
                     <h3 style="font-weight: 600; color: #fbbf24;">Registrar Acionamento de Garantia</h3>
                 </div>
                 <div style="padding: 1.25rem;">
@@ -207,17 +207,17 @@
                                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                                         @php
                                             $statusColors = [
-                                                'opened' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
-                                                'in_progress' => ['bg' => '#eff6ff', 'color' => '#2563eb'],
-                                                'resolved' => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
-                                                'denied' => ['bg' => '#fef2f2', 'color' => '#dc2626'],
+                                                'opened' => ['bg' => 'rgba(245,158,11,0.15)', 'color' => '#ca8a04'],
+                                                'in_progress' => ['bg' => 'rgba(59,130,246,0.15)', 'color' => '#2563eb'],
+                                                'resolved' => ['bg' => 'rgba(16,185,129,0.15)', 'color' => '#16a34a'],
+                                                'denied' => ['bg' => 'rgba(239,68,68,0.15)', 'color' => '#dc2626'],
                                             ];
-                                            $sc = $statusColors[$claim->status->value] ?? ['bg' => '#f3f4f6', 'color' => '#6b7280'];
+                                            $sc = $statusColors[$claim->status->value] ?? ['bg' => '#1a1a1a', 'color' => '#6b7280'];
                                         @endphp
                                         <span style="padding: 0.25rem 0.75rem; background: {{ $sc['bg'] }}; color: {{ $sc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                             {{ $claim->status->label() }}
                                         </span>
-                                        <span style="padding: 0.25rem 0.75rem; background: {{ $claim->type->value === 'supplier' ? '#eff6ff' : '#f5f3ff' }}; color: {{ $claim->type->value === 'supplier' ? '#2563eb' : '#7c3aed' }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
+                                        <span style="padding: 0.25rem 0.75rem; background: {{ $claim->type->value === 'supplier' ? 'rgba(59,130,246,0.15)' : 'rgba(139,92,246,0.15)' }}; color: {{ $claim->type->value === 'supplier' ? '#2563eb' : '#7c3aed' }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
                                             {{ $claim->type->shortLabel() }}
                                         </span>
                                     </div>
