@@ -1,191 +1,149 @@
 <x-app-layout>
     <x-slot name="title">Vendas</x-slot>
+    @php
+        $field = 'w-full rounded-lg border border-border bg-surface-overlay px-3 py-2 text-sm text-dg-100 placeholder-dg-500 focus:border-dg-400 focus:ring-2 focus:ring-dg-400/20';
+        $fieldLabel = 'mb-1 block text-xs font-medium text-dg-400';
+        $money = fn ($v) => 'R$ ' . number_format((float) $v, 2, ',', '.');
+        $canSeeFinancials = auth()->user()->canViewFinancials();
+        $activeFilters = collect($filters)->filter()->count();
+        $statusTone = [
+            'paid' => 'bg-emerald-500/15 text-emerald-400',
+            'pending' => 'bg-amber-500/15 text-amber-300',
+            'partial' => 'bg-sky-500/15 text-sky-300',
+            'cancelled' => 'bg-red-500/15 text-red-400',
+        ];
+    @endphp
     <div class="py-6">
-        <div class="px-6 lg:px-8">
-            @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem; color: #6ee7b7;">
-                    {{ session('success') }}
-                </div>
-            @endif
-            
-            @if(session('error'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem; color: #fca5a5;">
-                    {{ session('error') }}
-                </div>
-            @endif
+        <div class="px-4 sm:px-6 lg:px-8">
+            <x-flash class="mb-4" />
 
-            <!-- Cabeçalho -->
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-dg-100">Vendas</h1>
-                    <p class="text-sm text-dg-500">Histórico de vendas realizadas</p>
-                </div>
-                <a href="{{ route('sales.create') }}" 
-                   class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-surface text-white font-semibold rounded-lg hover:bg-surface-elevated transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    <span>Nova Venda</span>
-                </a>
-            </div>
+            <x-page-header title="Vendas" subtitle="Histórico de vendas realizadas">
+                <x-slot name="actions">
+                    <a href="{{ route('sales.create') }}" class="dg-btn-primary font-semibold">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        Nova venda
+                    </a>
+                </x-slot>
+            </x-page-header>
 
-            <!-- Card Principal -->
-            <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
-                
+            <div class="dg-card overflow-hidden">
                 <!-- Filtros -->
-                <div class="p-4 border-b border-border bg-surface">
-                    <form method="GET" action="{{ route('sales.index') }}">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
-                            <div>
-                                <label class="block text-xs font-medium text-dg-500 mb-1">Buscar</label>
-                                <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nº da venda, cliente..." 
-                                       class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm focus:border-gray-900 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-dg-500 mb-1">Status</label>
-                                <select name="payment_status" class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-gray-900 focus:outline-none">
-                                    <option value="">Todos</option>
-                                    @foreach($paymentStatuses as $status)
-                                        <option value="{{ $status->value }}" {{ ($filters['payment_status'] ?? '') === $status->value ? 'selected' : '' }}>
-                                            {{ $status->label() }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-dg-500 mb-1">Pagamento</label>
-                                <select name="payment_method" class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-gray-900 focus:outline-none">
-                                    <option value="">Todos</option>
-                                    @foreach($paymentMethods as $method)
-                                        <option value="{{ $method->value }}" {{ ($filters['payment_method'] ?? '') === $method->value ? 'selected' : '' }}>
-                                            {{ $method->label() }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-dg-500 mb-1">Tipo</label>
-                                <select name="sale_type" class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm bg-surface-raised focus:border-gray-900 focus:outline-none">
-                                    <option value="">Todos os tipos</option>
-                                    <option value="cliente_final" {{ ($filters['sale_type'] ?? '') === 'cliente_final' ? 'selected' : '' }}>Cliente Final</option>
-                                    <option value="repasse" {{ ($filters['sale_type'] ?? '') === 'repasse' ? 'selected' : '' }}>Repasse</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-dg-500 mb-1">Data Início</label>
-                                <input type="date" name="date_from" value="{{ $filters['date_from'] }}" 
-                                       class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm focus:border-gray-900 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-dg-500 mb-1">Data Fim</label>
-                                <input type="date" name="date_to" value="{{ $filters['date_to'] }}" 
-                                       class="w-full px-3 py-2 border border-border-strong rounded-lg text-sm focus:border-gray-900 focus:outline-none">
-                            </div>
+                <form method="GET" action="{{ route('sales.index') }}" class="border-b border-border p-4">
+                    <div class="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+                        <div>
+                            <label for="s-search" class="{{ $fieldLabel }}">Buscar</label>
+                            <input id="s-search" type="text" name="search" value="{{ $filters['search'] }}" placeholder="Nº da venda, cliente..." class="{{ $field }}">
                         </div>
-                        <div class="flex items-center gap-3 mt-4">
-                            <button type="submit" class="inline-flex items-center gap-2 px-5 py-2 bg-surface text-white font-semibold rounded-lg text-sm hover:bg-surface-elevated transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                                Filtrar
-                            </button>
-                            <a href="{{ route('sales.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-surface-raised text-dg-400 font-medium rounded-lg border border-border-strong text-sm hover:bg-surface transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                                Limpar
-                            </a>
-                            @if(collect($filters)->filter()->isNotEmpty())
-                                <span class="text-xs text-dg-500">
-                                    {{ collect($filters)->filter()->count() }} {{ collect($filters)->filter()->count() === 1 ? 'filtro ativo' : 'filtros ativos' }}
-                                </span>
-                            @endif
+                        <div>
+                            <label for="s-status" class="{{ $fieldLabel }}">Status</label>
+                            <select id="s-status" name="payment_status" class="{{ $field }}">
+                                <option value="">Todos</option>
+                                @foreach($paymentStatuses as $status)
+                                    <option value="{{ $status->value }}" {{ ($filters['payment_status'] ?? '') === $status->value ? 'selected' : '' }}>{{ $status->label() }}</option>
+                                @endforeach
+                            </select>
                         </div>
-                    </form>
-                </div>
+                        <div>
+                            <label for="s-method" class="{{ $fieldLabel }}">Pagamento</label>
+                            <select id="s-method" name="payment_method" class="{{ $field }}">
+                                <option value="">Todos</option>
+                                @foreach($paymentMethods as $method)
+                                    <option value="{{ $method->value }}" {{ ($filters['payment_method'] ?? '') === $method->value ? 'selected' : '' }}>{{ $method->label() }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="s-type" class="{{ $fieldLabel }}">Tipo</label>
+                            <select id="s-type" name="sale_type" class="{{ $field }}">
+                                <option value="">Todos os tipos</option>
+                                <option value="cliente_final" {{ ($filters['sale_type'] ?? '') === 'cliente_final' ? 'selected' : '' }}>Cliente Final</option>
+                                <option value="repasse" {{ ($filters['sale_type'] ?? '') === 'repasse' ? 'selected' : '' }}>Repasse</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="s-from" class="{{ $fieldLabel }}">Data início</label>
+                            <input id="s-from" type="date" name="date_from" value="{{ $filters['date_from'] }}" class="{{ $field }}">
+                        </div>
+                        <div>
+                            <label for="s-to" class="{{ $fieldLabel }}">Data fim</label>
+                            <input id="s-to" type="date" name="date_to" value="{{ $filters['date_to'] }}" class="{{ $field }}">
+                        </div>
+                    </div>
+                    <div class="mt-4 flex flex-wrap items-center gap-3">
+                        <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2 text-sm font-semibold text-dg-950 transition-colors hover:bg-dg-100">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            Filtrar
+                        </button>
+                        <a href="{{ route('sales.index') }}" class="inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-medium text-dg-300 transition-colors hover:text-dg-100">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            Limpar
+                        </a>
+                        @if($activeFilters)
+                            <span class="text-xs text-dg-500">{{ $activeFilters }} {{ $activeFilters === 1 ? 'filtro ativo' : 'filtros ativos' }}</span>
+                        @endif
+                    </div>
+                </form>
 
                 <!-- Tabela -->
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
-                                <th style="padding: 0.75rem 1.5rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Venda</th>
-                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Cliente</th>
-                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Tipo</th>
-                                <th style="padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Total</th>
-                                @if(auth()->user()->canViewFinancials())
-                                <th style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Lucro Bruto</th>
-                                <th style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Comissão</th>
-                                <th style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Lucro Líq.</th>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="dg-table-header">
+                            <tr>
+                                <th scope="col" class="px-5 py-3 text-left">Venda</th>
+                                <th scope="col" class="px-4 py-3 text-left">Cliente</th>
+                                <th scope="col" class="px-4 py-3 text-left">Tipo</th>
+                                <th scope="col" class="px-4 py-3 text-right">Total</th>
+                                @if($canSeeFinancials)
+                                    <th scope="col" class="px-3 py-3 text-right">Lucro bruto</th>
+                                    <th scope="col" class="px-3 py-3 text-right">Comissão</th>
+                                    <th scope="col" class="px-3 py-3 text-right">Lucro líq.</th>
                                 @endif
-                                <th style="padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Status</th>
-                                <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Data</th>
-                                <th style="padding: 0.75rem 1.5rem; text-align: right; font-size: 0.75rem; font-weight: 600; color: #818181; text-transform: uppercase; letter-spacing: 0.05em;">Ações</th>
+                                <th scope="col" class="px-4 py-3 text-center">Status</th>
+                                <th scope="col" class="px-4 py-3 text-left">Data</th>
+                                <th scope="col" class="px-5 py-3 text-right">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-border-subtle">
                             @forelse($sales as $sale)
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-                                    <td style="padding: 0.75rem 1rem;">
-                                        <div style="font-size: 0.75rem; font-weight: 600; color: #818181;">{{ $sale->sale_number }}</div>
-                                        <div style="font-size: 0.6875rem; color: #515151;">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name }}</div>
+                                @php $itemsLabel = $sale->items->map(fn($i) => ($i->quantity > 1 ? $i->quantity.'x ' : '') . $i->product_name)->implode(', '); @endphp
+                                <tr class="transition-colors hover:bg-surface-overlay/60">
+                                    <td class="whitespace-nowrap px-5 py-3">
+                                        <p class="text-xs font-semibold text-dg-300">{{ $sale->sale_number }}</p>
+                                        <p class="text-[0.6875rem] text-dg-500">{{ $sale->seller?->name ?? $sale->seller_name ?? $sale->user?->name }}</p>
                                     </td>
-                                    <td style="padding: 0.75rem 1rem;">
-                                        <div style="font-size: 0.875rem; color: #a4a4a4;">{{ $sale->customer?->name ?? 'Cliente não informado' }}</div>
-                                        <div style="font-size: 0.6875rem; color: #666666; margin-top: 0.125rem; max-width: 18rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $sale->items->map(fn($i) => ($i->quantity > 1 ? $i->quantity.'x ' : '') . $i->product_name)->implode(', ') }}">
-                                            {{ $sale->items->map(fn($i) => ($i->quantity > 1 ? $i->quantity.'x ' : '') . $i->product_name)->implode(', ') }}
-                                        </div>
+                                    <td class="px-4 py-3">
+                                        <p class="text-sm text-dg-100">{{ $sale->customer?->name ?? 'Cliente não informado' }}</p>
+                                        <p class="mt-0.5 max-w-[18rem] truncate text-[0.6875rem] text-dg-500" title="{{ $itemsLabel }}">{{ $itemsLabel }}</p>
                                     </td>
-                                    <td style="padding: 0.75rem 1rem;">
+                                    <td class="px-4 py-3">
                                         @if($sale->sale_type)
-                                            <span style="display: inline-block; padding: 0.25rem 0.625rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; {{ $sale->sale_type->value === 'repasse' ? 'background: rgba(168,85,247,0.1); color: #c4b5fd;' : 'background: rgba(59,130,246,0.1); color: #3b82f6;' }}">
+                                            <span class="inline-block whitespace-nowrap rounded-md px-2.5 py-1 text-xs font-semibold {{ $sale->sale_type->value === 'repasse' ? 'bg-violet-500/10 text-violet-300' : 'bg-sky-500/10 text-sky-300' }}">
                                                 {{ $sale->sale_type->label() }}
                                             </span>
                                         @else
-                                            <span style="font-size: 0.75rem; color: #515151;">N/A</span>
+                                            <span class="text-xs text-dg-600">N/A</span>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.75rem 1rem; text-align: right; font-weight: 600; font-size: 1rem; color: #e3e3e3;">
-                                        {{ $sale->formatted_total }}
-                                    </td>
-                                    @if(auth()->user()->canViewFinancials())
-                                    @php
-                                        $commissionTotal = $sale->commissions->sum('commission_amount');
-                                        $netProfit = $sale->profit - $commissionTotal;
-                                    @endphp
-                                    <td style="padding: 0.75rem 0.75rem; text-align: right; font-weight: 600; font-size: 0.8125rem; color: {{ $sale->profit >= 0 ? '#16a34a' : '#dc2626' }};">
-                                        R$ {{ number_format($sale->profit, 2, ',', '.') }}
-                                    </td>
-                                    <td style="padding: 0.75rem 0.75rem; text-align: right; font-size: 0.8125rem; font-weight: 600; color: {{ $commissionTotal > 0 ? '#7c3aed' : '#515151' }};">
-                                        {{ $commissionTotal > 0 ? 'R$ ' . number_format($commissionTotal, 2, ',', '.') : '-' }}
-                                    </td>
-                                    <td style="padding: 0.75rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ $netProfit >= 0 ? '#059669' : '#dc2626' }};">
-                                        R$ {{ number_format($netProfit, 2, ',', '.') }}
-                                    </td>
-                                    @endif
-                                    <td style="padding: 0.75rem 1rem; text-align: center;">
+                                    <td class="whitespace-nowrap px-4 py-3 text-right text-base font-semibold tabular-nums text-dg-50">{{ $sale->formatted_total }}</td>
+                                    @if($canSeeFinancials)
                                         @php
-                                            $statusColors = [
-                                                'paid' => ['bg' => 'rgba(22,163,106,0.12)', 'color' => '#4ade80'],
-                                                'pending' => ['bg' => 'rgba(202,138,4,0.12)', 'color' => '#fbbf24'],
-                                                'partial' => ['bg' => 'rgba(37,99,235,0.12)', 'color' => '#60a5fa'],
-                                                'cancelled' => ['bg' => 'rgba(220,38,38,0.12)', 'color' => '#f87171'],
-                                            ];
-                                            $sc = $statusColors[$sale->payment_status->value] ?? ['bg' => 'rgba(255,255,255,0.06)', 'color' => '#818181'];
+                                            $commissionTotal = $sale->commissions->sum('commission_amount');
+                                            $netProfit = $sale->profit - $commissionTotal;
                                         @endphp
-                                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background: {{ $sc['bg'] }}; color: {{ $sc['color'] }}; font-size: 0.75rem; font-weight: 600; border-radius: 9999px;">
+                                        <td class="whitespace-nowrap px-3 py-3 text-right text-[0.8125rem] font-semibold tabular-nums {{ $sale->profit >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ $money($sale->profit) }}</td>
+                                        <td class="whitespace-nowrap px-3 py-3 text-right text-[0.8125rem] font-semibold tabular-nums {{ $commissionTotal > 0 ? 'text-violet-300' : 'text-dg-600' }}">{{ $commissionTotal > 0 ? $money($commissionTotal) : '-' }}</td>
+                                        <td class="whitespace-nowrap px-3 py-3 text-right text-[0.8125rem] font-bold tabular-nums {{ $netProfit >= 0 ? 'text-emerald-300' : 'text-red-400' }}">{{ $money($netProfit) }}</td>
+                                    @endif
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="inline-block whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ $statusTone[$sale->payment_status->value] ?? 'bg-white/5 text-dg-400' }}">
                                             {{ $sale->payment_status->label() }}
                                         </span>
                                     </td>
-                                    <td style="padding: 0.75rem 1rem; font-size: 0.875rem; color: #818181;">
-                                        {{ $sale->sold_at->format('d/m/Y H:i') }}
-                                    </td>
-                                    <td style="padding: 0.75rem 1rem; text-align: right;">
-                                        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.375rem;">
+                                    <td class="whitespace-nowrap px-4 py-3 text-sm tabular-nums text-dg-400">{{ $sale->sold_at->format('d/m/Y H:i') }}</td>
+                                    <td class="px-5 py-3 text-right">
+                                        <div class="flex items-center justify-end gap-1.5">
                                             @include('sales.partials.receipt-button')
-                                            <a href="{{ route('sales.show', $sale) }}"
-                                               style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.3rem 0.625rem; background: #1a1a1a; color: #a4a4a4; font-size: 0.7rem; font-weight: 500; border-radius: 0.375rem; text-decoration: none; border: 1px solid rgba(255,255,255,0.06); transition: all 0.15s;"
-                                               onmouseover="this.style.background='#222'" onmouseout="this.style.background='#1a1a1a'">
+                                            <a href="{{ route('sales.show', $sale) }}" class="inline-flex items-center whitespace-nowrap rounded-md border border-border bg-surface-overlay px-2.5 py-1 text-[0.7rem] font-medium text-dg-300 transition-colors hover:bg-surface-elevated hover:text-dg-100">
                                                 Ver detalhes
                                             </a>
                                         </div>
@@ -193,51 +151,39 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" style="padding: 3rem; text-align: center; color: #818181;">
-                                        Nenhuma venda encontrada.
-                                    </td>
+                                    <td colspan="{{ $canSeeFinancials ? 10 : 7 }}" class="px-5 py-12 text-center text-dg-400">Nenhuma venda encontrada.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                         @if($sales->count() > 0)
-                        <tfoot>
-                            <tr style="background: #1a1a1a; border-top: 2px solid rgba(255,255,255,0.08);">
-                                <td colspan="3" style="padding: 0.875rem 1.5rem; font-size: 0.8rem; font-weight: 700; color: #a4a4a4; text-transform: uppercase; letter-spacing: 0.05em;">
-                                    Total ({{ $totals['count'] }} {{ $totals['count'] === 1 ? 'venda' : 'vendas' }})
-                                </td>
-                                <td style="padding: 0.875rem 1rem; text-align: right; font-weight: 700; font-size: 0.9375rem; color: #e3e3e3;">
-                                    R$ {{ number_format($totals['total_revenue'], 2, ',', '.') }}
-                                </td>
-                                @if(auth()->user()->canViewFinancials())
-                                <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ $totals['total_profit'] >= 0 ? '#16a34a' : '#dc2626' }};">
-                                    R$ {{ number_format($totals['total_profit'], 2, ',', '.') }}
-                                </td>
-                                <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.8125rem; color: {{ ($totals['total_commissions'] ?? 0) > 0 ? '#7c3aed' : '#515151' }};">
-                                    {{ ($totals['total_commissions'] ?? 0) > 0 ? 'R$ ' . number_format($totals['total_commissions'], 2, ',', '.') : '-' }}
-                                </td>
-                                <td style="padding: 0.875rem 0.75rem; text-align: right; font-weight: 800; font-size: 0.8125rem; color: {{ ($totals['total_net_profit'] ?? 0) >= 0 ? '#059669' : '#dc2626' }};">
-                                    R$ {{ number_format($totals['total_net_profit'] ?? 0, 2, ',', '.') }}
-                                </td>
-                                @endif
-                                <td style="padding: 0.875rem 1rem; text-align: center;">
-                                    @if($totals['total_revenue'] > 0)
-                                        <span style="display: inline-block; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; background: {{ ($totals['total_net_profit'] ?? $totals['total_profit']) >= 0 ? 'rgba(22,163,106,0.12)' : 'rgba(220,38,38,0.12)' }}; color: {{ ($totals['total_net_profit'] ?? $totals['total_profit']) >= 0 ? '#4ade80' : '#f87171' }};">
-                                            {{ number_format((($totals['total_net_profit'] ?? $totals['total_profit']) / $totals['total_revenue']) * 100, 1, ',', '.') }}%
-                                        </span>
+                            @php $net = $totals['total_net_profit'] ?? $totals['total_profit']; @endphp
+                            <tfoot class="border-t-2 border-border-strong bg-surface-overlay">
+                                <tr>
+                                    <td colspan="3" class="px-5 py-3.5 text-[0.8rem] font-bold uppercase tracking-wide text-dg-300">
+                                        Total ({{ $totals['count'] }} {{ $totals['count'] === 1 ? 'venda' : 'vendas' }})
+                                    </td>
+                                    <td class="whitespace-nowrap px-4 py-3.5 text-right text-[0.9375rem] font-bold tabular-nums text-dg-50">{{ $money($totals['total_revenue']) }}</td>
+                                    @if($canSeeFinancials)
+                                        <td class="whitespace-nowrap px-3 py-3.5 text-right text-[0.8125rem] font-bold tabular-nums {{ $totals['total_profit'] >= 0 ? 'text-emerald-400' : 'text-red-400' }}">{{ $money($totals['total_profit']) }}</td>
+                                        <td class="whitespace-nowrap px-3 py-3.5 text-right text-[0.8125rem] font-bold tabular-nums {{ ($totals['total_commissions'] ?? 0) > 0 ? 'text-violet-300' : 'text-dg-600' }}">{{ ($totals['total_commissions'] ?? 0) > 0 ? $money($totals['total_commissions']) : '-' }}</td>
+                                        <td class="whitespace-nowrap px-3 py-3.5 text-right text-[0.8125rem] font-extrabold tabular-nums {{ ($totals['total_net_profit'] ?? 0) >= 0 ? 'text-emerald-300' : 'text-red-400' }}">{{ $money($totals['total_net_profit'] ?? 0) }}</td>
                                     @endif
-                                </td>
-                                <td colspan="2" style="padding: 0.875rem 1rem;"></td>
-                            </tr>
-                        </tfoot>
+                                    <td class="px-4 py-3.5 text-center">
+                                        @if($totals['total_revenue'] > 0)
+                                            <span class="inline-block rounded-full px-2.5 py-1 text-[0.7rem] font-semibold tabular-nums {{ $net >= 0 ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400' }}" title="Margem líquida">
+                                                {{ number_format(($net / $totals['total_revenue']) * 100, 1, ',', '.') }}%
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td colspan="2" class="px-4 py-3.5"></td>
+                                </tr>
+                            </tfoot>
                         @endif
                     </table>
                 </div>
 
-                <!-- Paginação -->
                 @if($sales->hasPages())
-                    <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); background: #1a1a1a;">
-                        {{ $sales->withQueryString()->links() }}
-                    </div>
+                    <div class="border-t border-border bg-surface-overlay px-5 py-4">{{ $sales->withQueryString()->links() }}</div>
                 @endif
             </div>
         </div>
