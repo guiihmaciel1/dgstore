@@ -40,12 +40,22 @@
         <div class="rounded-xl border border-border bg-surface-raised p-4 sm:p-5">
             <p class="text-xs text-dg-400 sm:text-sm">Hoje</p>
             <p class="mt-1 truncate text-lg font-bold tabular-nums text-dg-100 sm:text-2xl"><x-money :value="$todayTotal" /></p>
-            <p class="mt-1 text-xs text-dg-400">
-                {{ $todayCount }} {{ $todayCount === 1 ? 'pedido' : 'pedidos' }}
-                @if($canSeeFinancials && $todayCount > 0)
-                    · lucro <x-money :value="$profit['today_profit']" class="{{ $profit['today_profit'] >= 0 ? 'text-emerald-400' : 'text-red-400' }}" />
-                @endif
-            </p>
+            <p class="mt-1 text-xs text-dg-400">{{ $todayCount }} {{ $todayCount === 1 ? 'pedido' : 'pedidos' }}</p>
+            @if($canSeeFinancials)
+                @php
+                    $todayProfit = $profit['today_profit'] ?? 0;
+                    $todayMargin = $todayTotal > 0 ? ($todayProfit / $todayTotal) * 100 : null;
+                @endphp
+                <div class="mt-2 border-t border-border pt-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <p class="text-xs text-dg-400">Lucro do dia</p>
+                        @if($todayMargin !== null)
+                            <span class="text-[0.6875rem] text-dg-400"><span x-show="showValues">{{ number_format($todayMargin, 1, ',', '.') }}%</span><span x-show="!showValues" x-cloak>•••</span></span>
+                        @endif
+                    </div>
+                    <p class="truncate text-base font-bold tabular-nums sm:text-xl {{ $todayProfit >= 0 ? 'text-emerald-400' : 'text-red-400' }}"><x-money :value="$todayProfit" /></p>
+                </div>
+            @endif
         </div>
 
         <div class="rounded-xl border border-border bg-surface-raised p-4 sm:p-5">
