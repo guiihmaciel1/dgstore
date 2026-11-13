@@ -105,14 +105,27 @@ class DeployCommand extends Command
     /** Recusa o deploy se arquivos versionados foram editados no servidor (o pull poderia conflitar). */
     private function ensureCleanTree(): bool
     {
-        $dirty = trim($this->git('status --porcelain --untracked-files=no'));
+        // Lockfiles são regerados pelo npm/composer no servidor: volta à versão do git.
+        $lockfiles = ['package-lock.json', 'composer.lock'];
+        $dirty = array_filter(explode("\n", $this->git('status --porcelain --untracked-files=no')));
+        $files = array_map(fn ($line) => trim(substr($line, 3)), $dirty);
+        $locks = array_values(array_intersect($files, $lockfiles));
 
-        if ($dirty === '') {
+        if ($locks !== []) {
+            $this->git('checkout -- ' . implode(' ', array_map('escapeshellarg', $locks)));
+            $this->line('  Restaurado(s) para a versão do git: ' . implode(', ', $locks));
+        }
+
+        $others = array_values(array_diff($files, $lockfiles));
+
+        if ($others === []) {
             return true;
         }
 
         $this->error('Há arquivos alterados direto no servidor. Resolva antes do deploy:');
-        $this->line($dirty);
+        foreach ($others as $file) {
+            $this->line("  {$file}");
+        }
 
         return false;
     }
@@ -154,6 +167,7 @@ class DeployCommand extends Command
 
     private function git(string $args): string
     {
-        return trim(Process::path(base_path())->run('git ' . $args)->output());
+        // rtrim: o status --porcelain começa com espaço (" M arquivo"), que não pode ser cortado.
+        return rtrim(Process::path(base_path())->run('git ' . $args)->output());
     }
 }
