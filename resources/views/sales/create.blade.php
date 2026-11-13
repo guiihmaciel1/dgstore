@@ -9,14 +9,14 @@
             @endif
 
             @if($errors->any())
-                <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <svg style="width: 1.25rem; height: 1.25rem; color: #fca5a5;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-red-500/10 border border-red-500/35 rounded-xl p-4 mb-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <svg class="w-5 h-5 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span style="font-weight: 600; color: #fca5a5;">Corrija os erros abaixo:</span>
+                        <span class="font-semibold text-red-300">Corrija os erros abaixo:</span>
                     </div>
-                    <ul style="list-style: disc; padding-left: 1.5rem; color: #fca5a5; font-size: 0.875rem;">
+                    <ul class="list-disc pl-6 text-red-300 text-sm">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -27,28 +27,27 @@
             <!-- Cabeçalho -->
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center">
-                    <a href="{{ route('sales.index') }}" style="margin-right: 1rem; padding: 0.5rem; color: #818181; border-radius: 0.5rem;" 
-                       onmouseover="this.style.backgroundColor='#222222'" onmouseout="this.style.backgroundColor='transparent'">
-                        <svg style="height: 1.5rem; width: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <a class="mr-4 p-2 text-dg-400 rounded-lg hover:bg-surface-elevated" href="{{ route('sales.index') }}">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                     </a>
                     <div>
-                        <h1 style="font-size: 1.5rem; font-weight: 700; color: #e3e3e3;">Nova Venda</h1>
-                        <p style="font-size: 0.875rem; color: #818181;">Preencha os dados para registrar uma venda</p>
+                        <h1 class="text-2xl font-bold text-dg-100">Nova Venda</h1>
+                        <p class="text-sm text-dg-400">Preencha os dados para registrar uma venda</p>
                     </div>
                 </div>
-                <span style="font-size: 0.875rem; color: #666666;">ESC para cancelar</span>
+                <span class="text-sm text-dg-500">ESC para cancelar</span>
             </div>
 
             @if(isset($reservation) && $reservation)
-                <div style="background: rgba(59,130,246,0.1); border: 1px solid #93c5fd; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                    <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-blue-500/10 border border-blue-300 rounded-xl p-4 mb-6 flex items-center gap-3">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
                     </svg>
                     <div>
-                        <span style="font-weight: 600; color: #93c5fd;">Convertendo Reserva #{{ $reservation->reservation_number }}</span>
-                        <span style="font-size: 0.875rem; color: #818181; margin-left: 0.5rem;">
+                        <span class="font-semibold text-blue-300">Convertendo Reserva #{{ $reservation->reservation_number }}</span>
+                        <span class="text-sm text-dg-400 ml-2">
                             O sinal de {{ $reservation->formatted_deposit_paid }} será aplicado como desconto.
                         </span>
                     </div>
@@ -56,13 +55,13 @@
             @endif
 
             @if(isset($preSale) && $preSale)
-                <div style="background: rgba(22,163,106,0.1); border: 1px solid rgba(22,163,106,0.3); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                    <svg style="width: 1.25rem; height: 1.25rem; color: #4ade80;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-[rgba(22,163,106,0.1)] border border-[rgba(22,163,106,0.3)] rounded-xl p-4 mb-6 flex items-center gap-3">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                     </svg>
                     <div>
-                        <span style="font-weight: 600; color: #4ade80;">Efetivando Pré-Venda #{{ $preSale->pre_sale_number }}</span>
-                        <span style="font-size: 0.875rem; color: #818181; margin-left: 0.5rem;">
+                        <span class="font-semibold text-green-400">Efetivando Pré-Venda #{{ $preSale->pre_sale_number }}</span>
+                        <span class="text-sm text-dg-400 ml-2">
                             Cliente: {{ $preSale->customer?->name }} · Produto: {{ $preSale->product_name }} · Sinal: {{ $preSale->formatted_down_payment }}
                         </span>
                     </div>
@@ -73,15 +72,15 @@
 
             {{-- Pré-Vendas Pendentes --}}
             @if(isset($pendingPreSales) && $pendingPreSales->count() > 0 && !(isset($preSale) && $preSale))
-                <div style="margin-bottom: 1.5rem; background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2); border-radius: 0.75rem; overflow: hidden;">
+                <div class="mb-6 bg-blue-500/[0.06] border border-blue-500/20 rounded-xl overflow-hidden">
                     @foreach($pendingPreSales as $ps)
-                        <div style="padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.75rem; {{ !$loop->last ? 'border-bottom: 1px solid rgba(59,130,246,0.1);' : '' }}">
-                            <span style="font-size: 0.6875rem; font-weight: 600; color: #818181; white-space: nowrap;">{{ $ps->pre_sale_number }}</span>
-                            <span style="display: inline-block; padding: 0.125rem 0.5rem; border-radius: 9999px; font-size: 0.5625rem; font-weight: 600; {{ $ps->status->color() }}">{{ $ps->status->label() }}</span>
-                            <span style="flex: 1; font-size: 0.8125rem; color: #a4a4a4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ $ps->customer?->name ?? 'N/A' }} · {{ $ps->product_name }}</span>
-                            <span style="font-size: 0.8125rem; font-weight: 600; color: #e3e3e3; white-space: nowrap;">{{ $ps->formatted_unit_price }}</span>
-                            <a href="{{ route('pre-sales.show', $ps) }}"
-                               style="padding: 0.25rem 0.625rem; font-size: 0.6875rem; font-weight: 600; border-radius: 0.375rem; white-space: nowrap; {{ $ps->isReady() ? 'background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3);' : 'background: rgba(255,255,255,0.04); color: #818181; border: 1px solid rgba(255,255,255,0.08);' }}">
+                        <div class="py-2 px-4 flex items-center gap-3" style="{{ !$loop->last ? 'border-bottom: 1px solid rgba(59,130,246,0.1);' : '' }}">
+                            <span class="text-[0.6875rem] font-semibold text-dg-400 whitespace-nowrap">{{ $ps->pre_sale_number }}</span>
+                            <span class="inline-block py-0.5 px-2 rounded-full text-[0.5625rem] font-semibold" style="{{ $ps->status->color() }}">{{ $ps->status->label() }}</span>
+                            <span class="flex-1 text-[0.8125rem] text-dg-300 overflow-hidden text-ellipsis whitespace-nowrap">{{ $ps->customer?->name ?? 'N/A' }} · {{ $ps->product_name }}</span>
+                            <span class="text-[0.8125rem] font-semibold text-dg-100 whitespace-nowrap">{{ $ps->formatted_unit_price }}</span>
+                            <a class="py-1 px-2.5 text-[0.6875rem] font-semibold rounded-md whitespace-nowrap" href="{{ route('pre-sales.show', $ps) }}"
+                               style="{{ $ps->isReady() ? 'background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3);' : 'background: rgba(255,255,255,0.04); color: #818181; border: 1px solid rgba(255,255,255,0.08);' }}">
                                 {{ $ps->isReady() ? 'Efetivar' : 'Ver' }}
                             </a>
                         </div>
@@ -102,46 +101,44 @@
                     <div class="sale-main">
                         
                         <!-- PASSO 1: TIPO DE VENDA + CONFIGURAÇÕES -->
-                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: visible;">
-                            <div style="background: #111827; color: white; padding: 1rem 1.5rem; border-radius: 1rem 1rem 0 0;">
-                                <div style="display: flex; align-items: center;">
-                                    <span style="width: 2rem; height: 2rem; background: #141414; color: #e3e3e3; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">1</span>
-                                    <span style="font-size: 1.125rem; font-weight: 600;">Primeiro Passo</span>
+                        <div class="bg-surface-raised rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.3)] border border-border overflow-visible">
+                            <div class="bg-[#111827] text-white py-4 px-6 rounded-t-2xl">
+                                <div class="flex items-center">
+                                    <span class="w-8 h-8 bg-surface-raised text-dg-100 rounded-full flex items-center justify-center font-bold mr-3">1</span>
+                                    <span class="text-lg font-semibold">Primeiro Passo</span>
                                 </div>
                             </div>
-                            <div style="padding: 1.5rem;">
-                            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem;">
+                            <div class="p-6">
+                            <div class="flex flex-wrap gap-6">
                                 <!-- Tipo de Venda -->
-                                <div style="flex: 1; min-width: 200px;">
-                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #a4a4a4; margin-bottom: 0.75rem;">
-                                        Tipo de Venda <span style="color: #fca5a5;">*</span>
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block font-semibold text-[0.9375rem] text-dg-300 mb-3">
+                                        Tipo de Venda <span class="text-red-300">*</span>
                                     </label>
-                                    <div style="display: flex; gap: 1rem;">
-                                        <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; transition: all 0.2s;"
+                                    <div class="flex gap-4">
+                                        <label class="flex items-center cursor-pointer py-3 px-4 border-2 border-white/[0.08] rounded-lg transition-all"
                                                :style="{ borderColor: saleType === 'cliente_final' ? '#3b82f6' : 'rgba(255,255,255,0.08)', background: saleType === 'cliente_final' ? 'rgba(59,130,246,0.15)' : '#1a1a1a' }">
-                                            <input type="radio" name="sale_type" value="cliente_final" 
-                                                   x-model="saleType" required
-                                                   style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #3b82f6;">
-                                            <span style="font-size: 0.9375rem; font-weight: 500;">Cliente</span>
+                                            <input class="w-[1.125rem] h-[1.125rem] mr-2.5 accent-blue-500" type="radio" name="sale_type" value="cliente_final"
+                                                   x-model="saleType" required>
+                                            <span class="text-[0.9375rem] font-medium">Cliente</span>
                                         </label>
-                                        <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; transition: all 0.2s;"
+                                        <label class="flex items-center cursor-pointer py-3 px-4 border-2 border-white/[0.08] rounded-lg transition-all"
                                                :style="{ borderColor: saleType === 'repasse' ? '#8b5cf6' : 'rgba(255,255,255,0.08)', background: saleType === 'repasse' ? 'rgba(139,92,246,0.15)' : '#1a1a1a' }">
-                                            <input type="radio" name="sale_type" value="repasse" 
-                                                   x-model="saleType" required
-                                                   style="width: 1.125rem; height: 1.125rem; margin-right: 0.625rem; accent-color: #8b5cf6;">
-                                            <span style="font-size: 0.9375rem; font-weight: 500;">Repasse</span>
+                                            <input class="w-[1.125rem] h-[1.125rem] mr-2.5 accent-violet-500" type="radio" name="sale_type" value="repasse"
+                                                   x-model="saleType" required>
+                                            <span class="text-[0.9375rem] font-medium">Repasse</span>
                                         </label>
                                     </div>
                                 </div>
 
                                 <!-- Vendedor Responsável -->
-                                <div style="flex: 1; min-width: 200px;">
-                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #a4a4a4; margin-bottom: 0.75rem;">
-                                        Vendedor Responsável <span style="color: #fca5a5;">*</span>
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block font-semibold text-[0.9375rem] text-dg-300 mb-3">
+                                        Vendedor Responsável <span class="text-red-300">*</span>
                                     </label>
-                                    <select name="seller_name" x-model="sellerName" required
-                                            style="width: 100%; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.9375rem; background: #1a1a1a; outline: none;"
-                                            onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
+                                    <select class="w-full py-3 px-4 border-2 border-white/[0.08] rounded-lg text-[0.9375rem] bg-surface-overlay outline-none focus:border-dg-500" name="seller_name" x-model="sellerName" required
+
+
                                             @change="sellerId = $event.target.selectedOptions[0]?.dataset?.userId || ''">
                                         <option value="">Selecione...</option>
                                         @foreach($sellers as $seller)
@@ -152,26 +149,22 @@
                                 </div>
 
                                 <!-- Tipo de Entrega -->
-                                <div style="flex: 1; min-width: 200px;">
-                                    <label style="display: block; font-weight: 600; font-size: 0.9375rem; color: #a4a4a4; margin-bottom: 0.75rem;">
-                                        Entrega <span style="color: #fca5a5;">*</span>
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block font-semibold text-[0.9375rem] text-dg-300 mb-3">
+                                        Entrega <span class="text-red-300">*</span>
                                     </label>
-                                    <select name="delivery_type" x-model="deliveryType" required
-                                            style="width: 100%; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.9375rem; background: #1a1a1a; outline: none;"
-                                            onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                    <select class="w-full py-3 px-4 border-2 border-white/[0.08] rounded-lg text-[0.9375rem] bg-surface-overlay outline-none focus:border-dg-500" name="delivery_type" x-model="deliveryType" required>
                                         <option value="">Selecione...</option>
                                         <option value="retirada">Retirada</option>
                                         <option value="entrega">Entrega</option>
                                         <option value="transferencia">Transferência</option>
                                     </select>
                                     <!-- Sub-opção de entrega -->
-                                    <div x-show="deliveryType === 'entrega'" x-collapse style="margin-top: 0.75rem;">
-                                        <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.375rem;">
+                                    <div class="mt-3" x-show="deliveryType === 'entrega'" x-collapse>
+                                        <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1.5">
                                             Método de Entrega
                                         </label>
-                                        <select name="delivery_method" x-model="deliveryMethod"
-                                                style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #1a1a1a; outline: none;"
-                                                onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                        <select class="w-full py-2 px-3 border-2 border-white/[0.08] rounded-lg text-sm bg-surface-overlay outline-none focus:border-dg-500" name="delivery_method" x-model="deliveryMethod">
                                             <option value="">Selecione...</option>
                                             <option value="motoboy_nosso">Motoboy Nosso</option>
                                             <option value="motoboy_cliente">Motoboy Cliente</option>
@@ -184,88 +177,78 @@
                         </div>
 
                         <!-- PASSO 2: BUSCAR PRODUTO -->
-                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: visible;">
-                            <div style="background: #111827; color: white; padding: 1rem 1.5rem; border-radius: 1rem 1rem 0 0;">
-                                <div style="display: flex; align-items: center; justify-content: space-between;">
-                                    <div style="display: flex; align-items: center;">
-                                        <span style="width: 2rem; height: 2rem; background: #141414; color: #e3e3e3; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 0.75rem;">2</span>
-                                        <span style="font-size: 1.125rem; font-weight: 600;">Adicionar Produtos</span>
+                        <div class="bg-surface-raised rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.3)] border border-border overflow-visible">
+                            <div class="bg-[#111827] text-white py-4 px-6 rounded-t-2xl">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <span class="w-8 h-8 bg-surface-raised text-dg-100 rounded-full flex items-center justify-center font-bold mr-3">2</span>
+                                        <span class="text-lg font-semibold">Adicionar Produtos</span>
                                     </div>
-                                    <button type="button" @click="showProductModal = true; productForm = resetProductForm()"
-                                            style="display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 0.5rem; font-size: 0.8125rem; font-weight: 500; cursor: pointer;"
-                                            onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-                                        <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button class="flex items-center gap-1.5 py-1.5 px-3 bg-white/15 text-white border border-white/30 rounded-lg text-[0.8125rem] font-medium cursor-pointer hover:bg-white/25" type="button" @click="showProductModal = true; productForm = resetProductForm()">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                         </svg>
                                         Cadastrar Produto
                                     </button>
                                 </div>
                             </div>
-                            <div style="padding: 1.5rem;">
-                                <div style="position: relative;">
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">
+                            <div class="p-6">
+                                <div class="relative">
+                                    <label class="block text-sm font-medium text-dg-300 mb-2">
                                         Buscar produto por nome, SKU ou IMEI
                                     </label>
-                                    <div style="position: relative;">
-                                        <input 
-                                            type="text" 
+                                    <div class="relative">
+                                        <input class="w-full pt-4 pr-4 pb-4 pl-12 text-lg border-2 border-white/[0.08] rounded-xl outline-none focus:border-dg-500"
+                                            type="text"
                                             x-model="searchTerm"
                                             @input.debounce.300ms="searchProducts"
                                             @keydown.enter.prevent="if(searchResults.length > 0) addItem(searchResults[0])"
                                             placeholder="Buscar por nome, SKU ou IMEI... (Enter para adicionar)"
-                                            style="width: 100%; padding: 1rem 1rem 1rem 3rem; font-size: 1.125rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.75rem; outline: none;"
-                                            onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
-                                            autofocus
-                                        >
-                                        <div style="position: absolute; top: 50%; left: 1rem; transform: translateY(-50%); pointer-events: none;">
-                                            <svg style="height: 1.5rem; width: 1.5rem; color: #666666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+
+                                            autofocus>
+                                        <div class="absolute top-[50%] left-4 -translate-y-1/2 pointer-events-none">
+                                            <svg class="h-6 w-6 text-dg-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                             </svg>
                                         </div>
                                     </div>
                                     
                                     <!-- Resultados da busca -->
-                                    <div x-show="searchResults.length > 0 || (searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading)" x-cloak 
-                                         style="position: absolute; z-index: 20; margin-top: 0.5rem; width: 100%; background: #141414; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); max-height: 20rem; overflow: auto;">
+                                    <div class="absolute z-[20] mt-2 w-full bg-surface-raised shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] rounded-xl border border-border max-h-[20rem] overflow-auto" x-show="searchResults.length > 0 || (searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading)" x-cloak>
                                         <template x-for="(product, pIdx) in searchResults" :key="(product.is_fragrance ? 'f_' : product.is_consignment ? 'c_' : 'p_') + product.id">
-                                            <button 
+                                            <button class="w-full py-3 px-4 text-left flex justify-between items-center border-b border-border-subtle hover:bg-white/[0.06]"
                                                 type="button"
-                                                @click="addItem(product)"
-                                                style="width: 100%; padding: 0.75rem 1rem; text-align: left; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.04);"
-                                                onmouseover="this.style.backgroundColor='rgba(255,255,255,0.06)'" onmouseout="this.style.backgroundColor='#1a1a1a'"
-                                            >
+                                                @click="addItem(product)">
                                                 <div>
-                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                        <span style="font-weight: 600; color: #e3e3e3;" x-text="product.name"></span>
-                                                        <span x-show="product.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Trade-in</span>
-                                                        <span x-show="product.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Consignado</span>
-                                                        <span x-show="product.is_fragrance" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(201,169,110,0.15); color: #c9a96e; border-radius: 9999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.025em;">Perfume</span>
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="font-semibold text-dg-100" x-text="product.name"></span>
+                                                        <span class="text-[0.625rem] py-[0.0625rem] px-1.5 bg-blue-500/15 text-blue-300 rounded-full font-semibold uppercase tracking-wide" x-show="product.from_trade_in">Trade-in</span>
+                                                        <span class="text-[0.625rem] py-[0.0625rem] px-1.5 bg-[rgba(251,191,36,0.15)] text-amber-400 rounded-full font-semibold uppercase tracking-wide" x-show="product.is_consignment">Consignado</span>
+                                                        <span class="text-[0.625rem] py-[0.0625rem] px-1.5 bg-[rgba(201,169,110,0.15)] text-[#c9a96e] rounded-full font-semibold uppercase tracking-wide" x-show="product.is_fragrance">Perfume</span>
                                                     </div>
-                                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem; flex-wrap: wrap;">
-                                                        <span style="font-size: 0.75rem; padding: 0.125rem 0.5rem; background: #222222; color: #818181; border-radius: 0.25rem;" x-text="product.sku"></span>
+                                                    <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                                        <span class="text-xs py-0.5 px-2 bg-surface-elevated text-dg-400 rounded" x-text="product.sku"></span>
                                                         <template x-if="product.imei && !product.is_consignment">
-                                                            <span style="font-size: 0.7rem; padding: 0.125rem 0.5rem; background: rgba(59,130,246,0.1); color: #60a5fa; border-radius: 0.25rem; font-family: monospace;" x-text="'IMEI: ' + product.imei"></span>
+                                                            <span class="text-[0.7rem] py-0.5 px-2 bg-blue-500/10 text-blue-400 rounded font-mono" x-text="'IMEI: ' + product.imei"></span>
                                                         </template>
-                                                        <span style="font-size: 0.75rem;" :style="{ color: product.stock > 0 ? '#6b7280' : '#ea580c', fontWeight: product.stock <= 0 ? '600' : '400' }" x-text="product.stock > 0 ? product.stock + ' em estoque' : 'Sem estoque'"></span>
+                                                        <span class="text-xs" :style="{ color: product.stock > 0 ? '#6b7280' : '#ea580c', fontWeight: product.stock <= 0 ? '600' : '400' }" x-text="product.stock > 0 ? product.stock + ' em estoque' : 'Sem estoque'"></span>
                                                         @if(auth()->user()->canViewFinancials())
-                                                        <span x-show="product.cost_price" style="font-size: 0.75rem; color: #059669; font-weight: 500;" x-text="product.cost_price ? 'Custo: R$ ' + product.cost_price.toFixed(2).replace('.', ',') : ''"></span>
+                                                        <span class="text-xs text-emerald-600 font-medium" x-show="product.cost_price" x-text="product.cost_price ? 'Custo: R$ ' + product.cost_price.toFixed(2).replace('.', ',') : ''"></span>
                                                         @endif
                                                     </div>
                                                 </div>
-                                                <svg style="width: 1.25rem; height: 1.25rem; color: #666666;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-5 h-5 text-dg-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                                 </svg>
                                             </button>
                                         </template>
                                         <!-- Opção de cadastrar quando não encontra -->
-                                        <div x-show="searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading"
-                                             style="padding: 1rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.06);">
-                                            <p style="font-size: 0.875rem; color: #818181; margin-bottom: 0.75rem;">Nenhum produto encontrado para "<span x-text="searchTerm" style="font-weight: 600;"></span>"</p>
-                                            <button type="button" 
-                                                    @click="productForm = resetProductForm(); productForm.name = searchTerm; showProductModal = true; searchResults = [];"
-                                                    style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.5rem 1rem; background: #111827; color: white; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; border: none; cursor: pointer;"
-                                                    onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
-                                                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="p-4 text-center border-t border-border" x-show="searchTerm.length >= 2 && searchResults.length === 0 && !searchLoading">
+                                            <p class="text-sm text-dg-400 mb-3">Nenhum produto encontrado para "<span class="font-semibold" x-text="searchTerm"></span>"</p>
+                                            <button class="inline-flex items-center gap-1.5 py-2 px-4 bg-[#111827] text-white rounded-lg text-sm font-medium border-0 cursor-pointer hover:bg-[#374151]" type="button"
+                                                    @click="productForm = resetProductForm(); productForm.name = searchTerm; showProductModal = true; searchResults = [];">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                                 </svg>
                                                 Cadastrar Produto Agora
@@ -275,84 +258,76 @@
                                 </div>
                                 
                                 <!-- Lista de itens adicionados -->
-                                <div style="margin-top: 1.5rem;">
-                                    <div x-show="items.length === 0" style="text-align: center; padding: 3rem 1rem; border: 2px dashed rgba(255,255,255,0.1); border-radius: 0.75rem;">
-                                        <svg style="margin: 0 auto; height: 3rem; width: 3rem; color: #515151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="mt-6">
+                                    <div class="text-center py-12 px-4 rounded-xl" x-show="items.length === 0" style="border: 2px dashed rgba(255,255,255,0.1);">
+                                        <svg class="my-0 mx-auto h-12 w-12 text-dg-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                         </svg>
-                                        <p style="margin-top: 1rem; color: #818181;">Nenhum produto adicionado</p>
-                                        <p style="font-size: 0.875rem; color: #666666;">Use o campo acima para buscar e adicionar produtos</p>
+                                        <p class="mt-4 text-dg-400">Nenhum produto adicionado</p>
+                                        <p class="text-sm text-dg-500">Use o campo acima para buscar e adicionar produtos</p>
                                     </div>
                                     
                                     <div x-show="items.length > 0">
                                         <template x-for="(item, index) in items" :key="index">
-                                            <div style="padding: 1rem; background: #1a1a1a; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 0.75rem;">
+                                            <div class="p-4 bg-surface-overlay rounded-xl border border-border mb-3">
                                                 {{-- Linha 1: Nome + badges + botão remover --}}
-                                                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                                    <div style="flex: 1; min-width: 0;">
-                                                        <div style="display: flex; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
-                                                            <p style="font-weight: 600; color: #e3e3e3; font-size: 0.9375rem; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" x-text="item.name"></p>
-                                                            <span x-show="item.from_trade_in" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(59,130,246,0.15); color: #93c5fd; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">TRADE-IN</span>
-                                                            <span x-show="item.is_consignment" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(251,191,36,0.15); color: #fbbf24; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">CONSIGNADO</span>
-                                                            <span x-show="item.is_fragrance" style="font-size: 0.625rem; padding: 0.0625rem 0.375rem; background: rgba(201,169,110,0.15); color: #c9a96e; border-radius: 9999px; font-weight: 600; flex-shrink: 0; white-space: nowrap;">PERFUME</span>
+                                                <div class="flex items-start justify-between gap-2 mb-3">
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="flex items-start gap-2 flex-wrap">
+                                                            <p class="font-semibold text-dg-100 text-[0.9375rem] leading-[1.3] overflow-hidden" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;" x-text="item.name"></p>
+                                                            <span class="text-[0.625rem] py-[0.0625rem] px-1.5 bg-blue-500/15 text-blue-300 rounded-full font-semibold shrink-0 whitespace-nowrap" x-show="item.from_trade_in">TRADE-IN</span>
+                                                            <span class="text-[0.625rem] py-[0.0625rem] px-1.5 bg-[rgba(251,191,36,0.15)] text-amber-400 rounded-full font-semibold shrink-0 whitespace-nowrap" x-show="item.is_consignment">CONSIGNADO</span>
+                                                            <span class="text-[0.625rem] py-[0.0625rem] px-1.5 bg-[rgba(201,169,110,0.15)] text-[#c9a96e] rounded-full font-semibold shrink-0 whitespace-nowrap" x-show="item.is_fragrance">PERFUME</span>
                                                         </div>
                                                         <input type="hidden" :name="'items['+index+'][product_id]'" :value="item.is_consignment || item.is_fragrance ? '' : (item.id || '')">
                                                         <input type="hidden" :name="'items['+index+'][consignment_item_id]'" :value="item.consignment_item_id || ''">
                                                         <input type="hidden" :name="'items['+index+'][fragrance_id]'" :value="item.fragrance_id || ''">
                                                         <input type="hidden" :name="'items['+index+'][product_name]'" :value="item.name || ''">
                                                     </div>
-                                                    <button type="button" @click="removeItem(index)" 
-                                                            style="padding: 0.375rem; color: #ef4444; border-radius: 0.5rem; cursor: pointer; background: none; border: none; flex-shrink: 0;"
-                                                            onmouseover="this.style.backgroundColor='rgba(239,68,68,0.15)'" onmouseout="this.style.backgroundColor='transparent'">
-                                                        <svg style="height: 1.125rem; width: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <button class="p-1.5 text-red-500 rounded-lg cursor-pointer bg-transparent border-0 shrink-0 hover:bg-red-500/15" type="button" @click="removeItem(index)">
+                                                        <svg class="h-[1.125rem] w-[1.125rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                                         </svg>
                                                     </button>
                                                 </div>
                                                 
                                                 {{-- Linha 2: Quantidade, Venda, Subtotal --}}
-                                                <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                                        <button type="button" @click="item.quantity = Math.max(1, item.quantity - 1); updateTotals()" 
-                                                                style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: #141414; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;">
-                                                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                                                <div class="flex items-center gap-3 flex-wrap">
+                                                    <div class="flex items-center gap-2">
+                                                        <button class="w-8 h-8 flex items-center justify-center bg-surface-raised border border-white/[0.08] rounded-lg cursor-pointer" type="button" @click="item.quantity = Math.max(1, item.quantity - 1); updateTotals()">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
                                                         </button>
-                                                        <input 
-                                                            type="number" 
+                                                        <input class="w-14 text-center font-bold text-base border-2 border-white/[0.08] rounded-lg p-1"
+                                                            type="number"
                                                             :name="'items['+index+'][quantity]'"
                                                             x-model.number="item.quantity"
                                                             @input="updateTotals"
                                                             min="1"
-                                                            :max="Math.max(1, item.stock)"
-                                                            style="width: 3.5rem; text-align: center; font-weight: 700; font-size: 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; padding: 0.25rem;"
-                                                        >
-                                                        <button type="button" @click="item.quantity = Math.min(Math.max(1, item.stock), item.quantity + 1); updateTotals()" 
-                                                                style="width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; background: #141414; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;">
-                                                            <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                                            :max="Math.max(1, item.stock)">
+                                                        <button class="w-8 h-8 flex items-center justify-center bg-surface-raised border border-white/[0.08] rounded-lg cursor-pointer" type="button" @click="item.quantity = Math.min(Math.max(1, item.stock), item.quantity + 1); updateTotals()">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                                         </button>
                                                     </div>
                                                     
-                                                    <div style="width: 7rem;">
-                                                        <label style="display: block; font-size: 0.625rem; color: #818181; text-transform: uppercase; margin-bottom: 0.125rem;">Venda</label>
+                                                    <div class="w-28">
+                                                        <label class="block text-[0.625rem] text-dg-400 uppercase mb-0.5">Venda</label>
                                                         <input type="hidden" :name="'items['+index+'][unit_price]'" :value="item.price">
-                                                        <input 
+                                                        <input class="w-full text-right font-semibold border-2 border-white/[0.08] rounded-lg py-1 px-2"
                                                             type="text"
                                                             inputmode="numeric"
                                                             :value="toMoneyMask(item.price)"
                                                             @input="applyMoneyMask($event); item.price = parseMoney($event.target.value); updateTotals()"
-                                                            placeholder="0,00"
-                                                            style="width: 100%; text-align: right; font-weight: 600; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; padding: 0.25rem 0.5rem;"
-                                                        >
+                                                            placeholder="0,00">
                                                     </div>
                                                     
-                                                    <div style="flex: 1; text-align: right;">
-                                                        <span style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;" x-text="formatMoney(item.quantity * item.price)"></span>
+                                                    <div class="flex-1 text-right">
+                                                        <span class="text-lg font-bold text-dg-100" x-text="formatMoney(item.quantity * item.price)"></span>
                                                     </div>
                                                 </div>
 
                                                 {{-- Combos de capinha --}}
                                                 <template x-if="item.category === 'case'">
-                                                    <div style="margin-top: 0.75rem;"
+                                                    <div class="mt-3"
                                                          x-data="{
                                                              basePrice() { return item.original_sale_price || item.price; },
                                                              combos() {
@@ -371,19 +346,19 @@
                                                                  updateTotals();
                                                              }
                                                          }">
-                                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;">
+                                                        <div class="grid grid-cols-3 gap-2">
                                                             <template x-for="combo in combos()" :key="combo.qty">
-                                                                <button type="button"
+                                                                <button class="flex flex-col items-center justify-center min-h-[4.5rem] p-2 rounded-xl cursor-pointer text-center transition-all" type="button"
                                                                         @click="selectCombo(combo)"
-                                                                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 4.5rem; padding: 0.5rem; border-radius: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; border: 2px solid;"
+                                                                        style="border: 2px solid;"
                                                                         :style="item.quantity === combo.qty
                                                                             ? 'background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-color: #c4b5fd; box-shadow: 0 2px 8px rgba(124,58,237,0.3);'
                                                                             : 'background: #141414; color: #a4a4a4; border-color: rgba(255,255,255,0.1);'">
-                                                                    <span style="font-size: 0.75rem; font-weight: 600; line-height: 1;" x-text="combo.label"></span>
-                                                                    <span style="font-size: 1.0625rem; font-weight: 800; margin-top: 0.25rem; line-height: 1;"
+                                                                    <span class="text-xs font-semibold leading-none" x-text="combo.label"></span>
+                                                                    <span class="text-[1.0625rem] font-extrabold mt-1 leading-none"
                                                                           :style="item.quantity === combo.qty ? 'color: white;' : 'color: #e3e3e3;'"
                                                                           x-text="'R$ ' + combo.total.toFixed(0)"></span>
-                                                                    <span style="font-size: 0.625rem; font-weight: 700; margin-top: 0.25rem; line-height: 1; min-height: 0.875rem;"
+                                                                    <span class="text-[0.625rem] font-bold mt-1 leading-none min-h-[0.875rem]"
                                                                           :style="combo.discount > 0
                                                                               ? (item.quantity === combo.qty ? 'color: #fde68a;' : 'color: #d97706;')
                                                                               : (item.quantity === combo.qty ? 'color: rgba(255,255,255,0.5);' : 'color: #515151;')"
@@ -399,88 +374,77 @@
                                                 <input type="hidden" :name="'items['+index+'][financial_cost]'" :value="item.financial_cost">
                                                 <input type="hidden" :name="'items['+index+'][commission_cost]'" :value="item.commission_cost">
                                                 @if(auth()->user()->canViewFinancials())
-                                                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.06); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
+                                                <div class="mt-3 pt-3 border-t border-border grid grid-cols-[1fr_1fr_1fr] gap-3 items-end">
                                                     <div>
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">
-                                                            Custo (R$) <span style="color: #fca5a5;">*</span>
+                                                        <label class="block text-[0.6875rem] font-medium text-dg-400 mb-1">
+                                                            Custo (R$) <span class="text-red-300">*</span>
                                                         </label>
-                                                        <input type="text"
+                                                        <input class="w-full py-1.5 px-2 border-2 border-white/[0.08] rounded-md text-[0.8125rem] outline-none focus:border-dg-500" type="text"
                                                                inputmode="numeric"
                                                                :value="toMoneyMask(item.cost_price)"
                                                                @input="applyMoneyMask($event); item.cost_price = parseMoney($event.target.value); syncCosts(item); updateTotals()"
-                                                               placeholder="0,00"
-                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
-                                                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                               placeholder="0,00">
                                                     </div>
                                                     <div>
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">
+                                                        <label class="block text-[0.6875rem] font-medium text-dg-400 mb-1">
                                                             Custo Financeiro (R$)
                                                         </label>
-                                                        <input type="text"
+                                                        <input class="w-full py-1.5 px-2 border-2 border-[#d1fae5] rounded-md text-[0.8125rem] outline-none bg-emerald-500/10 focus:border-green-600" type="text"
                                                                inputmode="numeric"
                                                                :value="toMoneyMask(item.financial_cost)"
                                                                @input="applyMoneyMask($event); item.financial_cost = parseMoney($event.target.value); updateTotals()"
-                                                               placeholder="0,00"
-                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid #d1fae5; border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: rgba(16,185,129,0.1);"
-                                                               onfocus="this.style.borderColor='#16a34a'" onblur="this.style.borderColor='#d1fae5'">
+                                                               placeholder="0,00">
                                                     </div>
                                                     <div>
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">
+                                                        <label class="block text-[0.6875rem] font-medium text-dg-400 mb-1">
                                                             Custo Comissão (R$)
                                                         </label>
-                                                        <input type="text"
+                                                        <input class="w-full py-1.5 px-2 border-2 border-[rgba(251,191,36,0.3)] rounded-md text-[0.8125rem] outline-none bg-surface-raised focus:border-amber-600" type="text"
                                                                inputmode="numeric"
                                                                :value="toMoneyMask(item.commission_cost)"
                                                                @input="applyMoneyMask($event); item.commission_cost = parseMoney($event.target.value); updateTotals()"
-                                                               placeholder="0,00"
-                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(251,191,36,0.3); border-radius: 0.375rem; font-size: 0.8125rem; outline: none; background: #141414;"
-                                                               onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='rgba(251,191,36,0.3)'">
+                                                               placeholder="0,00">
                                                     </div>
                                                 </div>
-                                                <div style="margin-top: 0.5rem; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.75rem; align-items: end;">
+                                                <div class="mt-2 grid grid-cols-[1fr_1fr_1fr_1fr] gap-3 items-end">
                                                     <div>
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Origem</label>
-                                                        <select :name="'items['+index+'][supplier_origin]'"
+                                                        <label class="block text-[0.6875rem] font-medium text-dg-400 mb-1">Origem</label>
+                                                        <select class="w-full py-1.5 px-2 border-2 border-white/[0.08] rounded-md text-[0.8125rem] bg-surface-overlay outline-none" :name="'items['+index+'][supplier_origin]'"
                                                                 x-model="item.supplier_origin"
-                                                                @change="updateTotals"
-                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; background: #1a1a1a; outline: none;">
+                                                                @change="updateTotals">
                                                             <option value="">-</option>
                                                             <option value="br">BR (Brasil)</option>
                                                             <option value="py">PY (Paraguai)</option>
                                                         </select>
                                                     </div>
                                                     <div x-show="item.supplier_origin">
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Tipo Frete</label>
-                                                        <select :name="'items['+index+'][freight_type]'"
+                                                        <label class="block text-[0.6875rem] font-medium text-dg-400 mb-1">Tipo Frete</label>
+                                                        <select class="w-full py-1.5 px-2 border-2 border-white/[0.08] rounded-md text-[0.8125rem] bg-surface-overlay outline-none" :name="'items['+index+'][freight_type]'"
                                                                 x-model="item.freight_type"
-                                                                @change="updateTotals"
-                                                                style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; background: #1a1a1a; outline: none;">
+                                                                @change="updateTotals">
                                                             <option value="">Sem frete</option>
                                                             <option value="percentage">% sobre custo</option>
                                                             <option value="fixed">Valor fixo (R$)</option>
                                                         </select>
                                                     </div>
                                                     <div x-show="item.supplier_origin && item.freight_type">
-                                                        <label style="display: block; font-size: 0.6875rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;" 
+                                                        <label class="block text-[0.6875rem] font-medium text-dg-400 mb-1"
                                                                x-text="item.freight_type === 'percentage' ? 'Frete (%)' : 'Frete (R$)'">Frete</label>
-                                                        <input type="number" 
+                                                        <input class="w-full py-1.5 px-2 border-2 border-white/[0.08] rounded-md text-[0.8125rem] outline-none focus:border-dg-500" type="number"
                                                                :name="'items['+index+'][freight_value]'"
                                                                x-model.number="item.freight_value"
                                                                @input="updateTotals"
-                                                               step="0.01" min="0" placeholder="0.00"
-                                                               style="width: 100%; padding: 0.375rem 0.5rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; outline: none;"
-                                                               onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                               step="0.01" min="0" placeholder="0.00">
                                                     </div>
                                                 </div>
 
                                                 {{-- Linha 3: Resumo de custo/lucro --}}
-                                                <div x-show="item.cost_price > 0" 
-                                                     style="margin-top: 0.5rem; display: flex; gap: 1rem; font-size: 0.75rem; color: #818181;">
+                                                <div class="mt-2 flex gap-4 text-xs text-dg-400" x-show="item.cost_price > 0">
                                                     <span x-show="getItemFreightAmount(item) > 0">
-                                                        Frete: <span style="font-weight: 600;" x-text="formatMoney(getItemFreightAmount(item))"></span>
+                                                        Frete: <span class="font-semibold" x-text="formatMoney(getItemFreightAmount(item))"></span>
                                                     </span>
                                                     <span x-show="getItemFreightAmount(item) > 0">
-                                                        Custo real: <span style="font-weight: 600;" x-text="formatMoney(getItemTotalCost(item))"></span>
+                                                        Custo real: <span class="font-semibold" x-text="formatMoney(getItemTotalCost(item))"></span>
                                                     </span>
                                                     <span :style="{ color: getItemProfit(item) >= 0 ? '#16a34a' : '#dc2626', fontWeight: '600' }">
                                                         Lucro: <span x-text="formatMoney(getItemProfit(item))"></span>
@@ -489,20 +453,17 @@
                                                 @endif
 
                                                 {{-- Alerta de sem estoque --}}
-                                                <div x-show="item.stock <= 0"
-                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.35); border-radius: 0.375rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
-                                                    <div style="display: flex; align-items: center; gap: 0.375rem;">
-                                                        <svg style="width: 1rem; height: 1rem; color: #ea580c; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div class="mt-2 py-2 px-3 bg-orange-500/[0.12] border border-orange-500/35 rounded-md flex items-center justify-between gap-2" x-show="item.stock <= 0">
+                                                    <div class="flex items-center gap-1.5">
+                                                        <svg class="w-4 h-4 text-orange-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                                         </svg>
-                                                        <span style="font-size: 0.75rem; color: #fdba74; font-weight: 600;">
+                                                        <span class="text-xs text-orange-300 font-semibold">
                                                             Sem estoque disponível!
                                                         </span>
                                                     </div>
-                                                    <button type="button" @click="openStockModal(index)"
-                                                            style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.625rem; background: #ea580c; color: white; border: none; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 600; cursor: pointer; white-space: nowrap;"
-                                                            onmouseover="this.style.background='#c2410c'" onmouseout="this.style.background='#ea580c'">
-                                                        <svg style="width: 0.75rem; height: 0.75rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <button class="inline-flex items-center gap-1 py-1 px-2.5 bg-orange-600 text-white border-0 rounded-md text-[0.6875rem] font-semibold cursor-pointer whitespace-nowrap hover:bg-orange-700" type="button" @click="openStockModal(index)">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                                         </svg>
                                                         Adicionar Estoque
@@ -510,12 +471,11 @@
                                                 </div>
                                                 {{-- Alerta de preço abaixo do custo total --}}
                                                 @if(auth()->user()->canViewFinancials())
-                                                <div x-show="item.cost_price > 0 && item.price > 0 && item.price < getItemTotalCost(item)"
-                                                     style="margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.375rem; display: flex; align-items: center; gap: 0.375rem;">
-                                                    <svg style="width: 1rem; height: 1rem; color: #fca5a5; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <div class="mt-2 py-2 px-3 bg-red-500/10 border border-red-500/35 rounded-md flex items-center gap-1.5" x-show="item.cost_price > 0 && item.price > 0 && item.price < getItemTotalCost(item)">
+                                                    <svg class="w-4 h-4 text-red-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
                                                     </svg>
-                                                    <span style="font-size: 0.75rem; color: #fca5a5; font-weight: 600;">
+                                                    <span class="text-xs text-red-300 font-semibold">
                                                         Preço abaixo do custo total! Custo: <span x-text="formatMoney(getItemTotalCost(item))"></span>
                                                     </span>
                                                 </div>
@@ -529,52 +489,49 @@
                         
                         
                         <!-- TRADE-IN (Aparelhos como entrada) -->
-                        <div x-show="saleType === 'cliente_final' || saleType === null" style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
-                            <div style="background: #7c3aed; color: white; padding: 0.75rem 1.5rem;">
-                                <div style="display: flex; align-items: center; justify-content: space-between;">
-                                    <div style="display: flex; align-items: center;">
-                                        <svg style="width: 1.25rem; height: 1.25rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-surface-raised rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.3)] border border-border overflow-hidden" x-show="saleType === 'cliente_final' || saleType === null">
+                            <div class="bg-violet-600 text-white py-3 px-6">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                         </svg>
-                                        <span style="font-weight: 600;">Aparelhos como Entrada (Trade-in)</span>
+                                        <span class="font-semibold">Aparelhos como Entrada (Trade-in)</span>
                                     </div>
-                                    <label style="display: flex; align-items: center; cursor: pointer;">
-                                        <input type="checkbox" x-model="hasTradeIn" @change="toggleTradeIn()" style="width: 1.25rem; height: 1.25rem; margin-right: 0.5rem;">
-                                        <span style="font-size: 0.875rem;">Ativar</span>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input class="w-5 h-5 mr-2" type="checkbox" x-model="hasTradeIn" @change="toggleTradeIn()">
+                                        <span class="text-sm">Ativar</span>
                                     </label>
                                 </div>
                             </div>
-                            <div x-show="hasTradeIn" x-collapse style="padding: 1.5rem;">
+                            <div class="p-6" x-show="hasTradeIn" x-collapse>
                                 <!-- Lista de aparelhos -->
                                 <template x-for="(ti, tiIndex) in tradeIns" :key="tiIndex">
-                                    <div style="background: rgba(124,58,237,0.08); border: 1px solid rgba(196,181,253,0.2); border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem; position: relative;">
-                                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                                            <span style="font-size: 0.8125rem; font-weight: 600; color: #c4b5fd;" x-text="'Aparelho ' + (tiIndex + 1)"></span>
-                                            <button type="button" @click="removeTradeIn(tiIndex)" 
+                                    <div class="bg-[rgba(124,58,237,0.08)] border border-[rgba(196,181,253,0.2)] rounded-xl p-4 mb-4 relative">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="text-[0.8125rem] font-semibold text-violet-300" x-text="'Aparelho ' + (tiIndex + 1)"></span>
+                                            <button class="p-1 text-red-500 bg-transparent border-0 cursor-pointer" type="button" @click="removeTradeIn(tiIndex)"
                                                     x-show="tradeIns.length > 1"
-                                                    style="padding: 0.25rem; color: #ef4444; background: none; border: none; cursor: pointer;"
+
                                                     title="Remover aparelho">
-                                                <svg style="width: 1.125rem; height: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg class="w-[1.125rem] h-[1.125rem]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                                 </svg>
                                             </button>
                                         </div>
-                                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+                                        <div class="grid grid-cols-3 gap-3">
                                             <!-- Nome/Descrição -->
-                                            <div style="grid-column: span 3;">
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
-                                                    Nome/Descrição <span style="color: #fca5a5;">*</span>
+                                            <div class="col-span-3">
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">
+                                                    Nome/Descrição <span class="text-red-300">*</span>
                                                 </label>
-                                                <input type="text" :name="'trade_ins['+tiIndex+'][device_name]'" x-model="ti.device_name" 
-                                                       placeholder="Ex: iPhone 13 Pro Max"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                <input class="w-full py-2 px-3 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="text" :name="'trade_ins['+tiIndex+'][device_name]'" x-model="ti.device_name"
+                                                       placeholder="Ex: iPhone 13 Pro Max">
                                             </div>
                                             <!-- Categoria -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Categoria</label>
-                                                <select :name="'trade_ins['+tiIndex+'][category]'" x-model="ti.category"
-                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Categoria</label>
+                                                <select class="w-full py-2 px-3 border-2 border-white/[0.08] rounded-lg text-sm bg-surface-raised" :name="'trade_ins['+tiIndex+'][category]'" x-model="ti.category">
                                                     <option value="">Selecione...</option>
                                                     @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
                                                         <optgroup label="{{ $group }}">
@@ -587,17 +544,14 @@
                                             </div>
                                             <!-- Modelo -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Modelo</label>
-                                                <input type="text" :name="'trade_ins['+tiIndex+'][device_model]'" x-model="ti.device_model" 
-                                                       placeholder="Ex: 15 Pro Max"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Modelo</label>
+                                                <input class="w-full py-2 px-3 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="text" :name="'trade_ins['+tiIndex+'][device_model]'" x-model="ti.device_model"
+                                                       placeholder="Ex: 15 Pro Max">
                                             </div>
                                             <!-- Condição Cosmética -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Condição Cosmética</label>
-                                                <select :name="'trade_ins['+tiIndex+'][condition]'" x-model="ti.condition"
-                                                        style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Condição Cosmética</label>
+                                                <select class="w-full py-2 px-3 border-2 border-white/[0.08] rounded-lg text-sm bg-surface-raised" :name="'trade_ins['+tiIndex+'][condition]'" x-model="ti.condition">
                                                     @foreach($tradeInConditions as $condition)
                                                         <option value="{{ $condition->value }}">{{ $condition->label() }}</option>
                                                     @endforeach
@@ -605,133 +559,113 @@
                                             </div>
                                             <!-- Armazenamento -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
-                                                    Armazenamento <span style="color: #fca5a5;">*</span>
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">
+                                                    Armazenamento <span class="text-red-300">*</span>
                                                 </label>
-                                                <input type="text" :name="'trade_ins['+tiIndex+'][storage]'" x-model="ti.storage" required
-                                                       placeholder="Ex: 256GB"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                <input class="w-full py-2 px-3 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="text" :name="'trade_ins['+tiIndex+'][storage]'" x-model="ti.storage" required
+                                                       placeholder="Ex: 256GB">
                                             </div>
                                             <!-- Cor -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
-                                                    Cor <span style="color: #fca5a5;">*</span>
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">
+                                                    Cor <span class="text-red-300">*</span>
                                                 </label>
-                                                <input type="text" :name="'trade_ins['+tiIndex+'][color]'" x-model="ti.color" required
-                                                       placeholder="Ex: Preto"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                <input class="w-full py-2 px-3 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="text" :name="'trade_ins['+tiIndex+'][color]'" x-model="ti.color" required
+                                                       placeholder="Ex: Preto">
                                             </div>
                                             <!-- IMEI -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">IMEI</label>
-                                                <input type="text" :name="'trade_ins['+tiIndex+'][imei]'" x-model="ti.imei" 
-                                                       placeholder="Ex: 123456789012345"
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">IMEI</label>
+                                                <input class="w-full py-2 px-3 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="text" :name="'trade_ins['+tiIndex+'][imei]'" x-model="ti.imei"
+                                                       placeholder="Ex: 123456789012345">
                                             </div>
 
                                             <!-- Separador Valores -->
-                                            <div style="grid-column: span 3; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 0.25rem; padding-top: 0.75rem;">
-                                                <span style="font-size: 0.75rem; font-weight: 600; color: #c4b5fd; text-transform: uppercase; letter-spacing: 0.05em;">Valores</span>
+                                            <div class="col-span-3 border-t border-border mt-1 pt-3">
+                                                <span class="text-xs font-semibold text-violet-300 uppercase tracking-wider">Valores</span>
                                             </div>
                                             <!-- Valor Negociado (= Preço Custo) -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
-                                                    Valor Negociado <span style="color: #fca5a5;">*</span>
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">
+                                                    Valor Negociado <span class="text-red-300">*</span>
                                                 </label>
-                                                <div style="position: relative;">
-                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.8125rem;">R$</span>
-                                                    <input type="number" :name="'trade_ins['+tiIndex+'][estimated_value]'" x-model.number="ti.estimated_value" 
-                                                           @input="updateTotals" step="0.01" min="0" required
-                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                <div class="relative">
+                                                    <span class="absolute left-3 top-[50%] -translate-y-1/2 text-dg-400 text-[0.8125rem]">R$</span>
+                                                    <input class="w-full pt-2 pr-3 pb-2 pl-9 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="number" :name="'trade_ins['+tiIndex+'][estimated_value]'" x-model.number="ti.estimated_value"
+                                                           @input="updateTotals" step="0.01" min="0" required>
                                                 </div>
                                             </div>
                                             <!-- Preço Final -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
-                                                    Preço Final <span style="color: #fca5a5;">*</span>
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">
+                                                    Preço Final <span class="text-red-300">*</span>
                                                 </label>
-                                                <div style="position: relative;">
-                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.8125rem;">R$</span>
-                                                    <input type="number" :name="'trade_ins['+tiIndex+'][sale_price]'" x-model.number="ti.sale_price" 
-                                                           step="0.01" min="0" placeholder="0,00" required
-                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                <div class="relative">
+                                                    <span class="absolute left-3 top-[50%] -translate-y-1/2 text-dg-400 text-[0.8125rem]">R$</span>
+                                                    <input class="w-full pt-2 pr-3 pb-2 pl-9 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="number" :name="'trade_ins['+tiIndex+'][sale_price]'" x-model.number="ti.sale_price"
+                                                           step="0.01" min="0" placeholder="0,00" required>
                                                 </div>
                                             </div>
                                             <!-- Preço Repasse -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
-                                                    Preço Repasse <span style="color: #fca5a5;">*</span>
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">
+                                                    Preço Repasse <span class="text-red-300">*</span>
                                                 </label>
-                                                <div style="position: relative;">
-                                                    <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.8125rem;">R$</span>
-                                                    <input type="number" :name="'trade_ins['+tiIndex+'][resale_price]'" x-model.number="ti.resale_price" 
-                                                           step="0.01" min="0" placeholder="0,00" required
-                                                           style="width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                <div class="relative">
+                                                    <span class="absolute left-3 top-[50%] -translate-y-1/2 text-dg-400 text-[0.8125rem]">R$</span>
+                                                    <input class="w-full pt-2 pr-3 pb-2 pl-9 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="number" :name="'trade_ins['+tiIndex+'][resale_price]'" x-model.number="ti.resale_price"
+                                                           step="0.01" min="0" placeholder="0,00" required>
                                                 </div>
                                             </div>
 
                                             <!-- Separador Seminovo -->
-                                            <div style="grid-column: span 3; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 0.25rem; padding-top: 0.75rem;">
-                                                <span style="font-size: 0.75rem; font-weight: 600; color: #c4b5fd; text-transform: uppercase; letter-spacing: 0.05em;">Informações do Seminovo</span>
+                                            <div class="col-span-3 border-t border-border mt-1 pt-3">
+                                                <span class="text-xs font-semibold text-violet-300 uppercase tracking-wider">Informações do Seminovo</span>
                                             </div>
                                             <!-- Bateria -->
                                             <div>
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">
-                                                    Bateria (%) <span style="color: #fca5a5;">*</span>
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">
+                                                    Bateria (%) <span class="text-red-300">*</span>
                                                 </label>
-                                                <input type="number" :name="'trade_ins['+tiIndex+'][battery_health]'" x-model.number="ti.battery_health"
-                                                       min="0" max="100" placeholder="Ex: 87" required
-                                                       style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                       onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                                <input class="w-full py-2 px-3 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="number" :name="'trade_ins['+tiIndex+'][battery_health]'" x-model.number="ti.battery_health"
+                                                       min="0" max="100" placeholder="Ex: 87" required>
                                             </div>
                                             <!-- Checkboxes -->
-                                            <div style="display: flex; gap: 1.5rem; align-items: center; padding-top: 0.25rem; grid-column: span 2;">
-                                                <label style="display: flex; align-items: center; gap: 0.375rem; cursor: pointer; font-size: 0.8125rem; color: #a4a4a4;">
+                                            <div class="flex gap-6 items-center pt-1 col-span-2">
+                                                <label class="flex items-center gap-1.5 cursor-pointer text-[0.8125rem] text-dg-300">
                                                     <input type="hidden" :name="'trade_ins['+tiIndex+'][has_box]'" value="0">
-                                                    <input type="checkbox" :name="'trade_ins['+tiIndex+'][has_box]'" x-model="ti.has_box" value="1"
-                                                           style="width: 1.125rem; height: 1.125rem; accent-color: #c4b5fd;">
-                                                    <svg style="width: 1rem; height: 1rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                                    <input class="w-[1.125rem] h-[1.125rem] accent-violet-300" type="checkbox" :name="'trade_ins['+tiIndex+'][has_box]'" x-model="ti.has_box" value="1">
+                                                    <svg class="w-4 h-4 text-dg-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                                                     Com caixa
                                                 </label>
-                                                <label style="display: flex; align-items: center; gap: 0.375rem; cursor: pointer; font-size: 0.8125rem; color: #a4a4a4;">
+                                                <label class="flex items-center gap-1.5 cursor-pointer text-[0.8125rem] text-dg-300">
                                                     <input type="hidden" :name="'trade_ins['+tiIndex+'][has_cable]'" value="0">
-                                                    <input type="checkbox" :name="'trade_ins['+tiIndex+'][has_cable]'" x-model="ti.has_cable" value="1"
-                                                           style="width: 1.125rem; height: 1.125rem; accent-color: #c4b5fd;">
-                                                    <svg style="width: 1rem; height: 1rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                                    <input class="w-[1.125rem] h-[1.125rem] accent-violet-300" type="checkbox" :name="'trade_ins['+tiIndex+'][has_cable]'" x-model="ti.has_cable" value="1">
+                                                    <svg class="w-4 h-4 text-dg-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                                                     Com cabo
                                                 </label>
                                             </div>
                                             <!-- Vincular Checklist -->
-                                            <div style="grid-column: span 3;" x-data="{ clSearch: '', clOpen: false, clResults: [], clDebounce: null }">
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Vincular Checklist</label>
+                                            <div class="col-span-3" x-data="{ clSearch: '', clOpen: false, clResults: [], clDebounce: null }">
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Vincular Checklist</label>
                                                 <input type="hidden" :name="'trade_ins['+tiIndex+'][checklist_id]'" :value="ti.checklist_id || ''">
-                                                <div style="position: relative;">
-                                                    <input type="text" x-model="clSearch" @focus="clOpen = true"
+                                                <div class="relative">
+                                                    <input class="w-full py-2 px-3 bg-surface-overlay text-dg-100 border-2 border-white/[0.08] rounded-lg text-sm focus:border-violet-600" type="text" x-model="clSearch" @focus="clOpen = true"
                                                            @input="clearTimeout(clDebounce); clDebounce = setTimeout(() => { fetch('{{ route("checklists.search") }}?q=' + encodeURIComponent(clSearch)).then(r => r.json()).then(d => { clResults = d; clOpen = true; }); }, 250)"
                                                            @click.away="clOpen = false"
                                                            placeholder="Buscar checklist..." autocomplete="off"
-                                                           x-show="!ti.checklist_id"
-                                                           style="width: 100%; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;"
-                                                           onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                                                    <div x-show="ti.checklist_id" style="display: flex; align-items: center; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; background: rgba(16,185,129,0.1);">
-                                                        <span style="flex: 1; font-size: 0.875rem; color: #e3e3e3;" x-text="ti.checklist_label || ''"></span>
-                                                        <button type="button" @click="ti.checklist_id = ''; ti.checklist_label = ''" style="background: none; border: none; cursor: pointer; color: #666666; padding: 2px;">
-                                                            <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                           x-show="!ti.checklist_id">
+                                                    <div class="flex items-center py-2 px-3 border-2 border-white/[0.08] rounded-lg bg-emerald-500/10" x-show="ti.checklist_id">
+                                                        <span class="flex-1 text-sm text-dg-100" x-text="ti.checklist_label || ''"></span>
+                                                        <button class="bg-transparent border-0 cursor-pointer text-dg-500 p-[2px]" type="button" @click="ti.checklist_id = ''; ti.checklist_label = ''">
+                                                            <svg class="w-[16px] h-[16px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                                         </button>
                                                     </div>
-                                                    <div x-show="clOpen && clResults.length > 0" style="position: absolute; z-index: 50; width: 100%; margin-top: 4px; background: #141414; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto;">
+                                                    <div class="absolute z-[50] w-full mt-[4px] bg-surface-raised border border-border rounded-lg shadow-[0_10px_25px_rgba(0,0,0,0.1)] max-h-[200px] overflow-y-auto" x-show="clOpen && clResults.length > 0">
                                                         <template x-for="cl in clResults" :key="cl.id">
-                                                            <button type="button" @click="ti.checklist_id = cl.id; ti.checklist_label = cl.name + ' (' + cl.summary + ')'; clOpen = false; clSearch = ''"
-                                                                    style="width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: none; background: #141414; cursor: pointer; font-size: 0.8rem;"
-                                                                    onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-                                                                <div style="font-weight: 500; color: #e3e3e3;" x-text="cl.name"></div>
-                                                                <div style="font-size: 0.7rem; color: #818181;" x-text="cl.summary + ' — ' + cl.status"></div>
+                                                            <button class="w-full text-left py-2 px-3 border-0 bg-surface-raised cursor-pointer text-[0.8rem] hover:bg-white/[0.03]" type="button" @click="ti.checklist_id = cl.id; ti.checklist_label = cl.name + ' (' + cl.summary + ')'; clOpen = false; clSearch = ''">
+                                                                <div class="font-medium text-dg-100" x-text="cl.name"></div>
+                                                                <div class="text-[0.7rem] text-dg-400" x-text="cl.summary + ' — ' + cl.status"></div>
                                                             </button>
                                                         </template>
                                                     </div>
@@ -739,56 +673,50 @@
                                             </div>
 
                                             <!-- Observações -->
-                                            <div style="grid-column: span 3;">
-                                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Observações</label>
-                                                <textarea :name="'trade_ins['+tiIndex+'][notes]'" x-model="ti.notes" rows="2"
-                                                          placeholder="Estado da tela, detalhes adicionais..."
-                                                          style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;"
-                                                          onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"></textarea>
+                                            <div class="col-span-3">
+                                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Observações</label>
+                                                <textarea class="w-full py-2 px-3 border-2 border-white/[0.08] rounded-lg text-sm resize-y focus:border-violet-600" :name="'trade_ins['+tiIndex+'][notes]'" x-model="ti.notes" rows="2"
+                                                          placeholder="Estado da tela, detalhes adicionais..."></textarea>
                                             </div>
                                         </div>
                                     </div>
                                 </template>
 
                                 <!-- Botão adicionar aparelho -->
-                                <button type="button" @click="addTradeIn()"
-                                        style="width: 100%; padding: 0.625rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: #7c3aed; color: white; border: none; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer;"
-                                        onmouseover="this.style.background='#6d28d9'" onmouseout="this.style.background='#7c3aed'">
-                                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button class="w-full p-2.5 flex items-center justify-center gap-2 bg-violet-600 text-white border-0 rounded-lg text-sm font-medium cursor-pointer hover:bg-violet-700" type="button" @click="addTradeIn()">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                     </svg>
                                     Adicionar outro aparelho
                                 </button>
 
                                 <!-- Total dos trade-ins -->
-                                <div x-show="tradeIns.length > 1" style="margin-top: 0.75rem; padding: 0.75rem; background: rgba(139,92,246,0.15); border-radius: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 0.8125rem; font-weight: 600; color: #c4b5fd;" x-text="tradeIns.length + ' aparelhos'"></span>
-                                    <span style="font-size: 1rem; font-weight: 700; color: #c4b5fd;" x-text="'Total: ' + formatMoney(totalTradeInValue)"></span>
+                                <div class="mt-3 p-3 bg-violet-500/15 rounded-lg flex justify-between items-center" x-show="tradeIns.length > 1">
+                                    <span class="text-[0.8125rem] font-semibold text-violet-300" x-text="tradeIns.length + ' aparelhos'"></span>
+                                    <span class="text-base font-bold text-violet-300" x-text="'Total: ' + formatMoney(totalTradeInValue)"></span>
                                 </div>
 
                             </div>
                         </div>
                         
                         <!-- Aviso: Trade-in não disponível para Repasse -->
-                        <div x-show="saleType === 'repasse'" style="background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 1rem; padding: 1.25rem; margin-bottom: 1.5rem;">
-                            <div style="display: flex; align-items: start; gap: 0.75rem;">
-                                <svg style="width: 1.5rem; height: 1.5rem; color: #fbbf24; flex-shrink: 0; margin-top: 0.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="bg-[rgba(251,191,36,0.1)] border border-[rgba(251,191,36,0.3)] rounded-2xl p-5 mb-6" x-show="saleType === 'repasse'">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-6 h-6 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 <div>
-                                    <p style="font-weight: 600; color: #fbbf24; margin-bottom: 0.25rem;">Trade-in não disponível</p>
-                                    <p style="font-size: 0.875rem; color: #a4a4a4;">Vendas do tipo <strong>Repasse</strong> não permitem aparelhos como entrada (trade-in).</p>
+                                    <p class="font-semibold text-amber-400 mb-1">Trade-in não disponível</p>
+                                    <p class="text-sm text-dg-300">Vendas do tipo <strong>Repasse</strong> não permitem aparelhos como entrada (trade-in).</p>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Observações -->
-                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); padding: 1.5rem;">
-                            <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.5rem;">Observações (opcional)</label>
-                            <textarea name="notes" rows="2" 
-                                      placeholder="Anotações sobre a venda..."
-                                      style="width: 100%; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.75rem; padding: 0.75rem; outline: none; resize: vertical;"
-                                      onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"></textarea>
+                        <div class="bg-surface-raised rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.3)] border border-border p-6">
+                            <label class="block text-sm font-medium text-dg-300 mb-2">Observações (opcional)</label>
+                            <textarea class="w-full border-2 border-white/[0.08] rounded-xl p-3 outline-none resize-y focus:border-dg-500" name="notes" rows="2"
+                                      placeholder="Anotações sobre a venda..."></textarea>
                         </div>
                     </div>
                     
@@ -796,53 +724,43 @@
                     <div class="sale-sidebar">
                         
                         <!-- PASSO 3: CLIENTE -->
-                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); position: relative; z-index: 30;">
-                            <div style="background: #374151; color: white; padding: 0.75rem 1.5rem; border-radius: 1rem 1rem 0 0;">
-                                <div style="display: flex; align-items: center; justify-content: space-between;">
-                                    <div style="display: flex; align-items: center;">
-                                        <span style="width: 1.5rem; height: 1.5rem; background: #141414; color: #a4a4a4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">3</span>
-                                        <span style="font-weight: 600;">Cliente <span style="color: #fca5a5;">*</span></span>
+                        <div class="bg-surface-raised rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.3)] border border-border relative z-[30]">
+                            <div class="bg-[#374151] text-white py-3 px-6 rounded-t-2xl">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 bg-surface-raised text-dg-300 rounded-full flex items-center justify-center font-bold text-sm mr-2">3</span>
+                                        <span class="font-semibold">Cliente <span class="text-red-300">*</span></span>
                                     </div>
-                                    <button type="button" @click="showCustomerModal = true; customerForm = resetCustomerForm()"
-                                            style="display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 0.375rem; font-size: 0.75rem; font-weight: 500; cursor: pointer;"
-                                            onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-                                        <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button class="flex items-center gap-1 py-1 px-2 bg-white/15 text-white border border-white/30 rounded-md text-xs font-medium cursor-pointer hover:bg-white/25" type="button" @click="showCustomerModal = true; customerForm = resetCustomerForm()">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                         </svg>
                                         Novo
                                     </button>
                                 </div>
                             </div>
-                            <div style="padding: 1rem;">
-                                <div x-show="!selectedCustomer.id" style="position: relative;">
-                                    <input 
-                                        type="text" 
+                            <div class="p-4">
+                                <div class="relative" x-show="!selectedCustomer.id">
+                                    <input class="w-full py-3 px-4 border-2 border-white/[0.08] rounded-xl outline-none focus:border-dg-500"
+                                        type="text"
                                         x-model="customerSearch"
                                         @input.debounce.300ms="searchCustomers"
-                                        placeholder="Buscar cliente por nome ou telefone..."
-                                        style="width: 100%; padding: 0.75rem 1rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.75rem; outline: none;"
-                                        onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
-                                    >
+                                        placeholder="Buscar cliente por nome ou telefone...">
                                     <input type="hidden" name="customer_id" x-model="selectedCustomer.id">
                                     
-                                    <div x-show="customerResults.length > 0 || (customerSearch.length >= 2 && customerResults.length === 0 && !customerSearchLoading)" x-cloak 
-                                         style="position: absolute; z-index: 50; margin-top: 0.5rem; width: 100%; background: #141414; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); max-height: 16rem; overflow: auto;">
+                                    <div class="absolute z-[50] mt-2 w-full bg-surface-raised shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] rounded-xl border border-border max-h-[16rem] overflow-auto" x-show="customerResults.length > 0 || (customerSearch.length >= 2 && customerResults.length === 0 && !customerSearchLoading)" x-cloak>
                                         <template x-for="customer in customerResults" :key="customer.id">
-                                            <button type="button" @click="selectCustomer(customer)"
-                                                    style="width: 100%; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; background: #141414;"
-                                                    onmouseover="this.style.backgroundColor='rgba(255,255,255,0.06)'" onmouseout="this.style.backgroundColor='#1a1a1a'">
-                                                <span style="font-weight: 500; color: #e3e3e3;" x-text="customer.name"></span>
-                                                <span style="font-size: 0.875rem; color: #818181; display: block;" x-text="customer.phone"></span>
+                                            <button class="w-full py-3 px-4 text-left border-b border-border-subtle cursor-pointer bg-surface-raised hover:bg-white/[0.06]" type="button" @click="selectCustomer(customer)">
+                                                <span class="font-medium text-dg-100" x-text="customer.name"></span>
+                                                <span class="text-sm text-dg-400 block" x-text="customer.phone"></span>
                                             </button>
                                         </template>
                                         <!-- Opção de cadastrar quando não encontra -->
-                                        <div x-show="customerSearch.length >= 2 && customerResults.length === 0 && !customerSearchLoading"
-                                             style="padding: 0.75rem 1rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.06);">
-                                            <p style="font-size: 0.8125rem; color: #818181; margin-bottom: 0.5rem;">Cliente não encontrado</p>
-                                            <button type="button" 
-                                                    @click="customerForm = resetCustomerForm(); customerForm.name = customerSearch; showCustomerModal = true; customerResults = [];"
-                                                    style="display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.375rem 0.75rem; background: #111827; color: white; border-radius: 0.375rem; font-size: 0.8125rem; font-weight: 500; border: none; cursor: pointer;">
-                                                <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="py-3 px-4 text-center border-t border-border" x-show="customerSearch.length >= 2 && customerResults.length === 0 && !customerSearchLoading">
+                                            <p class="text-[0.8125rem] text-dg-400 mb-2">Cliente não encontrado</p>
+                                            <button class="inline-flex items-center gap-1 py-1.5 px-3 bg-[#111827] text-white rounded-md text-[0.8125rem] font-medium border-0 cursor-pointer" type="button"
+                                                    @click="customerForm = resetCustomerForm(); customerForm.name = customerSearch; showCustomerModal = true; customerResults = [];">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                                 </svg>
                                                 Cadastrar Agora
@@ -851,19 +769,18 @@
                                     </div>
                                 </div>
                                 
-                                <div x-show="selectedCustomer.id" style="position: relative; padding: 0.625rem 2.5rem 0.625rem 0.75rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid rgba(16,185,129,0.35); display: flex; align-items: center; gap: 0.625rem;">
-                                    <div style="width: 2rem; height: 2rem; min-width: 2rem; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                        <svg style="width: 1rem; height: 1rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="relative pt-2.5 pr-10 pb-2.5 pl-3 bg-emerald-500/10 rounded-xl border border-emerald-500/35 flex items-center gap-2.5" x-show="selectedCustomer.id">
+                                    <div class="w-8 h-8 min-w-[2rem] bg-emerald-500/15 rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                         </svg>
                                     </div>
-                                    <div style="min-width: 0;">
-                                        <span style="font-weight: 600; color: #e3e3e3; font-size: 0.875rem;" x-text="selectedCustomer.name"></span>
-                                        <span style="font-size: 0.75rem; color: #818181; margin-left: 0.5rem;" x-text="selectedCustomer.phone"></span>
+                                    <div class="min-w-0">
+                                        <span class="font-semibold text-dg-100 text-sm" x-text="selectedCustomer.name"></span>
+                                        <span class="text-xs text-dg-400 ml-2" x-text="selectedCustomer.phone"></span>
                                     </div>
-                                    <button type="button" @click="clearCustomer" style="position: absolute; top: 0.375rem; right: 0.375rem; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                            onmouseover="this.style.background='rgba(239,68,68,0.15)'; this.style.color='#dc2626'" onmouseout="this.style.background='none'; this.style.color='#9ca3af'">
-                                        <svg style="height: 0.875rem; width: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <button class="absolute top-1.5 right-1.5 w-6 h-6 flex items-center justify-center text-dg-500 cursor-pointer bg-transparent border-0 rounded-md hover:bg-red-500/15 hover:text-red-600" type="button" @click="clearCustomer">
+                                        <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                         </svg>
                                     </button>
@@ -871,13 +788,11 @@
 
                                 {{-- Simulações salvas do cliente --}}
                                 <template x-if="customerSnapshots.length > 0">
-                                    <div style="margin-top: 0.375rem;">
+                                    <div class="mt-1.5">
                                         <template x-for="snap in customerSnapshots" :key="snap.id">
-                                            <button type="button" @click="useSnapshot(snap)"
-                                                    style="display: flex; align-items: center; gap: 0.375rem; padding: 0.25rem 0; background: none; border: none; cursor: pointer; font-size: 0.6875rem; color: #818181; width: 100%; text-align: left;"
-                                                    onmouseover="this.style.color='#e3e3e3'" onmouseout="this.style.color='#6b7280'">
-                                                <span style="font-size: 0.625rem; opacity: 0.6;">&#128203;</span>
-                                                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" x-text="snap.product_description + ' · R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2})"></span>
+                                            <button class="flex items-center gap-1.5 py-1 px-0 bg-transparent border-0 cursor-pointer text-[0.6875rem] text-dg-400 w-full text-left hover:text-dg-100" type="button" @click="useSnapshot(snap)">
+                                                <span class="text-[0.625rem] opacity-[0.6]">&#128203;</span>
+                                                <span class="overflow-hidden text-ellipsis whitespace-nowrap" x-text="snap.product_description + ' · R$ ' + Number(snap.product_price).toLocaleString('pt-BR', {minimumFractionDigits: 2})"></span>
                                             </button>
                                         </template>
                                     </div>
@@ -886,61 +801,58 @@
                         </div>
                         
                         <!-- PASSO 4: PAGAMENTO MISTO -->
-                        <div style="background: #141414; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
-                            <div style="background: #374151; color: white; padding: 0.75rem 1.5rem;">
-                                <div style="display: flex; align-items: center;">
-                                    <span style="width: 1.5rem; height: 1.5rem; background: #141414; color: #a4a4a4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; margin-right: 0.5rem;">4</span>
-                                    <span style="font-weight: 600;">Pagamento</span>
+                        <div class="bg-surface-raised rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.3)] border border-border overflow-hidden">
+                            <div class="bg-[#374151] text-white py-3 px-6">
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 bg-surface-raised text-dg-300 rounded-full flex items-center justify-center font-bold text-sm mr-2">4</span>
+                                    <span class="font-semibold">Pagamento</span>
                                 </div>
                             </div>
-                            <div style="padding: 1rem;">
+                            <div class="p-4">
                                 <!-- Dinheiro + PIX -->
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                                <div class="grid grid-cols-[1fr_1fr] gap-3 mb-4">
                                     <!-- Dinheiro -->
-                                    <div style="padding: 1rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid rgba(16,185,129,0.35);">
-                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #6ee7b7; margin-bottom: 0.75rem;">
-                                            <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/35">
+                                        <label class="flex items-center text-sm font-semibold text-emerald-300 mb-3">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                             </svg>
                                             Dinheiro
                                         </label>
-                                        <div style="position: relative;">
-                                            <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.75rem;">R$</span>
-                                            <input type="number" name="cash_payment" x-model.number="cashPayment" @input="updateTotals"
-                                                   step="0.01" min="0" placeholder="0,00"
-                                                   style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #86efac; border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
+                                        <div class="relative">
+                                            <span class="absolute left-2 top-[50%] -translate-y-1/2 text-dg-400 text-xs">R$</span>
+                                            <input class="w-full pt-2 pr-2 pb-2 pl-8 border border-green-300 rounded-lg text-sm bg-surface-raised" type="number" name="cash_payment" x-model.number="cashPayment" @input="updateTotals"
+                                                   step="0.01" min="0" placeholder="0,00">
                                         </div>
                                     </div>
                                     <!-- PIX -->
-                                    <div style="padding: 1rem; background: rgba(16,185,129,0.1); border-radius: 0.75rem; border: 1px solid #6ee7b7;">
-                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #6ee7b7; margin-bottom: 0.75rem;">
-                                            <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="p-4 bg-emerald-500/10 rounded-xl border border-emerald-300">
+                                        <label class="flex items-center text-sm font-semibold text-emerald-300 mb-3">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                             </svg>
                                             PIX
                                         </label>
-                                        <div style="position: relative;">
-                                            <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.75rem;">R$</span>
-                                            <input type="number" name="pix_payment" x-model.number="pixPayment" @input="updateTotals"
-                                                   step="0.01" min="0" placeholder="0,00"
-                                                   style="width: 100%; padding: 0.5rem 0.5rem 0.5rem 2rem; border: 1px solid #6ee7b7; border-radius: 0.5rem; font-size: 0.875rem; background: #141414;">
+                                        <div class="relative">
+                                            <span class="absolute left-2 top-[50%] -translate-y-1/2 text-dg-400 text-xs">R$</span>
+                                            <input class="w-full pt-2 pr-2 pb-2 pl-8 border border-emerald-300 rounded-lg text-sm bg-surface-raised" type="number" name="pix_payment" x-model.number="pixPayment" @input="updateTotals"
+                                                   step="0.01" min="0" placeholder="0,00">
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <!-- Parcelamentos em Cartões (Múltiplos) com Taxa Stone -->
-                                <div x-show="saleType === 'cliente_final' || saleType === null" style="margin-bottom: 1rem; padding: 1rem; background: rgba(59,130,246,0.1); border-radius: 0.75rem; border: 1px solid rgba(59,130,246,0.35);">
-                                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-                                        <label style="display: flex; align-items: center; font-size: 0.875rem; font-weight: 600; color: #93c5fd;">
-                                            <svg style="width: 1rem; height: 1rem; margin-right: 0.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="mb-4 p-4 bg-blue-500/10 rounded-xl border border-blue-500/35" x-show="saleType === 'cliente_final' || saleType === null">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <label class="flex items-center text-sm font-semibold text-blue-300">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                                             </svg>
                                             Parcelamento em Cartão
-                                            <span style="font-size: 0.6875rem; font-weight: 400; color: #818181; margin-left: 0.5rem;">(Taxa Stone aplicada)</span>
+                                            <span class="text-[0.6875rem] font-normal text-dg-400 ml-2">(Taxa Stone aplicada)</span>
                                         </label>
-                                        <button type="button" @click="addCardPayment()" 
-                                                style="display: flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.5rem; background: #3b82f6; color: white; border-radius: 0.375rem; font-size: 0.75rem; border: none; cursor: pointer;">
-                                            <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button class="flex items-center gap-1 py-1 px-2 bg-blue-500 text-white rounded-md text-xs border-0 cursor-pointer" type="button" @click="addCardPayment()">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                             </svg>
                                             Adicionar Cartão
@@ -949,33 +861,30 @@
                                     
                                     <!-- Lista de cartões -->
                                     <template x-for="(card, cardIndex) in cardPayments" :key="cardIndex">
-                                        <div style="background: #141414; border-radius: 0.5rem; padding: 0.75rem; margin-bottom: 0.5rem; border: 1px solid #dbeafe;">
-                                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                                                <span style="font-size: 0.75rem; font-weight: 600; color: #3b82f6;" x-text="'Cartão ' + (cardIndex + 1)"></span>
-                                                <button type="button" @click="removeCardPayment(cardIndex)" 
-                                                        style="padding: 0.125rem; color: #ef4444; background: none; border: none; cursor: pointer;">
-                                                    <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="bg-surface-raised rounded-lg p-3 mb-2 border border-[#dbeafe]">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <span class="text-xs font-semibold text-blue-500" x-text="'Cartão ' + (cardIndex + 1)"></span>
+                                                <button class="p-0.5 text-red-500 bg-transparent border-0 cursor-pointer" type="button" @click="removeCardPayment(cardIndex)">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                                     </svg>
                                                 </button>
                                             </div>
-                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                                            <div class="grid grid-cols-[1fr_1fr] gap-2">
                                                 <div>
-                                                    <label style="display: block; font-size: 0.7rem; color: #818181; margin-bottom: 0.125rem;">Valor Líquido (recebido)</label>
-                                                    <div style="position: relative;">
-                                                        <span style="position: absolute; left: 0.5rem; top: 50%; transform: translateY(-50%); color: #818181; font-size: 0.7rem;">R$</span>
-                                                        <input type="number" :name="'card_payments['+cardIndex+'][amount]'" 
+                                                    <label class="block text-[0.7rem] text-dg-400 mb-0.5">Valor Líquido (recebido)</label>
+                                                    <div class="relative">
+                                                        <span class="absolute left-2 top-[50%] -translate-y-1/2 text-dg-400 text-[0.7rem]">R$</span>
+                                                        <input class="w-full pt-1.5 pr-1.5 pb-1.5 pl-7 bg-surface-overlay text-dg-100 border border-white/[0.08] rounded-md text-sm" type="number" :name="'card_payments['+cardIndex+'][amount]'"
                                                                x-model.number="card.amount" @input="calculateCardFee(cardIndex)"
-                                                               step="0.01" min="0" placeholder="0,00"
-                                                               style="width: 100%; padding: 0.375rem 0.375rem 0.375rem 1.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem;">
+                                                               step="0.01" min="0" placeholder="0,00">
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label style="display: block; font-size: 0.7rem; color: #818181; margin-bottom: 0.125rem;">Parcelas</label>
-                                                    <select :name="'card_payments['+cardIndex+'][installments]'" 
+                                                    <label class="block text-[0.7rem] text-dg-400 mb-0.5">Parcelas</label>
+                                                    <select class="w-full p-1.5 border border-white/[0.08] rounded-md text-sm bg-surface-raised" :name="'card_payments['+cardIndex+'][installments]'"
                                                             x-model.number="card.installments"
-                                                            @change="calculateCardFee(cardIndex)"
-                                                            style="width: 100%; padding: 0.375rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.875rem; background: #141414;">
+                                                            @change="calculateCardFee(cardIndex)">
                                                         @for($i = 1; $i <= 21; $i++)
                                                             <option value="{{ $i }}">{{ $i }}x</option>
                                                         @endfor
@@ -983,37 +892,36 @@
                                                 </div>
                                             </div>
                                             <!-- Info da taxa Stone -->
-                                            <div x-show="card.amount > 0 && card.installments >= 1" 
-                                                 style="margin-top: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.04); border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.06);">
-                                                <div style="font-size: 0.75rem; color: #c4c4c4; font-weight: 500;">
+                                            <div class="mt-2 p-2 bg-white/[0.04] rounded-md border border-border" x-show="card.amount > 0 && card.installments >= 1">
+                                                <div class="text-xs text-[#c4c4c4] font-medium">
                                                     <span x-text="card.installments + 'x'"></span> - 
                                                     Taxa: <strong x-text="(card.mdr_rate || 0).toFixed(2) + '%'"></strong> - 
-                                                    Você recebe: <strong style="color: #16a34a;" x-text="formatMoney(card.amount)"></strong>
+                                                    Você recebe: <strong class="text-green-600" x-text="formatMoney(card.amount)"></strong>
                                                 </div>
-                                                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: #818181; margin-top: 0.375rem;">
+                                                <div class="flex justify-between items-center text-[0.7rem] text-dg-400 mt-1.5">
                                                     <span>Cliente paga: <strong x-text="formatMoney(card.gross_amount || card.amount || 0)"></strong></span>
-                                                    <span style="color: #fca5a5;">Taxa: <strong x-text="formatMoney(card.fee_amount || 0)"></strong></span>
+                                                    <span class="text-red-300">Taxa: <strong x-text="formatMoney(card.fee_amount || 0)"></strong></span>
                                                 </div>
-                                                <div x-show="card.installments > 1" style="font-size: 0.7rem; color: #818181; text-align: right; margin-top: 0.125rem;">
+                                                <div class="text-[0.7rem] text-dg-400 text-right mt-0.5" x-show="card.installments > 1">
                                                     <span x-text="card.installments + 'x de ' + formatMoney((card.gross_amount || card.amount || 0) / card.installments)"></span>
                                                 </div>
                                             </div>
                                         </div>
                                     </template>
                                     
-                                    <div x-show="cardPayments.length === 0" style="text-align: center; padding: 1rem; color: #818181; font-size: 0.75rem;">
+                                    <div class="text-center p-4 text-dg-400 text-xs" x-show="cardPayments.length === 0">
                                         Clique em "Adicionar Cartão" para parcelar
                                     </div>
                                 </div>
                                 
                                 <!-- Aviso: Cartão não disponível para Repasse -->
-                                <div x-show="saleType === 'repasse'" style="margin-bottom: 1rem; padding: 1rem; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 0.75rem;">
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <svg style="width: 1.25rem; height: 1.25rem; color: #fbbf24; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="mb-4 p-4 bg-[rgba(251,191,36,0.1)] border border-[rgba(251,191,36,0.3)] rounded-xl" x-show="saleType === 'repasse'">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
-                                        <p style="font-size: 0.875rem; color: #a4a4a4; font-weight: 500;">
-                                            <strong style="color: #fbbf24;">Pagamento com cartão não disponível</strong> para Repasse. Use dinheiro ou PIX.
+                                        <p class="text-sm text-dg-300 font-medium">
+                                            <strong class="text-amber-400">Pagamento com cartão não disponível</strong> para Repasse. Use dinheiro ou PIX.
                                         </p>
                                     </div>
                                 </div>
@@ -1027,8 +935,8 @@
                                 
                                 <!-- Status -->
                                 <div>
-                                    <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Status</label>
-                                    <select name="payment_status" x-model="paymentStatus" required style="width: 100%; padding: 0.5rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; outline: none; background: #141414;">
+                                    <label class="block text-sm font-medium text-dg-300 mb-1">Status</label>
+                                    <select class="w-full py-2 px-3 border-2 border-white/[0.08] rounded-lg outline-none bg-surface-raised" name="payment_status" x-model="paymentStatus" required>
                                         @foreach($paymentStatuses as $status)
                                             <option value="{{ $status->value }}" {{ $status->value === 'paid' ? 'selected' : '' }}>{{ $status->label() }}</option>
                                         @endforeach
@@ -1038,29 +946,29 @@
                         </div>
                         
                         <!-- RESUMO FINAL -->
-                        <div style="background: #111827; color: white; border-radius: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.25); overflow: hidden;">
-                            <div style="padding: 1.5rem;">
-                                <h3 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Resumo da Venda</h3>
+                        <div class="bg-[#111827] text-white rounded-2xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.25)] overflow-hidden">
+                            <div class="p-6">
+                                <h3 class="text-lg font-bold mb-4">Resumo da Venda</h3>
                                 
-                                <dl style="display: flex; flex-direction: column; gap: 0.5rem;">
-                                    <div style="display: flex; justify-content: space-between; color: #515151;">
+                                <dl class="flex flex-col gap-2">
+                                    <div class="flex justify-between text-dg-600">
                                         <dt>Itens</dt>
                                         <dd x-text="items.length + ' produto(s)'"></dd>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; color: #515151;">
+                                    <div class="flex justify-between text-dg-600">
                                         <dt>Subtotal</dt>
                                         <dd x-text="formatMoney(subtotal)"></dd>
                                     </div>
                                     @if(auth()->user()->canViewFinancials())
-                                    <div x-show="totalCost > 0" style="display: flex; justify-content: space-between; color: #666666; font-size: 0.8125rem;">
+                                    <div class="flex justify-between text-dg-500 text-[0.8125rem]" x-show="totalCost > 0">
                                         <dt>Custo total</dt>
                                         <dd x-text="formatMoney(totalCost)"></dd>
                                     </div>
-                                    <div x-show="totalFreight > 0" style="display: flex; justify-content: space-between; color: #666666; font-size: 0.8125rem;">
+                                    <div class="flex justify-between text-dg-500 text-[0.8125rem]" x-show="totalFreight > 0">
                                         <dt>Frete total</dt>
                                         <dd x-text="formatMoney(totalFreight)"></dd>
                                     </div>
-                                    <div x-show="totalCost > 0" style="display: flex; justify-content: space-between; font-size: 0.8125rem;"
+                                    <div class="flex justify-between text-[0.8125rem]" x-show="totalCost > 0"
                                          :style="{ color: totalProfit >= 0 ? '#4ade80' : '#f87171' }">
                                         <dt>Lucro estimado</dt>
                                         <dd x-text="formatMoney(totalProfit)"></dd>
@@ -1068,75 +976,71 @@
                                     @endif
 
                                     {{-- Prévia de comissão do vendedor --}}
-                                    <div x-show="sellerHasCommission && items.length > 0 && estimatedCommission > 0"
-                                         style="margin-top: 0.25rem; padding: 0.5rem 0.625rem; background: #1a1a2e; border: 1px solid #7c3aed40; border-radius: 0.5rem;">
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <dt style="font-size: 0.75rem; color: #a78bfa; display: flex; align-items: center; gap: 0.375rem;">
-                                                <svg style="width: 0.875rem; height: 0.875rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <div class="mt-1 py-2 px-2.5 bg-[#1a1a2e] border border-[#7c3aed40] rounded-lg" x-show="sellerHasCommission && items.length > 0 && estimatedCommission > 0">
+                                        <div class="flex justify-between items-center">
+                                            <dt class="text-xs text-violet-400 flex items-center gap-1.5">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                                 </svg>
-                                                Comissão <span x-text="sellerName" style="font-weight: 600;"></span>
+                                                Comissão <span class="font-semibold" x-text="sellerName"></span>
                                             </dt>
-                                            <dd style="font-size: 0.9375rem; font-weight: 700; color: #c4b5fd;" x-text="formatMoney(estimatedCommission)"></dd>
+                                            <dd class="text-[0.9375rem] font-bold text-violet-300" x-text="formatMoney(estimatedCommission)"></dd>
                                         </div>
                                     </div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <dt style="color: #515151;">Desconto</dt>
+                                    <div class="flex justify-between items-center">
+                                        <dt class="text-dg-600">Desconto</dt>
                                         <dd>
-                                            <input 
-                                                type="number" 
+                                            <input class="w-20 text-right py-1 px-2 bg-[#1f2937] border border-[#374151] rounded-lg text-white outline-none text-sm"
+                                                type="number"
                                                 name="discount"
                                                 x-model.number="discount"
                                                 @input="updateTotals"
                                                 step="0.01"
-                                                min="0"
-                                                style="width: 5rem; text-align: right; padding: 0.25rem 0.5rem; background: #1f2937; border: 1px solid #374151; border-radius: 0.5rem; color: white; outline: none; font-size: 0.875rem;"
-                                            >
+                                                min="0">
                                         </dd>
                                     </div>
                                     
-                                    <div style="padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid #374151;">
-                                        <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 700;">
+                                    <div class="pt-3 mt-2 border-t border-[#374151]">
+                                        <div class="flex justify-between text-xl font-bold">
                                             <dt>TOTAL</dt>
                                             <dd x-text="formatMoney(total)"></dd>
                                         </div>
                                     </div>
                                     
                                     <!-- Breakdown do pagamento -->
-                                    <div x-show="hasTradeIn || cashPayment > 0 || pixPayment > 0 || totalCardPayments > 0" 
-                                         style="padding-top: 0.75rem; margin-top: 0.5rem; border-top: 1px solid #374151;">
-                                        <div style="font-size: 0.75rem; font-weight: 600; color: #666666; margin-bottom: 0.5rem;">FORMA DE PAGAMENTO</div>
+                                    <div class="pt-3 mt-2 border-t border-[#374151]" x-show="hasTradeIn || cashPayment > 0 || pixPayment > 0 || totalCardPayments > 0">
+                                        <div class="text-xs font-semibold text-dg-500 mb-2">FORMA DE PAGAMENTO</div>
                                         <template x-for="(ti, tiIdx) in tradeIns" :key="tiIdx">
-                                            <div x-show="hasTradeIn && ti.estimated_value > 0" style="display: flex; justify-content: space-between; color: #a78bfa; font-size: 0.875rem;">
+                                            <div class="flex justify-between text-violet-400 text-sm" x-show="hasTradeIn && ti.estimated_value > 0">
                                                 <dt x-text="'Trade-in ' + (tradeIns.length > 1 ? (tiIdx + 1) + ' ' : '') + '(' + (ti.device_name || 'aparelho') + ')'"></dt>
                                                 <dd x-text="formatMoney(ti.estimated_value || 0)"></dd>
                                             </div>
                                         </template>
-                                        <div x-show="cashPayment > 0" style="display: flex; justify-content: space-between; color: #86efac; font-size: 0.875rem;">
+                                        <div class="flex justify-between text-green-300 text-sm" x-show="cashPayment > 0">
                                             <dt>Dinheiro</dt>
                                             <dd x-text="formatMoney(cashPayment)"></dd>
                                         </div>
-                                        <div x-show="pixPayment > 0" style="display: flex; justify-content: space-between; color: #6ee7b7; font-size: 0.875rem;">
+                                        <div class="flex justify-between text-emerald-300 text-sm" x-show="pixPayment > 0">
                                             <dt>PIX</dt>
                                             <dd x-text="formatMoney(pixPayment)"></dd>
                                         </div>
                                         <template x-for="(card, idx) in cardPayments" :key="idx">
-                                            <div x-show="card.amount > 0" style="display: flex; justify-content: space-between; color: #93c5fd; font-size: 0.875rem;">
+                                            <div class="flex justify-between text-blue-300 text-sm" x-show="card.amount > 0">
                                                 <dt x-text="'Cartão ' + (idx + 1) + ' (' + card.installments + 'x)'"></dt>
                                                 <dd x-text="formatMoney(card.amount)"></dd>
                                             </div>
                                         </template>
-                                        <div style="display: flex; justify-content: space-between; font-size: 0.875rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed #374151;"
+                                        <div class="flex justify-between text-sm mt-2 pt-2" style="border-top: 1px dashed #374151;"
                                              :style="{ color: paymentDifference === 0 ? '#4ade80' : '#fbbf24' }">
                                             <dt>Soma dos pagamentos</dt>
                                             <dd x-text="formatMoney(totalPayments)"></dd>
                                         </div>
                                         
                                         <!-- Alerta de diferença -->
-                                        <div x-show="items.length > 0 && Math.abs(paymentDifference) > 0.01" 
-                                             style="margin-top: 0.5rem; padding: 0.5rem; border-radius: 0.375rem;"
+                                        <div class="mt-2 p-2 rounded-md" x-show="items.length > 0 && Math.abs(paymentDifference) > 0.01"
+
                                              :style="{ background: paymentDifference > 0 ? '#7f1d1d' : '#713f12' }">
-                                            <p style="font-size: 0.75rem;" :style="{ color: paymentDifference > 0 ? '#fecaca' : '#fef08a' }">
+                                            <p class="text-xs" :style="{ color: paymentDifference > 0 ? '#fecaca' : '#fef08a' }">
                                                 <span x-show="paymentDifference > 0">
                                                     <strong>Faltam:</strong> <span x-text="formatMoney(paymentDifference)"></span>
                                                 </span>
@@ -1147,10 +1051,9 @@
                                         </div>
                                         
                                         <!-- Indicador de pagamento correto -->
-                                        <div x-show="items.length > 0 && Math.abs(paymentDifference) <= 0.01 && totalPayments > 0" 
-                                             style="margin-top: 0.5rem; padding: 0.5rem; background: #14532d; border-radius: 0.375rem;">
-                                            <p style="font-size: 0.75rem; color: #86efac; display: flex; align-items: center; gap: 0.25rem;">
-                                                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <div class="mt-2 p-2 bg-[#14532d] rounded-md" x-show="items.length > 0 && Math.abs(paymentDifference) <= 0.01 && totalPayments > 0">
+                                            <p class="text-xs text-green-300 flex items-center gap-1">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                                 </svg>
                                                 Pagamento correto!
@@ -1167,7 +1070,7 @@
                                 :class="{ 'sale-submit-btn-disabled': !canSubmit || submitting, 'sale-submit-btn-active': canSubmit && !submitting }"
                             >
                                 <span x-show="submitting" class="flex items-center justify-center gap-3">
-                                    <svg class="animate-spin" style="width:1.5rem;height:1.5rem;" fill="none" viewBox="0 0 24 24">
+                                    <svg class="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                                     </svg>
@@ -1194,83 +1097,73 @@
             </form>
 
             <!-- MODAL: CADASTRO RÁPIDO DE CLIENTE -->
-            <div x-show="showCustomerModal" x-cloak
-                 style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem;"
+            <div class="fixed inset-0 z-[100] flex items-center justify-center p-4" x-show="showCustomerModal" x-cloak
+
                  @keydown.escape.window="showCustomerModal = false">
-                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5);" @click="showCustomerModal = false"></div>
-                <div style="position: relative; background: #141414; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); width: 100%; max-width: 32rem; max-height: 90vh; overflow-y: auto;"
+                <div class="fixed inset-0 bg-black/50" @click="showCustomerModal = false"></div>
+                <div class="relative bg-surface-raised rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] w-full max-w-[32rem] max-h-[90vh] overflow-y-auto"
                      @click.stop>
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; background: rgba(16,185,129,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
-                                <svg style="width: 1.25rem; height: 1.25rem; color: #16a34a;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="py-5 px-6 border-b border-border flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-emerald-500/10 rounded-[0.625rem] flex items-center justify-center">
+                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;">Cadastro Rápido de Cliente</h3>
-                                <p style="font-size: 0.8125rem; color: #818181;">O cliente será vinculado automaticamente à venda</p>
+                                <h3 class="text-lg font-bold text-dg-100">Cadastro Rápido de Cliente</h3>
+                                <p class="text-[0.8125rem] text-dg-400">O cliente será vinculado automaticamente à venda</p>
                             </div>
                         </div>
-                        <button type="button" @click="showCustomerModal = false" style="padding: 0.375rem; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
-                            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button class="p-1.5 text-dg-500 cursor-pointer bg-transparent border-0 rounded-md hover:bg-white/[0.06]" type="button" @click="showCustomerModal = false">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </button>
                     </div>
-                    <div style="padding: 1.5rem;">
-                        <div x-show="customerFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; color: #fca5a5;" x-text="customerFormError"></p>
+                    <div class="p-6">
+                        <div class="mb-4 p-3 bg-red-500/10 border border-red-500/35 rounded-lg" x-show="customerFormError">
+                            <p class="text-[0.8125rem] text-red-300" x-text="customerFormError"></p>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <div style="grid-column: span 2;">
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Nome <span style="color: #fca5a5;">*</span></label>
-                                <input type="text" x-model="customerForm.name" x-ref="customerNameInput"
+                        <div class="grid grid-cols-[1fr_1fr] gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Nome <span class="text-red-300">*</span></label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="customerForm.name" x-ref="customerNameInput"
                                        placeholder="Nome completo do cliente"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
+
+
                                        @keydown.enter.prevent="saveCustomer">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Telefone <span style="color: #fca5a5;">*</span></label>
-                                <input type="text" x-model="customerForm.phone"
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Telefone <span class="text-red-300">*</span></label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="customerForm.phone"
                                        placeholder="(00) 00000-0000"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'"
+
+
                                        @keydown.enter.prevent="saveCustomer">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">CPF</label>
-                                <input type="text" x-model="customerForm.cpf"
-                                       placeholder="000.000.000-00"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">CPF</label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="customerForm.cpf"
+                                       placeholder="000.000.000-00">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Instagram</label>
-                                <input type="text" x-model="customerForm.instagram"
-                                       placeholder="@usuario"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Instagram</label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="customerForm.instagram"
+                                       placeholder="@usuario">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Data de Nascimento</label>
-                                <input type="date" x-model="customerForm.birth_date"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Data de Nascimento</label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="date" x-model="customerForm.birth_date">
                             </div>
                         </div>
                     </div>
-                    <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: flex-end; gap: 0.75rem; background: #1a1a1a; border-radius: 0 0 1rem 1rem;">
-                        <button type="button" @click="showCustomerModal = false"
-                                style="padding: 0.625rem 1.25rem; background: #141414; color: #a4a4a4; font-weight: 500; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                    <div class="py-4 px-6 border-t border-border flex justify-end gap-3 bg-surface-overlay rounded-b-2xl">
+                        <button class="py-2.5 px-5 bg-surface-raised text-dg-300 font-medium border border-white/[0.08] rounded-lg text-sm cursor-pointer" type="button" @click="showCustomerModal = false">
                             Cancelar
                         </button>
-                        <button type="button" @click="saveCustomer" :disabled="customerFormSaving"
-                                style="padding: 0.625rem 1.25rem; background: #111827; color: white; font-weight: 600; border: none; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
-                                onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
-                            <svg x-show="customerFormSaving" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button class="py-2.5 px-5 bg-[#111827] text-white font-semibold border-0 rounded-lg text-sm cursor-pointer flex items-center gap-2 hover:bg-[#374151]" type="button" @click="saveCustomer" :disabled="customerFormSaving">
+                            <svg class="w-4 h-4 animate-spin" x-show="customerFormSaving" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                             </svg>
                             <span x-text="customerFormSaving ? 'Salvando...' : 'Salvar e Vincular'"></span>
@@ -1280,47 +1173,43 @@
             </div>
 
             <!-- MODAL: CADASTRO RÁPIDO DE PRODUTO -->
-            <div x-show="showProductModal" x-cloak
-                 style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem;"
+            <div class="fixed inset-0 z-[100] flex items-center justify-center p-4" x-show="showProductModal" x-cloak
+
                  @keydown.escape.window="showProductModal = false">
-                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5);" @click="showProductModal = false"></div>
-                <div style="position: relative; background: #141414; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); width: 100%; max-width: 40rem; max-height: 90vh; overflow-y: auto;"
+                <div class="fixed inset-0 bg-black/50" @click="showProductModal = false"></div>
+                <div class="relative bg-surface-raised rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] w-full max-w-[40rem] max-h-[90vh] overflow-y-auto"
                      @click.stop>
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; background: rgba(59,130,246,0.1); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
-                                <svg style="width: 1.25rem; height: 1.25rem; color: #2563eb;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="py-5 px-6 border-b border-border flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-500/10 rounded-[0.625rem] flex items-center justify-center">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;">Cadastro Rápido de Produto</h3>
-                                <p style="font-size: 0.8125rem; color: #818181;">O produto será adicionado automaticamente à venda</p>
+                                <h3 class="text-lg font-bold text-dg-100">Cadastro Rápido de Produto</h3>
+                                <p class="text-[0.8125rem] text-dg-400">O produto será adicionado automaticamente à venda</p>
                             </div>
                         </div>
-                        <button type="button" @click="showProductModal = false" style="padding: 0.375rem; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
-                            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button class="p-1.5 text-dg-500 cursor-pointer bg-transparent border-0 rounded-md hover:bg-white/[0.06]" type="button" @click="showProductModal = false">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </button>
                     </div>
-                    <div style="padding: 1.5rem;">
-                        <div x-show="productFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; color: #fca5a5;" x-text="productFormError"></p>
+                    <div class="p-6">
+                        <div class="mb-4 p-3 bg-red-500/10 border border-red-500/35 rounded-lg" x-show="productFormError">
+                            <p class="text-[0.8125rem] text-red-300" x-text="productFormError"></p>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <div style="grid-column: span 2;">
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Nome <span style="color: #fca5a5;">*</span></label>
-                                <input type="text" x-model="productForm.name" x-ref="productNameInput"
-                                       placeholder="Ex: iPhone 15 Pro Max 256GB"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                        <div class="grid grid-cols-[1fr_1fr] gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Nome <span class="text-red-300">*</span></label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="productForm.name" x-ref="productNameInput"
+                                       placeholder="Ex: iPhone 15 Pro Max 256GB">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Categoria <span style="color: #fca5a5;">*</span></label>
-                                <select x-model="productForm.category" @change="generateProductSku"
-                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #1a1a1a; outline: none;">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Categoria <span class="text-red-300">*</span></label>
+                                <select class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm bg-surface-overlay outline-none" x-model="productForm.category" @change="generateProductSku">
                                     <option value="">Selecione...</option>
                                     @foreach(\App\Domain\Product\Enums\ProductCategory::grouped() as $group => $items)
                                         <optgroup label="{{ $group }}">
@@ -1332,107 +1221,85 @@
                                 </select>
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Condição <span style="color: #fca5a5;">*</span></label>
-                                <select x-model="productForm.condition"
-                                        style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #1a1a1a; outline: none;">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Condição <span class="text-red-300">*</span></label>
+                                <select class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm bg-surface-overlay outline-none" x-model="productForm.condition">
                                     @foreach(\App\Domain\Product\Enums\ProductCondition::cases() as $condition)
                                         <option value="{{ $condition->value }}">{{ $condition->label() }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">SKU <span style="color: #fca5a5;">*</span></label>
-                                <div style="display: flex; gap: 0.5rem;">
-                                    <input type="text" x-model="productForm.sku"
-                                           placeholder="Gerado automaticamente"
-                                           style="flex: 1; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                           onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
-                                    <button type="button" @click="generateProductSku" title="Gerar SKU"
-                                            style="padding: 0.5rem; background: #222222; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; cursor: pointer;">
-                                        <svg style="width: 1.125rem; height: 1.125rem; color: #818181;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">SKU <span class="text-red-300">*</span></label>
+                                <div class="flex gap-2">
+                                    <input class="flex-1 py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="productForm.sku"
+                                           placeholder="Gerado automaticamente">
+                                    <button class="p-2 bg-surface-elevated border-2 border-white/[0.08] rounded-lg cursor-pointer" type="button" @click="generateProductSku" title="Gerar SKU">
+                                        <svg class="w-[1.125rem] h-[1.125rem] text-dg-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                         </svg>
                                     </button>
                                 </div>
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">IMEI</label>
-                                <input type="text" x-model="productForm.imei"
-                                       placeholder="000000000000000"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">IMEI</label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="productForm.imei"
+                                       placeholder="000000000000000">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Modelo <span style="color: #fca5a5;">*</span></label>
-                                <input type="text" x-model="productForm.model"
-                                       placeholder="Ex: 15 Pro Max"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Modelo <span class="text-red-300">*</span></label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="productForm.model"
+                                       placeholder="Ex: 15 Pro Max">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Armazenamento <span style="color: #fca5a5;">*</span></label>
-                                <input type="text" x-model="productForm.storage"
-                                       placeholder="Ex: 256GB"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Armazenamento <span class="text-red-300">*</span></label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="productForm.storage"
+                                       placeholder="Ex: 256GB">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Cor <span style="color: #fca5a5;">*</span></label>
-                                <input type="text" x-model="productForm.color"
-                                       placeholder="Ex: Preto"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Cor <span class="text-red-300">*</span></label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="text" x-model="productForm.color"
+                                       placeholder="Ex: Preto">
                             </div>
                             <div>
-                                <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Quantidade <span style="color: #fca5a5;">*</span></label>
-                                <input type="number" x-model.number="productForm.stock_quantity" min="1"
-                                       style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                       onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Quantidade <span class="text-red-300">*</span></label>
+                                <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="number" x-model.number="productForm.stock_quantity" min="1">
                             </div>
                         </div>
 
                         <!-- Campos Seminovo -->
-                        <div x-show="productForm.condition === 'used' || productForm.condition === 'refurbished'"
-                             x-transition
-                             style="margin-top: 1rem; padding: 1rem; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35); border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; font-weight: 600; color: #fbbf24; margin-bottom: 0.75rem;">Informações do Seminovo</p>
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                        <div class="mt-4 p-4 bg-amber-500/10 border border-amber-500/35 rounded-lg" x-show="productForm.condition === 'used' || productForm.condition === 'refurbished'"
+                             x-transition>
+                            <p class="text-[0.8125rem] font-semibold text-amber-400 mb-3">Informações do Seminovo</p>
+                            <div class="grid grid-cols-3 gap-4">
                                 <div>
-                                    <label style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
-                                        <input type="checkbox" x-model="productForm.has_box"
-                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #e3e3e3;">
-                                        <span style="font-size: 0.8125rem; color: #a4a4a4;">Tem caixa</span>
+                                    <label class="flex items-center cursor-pointer gap-2">
+                                        <input class="w-4 h-4 rounded accent-[#e3e3e3]" type="checkbox" x-model="productForm.has_box">
+                                        <span class="text-[0.8125rem] text-dg-300">Tem caixa</span>
                                     </label>
                                 </div>
                                 <div>
-                                    <label style="display: flex; align-items: center; cursor: pointer; gap: 0.5rem;">
-                                        <input type="checkbox" x-model="productForm.has_cable"
-                                               style="width: 1rem; height: 1rem; border-radius: 0.25rem; accent-color: #e3e3e3;">
-                                        <span style="font-size: 0.8125rem; color: #a4a4a4;">Tem cabo</span>
+                                    <label class="flex items-center cursor-pointer gap-2">
+                                        <input class="w-4 h-4 rounded accent-[#e3e3e3]" type="checkbox" x-model="productForm.has_cable">
+                                        <span class="text-[0.8125rem] text-dg-300">Tem cabo</span>
                                     </label>
                                 </div>
                                 <div>
-                                    <label style="display: block; font-size: 0.75rem; font-weight: 500; color: #818181; margin-bottom: 0.25rem;">Saúde da Bateria (%)</label>
-                                    <input type="number" x-model.number="productForm.battery_health" min="0" max="100" placeholder="Ex: 87"
-                                           style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                           onfocus="this.style.borderColor='#666666'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                                    <label class="block text-xs font-medium text-dg-400 mb-1">Saúde da Bateria (%)</label>
+                                    <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-dg-500" type="number" x-model.number="productForm.battery_health" min="0" max="100" placeholder="Ex: 87">
                                 </div>
                             </div>
                         </div>
 
-                        <p style="margin-top: 1rem; padding: 0.75rem; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.35); border-radius: 0.5rem; font-size: 0.8125rem; color: #93c5fd;">
+                        <p class="mt-4 p-3 bg-blue-500/10 border border-blue-500/35 rounded-lg text-[0.8125rem] text-blue-300">
                             Os valores de custo e venda serão informados na hora da venda.
                         </p>
                     </div>
-                    <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: flex-end; gap: 0.75rem; background: #1a1a1a; border-radius: 0 0 1rem 1rem;">
-                        <button type="button" @click="showProductModal = false"
-                                style="padding: 0.625rem 1.25rem; background: #141414; color: #a4a4a4; font-weight: 500; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                    <div class="py-4 px-6 border-t border-border flex justify-end gap-3 bg-surface-overlay rounded-b-2xl">
+                        <button class="py-2.5 px-5 bg-surface-raised text-dg-300 font-medium border border-white/[0.08] rounded-lg text-sm cursor-pointer" type="button" @click="showProductModal = false">
                             Cancelar
                         </button>
-                        <button type="button" @click="saveProduct" :disabled="productFormSaving"
-                                style="padding: 0.625rem 1.25rem; background: #111827; color: white; font-weight: 600; border: none; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
-                                onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
-                            <svg x-show="productFormSaving" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button class="py-2.5 px-5 bg-[#111827] text-white font-semibold border-0 rounded-lg text-sm cursor-pointer flex items-center gap-2 hover:bg-[#374151]" type="button" @click="saveProduct" :disabled="productFormSaving">
+                            <svg class="w-4 h-4 animate-spin" x-show="productFormSaving" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                             </svg>
                             <span x-text="productFormSaving ? 'Salvando...' : 'Salvar e Adicionar à Venda'"></span>
@@ -1442,72 +1309,64 @@
             </div>
 
             <!-- MODAL: ENTRADA RÁPIDA DE ESTOQUE -->
-            <div x-show="showStockModal" x-cloak
-                 style="position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem;"
+            <div class="fixed inset-0 z-[100] flex items-center justify-center p-4" x-show="showStockModal" x-cloak
+
                  @keydown.escape.window="showStockModal = false">
-                <div style="position: fixed; inset: 0; background: rgba(0,0,0,0.5);" @click="showStockModal = false"></div>
-                <div style="position: relative; background: #141414; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6); width: 100%; max-width: 28rem;"
+                <div class="fixed inset-0 bg-black/50" @click="showStockModal = false"></div>
+                <div class="relative bg-surface-raised rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] w-full max-w-[28rem]"
                      @click.stop>
-                    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; background: rgba(249,115,22,0.12); border-radius: 0.625rem; display: flex; align-items: center; justify-content: center;">
-                                <svg style="width: 1.25rem; height: 1.25rem; color: #ea580c;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="py-5 px-6 border-b border-border flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-orange-500/[0.12] rounded-[0.625rem] flex items-center justify-center">
+                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                 </svg>
                             </div>
                             <div>
-                                <h3 style="font-size: 1.125rem; font-weight: 700; color: #e3e3e3;">Entrada Rápida de Estoque</h3>
-                                <p style="font-size: 0.8125rem; color: #818181;" x-text="stockItemName"></p>
+                                <h3 class="text-lg font-bold text-dg-100">Entrada Rápida de Estoque</h3>
+                                <p class="text-[0.8125rem] text-dg-400" x-text="stockItemName"></p>
                             </div>
                         </div>
-                        <button type="button" @click="showStockModal = false" style="padding: 0.375rem; color: #666666; cursor: pointer; background: none; border: none; border-radius: 0.375rem;"
-                                onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='none'">
-                            <svg style="width: 1.5rem; height: 1.5rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button class="p-1.5 text-dg-500 cursor-pointer bg-transparent border-0 rounded-md hover:bg-white/[0.06]" type="button" @click="showStockModal = false">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                             </svg>
                         </button>
                     </div>
-                    <div style="padding: 1.5rem;">
-                        <div x-show="stockFormError" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; color: #fca5a5;" x-text="stockFormError"></p>
+                    <div class="p-6">
+                        <div class="mb-4 p-3 bg-red-500/10 border border-red-500/35 rounded-lg" x-show="stockFormError">
+                            <p class="text-[0.8125rem] text-red-300" x-text="stockFormError"></p>
                         </div>
-                        <div x-show="stockFormSuccess" style="margin-bottom: 1rem; padding: 0.75rem; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35); border-radius: 0.5rem;">
-                            <p style="font-size: 0.8125rem; color: #6ee7b7;" x-text="stockFormSuccess"></p>
+                        <div class="mb-4 p-3 bg-emerald-500/10 border border-emerald-500/35 rounded-lg" x-show="stockFormSuccess">
+                            <p class="text-[0.8125rem] text-emerald-300" x-text="stockFormSuccess"></p>
                         </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Quantidade a adicionar <span style="color: #fca5a5;">*</span></label>
-                            <input type="number" x-model.number="stockForm.quantity" min="1" x-ref="stockQuantityInput"
-                                   @keydown.enter.prevent="saveStock"
-                                   style="width: 100%; padding: 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 1.125rem; font-weight: 700; text-align: center; outline: none;"
-                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                        <div class="mb-4">
+                            <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Quantidade a adicionar <span class="text-red-300">*</span></label>
+                            <input class="w-full p-3 border-2 border-white/[0.08] rounded-lg text-lg font-bold text-center outline-none focus:border-orange-600" type="number" x-model.number="stockForm.quantity" min="1" x-ref="stockQuantityInput"
+                                   @keydown.enter.prevent="saveStock">
                         </div>
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-size: 0.8125rem; font-weight: 500; color: #a4a4a4; margin-bottom: 0.25rem;">Motivo <span style="color: #666666;">(opcional)</span></label>
-                            <input type="text" x-model="stockForm.reason"
-                                   placeholder="Ex: Reposição de estoque"
-                                   style="width: 100%; padding: 0.625rem 0.75rem; border: 2px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; outline: none;"
-                                   onfocus="this.style.borderColor='#ea580c'" onblur="this.style.borderColor='rgba(255,255,255,0.06)'">
+                        <div class="mb-4">
+                            <label class="block text-[0.8125rem] font-medium text-dg-300 mb-1">Motivo <span class="text-dg-500">(opcional)</span></label>
+                            <input class="w-full py-2.5 px-3 border-2 border-white/[0.08] rounded-lg text-sm outline-none focus:border-orange-600" type="text" x-model="stockForm.reason"
+                                   placeholder="Ex: Reposição de estoque">
                         </div>
-                        <div style="padding: 0.75rem; background: #1a1a1a; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 1rem;">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; color: #818181;">
+                        <div class="p-3 bg-surface-overlay rounded-lg border border-border mb-4">
+                            <div class="flex justify-between text-[0.8125rem] text-dg-400">
                                 <span>Estoque atual:</span>
-                                <span style="font-weight: 600;" x-text="stockCurrentStock + ' un.'"></span>
+                                <span class="font-semibold" x-text="stockCurrentStock + ' un.'"></span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; font-size: 0.8125rem; color: #e3e3e3; margin-top: 0.25rem;">
-                                <span style="font-weight: 600;">Estoque após entrada:</span>
-                                <span style="font-weight: 700; color: #16a34a;" x-text="(stockCurrentStock + (stockForm.quantity || 0)) + ' un.'"></span>
+                            <div class="flex justify-between text-[0.8125rem] text-dg-100 mt-1">
+                                <span class="font-semibold">Estoque após entrada:</span>
+                                <span class="font-bold text-green-600" x-text="(stockCurrentStock + (stockForm.quantity || 0)) + ' un.'"></span>
                             </div>
                         </div>
                     </div>
-                    <div style="padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: flex-end; gap: 0.75rem; background: #1a1a1a; border-radius: 0 0 1rem 1rem;">
-                        <button type="button" @click="showStockModal = false"
-                                style="padding: 0.625rem 1.25rem; background: #141414; color: #a4a4a4; font-weight: 500; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                    <div class="py-4 px-6 border-t border-border flex justify-end gap-3 bg-surface-overlay rounded-b-2xl">
+                        <button class="py-2.5 px-5 bg-surface-raised text-dg-300 font-medium border border-white/[0.08] rounded-lg text-sm cursor-pointer" type="button" @click="showStockModal = false">
                             Cancelar
                         </button>
-                        <button type="button" @click="saveStock" :disabled="stockFormSaving"
-                                style="padding: 0.625rem 1.25rem; background: #ea580c; color: white; font-weight: 600; border: none; border-radius: 0.5rem; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"
-                                onmouseover="this.style.background='#c2410c'" onmouseout="this.style.background='#ea580c'">
-                            <svg x-show="stockFormSaving" style="width: 1rem; height: 1rem; animation: spin 1s linear infinite;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button class="py-2.5 px-5 bg-orange-600 text-white font-semibold border-0 rounded-lg text-sm cursor-pointer flex items-center gap-2 hover:bg-orange-700" type="button" @click="saveStock" :disabled="stockFormSaving">
+                            <svg class="w-4 h-4 animate-spin" x-show="stockFormSaving" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                             </svg>
                             <span x-text="stockFormSaving ? 'Salvando...' : 'Confirmar Entrada'"></span>
