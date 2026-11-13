@@ -1,143 +1,118 @@
 <x-app-layout>
     <x-slot name="title">Contas Bancárias</x-slot>
     <div class="py-6">
-        <div class="px-6 lg:px-8" x-data="{ showNewAccount: false, showTransfer: false }">
-            @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if(session('error'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
-                    {{ session('error') }}
-                </div>
-            @endif
-            @if($errors->any())
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
-                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.875rem;">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+        <div class="px-4 sm:px-6 lg:px-8" x-data="{ showNewAccount: false, showTransfer: false }">
+            <x-flash class="mb-4" />
 
-            <!-- Cabeçalho -->
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-dg-100">Carteiras</h1>
-                    <p class="text-sm text-dg-500">Gerencie suas contas e veja os saldos</p>
-                </div>
-                <div class="flex gap-2">
-                    <button @click="showTransfer = !showTransfer; showNewAccount = false"
-                            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: #141414; color: #a4a4a4; font-weight: 600; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; font-size: 0.875rem;"
-                            onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+            <x-page-header title="Carteiras" subtitle="Gerencie suas contas e veja os saldos">
+                <x-slot name="actions">
+                    <button type="button" @click="showTransfer = !showTransfer; showNewAccount = false" class="dg-btn-secondary" :aria-expanded="showTransfer">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
                         Transferir
                     </button>
-                    <button @click="showNewAccount = !showNewAccount; showTransfer = false"
-                            style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: #111827; color: white; font-weight: 600; border-radius: 0.75rem; border: none; cursor: pointer; font-size: 0.875rem;"
-                            onmouseover="this.style.background='#374151'" onmouseout="this.style.background='#111827'">
-                        Nova Carteira
+                    <button type="button" @click="showNewAccount = !showNewAccount; showTransfer = false" class="dg-btn-primary" :aria-expanded="showNewAccount">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        Nova carteira
                     </button>
-                </div>
-            </div>
+                </x-slot>
+            </x-page-header>
 
             <!-- Form Nova Carteira -->
-            <div x-show="showNewAccount" x-cloak style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1.5rem;">
-                <h3 style="font-weight: 600; color: #e3e3e3; margin-bottom: 1rem;">Nova Carteira</h3>
-                <form method="POST" action="{{ route('finance.accounts.store') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+            <div x-show="showNewAccount" x-cloak class="dg-card-flat mb-6 p-5">
+                <h3 class="mb-4 font-semibold text-dg-100">Nova carteira</h3>
+                <form method="POST" action="{{ route('finance.accounts.store') }}" class="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 lg:grid-cols-5">
                     @csrf
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Nome *</label>
-                        <input type="text" name="name" required placeholder="Ex: Nubank, PicPay" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
+                        <label for="acc-name" class="dg-label">Nome *</label>
+                        <input id="acc-name" type="text" name="name" required placeholder="Ex: Nubank, PicPay" class="dg-input py-2.5">
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Tipo *</label>
-                        <select name="type" required style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414; margin-top: 0.25rem;">
+                        <label for="acc-type" class="dg-label">Tipo *</label>
+                        <select id="acc-type" name="type" required class="dg-select py-2.5">
                             <option value="cash">Dinheiro</option>
                             <option value="bank">Banco</option>
                             <option value="digital_wallet">Carteira Digital</option>
                         </select>
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Saldo Inicial</label>
-                        <input type="number" name="initial_balance" step="0.01" value="0" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
+                        <label for="acc-initial" class="dg-label">Saldo inicial</label>
+                        <input id="acc-initial" type="number" name="initial_balance" step="0.01" value="0" class="dg-input py-2.5 text-right tabular-nums">
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Cor</label>
-                        <input type="color" name="color" value="#111827" style="width: 100%; height: 2.375rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; margin-top: 0.25rem; cursor: pointer;">
+                        <label for="acc-color" class="dg-label">Cor</label>
+                        <input id="acc-color" type="color" name="color" value="#4f46e5" class="h-[2.625rem] w-full cursor-pointer rounded-xl border border-border bg-surface-overlay p-1">
                     </div>
-                    <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;">Criar Carteira</button>
+                    <button type="submit" class="dg-btn-primary py-2.5">Criar carteira</button>
                 </form>
             </div>
 
             <!-- Form Transferência -->
-            <div x-show="showTransfer" x-cloak style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1.5rem;">
-                <h3 style="font-weight: 600; color: #e3e3e3; margin-bottom: 1rem;">Transferir entre Carteiras</h3>
-                <form method="POST" action="{{ route('finance.transfers.store') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+            <div x-show="showTransfer" x-cloak class="dg-card-flat mb-6 p-5">
+                <h3 class="mb-4 font-semibold text-dg-100">Transferir entre carteiras</h3>
+                <form method="POST" action="{{ route('finance.transfers.store') }}" class="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 lg:grid-cols-5">
                     @csrf
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">De *</label>
-                        <select name="from_account_id" required style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414; margin-top: 0.25rem;">
+                        <label for="tr-from" class="dg-label">De *</label>
+                        <select id="tr-from" name="from_account_id" required class="dg-select py-2.5">
                             @foreach($accounts as $acc)
                                 <option value="{{ $acc->id }}">{{ $acc->name }} ({{ $acc->formatted_balance }})</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Para *</label>
-                        <select name="to_account_id" required style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414; margin-top: 0.25rem;">
+                        <label for="tr-to" class="dg-label">Para *</label>
+                        <select id="tr-to" name="to_account_id" required class="dg-select py-2.5">
                             @foreach($accounts as $acc)
                                 <option value="{{ $acc->id }}">{{ $acc->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Valor *</label>
-                        <input type="number" name="amount" step="0.01" min="0.01" required style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
+                        <label for="tr-amount" class="dg-label">Valor *</label>
+                        <input id="tr-amount" type="number" name="amount" step="0.01" min="0.01" required class="dg-input py-2.5 text-right tabular-nums">
                     </div>
                     <div>
-                        <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Descrição</label>
-                        <input type="text" name="description" placeholder="Opcional" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
+                        <label for="tr-desc" class="dg-label">Descrição</label>
+                        <input id="tr-desc" type="text" name="description" placeholder="Opcional" class="dg-input py-2.5">
                     </div>
-                    <button type="submit" style="padding: 0.5rem 1rem; background: #111827; color: white; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;">Transferir</button>
+                    <button type="submit" class="dg-btn-primary py-2.5">Transferir</button>
                 </form>
             </div>
 
             <!-- Cards de Carteiras -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($accounts as $account)
-                    <div style="position: relative;">
-                    <a href="{{ route('finance.accounts', ['account_id' => $account->id]) }}"
-                       style="background: #141414; border-radius: 0.75rem; padding: 1.25rem; border: 2px solid {{ $selectedAccountId == $account->id ? $account->color : 'rgba(255,255,255,0.08)' }}; text-decoration: none; display: block; height: 100%; transition: all 0.15s;"
-                       onmouseover="this.style.boxShadow='0 4px 6px -1px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
-                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                            <div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; background: {{ $account->color }}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                <svg style="width: 1.25rem; height: 1.25rem; color: white;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $account->type->icon() }}"/>
-                                </svg>
+                    @php $selected = $selectedAccountId == $account->id; @endphp
+                    <div class="relative">
+                        <a href="{{ route('finance.accounts', ['account_id' => $account->id]) }}"
+                           @if($selected) aria-current="true" @endif
+                           class="block h-full rounded-xl border bg-surface-raised p-5 transition-colors hover:bg-surface-overlay focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dg-300 {{ $selected ? 'border-dg-300' : 'border-border hover:border-border-strong' }}">
+                            <div class="mb-4 flex items-center gap-3 pr-20">
+                                <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg ring-1 ring-inset ring-white/10" style="background: {{ $account->color }};">
+                                    <svg class="h-5 w-5 {{ $account->isLightColor() ? 'text-dg-950' : 'text-white' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $account->type->icon() }}"/>
+                                    </svg>
+                                </span>
+                                <div class="min-w-0">
+                                    <p class="truncate font-semibold text-dg-100">{{ $account->name }}</p>
+                                    <p class="text-xs text-dg-400">{{ $account->type->label() }}{{ $account->is_default ? ' · Padrão' : '' }}</p>
+                                </div>
                             </div>
-                            <div>
-                                <div style="font-weight: 600; color: #e3e3e3;">{{ $account->name }}</div>
-                                <div style="font-size: 0.75rem; color: #818181;">{{ $account->type->label() }}{{ $account->is_default ? ' — Padrão' : '' }}</div>
-                            </div>
-                        </div>
-                        <div style="font-size: 1.5rem; font-weight: 800; color: {{ (float)$account->current_balance >= 0 ? '#e3e3e3' : '#f87171' }};">
-                            {{ $account->formatted_balance }}
-                        </div>
-                    </a>
-                    @unless($account->is_default)
-                        <form method="POST" action="{{ route('finance.accounts.deactivate', $account) }}"
-                              onsubmit="return confirm('Desativar a carteira {{ addslashes($account->name) }}? Ela some das listas, mas o histórico fica guardado.')"
-                              style="position: absolute; top: 1rem; right: 1rem;">
-                            @csrf
-                            <button type="submit" title="Desativar carteira"
-                                    style="padding: 0.25rem 0.625rem; background: transparent; color: #818181; font-size: 0.75rem; font-weight: 500; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;"
-                                    onmouseover="this.style.color='#fca5a5'; this.style.borderColor='rgba(248,113,113,0.4)'" onmouseout="this.style.color='#818181'; this.style.borderColor='rgba(255,255,255,0.08)'">
-                                Desativar
-                            </button>
-                        </form>
-                    @endunless
+                            <p class="text-2xl font-bold tabular-nums {{ (float) $account->current_balance >= 0 ? 'text-dg-50' : 'text-red-400' }}">
+                                {{ $account->formatted_balance }}
+                            </p>
+                        </a>
+                        @unless($account->is_default)
+                            <form method="POST" action="{{ route('finance.accounts.deactivate', $account) }}"
+                                  onsubmit="return confirm('Desativar a carteira {{ addslashes($account->name) }}? Ela some das listas, mas o histórico fica guardado.')"
+                                  class="absolute right-4 top-4">
+                                @csrf
+                                <button type="submit" title="Desativar carteira"
+                                        class="rounded-md border border-border px-2.5 py-1 text-xs font-medium text-dg-400 transition-colors hover:border-red-500/40 hover:text-red-300">
+                                    Desativar
+                                </button>
+                            </form>
+                        @endunless
                     </div>
                 @endforeach
             </div>
@@ -145,68 +120,62 @@
             <!-- Extrato da Conta Selecionada -->
             @if($selectedAccountId)
                 @php $selectedAccount = $accounts->firstWhere('id', $selectedAccountId); @endphp
-                <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
-                    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-                            <h2 style="font-size: 0.9375rem; font-weight: 600; color: #e3e3e3;">Extrato — {{ $selectedAccount?->name ?? 'Conta' }}</h2>
-                            <form method="GET" action="{{ route('finance.accounts') }}" x-data x-ref="filterForm" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <input type="hidden" name="account_id" value="{{ $selectedAccountId }}">
-                                <div>
-                                    <label style="font-size: 0.625rem; font-weight: 500; color: #818181;">De</label>
-                                    <input type="date" name="start_date" value="{{ request('start_date') }}" style="padding: 0.25rem 0.5rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.75rem;"
-                                           x-on:change="$refs.filterForm.submit()">
-                                </div>
-                                <div>
-                                    <label style="font-size: 0.625rem; font-weight: 500; color: #818181;">Até</label>
-                                    <input type="date" name="end_date" value="{{ request('end_date') }}" style="padding: 0.25rem 0.5rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.75rem;"
-                                           x-on:change="$refs.filterForm.submit()">
-                                </div>
-                                @if(request('start_date') || request('end_date'))
-                                    <a href="{{ route('finance.accounts', ['account_id' => $selectedAccountId]) }}" style="padding: 0.25rem 0.625rem; background: #141414; color: #a4a4a4; font-weight: 500; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.08); text-decoration: none; font-size: 0.75rem; margin-top: 0.875rem;">Limpar</a>
-                                @endif
-                            </form>
-                        </div>
+                <section class="dg-card-flat overflow-hidden" aria-labelledby="statement-title">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
+                        <h2 id="statement-title" class="text-[0.9375rem] font-semibold text-dg-100">Extrato · {{ $selectedAccount?->name ?? 'Conta' }}</h2>
+                        <form method="GET" action="{{ route('finance.accounts') }}" x-data x-ref="filterForm" class="flex flex-wrap items-end gap-2">
+                            <input type="hidden" name="account_id" value="{{ $selectedAccountId }}">
+                            <div>
+                                <label for="st-start" class="block text-[0.6875rem] font-medium text-dg-400">De</label>
+                                <input id="st-start" type="date" name="start_date" value="{{ request('start_date') }}" x-on:change="$refs.filterForm.submit()"
+                                       class="rounded-lg border border-border bg-surface-overlay px-2 py-1.5 text-xs text-dg-100">
+                            </div>
+                            <div>
+                                <label for="st-end" class="block text-[0.6875rem] font-medium text-dg-400">Até</label>
+                                <input id="st-end" type="date" name="end_date" value="{{ request('end_date') }}" x-on:change="$refs.filterForm.submit()"
+                                       class="rounded-lg border border-border bg-surface-overlay px-2 py-1.5 text-xs text-dg-100">
+                            </div>
+                            @if(request('start_date') || request('end_date'))
+                                <a href="{{ route('finance.accounts', ['account_id' => $selectedAccountId]) }}" class="rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-dg-300 hover:text-dg-100">Limpar</a>
+                            @endif
+                        </form>
                     </div>
-                @if($statement->count() > 0)
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #1a1a1a;">
-                                    <th style="padding: 0.625rem 1.25rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Data</th>
-                                    <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Descrição</th>
-                                    <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Categoria</th>
-                                    <th style="padding: 0.625rem 1.25rem; text-align: right; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Valor</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($statement as $entry)
-                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
-                                        <td style="padding: 0.5rem 1.25rem; font-size: 0.8125rem; color: #818181;">{{ $entry->date?->format('d/m/Y H:i') ?? '-' }}</td>
-                                        <td style="padding: 0.5rem 1rem; font-size: 0.8125rem; font-weight: 500; color: #e3e3e3;">{{ $entry->description }}</td>
-                                        <td style="padding: 0.5rem 1rem;">
-                                            <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: {{ $entry->category_color }}20; color: {{ $entry->category_color }}; font-weight: 500;">
-                                                {{ $entry->category_name }}
-                                            </span>
-                                        </td>
-                                        <td style="padding: 0.5rem 1.25rem; text-align: right; font-size: 0.875rem; font-weight: 700; color: {{ (float)$entry->amount >= 0 ? '#16a34a' : '#dc2626' }};">
-                                            {{ (float)$entry->amount >= 0 ? '+' : '' }} R$ {{ number_format((float)$entry->amount, 2, ',', '.') }}
-                                        </td>
+                    @if($statement->count() > 0)
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="dg-table-header">
+                                    <tr>
+                                        <th scope="col" class="px-5 py-2.5 text-left">Data</th>
+                                        <th scope="col" class="px-4 py-2.5 text-left">Descrição</th>
+                                        <th scope="col" class="px-4 py-2.5 text-left">Categoria</th>
+                                        <th scope="col" class="px-5 py-2.5 text-right">Valor</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @else
-                    <div style="padding: 2rem; text-align: center; color: #666666;">
-                        Nenhuma movimentação nesta carteira{{ (request('start_date') || request('end_date')) ? ' no período selecionado' : '' }}.
-                    </div>
-                @endif
-                </div>
+                                </thead>
+                                <tbody class="divide-y divide-border-subtle">
+                                    @foreach($statement as $entry)
+                                        <tr class="transition-colors hover:bg-surface-overlay/60">
+                                            <td class="whitespace-nowrap px-5 py-2.5 text-[0.8125rem] text-dg-400">{{ $entry->date?->format('d/m/Y H:i') ?? '-' }}</td>
+                                            <td class="px-4 py-2.5 text-[0.8125rem] font-medium text-dg-100">{{ $entry->description }}</td>
+                                            <td class="px-4 py-2.5">
+                                                <span class="whitespace-nowrap rounded-full px-2 py-0.5 text-[0.6875rem] font-medium" style="background: {{ $entry->category_color }}26; color: {{ $entry->category_color }};">
+                                                    {{ $entry->category_name }}
+                                                </span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-5 py-2.5 text-right font-bold tabular-nums {{ (float) $entry->amount >= 0 ? 'text-emerald-400' : 'text-red-400' }}">
+                                                {{ (float) $entry->amount >= 0 ? '+' : '' }} R$ {{ number_format((float) $entry->amount, 2, ',', '.') }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="px-5 py-8 text-center text-sm text-dg-500">
+                            Nenhuma movimentação nesta carteira{{ (request('start_date') || request('end_date')) ? ' no período selecionado' : '' }}.
+                        </p>
+                    @endif
+                </section>
             @endif
         </div>
     </div>
-
-    @push('scripts')
-    <style>[x-cloak] { display: none !important; }</style>
-    @endpush
 </x-app-layout>

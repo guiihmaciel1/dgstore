@@ -74,6 +74,21 @@ class FinancialAccount extends Model
 
     // Methods
 
+    /** Cor da carteira é clara? Usado para escolher ícone escuro ou claro sobre ela. */
+    public function isLightColor(): bool
+    {
+        $hex = ltrim((string) $this->color, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        if (! ctype_xdigit($hex) || strlen($hex) !== 6) {
+            return false;
+        }
+        [$r, $g, $b] = array_map('hexdec', str_split($hex, 2));
+
+        return (0.299 * $r + 0.587 * $g + 0.114 * $b) > 160;
+    }
+
     public function addBalance(float $amount): void
     {
         $this->increment('current_balance', $amount);

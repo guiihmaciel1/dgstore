@@ -1,75 +1,59 @@
 <x-app-layout>
     <x-slot name="title">Contas a Receber</x-slot>
+    @php
+        $smallInput = 'w-full rounded-lg border border-border bg-surface-overlay px-2.5 py-1.5 text-[0.8125rem] text-dg-100 placeholder-dg-500 focus:border-dg-400 focus:ring-2 focus:ring-dg-400/20';
+    @endphp
     <div class="py-6">
-        <div class="px-6 lg:px-8" x-data="receivablesPage()">
-            @if(session('success'))
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(16,185,129,0.1); border: 1px solid #a7f3d0; border-radius: 0.5rem; color: #6ee7b7;">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if($errors->any())
-                <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(239,68,68,0.1); border: 1px solid #fecaca; border-radius: 0.5rem; color: #fca5a5;">
-                    <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.875rem;">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+        <div class="px-4 sm:px-6 lg:px-8" x-data="receivablesPage()">
+            <x-flash class="mb-4" />
 
-            <!-- Cabeçalho -->
-            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-dg-100">Contas a Receber</h1>
-                    <p class="text-sm text-dg-500">Acompanhe receitas pendentes e recebidas</p>
-                </div>
-                <button @click="showForm = !showForm"
-                        style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: #16a34a; color: white; font-weight: 600; border-radius: 0.75rem; border: none; cursor: pointer; font-size: 0.875rem;"
-                        onmouseover="this.style.background='#15803d'" onmouseout="this.style.background='#16a34a'">
-                    <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    Nova Receita
-                </button>
-            </div>
+            <x-page-header title="Contas a receber" subtitle="Acompanhe receitas pendentes e recebidas">
+                <x-slot name="actions">
+                    <button type="button" @click="showForm = !showForm" :aria-expanded="showForm"
+                            class="dg-btn bg-emerald-600 font-semibold text-white hover:bg-emerald-500">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        Nova receita
+                    </button>
+                </x-slot>
+            </x-page-header>
 
             <!-- Cards de Resumo -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div style="background: #141414; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #d97706;">A Receber (Filtrado)</div>
-                    <div style="font-size: 1.5rem; font-weight: 800; color: #d97706; margin-top: 0.25rem;">R$ {{ number_format($summary['pending'], 2, ',', '.') }}</div>
-                    <div style="font-size: 0.625rem; color: #666666; margin-top: 0.25rem;">Baseado nos filtros aplicados</div>
+            <dl class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div class="dg-card-flat p-5">
+                    <dt class="text-[0.6875rem] font-semibold uppercase tracking-wide text-amber-400">A receber (filtrado)</dt>
+                    <dd class="mt-1 text-2xl font-extrabold tabular-nums text-amber-300">R$ {{ number_format($summary['pending'], 2, ',', '.') }}</dd>
+                    <dd class="mt-1 text-[0.6875rem] text-dg-500">Baseado nos filtros aplicados</dd>
                 </div>
-                <div style="background: #141414; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid {{ $summary['overdue'] > 0 ? '#fecaca' : '#e5e7eb' }};">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #fca5a5;">Atrasado (Total)</div>
-                    <div style="font-size: 1.5rem; font-weight: 800; color: #fca5a5; margin-top: 0.25rem;">R$ {{ number_format($summary['overdue'], 2, ',', '.') }}</div>
-                    <div style="font-size: 0.625rem; color: #666666; margin-top: 0.25rem;">Todas as receitas atrasadas</div>
+                <div class="rounded-xl border bg-surface-raised p-5 {{ $summary['overdue'] > 0 ? 'border-red-500/35' : 'border-border' }}">
+                    <dt class="text-[0.6875rem] font-semibold uppercase tracking-wide text-red-400">Atrasado (total)</dt>
+                    <dd class="mt-1 text-2xl font-extrabold tabular-nums text-red-300">R$ {{ number_format($summary['overdue'], 2, ',', '.') }}</dd>
+                    <dd class="mt-1 text-[0.6875rem] text-dg-500">Todas as receitas atrasadas</dd>
                 </div>
-                <div style="background: #141414; border-radius: 0.75rem; padding: 1.25rem; border: 1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size: 0.6875rem; text-transform: uppercase; font-weight: 600; color: #16a34a;">Recebido no Período</div>
-                    <div style="font-size: 1.5rem; font-weight: 800; color: #16a34a; margin-top: 0.25rem;">R$ {{ number_format($summary['receivedInPeriod'], 2, ',', '.') }}</div>
-                    <div style="font-size: 0.625rem; color: #666666; margin-top: 0.25rem;">Baseado nos filtros aplicados</div>
+                <div class="dg-card-flat p-5">
+                    <dt class="text-[0.6875rem] font-semibold uppercase tracking-wide text-emerald-400">Recebido no período</dt>
+                    <dd class="mt-1 text-2xl font-extrabold tabular-nums text-emerald-300">R$ {{ number_format($summary['receivedInPeriod'], 2, ',', '.') }}</dd>
+                    <dd class="mt-1 text-[0.6875rem] text-dg-500">Baseado nos filtros aplicados</dd>
                 </div>
-            </div>
+            </dl>
 
             <!-- Formulário Nova Receita -->
-            <div x-show="showForm" x-cloak style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1.25rem; margin-bottom: 1.5rem;">
-                <h3 style="font-weight: 600; color: #e3e3e3; margin-bottom: 1rem;">Nova Receita</h3>
+            <div x-show="showForm" x-cloak class="dg-card-flat mb-6 p-5">
+                <h3 class="mb-4 font-semibold text-dg-100">Nova receita</h3>
                 <form method="POST" action="{{ route('finance.transactions.store') }}">
                     @csrf
                     <input type="hidden" name="type" value="income">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         <div>
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Descrição *</label>
-                            <input type="text" name="description" required placeholder="Ex: Parcela cliente João" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
+                            <label for="inc-desc" class="dg-label">Descrição *</label>
+                            <input id="inc-desc" type="text" name="description" required placeholder="Ex: Parcela cliente João" class="dg-input py-2.5">
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Valor Total *</label>
-                            <input type="number" name="amount" step="0.01" min="0.01" required placeholder="0,00" x-model.number="totalAmount" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
+                            <label for="inc-amount" class="dg-label">Valor total *</label>
+                            <input id="inc-amount" type="number" name="amount" step="0.01" min="0.01" required placeholder="0,00" x-model.number="totalAmount" class="dg-input py-2.5 text-right tabular-nums">
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Categoria *</label>
-                            <select name="category_id" required style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414; margin-top: 0.25rem;">
+                            <label for="inc-cat" class="dg-label">Categoria *</label>
+                            <select id="inc-cat" name="category_id" required class="dg-select py-2.5">
                                 <option value="">Selecione</option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -77,43 +61,43 @@
                             </select>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">1o Vencimento *</label>
-                            <input type="date" name="due_date" required value="{{ now()->format('Y-m-d') }}" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
+                            <label for="inc-due" class="dg-label">1º vencimento *</label>
+                            <input id="inc-due" type="date" name="due_date" required value="{{ now()->format('Y-m-d') }}" class="dg-input py-2.5">
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mt-4">
+                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
                         <div>
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Parcelas</label>
-                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;">
-                                <input type="number" name="installments" min="1" max="120" value="1" x-model.number="installments" style="width: 5rem; padding: 0.5rem 0.75rem; background: #1a1a1a; color: #e3e3e3; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem;">
-                                <span x-show="installments > 1" style="font-size: 0.6875rem; color: #16a34a; font-weight: 600;" x-text="installmentAmount"></span>
+                            <label for="inc-inst" class="dg-label">Parcelas</label>
+                            <div class="flex items-center gap-2">
+                                <input id="inc-inst" type="number" name="installments" min="1" max="120" value="1" x-model.number="installments" class="dg-input w-20 py-2.5 text-center">
+                                <span x-show="installments > 1" class="text-[0.6875rem] font-semibold text-emerald-400" x-text="installmentAmount"></span>
                             </div>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Já recebido?</label>
-                            <select name="is_paid" x-model="isPaid" :disabled="installments > 1" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414; margin-top: 0.25rem;">
-                                <option value="0">Não — Pendente</option>
-                                <option value="1" x-bind:disabled="installments > 1">Sim — Já recebido</option>
+                            <label for="inc-paid" class="dg-label">Já recebido?</label>
+                            <select id="inc-paid" name="is_paid" x-model="isPaid" :disabled="installments > 1" class="dg-select py-2.5 disabled:opacity-50">
+                                <option value="0">Não, pendente</option>
+                                <option value="1" x-bind:disabled="installments > 1">Sim, já recebido</option>
                             </select>
                             <template x-if="installments > 1">
-                                <span style="font-size: 0.625rem; color: #666666;">Parcelado = receber individualmente</span>
+                                <span class="mt-1 block text-[0.6875rem] text-dg-500">Parcelado: receba cada parcela separadamente</span>
                             </template>
                         </div>
                         <div x-show="isPaid === '1' && installments <= 1">
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Carteira</label>
-                            <select name="account_id" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; background: #141414; margin-top: 0.25rem;">
+                            <label for="inc-acc" class="dg-label">Carteira</label>
+                            <select id="inc-acc" name="account_id" class="dg-select py-2.5">
                                 @foreach($accounts as $account)
                                     <option value="{{ $account->id }}" {{ $account->is_default ? 'selected' : '' }}>{{ $account->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
-                            <label style="font-size: 0.75rem; font-weight: 500; color: #818181;">Observações</label>
-                            <input type="text" name="notes" placeholder="Opcional" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.5rem; font-size: 0.875rem; margin-top: 0.25rem;">
+                            <label for="inc-notes" class="dg-label">Observações</label>
+                            <input id="inc-notes" type="text" name="notes" placeholder="Opcional" class="dg-input py-2.5">
                         </div>
-                        <div style="display: flex; align-items: flex-end;">
-                            <button type="submit" style="width: 100%; padding: 0.5rem 1rem; background: #16a34a; color: white; font-weight: 600; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.875rem;">
-                                <span x-show="installments <= 1">Registrar Receita</span>
+                        <div class="flex items-end">
+                            <button type="submit" class="dg-btn w-full bg-emerald-600 py-2.5 font-semibold text-white hover:bg-emerald-500">
+                                <span x-show="installments <= 1">Registrar receita</span>
                                 <span x-show="installments > 1" x-text="'Registrar ' + installments + 'x'"></span>
                             </button>
                         </div>
@@ -122,16 +106,16 @@
             </div>
 
             <!-- Filtros -->
-            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); padding: 1rem; margin-bottom: 1.5rem;">
-                <form method="GET" action="{{ route('finance.receivables') }}" x-data x-ref="filterForm">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 items-end">
+            <div class="dg-card-flat mb-6 p-4">
+                <form method="GET" action="{{ route('finance.receivables') }}">
+                    <div class="grid grid-cols-2 items-end gap-3 sm:grid-cols-3 lg:grid-cols-6">
                         <div>
-                            <label style="font-size: 0.6875rem; font-weight: 500; color: #818181;">Buscar</label>
-                            <input type="text" name="search" value="{{ $filters['search'] }}" placeholder="Descrição..." style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem;">
+                            <label for="f-search" class="mb-1 block text-[0.6875rem] font-medium text-dg-400">Buscar</label>
+                            <input id="f-search" type="text" name="search" value="{{ $filters['search'] }}" placeholder="Descrição..." class="{{ $smallInput }}">
                         </div>
                         <div>
-                            <label style="font-size: 0.6875rem; font-weight: 500; color: #818181;">Categoria</label>
-                            <select name="category_id" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; background: #141414;">
+                            <label for="f-cat" class="mb-1 block text-[0.6875rem] font-medium text-dg-400">Categoria</label>
+                            <select id="f-cat" name="category_id" class="{{ $smallInput }}">
                                 <option value="">Todas</option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->id }}" {{ $filters['category_id'] == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -139,8 +123,8 @@
                             </select>
                         </div>
                         <div>
-                            <label style="font-size: 0.6875rem; font-weight: 500; color: #818181;">Status</label>
-                            <select name="status" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem; background: #141414;">
+                            <label for="f-status" class="mb-1 block text-[0.6875rem] font-medium text-dg-400">Status</label>
+                            <select id="f-status" name="status" class="{{ $smallInput }}">
                                 <option value="">Todos</option>
                                 <option value="pending" {{ $filters['status'] === 'pending' ? 'selected' : '' }}>Pendente</option>
                                 <option value="overdue" {{ $filters['status'] === 'overdue' ? 'selected' : '' }}>Atrasado</option>
@@ -148,19 +132,17 @@
                             </select>
                         </div>
                         <div>
-                            <label style="font-size: 0.6875rem; font-weight: 500; color: #818181;">De</label>
-                            <input type="date" name="start_date" value="{{ $filters['start_date'] }}" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem;">
+                            <label for="f-start" class="mb-1 block text-[0.6875rem] font-medium text-dg-400">De</label>
+                            <input id="f-start" type="date" name="start_date" value="{{ $filters['start_date'] }}" class="{{ $smallInput }}">
                         </div>
                         <div>
-                            <label style="font-size: 0.6875rem; font-weight: 500; color: #818181;">Até</label>
-                            <input type="date" name="end_date" value="{{ $filters['end_date'] }}" style="width: 100%; padding: 0.375rem 0.625rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.375rem; font-size: 0.8125rem;">
+                            <label for="f-end" class="mb-1 block text-[0.6875rem] font-medium text-dg-400">Até</label>
+                            <input id="f-end" type="date" name="end_date" value="{{ $filters['end_date'] }}" class="{{ $smallInput }}">
                         </div>
                         <div class="flex gap-2">
-                            <button type="submit" style="flex: 1; padding: 0.375rem 0.75rem; background: #2563eb; color: white; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer; font-size: 0.8125rem;">
-                                Filtrar
-                            </button>
+                            <button type="submit" class="flex-1 rounded-lg bg-white px-3 py-1.5 text-[0.8125rem] font-semibold text-dg-950 transition-colors hover:bg-dg-100">Filtrar</button>
                             @if(array_filter($filters))
-                                <a href="{{ route('finance.receivables') }}" style="padding: 0.375rem 0.75rem; background: #141414; color: #a4a4a4; font-weight: 500; border-radius: 0.375rem; border: 1px solid rgba(255,255,255,0.08); text-decoration: none; font-size: 0.8125rem; display: flex; align-items: center;">Limpar</a>
+                                <a href="{{ route('finance.receivables') }}" class="flex items-center rounded-lg border border-border px-3 py-1.5 text-[0.8125rem] font-medium text-dg-300 hover:text-dg-100">Limpar</a>
                             @endif
                         </div>
                     </div>
@@ -168,84 +150,83 @@
             </div>
 
             <!-- Tabela -->
-            <div style="background: #141414; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;">
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #1a1a1a;">
-                                <th style="padding: 0.625rem 1.25rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Previsão</th>
-                                <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Descrição</th>
-                                <th style="padding: 0.625rem 1rem; text-align: left; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Categoria</th>
-                                <th style="padding: 0.625rem 1rem; text-align: center; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Status</th>
-                                <th style="padding: 0.625rem 1rem; text-align: right; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Valor</th>
-                                <th style="padding: 0.625rem 1.25rem; text-align: right; font-size: 0.6875rem; font-weight: 600; color: #818181; text-transform: uppercase;">Ações</th>
+            <div class="dg-card-flat overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="dg-table-header">
+                            <tr>
+                                <th scope="col" class="px-5 py-2.5 text-left">Previsão</th>
+                                <th scope="col" class="px-4 py-2.5 text-left">Descrição</th>
+                                <th scope="col" class="px-4 py-2.5 text-left">Categoria</th>
+                                <th scope="col" class="px-4 py-2.5 text-center">Status</th>
+                                <th scope="col" class="px-4 py-2.5 text-right">Valor</th>
+                                <th scope="col" class="px-5 py-2.5 text-right">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-border-subtle">
                             @forelse($transactions as $tx)
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
-                                    <td style="padding: 0.625rem 1.25rem;">
-                                        <div style="font-size: 0.8125rem; font-weight: 500; color: #e3e3e3;">{{ $tx->due_date->format('d/m/Y') }}</div>
+                                <tr class="transition-colors hover:bg-surface-overlay/60">
+                                    <td class="whitespace-nowrap px-5 py-2.5">
+                                        <p class="text-[0.8125rem] font-medium tabular-nums text-dg-100">{{ $tx->due_date->format('d/m/Y') }}</p>
                                         @if($tx->paid_at)
-                                            <div style="font-size: 0.6875rem; color: #16a34a;">Recebido {{ $tx->paid_at->format('d/m') }}</div>
+                                            <p class="text-[0.6875rem] text-emerald-400">Recebido {{ $tx->paid_at->format('d/m') }}</p>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.625rem 1rem;">
-                                        <div style="font-size: 0.8125rem; font-weight: 500; color: #e3e3e3;">{{ Str::limit($tx->description, 45) }}</div>
+                                    <td class="px-4 py-2.5">
+                                        <p class="text-[0.8125rem] font-medium text-dg-100">{{ Str::limit($tx->description, 45) }}</p>
                                         @if($tx->notes)
-                                            <div style="font-size: 0.6875rem; color: #666666;">{{ Str::limit($tx->notes, 40) }}</div>
+                                            <p class="text-[0.6875rem] text-dg-500">{{ Str::limit($tx->notes, 40) }}</p>
                                         @endif
                                     </td>
-                                    <td style="padding: 0.625rem 1rem;">
-                                        <span style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; border-radius: 9999px; background: {{ $tx->category->color ?? '#6b7280' }}20; color: {{ $tx->category->color ?? '#6b7280' }}; font-weight: 500;">
+                                    <td class="px-4 py-2.5">
+                                        <span class="whitespace-nowrap rounded-full px-2 py-0.5 text-[0.6875rem] font-medium" style="background: {{ $tx->category->color ?? '#6b7280' }}26; color: {{ $tx->category->color ?? '#a4a4a4' }};">
                                             {{ $tx->category->name ?? '-' }}
                                         </span>
                                     </td>
-                                    <td style="padding: 0.625rem 1rem; text-align: center;">
-                                        <span style="font-size: 0.625rem; padding: 0.125rem 0.5rem; border-radius: 9999px; font-weight: 600; background: {{ $tx->status->bgColor() }}; color: {{ $tx->status->color() }};">
+                                    <td class="px-4 py-2.5 text-center">
+                                        <span class="whitespace-nowrap rounded-full px-2 py-0.5 text-[0.6875rem] font-semibold" style="background: {{ $tx->status->bgColor() }}; color: {{ $tx->status->color() }};">
                                             {{ $tx->status->label() }}
                                         </span>
                                     </td>
-                                    <td style="padding: 0.625rem 1rem; text-align: right; font-size: 0.875rem; font-weight: 700; color: #16a34a;">
-                                        R$ {{ number_format((float)$tx->amount, 2, ',', '.') }}
+                                    <td class="whitespace-nowrap px-4 py-2.5 text-right font-bold tabular-nums text-emerald-400">
+                                        R$ {{ number_format((float) $tx->amount, 2, ',', '.') }}
                                     </td>
-                                    <td style="padding: 0.625rem 1.25rem; text-align: right;">
+                                    <td class="whitespace-nowrap px-5 py-2.5 text-right">
                                         @if($tx->status->value !== 'paid' && $tx->status->value !== 'cancelled')
-                                            <form method="POST" action="{{ route('finance.transactions.pay', $tx) }}" style="display: inline;">
+                                            <form method="POST" action="{{ route('finance.transactions.pay', $tx) }}" class="inline-flex items-center gap-1">
                                                 @csrf
-                                                <select name="account_id" required style="font-size: 0.6875rem; padding: 0.125rem 0.25rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 0.25rem; background: #141414;">
+                                                <select name="account_id" required aria-label="Carteira do recebimento" class="rounded-md border border-border bg-surface-overlay py-1 pl-2 pr-7 text-[0.6875rem] text-dg-200">
                                                     @foreach($accounts as $acc)
                                                         <option value="{{ $acc->id }}" {{ $acc->is_default ? 'selected' : '' }}>{{ $acc->name }}</option>
                                                     @endforeach
                                                 </select>
-                                                <button type="submit" style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; background: #16a34a; color: white; border: none; border-radius: 0.25rem; cursor: pointer; font-weight: 600; margin-left: 0.25rem;">Receber</button>
+                                                <button type="submit" class="rounded-md bg-emerald-600 px-2.5 py-1 text-[0.6875rem] font-semibold text-white transition-colors hover:bg-emerald-500">Receber</button>
                                             </form>
-                                            <form method="POST" action="{{ route('finance.transactions.cancel', $tx) }}" style="display: inline; margin-left: 0.25rem;" onsubmit="return confirm('Cancelar esta receita?')">
+                                            <form method="POST" action="{{ route('finance.transactions.cancel', $tx) }}" class="ml-1 inline" onsubmit="return confirm('Cancelar esta receita?')">
                                                 @csrf
-                                                <button type="submit" style="font-size: 0.6875rem; padding: 0.125rem 0.5rem; background: none; color: #666666; border: none; cursor: pointer;">Cancelar</button>
+                                                <button type="submit" class="rounded-md px-2 py-1 text-[0.6875rem] font-medium text-dg-500 transition-colors hover:text-red-300">Cancelar</button>
                                             </form>
                                         @elseif($tx->status->value === 'paid')
-                                            <span style="font-size: 0.6875rem; color: #666666;">{{ $tx->account->name ?? '-' }}</span>
+                                            <span class="text-[0.6875rem] text-dg-500">{{ $tx->account->name ?? '-' }}</span>
                                         @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" style="padding: 2rem; text-align: center; color: #666666;">Nenhuma conta a receber encontrada.</td>
+                                    <td colspan="6" class="px-5 py-8 text-center text-sm text-dg-500">Nenhuma conta a receber encontrada.</td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
                 @if($transactions->hasPages())
-                    <div style="padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.06);">{{ $transactions->links() }}</div>
+                    <div class="border-t border-border px-5 py-4">{{ $transactions->links() }}</div>
                 @endif
             </div>
         </div>
     </div>
 
     @push('scripts')
-    <style>[x-cloak] { display: none !important; }</style>
     <script>
         function receivablesPage() {
             return {
