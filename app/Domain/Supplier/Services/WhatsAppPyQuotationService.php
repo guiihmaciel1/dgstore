@@ -37,13 +37,13 @@ class WhatsAppPyQuotationService
     /**
      * Processa cotação PY a partir de uma mensagem de grupo de um fornecedor já identificado.
      */
-    public function processGroupQuotation(Supplier $supplier, string $messageBody): bool
+    public function processGroupQuotation(Supplier $supplier, string $messageBody, bool $allowBlockFormat = false): bool
     {
         if (!$this->isPyQuotation($messageBody)) {
             return false;
         }
 
-        return $this->parseAndStore($supplier, $messageBody);
+        return $this->parseAndStore($supplier, $messageBody, $allowBlockFormat);
     }
 
     private function isPyQuotation(string $body): bool
@@ -72,10 +72,15 @@ class WhatsAppPyQuotationService
             ->first();
     }
 
-    private function parseAndStore(Supplier $supplier, string $messageBody): bool
+    private function parseAndStore(Supplier $supplier, string $messageBody, bool $allowBlockFormat = false): bool
     {
-        $parser = new PyQuotationParser();
-        $items = $parser->parse($messageBody);
+        $items = (new PyQuotationParser())->parse($messageBody);
+
+        // Formato em blocos (modelo numa linha, cores com preço embaixo).
+        // Só para origem já identificada (grupo vinculado), pois aceita quase qualquer lista.
+        if (empty($items) && $allowBlockFormat) {
+            $items = (new PyBlockQuotationParser())->parse($messageBody);
+        }
 
         if (empty($items)) {
             Log::warning('WhatsAppPyQuotation: cotação PY detectada mas parser não extraiu itens', [

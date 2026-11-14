@@ -177,11 +177,26 @@ class UazapiWebhookService
     {
         $messageBody = $message['text'] ?? $this->extractBody($message);
 
-        if (!is_string($messageBody) || mb_strlen($messageBody) < 100) {
+        if (!is_string($messageBody) || !preg_match('/\$\s*\d+/u', $messageBody)) {
             return;
         }
 
-        if (!preg_match('/\$\s*\d+/u', $messageBody)) {
+        // Grupo vinculado a um fornecedor (ID do grupo no campo telefone):
+        // vai direto para ele, inclusive ajustes curtos de preço.
+        $groupSupplier = Supplier::active()->where('phone', $chatId)->first();
+        if ($groupSupplier) {
+            try {
+                app(WhatsAppPyQuotationService::class)->processGroupQuotation($groupSupplier, $messageBody, allowBlockFormat: true);
+            } catch (\Throwable $e) {
+                Log::warning('Erro ao processar cotação de grupo vinculado', [
+                    'supplier' => $groupSupplier->name,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+            return;
+        }
+
+        if (mb_strlen($messageBody) < 100) {
             return;
         }
 
