@@ -184,7 +184,7 @@ class PurchaseService
 
     public function activeTotal(Purchase $purchase): float
     {
-        return (float) $purchase->items()
+        return (float) $purchase->items()->reorder()
             ->where('status', '!=', PurchaseItem::STATUS_CANCELLED)
             ->selectRaw('COALESCE(SUM(unit_cost * quantity), 0) as total')
             ->value('total');
@@ -192,7 +192,7 @@ class PurchaseService
 
     private function refreshStatus(Purchase $purchase): void
     {
-        $counts = $purchase->items()->selectRaw('status, COUNT(*) as n')->groupBy('status')->pluck('n', 'status');
+        $counts = $purchase->items()->reorder()->selectRaw('status, COUNT(*) as n')->groupBy('status')->pluck('n', 'status');
         $pending = (int) ($counts[PurchaseItem::STATUS_PENDING] ?? 0);
         $received = (int) ($counts[PurchaseItem::STATUS_RECEIVED] ?? 0);
 
