@@ -37,6 +37,18 @@ class WhatsAppQuotationService
     }
 
     /**
+     * Processa lista de repasse BR vinda de um grupo/comunidade vinculado ao fornecedor.
+     */
+    public function processGroupQuotation(Supplier $supplier, string $messageBody): bool
+    {
+        if (!$this->isQuotationMessage($messageBody) && !preg_match('/R\$\s*\d/u', $messageBody)) {
+            return false;
+        }
+
+        return $this->parseAndStore($supplier, $messageBody);
+    }
+
+    /**
      * Verifica se a mensagem é uma cotação de fornecedor.
      * Reconhece pela palavra "REPASSE" ou pelo padrão estrutural:
      * modelos de iPhone/Apple + preços numéricos + indicadores ❌.
@@ -79,8 +91,12 @@ class WhatsAppQuotationService
      */
     private function parseAndStore(Supplier $supplier, string $messageBody): bool
     {
-        $parser = new BrQuotationParser();
-        $items = $parser->parse($messageBody);
+        $items = (new BrQuotationParser())->parse($messageBody);
+
+        // Formato em blocos com "R$" (ex.: MT Imports)
+        if (empty($items)) {
+            $items = (new BrBlockQuotationParser())->parse($messageBody);
+        }
 
         if (empty($items)) {
             Log::warning('WhatsAppQuotation: cotação detectada mas parser não extraiu itens', [

@@ -186,7 +186,11 @@ class UazapiWebhookService
         $groupSupplier = Supplier::active()->where('phone', $chatId)->first();
         if ($groupSupplier) {
             try {
-                app(WhatsAppPyQuotationService::class)->processGroupQuotation($groupSupplier, $messageBody, allowBlockFormat: true);
+                if ($groupSupplier->origin === 'py') {
+                    app(WhatsAppPyQuotationService::class)->processGroupQuotation($groupSupplier, $messageBody, allowBlockFormat: true);
+                } else {
+                    app(WhatsAppQuotationService::class)->processGroupQuotation($groupSupplier, $messageBody);
+                }
             } catch (\Throwable $e) {
                 Log::warning('Erro ao processar cotação de grupo vinculado', [
                     'supplier' => $groupSupplier->name,
