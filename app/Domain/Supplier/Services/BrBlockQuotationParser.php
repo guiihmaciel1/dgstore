@@ -113,7 +113,7 @@ class BrBlockQuotationParser
 
     private function normalizeName(string $text): string
     {
-        $text = str_replace(['•', '”', '"', '″'], [' ', '"', '"', '"'], $text);
+        $text = str_replace(['•', '”', '″', 'Ô', 'ô'], [' ', '"', '"', 'O', 'o'], $text);
         $text = preg_replace('/(\d+)\s*gb\b/iu', '$1GB', $text);
         $text = preg_replace('/(\d+)\s*tb\b/iu', '$1TB', $text);
         $text = preg_replace('/(\d+)\s*mm\b/iu', '$1MM', $text);

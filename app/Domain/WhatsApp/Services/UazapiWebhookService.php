@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\WhatsApp\Services;
 
+use App\Domain\Supplier\Enums\SupplierOrigin;
 use App\Domain\Supplier\Models\Supplier;
 use App\Domain\Supplier\Services\WhatsAppPyQuotationService;
 use App\Domain\Supplier\Services\WhatsAppQuotationService;
@@ -186,7 +187,7 @@ class UazapiWebhookService
         $groupSupplier = Supplier::active()->where('phone', $chatId)->first();
         if ($groupSupplier) {
             try {
-                if ($groupSupplier->origin === 'py') {
+                if ($groupSupplier->origin === SupplierOrigin::Py) {
                     app(WhatsAppPyQuotationService::class)->processGroupQuotation($groupSupplier, $messageBody, allowBlockFormat: true);
                 } else {
                     app(WhatsAppQuotationService::class)->processGroupQuotation($groupSupplier, $messageBody);
