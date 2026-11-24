@@ -11,7 +11,7 @@
         <div>
             <h1 class="font-serif text-3xl sm:text-4xl font-semibold text-gray-900 leading-tight">Catálogo de perfumes</h1>
             <p class="mt-2 text-sm" style="color: #6b6b6b;">
-                Ribeirão Preto · Pronta entrega ou encomenda em 3–5 dias · 10x sem juros ou desconto no PIX
+                São José do Rio Preto · Pronta entrega ou encomenda em 3–5 dias · 10x sem juros ou desconto no PIX
             </p>
         </div>
         <div class="w-full sm:max-w-sm">
