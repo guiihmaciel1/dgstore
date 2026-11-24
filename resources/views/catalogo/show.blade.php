@@ -27,10 +27,7 @@
 
         {{-- Image — centered, white bg + zoom on hover + discount pin --}}
         @php
-            $showOrigPrice = $fragrance->original_price ?? ($fragrance->sale_price ? (int)(ceil(((float)$fragrance->sale_price * 1.2) / 10) * 10) : null);
-            $showDiscount = ($showOrigPrice && $fragrance->pix_price && $showOrigPrice > 0)
-                ? round(($showOrigPrice - (float)$fragrance->pix_price) / $showOrigPrice * 100)
-                : 0;
+            $showDiscount = $fragrance->catalog_discount_percent;
         @endphp
 
         @if($fragrance->image_url)
@@ -170,12 +167,13 @@
             {{-- Pricing --}}
             @if($fragrance->sale_price && $fragrance->pix_price)
                 @php
-                    $originalPrice = $fragrance->original_price ?? (int)(ceil(((float)$fragrance->sale_price * 1.2) / 10) * 10);
-                    $realDiscount = $originalPrice > 0 ? round((($originalPrice - (float)$fragrance->pix_price) / $originalPrice) * 100) : 0;
+                    $realDiscount = $fragrance->catalog_discount_percent;
                 @endphp
                 <div class="mt-6 pt-5" style="border-top: 1px solid #eee;">
                     <div class="flex items-baseline gap-2.5">
-                        <span class="text-xs line-through font-light" style="color: var(--muted);">R$ {{ number_format($originalPrice, 0, ',', '.') }}</span>
+                        @if($realDiscount >= 5)
+                            <span class="text-xs line-through font-light" style="color: var(--muted);">R$ {{ number_format((float) $fragrance->original_price, 0, ',', '.') }}</span>
+                        @endif
                         <span class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">R$ {{ number_format($fragrance->sale_price, 0, ',', '.') }}</span>
                     </div>
                     <p class="text-[11px] mt-1.5 font-light" style="color: var(--muted);">

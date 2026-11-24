@@ -116,10 +116,8 @@ class FragranceController extends Controller
         if ($pixPrice > 0) {
             $salePrice = FragranceProduct::calculateInstallmentPrice($pixPrice, $discountPercent);
             $data['sale_price'] = $salePrice;
-            $data['original_price'] = (int) (ceil(($salePrice * 1.2) / 10) * 10);
         } else {
             $data['sale_price'] = null;
-            $data['original_price'] = null;
         }
 
         $tags = $data['tags'] ?? [];

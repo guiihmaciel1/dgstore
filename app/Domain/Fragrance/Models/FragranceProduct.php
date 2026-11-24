@@ -232,4 +232,20 @@ class FragranceProduct extends Model
 
         return $price > 0 ? round($price / 10, 2) : null;
     }
+
+    /**
+     * Desconto do PIX sobre o preço de referência gravado (original_price).
+     * Sem original_price não há desconto: o catálogo não inventa "preço de".
+     */
+    public function getCatalogDiscountPercentAttribute(): int
+    {
+        $original = (float) ($this->original_price ?? 0);
+        $pix = (float) ($this->pix_price ?? 0);
+
+        if ($original <= 0 || $pix <= 0 || $pix >= $original) {
+            return 0;
+        }
+
+        return (int) round(($original - $pix) / $original * 100);
+    }
 }

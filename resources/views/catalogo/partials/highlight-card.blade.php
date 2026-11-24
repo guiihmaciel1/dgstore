@@ -1,19 +1,13 @@
 {{-- Single highlight card (used inside horizontal scroll) --}}
-@php
-    $hlOrigPrice = $product->original_price ?? ($product->sale_price ? (int)(ceil(((float)$product->sale_price * 1.2) / 10) * 10) : null);
-    $hlDiscount = ($hlOrigPrice && $product->pix_price && $hlOrigPrice > 0)
-        ? round(($hlOrigPrice - (float)$product->pix_price) / $hlOrigPrice * 100)
-        : 0;
-@endphp
 <a href="{{ route('catalogo.show', $product->slug) }}"
    class="snap-start shrink-0 w-[160px] sm:w-[185px] group"
    style="scroll-snap-align: start;">
     <div class="cat-card h-full flex flex-col">
         {{-- Image --}}
         <div class="cat-card-img aspect-[4/5] flex items-center justify-center p-4 sm:p-5 relative">
-            @if($hlDiscount >= 5)
+            @if($product->catalog_discount_percent >= 5)
                 <div class="discount-pin discount-pin-sm">
-                    <span class="discount-pin-value">{{ $hlDiscount }}%</span>
+                    <span class="discount-pin-value">{{ $product->catalog_discount_percent }}%</span>
                     <span class="discount-pin-label">OFF</span>
                 </div>
             @endif
@@ -56,52 +50,7 @@
                 </div>
             @endif
 
-            {{-- Pricing --}}
-            @if($product->sale_price && $product->pix_price)
-                <div class="mt-auto pt-3" style="border-top: 1px solid #eee; margin-top: auto;">
-                    <div class="flex items-baseline gap-1.5">
-                        <span class="text-[10px] line-through" style="color: var(--muted);">R$ {{ number_format($hlOrigPrice, 0, ',', '.') }}</span>
-                        <span class="text-base font-bold text-gray-900">R$ {{ number_format($product->sale_price, 0, ',', '.') }}</span>
-                    </div>
-                    <p class="text-[10px] mt-0.5" style="color: var(--muted);">
-                        10x de R$ {{ number_format((float)$product->sale_price / 10, 0, ',', '.') }} s/ juros
-                    </p>
-                    <div class="mt-2 px-3 py-1.5 rounded-lg pix-badge">
-                        <div class="flex items-baseline gap-0.5">
-                            <span class="text-xs font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
-                            <span class="text-[9px] font-medium" style="color: var(--teal); opacity: 0.6;">PIX</span>
-                        </div>
-                        @if($hlDiscount >= 5)
-                            <p class="text-[9px] font-bold mt-0.5" style="color: var(--teal-light);">-{{ $hlDiscount }}% economia</p>
-                        @endif
-                    </div>
-                    @if($product->stock_quantity <= 0)
-                        <p class="text-[9px] mt-1.5 font-medium tracking-wide" style="color: var(--gold);">
-                            Sob encomenda · 3–5 dias
-                        </p>
-                    @else
-                        <p class="text-[9px] mt-1.5 font-medium tracking-wide text-emerald-600">
-                            ✅ Pronta entrega
-                        </p>
-                    @endif
-                </div>
-            @elseif($product->pix_price)
-                <div class="mt-auto pt-3" style="border-top: 1px solid #eee; margin-top: auto;">
-                    <div class="px-3 py-1.5 rounded-lg pix-badge">
-                        <span class="text-sm font-bold" style="color: var(--teal);">R$ {{ number_format($product->pix_price, 0, ',', '.') }}</span>
-                        <span class="text-[9px] font-medium ml-0.5" style="color: var(--teal); opacity: 0.6;">PIX</span>
-                    </div>
-                    @if($product->stock_quantity <= 0)
-                        <p class="text-[9px] mt-1.5 font-medium tracking-wide" style="color: var(--gold);">
-                            Sob encomenda · 3–5 dias
-                        </p>
-                    @else
-                        <p class="text-[9px] mt-1.5 font-medium tracking-wide text-emerald-600">
-                            ✅ Pronta entrega
-                        </p>
-                    @endif
-                </div>
-            @endif
+            @include('catalogo.partials.card-price', ['product' => $product, 'size' => 'sm'])
         </div>
     </div>
 </a>
